@@ -4123,14 +4123,18 @@ const ok = (name, cond, extra = '') => {
     const rc = outbox.filter(m => m.tag === 'receipt').slice(r0);
     const o6 = await one('SELECT member_id, mail_to FROM bkk_orders WHERE id=$1', [buy6.body.order.id]);
     const rtok = await one(`SELECT member_id FROM bkk_login_tokens WHERE ip='receipt' ORDER BY created_at DESC LIMIT 1`);
-    ok("checkout with an email the merge moved to the kept profile: the pass, the receipt and its link are all the kept profile's",
-       b6.status === 200 && o6.member_id === k6id && o6.mail_to === null && rc.length === 1 && rc[0].to === 'pim.undo@example.com'
-       && rtok.member_id === k6id, JSON.stringify([b6.body, o6, rc.map(m => m.to), rtok]));
+    ok("checkout with an email the merge moved to the kept profile: the pass lands there; the receipt and its link are the double's, whose email it is",
+       b6.status === 200 && o6.member_id === k6id && o6.mail_to === 'pim.undo@example.com' && rc.length === 1 && rc[0].to === 'pim.undo@example.com'
+       && rtok.member_id === f6id, JSON.stringify([b6.body, o6, rc.map(m => m.to), rtok]));
     const undo6 = await unmerge(F6);
     const b6row = await one('SELECT b.member_id AS bm, p.member_id AS pm FROM bkk_bookings b JOIN bkk_passes p ON p.id=b.pass_id WHERE b.id=$1',
       [b6.body.booking.id]);
     ok('undo: the class booked since on the moved pack goes back with the pack', undo6.status === 200
        && b6row.bm === f6id && b6row.pm === f6id, JSON.stringify([undo6.body, b6row]));
+    ok("...and so do the sale made with the double's email and its pass", undo6.body.since.orders === 1
+       && (await one('SELECT member_id FROM bkk_orders WHERE id=$1', [buy6.body.order.id])).member_id === f6id
+       && (await one('SELECT count(*)::int AS n FROM bkk_passes WHERE order_id=$1 AND member_id=$2', [buy6.body.order.id, f6id])).n === 1,
+       JSON.stringify(undo6.body));
 
     // The same student, two emails: a purchase with the double's email after the merge.
     const K7 = 'BMRGKEEP00007', F7 = 'BMRGFOLD00007';
@@ -4198,10 +4202,117 @@ const ok = (name, cond, extra = '') => {
        && (await k9orders()) === o9 + 1 && (await one('SELECT count(*)::int AS n FROM bkk_members')).n === m9, JSON.stringify(byPhone.body));
     const win9 = [{ memberRezervId: 'RZ-M10', name: 'Fah K', date: addD(todayB, -4), amount: '1,605', item: 'Drop-in', status: 'Paid' }];
     const w9a = await imp('payments', win9);
-    await unmerge(F9);
+    const pass10 = [{ memberRezervId: 'RZ-M10', name: 'Fah K', plan: '1 month unlimited', start: addD(todayB, -4),
+      until: addD(todayB, 25), rezervId: 'RZP-M10' }];
+    const wp1 = await imp('passes', pass10);
+    const u9 = await unmerge(F9);
+    const f9id = await idOf(F9);
     const w9b = await imp('payments', win9);
-    ok('a Rezerv row imported while merged is not added again after an undo', w9a.body.added === 1 && w9b.body.added === 0
-       && w9b.body.matched === 1, JSON.stringify([w9a.body, w9b.body]));
+    const wp2 = await imp('passes', pass10);
+    ok("Rezerv rows for the double imported while merged go back to it on undo", w9a.body.added === 1 && wp1.body.added === 1
+       && u9.body.since.orders >= 1 && u9.body.since.passes === 1
+       && (await one(`SELECT member_id FROM bkk_passes WHERE source='rezerv' AND source_ref='RZP-M10'`)).member_id === f9id, JSON.stringify(u9.body));
+    ok('...and the next import finds them there: nothing added twice, no id taken by another profile', w9b.body.added === 0
+       && w9b.body.matched === 1 && wp2.body.matched === 1 && !wp2.body.skipped.length, JSON.stringify([w9b.body, wp2.body]));
+
+    // A wrong merge where the email moved: what was done with it follows the double back.
+    const KA = 'BMRGKEEP00010', FA = 'BMRGFOLD00010';
+    await pool.query(`INSERT INTO bkk_members (code,name) VALUES ($1,'Twin Name')`, [KA]);
+    await pool.query(`INSERT INTO bkk_members (code,name,email) VALUES ($1,'Twin Name','twin.b@example.com')`, [FA]);
+    const faid = await idOf(FA);
+    await pool.query(`INSERT INTO bkk_login_tokens (token,member_id,email,ip,expires_at) VALUES ('mrgtokA',$1,'twin.b@example.com','receipt', now() + interval '30 days')`, [faid]);
+    await merge(KA, { from: FA });
+    await pool.query(`UPDATE bkk_login_tokens SET created_at = created_at - interval '2 hours' WHERE created_at > now() - interval '1 hour'`);
+    await post('/api/bkk/login/request', { email: 'twin.b@example.com' });
+    const tokA = await one(`SELECT member_id FROM bkk_login_tokens WHERE email='twin.b@example.com' AND ip <> 'receipt' ORDER BY created_at DESC LIMIT 1`);
+    const buyA = await post('/api/bkk/orders', { productCode: 'pack8', name: 'Twin Name', email: 'twin.b@example.com', memberCode: FA });
+    ok("while merged, a sign-in and a sale with the email the merge moved are the double's; a phone holding the double's code keeps it",
+       tokA.member_id === faid && buyA.status === 200 && buyA.body.member.code === FA, JSON.stringify([tokA, buyA.body.member]));
+    await post(`/api/bkk/admin/orders/${buyA.body.order.id}/force-activate`, {}, ADMIN);
+    const undoA = await unmerge(FA);
+    ok("undo: that sale and its pass go back to the double, and the double's code opens its own profile with them", undoA.status === 200
+       && undoA.body.since.orders === 1 && undoA.body.since.passes === 1 && (await J('/api/bkk/me/' + FA)).body.passes.length === 1
+       && (await J('/api/bkk/me/' + KA)).body.passes.length === 0, JSON.stringify(undoA.body));
+    // Changing the kept profile's email stops links made on the double for the old address.
+    await merge(KA, { from: FA });
+    const chg = await post(`/api/bkk/admin/members/${KA}/email`, { email: 'twin.new@example.com' }, ADMIN);
+    ok("changing the kept profile's email also stops the double's links for the old address", chg.status === 200
+       && (await one(`SELECT expires_at <= now() AS dead FROM bkk_login_tokens WHERE token='mrgtokA'`)).dead === true, JSON.stringify(chg.body));
+    await post('/api/bkk/login/request', { email: 'twin.b@example.com' });
+    ok("...and the old address signs in to no one", (await one(`SELECT count(*)::int AS n FROM bkk_login_tokens
+      WHERE email='twin.b@example.com' AND expires_at > now()`)).n === 0);
+
+    // A teacher page or staff screen opened before the merge.
+    const tk = await post('/api/bkk/admin/teachers', { name: 'Merge Teacher' }, ADMIN);
+    const TK = { 'x-teacher-key': tk.body.passcode };
+    const note = await post('/api/bkk/teacher/notes', { memberCode: FA, body: 'note from a page opened before the merge' }, TK);
+    ok("a teacher note saved with the double's code lands on the kept profile", note.status === 200
+       && (await one(`SELECT member_id FROM bkk_notes WHERE body='note from a page opened before the merge'`)).member_id === await idOf(KA),
+       JSON.stringify(note.body));
+    const tv = await J('/api/bkk/teacher/student/' + FA, { headers: TK });
+    const hist = await J(`/api/bkk/admin/members/${FA}/history`, { headers: ADMIN });
+    ok("...and the teacher view and staff history opened with it show the kept profile", tv.status === 200 && hist.status === 200
+       && JSON.stringify(tv.body).includes('note from a page opened before the merge'), JSON.stringify([tv.status, hist.status]));
+    const ph2 = await one(`INSERT INTO bkk_photos (public_id, class_date) VALUES ('merge/p2', $1) RETURNING id`, [todayB]);
+    const tagOld = await post(`/api/bkk/teacher/photos/${ph2.id}/tags`, { tags: [{ code: FA, role: 'main' }] }, TK);
+    ok("a photo tag with the double's code asks for a reload instead of tagging the empty profile", tagOld.status === 409, JSON.stringify(tagOld.body));
+    await unmerge(FA);
+
+    // Two merges: undoing the later one takes the first double's sale with it.
+    const KB = 'BMRGKEEP00011', FB = 'BMRGFOLD00011', GB = 'BMRGFOLD00021';
+    await pool.query(`INSERT INTO bkk_members (code,name,email) VALUES ($1,'Bee Chain','bee.k@example.com'), ($2,'Bee Chain','bee.f@example.com'),
+      ($3,'Bee Chain','bee.g@example.com')`, [KB, FB, GB]);
+    await merge(FB, { from: GB, sure: true });
+    await merge(KB, { from: FB, sure: true });
+    const buyB = await post('/api/bkk/orders', { productCode: 'pack8', name: 'Bee Chain', email: 'bee.g@example.com' });
+    const uF = await unmerge(FB), uG = await unmerge(GB);
+    ok("a sale made with an earlier double's email follows it back through both undos", uF.status === 200 && uG.status === 200
+       && (await one('SELECT member_id FROM bkk_orders WHERE id=$1', [buyB.body.order.id])).member_id === await idOf(GB), JSON.stringify([uF.body, uG.body]));
+
+    // A merge-cancelled seat in a class the shala has cancelled since stays cancelled.
+    const KC = 'BMRGKEEP00012', FC = 'BMRGFOLD00012';
+    await pool.query(`INSERT INTO bkk_members (code,name) VALUES ($1,'Cee Seat'), ($2,'Cee Seat')`, [KC, FC]);
+    await post('/api/bkk/admin/passes', { memberCode: KC, productCode: 'unlim1' }, ADMIN);
+    await post('/api/bkk/admin/passes', { memberCode: FC, productCode: 'unlim1' }, ADMIN);
+    const cC = free[3];
+    await post('/api/bkk/bookings', { memberCode: KC, slotId: cC.slotId, date: cC.date });
+    const fC = await post('/api/bkk/bookings', { memberCode: FC, slotId: cC.slotId, date: cC.date });
+    await merge(KC, { from: FC });
+    await post('/api/bkk/admin/classes/cancel', { slotId: cC.slotId, date: cC.date, reason: 'merge test' }, ADMIN);
+    const uC = await unmerge(FC);
+    ok('undo does not book a seat back into a class the shala cancelled since', uC.status === 200 && uC.body.seatsNotBack === 1
+       && (await one('SELECT status FROM bkk_bookings WHERE id=$1', [fC.body.booking.id])).status === 'cancelled', JSON.stringify(uC.body));
+    await post('/api/bkk/admin/classes/reopen', { slotId: cC.slotId, date: cC.date }, ADMIN);
+
+    // Rezerv: a different student with the same name is not the merged one.
+    const KD = 'BMRGKEEP00013', FD = 'BMRGFOLD00013';
+    await pool.query(`INSERT INTO bkk_members (code,name,rezerv_id) VALUES ($1,'Ploy Dee','RZ-M13')`, [KD]);
+    await pool.query(`INSERT INTO bkk_members (code,name,email,phone) VALUES ($1,'Ploy Dee','ploy.one@example.com','081-555-1313')`, [FD]);
+    await merge(KD, { from: FD });
+    const other13 = await imp('members', [{ rezervId: 'RZ-M14', name: 'Ploy Dee', email: 'ploy.two@example.com' }]);
+    ok('a Rezerv student with the same name, another id and another email is somebody new, not the merged student',
+       other13.body.added === 1 && (await one(`SELECT count(*)::int AS n FROM bkk_members WHERE rezerv_id='RZ-M14' AND email='ploy.two@example.com'`)).n === 1
+       && (await one('SELECT email FROM bkk_members WHERE code=$1', [KD])).email === 'ploy.one@example.com', JSON.stringify(other13.body));
+
+    // Rezerv rows found by a phone the merge moved, and by the double's own phone.
+    const KE = 'BMRGKEEP00014', FE = 'BMRGFOLD00014';
+    await pool.query(`INSERT INTO bkk_members (code,name,rezerv_id) VALUES ($1,'Eve Phone','RZ-M15')`, [KE]);
+    await pool.query(`INSERT INTO bkk_members (code,name,phone) VALUES ($1,'Eve P','086-555-1414')`, [FE]);
+    const phoneRow = [{ phone: '0865551414', date: addD(todayB, -7), amount: '1,605', item: 'Drop-in', status: 'Paid' }];
+    const pe1 = await imp('payments', phoneRow);
+    await merge(KE, { from: FE });
+    const pe2 = await imp('payments', phoneRow);
+    ok("a phone-only Rezerv payment from before the merge is found again after the phone moved to the kept profile",
+       pe1.body.added === 1 && pe2.body.added === 0 && pe2.body.matched === 1, JSON.stringify([pe1.body, pe2.body]));
+    const KF = 'BMRGKEEP00015', FF = 'BMRGFOLD00015';
+    await pool.query(`INSERT INTO bkk_members (code,name,phone) VALUES ($1,'Fon Two','081-555-1501'), ($2,'Fon Two','089-555-1502')`, [KF, FF]);
+    await merge(KF, { from: FF, sure: true });
+    const mF = (await one('SELECT count(*)::int AS n FROM bkk_members')).n;
+    const pf = await imp('payments', [{ phone: '0895551502', date: addD(todayB, -7), amount: '1,605', item: 'Drop-in', status: 'Paid' }]);
+    ok("...and one found by the double's own phone lands on the kept profile, no new student", pf.body.added === 1
+       && (await one('SELECT count(*)::int AS n FROM bkk_members')).n === mF
+       && (await one(`SELECT member_id FROM bkk_orders WHERE source='rezerv' ORDER BY id DESC LIMIT 1`)).member_id === await idOf(KF),
+       JSON.stringify(pf.body));
 
     // A Rezerv pass staff copied by hand from an aybkk.net sale.
     console.log('\n— a Rezerv copy of an aybkk.net sale is not a second pass —');
@@ -4233,6 +4344,15 @@ const ok = (name, cond, extra = '') => {
       start: addD(todayB, 3), until: addD(todayB, 182), rezervId: 'RZP-SIX2' }]);
     ok('...and a copy dated near the sale is still a copy when the pass here starts weeks later', sixLate.body.added === 0
        && sixLate.body.skipped.map(x => x.code).join() === 'copyOfSale', JSON.stringify(sixLate.body));
+    const dropMember = await one(`INSERT INTO bkk_members (code,name,email) VALUES ('BMRGDROP00001','Drop Credit','drop.credit@example.com') RETURNING id`);
+    const dropOrder = await one(`INSERT INTO bkk_orders (refno, product_id, member_id, base_thb, amount_thb, status, verified_at)
+      VALUES (990000000077, (SELECT id FROM bkk_products WHERE code='dropin'), $1, 1500, 1500, 'paid', now()) RETURNING id`, [dropMember.id]);
+    await pool.query(`INSERT INTO bkk_passes (member_id, product_id, order_id, kind, credits_total, credits_used, valid_days, valid_from, valid_until)
+      SELECT $1, id, $2, kind, 1, 1, valid_days, $3::date, $3::date FROM bkk_products WHERE code='dropin'`, [dropMember.id, dropOrder.id, todayB]);
+    const credit = await imp('passes', [{ name: 'Drop Credit', email: 'drop.credit@example.com', plan: 'Mysore 5.30am (1st batch) (Refunded credits)',
+      start: addD(todayB, 1), until: addD(todayB, 60), classesLeft: '1', rezervId: 'RZP-CREDIT1' }]);
+    ok('a class credit Rezerv gives back for a cancelled class is never taken for a copy of a drop-in sold here', credit.body.added === 1,
+       JSON.stringify(credit.body));
   }
 
   console.log(`\n${PASS} passed, ${FAIL} failed`);

@@ -522,6 +522,11 @@ function mountBkk(app, opts = {}) {
     // Checkout with a folded profile's email: the pass lands on the kept profile,
     // the receipt and its sign-in link go to the address that was typed.
     await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS mail_to TEXT`);
+    // A Rezerv row imported while a merge stood remembers the profile its
+    // Rezerv details found, so an undo takes it back there.
+    for (const t of ['bkk_orders', 'bkk_passes', 'bkk_bookings']) {
+      await q(`ALTER TABLE ${t} ADD COLUMN IF NOT EXISTS via_member INTEGER`);
+    }
     await q(`CREATE INDEX IF NOT EXISTS bkk_members_merged ON bkk_members (merged_into) WHERE merged_into IS NOT NULL`);
 
     // Catalogue: a package added to SEED_PRODUCTS reaches a running shala on the
@@ -743,6 +748,20 @@ function mountBkk(app, opts = {}) {
       m = (await db.query('SELECT * FROM bkk_members WHERE id=$1', [m.merged_into])).rows[0];
     return m && !m.merged_into ? m : null;
   }
+  // The profile an email belongs to. An email the merge moved onto the kept
+  // profile still belongs to the folded one it came from, while the kept profile
+  // holds it: a link, a sale or a Rezerv row made with it then follows that
+  // profile back on an undo. An address since removed from the kept one is no one's.
+  async function rawByEmail(db, email) {
+    const e = String(email || '').trim().toLowerCase();
+    if (!e) return null;
+    const moved = (await db.query(`SELECT x.* FROM bkk_members x
+      WHERE x.merged_into IS NOT NULL AND lower(x.merge_log->'fields'->>'email') = $1
+        AND EXISTS (SELECT 1 FROM bkk_members l WHERE l.id = x.merged_into AND lower(l.email) = $1)
+      ORDER BY x.merged_at LIMIT 1`, [e])).rows[0];
+    return moved || (await db.query('SELECT * FROM bkk_members WHERE lower(email)=$1 LIMIT 1', [e])).rows[0] || null;
+  }
+
   // The profile a student's code opens: a folded code opens the kept profile for
   // as long as the merge stands, so an undo needs nothing changed on any phone.
   const memberByCode = async (code, db = pool) =>
@@ -892,13 +911,14 @@ function mountBkk(app, opts = {}) {
         } catch (e) { return res.status(409).json({ error: e.message }); }
       }
 
-      const before = (await q('SELECT id FROM bkk_members WHERE lower(email)=$1 LIMIT 1',
-        [String(email).trim().toLowerCase()])).rows[0];
+      const before = await rawByEmail(pool, email);
       const member = await findOrCreateMember({ name, email, phone });
       // Typing someone's email at checkout must not open their profile (photos,
       // teacher notes): an existing profile's code goes back only to a browser
-      // that already holds it. Everyone else signs in from the receipt email.
-      const showCode = !before || req.body.memberCode === member.code;
+      // that already holds it (a merged-in code counts, and stays as it is).
+      // Everyone else signs in from the receipt email.
+      const holder = before && req.body.memberCode ? await memberByCode(req.body.memberCode) : null;
+      const showCode = !before || (!!holder && holder.id === member.id);
       const pct = await surcharge();
       const { fee, vat, total } = breakdown(pr.price_thb, pct);
 
@@ -921,7 +941,7 @@ function mountBkk(app, opts = {}) {
       const cfg = paysoConfig();
       res.json({
         order: { id: o.id, refno: String(o.refno), amount: total, product: pr.name_en },
-        member: showCode ? { code: member.code } : { existing: true },
+        member: showCode ? { code: holder ? String(req.body.memberCode) : member.code } : { existing: true },
         pay: cfg ? buildPayForm(cfg, o, pr, member, req) : null,
         payLink: cfg ? null : paysnLink(o, pr),
         payUnavailable: (cfg || paysnLink(o, pr)) ? undefined :
@@ -1191,9 +1211,8 @@ function mountBkk(app, opts = {}) {
     const m = (await q('SELECT * FROM bkk_members WHERE id=$1', [order.member_id])).rows[0];
     // Bought with a folded profile's email: mail that address, and its link signs
     // in as that profile (which opens this one while the merge stands).
-    const to = order.mail_to
-      ? (await q('SELECT id, email FROM bkk_members WHERE lower(email)=$1', [order.mail_to])).rows[0] : null;
-    const via = to || m;
+    const to = order.mail_to ? await rawByEmail(pool, order.mail_to) : null;
+    const via = to ? { id: to.id, email: order.mail_to } : m;
     if (!m || !via || !via.email) return;
     const token = crypto.randomBytes(32).toString('hex');
     await q(`INSERT INTO bkk_login_tokens (token,member_id,email,ip,expires_at)
@@ -1250,7 +1269,7 @@ function mountBkk(app, opts = {}) {
         return res.json(vague);
       }
 
-      const hit = (await q('SELECT * FROM bkk_members WHERE lower(email)=$1 LIMIT 1', [email])).rows[0];
+      const hit = await rawByEmail(pool, email);
       const m = await liveMember(pool, hit);
       if (!m) return res.json(vague);
       if (lang) await q('UPDATE bkk_members SET lang=$2 WHERE id=$1', [m.id, lang]);
@@ -1264,7 +1283,7 @@ function mountBkk(app, opts = {}) {
 
       const t = render('signin', lang || m.lang || 'en',
         { name: m.name, link: `${baseUrl()}/api/bkk/login/${token}` });
-      await sendMail({ to: hit.email, subject: t.subject, html: t.html, text: t.text, tag: 'signin' });
+      await sendMail({ to: email, subject: t.subject, html: t.html, text: t.text, tag: 'signin' });
       res.json(vague);
     } catch (e) {
       console.error('[bkk login] request failed:', e.message);
@@ -1304,9 +1323,11 @@ function mountBkk(app, opts = {}) {
   // An address that leaves a profile takes its sign-in and receipt links with it,
   // or the person it belongs to could still open the profile it left.
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // A link made on a profile merged into this one opens this one too.
   const stopLinks = (db, memberId, email) => db.query(
     `UPDATE bkk_login_tokens SET expires_at=now()
-     WHERE member_id=$1 AND lower(email)=$2 AND expires_at > now()`, [memberId, email]);
+     WHERE member_id IN (SELECT id FROM bkk_members WHERE id=$1 OR merged_into=$1)
+       AND lower(email)=$2 AND expires_at > now()`, [memberId, email]);
   app.post('/api/bkk/admin/members/:code/email', async (req, res) => {
     if (adminOnly(req, res)) return;
     const b = req.body || {};
@@ -1434,7 +1455,7 @@ function mountBkk(app, opts = {}) {
       }
       const K = keep.id, F = fold.id;
       const ids = r => r.rows.map(x => x.id);
-      const log = { keep: K, rows: {}, seats: [], fields: {}, refolded: [] };
+      const log = { keep: K, rows: {}, seats: [], fields: {}, refolded: [], mails: fold.email ? [fold.email] : [] };
 
       // One class booked on both: keep the seat that was checked in, else the
       // one made here (not the Rezerv copy), else the kept profile's. The other
@@ -1524,11 +1545,21 @@ function mountBkk(app, opts = {}) {
       }
       await client.query(`UPDATE bkk_photo_members SET member_id=$1 WHERE member_id=$2 AND photo_id = ANY($3::int[])`,
         [F, K, L.rows.bkk_photo_members || []]);
-      const mails = [f.email, (L.fields || {}).email].filter(Boolean).map(e => String(e).toLowerCase());
-      const since = { orders: await client.query(`UPDATE bkk_orders SET member_id=$1 WHERE member_id=$2 AND mail_to = ANY($3::text[])
-        RETURNING id`, [F, K, mails]).then(ids) };
-      since.passes = await client.query(`UPDATE bkk_passes SET member_id=$1 WHERE member_id=$2 AND order_id = ANY($3::int[])
-        RETURNING id`, [F, K, since.orders]).then(ids);
+      // Everything this undo takes back: the folded profile and the ones merged
+      // into it before (they point back at it below), with every email they had.
+      const fam = [F, ...(L.refolded || [])];
+      const theirs = (await client.query(`SELECT email, merge_log FROM bkk_members WHERE id = ANY($1::int[])`, [L.refolded || []])).rows;
+      const mails = [f.email, (L.fields || {}).email, ...(L.mails || []),
+        ...theirs.flatMap(x => [x.email, x.merge_log && x.merge_log.fields && x.merge_log.fields.email, ...((x.merge_log || {}).mails || [])])]
+        .filter(Boolean).map(e => String(e).toLowerCase());
+      const since = { orders: await client.query(`UPDATE bkk_orders SET member_id=$1 WHERE member_id=$2
+        AND (mail_to = ANY($3::text[]) OR (source='rezerv' AND via_member = ANY($4::int[]))) RETURNING id`, [F, K, mails, fam]).then(ids) };
+      since.passes = await client.query(`UPDATE bkk_passes SET member_id=$1 WHERE member_id=$2
+        AND (order_id = ANY($3::int[]) OR (source='rezerv' AND via_member = ANY($4::int[]))) RETURNING id`,
+        [F, K, [...(L.rows.bkk_orders || []), ...since.orders], fam]).then(ids);
+      since.visits = await client.query(`UPDATE bkk_bookings b SET member_id=$1 WHERE b.member_id=$2 AND b.source='rezerv'
+        AND b.via_member = ANY($3::int[]) AND NOT (b.status='booked' AND EXISTS (SELECT 1 FROM bkk_bookings o WHERE o.member_id=$1
+          AND o.slot_id=b.slot_id AND o.class_date=b.class_date AND o.status='booked')) RETURNING b.id`, [F, K, fam]).then(ids);
       // A class goes with the pass that paid for it, unless that student already holds a seat in it.
       since.bookings = await client.query(`UPDATE bkk_bookings b SET member_id=$1 WHERE b.member_id=$2 AND b.pass_id = ANY($3::int[])
         AND NOT (b.status='booked' AND EXISTS (SELECT 1 FROM bkk_bookings o WHERE o.member_id=$1 AND o.slot_id=b.slot_id
@@ -1538,9 +1569,19 @@ function mountBkk(app, opts = {}) {
       // seat in that class now, and its pass still has the class to give.
       let seatsNotBack = 0;
       for (const s of L.seats || []) {
-        let can = (await client.query(`SELECT 1 FROM bkk_bookings b WHERE b.id=$1 AND b.status='cancelled' AND b.cancel_reason LIKE 'merged:%'
-          AND NOT EXISTS (SELECT 1 FROM bkk_bookings o WHERE o.member_id=b.member_id AND o.slot_id=b.slot_id
-            AND o.class_date=b.class_date AND o.status='booked')`, [s.id])).rows.length > 0;
+        const seat = (await client.query(`SELECT b.slot_id, to_char(b.class_date,'YYYY-MM-DD') AS d, b.start_at > now() AS ahead
+          FROM bkk_bookings b WHERE b.id=$1 AND b.status='cancelled' AND b.cancel_reason LIKE 'merged:%'
+            AND NOT EXISTS (SELECT 1 FROM bkk_bookings o WHERE o.member_id=b.member_id AND o.slot_id=b.slot_id
+              AND o.class_date=b.class_date AND o.status='booked')`, [s.id])).rows[0];
+        let can = !!seat;
+        // A class still to come takes the seat only if it still runs and has room, as any booking.
+        if (can && seat.ahead && seat.slot_id) {
+          await client.query('SELECT pg_advisory_xact_lock($1::int, $2::int)', [seat.slot_id, Number(seat.d.replace(/-/g, ''))]);
+          const c = (await client.query(`SELECT coalesce(o.cancelled, false) AS off, coalesce(o.capacity, s.capacity) AS cap
+            FROM bkk_class_slots s LEFT JOIN bkk_class_overrides o ON o.slot_id=s.id AND o.class_date=$2 WHERE s.id=$1`,
+            [seat.slot_id, seat.d])).rows[0];
+          can = !!c && !c.off && (await seatsTaken(client, seat.slot_id, seat.d)) < c.cap;
+        }
         if (can && s.pass) can = (await client.query(`UPDATE bkk_passes SET credits_used = credits_used + 1
           WHERE id=$1 AND (kind='unlimited' OR credits_used < credits_total) RETURNING id`, [s.pass])).rows.length > 0;
         if (!can) { seatsNotBack++; continue; }
@@ -2932,17 +2973,19 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     }
     let clash = null;
     if (f.email) {
-      const raw = (await db.query('SELECT * FROM bkk_members WHERE lower(email)=$1', [f.email])).rows[0];
+      const raw = await rawByEmail(db, f.email);
       const r = await liveMember(db, raw);
       if (r && !(f.rezervId && r.rezerv_id && r.rezerv_id !== f.rezervId)) return { member: r, raw };
       if (r) clash = { code: 'clashEmail', vals: [f.email, r.name, r.code, r.rezerv_id] };
     }
     // Profiles that fit, one answer per student: a merged pair is one person.
+    // The student a folded row leads to must fit too: its Rezerv id or email
+    // (moved there by the merge) saying somebody else rules it out.
     const perStudent = async fits => {
       const by = new Map();
       for (const raw of fits) {
         const m = await liveMember(db, raw);
-        if (m) by.set(m.id, by.has(m.id) ? { member: m, raw: m } : { member: m, raw });
+        if (m && !other(m) && !emailOff(m)) by.set(m.id, by.has(m.id) ? { member: m, raw: m } : { member: m, raw });
       }
       return [...by.values()];
     };
@@ -3198,9 +3241,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       }
     }
     await db.query(
-      `INSERT INTO bkk_bookings (slot_id,class_date,start_at,member_id,status,booked_at,checked_in_at,cancel_reason,cover,source,source_ref,class_title)
-       VALUES ($1,$2,$3,$4,$5,NULL,$6,$7,'rezerv','rezerv',$8,$9)`,
-      [slot ? slot.id : null, when.date, startAt, m.id, t.status, t.checkedIn, t.reason, ref, className]);
+      `INSERT INTO bkk_bookings (slot_id,class_date,start_at,member_id,status,booked_at,checked_in_at,cancel_reason,cover,source,source_ref,class_title,via_member)
+       VALUES ($1,$2,$3,$4,$5,NULL,$6,$7,'rezerv','rezerv',$8,$9,$10)`,
+      [slot ? slot.id : null, when.date, startAt, m.id, t.status, t.checkedIn, t.reason, ref, className, who.refId]);
     return { result: 'added' };
   }
 
@@ -3269,10 +3312,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const at = startAtISO(when.date, when.time || '00:00');
     await db.query(
       `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb,status,gateway_note,
-         verified_at,created_at,method,item_name,source,source_ref)
-       VALUES ($1,$2,$3,$4,0,$5,$6,$7,$8,$9,$9,$10,$11,'rezerv',$12)`,
+         verified_at,created_at,method,item_name,source,source_ref,via_member)
+       VALUES ($1,$2,$3,$4,0,$5,$6,$7,$8,$9,$9,$10,$11,'rezerv',$12,$13)`,
       [refno, pr ? pr.id : null, who.member.id, amt - vat, vat, amt, amt < 0 ? 'refund' : 'paid',
-       [methodRaw, note].filter(Boolean).join(' | ') || 'moved from Rezerv', at, payMethod(methodRaw), item, ref]);
+       [methodRaw, note].filter(Boolean).join(' | ') || 'moved from Rezerv', at, payMethod(methodRaw), item, ref, who.refId]);
     return { result: 'added' };
   }
 
@@ -3389,7 +3432,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     // copy came back here as a second pass. The same package sold here within 5
     // days of the sale or of its start, and no Rezerv payment for it: the copy.
     // Payments import before passes, so a pass Rezerv was paid for is known here.
-    if (!off) {
+    // A class credit Rezerv gives back (a cancelled class) is no sale: never a copy.
+    if (!off && !CLASS_CREDIT.test(planRaw) && !/refunded\s*credits?/i.test(planRaw)) {
       const fam = PKG_FAMILY[pr.code] || [pr.code];
       const sold = (await db.query(`SELECT to_char(${PAY_DAY},'YYYY-MM-DD') AS d
         FROM bkk_passes p JOIN bkk_orders o ON o.id=p.order_id JOIN bkk_products px ON px.id=p.product_id
@@ -3403,11 +3447,11 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     }
     await db.query(`INSERT INTO bkk_passes
         (member_id,product_id,order_id,kind,credits_total,credits_used,daily_cap,valid_days,valid_from,valid_until,note,source,
-         status,frozen_from,frozen_until,source_ref)
-      VALUES ($1,$2,NULL,$3,$4,$5,$6,$7,$8,$9,$10,'rezerv',$11,$12,$13,$14)`,
+         status,frozen_from,frozen_until,source_ref,via_member)
+      VALUES ($1,$2,NULL,$3,$4,$5,$6,$7,$8,$9,$10,'rezerv',$11,$12,$13,$14,$15)`,
       [m.id, pr.id, pr.kind, total, left != null ? Math.max(0, total - left) : 0,
        pr.daily_cap, pr.valid_days, from, until.date, note, status,
-       later ? null : fFrom, later ? null : fUntil, ref]);
+       later ? null : fFrom, later ? null : fUntil, ref, who.refId]);
     return { result: 'added' };
   }
 
@@ -3553,7 +3597,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   app.get('/api/bkk/admin/members/:code/history', async (req, res) => {
     if (adminOnly(req, res)) return;
     try {
-      const m = (await q('SELECT * FROM bkk_members WHERE code=$1', [req.params.code])).rows[0];
+      const m = await memberByCode(req.params.code);
       if (!m) return res.status(404).json({ error: 'member not found' });
       const [visits, pays, passes, notes, photos, checks, active] = await Promise.all([
         q(`SELECT b.id, to_char(b.class_date,'YYYY-MM-DD') AS date, ${VISIT_TIME} AS time,
@@ -3905,7 +3949,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const t = await teacherFrom(req);
     if (!t) return res.status(401).json({ error: 'bad passcode' });
     try {
-      const m = (await q('SELECT * FROM bkk_members WHERE code=$1', [req.params.code])).rows[0];
+      const m = await memberByCode(req.params.code);
       if (!m) return res.status(404).json({ error: 'not found' });
       const [passes, notes, recent] = await Promise.all([
         q(`SELECT p.*, pr.name_en FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
@@ -3930,7 +3974,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (!t) return res.status(401).json({ error: 'bad passcode' });
     try {
       const { memberCode, body, toWorkOn, classDate, shareWithStudent } = req.body || {};
-      const m = (await q('SELECT id FROM bkk_members WHERE code=$1', [memberCode])).rows[0];
+      const m = await memberByCode(memberCode);
       if (!m) return res.status(404).json({ error: 'student not found' });
       if (!String(body || '').trim() && !String(toWorkOn || '').trim()) {
         return res.status(400).json({ error: 'write something in one of the two boxes' });
@@ -4007,7 +4051,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     // Cutting the list instead would save the photo without some of them, the main student maybe.
     if (list.length > 30) throw Object.assign(new Error('30 names at most on one photo. Nothing was saved.'), { status: 400 });
     if (!list.length) return { ids: [], roles: [], given };
-    const rows = (await q('SELECT id, code FROM bkk_members WHERE code = ANY($1::text[])', [list])).rows;
+    const rows = (await q('SELECT id, code FROM bkk_members WHERE code = ANY($1::text[]) AND merged_into IS NULL', [list])).rows;
     if (rows.length < list.length) {
       const e = new Error('A student on this photo has a new code. Reload the page and pick them again. Nothing was saved.');
       e.status = 409;
@@ -4318,7 +4362,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (!t) return res.status(401).json({ error: 'bad passcode' });
     if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
     try {
-      const m = (await q('SELECT id, code, name, email FROM bkk_members WHERE code=$1', [req.params.code])).rows[0];
+      const m = await memberByCode(req.params.code);
       if (!m) return res.status(404).json({ error: 'student not found' });
       const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 60, 1), 200);
       const offset = Math.max(parseInt(req.query.offset, 10) || 0, 0);
@@ -4356,7 +4400,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const byDay = new Map();           // date -> [photos they are main in, the others]
       for (const ph of photos.reverse()) {
         if (!byDay.has(ph.date)) byDay.set(ph.date, [[], []]);
-        const main = ph.members.some(x => x.code === req.params.code && x.role === 'main');
+        const main = ph.members.some(x => x.code === m.code && x.role === 'main');
         byDay.get(ph.date)[main ? 0 : 1].push({ id: ph.id, thumb: ph.thumb, full: ph.full, save: ph.save });
       }
       res.json({ days: [...byDay.entries()].sort((a, b) => b[0].localeCompare(a[0]))
