@@ -205,7 +205,23 @@
   details.tries{margin-top:14px;border-top:1px solid var(--line)}
   details.tries>summary{cursor:pointer;padding:12px 0 10px;font-weight:700}
   details.tries>summary .muted{display:block;font-weight:400}
-  @media (max-width:640px),(pointer:coarse){.link.who,.ordact .btn,#chkAll,.tdh .btn,.btn.back{min-height:44px}}
+  /* One sale, one row (15 Nov 2026): a ฿0 line, where a row came from, and what was done by hand. */
+  .pill.zero,.pill.twin{background:#eeeaf0;color:#5d5463}
+  .pill.hand{background:#fff3d6;color:#6b520e;margin-top:4px}
+  .badge{display:inline-block;padding:0 6px;border:1px solid var(--soft);border-radius:5px;font-size:11.5px;font-weight:700;
+    line-height:1.5;color:var(--soft);vertical-align:1px}
+  .onote{display:block;margin-top:3px;font-size:12.5px;line-height:1.4;color:var(--soft);overflow-wrap:anywhere}
+  .onote.warn{color:#8a5a00;font-weight:700}
+  .gone{color:var(--soft);text-decoration:line-through}
+  .reloadbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 16px;
+    background:#fff3d6;color:#6b520e;font-weight:700;font-size:14.5px;cursor:pointer;border-bottom:1px solid var(--line)}
+  .reloadbar span{flex:1 1 200px}
+  .reloadbar .btn{min-height:44px}
+  .sellout:empty{display:none}
+  .sellout .btn{margin-top:8px;min-height:44px}
+  .sellout .sub{display:block;font-size:12.5px;margin-top:2px}
+  @media (max-width:640px),(pointer:coarse){.link.who,.ordact .btn,#chkAll,.tdh .btn,.btn.back{min-height:44px}
+    .btn.rfr{min-height:44px;min-width:44px}}
   /* Today: each class opens, so "+ Add student" is one tap away (Nov 2026). */
   .tdh{display:flex;align-items:flex-start;gap:10px}
   .tdh>div{flex:1;min-width:0}
@@ -264,7 +280,8 @@
   .hint{min-height:1.2em;font-size:13.5px;color:var(--soft);margin:10px 0 0}
   .hint.bad{background:#fdeaea;color:#a33;border-radius:7px;padding:8px 10px;font-weight:700}
   #adGo{width:100%;margin-top:12px;padding:13px;font-size:15px}
-  @media (prefers-color-scheme:dark){.rr .in,.drow .in,td .in,.hit em.ok{color:#3ddc97}.now .no{color:#ff8f86}.now{border-left-color:#3ddc97}}
+  @media (prefers-color-scheme:dark){.rr .in,.drow .in,td .in,.hit em.ok{color:#3ddc97}.now .no{color:#ff8f86}.now{border-left-color:#3ddc97}
+    .onote.warn{color:#f2c94c}}
   @media (min-width:560px){
     .cal{padding:18px 16px}
     .cal .head b{font-size:34px}.cal .head b small{font-size:22px}.cal.wk .head b{font-size:24px}
@@ -290,6 +307,8 @@
 </div>
 
 <div id="app" style="display:none">
+<div id="reloadBar" class="reloadbar" role="status" hidden onclick="location.reload()"><span data-t="pageNew">This page was updated. Tap to reload.</span>
+  <button class="btn sm" data-t="reload">Reload</button></div>
 <header><h1 data-t="title">AYBKK Bangkok Admin</h1>
   <div class="lang"><button data-lang="en" onclick="setLang('en')">EN</button><button data-lang="th" onclick="setLang('th')">ไทย</button></div>
   <button class="btn gray" data-t="lock" onclick="logout()">Lock</button></header>
@@ -340,7 +359,7 @@
       mergePlan: j => `Keep: ${j.keep.name} (${j.keep.code}) ${j.keep.email || ''}\nFold in: ${j.fold.name} (${j.fold.code}) ${j.fold.email || ''}\n\nMoves: ${j.moved.passes} passes, ${j.moved.bookings} classes, ${j.moved.orders} payments, ${j.moved.photo_members} photos, ${j.moved.notes} notes.${j.seatsCancelled ? `\n${j.seatsCancelled} class(es) were booked on both: one copy is cancelled.` : ''}${j.journalLeft ? `\n\nBoth have a practice journal: entries written under ${j.fold.code} stay there and do not show on this profile. To keep that journal, merge the other way round.` : ''}${j.left.checks || j.left.photos ? `\nStays on ${j.fold.code} (this profile already has the same day or photo): ${j.left.checks} check(s), ${j.left.photos} photo tag(s).` : ''}\n\nThe other code and email lead to this profile from now on. Undo is on this card.`,
       mergeDone: n => `Done. ${n} has one profile now.`,
       foldedL: 'Merged in:', undoBtn: 'Undo', qUndo: c => `Take ${c} back out as its own profile? Everything that moved goes back.`,
-      undoDone: j => `Undone.${j.fieldsKept && j.fieldsKept.length ? `\nChanged on the kept profile since, so not moved back: ${j.fieldsKept.join(', ')}.` : ''}${j.seatsNotBack ? `\n${j.seatsNotBack} cancelled class(es) not booked again: the seat is taken or the pack is used up.` : ''}`,
+      undoDone: j => `Undone.${j.fieldsKept && j.fieldsKept.length ? `\nChanged on the kept profile since, so not moved back: ${j.fieldsKept.join(', ')}.` : ''}${j.seatsNotBack ? `\n${j.seatsNotBack} cancelled class(es) not booked again: the seat is taken or the pack is used up.` : ''}${j.twinsUndone && j.twinsUndone.passes ? `\n${j.twinsUndone.passes} Rezerv pass(es) kept void as the copy of the other profile's sale are live again: check each student has one pass.` : ''}`,
       impTitle: 'Move students from Rezerv', impBtn: 'Import',
       impHelp: 'One student per line: name | email | plan | end date | classes left (packs only). Email can be empty now and added later by importing the same line again with the email. Safe to run twice: nobody and no pass is added twice.',
       impDone: j => `Done. ${j.members} students (${j.newMembers} new), ${j.passes} passes added, ${j.emailsAdded} emails filled in.`,
@@ -385,7 +404,7 @@
       bookedIn: (n, i) => `${n} booked, ${i} checked in`, checkedIn: '✓ in', notYet: 'not yet',
       payments: 'Payments', thStudent: 'Student', thPackage: 'Package', thStatus: 'Status', thRef: 'Ref',
       fee: 'fee', vat: 'VAT', activate: 'Activate', noOrders: 'no orders yet',
-      ordersHelp: 'Each time a student taps Buy, a new line shows here, even if they never pay. A line that was not paid and is more than one day old, or that the student paid for later, moves into Unpaid tries at the bottom. Check payment asks PaySolutions if the money came: if it did, the pass turns on. Activate turns the pass on by hand: press it only when you can see the money in PaySolutions. Every activation here is saved as manual.',
+      ordersHelp: 'Each time a student taps Buy, a new line shows here, even if they never pay. A line that was not paid moves into Unpaid tries at the bottom when it is more than one day old, when the student tried again, or when they paid for the same thing. Check payment asks PaySolutions if the money came: if it did, the pass turns on. Activate turns the pass on by hand: press it only when you can see the money in PaySolutions. Every activation here is saved as manual.',
       qActivate: 'Activate this pass?\nOnly do this once you have seen the money arrive in PaySolutions.',
       activatedNoClass: e => `Activated. Could not book the class: ${e}. Book them by hand.`,
       feeTitle: 'Online payment fee',
@@ -434,7 +453,7 @@
       mergeNo: 'ยังไม่ได้รวม',
       mergePlan: j => `เก็บ: ${j.keep.name} (${j.keep.code}) ${j.keep.email || ''}\nรวมเข้ามา: ${j.fold.name} (${j.fold.code}) ${j.fold.email || ''}\n\nย้าย: แพ็กเกจ ${j.moved.passes} คลาส ${j.moved.bookings} การชำระเงิน ${j.moved.orders} รูป ${j.moved.photo_members} โน้ต ${j.moved.notes}${j.seatsCancelled ? `\nมี ${j.seatsCancelled} คลาสที่จองไว้ทั้งสองโปรไฟล์: ยกเลิกอันที่ซ้ำ` : ''}${j.journalLeft ? `\n\nทั้งสองโปรไฟล์มีบันทึกการฝึก: บันทึกของ ${j.fold.code} จะอยู่ที่เดิม ไม่แสดงในโปรไฟล์นี้ ถ้าอยากเก็บบันทึกนั้น ให้รวมกลับด้าน` : ''}${j.left.checks || j.left.photos ? `\nอยู่ที่ ${j.fold.code} ต่อ (โปรไฟล์นี้มีวันหรือรูปเดียวกันแล้ว): ผลตรวจ ${j.left.checks} รูป ${j.left.photos}` : ''}\n\nรหัสและอีเมลของอีกอันจะพามาที่โปรไฟล์นี้ ยกเลิกการรวมได้ที่การ์ดนี้`,
       mergeDone: n => `เรียบร้อย ${n} มีโปรไฟล์เดียวแล้ว`,
-      foldedL: 'รวมเข้ามาแล้ว:', undoBtn: 'ยกเลิกการรวม', qUndo: c => `แยก ${c} ออกเป็นโปรไฟล์ของตัวเองอีกครั้งไหม? ทุกอย่างที่ย้ายมาจะกลับไป`, undoDone: j => `แยกออกแล้ว${j.fieldsKept && j.fieldsKept.length ? `\nมีการแก้ในโปรไฟล์ที่เก็บไว้หลังรวม จึงไม่ย้ายกลับ: ${j.fieldsKept.join(', ')}` : ''}${j.seatsNotBack ? `\nมี ${j.seatsNotBack} คลาสที่ยกเลิกไว้ไม่ได้จองคืน: ที่นั่งถูกใช้แล้วหรือแพ็กเกจหมดแล้ว` : ''}`,
+      foldedL: 'รวมเข้ามาแล้ว:', undoBtn: 'ยกเลิกการรวม', qUndo: c => `แยก ${c} ออกเป็นโปรไฟล์ของตัวเองอีกครั้งไหม? ทุกอย่างที่ย้ายมาจะกลับไป`, undoDone: j => `แยกออกแล้ว${j.fieldsKept && j.fieldsKept.length ? `\nมีการแก้ในโปรไฟล์ที่เก็บไว้หลังรวม จึงไม่ย้ายกลับ: ${j.fieldsKept.join(', ')}` : ''}${j.seatsNotBack ? `\nมี ${j.seatsNotBack} คลาสที่ยกเลิกไว้ไม่ได้จองคืน: ที่นั่งถูกใช้แล้วหรือแพ็กเกจหมดแล้ว` : ''}${j.twinsUndone && j.twinsUndone.passes ? `\nแพ็กเกจจาก Rezerv ${j.twinsUndone.passes} ใบที่ยกเลิกไว้เพราะเป็นสำเนาการขายของอีกโปรไฟล์ กลับมาใช้งานได้แล้ว: ตรวจว่านักเรียนแต่ละคนมีแพ็กเกจเดียว` : ''}`,
       impTitle: 'ย้ายนักเรียนจาก Rezerv', impBtn: 'นำเข้า',
       impHelp: 'บรรทัดละหนึ่งคน: ชื่อ | อีเมล | แพ็กเกจ | วันหมดอายุ | ครั้งที่เหลือ (เฉพาะแพ็กครั้ง) อีเมลเว้นว่างไว้ก่อนได้ แล้วนำเข้าบรรทัดเดิมพร้อมอีเมลภายหลัง กดซ้ำได้ ไม่มีชื่อหรือบัตรซ้ำ',
       impDone: j => `เสร็จแล้ว นักเรียน ${j.members} คน (ใหม่ ${j.newMembers}) เพิ่มบัตร ${j.passes} ใบ เติมอีเมล ${j.emailsAdded} คน`,
@@ -479,7 +498,7 @@
       bookedIn: (n, i) => `จอง ${n} คน เช็คอินแล้ว ${i} คน`, checkedIn: '✓ เช็คอินแล้ว', notYet: 'ยังไม่มา',
       payments: 'การชำระเงิน', thStudent: 'นักเรียน', thPackage: 'แพ็กเกจ', thStatus: 'สถานะ', thRef: 'อ้างอิง',
       fee: 'ค่าธรรมเนียม', vat: 'VAT', activate: 'เปิดใช้', noOrders: 'ยังไม่มีรายการ',
-      ordersHelp: 'ทุกครั้งที่นักเรียนกดซื้อ จะมีรายการใหม่ที่นี่ แม้ยังไม่จ่าย รายการที่ไม่ได้จ่ายและเกิน 1 วัน หรือที่นักเรียนจ่ายทีหลังแล้ว จะย้ายไปอยู่ใน "กดซื้อแต่ไม่ได้จ่าย" ด้านล่าง ปุ่มตรวจการชำระจะถาม PaySolutions ถ้าเงินเข้าแล้ว แพ็กเกจจะเปิดเอง ปุ่มเปิดใช้คือเปิดแพ็กเกจด้วยมือ กดเมื่อเห็นเงินเข้าใน PaySolutions แล้วเท่านั้น ทุกครั้งที่เปิดใช้จากหน้านี้จะบันทึกว่าทำด้วยมือ',
+      ordersHelp: 'ทุกครั้งที่นักเรียนกดซื้อ จะมีรายการใหม่ที่นี่ แม้ยังไม่จ่าย รายการที่ไม่ได้จ่ายจะย้ายไปอยู่ใน "กดซื้อแต่ไม่ได้จ่าย" ด้านล่าง เมื่อเกิน 1 วัน เมื่อนักเรียนกดซื้อใหม่ หรือเมื่อนักเรียนจ่ายแพ็กเกจเดียวกันแล้ว ปุ่มตรวจการชำระจะถาม PaySolutions ถ้าเงินเข้าแล้ว แพ็กเกจจะเปิดเอง ปุ่มเปิดใช้คือเปิดแพ็กเกจด้วยมือ กดเมื่อเห็นเงินเข้าใน PaySolutions แล้วเท่านั้น ทุกครั้งที่เปิดใช้จากหน้านี้จะบันทึกว่าทำด้วยมือ',
       qActivate: 'เปิดใช้แพ็กเกจนี้?\nทำเมื่อเห็นเงินเข้าใน PaySolutions แล้วเท่านั้น',
       activatedNoClass: e => `เปิดใช้แล้ว แต่จองคลาสให้ไม่ได้ (${e}) กรุณาจองให้นักเรียนเอง`,
       feeTitle: 'ค่าธรรมเนียมจ่ายออนไลน์',
@@ -803,11 +822,11 @@
     triesH: n => `Unpaid tries (${n})`,
     triesSub: 'The student left the payment page. Nothing to do unless they say they paid.',
     nTries: n => `+${n} unpaid ${n === 1 ? 'try' : 'tries'}`,
-    nthPay: n => `${n === 2 ? '2nd' : n === 3 ? '3rd' : n + 'th'} payment for this package in 3 days`,
+    nthPay: n => `${n === 2 ? '2nd' : n === 3 ? '3rd' : n + 'th'} payment for this package in 3 days: check the bank or PaySolutions, then tell the owner`,
     ordPill: { paid: 'Paid', pending: 'Pending', failed: 'Failed', mismatch: 'Wrong amount', refund: 'Refund' },
     // Without the PaySolutions keys nothing can be checked, so only a later payment folds a line away.
     triesSubLink: 'The student paid for the same thing later. Nothing to do unless they say they paid twice.',
-    ordersHelpLink: 'Each time a student taps Buy, a new line shows here, even if they never pay. PaySolutions is not connected to this page, so no pass turns on by itself: check that the money came in, then press Activate. A line moves into Unpaid tries at the bottom only when the student paid for the same thing later. Every activation here is saved as manual.',
+    ordersHelpLink: 'Each time a student taps Buy, a new line shows here, even if they never pay. PaySolutions is not connected to this page, so no pass turns on by itself: check that the money came in, then press Activate. A line moves into Unpaid tries at the bottom only when the student tried again or paid for the same thing. Every activation here is saved as manual.',
   });
   Object.assign(STR.th, {
     notPaidYet: 'ยังไม่ชำระ', chkPay: 'ตรวจการชำระ', chkWait: 'กำลังตรวจ…', chkPaid: 'ชำระแล้ว: เปิดใช้แพ็กเกจแล้ว',
@@ -820,10 +839,67 @@
     triesH: n => `กดซื้อแต่ไม่ได้จ่าย (${n})`,
     triesSub: 'นักเรียนออกจากหน้าจ่ายเงินไปก่อน ไม่ต้องทำอะไร เว้นแต่นักเรียนบอกว่าจ่ายแล้ว',
     nTries: n => `กดซื้อแต่ไม่ได้จ่ายอีก ${n} ครั้ง`,
-    nthPay: n => `จ่ายแพ็กเกจนี้เป็นครั้งที่ ${n} ใน 3 วัน`,
+    nthPay: n => `จ่ายแพ็กเกจนี้เป็นครั้งที่ ${n} ใน 3 วัน: ตรวจในบัญชีธนาคารหรือ PaySolutions แล้วแจ้งเจ้าของ`,
     triesSubLink: 'นักเรียนจ่ายแพ็กเกจเดียวกันทีหลังแล้ว ไม่ต้องทำอะไร เว้นแต่นักเรียนบอกว่าจ่ายสองครั้ง',
-    ordersHelpLink: 'ทุกครั้งที่นักเรียนกดซื้อ จะมีรายการใหม่ที่นี่ แม้ยังไม่จ่าย หน้านี้ยังไม่ได้เชื่อมต่อ PaySolutions แพ็กเกจจึงไม่เปิดเอง ให้ตรวจว่าเงินเข้าแล้ว แล้วกดเปิดใช้ รายการจะย้ายไปอยู่ใน "กดซื้อแต่ไม่ได้จ่าย" ด้านล่างเฉพาะเมื่อนักเรียนจ่ายแพ็กเกจเดียวกันทีหลังแล้ว ทุกครั้งที่เปิดใช้จากหน้านี้จะบันทึกว่าทำด้วยมือ',
+    ordersHelpLink: 'ทุกครั้งที่นักเรียนกดซื้อ จะมีรายการใหม่ที่นี่ แม้ยังไม่จ่าย หน้านี้ยังไม่ได้เชื่อมต่อ PaySolutions แพ็กเกจจึงไม่เปิดเอง ให้ตรวจว่าเงินเข้าแล้ว แล้วกดเปิดใช้ รายการจะย้ายไปอยู่ใน "กดซื้อแต่ไม่ได้จ่าย" ด้านล่างเฉพาะเมื่อนักเรียนกดซื้อใหม่ หรือจ่ายแพ็กเกจเดียวกันแล้ว ทุกครั้งที่เปิดใช้จากหน้านี้จะบันทึกว่าทำด้วยมือ',
   });
+  // One sale, one row (15 Nov 2026): Rezerv history in its own fold, notes that
+  // tie a sale to its copies, and guards before a second pass or a second sale.
+  Object.assign(STR.en, {
+    pageNew: 'This page was updated. Tap to reload.', reload: 'Reload',
+    ordNewest: (n, t) => `Newest ${n} of ${t}`,
+    rzH: n => `From Rezerv (${n})`,
+    rzHelp: 'Records moved from Rezerv. ฿0 lines are passes entered in Rezerv; the money is written in the note.',
+    nBonus: n => `+${n} at ฿0 (bonus months or passes given)`,
+    alsoRz: (d, amt) => `Also in Rezerv on ${d} (${amt}): check they have one pass`,
+    alsoRzLinked: (d, amt) => `Also in Rezerv on ${d} (${amt}), linked as the same sale`,
+    nAgain: n => `Tapped Buy again after paying${n > 1 ? ` (${n} times)` : ''}`,
+    sameName: c => `Same name as another profile (${c}): check if it is one person, then tell the owner`,
+    byHand: 'Activated by hand', twinOf: r => `Same sale as ref ${r}`,
+    qPaidAlready: (d, r, m) => `This student already paid for this on ${d} (ref ${r}, ${m}). Activate anyway?`,
+    qRepeat: (d, r, m, amt) => `This student already paid for this on ${d}: ${amt} ${m} (ref ${r}). Sell again anyway?`,
+    sellLost: 'No reply. Check Payments before you sell again.', retry: 'Retry',
+    sellRetryHelp: 'Retry sends the same sale again. It is never sold twice.',
+    sellSending: 'Sending the sale...', sellPending: 'A sale has no answer yet. Tap Retry on it first.',
+    rManual: (n, amt) => `Activated by hand: ${n}, ${amt}`,
+    nRefunds: n => n === 1 ? '1 refund' : `${n} refunds`,
+    rzTwice: r => `Same Rezerv payment as order ${r}, imported twice`,
+    voidNote: (r, d) => `Void: ${r} (by staff, ${d})`,
+    rzPassBack: 'The Rezerv pass for the same sale is live again.',
+  });
+  Object.assign(STR.en.ordPill, { twin: 'Same sale', void: 'Void' });
+  Object.assign(STR.en.words, { twin: 'same sale', void: 'void' });
+  Object.assign(STR.th, {
+    pageNew: 'หน้านี้มีการอัปเดต แตะเพื่อโหลดใหม่', reload: 'โหลดใหม่',
+    ordNewest: (n, t) => `ล่าสุด ${n} จาก ${t} รายการ`,
+    rzH: n => `จาก Rezerv (${n})`,
+    rzHelp: 'ข้อมูลที่ย้ายมาจาก Rezerv รายการ ฿0 คือแพ็กเกจที่ลงไว้ใน Rezerv ยอดเงินจริงเขียนไว้ในหมายเหตุ',
+    nBonus: n => `+${n} รายการ ฿0 (เดือนแถม หรือแพ็กเกจที่ให้)`,
+    alsoRz: (d, amt) => `มีใน Rezerv ด้วย วันที่ ${d} (${amt}): ตรวจว่านักเรียนมีแพ็กเกจเดียว`,
+    alsoRzLinked: (d, amt) => `มีใน Rezerv ด้วย วันที่ ${d} (${amt}) ผูกไว้เป็นการขายครั้งเดียวกันแล้ว`,
+    nAgain: n => `กดซื้ออีกครั้งหลังจ่ายแล้ว${n > 1 ? ` (${n} ครั้ง)` : ''}`,
+    sameName: c => `ชื่อเดียวกับโปรไฟล์อื่น (${c}): ตรวจว่าเป็นคนเดียวกันไหม แล้วแจ้งเจ้าของ`,
+    byHand: 'เปิดใช้ด้วยมือ', twinOf: r => `ขายครั้งเดียวกับเลขอ้างอิง ${r}`,
+    qPaidAlready: (d, r, m) => `นักเรียนคนนี้จ่ายแพ็กเกจนี้แล้วเมื่อ ${d} (เลขอ้างอิง ${r}, ${m}) จะเปิดใช้อีกครั้งไหม?`,
+    qRepeat: (d, r, m, amt) => `นักเรียนคนนี้จ่ายแพ็กเกจนี้แล้วเมื่อ ${d}: ${amt} ${m} (เลขอ้างอิง ${r}) จะขายอีกครั้งไหม?`,
+    sellLost: 'ไม่มีการตอบกลับ ดูในหน้าการชำระเงินก่อนขายอีกครั้ง', retry: 'ลองอีกครั้ง',
+    sellRetryHelp: 'ลองอีกครั้งจะส่งการขายเดิม ไม่ขายซ้ำ',
+    sellSending: 'กำลังส่งการขาย...', sellPending: 'มีการขายที่ยังไม่มีการตอบกลับ กดลองอีกครั้งที่รายการนั้นก่อน',
+    rManual: (n, amt) => `เปิดใช้ด้วยมือ: ${n} รายการ ${amt}`,
+    nRefunds: n => `คืนเงิน ${n} รายการ`,
+    rzTwice: r => `การชำระเดียวกับรายการ ${r} จาก Rezerv ที่นำเข้ามาสองครั้ง`,
+    voidNote: (r, d) => `ยกเลิกแล้ว: ${r} (โดยพนักงาน ${d})`,
+    rzPassBack: 'แพ็กเกจจาก Rezerv ของการขายครั้งเดียวกันกลับมาใช้งานได้แล้ว',
+    ordPill: { twin: 'ขายครั้งเดียวกัน', void: 'ยกเลิกแล้ว' },
+    ci_twinOfAybkk: r => `รายการ ฿0 ของการขายที่จ่ายบน aybkk.net (เลขอ้างอิง ${r}): เก็บไว้เป็นการขายครั้งเดียวกัน ไม่นับเป็นเงินเข้า`,
+    ci_maybeTwin: (r, pkg) => `aybkk.net มีการขาย${pkg ? ' ' + (TH_BY_EN[pkg] || pkg) : 'แพ็กเกจนี้'} ที่จ่ายแล้วภายใน 5 วัน (เลขอ้างอิง ${r}): เก็บเป็นชำระแล้ว ตรวจว่าไม่ใช่การขายครั้งเดียวที่ลงไว้สองที่`,
+    ci_rezervTwin: r => `การชำระเงินนี้จาก Rezerv มีอยู่แล้วเป็นรายการ ${r} (จากไฟล์ที่มีหรือไม่มีรหัส Rezerv): ไม่เพิ่มซ้ำ`,
+    ci_twinPass: (r, used, total, from, until, paused) => `เป็นการขายเดียวกับแพ็กเกจ aybkk.net ของเลขอ้างอิง ${r}: เก็บเป็นแพ็กเกจที่ยกเลิกแล้ว นักเรียนจึงมีแพ็กเกจเดียว`
+      + (used ? `; ใช้ไปใน Rezerv ${used} จาก ${total} ครั้ง นับรวมในแพ็กเกจนั้นแล้ว` : '')
+      + (from ? `; แพ็กเกจนั้นเริ่มวันที่ ${from} ตาม Rezerv${until ? ` และหมดอายุวันที่ ${until}` : ''}` : '')
+      + (paused ? `; ใน Rezerv พักแพ็กเกจนี้ไว้${paused !== '-' ? ` ตั้งแต่ ${paused}` : ''}: แพ็กเกจที่เก็บไว้ยังไม่ได้พักที่นี่` : ''),
+  });
+  Object.assign(STR.th.words, { twin: 'ขายครั้งเดียวกัน' });
   // A name opens the profile, which starts with what they can use today; a
   // class opens from Today; someone who came to a class that is over is added (Nov 2026).
   Object.assign(STR.en, {
@@ -894,9 +970,11 @@
   let TH_NAMES = null, TH_BY_EN = {};
   let PAY_MODE = null;                  // 'gateway' when PaySolutions can be asked; null until known
   let DROP_PRICE = null;                // the desk price of a drop-in: VAT in, no online fee
+  // A failed fetch is not kept: PAY_MODE unknown turns the 24-hour fold off, so the next tab asks again.
   const loadThNames = async () => {
     if (TH_NAMES) return;
-    const d = await fetch('/api/bkk/products').then(r => r.json()).catch(() => ({}));
+    const d = await fetch('/api/bkk/products').then(r => r.ok ? r.json() : null).catch(() => null);
+    if (!d || !Array.isArray(d.products)) return;
     TH_NAMES = {};
     PAY_MODE = (d.payment || {}).mode || null;
     for (const x of d.products || []) if (x.name_th) { TH_NAMES[x.id] = x.name_th; TH_BY_EN[x.name_en] = x.name_th; }
@@ -948,9 +1026,27 @@
   };
   window.logout = () => { store.del('aybkk_bkk_key'); location.reload(); };
 
+  // A tab left open for days runs an old copy of this page (15 Nov 2026: the fix
+  // for unpaid tries was live, the owner's tab was not). Asked when a tab opens
+  // and every 10 minutes; never reloads by itself, as someone may be typing.
+  let PAGE_TAG = null;
+  async function checkPage() {
+    let tag = null;
+    try {
+      const r = await fetch(location.pathname, { method: 'HEAD', cache: 'no-store' });
+      if (r.ok) tag = [r.headers.get('ETag'), r.headers.get('Last-Modified')].filter(Boolean).join(' ') || null;
+    } catch (_) {}
+    if (!tag) return;
+    if (PAGE_TAG == null) PAGE_TAG = tag;
+    else if (tag !== PAGE_TAG) $('#reloadBar').hidden = false;
+  }
+  checkPage();
+  setInterval(checkPage, 10 * 60e3);
+
   let current = 'today', SUB = null;    // SUB: a view opened on top of a tab ('history', 'class')
   window.tab = t => {
     current = t; SUB = null;
+    checkPage();
     $('#view').classList.remove('wide');
     document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.id === 't-' + t));
     if (t === 'today') renderToday();
@@ -983,7 +1079,8 @@
     <div class="box">
       <b>${T('sellTitle')}</b>
       <p class="muted">${T('sellHelp')}</p>
-      <p><button class="btn pink" onclick="sellDesk()">${T('sellBtn')}</button></p>
+      <p><button class="btn pink" id="sellBtn" onclick="sellDesk()"${SELL && SELL.busy ? ' disabled' : ''}>${T('sellBtn')}</button></p>
+      <div id="sellOut" class="sellout" role="status" aria-live="polite">${sellOutHtml()}</div>
     </div>
     <div class="box">
       <b>${T('giveTitle')}</b>
@@ -1163,7 +1260,10 @@
       body = { reason: ask(T('qWhy'), '') || '' };
     }
     const r = await api(`/api/bkk/admin/passes/${id}/${what}`, { method: 'POST', body: JSON.stringify(body) });
-    if (await shout(r)) findStudents();
+    const j = await shout(r);
+    // The Rezerv copy of a voided pass is the sale's pass again: said, so nobody voids it by mistake.
+    if (j && (j.rezervPassBack || []).length) alert(T('rzPassBack'));
+    if (j) findStudents();
   };
 
   window.grantPass = async () => {
@@ -1185,6 +1285,8 @@
   };
 
   window.sellDesk = async () => {
+    // One sale at a time: a sale with no answer is finished with Retry, never sold again here.
+    if (SELL) { if (!SELL.busy) alert(T('sellPending')); return; }
     const d = await fetch('/api/bkk/products').then(r => r.json());
     const ps = d.products || [];
     const withVat = p => p.price_thb + Math.round(p.price_thb * (d.vatPct || 0) / 100);
@@ -1200,11 +1302,64 @@
     const method = { 1: 'cash', 2: 'transfer', 3: 'card' }[m];
     if (!method) return alert(T('pick123'));
     if (!confirm(T('confirmSale', name, pkgName(p), '฿' + withVat(p).toLocaleString(), W(method)))) return;
-    const r = await api('/api/bkk/admin/sales', { method: 'POST',
-      body: JSON.stringify({ productCode: p.code, name, email, phone, method }) });
-    const j = await shout(r);
-    if (j) { alert(T('doneSale', '฿' + j.order.amount.toLocaleString(), W(j.order.method), j.order.refno, j.member.name, j.member.code)); renderStudents(name); }
+    // One id for this sale, made once: Retry after a lost reply sends it again, and the server answers with the first sale.
+    SELL = { productCode: p.code, name, email, phone, method, requestId: newId(),
+      what: [name, pkgName(p), '฿' + withVat(p).toLocaleString(), W(method)].join(' · ') };
+    await sendSale();
   };
+  // A sale on its way (busy), or one whose reply was lost: kept until the server
+  // answers, in this tab's session too, so a reload still offers Retry with the same id.
+  const SELL_KEY = 'aybkk_desk_sale';
+  let SELL = (() => {
+    try { const x = JSON.parse(sessionStorage.getItem(SELL_KEY) || 'null'); return x && x.requestId ? { ...x, busy: false } : null; }
+    catch (_) { return null; }
+  })();
+  const keepSell = () => {
+    try { if (SELL) sessionStorage.setItem(SELL_KEY, JSON.stringify(SELL)); else sessionStorage.removeItem(SELL_KEY); } catch (_) {}
+  };
+  const SALE_WAIT = 20e3;
+  const sellOutHtml = () => !SELL ? '' : SELL.busy ? `<p class="muted">${esc(T('sellSending'))}</p>`
+    : `<div class="flash warn"><b>${esc(T('sellLost'))}</b><span class="sub">${esc(SELL.what || SELL.name)}</span>
+      <span class="sub">${esc(T('sellRetryHelp'))}</span><button class="btn" onclick="sellRetry()">${esc(T('retry'))}</button></div>`;
+  const paintSell = () => {
+    if ($('#sellOut')) $('#sellOut').innerHTML = sellOutHtml();
+    if ($('#sellBtn')) $('#sellBtn').disabled = !!(SELL && SELL.busy);
+  };
+  // A reply that never comes is a lost reply too: after SALE_WAIT the same Retry box shows.
+  const apiWait = (url, opts, ms) => {
+    const c = window.AbortController ? new AbortController() : null;
+    const t = c && setTimeout(() => c.abort(), ms);
+    return api(url, c ? { ...opts, signal: c.signal } : opts).finally(() => clearTimeout(t));
+  };
+  async function sendSale() {
+    const sale = SELL;
+    if (!sale || sale.busy) return;
+    sale.busy = true; keepSell(); paintSell();
+    const { what, busy, ...body } = sale;
+    let r = null, j = {};
+    try {
+      r = await apiWait('/api/bkk/admin/sales', { method: 'POST', body: JSON.stringify(body) }, SALE_WAIT);
+      j = await r.json();
+    } catch (_) { if (r && r.ok) r = null; }
+    sale.busy = false;
+    // Another sale took its place meanwhile: this answer is not for the box any more.
+    if (SELL !== sale) return;
+    // No answer, or a server that fell over after it may have sold: only the same id may try again.
+    if (!r || r.status >= 500 || (r.ok && !j.order)) { keepSell(); paintSell(); if (!$('#sellOut')) alert(T('sellLost')); return; }
+    if (r.status === 409 && j.repeatOf) {
+      const x = j.repeatOf;
+      if (confirm(T('qRepeat', whenPaid(x.at), x.refno, W(x.method), '฿' + Number(x.amount).toLocaleString()))) {
+        sale.confirmRepeat = true;
+        return sendSale();
+      }
+      SELL = null; keepSell(); paintSell(); return;
+    }
+    SELL = null; keepSell(); paintSell();
+    if (!r.ok) { alert(j.error || T('failed')); return; }
+    alert(T('doneSale', '฿' + j.order.amount.toLocaleString(), W(j.order.method), j.order.refno, j.member.name, j.member.code));
+    renderStudents(sale.name);
+  }
+  window.sellRetry = () => { if (SELL && !SELL.busy) sendSale(); };
 
   window.bookFor = async (code) => {
     const d = await api('/api/bkk/schedule?days=14').then(r => r.json());
@@ -1567,7 +1722,7 @@
   // reply resends the same id, so the server answers instead of adding twice.
   const AD = { key: null };
   const resetAdd = key => Object.assign(AD, { key, member: null, isNew: false, cover: null, method: null,
-    hits: [], seq: (AD.seq || 0) + 1, sent: null, here: null, term: '', nn: '', ne: '', np: '', err: '', busy: false });
+    hits: [], seq: (AD.seq || 0) + 1, sent: null, here: null, term: '', nn: '', ne: '', np: '', err: '', busy: false, lost: false });
   const newId = () => (window.crypto && crypto.randomUUID ? crypto.randomUUID()
     : Date.now().toString(36) + Math.random().toString(36).slice(2));
   const seatOf = m => m && CV.data ? CV.data.roster.find(b => b.code === m.code) : null;
@@ -1684,7 +1839,8 @@
     $('#adHere').disabled = !hereOk(c);
     const ready = on ? here : (AD.member || (AD.isNew && name)) && AD.cover && (AD.cover !== 'dropin' || AD.method);
     $('#adGo').disabled = !ready || AD.busy;
-    $('#adGo').textContent = T(isOver(c) ? 'addGoCame' : here ? 'addGoIn' : 'addGo');
+    // A drop-in sale whose reply was lost: the same button sends the same id again.
+    $('#adGo').textContent = T(AD.lost && AD.err ? 'retry' : isOver(c) ? 'addGoCame' : here ? 'addGoIn' : 'addGo');
     const hint = on ? T(here ? 'hOnIn' : 'hOnOnly')
       : !chosen ? T('hFind') : AD.isNew && !name ? T('hName')
       : !AD.cover ? (AD.member && !hasPass ? T('hNoPass') : T('hCover'))
@@ -1713,11 +1869,14 @@
     AD.busy = true; AD.err = ''; paintAdd();
     let r = null, d = {};
     try {
-      r = await api('/api/bkk/admin/walkin', { method: 'POST', body: JSON.stringify(body) });
+      r = await apiWait('/api/bkk/admin/walkin', { method: 'POST', body: JSON.stringify(body) }, SALE_WAIT);
       d = await r.json().catch(() => ({}));
     } catch (_) { d = { error: T('addNoNet') }; }
     AD.busy = false;
     if (SUB !== 'class' || CV.ref !== ref) return;
+    // A sale with no answer may have gone through: say so, and keep its id for Retry.
+    AD.lost = body.cover === 'dropin' && (!r || r.status >= 500);
+    if (AD.lost) { AD.err = T('sellLost'); paintAdd(); return; }
     // The drop-in is sold but they are not on the list: the money stays,
     // and someone books them by hand.
     if (d.paid) { resetAdd(AD.key); alert(d.error || T('addPaidNot', d.refno)); loadClass(); return; }
@@ -1804,56 +1963,142 @@
   // Every Buy on aybkk.net makes an order before the student pays, so leaving the
   // payment page, or trying again, leaves an unpaid order behind (Nov 2026).
   // Old ones, and ones a later payment for the same package replaced, fold away.
+  // One sale, one row (15 Nov 2026): Rezerv history sits in its own fold, its ฿0
+  // lines counted on the real payment next to them; a sale here says when Rezerv
+  // has it too; a row with money here never folds.
   const HOUR = 3600e3;
-  let ORD = [], CHK = {}, TRIES_OPEN = false, CHK_ALL = false;
+  let ORD = [], ORD_TOTAL = 0, CHK = {}, TRIES_OPEN = false, RZ_OPEN = false, CHK_ALL = false;
   const ordAt = o => Date.parse(o.created_at) || 0;
-  const online = o => o.source !== 'rezerv' && (!o.method || o.method === 'online');
+  const isRz = o => o.source === 'rezerv';
+  const online = o => !isRz(o) && (!o.method || o.method === 'online');
   const unpaid = o => online(o) && (o.status === 'pending' || o.status === 'failed');
   // A drop-in is bought for one class: two drop-ins match only for the same class on the same day.
   const sameClass = (a, b) => (a.slot_id == null && b.slot_id == null)
     || (a.slot_id === b.slot_id && String(a.class_date) === String(b.class_date));
   const samePkg = (a, b) => a.id !== b.id && a.member_id != null && a.member_id === b.member_id
     && a.product_id != null && a.product_id === b.product_id && sameClass(a, b);
+  // Across the two systems a package is its name too: Rezerv's old 6 months and ours share one.
+  const pkgKey = o => String(o.name_en || o.item_name || '').toLowerCase();
+  const crossPkg = (a, b) => a.id !== b.id && a.member_id != null && a.member_id === b.member_id
+    && ((a.product_id != null && a.product_id === b.product_id) || (!!pkgKey(a) && pkgKey(a) === pkgKey(b)));
+  // One package under two names, as the server's PKG_FAMILY: one sale may sit under either.
+  const FAM = { unlim6m: 'unlim6', unlim12m: 'unlim12', pack8m1: 'pack8' };
+  const fam = o => o.product_code ? FAM[o.product_code] || o.product_code : '';
+  const nearPkg = (a, b) => crossPkg(a, b) || (a.id !== b.id && a.member_id != null && a.member_id === b.member_id
+    && !!fam(a) && fam(a) === fam(b));
+  // The day the money came in, as the server pairs a sale with its Rezerv copy.
+  const payDay = o => bkkYmd(Date.parse(o.verified_at || o.created_at) || 0);
+  const payApart = (a, b) => Math.abs(Date.parse(payDay(a)) - Date.parse(payDay(b))) / 864e5;
   const after = (a, b) => ordAt(a) > ordAt(b) || (ordAt(a) === ordAt(b) && a.id > b.id);
+  const ordDay = o => bkkYmd(ordAt(o));
+  const daysApart = (a, b) => Math.abs(Date.parse(ordDay(a)) - Date.parse(ordDay(b))) / 864e5;
+  const paidHere = o => !isRz(o) && o.status === 'paid' && o.amount_thb > 0;
+  // "Ana Example" and "example ana." are one name: lower case, no punctuation, words sorted.
+  const normName = n => String(n || '').toLowerCase().replace(/[^\p{L}\p{M}\p{N}\s]/gu, ' ').split(/\s+/).filter(Boolean).sort().join(' ');
   // Only with the PaySolutions keys does an unpaid order mean "not paid". With a pay.sn
   // link, or no online payment, a student who paid also waits here for staff.
   const gw = () => PAY_MODE === 'gateway';
   function sortOrders(list, now) {
+    const ours = list.filter(o => !isRz(o)), rz = list.filter(isRz);
+    // Paid, then Buy tapped again for the same thing within 3 days.
+    const paidBefore = o => ours.filter(p => p.status === 'paid' && samePkg(p, o) && after(o, p) && ordAt(o) - ordAt(p) <= 72 * HOUR)
+      .sort((a, b) => ordAt(b) - ordAt(a))[0];
+    // Only the newest unpaid try for a package and class stays out.
     const isTry = o => unpaid(o) && ((gw() && now - ordAt(o) > 24 * HOUR)
-      || list.some(p => p.status === 'paid' && samePkg(p, o) && after(p, o)));
-    const tries = list.filter(isTry), main = list.filter(o => !isTry(o));
-    const triesN = {}, nth = {};
-    // Each try is counted once, on the nearest order for the same package left in view.
+      || ours.some(p => (p.status === 'paid' || unpaid(p)) && samePkg(p, o) && after(p, o)) || !!paidBefore(o));
+    const tries = ours.filter(isTry), main = ours.filter(o => !isTry(o));
+    const triesN = {}, againN = {}, nth = {}, alsoRz = {}, rzLinked = {}, bonusN = {}, sameName = {};
+    // Each try is counted once: on the payment it came after, or the nearest order for the same package left in view.
     for (const t of tries) {
+      const p = paidBefore(t);
+      if (p) { againN[p.id] = (againN[p.id] || 0) + 1; continue; }
       const gap = m => Math.abs(ordAt(m) - ordAt(t));
       const near = main.filter(m => samePkg(m, t) && gap(m) <= 24 * HOUR).sort((a, b) => gap(a) - gap(b))[0];
       if (near) triesN[near.id] = (triesN[near.id] || 0) + 1;
     }
-    const paidOnline = o => o.status === 'paid' && online(o);
-    for (const o of main) if (paidOnline(o)) {
-      const k = list.filter(p => paidOnline(p) && samePkg(p, o) && after(o, p) && ordAt(o) - ordAt(p) <= 72 * HOUR).length;
+    // Online and desk alike: the 2nd paid row for one package and class in 3 days.
+    for (const o of main) if (paidHere(o)) {
+      const k = ours.filter(p => paidHere(p) && samePkg(p, o) && after(o, p) && ordAt(o) - ordAt(p) <= 72 * HOUR).length;
       if (k) nth[o.id] = k + 1;
     }
-    return { main, tries, triesN, nth };
+    // The same package (or its family) in Rezerv within 5 days of the payment, as
+    // the import pairs them, seen without opening the fold: its own twin always,
+    // and any Rezerv line not linked to another sale.
+    // Settled (grey) only when every such line is linked to this sale and the server
+    // sees no live Rezerv pass for it; a line not linked first, as that is the one to check.
+    for (const o of main) if (o.status !== 'void') {
+      const gap = x => Math.abs(ordAt(x) - ordAt(o));
+      const near = rz.filter(x => x.twin_of === o.id
+        || (x.status === 'paid' && x.twin_of == null && nearPkg(x, o) && payApart(x, o) <= 5));
+      if (!near.length) continue;
+      const open = near.filter(x => x.twin_of !== o.id);
+      alsoRz[o.id] = (open.length ? open : near).sort((a, b) => gap(a) - gap(b))[0];
+      if (!open.length && !o.rz_pass) rzLinked[o.id] = true;
+    }
+    // In the fold, a ฿0 line goes onto the same person's nearest Rezerv payment within 3 days.
+    const rzPaid = rz.filter(x => x.status === 'paid' && x.amount_thb > 0), rzRows = [];
+    for (const x of rz) {
+      const gap = p => Math.abs(ordAt(p) - ordAt(x));
+      const near = x.status === 'paid' && x.amount_thb === 0
+        && rzPaid.filter(p => p.member_id != null && p.member_id === x.member_id && daysApart(p, x) <= 3).sort((a, b) => gap(a) - gap(b))[0];
+      if (near) bonusN[near.id] = (bonusN[near.id] || 0) + 1;
+      else rzRows.push(x);
+    }
+    const codes = new Map();
+    for (const o of list) {
+      const k = normName(o.member_name);
+      if (!k || !o.member_code) continue;
+      if (!codes.has(k)) codes.set(k, new Set());
+      codes.get(k).add(o.member_code);
+    }
+    for (const o of list) {
+      const c = codes.get(normName(o.member_name));
+      if (c && c.size > 1) sameName[o.id] = [...c].filter(x => x !== o.member_code).join(', ');
+    }
+    return { main, tries, rz: rzRows, rzAll: rz.length, triesN, againN, nth, alsoRz, rzLinked, bonusN, sameName };
   }
+  // The class a drop-in was bought for, and the day of it; what Rezerv called a line it named otherwise.
+  const dayShort = (d, weekday) => ymdLong(d, weekday, String(d).slice(0, 4) === bkkYmd().slice(0, 4));
+  const ordClass = o => o.class_title ? [cls(o.class_title), o.class_day ? dayShort(o.class_day, true) : ''].filter(Boolean).join(' · ')
+    : isRz(o) && o.item_name && o.item_name.toLowerCase() !== pkgKey(o) ? o.item_name : '';
   const ordPill = o => gw() && online(o) && o.status === 'pending' ? T('notPaidYet')
+    : o.status === 'paid' && o.amount_thb === 0 ? '฿0'
     : (STR[LANG].ordPill || {})[o.status] || W(o.status);
+  const byHand = o => /^MANUAL ACTIVATION/.test(o.gateway_note || '');
   const chkCls = c => 'chk' + (c && c.kind ? ' ' + c.kind : '');
   const chkInner = c => c ? esc(c.text) + (c.raw ? `<small>${esc(c.raw)}</small>` : '') : '';
+  const ordWhen = o => { const d = ordDay(o); return `${d.slice(0, 4) === bkkYmd().slice(0, 4) ? d.slice(5) : d} ${time(o.created_at)}`; };
   const ordRow = (o, s) => {
-    const notes = [s.triesN[o.id] && T('nTries', s.triesN[o.id]), s.nth[o.id] && T('nthPay', s.nth[o.id])].filter(Boolean);
+    const rz = s.alsoRz[o.id];
+    const notes = [s.triesN[o.id] && T('nTries', s.triesN[o.id]), s.againN[o.id] && T('nAgain', s.againN[o.id]),
+      s.nth[o.id] && [T('nthPay', s.nth[o.id]), true],
+      rz && [T(s.rzLinked[o.id] ? 'alsoRzLinked' : 'alsoRz', dayShort(ordDay(rz)), baht(rz.amount_thb)), !s.rzLinked[o.id]],
+      s.bonusN[o.id] && T('nBonus', s.bonusN[o.id]), s.sameName[o.id] && [T('sameName', s.sameName[o.id]), true]]
+      .filter(Boolean).map(n => Array.isArray(n) ? n : [n, false]);
+    const zero = o.status === 'paid' && o.amount_thb === 0, cl = ordClass(o);
+    // A twin's note starts with the ref it copies, which the line above it says already.
+    const note = o.status === 'twin' ? String(o.gateway_note || '').split(' | ').slice(1).join(' | ') : String(o.gateway_note || '');
+    // A void row says why, first and whole, in the page's language.
+    const said = () => {
+      if (o.status !== 'void') return note.slice(0, 60);
+      const first = note.split(' | ')[0], v = first.match(/^Void: (.*) \(by staff, (\d{4}-\d{2}-\d{2})\)$/),
+        b = first.match(/^same Rezerv payment as order (\d+), imported twice$/);
+      return (v ? T('voidNote', v[1], v[2]) : b ? T('rzTwice', b[1]) : first).slice(0, 160);
+    };
     return `<tr>
       <td>${o.member_code ? whoBtn(o.member_code, o.member_name, 'who-' + o.id) : `<b>${esc(o.member_name || '–')}</b>`}<br><span class="muted">${esc(o.email || '')}<br>${esc(o.member_code)}</span>
-        ${notes.map(n => `<br><span class="muted">${esc(n)}</span>`).join('')}</td>
-      <td>${esc(pkgName(o))}<br><b>฿${o.amount_thb.toLocaleString()}</b>
+        ${notes.map(([n, w]) => `<span class="onote${w ? ' warn' : ''}">${esc(n)}</span>`).join('')}</td>
+      <td>${esc(pkgName(o))}${cl ? `<span class="onote">${esc(cl)}</span>` : '<br>'}<b${o.status === 'void' ? ' class="gone"' : ''}>฿${o.amount_thb.toLocaleString()}</b>
         <br><span class="muted">${o.base_thb.toLocaleString()} + ${T('fee')} ${o.fee_thb.toLocaleString()} + ${T('vat')} ${(o.vat_thb || 0).toLocaleString()}</span></td>
-      <td><span class="pill ${esc(o.status)}">${esc(ordPill(o))}</span> <span class="muted">${esc(W(o.method || 'online'))}${o.source === 'rezerv' ? ' · Rezerv' : ''}</span><br>
-        <span class="muted">${o.created_at ? `${bkkYmd(ordAt(o)).slice(5)} ${time(o.created_at)}` : ''}</span>
-        ${o.gateway_note ? `<br><span class="muted">${esc(String(o.gateway_note).slice(0, 60))}</span>` : ''}
+      <td><span class="pill ${zero ? 'zero' : esc(o.status)}">${esc(ordPill(o))}</span> <span class="muted">${esc(W(o.method || 'online'))}</span>${isRz(o) ? ' <span class="badge">Rezerv</span>' : ''}<br>
+        <span class="muted">${o.created_at ? ordWhen(o) : ''}</span>
+        ${byHand(o) && o.status === 'paid' ? `<br><span class="pill hand">${esc(T('byHand'))}</span>` : ''}
+        ${o.status === 'twin' && o.twin_refno ? `<span class="onote">${esc(T('twinOf', o.twin_refno))}</span>` : ''}
+        ${note ? `<span class="onote">${esc(said())}</span>` : ''}
         <span class="${chkCls(CHK[o.id])}" id="chk-${o.id}" role="status">${chkInner(CHK[o.id])}</span></td>
       <td class="muted ref" data-l="${esc(T('thRef'))}" style="word-break:break-all;font-size:12px">${o.refno}</td>
       <td><div class="ordact">${[gw() && unpaid(o) && `<button class="btn sm" id="chkb-${o.id}" onclick="chkPay(${o.id})">${T('chkPay')}</button>`,
-        o.status !== 'paid' && o.source !== 'rezerv' && `<button class="btn red" onclick="force(${o.id})">${T('activate')}</button>`]
+        ['pending', 'failed', 'mismatch'].includes(o.status) && !isRz(o) && `<button class="btn red" onclick="force(${o.id})">${T('activate')}</button>`]
         .filter(Boolean).join('')}</div></td>
     </tr>`;
   };
@@ -1869,21 +2114,28 @@
     if (current !== 'orders' || SUB) return;
     if (!keep) CHK = {};
     ORD = d.orders || [];
+    ORD_TOTAL = d.total || ORD.length;
     const now = Date.now(), s = sortOrders(ORD, now);
     const fresh = gw() ? ORD.filter(o => online(o) && o.status === 'pending' && now - ordAt(o) < 72 * HOUR).length : 0;
     $('#view').innerHTML = `<div class="box"><b>${T('payments')}</b>
-      <button class="btn gray" style="float:right" onclick="tab('orders')">↻</button>
+      <button class="btn gray rfr" style="float:right" onclick="tab('orders')" aria-label="${esc(T('reload'))}">↻</button>
+      ${ORD_TOTAL > ORD.length ? `<br><span class="muted">${esc(T('ordNewest', ORD.length.toLocaleString(), ORD_TOTAL.toLocaleString()))}</span>` : ''}
       ${fresh ? `<p><button class="btn sm" id="chkAll" onclick="chkAll()">${T('chkAll')}</button>
         <span class="muted" id="chkAllMsg" role="status"></span></p>` : ''}
       ${flash ? `<div class="flash${flash.warn ? ' warn' : ''}" role="status">${esc(flash.text)}</div>` : ''}
       ${s.main.length ? ordTable(s.main.map(o => ordRow(o, s)).join(''))
-        : s.tries.length ? '' : ordTable(`<tr><td class="muted">${T('noOrders')}</td></tr>`)}
+        : s.tries.length || s.rzAll ? '' : ordTable(`<tr><td class="muted">${T('noOrders')}</td></tr>`)}
       ${s.tries.length ? `<details class="tries" id="tries"${TRIES_OPEN ? ' open' : ''}>
         <summary>${esc(T('triesH', s.tries.length))}<span class="muted">${esc(T(gw() ? 'triesSub' : 'triesSubLink'))}</span></summary>
         ${ordTable(s.tries.map(o => ordRow(o, s)).join(''))}</details>` : ''}
+      ${s.rzAll ? `<details class="tries" id="rzFold"${RZ_OPEN ? ' open' : ''}>
+        <summary>${esc(T('rzH', s.rzAll))}<span class="muted">${esc(T('rzHelp'))}</span></summary>
+        ${ordTable(s.rz.map(o => ordRow(o, s)).join(''))}</details>` : ''}
       <p class="muted">${T(gw() ? 'ordersHelp' : 'ordersHelpLink')}</p></div>`;
     const f = $('#tries');
     if (f) f.addEventListener('toggle', () => { TRIES_OPEN = f.open; });
+    const z = $('#rzFold');
+    if (z) z.addEventListener('toggle', () => { RZ_OPEN = z.open; });
     const who = id => id && document.getElementById(id);
     if (back) backTo(back);
     const c = show && $(`#chk-${show}`), tr = c && c.closest('tr');
@@ -1949,10 +2201,18 @@
     if ($('#chkAllMsg')) $('#chkAllMsg').textContent = text;
   };
 
+  // A try whose package the student already paid for: the server names that payment, and staff say yes once more.
+  const whenPaid = at => at ? `${dayShort(bkkYmd(Date.parse(at)))} ${time(at)}` : '';
   window.force = async (id) => {
     if (!confirm(T('qActivate'))) return;
-    const r = await api(`/api/bkk/admin/orders/${id}/force-activate`, { method: 'POST' });
-    const j = await r.json().catch(() => ({}));
+    let r = await api(`/api/bkk/admin/orders/${id}/force-activate`, { method: 'POST', body: '{}' });
+    let j = await r.json().catch(() => ({}));
+    if (r.status === 409 && j.paidAlready) {
+      const p = j.paidAlready;
+      if (!confirm(T('qPaidAlready', whenPaid(p.at), p.refno, W(p.method || 'online')))) return;
+      r = await api(`/api/bkk/admin/orders/${id}/force-activate`, { method: 'POST', body: JSON.stringify({ confirm: true }) });
+      j = await r.json().catch(() => ({}));
+    }
     if (!r.ok) alert(j.error || T('failed'));
     // A drop-in bought for a class that was cancelled or over by now: the pass
     // is live but nobody is on the list, and this list does not show the class.
@@ -2203,7 +2463,9 @@
     const days = [...rows.keys()].sort().map(k => { const b = rows.get(k); return `<tr>
       <td class="nowrap">${esc(long ? monthName(k) : ymdLong(k, true))}</td><td class="n">${b.came}</td>
       <td class="n">${b.booked}</td><td class="n">${b.money ? baht(b.money) : ''}</td></tr>`; });
-    const money = (list, label) => list.map(x => `<tr><td>${esc(label(x))}</td><td class="n">${x.n}</td><td class="n">${baht(x.total)}</td></tr>`);
+    // A refund is money going back: said on its own, never a count of 0 next to a minus.
+    const nPaid = x => x.refunds ? (x.n ? `${x.n} + ${T('nRefunds', x.refunds)}` : T('nRefunds', x.refunds)) : String(x.n);
+    const money = (list, label) => list.map(x => `<tr><td>${esc(label(x))}</td><td class="n">${esc(nPaid(x))}</td><td class="n">${baht(x.total)}</td></tr>`);
     const moneyHeads = first => [[first], [T('thCount'), 'n'], [T('thTotal'), 'n']];
     // The call lists are worked from a phone: History sits under the name, never off to the side.
     const who = (x, k) => `${whoBtn(x.code, x.name, `who-${k}-${x.code}`)}<br><span class="muted">${esc(x.code)}</span> ${histBtn(x.code)}`;
@@ -2221,6 +2483,7 @@
       <div class="box"><b>${T('rMoneyH')}</b>
         <div class="tiles">${tile(T('kMoney'), baht(m.total))}${tile(T('kVat'), baht(m.vat))}
           ${tile(T('kPayments'), String(m.count))}${tile(T('kSold'), String(d.passes.sold))}</div>
+        ${m.manual && m.manual.n ? `<p class="muted">${esc(T('rManual', m.manual.n, baht(m.manual.total)))}</p>` : ''}
         ${m.byMethod.length ? `<p><b>${T('rByMethod')}</b></p>${tbl(moneyHeads(T('thMethod')), money(m.byMethod, x => W(x.method || 'online')))}` : ''}
         ${m.byItem.length ? `<p><b>${T('rByItem')}</b></p>${tbl(moneyHeads(T('thItem')), money(m.byItem, x => itemName(x.item)
           + (x.price && m.byItem.some(y => y !== x && y.item === x.item) ? ' · ' + baht(x.price) : '')))}` : ''}

@@ -899,6 +899,62 @@ const MYSORE = 'Mysore 5.30am (1st batch)';
        boom.code === 1 && boom.err === 'Stopped: unexpected error.\n' && boom.calls.length === 0 && !boom.all.includes('Boom'), boom.all);
   }
 
+  console.log('\n:: run-all: one sale on aybkk.net and in Rezerv (15 Nov 2026) ::');
+  {
+    const fay = who(61, 'Fayline'), gus = who(62, 'Gusto');
+    const mdy = d => { const [y, m, dd] = d.split('-'); return `${m}/${dd}/${y}`; };
+    const W1 = dir('twin-students');
+    put(W1, STUDENTS_FILE, csv(STUDENTS, [student(fay), student(gus)]));
+    const w1 = await cli(['run-all', W1, '--save']);
+    const sell = async (p, productCode) => (await fetch(API + '/api/bkk/admin/sales', { method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-bkk-key': KEY },
+      body: JSON.stringify({ productCode, name: p.name, email: p.email, method: 'cash', requestId: `cli-${p.rz}-${productCode}` }) })).json();
+    const fSale = await sell(fay, 'unlim3'), gSale = await sell(gus, 'unlim1');
+    ok('two desk sales on aybkk.net for students who came over from Rezerv', w1.code === 0 && !!fSale.order && !!gSale.order,
+       JSON.stringify([w1.code, fSale.success, gSale.success]));
+    // run-all wants the students file next to the others: matched again, nothing new.
+    const folder = name => { const d = dir(name); put(d, STUDENTS_FILE, csv(STUDENTS, [student(fay), student(gus)])); return d; };
+    const W2 = folder('twin-zero');
+    put(W2, 'rezerv-payments-2026.csv', csv(PAYMENTS, [payment(`${mdy(T0)} 07:10:00`, 61, fay, '3 months Unlimited', 'Free', 0, 0)]));
+    const w2 = await cli(['run-all', W2, '--save']);
+    const fRow = await one(`SELECT o.status, o.twin_of, t.refno::text AS twin_ref FROM bkk_orders o LEFT JOIN bkk_orders t ON t.id=o.twin_of
+      WHERE o.source='rezerv' AND o.source_ref=$1`, [trx(61)]);
+    ok('a ฿0 Rezerv line for that sale is a note, not a stop: saved as the twin of the aybkk.net order',
+       w2.code === 0 && /^Done: 2 files saved/m.test(w2.out) && /^    twinOfAybkk: 1$/m.test(w2.out)
+       && fRow.status === 'twin' && fRow.twin_ref === fSale.order.refno, w2.all + JSON.stringify(fRow));
+    const W3 = folder('twin-money');
+    put(W3, 'rezerv-payments-2026.csv', csv(PAYMENTS, [payment(`${mdy(T0)} 07:20:00`, 62, gus, '1 Month unlimited', 'CASH', 10272, 672)]));
+    const w3 = await since(() => cli(['run-all', W3, '--save']));
+    ok('a Rezerv line with money for a package paid on aybkk.net within 5 days stops run-all for a person (maybeTwin), nothing saved',
+       w3.code === 1 && /^Rule: warning-needs-a-person: .*maybeTwin 1\.$/m.test(w3.err) && sent(w3.calls) === 'members:true,members:false,payments:true'
+       && (await one(`SELECT count(*)::int AS n FROM bkk_orders WHERE source='rezerv' AND source_ref=$1`, [trx(62)])).n === 0, w3.all);
+    const W4 = folder('twin-pass');
+    put(W4, MEMBERSHIPS_FILE, csv(MEMBERSHIPS, [membership(fay, 61, '3 months Unlimited', 'Active', T0, addD(T0, 89))]));
+    const w4 = await since(() => cli(['run-all', W4, '--save']));
+    ok('a Rezerv pass for the same sale as an aybkk.net pass stops run-all for a person (twinPass), nothing saved',
+       w4.code === 1 && /^Rule: warning-needs-a-person: .*twinPass 1\.$/m.test(w4.err) && sent(w4.calls) === 'members:true,members:false,passes:true'
+       && (await one(`SELECT count(*)::int AS n FROM bkk_passes WHERE source='rezerv' AND source_ref=$1`, [memberNo(61)])).n === 0, w4.all);
+    // The same Rezerv payment again from a report with no TransactionID: already here, and a person looks.
+    const W5 = folder('twin-rezerv');
+    const noId = payment(`${mdy(addD(T0, -20))} 09:00:00`, 63, gus, 'Drop-in', 'CARD', 1605, 105);
+    put(W5, 'rezerv-payments-2026.csv', csv(PAYMENTS, [noId]));
+    const w5a = await cli(['run-all', W5, '--save']);
+    put(W5, 'rezerv-payments-2026.csv', csv(PAYMENTS.replace('TransactionID,', ''), [noId]));
+    const w5b = await since(() => cli(['run-all', W5, '--save']));
+    ok('...and so does one Rezerv payment that comes again from a file without its id (rezervTwin), nothing added',
+       w5a.code === 0 && w5b.code === 1 && /^Rule: warning-needs-a-person: .*rezervTwin 1\.$/m.test(w5b.err)
+       && (await one(`SELECT count(*)::int AS n FROM bkk_orders o JOIN bkk_members m ON m.id=o.member_id
+         WHERE m.rezerv_id=$1 AND o.source='rezerv'`, [gus.rz])).n === 1, w5a.all + w5b.all);
+    // Rezerv's 8 classes in 1 month next to a pack of 8 in 2 months sold here: one package family, so the same sale.
+    const gPack = await sell(gus, 'pack8');
+    const W6 = folder('twin-near');
+    put(W6, PACKS_FILE, csv(PACKAGES, [pack(gus, 64, '8 classes / 1 month', 'Active', T0, addD(T0, 29), 8, 8)]));
+    const w6 = await since(() => cli(['run-all', W6, '--save']));
+    ok('a Rezerv pack under the other name of a pack sold here is its twin too: run-all stops for a person (twinPass), nothing saved',
+       !!gPack.order && !gPack.repeat && w6.code === 1 && /^Rule: warning-needs-a-person: .*twinPass 1\.$/m.test(w6.err)
+       && (await one(`SELECT count(*)::int AS n FROM bkk_passes WHERE source='rezerv' AND source_ref=$1`, [trx(964)])).n === 0, w6.all);
+  }
+
   console.log('\n— the codes this tool knows are the server\'s —');
   {
     const { SKIP_CODES, WARN_CODES, KINDS, SERVERS, DEFAULT_TIMEOUT_MS } = require(SCRIPT);
@@ -922,8 +978,10 @@ const MYSORE = 'Mysore 5.30am (1st batch)';
     ok('...the only skips run-all lets through: a pack never started, a Rezerv copy of an aybkk.net sale, a payment that brought no money, a waiting-list place',
        KINDS.map(k => `${k}:${Object.keys(SKIP_CODES[k]).filter(c => SKIP_CODES[k][c] === 'ok')}`).join(' ')
        === 'members: passes:neverStarted,copyOfSale payments:notMoney visits:waitlist');
-    ok('...the notes run-all stops on: a status, a VAT or a pause date the server could not read, and more classes left than the pack holds',
-       Object.keys(WARN_CODES).filter(c => WARN_CODES[c] === 'ask').sort().join() === 'badFreeze,badVat,leftOver,passStatus');
+    ok('...the notes run-all stops on: a status, a VAT or a pause date the server could not read, more classes left than the pack holds, '
+       + 'and one sale that may be in both systems or a Rezerv payment already here from another file',
+       Object.keys(WARN_CODES).filter(c => WARN_CODES[c] === 'ask').sort().join() === 'badFreeze,badVat,leftOver,maybeTwin,passStatus,rezervTwin,twinPass');
+    ok('...and a ฿0 Rezerv copy of an aybkk.net sale is a note: kept as its twin, never money', WARN_CODES.twinOfAybkk === 'note');
     ok('a batch is given two minutes, and rows go to aybkk.net or my.aybkk.com only',
        DEFAULT_TIMEOUT_MS === 120000 && SERVERS.join() === 'aybkk.net,my.aybkk.com', `${DEFAULT_TIMEOUT_MS} ${SERVERS}`);
   }
