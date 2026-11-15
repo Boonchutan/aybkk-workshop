@@ -157,9 +157,9 @@ const MYSORE = 'Mysore 5.30am (1st batch)';
   console.log('\n— plan: which files, in which order —');
   {
     const d = dir('plan');
-    const wanted = [STUDENTS_FILE, MEMBERSHIPS_FILE, PACKS_FILE,
+    const wanted = [STUDENTS_FILE,
       'rezerv-payments-2024.csv', 'rezerv-payments-2025-jan-jun.csv', 'rezerv-payments-2025-jul-dec.csv', 'rezerv-payments-2026.csv',
-      'rezerv-visits-2024.csv', 'rezerv-visits-2025.csv', 'rezerv-visits-2026.csv', 'rezerv-visits-upcoming-2026-11-12.csv'];
+      MEMBERSHIPS_FILE, PACKS_FILE, 'rezerv-visits-2024.csv', 'rezerv-visits-2025.csv', 'rezerv-visits-2026.csv', 'rezerv-visits-upcoming-2026-11-12.csv'];
     const named = ['rezerv-payments-voided-2026.csv', 'rezerv-payments-refunded-2026.csv', 'rezerv-class-attendance-2026.csv',
       'rezerv-something-else.csv', 'rezerv-students-2026-11-12.xlsx'];
     // A downloads folder holds slips and forms named after students: counted, never named, never read.
@@ -169,8 +169,8 @@ const MYSORE = 'Mysore 5.30am (1st batch)';
     fs.mkdirSync(path.join(d, 'rezerv-details'));
     const r = await since(() => cli(['plan', d]));
     const listed = [...r.out.matchAll(/^\s+\d+\. (\w+)\s+(\S+)$/gm)].map(m => `${m[1]} ${m[2]}`);
-    const kinds = ['members', 'passes', 'passes', 'payments', 'payments', 'payments', 'payments', 'visits', 'visits', 'visits', 'visits'];
-    ok('plan lists the 11 files in import order: students, memberships, packages, payments by year and month, visits by year, upcoming last',
+    const kinds = ['members', 'payments', 'payments', 'payments', 'payments', 'passes', 'passes', 'visits', 'visits', 'visits', 'visits'];
+    ok('plan lists the 11 files in import order: students, payments by year and month, memberships, packages, visits by year, upcoming last',
        r.code === 0 && listed.join() === wanted.map((n, i) => `${kinds[i]} ${n}`).join(), r.all);
     const ignored = [...r.out.matchAll(/^\s+- (rezerv-\S+): (.*)$/gm)].map(m => m[1]).sort();
     ok('...and names what it ignores under a rezerv- name: voided, refunded, class-attendance, not a name it knows',
@@ -441,12 +441,12 @@ const MYSORE = 'Mysore 5.30am (1st batch)';
   ok('run-all --save saves the 8 files of a made-up folder and ends clean', all1.code === 0 && /^Done: 8 files saved, steps 1 to 8 of 8\.$/m.test(all1.out), all1.all);
   ok('...each file checked, then saved, in the order of the plan',
      all1.calls.map(c => `${c.kind}:${c.dry ? 'check' : 'save'}:${c.n}`).join(' ')
-     === 'members:check:3 members:save:3 passes:check:2 passes:save:2 passes:check:2 passes:save:2 payments:check:1 payments:save:1 '
-       + 'payments:check:1 payments:save:1 payments:check:2 payments:save:2 visits:check:3 visits:save:3 visits:check:1 visits:save:1',
+     === 'members:check:3 members:save:3 payments:check:1 payments:save:1 payments:check:1 payments:save:1 payments:check:2 payments:save:2 '
+       + 'passes:check:2 passes:save:2 passes:check:2 passes:save:2 visits:check:3 visits:save:3 visits:check:1 visits:save:1',
      JSON.stringify(all1.calls.map(c => [c.kind, c.dry, c.n])));
   const payOrder = all1.calls.filter(c => c.kind === 'payments' && c.dry).map(c => c.body.rows[0].rezervId).join();
   const passOrder = all1.calls.filter(c => c.kind === 'passes' && c.dry).map(c => c.body.rows[0].plan.slice(0, 7)).join();
-  ok('...memberships before packages, payments by year and by month', payOrder === [trx(21), trx(22), trx(23)].join()
+  ok('...payments by year and by month, then memberships before packages', payOrder === [trx(21), trx(22), trx(23)].join()
      && passOrder === '1 Month,10 clas', payOrder + ' ' + passOrder);
   ok('...the voided list and the class-attendance list are named as ignored, the notes are counted, and none is read',
      /rezerv-payments-voided-2026\.csv: its name says voided/.test(all1.out) && /rezerv-class-attendance-2026\.csv: its name says class-attendance/.test(all1.out)
@@ -505,39 +505,42 @@ const MYSORE = 'Mysore 5.30am (1st batch)';
       pack(cy, 11, 'Full workshop with Guest Teachers', 'Expired', '2025-03-01', '2025-03-28', 7, 0),
       pack(cy, 12, 'Drop-in (1500thb + online transaction fee 5%)', 'Expired', '2025-05-06', '2025-05-06', 1, 0)]));
     put(S, 'rezerv-payments-2026.csv', csv(PAYMENTS, [payment('10/22/2026 08:00:00', 31, cy, 'Drop-in', 'CARD', 1605, 105)]));
+    put(S, 'rezerv-visits-2025.csv', csv(VISITS, [visit('2025-03-17', '05:30 AM', MYSORE, `B${s8}32`, cy, 'Completed')]));
     const paid = async () => (await one(`SELECT count(*)::int AS n FROM bkk_orders WHERE source='rezerv' AND source_ref=$1`, [trx(31)])).n;
+    const came = async () => (await one('SELECT count(*)::int AS n FROM bkk_bookings WHERE source_ref=$1', [`B${s8}32`])).n;
     const passN = async n => (await one(`SELECT count(*)::int AS n FROM bkk_passes WHERE source='rezerv' AND source_ref=$1`, [trx(900 + n)])).n;
     const lookS = await since(() => cli(['run-all', S]));
     ok('a look goes through every file and says which one would stop a real run',
-       lookS.code === 1 && lookS.calls.length === 3 && lookS.calls.every(c => c.dry === true)
+       lookS.code === 1 && lookS.calls.length === 4 && lookS.calls.every(c => c.dry === true)
        && /^  Would stop here \(skip-code-needs-a-person\): .*badPlan 1\.$/m.test(lookS.out)
-       && lookS.out.includes(`With --save the run would stop at:\n  step 2: ${PACKS_FILE} (skip-code-needs-a-person)\n`), lookS.all);
+       && lookS.out.includes(`With --save the run would stop at:\n  step 3: ${PACKS_FILE} (skip-code-needs-a-person)\n`), lookS.all);
     const r = await since(() => cli(['run-all', S, '--save']));
     ok('a skip code that needs a person stops the run: which file, which rule, the counts',
-       r.code === 1 && new RegExp(`^STOPPED at step 2 of 3: ${PACKS_FILE.replace(/\./g, '\\.')} \\(passes\\)$`, 'm').test(r.err)
+       r.code === 1 && new RegExp(`^STOPPED at step 3 of 4: ${PACKS_FILE.replace(/\./g, '\\.')} \\(passes\\)$`, 'm').test(r.err)
        && /^Rule: skip-code-needs-a-person: .*badPlan 1\.$/m.test(r.err)
        && /^Counts: rows 2, added 1, already there 0, updated 0, new students 0, skipped 1\.$/m.test(r.err), r.all);
-    ok('...nothing of that file is saved and no later file is touched',
-       sent(r.calls) === 'members:true,members:false,passes:true' && (await passN(12)) === 0 && (await paid()) === 0
+    ok('...nothing of that file is saved and no later file is touched (the payments before it are saved)',
+       sent(r.calls) === 'members:true,members:false,payments:true,payments:false,passes:true' && (await passN(12)) === 0
+       && (await paid()) === 1 && (await came()) === 0
        && /Nothing from this file was saved, and no later file was touched/.test(r.err), sent(r.calls));
     const exp = (r.err.match(/write passes '([^']+)' --expect "([0-9a-f:]+)"/) || []);
-    const next = `run-all '${S}' --save --from-step '3:rezerv-payments-2026.csv' --base ${FRONT}`;
+    const next = `run-all '${S}' --save --from-step '4:rezerv-visits-2025.csv' --base ${FRONT}`;
     ok('...and it prints how a person accepts the file and carries on, the next step named with its file',
        exp[1] === packs && /^2:1:0:0:1:0:[0-9a-f]{12}$/.test(exp[2] || '') && r.err.includes(next), r.err);
     const acc = await cli(['write', 'passes', packs, '--expect', exp[2] || NONE]);
-    const wrongStep = [await since(() => cli(['run-all', S, '--save', '--from-step', '3'])),
-      await since(() => cli(['run-all', S, '--save', '--from-step', '4:rezerv-payments-2026.csv'])),
-      await since(() => cli(['run-all', S, '--save', '--from-step', '2:rezerv-payments-2026.csv']))];
+    const wrongStep = [await since(() => cli(['run-all', S, '--save', '--from-step', '4'])),
+      await since(() => cli(['run-all', S, '--save', '--from-step', '5:rezerv-visits-2025.csv'])),
+      await since(() => cli(['run-all', S, '--save', '--from-step', '3:rezerv-visits-2025.csv']))];
     ok('--from-step without its file, past the last step, or naming another file than the one at that step is wrong use: nothing is sent',
-       wrongStep.every(w => w.code === 2 && w.calls.length === 0) && /step 2 of this folder is rezerv-passes-packages/.test(wrongStep[2].err),
+       wrongStep.every(w => w.code === 2 && w.calls.length === 0) && /step 3 of this folder is rezerv-passes-packages/.test(wrongStep[2].err),
        JSON.stringify(wrongStep.map(w => [w.code, w.calls.length, w.err.split('\n')[0]])));
-    const rest = await since(() => cli(['run-all', S, '--save', '--from-step', '3:rezerv-payments-2026.csv']));
+    const rest = await since(() => cli(['run-all', S, '--save', '--from-step', '4:rezerv-visits-2025.csv']));
     ok('--from-step carries on after it: the earlier steps are left alone', acc.code === 0 && (await passN(12)) === 1 && rest.code === 0
-       && sent(rest.calls) === 'payments:true,payments:false' && (await paid()) === 1
-       && /^Done: 1 file saved, steps 3 to 3 of 3\.$/m.test(rest.out), rest.all);
+       && sent(rest.calls) === 'visits:true,visits:false' && (await paid()) === 1 && (await came()) === 1
+       && /^Done: 1 file saved, steps 4 to 4 of 4\.$/m.test(rest.out), rest.all);
     // A file added to the folder moves the steps: the command printed before no longer fits.
     put(S, MEMBERSHIPS_FILE, csv(MEMBERSHIPS, [membership(cy, 1, '1 Month unlimited', 'Active', addD(T0, -5), addD(T0, 24))]));
-    const shifted = await since(() => cli(['run-all', S, '--save', '--from-step', '3:rezerv-payments-2026.csv']));
+    const shifted = await since(() => cli(['run-all', S, '--save', '--from-step', '4:rezerv-visits-2025.csv']));
     ok('...and once the folder has changed, the old --from-step is refused, not run against another file',
        shifted.code === 2 && shifted.calls.length === 0 && /The folder has changed/.test(shifted.err), shifted.all);
 
@@ -913,9 +916,9 @@ const MYSORE = 'Mysore 5.30am (1st batch)';
     ok('...each on the side the server uses it on: a note it gives is in the notes table, a skip in the skips',
        asNote.length >= 16 && asSkip.length >= 20 && clash.length === 3 && [...asNote, ...clash].every(c => has(WARN_CODES, c))
        && [...asSkip, ...clash].every(c => known.has(c)), JSON.stringify([asNote.filter(c => !has(WARN_CODES, c)), asSkip.filter(c => !known.has(c))]));
-    ok('...the only skips run-all lets through: a pack never started, a payment that brought no money, a waiting-list place',
+    ok('...the only skips run-all lets through: a pack never started, a Rezerv copy of an aybkk.net sale, a payment that brought no money, a waiting-list place',
        KINDS.map(k => `${k}:${Object.keys(SKIP_CODES[k]).filter(c => SKIP_CODES[k][c] === 'ok')}`).join(' ')
-       === 'members: passes:neverStarted payments:notMoney visits:waitlist');
+       === 'members: passes:neverStarted,copyOfSale payments:notMoney visits:waitlist');
     ok('...the notes run-all stops on: a status, a VAT or a pause date the server could not read, and more classes left than the pack holds',
        Object.keys(WARN_CODES).filter(c => WARN_CODES[c] === 'ask').sort().join() === 'badFreeze,badVat,leftOver,passStatus');
     ok('a batch is given two minutes, and rows go to aybkk.net or my.aybkk.com only',
