@@ -80,12 +80,44 @@ for it in T['items']:
     mh=max(it['_mom'].height,it.get('_momok',it['_mom']).height); it['_mh']=mh
     bottom=1250+mh/2+30+it['_ans'].height; rtop=FOOT_Y-it['_real'].height/2
     it['_dy']=-max(0,bottom+16-rtop)
+prev_end=0.0
+for it in T['items']:
+    rt=it['a']+0.9
+    if it['end']-rt<1.0: rt=it['a']+0.4
+    it['_rt']=rt; it['_q']=max(it['q'],prev_end); it['_end']=max(it['end'],rt+1.3); prev_end=it['_end']
+FACES={float(k):v for k,v in json.load(open(D+'/faces/faces.json')).items()}
+TITLE_R=(230,105,850,240)
+def _ov(a,b): return max(0,min(a[2],b[2])-max(a[0],b[0]))*max(0,min(a[3],b[3])-max(a[1],b[1]))
+ALLS=[]
+for k,it in enumerate(T['items']):
+    for j,s_ in enumerate(it['stk']): ALLS.append((k,j,s_,max(it['end'],s_[1]+1.4)))
+POS={}; FOV={}
+TT=[1250+it['_dy']-it['_mh']/2-25 for it in T['items']]
+for k,j,s_,h in ALLS:
+    later=[x[2][1] for x in ALLS if x[2][1]>s_[1]]
+    t0,t1=s_[1],min([h+0.25]+later)
+    fb=[]
+    for tf,bx in FACES.items():
+        if t0-0.25<=tf<=t1+0.25:
+            for b in bx: fb.append((b[0]-45,b[1]-45,b[0]+b[2]+45,b[1]+b[3]+45))
+    best=None
+    for sz in (300,260,220):
+        for cx in range(sz//2+10,1080-sz//2-9,20):
+            for cy in range(260+sz//2,int(min(TT[k:k+2]))-int(sz*0.56),20):
+                hz=sz*0.56
+                r=(cx-hz,cy-hz-8,cx+hz,cy+hz+8)
+                ovf=max([_ov(r,f) for f in fb]+[0])
+                cost=ovf*10+_ov(r,TITLE_R)*50
+                if j>0: cost+=_ov(r,(700,235,1070,350))*50
+                cost+=(300-sz)*40+abs(cx-880)*3+abs(cy-480)*3
+                if best is None or cost<best[0]: best=(cost,cx,cy,sz,ovf)
+    POS[(k,j)]=best[1:4]; FOV[(k,j)]=best[4]
 def paste_c(fr,im,cx,cy,scale=1.0,alpha=1.0):
     if scale<=0.01 or alpha<=0.01: return
     if abs(scale-1)>0.01: im=im.resize((max(1,int(im.width*scale)),max(1,int(im.height*scale))),Image.LANCZOS)
     if alpha<1: a=im.getchannel('A').point(lambda v:int(v*alpha)); im=im.copy(); im.putalpha(a)
     fr.alpha_composite(im,(int(cx-im.width/2),int(cy-im.height/2)))
-MAIN=(850,500); ROWY=300
+MAIN=(850,500); ROWY=290
 def overlay(fr,t):
     # title
     paste_c(fr,TITLE,W/2,TITLE_Y,1.0,ease(t/0.3))
@@ -93,38 +125,38 @@ def overlay(fr,t):
         if not (it['q']<=t<it['end']+0.25): continue
         fade=1.0 if t<it['end'] else max(0,1-(t-it['end'])/0.25)
         pass
-    # stickers (global: may run past their item's end; the newest sticker owns the main spot)
-    ALL=[]
-    for k,it in enumerate(T['items']):
-        for s in it['stk']: ALL.append((k,s,max(it['end'],s[1]+1.4)))
-    act=[(k,s,h) for k,s,h in ALL if s[1]<=t<h+0.25]
+    # stickers (global: the newest sticker owns the big spot, placed off every face)
+    act=[(k,j,s_,h) for k,j,s_,h in ALLS if s_[1]<=t<h+0.25]
     if act:
-        kk=max(k for k,s,h in act if True) if False else None
-        newest=max(act,key=lambda x:x[1][1]); kk=newest[0]
+        newest=max(act,key=lambda x:x[2][1]); kk=newest[0]
         grp=[x for x in act if x[0]==kk]
-        for i,(k,s,h) in enumerate(grp):
+        for i,(k,j,s_,h) in enumerate(grp):
             fade=1.0 if t<h else max(0,1-(t-h)/0.25)
-            newer=[x for x in grp[i+1:]]
+            cx0,cy0,sz0=POS[(k,j)]
+            newer=grp[i+1:]
             if not newer:
-                sc=popscale(t-s[1]); bob=6*np.sin((t-s[1])*4.0)
-                paste_c(fr,stk(s[0],300),MAIN[0],MAIN[1]+bob,sc,fade)
+                sc=popscale(t-s_[1]); bob=6*np.sin((t-s_[1])*4.0)
+                paste_c(fr,stk(s_[0],sz0),cx0,cy0+bob,sc,fade)
             else:
-                tm=ease((t-newer[0][1][1])/0.3); slot=i
-                tx=1000-slot*125; ty=ROWY
-                cx=MAIN[0]+(tx-MAIN[0])*tm; cy=MAIN[1]+(ty-MAIN[1])*tm; sz=1-(1-110/300)*tm
-                paste_c(fr,stk(s[0],300),cx,cy,sz,fade)
+                tm=ease((t-newer[0][2][1])/0.3)
+                tx=1010-i*100; ty=ROWY
+                cx=cx0+(tx-cx0)*tm; cy=cy0+(ty-cy0)*tm; sz=1-(1-90/sz0)*tm
+                paste_c(fr,stk(s_[0],sz0),cx,cy,sz,fade)
     for it in T['items']:
-        if not (it['q']<=t<it['end']+0.25): continue
-        fade=1.0 if t<it['end'] else max(0,1-(t-it['end'])/0.25)
-        # mom pill
-        mp=it['_mom']; rt=it['a']+0.9; ma=1.0
-        if 'momok' in it and t>=it['momok'][0]: mp=it['_momok']; ma=ease((t-it['momok'][0])/0.2)
-        elif t>=rt: ma=1-ease((t-rt)/0.25)
-        up=ease((t-it['q'])/0.22); paste_c(fr,mp,W/2,1250+it['_dy']+40*(1-up),1.0,up*fade*ma)
+        q,e,rt=it['_q'],it['_end'],it['_rt']
+        if not (q<=t<e): continue
+        fade=1.0 if t<e-0.2 else max(0,(e-t)/0.2)
+        mk=it['momok'][0] if 'momok' in it else None
+        mp=it['_mom']; ma=1.0
+        if mk is not None and t>=mk: mp=it['_momok']; ma=ease((t-mk)/0.2)
+        elif t>=rt: ma=1-ease((t-rt)/0.2)
+        up=ease((t-q)/0.2); paste_c(fr,mp,W/2,1250+it['_dy']+40*(1-up),1.0,up*fade*ma)
         if t>=it['a']:
             paste_c(fr,it['_ans'],W/2,1250+it['_dy']+it['_mh']/2+30+it['_ans'].height/2,popscale(t-it['a']),fade)
-            rt=it['a']+0.9
-            if t>=rt: paste_c(fr,it['_real'],W/2,FOOT_Y,1.0,ease((t-rt)/0.25)*fade)
+            if t>=rt+0.2:
+                ra=ease((t-rt-0.2)/0.25)
+                if mk is not None and t>=mk-0.2: ra*=max(0,(mk-t)/0.2)
+                paste_c(fr,it['_real'],W/2,FOOT_Y,1.0,ra*fade)
 def frames():
     p=subprocess.Popen([FF,'-loglevel','error','-i',D+'/src/src.mp4','-vf',f'scale={W}:{H}:flags=lanczos','-f','rawvideo','-pix_fmt','rgb24','-'],stdout=subprocess.PIPE)
     n=W*H*3
