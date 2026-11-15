@@ -512,6 +512,11 @@ function mountBkk(app, opts = {}) {
     await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_orders_twin_of ON bkk_orders (twin_of) WHERE twin_of IS NOT NULL`);
     await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS twin_of INTEGER REFERENCES bkk_passes(id)`);
     await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_passes_twin_of ON bkk_passes (twin_of) WHERE twin_of IS NOT NULL`);
+    // On a void Rezerv twin pass, what taking the pair apart puts back: used (the
+    // classes the import added to the pass kept), from and until (the dates it
+    // gave that pass, and untilWas before them), and status (what Rezerv says of
+    // this one now, so it comes back paused, or stays void if Rezerv stopped it).
+    await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS twin_undo JSONB`);
     // The student's own face (9 Nov 2026), so teachers can greet them by name.
     // photo_id is a private Cloudinary asset. photo_tries counts uploads on
     // photo_tries_on (a Bangkok day), to cap them.
@@ -1600,14 +1605,25 @@ function mountBkk(app, opts = {}) {
       // undo leaves on two profiles was paired across two people while merged: the
       // Rezerv pass kept void for the other one's pass is live again (no pass
       // lost), and the ฿0 Rezerv line is no longer that sale's twin (it stays ฿0).
+      // The classes and start day the import put on the pass kept come off it
+      // first: they were the other student's. One Rezerv payment voided as
+      // imported twice, with its copy now on the other profile, is a payment again.
       const across = `((r.member_id=$1 AND a.member_id=$2) OR (r.member_id=$2 AND a.member_id=$1))`;
-      const twinsBack = await twinPassBack(client, (await client.query(`SELECT a.id FROM bkk_passes r JOIN bkk_passes a ON a.id=r.twin_of
-        WHERE r.source='rezerv' AND ${across}`, [F, K])).rows.map(x => x.id),
-        `live again: the aybkk.net pass it was kept void for is on another profile since a merge was undone on ${bkkToday()}`);
+      const split = (await client.query(`SELECT r.id AS rid, a.id AS aid FROM bkk_passes r JOIN bkk_passes a ON a.id=r.twin_of
+        WHERE r.source='rezerv' AND ${across}`, [F, K])).rows;
+      await twinCarryBack(client, split.map(x => x.rid));
+      const twinsBack = await twinPassBack(client, split.map(x => x.aid),
+        `the aybkk.net pass it was kept void for is on another profile since a merge was undone on ${bkkToday()}`);
       const twinsOff = (await client.query(`UPDATE bkk_orders r SET status='paid', twin_of=NULL,
           gateway_note = regexp_replace(coalesce(r.gateway_note,''), '^entered in Rezerv for check-in; paid on aybkk\\.net ref ',
             'not the twin of aybkk.net ref ') || ' | that sale is on another profile since a merge was undone on ' || $3
         FROM bkk_orders a WHERE a.id=r.twin_of AND r.source='rezerv' AND r.status='twin' AND ${across} RETURNING r.id`,
+        [F, K, bkkToday()])).rows.length;
+      const paysBack = (await client.query(`UPDATE bkk_orders r SET status = CASE WHEN r.amount_thb < 0 THEN 'refund' ELSE 'paid' END,
+          gateway_note = regexp_replace(r.gateway_note, '^same Rezerv payment as order (\\d+), imported twice',
+            'not the same Rezerv payment as order \\1') || ' | that order is on another profile since a merge was undone on ' || $3
+        FROM bkk_orders a WHERE a.source='rezerv' AND r.source='rezerv' AND r.status='void'
+          AND r.gateway_note LIKE 'same Rezerv payment as order ' || a.refno::text || ', imported twice%' AND ${across} RETURNING r.id`,
         [F, K, bkkToday()])).rows.length;
       // A seat the merge cancelled comes back only if its student holds no other
       // seat in that class now, and its pass still has the class to give.
@@ -1650,7 +1666,7 @@ function mountBkk(app, opts = {}) {
       res.json({ success: true, code: f.code, fieldsBack: still.filter(k => k !== 'photo_at'),
         fieldsKept: back.filter(k => !still.includes(k) && k !== 'photo_at'), seatsNotBack,
         since: Object.fromEntries(Object.entries(since).map(([k, v]) => [k, v.length])),
-        twinsUndone: { passes: twinsBack.length, orders: twinsOff } });
+        twinsUndone: { passes: twinsBack.length, orders: twinsOff, payments: paysBack } });
     } catch (e) {
       await client.query('ROLLBACK').catch(() => {});
       res.status(500).json({ error: e.message });
@@ -2339,15 +2355,18 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // With a class (slotId, date), the sale also books it: staff timing (until the
   // class ends) and over capacity allowed, since the person is at the desk.
   // saleId: the desk's own id for this sale (bkk_orders.request_id), unique.
-  async function deskSale({ member, pr, method, slotId, date, checkIn, source, requestId, late, saleId }) {
+  // mailTo: a folded profile's email typed for the sale, as checkout keeps it,
+  // so the receipt goes there and an undo of that merge takes the sale back.
+  async function deskSale({ member, pr, method, slotId, date, checkIn, source, requestId, late, saleId, mailTo }) {
     const { vat, total } = breakdown(pr.price_thb, 0);
     let o = null;
     for (let attempt = 0; attempt < 5 && !o; attempt++) {
       try {
         o = (await q(
-          `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb,method,slot_id,class_date,request_id)
-           VALUES ($1,$2,$3,$4,0,$5,$6,$7,$8,$9,$10) RETURNING *`,
-          [newRefno(), pr.id, member.id, pr.price_thb, vat, total, method, slotId || null, slotId ? date : null, saleId || null])).rows[0];
+          `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb,method,slot_id,class_date,request_id,mail_to)
+           VALUES ($1,$2,$3,$4,0,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+          [newRefno(), pr.id, member.id, pr.price_thb, vat, total, method, slotId || null, slotId ? date : null, saleId || null,
+           mailTo || null])).rows[0];
       } catch (e) {
         if (e.constraint === 'bkk_orders_request_id') throw e;
         if (!/duplicate key/.test(e.message) || attempt === 4) throw e;
@@ -2419,7 +2438,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       // Only someone already here can have bought it before: a new person is made after the check.
       const em = String(email || '').trim().toLowerCase();
       // The profile the sale lands on: an email of a profile merged into another one leads there.
-      const known = em ? await liveMember(pool, await rawByEmail(pool, em)) : null;
+      const typed = em ? await rawByEmail(pool, em) : null;
+      const known = typed ? await liveMember(pool, typed) : null;
       if (known && req.body.confirmRepeat !== true) {
         const p = (await q(
           `SELECT o.refno, ${PAY_AT} AS at, o.method, o.amount_thb FROM bkk_orders o
@@ -2436,7 +2456,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const member = await findOrCreateMember({ name, email, phone });
       let sale;
       try {
-        sale = await deskSale({ member, pr, method, slotId: slotId ? Number(slotId) : null, date, checkIn: !!checkIn, saleId: rid });
+        sale = await deskSale({ member, pr, method, slotId: slotId ? Number(slotId) : null, date, checkIn: !!checkIn, saleId: rid,
+          mailTo: typed && typed.id !== member.id ? em : null });
       } catch (e) {
         const first = e.constraint === 'bkk_orders_request_id' && await saleDone(rid);
         if (first) return res.json(first);
@@ -2506,14 +2527,16 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     catch (e) { return res.status(409).json({ error: e.message }); }
     const checkIn = over || b.checkIn !== false;
     const source = checkIn ? 'door' : 'staff';
-    let member;
+    let member, mailTo = null;
     try {
       if (b.memberCode) {
         member = await memberByCode(b.memberCode);
         if (!member) return res.status(404).json({ error: 'member not found' });
       } else {
         if (!String(b.name || '').trim()) return res.status(400).json({ error: 'name is required for a new person' });
+        const typed = await rawByEmail(pool, b.email);
         member = await findOrCreateMember({ name: b.name, email: b.email, phone: b.phone });
+        if (typed && typed.id !== member.id) mailTo = String(b.email).trim().toLowerCase();
       }
     } catch (e) { return res.status(500).json({ error: e.message }); }
 
@@ -2548,7 +2571,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const pr = (await q(`SELECT * FROM bkk_products WHERE code='dropin' AND active`)).rows[0];
       if (!pr) return res.status(404).json({ error: 'the drop-in is not on sale' });
       const { o, act } = await deskSale({ member, pr, method: b.method, slotId, date, checkIn,
-        source, requestId: rid, late });
+        source, requestId: rid, late, mailTo });
       if (act && act.unsold) return await listed(act.seat);
       // Paid, but the seat went in the moment between: the money and the pass
       // stand, and the shala has the Telegram ping to put them on by hand.
@@ -2589,13 +2612,35 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
 
   // A Rezerv pass the import kept void as the copy of an aybkk.net pass is that
   // sale's pass again once the aybkk.net pass is voided: the student keeps one
-  // pass, not none. Its own dates and classes used come back with it. The note
-  // loses "voided:", so a later import leaves it live.
+  // pass, not none. Its own dates and classes used come back with it, paused if
+  // Rezerv has it paused. One Rezerv stopped since stays void, no longer paired.
+  // The note loses "voided:", so a later import leaves it as it is. said: why,
+  // after "live again: ". Gives the ids that are live again.
   async function twinPassBack(db, passIds, said) {
     if (!passIds.length) return [];
-    return (await db.query(`UPDATE bkk_passes SET status='active', twin_of=NULL,
-        note = regexp_replace(coalesce(note,''), '^voided: same sale as aybkk\\.net ref \\d+( \\| )?', '') || ' | ' || $2
-      WHERE twin_of = ANY($1) AND source='rezerv' AND status='void' RETURNING id`, [passIds, said])).rows.map(r => r.id);
+    return (await db.query(`UPDATE bkk_passes SET status = coalesce(twin_undo->>'status', 'active'), twin_of=NULL, twin_undo=NULL,
+        note = regexp_replace(coalesce(note,''), '^voided: same sale as aybkk\\.net ref \\d+( \\| )?', '') || ' | '
+          || CASE WHEN twin_undo->>'status' = 'void' THEN 'not paired now, still void as Rezerv stopped it: ' ELSE 'live again: ' END || $2
+      WHERE twin_of = ANY($1) AND source='rezerv' AND status='void' RETURNING id, status`, [passIds, said])).rows
+      .filter(r => r.status !== 'void').map(r => r.id);
+  }
+
+  // An undo that takes a twin pair apart: the pass kept gives back what the
+  // import carried onto it from the other student's Rezerv pass. The classes it
+  // added come off; a start day it gave, if the pass still starts then, becomes
+  // the first class booked on it (ending its own days later), or none.
+  async function twinCarryBack(db, rezervIds) {
+    for (const id of rezervIds) {
+      const r = (await db.query(`SELECT r.twin_undo AS u, a.id, to_char(a.valid_from,'YYYY-MM-DD') AS f,
+          (SELECT to_char(min(b.class_date),'YYYY-MM-DD') FROM bkk_bookings b WHERE b.pass_id=a.id AND b.status <> 'cancelled') AS first
+        FROM bkk_passes r JOIN bkk_passes a ON a.id=r.twin_of WHERE r.id=$1 FOR UPDATE OF a`, [id])).rows[0];
+      if (!r || !r.u) continue;
+      const dated = !!r.u.from && r.f === r.u.from;
+      await db.query(`UPDATE bkk_passes SET credits_used = GREATEST(0, credits_used - $2::int),
+          valid_from = CASE WHEN $3::boolean THEN $4::date ELSE valid_from END,
+          valid_until = CASE WHEN NOT $3::boolean THEN valid_until WHEN $4::date IS NOT NULL THEN $4::date + valid_days ELSE $5::date END
+        WHERE id=$1`, [r.id, Number(r.u.used) || 0, dated, r.first, r.u.untilWas || null]);
+    }
   }
 
   // A paid aybkk.net order a person has checked against the bank or PaySolutions
@@ -2628,7 +2673,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const said = `Void: ${reason} (by staff, ${bkkToday()})`;
       const gone = (await client.query(`UPDATE bkk_passes SET status='void', note = coalesce(note || ' | ', '') || $2
         WHERE order_id=$1 AND status <> 'void' RETURNING id`, [o.id, `voided: order ${o.refno} void`])).rows.map(p => p.id);
-      const back = await twinPassBack(client, gone, `live again: aybkk.net order ${o.refno} was made void on ${bkkToday()}`);
+      const back = await twinPassBack(client, gone, `aybkk.net order ${o.refno} was made void on ${bkkToday()}`);
       await client.query(`UPDATE bkk_orders SET status='void', gateway_note = $2 || coalesce(' | ' || gateway_note, '') WHERE id=$1`,
         [o.id, said]);
       await client.query('COMMIT');
@@ -2715,9 +2760,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         apply: `Void order ${r.xref} with the note "same Rezerv payment as order ${r.kref}, imported twice". Order ${r.kref} stays.` });
     }
     // (c) two live passes for one sale: an aybkk.net pass and a Rezerv pass of the
-    // same package family that starts within 5 days of the sale or of that pass.
+    // same package family that starts within 5 days of the sale or of that pass,
+    // and no Rezerv payment above ฿0 for that family within 5 days of its start
+    // (then the import keeps both, and e lists that payment). A class credit is
+    // never a copy: its note says so (CREDIT_NOTE), and for a Rezerv drop-in
+    // imported before that note, the reason says it may be one.
     const c = (await db.query(`SELECT r.id AS rid, a.id AS aid, o.refno, to_char(${payDay('o')},'YYYY-MM-DD') AS paid_on,
-        coalesce(pr.name_en, 'pass') AS item, m.code, m.name
+        coalesce(pr.name_en, 'pass') AS item, pr.code = 'dropin' AS dropin, m.code, m.name
       FROM bkk_passes r JOIN bkk_passes a ON a.member_id=r.member_id AND a.source IS DISTINCT FROM 'rezerv'
         AND a.status IN ('active','frozen') AND ${famOf('a')} = ${famOf('r')}
         AND (a.valid_until IS NULL OR a.valid_until >= $1::date)
@@ -2727,6 +2776,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         AND r.valid_from IS NOT NULL
         AND (abs(${payDay('o')} - r.valid_from) <= ${COPY_DAYS} OR abs(a.valid_from - r.valid_from) <= ${COPY_DAYS})
         AND NOT EXISTS (SELECT 1 FROM bkk_passes x WHERE x.twin_of=a.id)
+        AND coalesce(r.note, '') NOT LIKE '%${CREDIT_NOTE}%'
+        AND NOT EXISTS (SELECT 1 FROM bkk_orders y WHERE y.member_id=r.member_id AND y.source='rezerv' AND y.status='paid'
+          AND y.amount_thb > 0 AND ${famOf('y')} = ${famOf('r')} AND abs(${payDay('y')} - r.valid_from) <= ${COPY_DAYS})
       ORDER BY (a.product_id=r.product_id OR ${pkgOf('a')} = ${pkgOf('r')}) DESC,
         LEAST(abs(${payDay('o')} - r.valid_from), abs(a.valid_from - r.valid_from)), r.id, a.id`, [today])).rows;
     const pairs = greedy(c, 'rid', 'aid');
@@ -2742,7 +2794,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     for (const r of pairs) {
       const rz = pass(r.rid), ay = pass(r.aid);
       items.push({ id: `c-${r.rid}-${r.aid}`, kind: 'c', member: who(r), passes: [rz, ay],
-        reason: `Two live ${r.item} passes for what looks like one sale: one from Rezerv (${rz.from} to ${rz.until}, ${rz.classesUsed} classes used, ${rz.bookingsAhead} booked ahead) and the aybkk.net pass of ref ${r.refno} (paid ${r.paid_on}; ${ay.from ? `${ay.from} to ${ay.until}` : 'starts on the first class'}, ${ay.classesUsed} classes used, ${ay.bookingsAhead} booked ahead).`,
+        reason: `Two live ${r.item} passes for what looks like one sale: one from Rezerv (${rz.from} to ${rz.until}, ${rz.classesUsed} classes used, ${rz.bookingsAhead} booked ahead) and the aybkk.net pass of ref ${r.refno} (paid ${r.paid_on}; ${ay.from ? `${ay.from} to ${ay.until}` : 'starts on the first class'}, ${ay.classesUsed} classes used, ${ay.bookingsAhead} booked ahead).${r.dropin ? ' If the Rezerv one is a class Rezerv gave back for a cancelled class, it is no copy: keep both.' : ''}`,
         apply: 'Nothing here. A person chooses which pass to keep and voids the other with Void pass on the profile.' });
     }
     // (d) two paid aybkk.net orders, same person, package and class, that may be
@@ -2785,7 +2837,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       LEFT JOIN bkk_products kp ON kp.id=k.product_id
       WHERE r.source='rezerv' AND r.status='paid' AND r.amount_thb > 0 AND r.twin_of IS NULL
       ORDER BY ${lineOrder}`)).rows);
-    for (const r of greedy(e, 'rid', 'kid')) items.push({ id: `e-${r.rid}-${r.kid}`, kind: 'e', member: who(r),
+    // One item for each Rezerv line, with its nearest sale, as the import warns on each line.
+    const eOne = e.filter((r, i) => e.findIndex(x => x.rid === r.rid) === i);
+    for (const r of eOne) items.push({ id: `e-${r.rid}-${r.kid}`, kind: 'e', member: who(r),
       orders: [{ id: r.rid, refno: ref(r.rref), day: r.rday, source: 'rezerv', method: r.rmethod, amount: r.ramount, item: r.ritem },
         { id: r.kid, refno: ref(r.kref), day: r.kday, source: 'aybkk', method: r.kmethod, amount: r.kamount, item: r.kitem }],
       reason: `A ${r.ritem} line from Rezerv (฿${r.ramount}, ${r.rday}) next to ${r.kitem} paid on aybkk.net (ref ${r.kref}, ฿${r.kamount}, ${r.kmethod}, ${r.kday}): it may be one sale entered in both, or two sales.`,
@@ -3191,6 +3245,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   const CLASS_CREDIT = /^(?!.*\b(workshop|with)\b)(\[online\]\s*)?(mysore|led\s+(primary|intermediate)|self[\s-]*practice)\b/i;
   // A class credit Rezerv gives back (a cancelled class) is no sale: never the copy of one.
   const creditBack = s => CLASS_CREDIT.test(s) || /refunded\s*credits?/i.test(s);
+  const CREDIT_NOTE = 'a class Rezerv gave back';
   const IMPORT_PLANS = [[/^1\s*month/i, 'unlim1'], [/^2\s*months?/i, 'unlim2'], [/^3\s*months?/i, 'unlim3'],
     [/^6\s*months?/i, 'unlim6'], [/^(12\s*months?|1\s*years?)\b/i, 'unlim12'], [/^10[\s-]*class/i, 'pack10'],
     [/^8[\s-]*class.*\b1\s*(month|mo)\b/i, 'pack8m1'], [/^8[\s-]*class/i, 'pack8'], [/^drop[\s-]*in\b/i, 'dropin'], [CLASS_CREDIT, 'dropin']];
@@ -3318,9 +3373,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     twinOfAybkk: ref => `a ฿0 line for the sale paid on aybkk.net as ref ${ref}: kept as the same sale, not counted as money`,
     maybeTwin: (ref, pkg) => `aybkk.net has a paid sale of ${pkg || 'this package'} within 5 days (ref ${ref}): kept as paid; check it is not one sale entered twice`,
     rezervTwin: ref => `the same Rezerv payment is here already as order ${ref}, from a file with or without Rezerv's id: not added again`,
-    twinPass: (ref, used, total, from) => `the same sale as the aybkk.net pass of ref ${ref}: kept as a void pass, so the student has one pass`
+    twinPass: (ref, used, total, from, until, paused) => `the same sale as the aybkk.net pass of ref ${ref}: kept as a void pass, so the student has one pass`
       + (used ? `; the ${used} of ${total} classes used in Rezerv now count on that pass` : '')
-      + (from ? `; that pass now starts on ${from}, as in Rezerv` : ''),
+      + (from ? `; that pass now starts on ${from}, as in Rezerv${until ? `, and ends on ${until}` : ''}` : '')
+      + (paused ? `; Rezerv has it paused${paused !== '-' ? ` from ${paused}` : ''}: the pass kept is not paused here` : ''),
     badPlan: v => `package "${v}" is not one of ours (a workshop, or not understood): not kept as a pass`,
     passStatus: v => `pass status "${v}" not understood: read as no status`,
     neverStarted: v => `never started, and Rezerv says ${v}: nothing to keep`,
@@ -3732,8 +3788,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     // same package first, then the nearest. A ฿0 line is the copy of one not
     // paired yet: kept, never money. A line with money may be the same sale typed
     // in at its price, or a second sale: a person decides, whether or not a ฿0
-    // line of that sale came first in the file. A refund, and a class credit
-    // Rezerv gives back, are no sale.
+    // line of that sale came first in the file. A refund (a ฿0 one too), and a
+    // class credit Rezerv gives back, are no sale.
     const near = extra => db.query(`SELECT o.id, o.refno, px.name_en FROM bkk_orders o
       JOIN bkk_products px ON px.id=o.product_id
       WHERE o.source IS NULL AND o.status='paid' AND o.amount_thb > 0 AND o.member_id=$1
@@ -3741,7 +3797,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       ORDER BY (o.product_id=$5 OR lower(px.name_en) = lower($6)) DESC, abs(${PAY_DAY} - $2::date),
         abs(extract(epoch FROM ${PAY_AT} - $3::timestamptz)), o.id LIMIT 1`,
       [who.member.id, when.date, at, PKG_FAMILY[pr.code] || [pr.code], pr.id, pr.name_en]).then(r => r.rows[0]);
-    const sale = !!pr && amt >= 0 && !creditBack(item || '');
+    const sale = !!pr && st !== 'refund' && amt >= 0 && !creditBack(item || '');
     const twin = sale && amt === 0 ? await near('AND NOT EXISTS (SELECT 1 FROM bkk_orders x WHERE x.twin_of=o.id)') : null;
     const maybe = sale && amt > 0 ? await near('') : null;
     if (twin) warn(why('twinOfAybkk', String(twin.refno)));
@@ -3753,7 +3809,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb,status,gateway_note,
          verified_at,created_at,method,item_name,source,source_ref,twin_of,via_member)
        VALUES ($1,$2,$3,$4,0,$5,$6,$7,$8,$9,$9,$10,$11,'rezerv',$12,$13,$14)`,
-      [refno, pr ? pr.id : null, who.member.id, amt - vat, vat, amt, twin ? 'twin' : amt < 0 ? 'refund' : 'paid',
+      [refno, pr ? pr.id : null, who.member.id, amt - vat, vat, amt, twin ? 'twin' : st === 'refund' || amt < 0 ? 'refund' : 'paid',
        twin ? [`entered in Rezerv for check-in; paid on aybkk.net ref ${twin.refno}`, said].filter(Boolean).join(' | ')
          : said || 'moved from Rezerv', at, payMethod(methodRaw), item, ref, twin ? twin.id : null, who.refId]);
     return { result: 'added' };
@@ -3834,7 +3890,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const frozen = !off && !later && (state === 'frozen' || (fFrom && fFrom <= ctx.today && (!fUntil || fUntil >= ctx.today)));
     if (!off && later) warn(why('freezeLater', fFrom, fUntil || ''));
     const status = off ? 'void' : frozen ? 'frozen' : 'active';
-    const note = ['moved from Rezerv', off ? `${said} in Rezerv` : null,
+    // CREDIT_NOTE marks a class credit, which the doubles list never takes for a copy.
+    const note = ['moved from Rezerv', creditBack(planRaw) ? CREDIT_NOTE : null, off ? `${said} in Rezerv` : null,
       fFrom || fUntil ? `paused in Rezerv ${fFrom || '?'} to ${fUntil || '?'}` : null].filter(Boolean).join(' | ');
 
     const who = await importStudent(db, row, ctx, warn);
@@ -3844,7 +3901,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (!ctx.made) await fillMember(db, m, who.f, warn);
     // Rezerv's own pass id first: a pause or extra days here move the end date.
     const ref = importId(row.rezervId) || null;
-    const COLS = 'id, member_id, status, source, note, source_ref';
+    const COLS = 'id, member_id, status, source, note, source_ref, twin_of';
     let had = ref ? (await db.query(`SELECT ${COLS} FROM bkk_passes WHERE source='rezerv' AND source_ref=$1`, [ref])).rows[0] : null;
     if (had && had.member_id !== m.id) return { skip: why('idReused', ref, 'pass') };
     // No pass id, or a pass that came over without one: the same package and
@@ -3853,69 +3910,104 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         AND ($4::text IS NULL OR source_ref IS NULL)
         AND (valid_until=$3 OR ($4::text IS NOT NULL AND source='rezerv' AND valid_from=$5::date))
       ORDER BY valid_until=$3 DESC, id LIMIT 1`, [m.id, pr.id, until.date, ref, start ? start.date : null])).rows[0];
+    const from = start ? start.date
+      : new Date(Date.parse(until.date + 'T00:00:00Z') - (pr.valid_days - 1) * 86400e3).toISOString().slice(0, 10);
+    const used = left != null ? Math.max(0, total - left) : 0;
+    const pause = [later ? null : fFrom, later ? null : fUntil];
+    const copy = { used, total, from, until: until.date, started: from <= ctx.today, status, paused: frozen ? fFrom || '-' : '' };
     if (had) {
       const tag = had.source === 'rezerv' ? had.source_ref || ref : null;
+      if (tag !== had.source_ref) await db.query('UPDATE bkk_passes SET source_ref=$2 WHERE id=$1', [had.id, tag]);
+      // A twin stays void as the copy of the pass kept. What Rezerv says of it
+      // now is what it comes back as if that pair is taken apart.
+      if (had.source === 'rezerv' && had.status === 'void' && had.twin_of) {
+        const ch = await db.query(`UPDATE bkk_passes SET twin_undo = coalesce(twin_undo, '{}'::jsonb) || jsonb_build_object('status', $2::text),
+            frozen_from=$3, frozen_until=$4,
+            note = CASE WHEN $2 = 'void' AND coalesce(twin_undo->>'status', '') <> 'void' THEN note || ' | ' || $5 ELSE note END
+          WHERE id=$1 AND (coalesce(twin_undo->>'status', 'active') <> $2
+            OR frozen_from IS DISTINCT FROM $3::date OR frozen_until IS DISTINCT FROM $4::date) RETURNING id`,
+          [had.id, status, ...pause, `${said} in Rezerv`]);
+        return { result: ch.rows.length ? 'updated' : 'matched' };
+      }
       // Rezerv lists some passes twice, one copy "Inactive": the copy still in
-      // use wins, in either order. Never one staff voided here.
+      // use wins, in either order. Never one staff voided here. One that is the
+      // copy of a sale here stays void as its twin, as a new one would.
       if (!off && had.status === 'void' && had.source === 'rezerv' && !/voided:/.test(had.note || '')) {
-        await db.query('UPDATE bkk_passes SET status=$2, frozen_from=$3, frozen_until=$4, note=$5, source_ref=$6 WHERE id=$1',
-          [had.id, status, later ? null : fFrom, later ? null : fUntil, note, tag]);
+        const c = await copyOf(db, m, pr, from, planRaw);
+        if (c.skip) return c;
+        if (c.twin) {
+          const undo = await carryOnto(db, c.twin, copy, warn);
+          await db.query(`UPDATE bkk_passes SET twin_of=$2, twin_undo=$3, credits_used=$4, frozen_from=$5, frozen_until=$6, note=$7 WHERE id=$1`,
+            [had.id, c.twin.id, undo, used, ...pause, `voided: same sale as aybkk.net ref ${c.twin.refno} | ${note}`]);
+          return { result: 'updated' };
+        }
+        await db.query('UPDATE bkk_passes SET status=$2, frozen_from=$3, frozen_until=$4, note=$5 WHERE id=$1',
+          [had.id, status, ...pause, note]);
         return { result: 'updated' };
       }
-      if (tag !== had.source_ref) await db.query('UPDATE bkk_passes SET source_ref=$2 WHERE id=$1', [had.id, tag]);
       return { result: 'matched' };
     }
     if (off && until.date >= ctx.today) warn(why('passOff', said));
-    const from = start ? start.date
-      : new Date(Date.parse(until.date + 'T00:00:00Z') - (pr.valid_days - 1) * 86400e3).toISOString().slice(0, 10);
-    // Staff copied aybkk.net sales into Rezerv to check students in (Nov 2026),
-    // and each copy came back here as a second pass: one sale, one pass. The copy:
-    // a pass here of the same package family from a sale paid within 5 days of
-    // this one's start, or starting within 5 days of it, and no Rezerv payment
-    // above ฿0 for that family in those days (payments import before passes, so
-    // a pass Rezerv was paid for is known here). A class credit Rezerv gives back
-    // (a cancelled class) is no sale: never a copy. The nearest live pass here not
-    // paired yet, the same package first, stays, and this one comes over void as
-    // its twin, one to one; "voided:" keeps a later import from bringing it back.
-    // With each such pass paired already, or none live, the copy is not kept. A
-    // new pass holds no booking (a Rezerv visit never takes a pass), so nothing
-    // is left without one.
-    let twin = null;
-    if (!off && !creditBack(planRaw)) {
-      const hits = (await db.query(`SELECT p.id, p.valid_from, o.refno, to_char(${PAY_DAY},'YYYY-MM-DD') AS d,
-          p.status IN ('active','frozen') AND NOT EXISTS (SELECT 1 FROM bkk_passes x WHERE x.twin_of=p.id) AS free
-        FROM bkk_passes p JOIN bkk_orders o ON o.id=p.order_id JOIN bkk_products px ON px.id=p.product_id
-        WHERE p.member_id=$1 AND px.code = ANY($2::text[]) AND o.status='paid' AND o.source IS DISTINCT FROM 'rezerv'
-          AND (abs(${PAY_DAY} - $3::date) <= ${COPY_DAYS} OR abs(p.valid_from - $3::date) <= ${COPY_DAYS})
-          AND NOT EXISTS (SELECT 1 FROM bkk_orders r JOIN bkk_products rx ON rx.id=r.product_id
-            WHERE r.member_id=$1 AND rx.code = ANY($2::text[]) AND r.source='rezerv' AND r.status='paid' AND r.amount_thb > 0
-              AND abs(${payDay('r')} - $3::date) <= ${COPY_DAYS})
-        ORDER BY 5 DESC, (p.product_id=$4 OR lower(px.name_en) = lower($5)) DESC,
-          LEAST(abs(${PAY_DAY} - $3::date), abs(p.valid_from - $3::date)), p.id`,
-        [m.id, PKG_FAMILY[pr.code] || [pr.code], from, pr.id, pr.name_en])).rows;
-      if (hits.length && !hits[0].free) return { skip: why('copyOfSale', pr.name_en, hits[0].d) };
-      twin = hits[0] || null;
-    }
-    // What the student used in Rezerv goes onto the pass they keep: the classes,
-    // and the start day of one that has started there (it ends as Rezerv says).
-    const used = left != null ? Math.max(0, total - left) : 0;
-    const started = from <= ctx.today;
-    if (twin) {
-      await db.query(`UPDATE bkk_passes SET credits_used = LEAST(coalesce(credits_total, $2), GREATEST(credits_used, $2)),
-          valid_from = CASE WHEN valid_from IS NULL AND $3::boolean THEN $4::date ELSE valid_from END,
-          valid_until = CASE WHEN valid_from IS NULL AND $3::boolean THEN $5::date ELSE valid_until END
-        WHERE id=$1`, [twin.id, used, started, from, until.date]);
-      warn(why('twinPass', String(twin.refno), used, total || '', !twin.valid_from && started ? from : ''));
-    }
+    const c = off ? {} : await copyOf(db, m, pr, from, planRaw);
+    if (c.skip) return c;
+    const twin = c.twin || null;
+    const undo = twin ? await carryOnto(db, twin, copy, warn) : null;
     await db.query(`INSERT INTO bkk_passes
         (member_id,product_id,order_id,kind,credits_total,credits_used,daily_cap,valid_days,valid_from,valid_until,note,source,
-         status,frozen_from,frozen_until,source_ref,twin_of,via_member)
-      VALUES ($1,$2,NULL,$3,$4,$5,$6,$7,$8,$9,$10,'rezerv',$11,$12,$13,$14,$15,$16)`,
+         status,frozen_from,frozen_until,source_ref,twin_of,via_member,twin_undo)
+      VALUES ($1,$2,NULL,$3,$4,$5,$6,$7,$8,$9,$10,'rezerv',$11,$12,$13,$14,$15,$16,$17)`,
       [m.id, pr.id, pr.kind, total, used,
        pr.daily_cap, pr.valid_days, from, until.date,
        twin ? `voided: same sale as aybkk.net ref ${twin.refno} | ${note}` : note, twin ? 'void' : status,
-       later || twin ? null : fFrom, later || twin ? null : fUntil, ref, twin ? twin.id : null, who.refId]);
+       ...pause, ref, twin ? twin.id : null, who.refId, undo]);
     return { result: 'added' };
+  }
+
+  // Staff copied aybkk.net sales into Rezerv to check students in (Nov 2026),
+  // and each copy came back here as a second pass: one sale, one pass. The copy:
+  // a pass here of the same package family from a sale paid within 5 days of
+  // this one's start, or starting within 5 days of it, and no Rezerv payment
+  // above ฿0 for that family in those days (payments import before passes, so
+  // a pass Rezerv was paid for is known here). A class credit Rezerv gives back
+  // (a cancelled class) is no sale: never a copy. The nearest live pass here not
+  // paired yet, the same package first, stays (twin), and the Rezerv one is kept
+  // void as its twin, one to one; "voided:" keeps a later import from bringing
+  // it back. With each such pass paired already, or none live, the copy is not
+  // kept (skip). A new pass holds no booking (a Rezerv visit never takes a
+  // pass), so nothing is left without one.
+  async function copyOf(db, m, pr, from, planRaw) {
+    if (creditBack(planRaw)) return {};
+    const hits = (await db.query(`SELECT p.id, p.valid_from, o.refno, to_char(${PAY_DAY},'YYYY-MM-DD') AS d,
+        p.status IN ('active','frozen') AND NOT EXISTS (SELECT 1 FROM bkk_passes x WHERE x.twin_of=p.id) AS free,
+        (p.product_id=$4 OR lower(px.name_en) = lower($5)) AS same
+      FROM bkk_passes p JOIN bkk_orders o ON o.id=p.order_id JOIN bkk_products px ON px.id=p.product_id
+      WHERE p.member_id=$1 AND px.code = ANY($2::text[]) AND o.status='paid' AND o.source IS DISTINCT FROM 'rezerv'
+        AND (abs(${PAY_DAY} - $3::date) <= ${COPY_DAYS} OR abs(p.valid_from - $3::date) <= ${COPY_DAYS})
+        AND NOT EXISTS (SELECT 1 FROM bkk_orders r JOIN bkk_products rx ON rx.id=r.product_id
+          WHERE r.member_id=$1 AND rx.code = ANY($2::text[]) AND r.source='rezerv' AND r.status='paid' AND r.amount_thb > 0
+            AND abs(${payDay('r')} - $3::date) <= ${COPY_DAYS})
+      ORDER BY 5 DESC, 6 DESC, LEAST(abs(${PAY_DAY} - $3::date), abs(p.valid_from - $3::date)), p.id`,
+      [m.id, PKG_FAMILY[pr.code] || [pr.code], from, pr.id, pr.name_en])).rows;
+    if (hits.length && !hits[0].free) return { skip: why('copyOfSale', pr.name_en, hits[0].d) };
+    return { twin: hits[0] || null };
+  }
+
+  // What the student used in Rezerv goes onto the pass they keep: the classes,
+  // and for one not started here, the start day of one started in Rezerv. It
+  // then ends as Rezerv says for the same package; a package of the family with
+  // another length (8 classes in 1 or 2 months, a 12- or 13-month year) runs its
+  // own days from that start, as its first class would make it. Warns, and
+  // gives what an undo that takes the pair apart puts back (twin_undo).
+  async function carryOnto(db, twin, { used, total, from, until, started, status, paused }, warn) {
+    const k = (await db.query(`SELECT credits_used, to_char(valid_from,'YYYY-MM-DD') AS f, to_char(valid_until,'YYYY-MM-DD') AS u
+      FROM bkk_passes WHERE id=$1 FOR UPDATE`, [twin.id])).rows[0];
+    const dated = !k.f && started;
+    const now = (await db.query(`UPDATE bkk_passes SET credits_used = LEAST(coalesce(credits_total, $2), GREATEST(credits_used, $2)),
+        valid_from = CASE WHEN $3::boolean THEN $4::date ELSE valid_from END,
+        valid_until = CASE WHEN NOT $3::boolean THEN valid_until WHEN $6::boolean THEN $5::date ELSE $4::date + valid_days END
+      WHERE id=$1 RETURNING credits_used, to_char(valid_until,'YYYY-MM-DD') AS u`, [twin.id, used, dated, from, until, twin.same])).rows[0];
+    warn(why('twinPass', String(twin.refno), used, total || '', dated ? from : '', dated ? now.u : '', paused));
+    return { used: now.credits_used - k.credits_used, status, ...(dated ? { from, until: now.u, untilWas: k.u } : {}) };
   }
 
   const IMPORTERS = { members: importMemberRow, visits: importVisit, payments: importPayment, passes: importPass };
@@ -4376,7 +4468,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         [req.params.id, `voided: ${reason || 'no reason given'}`]);
       if (!r.rows.length) return res.status(409).json({ error: 'pass not found, or already void' });
       // The Rezerv copy of this pass, kept void by the import, is the sale's pass again.
-      const back = await twinPassBack(pool, [r.rows[0].id], `live again: aybkk.net pass ${r.rows[0].id} was made void on ${bkkToday()}`);
+      const back = await twinPassBack(pool, [r.rows[0].id], `aybkk.net pass ${r.rows[0].id} was made void on ${bkkToday()}`);
       res.json({ success: true, pass: r.rows[0], rezervPassBack: back });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });

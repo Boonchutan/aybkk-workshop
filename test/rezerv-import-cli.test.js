@@ -922,7 +922,7 @@ const MYSORE = 'Mysore 5.30am (1st batch)';
     const W3 = folder('twin-money');
     put(W3, 'rezerv-payments-2026.csv', csv(PAYMENTS, [payment(`${mdy(T0)} 07:20:00`, 62, gus, '1 Month unlimited', 'CASH', 10272, 672)]));
     const w3 = await since(() => cli(['run-all', W3, '--save']));
-    ok('a Rezerv line with money for a package paid on aybkk.net within 3 days stops run-all for a person (maybeTwin), nothing saved',
+    ok('a Rezerv line with money for a package paid on aybkk.net within 5 days stops run-all for a person (maybeTwin), nothing saved',
        w3.code === 1 && /^Rule: warning-needs-a-person: .*maybeTwin 1\.$/m.test(w3.err) && sent(w3.calls) === 'members:true,members:false,payments:true'
        && (await one(`SELECT count(*)::int AS n FROM bkk_orders WHERE source='rezerv' AND source_ref=$1`, [trx(62)])).n === 0, w3.all);
     const W4 = folder('twin-pass');

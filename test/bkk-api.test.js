@@ -3747,7 +3747,7 @@ const ok = (name, cond, extra = '') => {
       name_en: '8 classes / 2 months', created_at: at(3) });
     const p8m1 = row({ member_id: 12, member_code: 'OSL12', member_name: 'Lia Example', product_id: 7, product_code: 'pack8m1',
       name_en: '8 classes / 1 month', source: 'rezerv', method: 'other', amount_thb: 0, created_at: at(2) });
-    ok('a Rezerv line under the near package (8 classes in 1 month next to 2 months) gets the note too',
+    ok('a Rezerv line under the other name of the package family (8 classes in 1 month next to 2 months) gets the note too',
        sortOrders([p8m1, p8], NOW).alsoRz[p8.id] === p8m1);
   }
 
@@ -3872,7 +3872,7 @@ const ok = (name, cond, extra = '') => {
     const mtSale = await sell({ productCode: 'unlim1', name: mt.name, email: mt.email, requestId: 'os-rae-1' });
     const mt1 = await imp('payments', [{ rezervId: 'OS-T2', memberRezervId: 'OS-201', date: `${dmy(addDay(today, -1))} 18:00`,
       amount: mtSale.body.order.amount, item: '1 Month unlimited', method: 'CASH' }]);
-    ok('a Rezerv line with money for a package paid here within 3 days stays paid, and asks a person (maybeTwin)',
+    ok('a Rezerv line with money for a package paid here within 5 days stays paid, and asks a person (maybeTwin)',
        (await q1(`SELECT status, twin_of FROM bkk_orders WHERE source_ref='OS-T2'`)).status === 'paid'
        && mt1.body.warnings.some(w => w.code === 'maybeTwin' && w.vals[0] === mtSale.body.order.refno), JSON.stringify(mt1.body));
     const far = await person('OS-202', 'Sam Example', 'sam.os@example.test');
@@ -4041,8 +4041,8 @@ const ok = (name, cond, extra = '') => {
     // ── review fixes (15 Nov 2026) ──
     // A void is final: the public payment check, the postback and Activate never bring it back.
     const stubApp = express(); stubApp.use(express.json());
-    let stubAns = null;
-    stubApp.post('/order/orderdetailpost', (req, res) => stubAns ? res.json([stubAns]) : res.send(''));
+    let stubAns = null, stubAsked = 0;
+    stubApp.post('/order/orderdetailpost', (req, res) => { stubAsked++; return stubAns ? res.json([stubAns]) : res.send(''); });
     const stubSrv = stubApp.listen(0, '127.0.0.1');
     await new Promise(r => stubSrv.once('listening', r));
     const gwEnv = { PAYSO_MERCHANT_ID: '000000012345', PAYSO_SECRET_KEY: 'test-only', PAYSO_API_KEY: 'test-only',
@@ -4055,14 +4055,18 @@ const ok = (name, cond, extra = '') => {
       const gwId = (await ord(gw1.body.order.refno)).id;
       const gwVoid = await post(`/api/bkk/admin/orders/${gwId}/void`, { reason: 'paid twice, one sent back' }, ADMIN);
       const gwRep0 = await report(today);
+      // The postback answers first and then runs the same verify as the public
+      // check, so the check (which answers after its verify) shows what the
+      // postback does: a void order is never asked about at the gateway.
+      const asked0 = stubAsked;
       const gwChk = (await J('/api/bkk/pay/check/' + gw1.body.order.refno)).body;
+      const gwAsked = stubAsked - asked0;
       await post('/api/bkk/pay/postback', { refno: String(gw1.body.order.refno) });
-      await new Promise(r => setTimeout(r, 300));
       const gwFa = await post(`/api/bkk/admin/orders/${gwId}/force-activate`, { confirm: true }, ADMIN);
       const gwRow = await ord(gw1.body.order.refno), gwRep1 = await report(today);
       const gwLive = (await q1(`SELECT count(*)::int AS n FROM bkk_passes WHERE order_id=$1 AND status <> 'void'`, [gwId])).n;
       ok('a void online order stays void: the public check, the postback and Activate (409) never make it paid or give a pass',
-         gwPaid.status === 'paid' && gwVoid.status === 200 && gwChk.status === 'void' && gwFa.status === 409 && gwRow.status === 'void'
+         gwPaid.status === 'paid' && gwVoid.status === 200 && gwChk.status === 'void' && gwAsked === 0 && gwFa.status === 409 && gwRow.status === 'void'
          && gwRow.gateway_note.startsWith('Void: paid twice, one sent back') && gwLive === 0
          && gwRep1.money.total === gwRep0.money.total && gwRep1.money.count === gwRep0.money.count, JSON.stringify([gwChk, gwFa.body, gwRow.gateway_note]));
       stubAns = null;
@@ -4164,6 +4168,8 @@ const ok = (name, cond, extra = '') => {
       item: '8 classes / 1 month', method: 'Free' }]);
     const jList = ((await J('/api/bkk/admin/doubles', { headers: ADMIN })).body.items || []).filter(x => x.member.code === pj.code);
     const jRz = await q1(`SELECT status, twin_of FROM bkk_passes WHERE member_id=$1 AND source='rezerv'`, [pj.id]);
+    const jKept = await q1(`SELECT to_char(valid_from,'YYYY-MM-DD') AS f, to_char(valid_until,'YYYY-MM-DD') AS u FROM bkk_passes
+      WHERE member_id=$1 AND source IS NULL`, [pj.id]);
     ok('a Rezerv pass and ฿0 line under the other name of a pack sold here: the same sale (twinPass, twinOfAybkk), one live pass, nothing to list',
        jPass.body.warnings.some(w => w.code === 'twinPass' && w.vals[0] === jSale.body.order.refno)
        && jPay.body.warnings.some(w => w.code === 'twinOfAybkk' && w.vals[0] === jSale.body.order.refno)
@@ -4171,6 +4177,8 @@ const ok = (name, cond, extra = '') => {
        && jRz.status === 'void' && !!jRz.twin_of
        && (await q1(`SELECT status FROM bkk_orders WHERE source_ref='OS-J1'`)).status === 'twin'
        && jList.length === 0, JSON.stringify([jPass.body.warnings, jPay.body.warnings, jList.map(x => x.kind)]));
+    ok('...and the pack sold here starts on the Rezerv day but keeps its own 2 months, not the 1 month of the Rezerv name',
+       jKept.f === today && jKept.u === addDay(today, 60), JSON.stringify(jKept));
     // A Rezerv payment with money for the package: no copy, so two live passes, and the page is told.
     const pl = await person('OS-417', 'Lia Example', 'lia.os@example.test');
     const lSale = await sell({ productCode: 'unlim3', name: pl.name, email: pl.email, requestId: 'os-lia-1' });
@@ -4179,11 +4187,11 @@ const ok = (name, cond, extra = '') => {
     const lPass = await imp('passes', [{ rezervId: 'OS-LM1', memberRezervId: 'OS-417', plan: '3 months Unlimited', status: 'Active',
       start: dmy(addDay(today, -2)), until: dmy(addDay(today, 87)) }]);
     const lList = ((await J('/api/bkk/admin/doubles', { headers: ADMIN })).body.items || []).filter(x => x.member.code === pl.code);
-    ok('a Rezerv line with money for a package sold here: it asks (maybeTwin), and its pass is no copy: kept live, both listed (c, e)',
+    ok('a Rezerv line with money for a package sold here: it asks (maybeTwin), and its pass is no copy: kept live, the line listed (e)',
        lPay.body.warnings.some(w => w.code === 'maybeTwin' && w.vals[0] === lSale.body.order.refno)
        && lPass.body.added === 1 && !lPass.body.skipped.length && !lPass.body.warnings.some(w => w.code === 'twinPass')
        && (await q1(`SELECT count(*)::int AS n FROM bkk_passes WHERE member_id=$1 AND status='active'`, [pl.id])).n === 2
-       && lList.map(x => x.kind).sort().join() === 'c,e', JSON.stringify([lPay.body.warnings, lPass.body, lList.map(x => x.kind)]));
+       && lList.map(x => x.kind).sort().join() === 'e', JSON.stringify([lPay.body.warnings, lPass.body, lList.map(x => x.kind)]));
     const lRow = ((await J('/api/bkk/admin/orders?limit=2000', { headers: ADMIN })).body.orders || []).find(o => String(o.refno) === lSale.body.order.refno);
     ok('...and the payments list tells the page that sale has a live Rezerv pass next to it',
        lRow && lRow.rz_pass === true && lRow.product_code === 'unlim3', JSON.stringify(lRow && [lRow.rz_pass, lRow.product_code]));
@@ -5130,6 +5138,144 @@ const ok = (name, cond, extra = '') => {
     ok('a desk sale with the folded email lands on the kept profile, and a second one within 15 minutes answers 409 repeatOf',
        ds1.status === 200 && ds1.body.member.code === pK3.code && ds2.status === 409 && ds2.body.repeatOf.refno === ds1.body.order.refno,
        JSON.stringify([ds1.body, ds2.body]));
+    const mUn = await unmerge(pF3.code);
+    const ds3 = await desk('oc-moe-3');
+    const moeOrd = await q1(`SELECT member_id, mail_to FROM bkk_orders WHERE refno=$1`, [ds1.body.order.refno]);
+    ok('...it keeps the email typed (mail_to), so the undo takes that sale and its pass back, and a sale with that email still answers 409 repeatOf',
+       mUn.status === 200 && mUn.body.since.orders === 1 && moeOrd.member_id === pF3.id && moeOrd.mail_to === 'moe.f.oc@example.test'
+       && (await live(pF3)) === 1 && (await live(pK3)) === 0 && ds3.status === 409 && ds3.body.repeatOf.refno === ds1.body.order.refno,
+       JSON.stringify([mUn.body, moeOrd, ds3.body]));
+    const pK6 = await who(null, 'Uli Example', 'uli.k.oc@example.test'), pF6 = await who(null, 'Uli Example', 'uli.f.oc@example.test');
+    await merge(pK6.code, { from: pF6.code, sure: true });
+    const isMoon = d => moonDaysBetween(d, d).size > 0;
+    let uDay = addDay(today, 2);
+    while (isMoon(uDay)) uDay = addDay(uDay, 1);
+    const uSlot = (await q1(`INSERT INTO bkk_class_slots (code,title,kind,weekday,start_time,duration_min,capacity)
+      VALUES ('test_oc_uli','Uli Class','test',$1,'10:10',60,5) RETURNING id`, [new Date(uDay + 'T12:00:00Z').getUTCDay()])).id;
+    const uw = await post('/api/bkk/admin/walkin', { slotId: uSlot, date: uDay, cover: 'dropin', method: 'cash', checkIn: false,
+      name: 'Uli Example', email: 'uli.f.oc@example.test' }, ADMIN);
+    const uOrd = await q1(`SELECT member_id, mail_to FROM bkk_orders WHERE refno=$1`, [uw.body.refno]);
+    const uUn = await unmerge(pF6.code);
+    ok('...and so does a drop-in the door sells with that email',
+       uw.status === 200 && uOrd.member_id === pK6.id && uOrd.mail_to === 'uli.f.oc@example.test' && uUn.body.since.orders === 1
+       && (await q1(`SELECT member_id FROM bkk_orders WHERE refno=$1`, [uw.body.refno])).member_id === pF6.id, JSON.stringify([uw.body, uOrd, uUn.body]));
+
+    // A copy of another package of the family keeps the length sold here; the same package ends as Rezerv says.
+    const pDates = id => q1(`SELECT status, credits_used, to_char(valid_from,'YYYY-MM-DD') AS f, to_char(valid_until,'YYYY-MM-DD') AS u
+      FROM bkk_passes WHERE id=$1`, [id]);
+    const pY = await who('OC-Y', 'Yui Example');
+    const sY = await sale(pY, 'unlim12m', addDay(today, -1));
+    const yRow = pass('OC-Y', '1 Year (13 months)', today, 395);
+    const y1 = await imp('passes', [yRow]);
+    const yKept = await pDates(sY.pass);
+    ok('a 13-month Rezerv year paired with 12 months sold here: the pass kept starts on the Rezerv day and runs its own 365 days, said in the warning',
+       has(y1, 'twinPass') && (await rzPass(yRow.rezervId)).twin_of === sY.pass && yKept.f === today && yKept.u === addDay(today, 365)
+       && y1.body.warnings.some(w => w.code === 'twinPass' && w.vals[3] === today && w.vals[4] === addDay(today, 365)),
+       JSON.stringify([y1.body.warnings, yKept]));
+    ok('...and a copy of the same package carries Rezerv\'s own end day', (await pDates(sA.pass)).u === addDay(today, 89),
+       JSON.stringify(await pDates(sA.pass)));
+
+    // An undo that takes a pair apart takes the carry back off the pass sold here.
+    const pK4 = await who('OC-K4', 'Ola Example'), pF4 = await who(null, 'Ola Example', 'ola.oc@example.test');
+    const sF4 = await sale(pF4, 'pack8', today);
+    await merge(pK4.code, { from: pF4.code });
+    const k4Row = pass('OC-K4', '8 classes / 2 months', addDay(today, -3), 60, { classesLeft: 3 });
+    const k4 = await imp('passes', [k4Row]);
+    const f4Mid = await pDates(sF4.pass);
+    const un4 = await unmerge(pF4.code);
+    const f4 = await pDates(sF4.pass), k4Rz = await rzPass(k4Row.rezervId);
+    const f4Void = await post(`/api/bkk/admin/orders/${sF4.id}/void`, { reason: 'test' }, ADMIN);
+    ok('an undo of a merge that paired a pack: the pack sold here gives back the 5 classes and the start day it took, and S9 can void it',
+       has(k4, 'twinPass') && f4Mid.credits_used === 5 && f4Mid.f === addDay(today, -3)
+       && un4.body.twinsUndone.passes === 1 && f4.credits_used === 0 && f4.f === null && f4.u === null
+       && k4Rz.status === 'active' && f4Void.status === 200, JSON.stringify([f4Mid, f4, k4Rz, f4Void.body]));
+    const pK5 = await who('OC-K5', 'Pat Example'), pF5 = await who(null, 'Pat Example', 'pat.oc@example.test');
+    const sF5 = await sale(pF5, 'pack8', today);
+    await merge(pK5.code, { from: pF5.code });
+    await imp('passes', [pass('OC-K5', '8 classes / 2 months', addDay(today, -3), 60, { classesLeft: 3 })]);
+    await pool.query(`INSERT INTO bkk_bookings (slot_id,class_date,start_at,member_id,pass_id,status)
+      VALUES ($1,$2::date,$3::timestamptz,$4,$5,'booked')`, [uSlot, uDay, `${uDay}T10:10:00+07:00`, pK5.id, sF5.pass]);
+    await pool.query('UPDATE bkk_passes SET credits_used = credits_used + 1 WHERE id=$1', [sF5.pass]);
+    await unmerge(pF5.code);
+    const f5 = await pDates(sF5.pass);
+    ok('...a class booked on it since stays: 1 used, and the pass starts on that class and runs its own 60 days',
+       f5.credits_used === 1 && f5.f === uDay && f5.u === addDay(uDay, 60), JSON.stringify(f5));
+
+    // A ฿0 refund never twins, wherever it sits in the file.
+    const pG = await who('OC-G', 'Gia Example');
+    const sG = await sale(pG, 'unlim1', today);
+    const gBack = pay('OC-G', '1 Month unlimited', 0, today, { status: 'Refunded' }), gZero = pay('OC-G', '1 Month unlimited', 0, addDay(today, -1));
+    const g1 = await imp('payments', [gBack, gZero]);
+    const gB = await rzLine(gBack.rezervId), gZ = await rzLine(gZero.rezervId);
+    ok('a ฿0 line marked Refunded is a refund, never a twin: the paid ฿0 line after it in the file is the twin of the sale',
+       gZ.status === 'twin' && gZ.twin_of === sG.id && gB.status === 'refund' && gB.twin_of === null
+       && g1.body.warnings.filter(w => w.code === 'twinOfAybkk').map(w => w.row).join() === '2', JSON.stringify([g1.body.warnings, gB, gZ]));
+
+    // The doubles list: one e for each Rezerv line, and no c for what the import keeps as two passes.
+    const pV = await who('OC-V', 'Vic Example');
+    const sV = await sale(pV, 'unlim1', today);
+    const v1 = await imp('payments', [pay('OC-V', '1 Month unlimited', 9600, today), pay('OC-V', '1 Month unlimited', 9600, addDay(today, -2))]);
+    const dl2 = (await J('/api/bkk/admin/doubles', { headers: ADMIN })).body.items || [];
+    const kinds2 = m => dl2.filter(x => x.member.code === m.code).map(x => x.kind).sort().join();
+    ok('two Rezerv lines with money next to one sale: the import asks on each (maybeTwin), and the list has an e for each',
+       v1.body.warnings.filter(w => w.code === 'maybeTwin').length === 2 && kinds2(pV) === 'e,e'
+       && dl2.filter(x => x.member.code === pV.code).every(x => x.orders[1].id === sV.id), JSON.stringify(dl2.filter(x => x.member.code === pV.code)));
+    ok('...a pass Rezerv has a paid line for is no c (the import keeps both; e lists the line), nor is a class credit, marked in its note',
+       kinds2(pR) === 'e' && kinds2(pC) === '' && (await rzPass(cRow.rezervId)).note.includes('a class Rezerv gave back'),
+       JSON.stringify([kinds2(pR), kinds2(pC), (await rzPass(cRow.rezervId)).note]));
+
+    // Rezerv lists a copy twice, the "Inactive" line first: the live line still makes it the twin.
+    const pZ = await who('OC-Z', 'Zoe Example');
+    const sZ = await sale(pZ, 'unlim1', today);
+    const zRow = pass('OC-Z', '1 Month unlimited', today, 30);
+    const z1 = await imp('passes', [{ ...zRow, status: 'Inactive' }, zRow]);
+    const zRz = await rzPass(zRow.rezervId);
+    const z2 = await imp('passes', [zRow]);
+    ok('the "Inactive" copy first, then the live one: kept void as the twin of the sale (twinPass), one live pass, and again nothing changes',
+       has(z1, 'twinPass') && z1.body.updated === 1 && zRz.status === 'void' && zRz.twin_of === sZ.pass && /^voided:/.test(zRz.note)
+       && (await live(pZ)) === 1 && z2.body.matched === 1 && (await rzPass(zRow.rezervId)).status === 'void', JSON.stringify([z1.body, zRz, z2.body]));
+
+    // One Rezerv payment voided as imported twice while merged is a payment again after the undo.
+    const pH = await who('OC-H', 'Hal Example', 'hal.k.oc@example.test'), pH2 = await who(null, 'Hal Example', 'hal.f.oc@example.test');
+    const hDay = addDay(today, -3);
+    await imp('payments', [{ rezervId: 'OC-HID', memberRezervId: 'OC-H', date: `${dmy(hDay)} 10:15`, amount: 10272, item: '1 Month Unlimited', method: 'CASH' }]);
+    await imp('payments', [{ email: 'hal.f.oc@example.test', name: 'Hal Example', date: `${dmy(hDay)} 10:15`, amount: 10272, item: '1 Month Unlimited', method: 'CASH' }]);
+    const hm0 = await report();
+    await merge(pH.code, { from: pH2.code, sure: true });
+    const hb = ((await J('/api/bkk/admin/doubles', { headers: ADMIN })).body.items || []).filter(x => x.member.code === pH.code && x.kind === 'b');
+    const hAp = await post('/api/bkk/admin/doubles/apply', { ids: hb.map(x => x.id) }, ADMIN);
+    const hm1 = await report();
+    const hUn = await unmerge(pH2.code);
+    const hm2 = await report();
+    ok('a payment voided as imported twice while two profiles were merged is a payment again after the undo: the totals as before',
+       hb.length === 1 && hAp.body.applied.length === 1 && hm1.count === hm0.count - 1 && hUn.body.twinsUndone.payments === 1
+       && hm2.count === hm0.count && hm2.total === hm0.total
+       && (await q1(`SELECT count(*)::int AS n FROM bkk_orders WHERE member_id = ANY($1) AND status='paid'`, [[pH.id, pH2.id]])).n === 2,
+       JSON.stringify([hb.length, hAp.body, hm0.count, hm1.count, hm2.count, hUn.body.twinsUndone]));
+
+    // A twin comes back as Rezerv has it: stopped since, it stays void; paused, it comes back paused.
+    const pJ = await who('OC-J', 'Jun Example');
+    const sJ = await sale(pJ, 'unlim1', today);
+    const jRow = pass('OC-J', '1 Month unlimited', today, 30);
+    await imp('passes', [jRow]);
+    const j2 = await imp('passes', [{ ...jRow, status: 'Cancelled', cancelled: 'Yes' }]);
+    const j3 = await imp('passes', [{ ...jRow, status: 'Cancelled', cancelled: 'Yes' }]);
+    const jV = await post(`/api/bkk/admin/orders/${sJ.id}/void`, { reason: 'test' }, ADMIN);
+    const jRz = await rzPass(jRow.rezervId);
+    ok('a twin Rezerv says is cancelled since: the re-import notes it once, and voiding the sale here leaves it void, no longer paired',
+       j2.body.updated === 1 && j3.body.matched === 1 && jV.status === 200 && jV.body.rezervPassBack.length === 0
+       && jRz.status === 'void' && jRz.twin_of === null && /cancelled in Rezerv/.test(jRz.note) && !/live again/.test(jRz.note)
+       && (await live(pJ)) === 0, JSON.stringify([j2.body, jV.body, jRz]));
+    const pW = await who('OC-W', 'Wen Example');
+    const sW = await sale(pW, 'unlim3', addDay(today, -10), { from: addDay(today, -10) });
+    const wRow = pass('OC-W', '3 months Unlimited', addDay(today, -9), 90, { status: 'Frozen',
+      frozenFrom: dmy(addDay(today, -2)), frozenUntil: dmy(addDay(today, 12)) });
+    const w1 = await imp('passes', [wRow]);
+    const wV = await post(`/api/bkk/admin/orders/${sW.id}/void`, { reason: 'test' }, ADMIN);
+    const wRz = await q1(`SELECT status, to_char(frozen_from,'YYYY-MM-DD') AS ff FROM bkk_passes WHERE source='rezerv' AND source_ref=$1`, [wRow.rezervId]);
+    ok('a twin Rezerv has paused today: the warning says so, and voiding the sale brings it back paused, as Rezerv has it',
+       w1.body.warnings.some(w => w.code === 'twinPass' && w.vals[5] === addDay(today, -2)) && wV.status === 200
+       && wV.body.rezervPassBack.length === 1 && wRz.status === 'frozen' && wRz.ff === addDay(today, -2), JSON.stringify([w1.body.warnings, wV.body, wRz]));
   }
 
   console.log(`\n${PASS} passed, ${FAIL} failed`);
