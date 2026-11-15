@@ -15,7 +15,10 @@
      "elephant",
      1.92
     ]
-   ]
+   ],
+   "mom_en": "Ride an elephant…",
+   "ans_en": "Ride an elephant, because a tsunami is coming",
+   "real_en": "Ride an elephant to catch a grasshopper"
   },
   {
    "q": 5.04,
@@ -31,7 +34,10 @@
      "frog_or_toad",
      9.54
     ]
-   ]
+   ],
+   "mom_en": "Push a mortar…",
+   "ans_en": "A toad?",
+   "real_en": "Push a mortar up a mountain"
   },
   {
    "q": 9.28,
@@ -53,7 +59,10 @@
      "tiger",
      10.74
     ]
-   ]
+   ],
+   "mom_en": "Draw a tiger for…",
+   "ans_en": "For us!",
+   "real_en": "Draw a tiger to scare the cow"
   },
   {
    "q": 13.5,
@@ -75,7 +84,10 @@
      "cow",
      16.94
     ]
-   ]
+   ],
+   "mom_en": "Look for a needle in…",
+   "ans_en": "A cow",
+   "real_en": "Look for a needle in the ocean"
   },
   {
    "q": 17.5,
@@ -103,7 +115,10 @@
      "elephant",
      23.32
     ]
-   ]
+   ],
+   "mom_en": "In water, it won’t float away. In fire…",
+   "ans_en": "An elephant helps!",
+   "real_en": "In water, it won’t float away. In fire, it won’t burn"
   },
   {
    "q": 24.34,
@@ -125,7 +140,10 @@
      "car_zoom",
      30.76
     ]
-   ]
+   ],
+   "mom_en": "Lose, be a monk. Win, be a…",
+   "ans_en": "",
+   "real_en": "Lose, be a monk. Win, be a demon"
   },
   {
    "q": 32.7,
@@ -153,7 +171,10 @@
      "rhino",
      38.12
     ]
-   ]
+   ],
+   "mom_en": "See an elephant poop…",
+   "ans_en": "Then a rhino comes to poop too",
+   "real_en": "See an elephant poop, poop like the elephant"
   },
   {
    "q": 40.04,
@@ -175,7 +196,10 @@
      "splash",
      47.14
     ]
-   ]
+   ],
+   "mom_en": "Pull the river…",
+   "ans_en": "Aquaman!",
+   "real_en": "Pull in all five rivers"
   },
   {
    "q": 46.82,
@@ -197,7 +221,10 @@
      "whoosh",
      50.86
     ]
-   ]
+   ],
+   "mom_en": "Point to the hole for…",
+   "ans_en": "A cheetah!",
+   "real_en": "Point to the hole for the squirrel"
   },
   {
    "q": 50.92,
@@ -225,7 +252,10 @@
      "slurp",
      57.54
     ]
-   ]
+   ],
+   "mom_en": "Hold poop…",
+   "ans_en": "Hold poop, so an elephant sucks it away",
+   "real_en": "Holding poop beats holding a fart"
   },
   {
    "q": 60.22,
@@ -263,7 +293,11 @@
      "ding",
      69.04
     ]
-   ]
+   ],
+   "mom_en": "A hen is pretty for her feathers, a person for…",
+   "ans_en": "Because you want to walk to a hotel party",
+   "real_en": "A hen is pretty for her feathers, a person for their clothes",
+   "momok_en": "Mom: Oh, correct!"
   },
   {
    "q": 68.54,
@@ -291,7 +325,10 @@
      "boing",
      76.12
     ]
-   ]
+   ],
+   "mom_en": "Hands won’t paddle, so the feet…",
+   "ans_en": "Feet kick a face!",
+   "real_en": "Hands won’t paddle, and the feet drag in the water"
   },
   {
    "q": 78.02,
@@ -319,7 +356,10 @@
      "ding",
      84.06
     ]
-   ]
+   ],
+   "mom_en": "Teach a crocodile to…",
+   "ans_en": "Yoga!",
+   "real_en": "Teach a crocodile to swim"
   }
  ],
  "freeze": 1.6,
@@ -339,5 +379,6 @@
   "fx": 0.4,
   "tone": 0.28,
   "laugh": 0.4
- }
+ },
+ "title_en": "Gen Alpha finishes Thai proverbs"
 }

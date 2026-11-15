@@ -24,8 +24,12 @@ def text_img(txt,size,fill,stroke,sw,maxw=980,align='center',lh=1.18):
         lw=f.getlength(l); x=(wmax-lw)/2 if align=='center' else sw+10
         d.text((x,ys[k]),l,font=f,fill=fill,stroke_width=sw,stroke_fill=stroke)
     return im.crop(im.getbbox())
-def pill(txt,size,fg,bg,pad=(34,16),maxw=940):
+def stack(a,b,gap):
+    w=max(a.width,b.width); im=Image.new('RGBA',(w,a.height+gap+b.height),(0,0,0,0))
+    im.alpha_composite(a,((w-a.width)//2,0)); im.alpha_composite(b,((w-b.width)//2,a.height+gap)); return im
+def pill(txt,size,fg,bg,pad=(34,16),maxw=940,en=None,en_size=30):
     t=text_img(txt,size,fg,bg[:3],0,maxw)
+    if en: t=stack(text_img(en,en_size,fg,bg[:3],0,maxw),t,4)
     w,h=t.size; im=Image.new('RGBA',(w+2*pad[0],h+2*pad[1]),(0,0,0,0)); d=ImageDraw.Draw(im)
     d.rounded_rectangle([0,0,im.width-1,im.height-1],radius=min(40,im.height//2),fill=bg)
     im.alpha_composite(t,(pad[0],pad[1])); return im
@@ -42,13 +46,18 @@ def popscale(dt,dur=0.32):
     if dt>=dur: return 1.0
     x=dt/dur; return 1.18*np.sin(x*np.pi/2) if x<0.7 else 1.18-0.18*((x-0.7)/0.3)
 # pre-render
-TITLE_BIG=text_img(T['title'].replace('ต่อคำ','\nต่อคำ').replace('\n',' '),88,(255,255,255),BLK,8,maxw=900)
-TITLE_SMALL=pill(T['title'],44,(255,255,255),(20,16,16,165))
+TITLE_BIG=stack(text_img(T['title_en'],46,(255,255,255),BLK,6,maxw=900),text_img(T['title'].replace('ต่อคำ','\nต่อคำ').replace('\n',' '),88,(255,255,255),BLK,8,maxw=900),2)
+TITLE_SMALL=pill(T['title'],44,(255,255,255),(20,16,16,165),en=T['title_en'],en_size=26)
 for it in T['items']:
-    it['_mom']=pill('แม่: '+it['mom'],52,(30,24,24),(255,255,255,238))
-    it['_ans']=text_img(it['ans'],88,YEL,BLK,9)
-    it['_real']=text_img('ของจริง: '+it['real'],44,(255,255,255),BLK,5,maxw=1000)
-    if 'momok' in it: it['_momok']=pill(it['momok'][1].replace(' 😂',''),52,(30,24,24),(255,255,255,238))
+    it['_mom']=pill('แม่: '+it['mom'],52,(30,24,24),(255,255,255,238),en='Mom: '+it['mom_en'],en_size=30)
+    th=text_img(it['ans'],70,YEL,BLK,8)
+    it['_ans']=stack(text_img(it['ans_en'],34,YEL,BLK,4,maxw=1010),th,2) if it.get('ans_en') else th
+    it['_real']=stack(text_img('Real one: '+it['real_en'],30,(255,255,255),BLK,4,maxw=1000),text_img('ของจริง: '+it['real'],44,(255,255,255),BLK,5,maxw=1000),2)
+    if 'momok' in it: it['_momok']=pill(it['momok'][1].replace(' 😂',''),52,(30,24,24),(255,255,255,238),en=it.get('momok_en'),en_size=30)
+for it in T['items']:
+    mh=max(it['_mom'].height,it.get('_momok',it['_mom']).height); it['_mh']=mh
+    bottom=1250+mh/2+30+it['_ans'].height; rtop=1795-it['_real'].height/2
+    it['_dy']=-max(0,bottom+16-rtop)
 def paste_c(fr,im,cx,cy,scale=1.0,alpha=1.0):
     if scale<=0.01 or alpha<=0.01: return
     if abs(scale-1)>0.01: im=im.resize((max(1,int(im.width*scale)),max(1,int(im.height*scale))),Image.LANCZOS)
@@ -59,8 +68,6 @@ def overlay(fr,t):
     # title
     if t<3.0:
         s=popscale(t-0.05); paste_c(fr,TITLE_BIG,W/2,210,s)
-    else:
-        a=ease((t-3.0)/0.25); paste_c(fr,TITLE_SMALL,W/2,92,1.0,a)
     for it in T['items']:
         if not (it['q']<=t<it['end']+0.25): continue
         fade=1.0 if t<it['end'] else max(0,1-(t-it['end'])/0.25)
@@ -89,13 +96,14 @@ def overlay(fr,t):
         if not (it['q']<=t<it['end']+0.25): continue
         fade=1.0 if t<it['end'] else max(0,1-(t-it['end'])/0.25)
         # mom pill
-        mp=it['_mom']
-        if 'momok' in it and t>=it['momok'][0]: mp=it['_momok']
-        up=ease((t-it['q'])/0.22); paste_c(fr,mp,W/2,1250+40*(1-up),1.0,up*fade)
+        mp=it['_mom']; rt=it['a']+0.9; ma=1.0
+        if 'momok' in it and t>=it['momok'][0]: mp=it['_momok']; ma=ease((t-it['momok'][0])/0.2)
+        elif t>=rt: ma=1-ease((t-rt)/0.25)
+        up=ease((t-it['q'])/0.22); paste_c(fr,mp,W/2,1250+it['_dy']+40*(1-up),1.0,up*fade*ma)
         if t>=it['a']:
-            paste_c(fr,it['_ans'],W/2,1250+mp.height/2+30+it['_ans'].height/2,popscale(t-it['a']),fade)
+            paste_c(fr,it['_ans'],W/2,1250+it['_dy']+it['_mh']/2+30+it['_ans'].height/2,popscale(t-it['a']),fade)
             rt=it['a']+0.9
-            if t>=rt: paste_c(fr,it['_real'],W/2,1810,1.0,ease((t-rt)/0.25)*fade)
+            if t>=rt: paste_c(fr,it['_real'],W/2,1795,1.0,ease((t-rt)/0.25)*fade)
 def frames():
     p=subprocess.Popen([FF,'-loglevel','error','-i',D+'/src/src.mp4','-vf',f'scale={W}:{H}:flags=lanczos','-f','rawvideo','-pix_fmt','rgb24','-'],stdout=subprocess.PIPE)
     n=W*H*3

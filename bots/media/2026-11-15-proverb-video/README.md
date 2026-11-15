@@ -26,3 +26,8 @@ Boonchu's video (Drive AYBKK/03_Reels_Content/สุภาษิต, 85 s, 4K ve
 - Fire: real flare whoosh on 🔥. Laugh: 2 s CC0 chuckle at 40% when Mom laughs (40.1 s and 83.6 s).
 - Levels vs the normalized voice's mono 99.9% peak: animals 0.60, other effects 0.40, ding/bell/gong 0.28, laugh 0.40 (checked in mix.wav).
 - Boonchu, 15 Nov: 'it all good'. Draft 4 approved. Timing and sound rules saved as standing orders in plato.md.
+
+## Draft 5 = final (15 Nov)
+- Small English line above every Thai line (title, Mom, Boone, real proverb). Boone's answer Thai 70 px, English 34 px.
+- Less clutter: title only 0-3 s; Mom's line fades out when the real proverb comes in; tall answers lift up so nothing overlaps.
+- Drive upload from the cloud session is capped at 10 MB, so the 95 MB mp4 could not go to Drive for the Edits job.
