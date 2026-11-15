@@ -4355,6 +4355,56 @@ const ok = (name, cond, extra = '') => {
        JSON.stringify(credit.body));
   }
 
+  console.log('\n-- PaySolutions says "Y Paid" (15 Nov 2026) --');
+  {
+    const http = require('http');
+    const one = async (sql, args = []) => (await pool.query(sql, args)).rows[0] || {};
+    let answer = null;
+    const stub = http.createServer((req, res) => {
+      req.resume();
+      req.on('end', () => { res.setHeader('Content-Type', 'application/json'); res.end(answer == null ? '' : JSON.stringify(answer)); });
+    });
+    await new Promise(r => stub.listen(0, '127.0.0.1', r));
+    const env = { PAYSO_MERCHANT_ID: '00012345', PAYSO_SECRET_KEY: 'test-only', PAYSO_API_KEY: 'test-only',
+      PAYSO_INQUIRY_BASE: `http://127.0.0.1:${stub.address().port}` };
+    Object.assign(process.env, env);
+    const buy = async n => (await post('/api/bkk/orders', { productCode: 'pack8', name: `Status ${n} Example`, email: `status.${n}@example.com` })).body;
+    const state = async refno => one(`SELECT o.status, o.gateway_note, (SELECT count(*)::int FROM bkk_passes p WHERE p.order_id=o.id) AS passes
+      FROM bkk_orders o WHERE o.refno=$1`, [refno]);
+    const check = async (o, a) => { answer = a; return (await J('/api/bkk/pay/check/' + o.order.refno)).body; };
+
+    const y = await buy('y');
+    const yChk = await check(y, [{ ReferenceNo: String(y.order.refno).padStart(12, '0'), Total: y.order.amount, Status: 'Y', StatusName: 'Paid' }]);
+    const yRow = await state(y.order.refno);
+    ok('"Y Paid" at the right amount is a payment: the order is paid and the pass is made', yChk.status === 'paid'
+       && yRow.status === 'paid' && yRow.passes === 1, JSON.stringify([yChk, yRow]));
+    const cp = await buy('cp');
+    const cpChk = await check(cp, { Total: cp.order.amount, Status: 'CP', StatusName: 'COMPLETE' });
+    ok('..."CP COMPLETE" as in the docs still is', cpChk.status === 'paid' && (await state(cp.order.refno)).passes === 1, JSON.stringify(cpChk));
+    const wrong = await buy('wrong');
+    const wChk = await check(wrong, [{ Total: wrong.order.amount - 1, Status: 'Y', StatusName: 'Paid' }]);
+    const wRow = await state(wrong.order.refno);
+    ok('...but "Y Paid" for another amount makes no pass: it waits as a mismatch', wChk.status === 'mismatch'
+       && wRow.status === 'mismatch' && wRow.passes === 0, JSON.stringify([wChk, wRow]));
+    const none = await buy('none');
+    const nChk = await check(none, [{ Status: 'Y', StatusName: 'Paid' }]);
+    ok('...and "Y Paid" with no amount makes no pass either', nChk.status === 'mismatch' && (await state(none.order.refno)).passes === 0,
+       JSON.stringify(nChk));
+    const unpaid = await buy('unpaid');
+    const uChk = await check(unpaid, [{ Total: unpaid.order.amount, Status: 'N', StatusName: 'Unpaid' }]);
+    const uRow = await state(unpaid.order.refno);
+    ok('another status is not paid, and the note keeps what PaySolutions said, the amount included', uChk.status === 'pending'
+       && uRow.status === 'pending' && uRow.passes === 0 && uRow.gateway_note === `http 200 status=N Unpaid total=${unpaid.order.amount}`,
+       JSON.stringify(uRow));
+    const empty = await check(unpaid, null);
+    ok('...and no answer at all is still "no record"', empty.status === 'pending' && /^no record/.test(empty.note || ''), JSON.stringify(empty));
+    const again = await check(y, [{ Total: y.order.amount, Status: 'Y', StatusName: 'Paid' }]);
+    ok('asking again about a paid order makes no second pass', again.status === 'paid' && (await state(y.order.refno)).passes === 1,
+       JSON.stringify(again));
+    Object.keys(env).forEach(k => { delete process.env[k]; });
+    stub.close();
+  }
+
   console.log(`\n${PASS} passed, ${FAIL} failed`);
   srv.close(); await pool.end();
   process.exit(FAIL ? 1 : 0);

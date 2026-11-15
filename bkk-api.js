@@ -1096,6 +1096,7 @@ function mountBkk(app, opts = {}) {
   // is written out literally rather than normalised. merchantID is the LAST 5
   // DIGITS of the merchant id, in both header and body. Unused body fields take
   // the literal placeholders the docs specify ("X", "QWERTY").
+  const PAID_STATUS = new Set(['CP', 'Y']);
   async function inquire(cfg, order) {
     const url = `${cfg.inquiryBase.replace(/\/$/, '')}/order/orderdetailpost`;
     const mid5 = String(cfg.merchantId).slice(-5);
@@ -1124,13 +1125,15 @@ function mountBkk(app, opts = {}) {
     // key both come back "not paid", and the code is what tells them apart.
     if (!d) return { paid: false, note: `no record (http ${r.status})` };
     const status = String(d.Status ?? '').toUpperCase();
-    const paid = status === 'CP';
+    // The docs show "CP" (COMPLETE); the live account answers "Y" (Paid) for a
+    // finished payment (15 Nov 2026). Either is paid; the amount is still checked.
+    const paid = PAID_STATUS.has(status);
     // Total comes back as a JSON number (3900.0), not a string.
     const amount = d.Total == null ? null : Number(d.Total);
     return {
       paid, amount, raw: d,
       note: paid ? 'confirmed'
-        : `http ${r.status} status=${status || 'unknown'} ${d.StatusName || ''}`.trim(),
+        : `http ${r.status} status=${status || 'unknown'} ${d.StatusName || ''} total=${d.Total ?? 'none'}`.trim(),
     };
   }
 
