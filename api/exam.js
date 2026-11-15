@@ -9,6 +9,7 @@
 const express = require('express');
 const router = express.Router();
 const { staffOnly } = require('../lib/staff-key');
+const { readPrivateJson, seedPrivateJson } = require('../lib/private-data');
 const { v4: uuidv4 } = require('uuid');
 
 const BANK = require('../exam-bank-cn2');
@@ -43,17 +44,13 @@ const TEST_SEATS = [
 ];
 const isTestSeat = id => TEST_SEATS.some(s => s.id === id);
 
-/* The eleven who sat Part 3, named explicitly rather than read from classType.
-   The tag in the graph is wrong in three ways: it still carries Cris, who did not
-   attend, and it is missing QiaoQiao and Xiao Ma entirely, so two students could
-   not have sat the exam at all. An exam roster must not depend on a tag being
-   tidy on the night.
-
-   Ids were chosen by journal history, because a record with real check-ins is the
-   student's actual account and the zero check-in duplicates are workshop signup
-   forms. Two are marked verify: they had more than one plausible record.
-   Cris Shudi and TinaQian are deliberately absent. */
-const COHORT_ROSTER = [
+/* The students who sat Part 3, named explicitly rather than read from classType: the tag in
+   the graph was wrong on the night (it carried a student who did not attend and missed two who
+   did). Ids were chosen by journal history; "verify" marks a student with more than one plausible
+   record. The list names students, so it lives in the private data dir, not in git.
+   For one release the list below is copied there on boot; the next PR deletes it from the code. */
+const COHORT_FILE = ['exam', EXAM_ID + '-cohort.json'];
+seedPrivateJson([
   { id: '4c576442-e2c0-4884-9878-d97cd62ee8d3', name: 'Yi yang',  chineseName: '徐一洋' },
   { id: 'ws-1774548685162',                     name: 'QiaoQiao', chineseName: '乔畅', verify: true },
   { id: '0522af73-efb6-46a5-a73b-c5023f8affeb', name: 'Lisa',     chineseName: '赵丽云' },
@@ -65,7 +62,8 @@ const COHORT_ROSTER = [
   { id: 'c0b4d60e-df44-4b8d-93fa-854b4081de02', name: 'Tinyee',   chineseName: '李亭逸' },
   { id: 'e2568186-8aff-4f58-b429-fc2ce9d94b28', name: 'Much',     chineseName: '马驰' },
   { id: 'd7e82761-191f-4723-bbb5-a9eb7a65b8b1', name: 'Wini',     chineseName: '王榕榕' },
-];
+], ...COHORT_FILE);
+const cohortRoster = () => readPrivateJson(...COHORT_FILE) || [];
 
 /* Append-only disk copy of every submitted paper, written before the graph write.
    This is the safety net: if Neo4j is unreachable, slow, or the write silently
@@ -111,7 +109,7 @@ function checkTeacherAuth(req) {
 }
 
 /* ---------------------------------------------------------------- roster */
-/* Serves COHORT_ROSTER, the explicit list of the eleven who sat Part 3. The
+/* Serves the cohort roster (private data dir), the explicit list of the eleven who sat Part 3. The
    graph is consulted only for who has already submitted, so a wrong or missing
    classType tag cannot drop a student from the exam or add one who left. */
 router.get('/roster', staffOnly, async (req, res) => {
@@ -121,10 +119,10 @@ router.get('/roster', staffOnly, async (req, res) => {
       `MATCH (s:Student)-[:TOOK]->(a:ExamAttempt {examId: $examId})
        WHERE s.id IN $ids OR s.pgId IN $ids OR s.studentId IN $ids
        RETURN DISTINCT s.id AS id`,
-      { examId: EXAM_ID, ids: COHORT_ROSTER.map(s => s.id) }
+      { examId: EXAM_ID, ids: cohortRoster().map(s => s.id) }
     );
     const done = new Set(result.records.map(r => r.get('id')));
-    const students = COHORT_ROSTER.map(s => ({
+    const students = cohortRoster().map(s => ({
       id: s.id, name: s.name, chineseName: s.chineseName,
       submitted: done.has(s.id)
     }));
@@ -134,7 +132,7 @@ router.get('/roster', staffOnly, async (req, res) => {
     /* even with the graph down the full roster still renders; only the
        "submitted" badges are lost until it returns */
     console.error('exam roster error:', error);
-    const students = COHORT_ROSTER.map(s => ({
+    const students = cohortRoster().map(s => ({
       id: s.id, name: s.name, chineseName: s.chineseName, submitted: false
     }));
     const seats = TEST_SEATS.map(s => ({ ...s, submitted: false, isTest: true }));
@@ -175,9 +173,9 @@ router.get('/paper/:studentId', async (req, res) => {
     }
 
     const paper = drawForStudent(BANK, studentId, EXAM_ID);
-    /* the roster name wins over the graph name, so Xiao Ma is not greeted as
-       "Sharma", the alias her database record happens to carry */
-    const rosterEntry = COHORT_ROSTER.find(r => r.id === studentId);
+    /* the roster name wins over the graph name, so a student is not greeted by
+       an old alias their database record happens to carry */
+    const rosterEntry = cohortRoster().find(r => r.id === studentId);
     res.json({
       success: true,
       studentId,

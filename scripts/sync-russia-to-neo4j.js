@@ -1,3 +1,4 @@
+require('dotenv').config();
 /**
  * Sync Russia WS students from ru-bot-state.json → Neo4j
  * Run: node scripts/sync-russia-to-neo4j.js
@@ -8,7 +9,7 @@ const neo4j = require('neo4j-driver');
 
 const driver = neo4j.driver(
   'bolt://localhost:7687',
-  neo4j.auth.basic('neo4j', 'aybkk_neo4j_2026'),
+  neo4j.auth.basic(process.env.NEO4J_USER || 'neo4j', process.env.NEO4J_PASSWORD),
   { encrypted: 'ENCRYPTION_OFF' }
 );
 const session = driver.session();

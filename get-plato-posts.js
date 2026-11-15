@@ -1,10 +1,11 @@
+require('dotenv').config();
 // Get Plato's full content from Agora
 const neo4j = require('neo4j-driver');
 
 async function main() {
   const driver = neo4j.driver(
     'bolt://localhost:7687',
-    neo4j.auth.basic('neo4j', 'aybkk_neo4j_2026')
+    neo4j.auth.basic(process.env.NEO4J_USER || 'neo4j', process.env.NEO4J_PASSWORD)
   );
   const session = driver.session();
 

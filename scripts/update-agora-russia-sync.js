@@ -1,6 +1,7 @@
+require('dotenv').config();
 // Update Agora memory after Russia sync
 const neo4j = require('neo4j-driver');
-const driver = neo4j.driver('bolt://localhost:7687', neo4j.auth.basic('neo4j', 'aybkk_neo4j_2026'), { encrypted: 'ENCRYPTION_OFF' });
+const driver = neo4j.driver('bolt://localhost:7687', neo4j.auth.basic(process.env.NEO4J_USER || 'neo4j', process.env.NEO4J_PASSWORD), { encrypted: 'ENCRYPTION_OFF' });
 const session = driver.session();
 
 const memory = `AYBKK UPDATE — Russia WS Sync Complete (May 12, 2026)
@@ -46,7 +47,7 @@ Built by Boonchu + Claude Code during Russia trip (April 25 – May 12, 2026).
 - Day-color system: Mon=Sage, Tue=Terra, Wed=Gold, Thu=Orange, Fri=Dusty Blue, Sat=Lavender, Sun=Mist Gray
 
 === NEO4J STATUS ===
-URI: bolt://localhost:7687 | User: neo4j | PW: aybkk_neo4j_2026
+URI: bolt://localhost:7687 | User: neo4j | PW: (NEO4J_PASSWORD in .env)
 Labels: Student, Tag, Assessment, CheckIn, Membership, etc.
 Key rels: HAS_MEMBERSHIP, HAS_STRENGTH, HAS_WEAKNESS, ATTENDED, HAS_DIFFICULTY, HAS_EXPERIENCE
 

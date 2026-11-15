@@ -4,6 +4,7 @@
  * Works with: Neo4j (stores LINE UIDs), Claim page (links accounts)
  */
 
+require('dotenv').config();
 const express = require('express');
 const neo4j = require('neo4j-driver');
 const crypto = require('crypto');
@@ -11,10 +12,10 @@ const crypto = require('crypto');
 // Config from env
 const NEO4J_URI = process.env.NEO4J_URI || 'bolt://localhost:7687';
 const NEO4J_USER = process.env.NEO4J_USER || 'neo4j';
-const NEO4J_PASSWORD = process.env.NEO4J_PASSWORD || 'poinefth水下123';
+const NEO4J_PASSWORD = process.env.NEO4J_PASSWORD;
 const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN;
 const LINE_CHANNEL_SECRET = process.env.LINE_CHANNEL_SECRET;
-const LINE_WEBHOOK_VERIFY_TOKEN = process.env.LINE_WEBHOOK_VERIFY_TOKEN || 'aybkk-line-verify-token';
+const LINE_WEBHOOK_VERIFY_TOKEN = process.env.LINE_WEBHOOK_VERIFY_TOKEN;
 
 const driver = neo4j.driver(NEO4J_URI, neo4j.auth.basic(NEO4J_USER, NEO4J_PASSWORD));
 
@@ -237,7 +238,7 @@ app.get('/webhook', (req, res) => {
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
 
-  if (mode === 'subscribe' && token === LINE_WEBHOOK_VERIFY_TOKEN) {
+  if (mode === 'subscribe' && LINE_WEBHOOK_VERIFY_TOKEN && token === LINE_WEBHOOK_VERIFY_TOKEN) {
     console.log('[LINE Bot] Webhook verified!');
     res.status(200).send(challenge);
   } else {

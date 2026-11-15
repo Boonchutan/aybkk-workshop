@@ -1,3 +1,4 @@
+require('dotenv').config();
 /**
  * Migrate teaching data from local Neo4j → AuraDB
  * Copies: TeachingStructure, TeachingStage, Asana, Tag, Section
@@ -10,13 +11,13 @@ const neo4j = require('neo4j-driver');
 
 const SOURCE = neo4j.driver(
   'bolt://localhost:7687',
-  neo4j.auth.basic('neo4j', 'aybkk_neo4j_2026'),
+  neo4j.auth.basic('neo4j', process.env.NEO4J_LOCAL_PASSWORD),
   { encrypted: 'ENCRYPTION_OFF' }
 );
 
 const TARGET = neo4j.driver(
-  'neo4j+s://69645294.databases.neo4j.io',
-  neo4j.auth.basic('69645294', 'eaWAnXOJaU02tsZhD9OZajvYi0iqP_xiDRxHyWjUUFQ')
+  process.env.NEO4J_URI,
+  neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASSWORD)
 );
 
 async function run() {

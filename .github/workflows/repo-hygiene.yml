@@ -1,0 +1,19 @@
+name: No secrets or student files in the repo
+
+# The repo is public. Every push and pull request is checked for passwords, keys, tokens
+# and files that name students (rosters, QR cards, journals). No install, no database.
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+jobs:
+  hygiene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - name: Check tracked files
+        run: node test/repo-hygiene.test.js

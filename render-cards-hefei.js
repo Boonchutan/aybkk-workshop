@@ -12,7 +12,7 @@ const QRCode = require('qrcode');
 const fs = require('fs');
 const path = require('path');
 
-const roster = require('./public/rosters/hefei.json');
+const roster = require('./private-data/rosters/hefei.json');
 
 GlobalFonts.registerFromPath(path.join(__dirname, 'fonts', 'LXGWWenKai-Regular.ttf'), 'LXGW WenKai');
 GlobalFonts.registerFromPath(path.join(__dirname, 'fonts', 'LXGWWenKai-Medium.ttf'), 'LXGW WenKai Medium');
@@ -31,7 +31,7 @@ const TW = mm(54), TH = mm(85.6);        // trim size
 const CX = W / 2;                        // card center x
 const HOLE_CY = BY + mm(5), HOLE_R = mm(2.5);   // 5mm punch, top-center
 
-const OUT = path.join(__dirname, 'hefei-cards-print');
+const OUT = path.join(__dirname, 'private-data', 'hefei-cards-print');
 fs.mkdirSync(OUT, { recursive: true });
 
 const ART_PATH = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : null;

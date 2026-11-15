@@ -1,10 +1,11 @@
+require('dotenv').config();
 /**
  * AYBKK Student Progress - Complete Schema
  * Supports: Active students, Assessments, Daily check-ins, Weekly reports, Upsell
  */
 
 const neo4j = require('neo4j-driver');
-const driver = neo4j.driver('bolt://localhost:7687', neo4j.auth.basic('neo4j', 'aybkk_neo4j_2026'));
+const driver = neo4j.driver('bolt://localhost:7687', neo4j.auth.basic(process.env.NEO4J_USER || 'neo4j', process.env.NEO4J_PASSWORD));
 
 async function setup() {
   const session = driver.session();

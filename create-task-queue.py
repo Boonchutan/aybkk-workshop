@@ -3,7 +3,7 @@ from neo4j import GraphDatabase
 import os
 
 uri = "bolt://localhost:7687"
-auth = ("neo4j", "aybkk_neo4j_2026")
+auth = (os.environ.get("NEO4J_USER", "neo4j"), os.environ["NEO4J_PASSWORD"])
 
 driver = GraphDatabase.driver(uri, auth=auth)
 

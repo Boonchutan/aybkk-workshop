@@ -10,6 +10,7 @@ const neo4j = require('neo4j-driver');
 const cors = require('cors');
 const { mountAttendance } = require('./attendance-api');
 const { isStaff, staffOnly, staffFiles, deny } = require('./lib/staff-key');
+const { privatePath, readPrivateJson, writePrivateJson, seedPrivateJson } = require('./lib/private-data');
 const { mountBkk } = require('./bkk-api');
 const { mountPartner } = require('./partner-api');
 const { mountIdcn } = require('./idcn-api');
@@ -49,6 +50,23 @@ if (!fs.existsSync(UPLOAD_DIR)) {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 }
 
+// Workshop rosters name students, so they live in the private data dir, never in git.
+// They arrive by PUT /api/bkk/admin/rosters/:name.
+const rosterName = name => {
+  const n = String(name || '').toLowerCase();
+  return /^[a-z0-9]{1,40}$/.test(n) ? n : null;
+};
+const rosterFile = name => rosterName(name) && privatePath('rosters', rosterName(name) + '.json');
+const readRoster = name => rosterName(name) && readPrivateJson('rosters', rosterName(name) + '.json');
+// For one release: the Hefei roster still ships in git, so copy it to the private dir before the
+// repo copy is deleted. Printed /s/ card links and door passes look students up in it.
+(() => {
+  const legacy = path.join(__dirname, 'public', 'rosters', 'hefei.json');
+  let roster = null;
+  try { roster = JSON.parse(fs.readFileSync(legacy, 'utf8')); } catch {}
+  if (seedPrivateJson(roster, 'rosters', 'hefei.json')) console.log('✓ hefei roster copied to the private data dir');
+})();
+
 // Neo4j Connection
 // Local dev: bolt://localhost:7687
 // Production: neo4j+s://xxxxxxxx.databases.neo4j.io (AuraDB)
@@ -57,11 +75,12 @@ const _neo4jConfig = _neo4jUri.startsWith('neo4j+s') ? {} : { encrypted: 'ENCRYP
 const driver = neo4j.driver(
   _neo4jUri,
   neo4j.auth.basic(
-    process.env.NEO4J_USER || '69645294',
-    process.env.NEO4J_PASSWORD || 'aybkk_neo4j_2026'
+    process.env.NEO4J_USER || 'neo4j',
+    process.env.NEO4J_PASSWORD || ''
   ),
   _neo4jConfig
 );
+if (!process.env.NEO4J_PASSWORD) console.error('✗ NEO4J_PASSWORD is not set: journals, orientations and China workshop pages cannot reach Neo4j');
 
 // Test Neo4j connection
 async function testNeo4j() {
@@ -125,6 +144,20 @@ app.use(staffFiles);
 // index: false so '/' falls through to the host-aware front-door route below
 app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 app.use('/uploads', express.static(UPLOAD_DIR));
+// The check-in station, attendance and orientation pages still fetch /rosters/<name>.json.
+app.get('/rosters/:file', staffOnly, (req, res) => {
+  const m = /^(.+)\.json$/i.exec(req.params.file);
+  const roster = m && readRoster(m[1]);
+  if (!roster) return res.status(404).json({ error: 'roster not on this server' });
+  res.json(roster);
+});
+app.put('/api/bkk/admin/rosters/:name', staffOnly, (req, res) => {
+  const name = rosterName(req.params.name);
+  if (!name) return res.status(400).json({ error: 'roster name: letters and digits only' });
+  if (!req.body || !Array.isArray(req.body.students)) return res.status(400).json({ error: 'need a roster with a students list' });
+  writePrivateJson(req.body, 'rosters', name + '.json');
+  res.json({ ok: true, name, students: req.body.students.length });
+});
 
 // ─── Merged-identity alias ───────────────────────────────────────────────────
 // Post-workshop identity merges (POST /api/orientation-status/hefei/merge) stamp
@@ -431,7 +464,6 @@ app.post('/api/upload/student-photo', async (req, res) => {
 global.LINE_GROUP_ID = null;
 
 // LINE Messaging API webhook
-const LINE_CHANNEL_SECRET = process.env.LINE_CHANNEL_SECRET || 'your-line-channel-secret';
 const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN || '';
 
 // Push helper used by webhook handlers
@@ -601,7 +633,7 @@ app.use((req, res, next) => {
 });
 
 // Workshop check-in station sync + printed short links (offline-first station)
-mountAttendance(app, { pgPool });
+mountAttendance(app, { pgPool, rosterFile: rosterFile('hefei') });
 
 // Tee shop (WeChat-pay flow with reservation holds)
 mountShop(app);
@@ -1015,13 +1047,13 @@ app.post('/api/orientations', async (req, res) => {
       const code = String(req.body.studentCode || '').trim().toUpperCase();
       let roster = null;
       if (code && code.includes('-')) {
-        const rosterPath = path.join(__dirname, 'public', 'rosters', code.split('-')[0].toLowerCase() + '.json');
-        roster = JSON.parse(fs.readFileSync(rosterPath, 'utf8'));
-        const hit = (roster.students || []).find(s => s.id === code);
+        roster = readRoster(code.split('-')[0]);
+        const hit = ((roster && roster.students) || []).find(s => s.id === code);
         if (hit) { studentId = hit.journalId; cardCode = hit.id; }
       }
       if (!cardCode && String(req.body.location || '') === 'hefei') {
-        if (!roster) roster = JSON.parse(fs.readFileSync(path.join(__dirname, 'public', 'rosters', 'hefei.json'), 'utf8'));
+        if (!roster) roster = readRoster('hefei');
+        if (!roster) throw new Error('no hefei roster');
         const latin = v => String(v || '').toLowerCase().replace(/[^a-z0-9]/g, '');
         const en = latin(req.body.englishName || name);
         const zh = String(req.body.chineseName || name || '').trim();
@@ -1122,8 +1154,8 @@ app.post('/api/orientations', async (req, res) => {
 app.get('/api/orientation-status/hefei', staffOnly, async (req, res) => {
   const session = driver.session();
   try {
-    const rosterPath = path.join(__dirname, 'public', 'rosters', 'hefei.json');
-    const roster = JSON.parse(fs.readFileSync(rosterPath, 'utf8'));
+    const roster = readRoster('hefei');
+    if (!roster) return res.status(404).json({ error: 'hefei roster is not on this server' });
     const students = (roster.students || []).filter(s => !/^walk-in/i.test(s.name || ''));
     const result = await session.run(
       `MATCH (s:Student)
@@ -1226,7 +1258,8 @@ app.post('/api/orientation-status/hefei/merge', async (req, res) => {
       'mergedInto', 'mergedAt', 'mergeNote', 'dedupedAt', 'dedupeNote',
       'autoCreatedFromCheckin', 'createdFromMerge', 'sortOrder']);
 
-    const roster = JSON.parse(fs.readFileSync(path.join(__dirname, 'public', 'rosters', 'hefei.json'), 'utf8'));
+    const roster = readRoster('hefei');
+    if (!roster) return res.status(404).json({ error: 'hefei roster is not on this server' });
     const people = (roster.students || []).filter(s => !/^walk-in/i.test(s.name || '') && s.journalId);
     const journalIds = people.map(p => p.journalId);
 

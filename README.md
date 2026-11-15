@@ -254,7 +254,7 @@ cd ~/mission-control
 ```
 LINE_CHANNEL_ACCESS_TOKEN=xxx
 LINE_CHANNEL_SECRET=xxx
-LINE_WEBHOOK_VERIFY_TOKEN=aybkk-line-verify-token
+LINE_WEBHOOK_VERIFY_TOKEN=xxx
 ```
 
 ### Webhook Setup (LINE Developers Console)

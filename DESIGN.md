@@ -104,5 +104,5 @@ zh body never in display faces. Uppercase labels get 0.14-0.22em letter-spacing.
   planner icons); QR endpoints (`/api/journal/qr/{id}`) render server-side, keep QR
   contrast dark-on-light; bkk-students has an external qrserver fallback; share-card
   and student-report render images/print, check both after re-theme.
-- Bangkok QR cards (public/qr-cards) already match the home theme; per-city cards
+- Bangkok QR cards (private-data/qr-cards, never in git) already match the home theme; per-city cards
   (e.g. Hefei) should read their city block from tokens v2.

@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 // generate-hefei-roster.js
-// Builds public/rosters/hefei.json (the offline roster the iPad station reads)
-// and one QR PNG per student in public/qr-cards/hefei/.
+// Builds private-data/rosters/hefei.json (the roster the iPad station reads) and one
+// QR PNG per student in private-data/qr-cards/hefei/. private-data/ is git-ignored:
+// rosters name students and this repo is public. Send the roster to the server with
+//   curl -X PUT -H "x-bkk-key: $BKK_ADMIN_KEY" -H "Content-Type: application/json" \
+//     --data-binary @private-data/rosters/hefei.json https://aybkk.net/api/bkk/admin/rosters/hefei
 //
-// Input (optional): hefei-students.json  OR  hefei-students.csv in this folder.
+// Input (optional): private-data/hefei-students.json  OR  private-data/hefei-students.csv.
 //   JSON: [{ "name":"燕子", "package":"Full", "journalId":"<uuid>", "phone":"" }, ...]
 //   CSV : header row with columns  name,package[,journalId,phone,size]
 // If no input file is found, a small SAMPLE cohort is generated so you can test.
@@ -22,6 +25,7 @@ const AYBKK_NS = uuidv5("aybkk.org/hefei-2026", uuidv5.DNS); // stable namespace
 
 const BASE_URL = (process.env.BASE_URL || "https://aybkk-ashtanga.up.railway.app").replace(/\/$/, "");
 const QR_MODE  = process.env.QR_MODE || "short";
+const PRIVATE  = path.join(__dirname, "private-data");
 
 // ── EDIT ME: the Hefei session list ─────────────────────────────────────────
 const SESSIONS = [
@@ -49,12 +53,12 @@ const PACKAGE_MAP = {
 };
 
 const SAMPLE = [
-  { name: "燕子",      package: "Full" },
-  { name: "Xiao Ma",  package: "Full" },
-  { name: "颜宁",      package: "Weekend" },
-  { name: "Bella",    package: "3day" },
-  { name: "老聂",      package: "Mysore" },
-  { name: "Maoni 猫腻", package: "Host" },
+  { name: "测试一 (Test One)",   package: "Full" },
+  { name: "测试二 (Test Two)",   package: "Full" },
+  { name: "测试三 (Test Three)", package: "Weekend" },
+  { name: "测试四 (Test Four)",  package: "3day" },
+  { name: "测试五 (Test Five)",  package: "Mysore" },
+  { name: "测试六 (Test Six)",   package: "Host" },
 ];
 
 function entitledFor(pkg) {
@@ -65,8 +69,8 @@ function entitledFor(pkg) {
 }
 
 function loadInput() {
-  const jsonPath = path.join(__dirname, "hefei-students.json");
-  const csvPath  = path.join(__dirname, "hefei-students.csv");
+  const jsonPath = path.join(PRIVATE, "hefei-students.json");
+  const csvPath  = path.join(PRIVATE, "hefei-students.csv");
   if (fs.existsSync(jsonPath)) {
     console.log("Reading hefei-students.json");
     return JSON.parse(fs.readFileSync(jsonPath, "utf8"));
@@ -107,8 +111,8 @@ function slugFor(raw, name, code) {
 
 async function main() {
   const input = loadInput();
-  const outDir = path.join(__dirname, "public", "rosters");
-  const qrDir  = path.join(__dirname, "public", "qr-cards", "hefei");
+  const outDir = path.join(PRIVATE, "rosters");
+  const qrDir  = path.join(PRIVATE, "qr-cards", "hefei");
   fs.mkdirSync(outDir, { recursive: true });
   fs.mkdirSync(qrDir, { recursive: true });
 
@@ -162,8 +166,8 @@ async function main() {
   fs.writeFileSync(path.join(qrDir, "manifest.json"), JSON.stringify(cardManifest, null, 2));
 
   console.log(`\n✓ ${students.length} students`);
-  console.log(`✓ roster:  public/rosters/hefei.json`);
-  console.log(`✓ QR PNGs: public/qr-cards/hefei/  (mode=${QR_MODE}, base=${BASE_URL})`);
+  console.log(`✓ roster:  private-data/rosters/hefei.json  (PUT it to /api/bkk/admin/rosters/hefei)`);
+  console.log(`✓ QR PNGs: private-data/qr-cards/hefei/  (mode=${QR_MODE}, base=${BASE_URL})`);
   console.log(`  Full: ${students.filter(s => s.entitledSessions[0] === "*").length}  ·  Partial: ${students.filter(s => s.entitledSessions[0] !== "*").length}`);
 }
 

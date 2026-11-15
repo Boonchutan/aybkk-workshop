@@ -1,6 +1,7 @@
+require('dotenv').config();
 // Script to update TeamMemory in Neo4j with Russia WS build info
 const neo4j = require('neo4j-driver');
-const driver = neo4j.driver('bolt://localhost:7687', neo4j.auth.basic('neo4j', 'aybkk_neo4j_2026'));
+const driver = neo4j.driver('bolt://localhost:7687', neo4j.auth.basic(process.env.NEO4J_USER || 'neo4j', process.env.NEO4J_PASSWORD));
 const session = driver.session();
 
 const memory = `AYBKK UPDATE — Russia WS Build (May 12, 2026)
@@ -62,7 +63,7 @@ Built by Boonchu during Russia trip (April 25 – May 12, 2026).
 - Mission Control tabs: Progress, Timeline, Kanban, Brainstorm, Heat Map, Students
 
 === NEO4J CREDENTIALS (unchanged) ===
-URI: bolt://localhost:7687, User: neo4j, PW: aybkk_neo4j_2026
+URI: bolt://localhost:7687, User: neo4j, PW: (NEO4J_PASSWORD in .env)
 
 === TEAM ===
 Boonchu Tanti (Founder) — @boonchu_tanti

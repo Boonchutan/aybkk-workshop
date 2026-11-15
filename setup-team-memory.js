@@ -1,3 +1,4 @@
+require('dotenv').config();
 /**
  * Setup shared Team Memory in Neo4j
  * All agents query this for shared context
@@ -7,12 +8,12 @@ const neo4j = require('neo4j-driver');
 
 const driver = neo4j.driver(
   'bolt://localhost:7687',
-  neo4j.auth.basic('neo4j', 'aybkk_neo4j_2026')
+  neo4j.auth.basic(process.env.NEO4J_USER || 'neo4j', process.env.NEO4J_PASSWORD)
 );
 
 const TEAM_MEMORY = `AYBKK COMPREHENSIVE (Mar 22, 2026):
 
-NEO4J: User=neo4j, PW=aybkk_neo4j_2026, URI=bolt://localhost:7687. Students from Notion. Schema: Student, Membership, Tag, Assessment, TagHistory. Student.id = studentId integer. Relationships: HAS_MEMBERSHIP, HAS_STRENGTH, HAS_WEAKNESS, HAS_CURRENT, HAS_ASSESSMENT. Neo4j int IDs: pass plain integer to session.run(), NOT {low: x, high: y}.
+NEO4J: User=neo4j, PW=(NEO4J_PASSWORD in .env), URI=bolt://localhost:7687. Students from Notion. Schema: Student, Membership, Tag, Assessment, TagHistory. Student.id = studentId integer. Relationships: HAS_MEMBERSHIP, HAS_STRENGTH, HAS_WEAKNESS, HAS_CURRENT, HAS_ASSESSMENT. Neo4j int IDs: pass plain integer to session.run(), NOT {low: x, high: y}.
 
 TELEGRAM BOT: @AYBKKstudentProgress_bot, token in TELEGRAM_BOT_TOKEN (.env). File=~/mission-control/assessment-bot.js (935 lines). Schema setup=~/mission-control/setup-assessment-schema.js. Flow: /start → language → student (active memberships only, sorted by most assessed) → strengths → weaknesses → energy → behavior → asana → toFix → confirm → save to Neo4j. Teachers: Boonchu, Jamsai, M. Multi-lang: EN/TH/中文.
 

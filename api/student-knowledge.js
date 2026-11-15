@@ -5,7 +5,7 @@ const router = express.Router();
 
 const driver = neo4j.driver(
   process.env.NEO4J_URI || 'bolt://localhost:7687',
-  neo4j.auth.basic(process.env.NEO4J_USER || 'neo4j', process.env.NEO4J_PASSWORD || 'aybkk-dev')
+  neo4j.auth.basic(process.env.NEO4J_USER || 'neo4j', process.env.NEO4J_PASSWORD)
 );
 
 // Get all body areas with movement counts

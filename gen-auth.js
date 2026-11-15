@@ -1,5 +1,6 @@
 const crypto = require('crypto');
-const password = 'AyBkk2026'; // 8+ chars
+const password = process.argv[2];
+if (!password || password.length < 8) { console.error('usage: node gen-auth.js <password, 8+ chars>'); process.exit(1); }
 const salt = crypto.randomBytes(32);
 const hash1 = crypto.createHash('sha256').update(salt).update(password).digest('hex');
 const hash2 = crypto.createHash('sha256').update(salt).update(hash1).digest('hex');
