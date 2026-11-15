@@ -4355,6 +4355,64 @@ const ok = (name, cond, extra = '') => {
        JSON.stringify(credit.body));
   }
 
+  console.log('\n— PaySolutions: "Y" / "Paid" is paid, and a late answer is still caught (15 Nov 2026) —');
+  {
+    const keys = ['PAYSO_MERCHANT_ID', 'PAYSO_SECRET_KEY', 'PAYSO_API_KEY'];
+    keys.forEach(k => { process.env[k] = 'test-only-12345'; });
+    const answers = new Map();          // 12-digit refno -> what the gateway says ('' = no record)
+    const gate = async (url, init) => {
+      const a = answers.get(JSON.parse(init.body).refno);
+      return new Response(a == null ? '' : JSON.stringify([a]), { status: 200 });
+    };
+    const gapp = express();
+    gapp.use(express.json());
+    await mountBkk(gapp, { pgPool: pool, gatewayFetch: gate, paySweepMs: 250, now });
+    const gsrv = gapp.listen(0);
+    const G = `http://127.0.0.1:${gsrv.address().port}`;
+    const gpost = (p, b) => fetch(G + p, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) })
+      .then(async r => ({ status: r.status, body: await r.json().catch(() => ({})) }));
+    const gcheck = refno => fetch(`${G}/api/bkk/pay/check/${refno}`).then(r => r.json());
+    const r12 = refno => String(refno).padStart(12, '0');
+    const buy = async tag => (await gpost('/api/bkk/orders', { productCode: 'pack8', name: `Gate ${tag}`, email: `gate.${tag}@example.com` })).body;
+    const row = refno => pool.query('SELECT status, gateway_note FROM bkk_orders WHERE refno=$1', [refno]).then(r => r.rows[0]);
+    const passesOf = code => J('/api/bkk/me/' + code).then(r => r.body.passes.length);
+
+    const a = await buy('yes');
+    answers.set(r12(a.order.refno), { Status: 'Y', StatusName: 'Paid', Total: a.order.amount });
+    const ca = await gcheck(a.order.refno);
+    ok('the gateway answering Y / Paid with the right amount is a payment: the pass is made', ca.status === 'paid'
+       && (await passesOf(a.member.code)) === 1, JSON.stringify([ca, await row(a.order.refno)]));
+    const b = await buy('short');
+    answers.set(r12(b.order.refno), { Status: 'Y', StatusName: 'Paid', Total: b.order.amount - 1 });
+    ok('...but never with a different amount', (await gcheck(b.order.refno)).status === 'mismatch' && (await passesOf(b.member.code)) === 0);
+    const c = await buy('cp');
+    answers.set(r12(c.order.refno), { Status: 'CP', StatusName: 'Completed', Total: c.order.amount });
+    ok('CP is still a payment', (await gcheck(c.order.refno)).status === 'paid' && (await passesOf(c.member.code)) === 1);
+    const d = await buy('odd');
+    answers.set(r12(d.order.refno), { Status: 'Y', StatusName: 'Pending', Total: d.order.amount });
+    const dc = await gcheck(d.order.refno);
+    const e = await buy('name');
+    answers.set(r12(e.order.refno), { Status: 'XX', StatusName: 'Paid', Total: e.order.amount });
+    const ec = await gcheck(e.order.refno);
+    ok('Y with another name, or "Paid" on a code we do not know, makes no pass and is written down', dc.status === 'pending'
+       && ec.status === 'pending' && (await row(e.order.refno)).gateway_note === 'http 200 status=XX Paid'
+       && (await passesOf(d.member.code)) === 0 && (await passesOf(e.member.code)) === 0, JSON.stringify([dc, ec]));
+
+    // Nobody comes back to the page and no postback arrives: the sweep asks again.
+    const late = await buy('late');
+    const old = await buy('old');
+    await pool.query(`UPDATE bkk_orders SET created_at = now() - interval '10 minutes' WHERE refno=$1`, [late.order.refno]);
+    await pool.query(`UPDATE bkk_orders SET created_at = now() - interval '30 hours' WHERE refno=$1`, [old.order.refno]);
+    answers.set(r12(late.order.refno), { Status: 'Y', StatusName: 'Paid', Total: late.order.amount });
+    answers.set(r12(old.order.refno), { Status: 'CP', StatusName: 'Completed', Total: old.order.amount });
+    await new Promise(r => setTimeout(r, 1200));
+    ok('a payment confirmed after the student left is picked up by the sweep, with no page or postback',
+       (await row(late.order.refno)).status === 'paid' && (await passesOf(late.member.code)) === 1, JSON.stringify(await row(late.order.refno)));
+    ok('...an order older than a day is left for a person', (await row(old.order.refno)).status === 'pending');
+    gsrv.close();
+    keys.forEach(k => { delete process.env[k]; });
+  }
+
   console.log(`\n${PASS} passed, ${FAIL} failed`);
   srv.close(); await pool.end();
   process.exit(FAIL ? 1 : 0);

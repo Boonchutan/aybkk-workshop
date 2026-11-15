@@ -28,6 +28,7 @@ const LETTER_PER_DAY = 60;                     // the same mail account sends re
 const LETTER_ASKS_PER_DAY = 3;                 // confirm mails to one address
 const CANCEL_CUTOFF_HOURS = 5;                 // cancel ≥5h before start → credit back
 const LATE_ADD_DAYS = 7;                       // staff put someone who came on a class that is over, this many days back
+const PAY_SWEEP_MS = 10 * 60 * 1000;           // re-ask PaySolutions about online orders still pending
 const VAT_PCT = 7;                             // Thai VAT, charged on price + online fee
 
 // ── seed data (from aybkk.com, captured 2026-08-05) ─────────────────────────
@@ -257,6 +258,8 @@ function mountBkk(app, opts = {}) {
   const pool = opts.pgPool;
   const cloudinary = opts.cloudinary || null;
   const httpFetch = opts.fetch || fetch;
+  // PaySolutions' inquiry API. Tests put a fake gateway here.
+  const gatewayFetch = opts.gatewayFetch || fetch;
   // Tests move the clock the 12 Nov price switch and the face links read.
   const nowMs = typeof opts.now === 'function' ? opts.now : Date.now;
   // No key set means no admin at all: the repo is public, so a default key
@@ -1051,8 +1054,12 @@ function mountBkk(app, opts = {}) {
 
     const verdict = await inquire(cfg, o);
     if (!verdict.paid) {
-      await q(`UPDATE bkk_orders SET gateway_note = $2 WHERE id = $1`,
-        [o.id, (verdict.note || 'not confirmed').slice(0, 300)]);
+      const note = (verdict.note || 'not confirmed').slice(0, 300);
+      await q(`UPDATE bkk_orders SET gateway_note = $2 WHERE id = $1`, [o.id, note]);
+      // Said once per new answer, so a re-check every few minutes is not a flood.
+      if (verdict.looksPaid && o.gateway_note !== note) {
+        notify(`⚠️ AYBKK payment: the gateway says "${note}" for order ${refno} (฿${o.amount_thb}), and no pass was made. Check it in PaySolutions, then activate it in the admin if the money is there.`);
+      }
       return { status: o.status, note: verdict.note };
     }
     // Amount must match what we asked for. A confirmed payment with no amount
@@ -1099,7 +1106,7 @@ function mountBkk(app, opts = {}) {
   async function inquire(cfg, order) {
     const url = `${cfg.inquiryBase.replace(/\/$/, '')}/order/orderdetailpost`;
     const mid5 = String(cfg.merchantId).slice(-5);
-    const r = await fetch(url, {
+    const r = await gatewayFetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -1124,13 +1131,19 @@ function mountBkk(app, opts = {}) {
     // key both come back "not paid", and the code is what tells them apart.
     if (!d) return { paid: false, note: `no record (http ${r.status})` };
     const status = String(d.Status ?? '').toUpperCase();
-    const paid = status === 'CP';
+    const named = String(d.StatusName ?? '').trim();
+    // Paid: "CP", or "Y" with the name "Paid". Two students paid on 15 Nov 2026
+    // and the gateway answered Y / Paid; read as unpaid, they got no pass.
+    // PaySolutions publishes no list of these codes outside its merchant panel.
+    const paid = status === 'CP' || (status === 'Y' && /^paid$/i.test(named));
     // Total comes back as a JSON number (3900.0), not a string.
     const amount = d.Total == null ? null : Number(d.Total);
     return {
       paid, amount, raw: d,
+      // A name that says paid on a code we do not take: a person must look.
+      looksPaid: !paid && /\b(paid|success|complete)/i.test(named) && !/\b(un|not\s*)paid|fail|cancel|void|refund|reject|expire/i.test(named),
       note: paid ? 'confirmed'
-        : `http ${r.status} status=${status || 'unknown'} ${d.StatusName || ''}`.trim(),
+        : `http ${r.status} status=${status || 'unknown'} ${named}`.trim(),
     };
   }
 
@@ -1224,6 +1237,30 @@ function mountBkk(app, opts = {}) {
       refno: order.refno, link: `${baseUrl()}/api/bkk/login/${token}`, cls,
     });
     await sendMail({ to: via.email, subject: t.subject, html: t.html, text: t.text, tag: 'receipt' });
+  }
+
+  // A payment can be confirmed after the student's page stopped asking and
+  // after PaySolutions' one postback: re-ask about online orders still pending,
+  // a few at a time. Each answer is the same check as ever. The last 2 hours
+  // every round, the rest of the last day once an hour: most pending orders
+  // were never paid, and each check is a call to PaySolutions.
+  let sweeping = false, lastLongSweep = 0;
+  async function sweepPayments() {
+    if (sweeping || !paysoConfig()) return;
+    sweeping = true;
+    try {
+      const long = Date.now() - lastLongSweep >= 3600e3;
+      if (long) lastLongSweep = Date.now();
+      const due = (await q(`SELECT refno FROM bkk_orders
+        WHERE status='pending' AND source IS NULL AND method='online'
+          AND created_at BETWEEN now() - ($1 || ' hours')::interval AND now() - interval '2 minutes'
+        ORDER BY created_at DESC LIMIT 25`, [long ? '26' : '2'])).rows;
+      for (const o of due) {
+        try { await verifyAndActivate(Number(o.refno)); }
+        catch (e) { console.error('[bkk pay] sweep:', e.message); }
+      }
+    } catch (e) { console.error('[bkk pay] sweep failed:', e.message); }
+    finally { sweeping = false; }
   }
 
   async function notify(text) {
@@ -4905,6 +4942,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   return booted
     .then(() => {
       console.log('✓ bkk-api mounted (/api/bkk/*)'); letterPurge(); sweepFaces();
+      setInterval(sweepPayments, opts.paySweepMs || PAY_SWEEP_MS).unref();
       return switchPrices().catch(e => console.error('✗ bkk: price switch failed:', e.message));
     })
     .catch(e => console.error('✗ bkk-api schema init failed:', e.message));
