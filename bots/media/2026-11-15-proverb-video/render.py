@@ -110,14 +110,22 @@ if MODE=='preview':
 subprocess.run([FF,'-y','-loglevel','error','-i',D+'/src/src.mp4','-vn','-ac','2','-ar','44100',D+'/orig.wav'],check=True)
 w=wave.open(D+'/orig.wav'); a=np.frombuffer(w.readframes(w.getnframes()),dtype=np.int16).reshape(-1,2).astype(np.float32)/32768; SR=44100
 a=np.concatenate([a,np.zeros((int(T['freeze']*SR)+SR,2),np.float32)])
-def load(key):
-    p=f'{D}/sfx/{key}.wav' if SFX_OK.get(key) else f'{D}/sfx_synth/{key}.wav'
-    if not os.path.exists(p): p=f'{D}/sfx_synth/pop.wav'
+def rd(p):
     ww=wave.open(p); x=np.frombuffer(ww.readframes(ww.getnframes()),dtype=np.int16).astype(np.float32)/32768
     if ww.getnchannels()==2: x=x.reshape(-1,2).mean(1)
     if ww.getframerate()!=SR:
         n=int(len(x)*SR/ww.getframerate()); x=np.interp(np.linspace(0,len(x)-1,n),np.arange(len(x)),x)
     return x/(np.abs(x).max()+1e-9)
+def arms(x):
+    f=int(0.02*SR); r=np.sqrt(np.mean(x[:len(x)//f*f].reshape(-1,f)**2,1)); r=np.sort(r)[::-1]; return float(np.sqrt(np.mean(r[:max(1,len(r)//2)]**2)))
+def load(key):
+    syn=f'{D}/sfx_synth/{key}.wav'
+    if not os.path.exists(syn): syn=f'{D}/sfx_synth/pop.wav'
+    if SFX_OK.get(key) and os.path.exists(f'{D}/sfx/{key}.wav'):
+        x=rd(f'{D}/sfx/{key}.wav'); ref=SYN_RMS.get(key) or arms(rd(syn))
+        return x*min(ref/(arms(x)+1e-9),1.0)
+    return rd(syn)
+SYN_RMS=json.load(open(D+'/synth_rms.json')) if os.path.exists(D+'/synth_rms.json') else {}
 GAIN={'pop':0.35,'ding':0.4,'gong':0.5}; G6=T.get('sfx_gain',1.0)
 for it in T['items']:
     for s in it['stk']:
@@ -125,6 +133,8 @@ for it in T['items']:
 pk=np.abs(a).max();
 if pk>0.98: a=a/pk*0.98
 ww=wave.open(D+'/mix.wav','w'); ww.setnchannels(2); ww.setsampwidth(2); ww.setframerate(SR); ww.writeframes((a*32767).astype(np.int16).tobytes()); ww.close()
+if MODE=='audio':
+    subprocess.run([FF,'-y','-loglevel','error','-i',sys.argv[3],'-i',D+'/mix.wav','-map','0:v','-map','1:a','-c:v','copy','-c:a','aac','-b:a','192k','-shortest','-movflags','+faststart',D+'/out.mp4'],check=True); print('audio remux done'); sys.exit()
 enc=subprocess.Popen([FF,'-y','-loglevel','error','-f','rawvideo','-pix_fmt','rgb24','-s',f'{W}x{H}','-r',str(FPS),'-i','-','-i',D+'/mix.wav','-c:v','libx264','-preset','medium','-crf','20','-pix_fmt','yuv420p','-c:a','aac','-b:a','192k','-shortest','-movflags','+faststart',D+'/out.mp4'],stdin=subprocess.PIPE)
 last=None; i=0
 for fr in frames():

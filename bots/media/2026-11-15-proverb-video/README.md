@@ -12,3 +12,10 @@ Boonchu's video (Drive AYBKK/03_Reels_Content/สุภาษิต, 85 s, 4K ve
 - All sound effects at 60% of draft 1 (`sfx_gain` 0.6 in timeline.json).
 - ชี้โพรง gets a tree-trunk-with-hole sticker (stk/treehole.png, drawn in PIL), then ชีต้า gets 🐆.
 - Newest sticker owns the big spot; older ones in the same line move to a small row at the top.
+
+## Draft 3 (15 Nov): real sounds
+- 15 real recordings, all CC0 or public domain, checked by a second agent (sources and licences: sfx_sources.json, trimmed files: sfx/).
+- Elephant, cow, tiger, toad are real animals. Cartoon sounds come from the USC Sunset/Red/Gold libraries on archive.org (CC0).
+- No CC0 rhino or cheetah call exists: rhino = heavy animal stomping run, cheetah = whoosh.
+- Level rule: a real sound is never louder than the draft 2 sound for the same key (peak and loudness capped), so every sound stays at 60% of draft 1.
+- `python3 -I render.py $D audio draft2.mp4` rebuilds only the sound and remuxes (1 min instead of 25).

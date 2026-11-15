@@ -1,0 +1,122 @@
+[
+ {
+  "key": "elephant",
+  "source_url": "https://commons.wikimedia.org/wiki/File:Elephant_voice_-_trumpeting.ogg",
+  "licence": "CC0 1.0 (Commons licence box: {{self|Cc-zero}})",
+  "author": "தகவலுழவன் (Wikimedia Commons user, own work, 2011)",
+  "seconds": 1.39,
+  "note": "Asian elephant trumpet call (file is in Category:Elephas maximus). It is the whole call, trimmed to 0.05-1.44 s of the 1.44 s source, with a 0.1 s fade-out. Waveform: steady trumpet energy for about 0.9 s, mostly 0.5-3 kHz. Not silent (RMS -18 dBFS), peak -3.0 dBFS, no clipping. The source is a small low-bitrate stereo ogg. Raw: .../sfx/raw/elephant.ogg"
+ },
+ {
+  "key": "frog_or_toad",
+  "source_url": "https://www.nps.gov/subjects/sound/sounds-pigfrog.htm",
+  "licence": "Public domain (US Government work, National Park Service; the NPS sound gallery says 'The files are in the public domain'; the Commons copy File:PigFrog_EvergladesNP.ogg is tagged PD-USGov-NPS)",
+  "author": "NPS Natural Sounds & Night Skies Division",
+  "seconds": 0.85,
+  "note": "Pig frog (Lithobates grylio) from Everglades National Park: two deep grunting croaks around 310 Hz (very tonal), trimmed to 0.62-1.47 s of the 2.09 s source. Raw is the original NPS mp3 (nri-PigFrogEvergladesNP.mp3), because the Commons download was rate-limited. The source peaks near full scale but has no flat-topped clipping. Output peak -3.0 dBFS, RMS -22 dBFS (lower because of the gap between the croaks). Raw: .../sfx/raw/frog_or_toad.mp3"
+ },
+ {
+  "key": "tiger",
+  "source_url": "https://commons.wikimedia.org/wiki/File:439280_schots_angry-tiger.wav",
+  "licence": "CC0 1.0 (Commons licence box {{cc-zero}}; imported from Freesound sound 439280)",
+  "author": "schots (Freesound)",
+  "seconds": 1.3,
+  "note": "The source is 65 s of a caged tiger growling and snarling, with a lot of reverb. I took 11.05-12.35 s: one low, rumbling growl (about 140-180 Hz, tonal). I chose it over the hissy snarls so it is not too scary. Peak -3.0 dBFS, RMS -15.6 dBFS, no clipping. Room reverb stays audible. Raw is Commons' own ogg transcode of the WAV, because the original returned HTTP 429. Raw: .../sfx/raw/tiger.ogg"
+ },
+ {
+  "key": "cow",
+  "source_url": "https://bigsoundbank.com/cow-moos-3-s2383.html",
+  "licence": "CC0 1.0 (the sound page says 'License CC0 (public domain): Free and royalty-free'; the site licence page says 'Creative Commons CC0 1.0 Universal')",
+  "author": "Joseph SARDIN (BigSoundBank, own recording, Tascam DR-40 + ME66)",
+  "seconds": 1.6,
+  "note": "'Cow moos #3': one clean moo (about 270 Hz, very tonal) on a silent background, with a short breath before it. Trimmed to 1.05-2.65 s of the 2.93 s source. Raw is the site's mp3, because the WAV download needs JS or an account. Peak -3.0 dBFS, RMS -15.6 dBFS. Spare option, not used: a deeper low moo (130-180 Hz) with faint birds and wind behind it, by Felix Blume (archive.org aporee_38586_44099, Public Domain Mark), rendered at /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/sfxwork/cand/cow_blume/alt_cow_blume.wav. Rejected: Commons 'Cow in Antefasy.wav' (CC0, but it is a person saying the word 'cow' in Malagasy, not a moo) and 'Sound Ideas, COW - SINGLE MOO' (a commercial library sound with a false PD tag, under a deletion request). Raw: .../sfx/raw/cow.mp3"
+ },
+ {
+  "key": "car_zoom",
+  "source_url": "https://archive.org/download/SSE_Library_VEHICLES/GENERIC%20BY/VEHBy_Car%20by_CS_USC.wav",
+  "licence": "CC0 1.0 (archive.org item SSE_Library_VEHICLES, licenseurl creativecommons.org/publicdomain/zero/1.0)",
+  "author": "Sunset Editorial sound library (USC Cinema), restored and released CC0 by Craig Smith",
+  "seconds": 2,
+  "note": "Source 'Car by' (Sunset Editorial). Clip is 3.6-5.6 s: the car comes in fast, peaks at about 1.3 s with a Doppler pitch drop (centroid 1.3k to 0.9k Hz), then fades. 0.15 s fade-in. Peak -3 dBFS, no clipping. Raw file is raw/car_zoom.wav. Other option: SSE 'Yamaha motorcycle roaring by fast'."
+ },
+ {
+  "key": "splash",
+  "source_url": "https://archive.org/download/Red_Library_Water_1/R23-09-Water%20Splashes.wav",
+  "licence": "CC0 1.0 (archive.org item Red_Library_Water_1)",
+  "author": "USC Red Library (1930s-40s Hollywood optical effects), digitized and released CC0 by Craig Smith",
+  "seconds": 1.32,
+  "note": "Source 'R23-09 Water Splashes'. Clip is 0.38-1.70 s, the first of three separate splashes: fast attack, about 1.2 s decay, quiet floor. Gain +13 dB to reach -3 dBFS peak. Raw file is raw/splash.wav."
+ },
+ {
+  "key": "whoosh",
+  "source_url": "https://archive.org/download/SSE_Library_SWOOSHES/SWISH/SWSH_Processed%20swishes_CS_USC.wav",
+  "licence": "CC0 1.0 (archive.org item SSE_Library_SWOOSHES)",
+  "author": "Sunset Editorial sound library (USC Cinema), restored and released CC0 by Craig Smith",
+  "seconds": 0.8,
+  "note": "Source 'Processed swishes' (a designed swish effect). Clip is 4.10-4.90 s: one quick swish, rising to a peak at about 0.4 s and then falling away. 0.12 s fade-in hides the tape hiss. Gain +13 dB, so a little old-tape hiss stays under the swish. Raw file is raw/whoosh.wav. Cleaner but more cloth-like option: Red R24-18 'Tent or Tarp Whoosh'."
+ },
+ {
+  "key": "slurp",
+  "source_url": "https://archive.org/download/GOLD_TAPE_39_Miscellaneous/G39-14-Rubber%20Plunger.wav",
+  "licence": "CC0 1.0 (archive.org item GOLD_TAPE_39_Miscellaneous)",
+  "author": "USC Gold Library (1930s-40s Hollywood optical effects), digitized and released CC0 by Craig Smith",
+  "seconds": 0.68,
+  "note": "No real drinking or straw slurp exists in PD/CC0, so this is a rubber plunger. Clip is 0.12-0.80 s, one stroke: a low squish push at about 0.1 s, then a suction pull at 0.3-0.5 s. It reads as a sucking or suction slurp for 'elephant sucks it out'. Raw file is raw/slurp.wav. Other option: Red R16-45 'Vacuum Cleaner' (motor start)."
+ },
+ {
+  "key": "party_horn",
+  "source_url": "https://archive.org/download/SSE_Library_WHISTLES/MISC/WHSTMisc-PARTY_Snake%20whistle%3B%20party%20favor_CS_USC.wav",
+  "licence": "CC0 1.0 (archive.org item SSE_Library_WHISTLES)",
+  "author": "Sunset Editorial sound library (USC Cinema), restored and released CC0 by Craig Smith",
+  "seconds": 1.25,
+  "note": "Source 'Snake whistle; party favor' (a party blower). Clip is 8.80-10.05 s, the last of five blows: a raspy buzz (energy 2-8 kHz) that ends on its own. Raw file is raw/party_horn.wav. For a crowd 'yay' instead, use the CC0 SSE CROWDS clip 'Kids yelling yeah!' at https://archive.org/download/SSE_Library_CROWDS/CHILDREN/CRWDChld_Kids%20yelling%20%3Fyeah%21%3F_CS_USC.wav (takes at 0.1-1.1 s and 2.0-3.1 s)."
+ },
+ {
+  "key": "ding",
+  "source_url": "https://archive.org/download/GOLD_TAPE_19_20_Bells_Buzzers/G19-10-Calm%20Signal%20Chime.wav",
+  "licence": "CC0 1.0 (archive.org item GOLD_TAPE_19_20_Bells_Buzzers)",
+  "author": "USC Gold Library (1930s-40s Hollywood optical effects), digitized and released CC0 by Craig Smith",
+  "seconds": 1.63,
+  "note": "Source 'Calm Signal Chime'. Clip is 18.12-19.75 s: one strike of a very pure chime at 743 Hz (about F#5) that decays smoothly by about 25 dB. Good as a correct-answer ding. Raw file is raw/ding.wav. For a brighter, shorter game-style sound, Kenney 'Interface Sounds' (CC0) confirmation_002/003 last only 0.3-0.5 s."
+ },
+ {
+  "key": "boing",
+  "source_url": "https://archive.org/download/GOLD_TAPE_39_Miscellaneous/G39-03-Cartoon%20Boings.wav",
+  "licence": "CC0 1.0 (archive.org item GOLD_TAPE_39_Miscellaneous)",
+  "author": "USC Gold Library (1930s-40s Hollywood optical effects), digitized and released CC0 by Craig Smith",
+  "seconds": 1.47,
+  "note": "Source 'Cartoon Boings'. Clip is 3.98-5.45 s: one classic boi-oi-oing, a tonal note at about 260-340 Hz with a wobble, decaying over about 1.3 s. Raw file is raw/boing.wav. A higher-pitched option is the SSE CARTOON 'TOONBoing Large spring snaps with a twang' (1270 Hz)."
+ },
+ {
+  "key": "pop",
+  "source_url": "https://archive.org/download/SSE_Library_CARTOON/POP/TOONPop_Comedy%20cartoon%20cork%20pop_CS_USC.wav",
+  "licence": "CC0 1.0 (archive.org item SSE_Library_CARTOON)",
+  "author": "Sunset Editorial sound library (USC Cinema), restored and released CC0 by Craig Smith",
+  "seconds": 0.62,
+  "note": "Source 'Comedy cartoon cork pop'. Clip is 0.10-0.72 s: the pop starts about 10 ms in and is mostly gone by 0.4 s (energy 0.5-2 kHz), so it suits stickers appearing. The rest is near-silent padding. Raw file is raw/pop.wav."
+ },
+ {
+  "key": "gong",
+  "source_url": "https://archive.org/download/Red_Library_Music/R05-02-Gong%20Hit.wav",
+  "licence": "CC0 1.0 (archive.org item Red_Library_Music)",
+  "author": "USC Red Library (1930s-40s Hollywood optical effects), digitized and released CC0 by Craig Smith",
+  "seconds": 2,
+  "note": "Source 'R05-02 Gong Hit'. Clip is 0.22-2.22 s: a deep, warm gong (energy 215-335 Hz, old optical sound with dull highs). The fade-out is 0.6 s instead of 0.1 s so the long ring does not cut off. Raw file is raw/gong.wav. Better option not used: the Commons CC0 file 'File:240382 the-very-real-horst chinese-gong-finish-session-2014-06-10-29-143.wav', a modern recording of a Chinese gong struck at the end of a dojo exercise session. upload.wikimedia.org kept returning 429 rate limits (Retry-After 600 s) and it never downloaded. Its URL is https://upload.wikimedia.org/wikipedia/commons/1/16/240382_the-very-real-horst_chinese-gong-finish-session-2014-06-10-29-143.wav if you want to swap it in later."
+ },
+ {
+  "key": "plop",
+  "source_url": "https://archive.org/download/GOLD_TAPE_53_54_Water/G53-16-Water%20Drip.wav",
+  "licence": "CC0 1.0 (archive.org item GOLD_TAPE_53_54_Water)",
+  "author": "USC Gold Library (1930s-40s Hollywood optical effects), digitized and released CC0 by Craig Smith",
+  "seconds": 0.65,
+  "note": "Source 'Water Drip'. Clip is 6.33-6.98 s: one water drop into water, a small tonal plip-plop at about 1.4 kHz lasting about 0.15 s, with a small second bump, then a quiet tail. It is small and light, not a big squelch. Raw file is raw/plop.wav. A lower 'bloop' (pitch rising 140 to 345 Hz) is in G54-06 'Bubbles and Splashes' at 8.10-8.34 s, but it sits on a noisy water bed."
+ },
+ {
+  "key": "rhino",
+  "source_url": "https://archive.org/download/SSE_Library_ANIMALS/WILD/ANMLWild_Elephant%20running%20by%20in%20dirt_CS_USC.wav",
+  "licence": "CC0 1.0 (archive.org item SSE_Library_ANIMALS licenseurl)",
+  "author": "Sunset Editorial sound library (USC Cinema), released CC0 by Craig Smith",
+  "seconds": 1.5,
+  "note": "No PD/CC0 rhino call exists; heavy animal stomping run used instead (2.3-3.8 s of source). Cheetah uses the whoosh."
+ }
+]
