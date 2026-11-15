@@ -7,7 +7,7 @@
 //     --data-binary @private-data/rosters/hefei.json https://aybkk.net/api/bkk/admin/rosters/hefei
 //
 // Input (optional): private-data/hefei-students.json  OR  private-data/hefei-students.csv.
-//   JSON: [{ "name":"燕子", "package":"Full", "journalId":"<uuid>", "phone":"" }, ...]
+//   JSON: [{ "name":"测试", "package":"Full", "journalId":"<uuid>", "phone":"" }, ...]
 //   CSV : header row with columns  name,package[,journalId,phone,size]
 // If no input file is found, a small SAMPLE cohort is generated so you can test.
 //
@@ -93,7 +93,7 @@ function qrPayload(code, journalId, name) {
 
 // Short, human-readable slug for the digital door pass (cn.aybkk.net/s/<slug>).
 // Explicit `slug` in hefei-students.json wins; else the Latin part of
-// "中文 (Yaya)"; else the whole name ASCII-stripped; else the card code.
+// "中文 (Name)"; else the whole name ASCII-stripped; else the card code.
 // Collisions get the card digits appended so every slug stays unique.
 const takenSlugs = new Set();
 function slugFor(raw, name, code) {

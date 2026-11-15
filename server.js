@@ -58,14 +58,6 @@ const rosterName = name => {
 };
 const rosterFile = name => rosterName(name) && privatePath('rosters', rosterName(name) + '.json');
 const readRoster = name => rosterName(name) && readPrivateJson('rosters', rosterName(name) + '.json');
-// For one release: the Hefei roster still ships in git, so copy it to the private dir before the
-// repo copy is deleted. Printed /s/ card links and door passes look students up in it.
-(() => {
-  const legacy = path.join(__dirname, 'public', 'rosters', 'hefei.json');
-  let roster = null;
-  try { roster = JSON.parse(fs.readFileSync(legacy, 'utf8')); } catch {}
-  if (seedPrivateJson(roster, 'rosters', 'hefei.json')) console.log('✓ hefei roster copied to the private data dir');
-})();
 
 // Neo4j Connection
 // Local dev: bolt://localhost:7687
@@ -1040,7 +1032,7 @@ app.post('/api/orientations', async (req, res) => {
     // Bind to a pre-assigned card identity when the orientation link carries a card code
     // (e.g. orientation-hefei.html?s=HEFEI-023 → reuse that student's journal UUID).
     // Students who skip the name picker still get bound when their typed name
-    // matches a roster entry (Yuehua case: picker skipped → orphan gz- id).
+    // matches a roster entry (a student skipped the picker → orphan gz- id).
     let studentId = 'gz-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
     let cardCode = null;
     try {
@@ -1176,7 +1168,7 @@ app.get('/api/orientation-status/hefei', staffOnly, async (req, res) => {
       const sEn = latin(m ? m[2] : s.name);
       // Bound orientations match by journalId; picker-skippers (fresh gz- ids)
       // match by the name they typed on the form, including known aliases
-      // (e.g. Yammin signs as Yasmin).
+      // (e.g. a student whose form name differs from the roster name).
       const isDone = orientedIds.has(s.journalId)
         || (sEn && orientedLatin.has(sEn))
         || (sZh && orientedZh.has(sZh))
@@ -2896,7 +2888,10 @@ app.get('/claim', (req, res) => {
 const CALENDAR_FILE = path.join(__dirname, 'data', 'calendar.json');
 let CALENDAR_SEED = null;
 try {
-  CALENDAR_SEED = require('./scripts/calendar-seed.js');
+  // The seed names family members and school dates, so it moves to the private data dir:
+  // copied there for one release, then scripts/calendar-seed.js leaves git.
+  seedPrivateJson(require('./scripts/calendar-seed.js'), 'calendar-seed.json');
+  CALENDAR_SEED = readPrivateJson('calendar-seed.json');
 } catch (e) {
   console.error('calendar seed module unavailable, planner starts empty:', e.message);
 }
@@ -2983,7 +2978,7 @@ app.get('/calendar', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'calendar.html'));
 });
 
-app.get('/api/calendar', async (req, res) => {
+app.get('/api/calendar', staffOnly, async (req, res) => {
   try {
     res.json(await readCalendar(req.pg));
   } catch (err) {
@@ -2995,7 +2990,7 @@ app.get('/api/calendar', async (req, res) => {
   }
 });
 
-app.put('/api/calendar', async (req, res) => {
+app.put('/api/calendar', staffOnly, async (req, res) => {
   try {
     const { lanes, events } = req.body || {};
     if (!Array.isArray(lanes) || !Array.isArray(events)) {
