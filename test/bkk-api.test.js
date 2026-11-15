@@ -4405,6 +4405,72 @@ const ok = (name, cond, extra = '') => {
     stub.close();
   }
 
+  console.log('\n-- the PaySolutions postback comes as a GET (15 Nov 2026) --');
+  {
+    const http = require('http');
+    const one = async (sql, args = []) => (await pool.query(sql, args)).rows[0] || {};
+    let answer = null, asked = 0;
+    const stub = http.createServer((req, res) => {
+      req.resume();
+      req.on('end', () => { asked++; res.setHeader('Content-Type', 'application/json'); res.end(answer == null ? '' : JSON.stringify(answer)); });
+    });
+    await new Promise(r => stub.listen(0, '127.0.0.1', r));
+    const env = { PAYSO_MERCHANT_ID: '00012345', PAYSO_SECRET_KEY: 'test-only', PAYSO_API_KEY: 'test-only',
+      PAYSO_INQUIRY_BASE: `http://127.0.0.1:${stub.address().port}` };
+    Object.assign(process.env, env);
+    const buy = async n => (await post('/api/bkk/orders', { productCode: 'pack8', name: `Postback ${n} Example`, email: `postback.${n}@example.com` })).body;
+    const state = async refno => one(`SELECT o.status, (SELECT count(*)::int FROM bkk_passes p WHERE p.order_id=o.id) AS passes
+      FROM bkk_orders o WHERE o.refno=$1`, [refno]);
+    const settle = () => new Promise(r => setTimeout(r, 400));
+    const ref12 = o => String(o.order.refno).padStart(12, '0');
+    const panel = o => `/api/bkk/pay/postback?refno=${ref12(o)}&merchantid=00012345&customeremail=postback%40example.com`
+      + `&productdetail=AYBKK&total=${o.order.amount}.00&cardtype=PP`;
+
+    const forged = await buy('forged');
+    answer = null;
+    const fRes = await J(panel(forged));
+    await settle();
+    ok('a GET postback is answered 200, and with no payment at PaySolutions it makes no pass', fRes.status === 200
+       && (await state(forged.order.refno)).status === 'pending' && (await state(forged.order.refno)).passes === 0,
+       JSON.stringify([fRes.status, await state(forged.order.refno)]));
+
+    const paid = await buy('paid');
+    answer = [{ Total: paid.order.amount, Status: 'Y', StatusName: 'Paid' }];
+    const before = asked;
+    const pRes = await J(panel(paid));
+    await settle();
+    const pRow = await state(paid.order.refno);
+    ok('a GET postback the way the merchant panel sends it asks PaySolutions and turns a paid order on', pRes.status === 200
+       && asked === before + 1 && pRow.status === 'paid' && pRow.passes === 1, JSON.stringify([pRes.status, asked - before, pRow]));
+
+    const wrong = await buy('wrong');
+    answer = [{ Total: wrong.order.amount + 100, Status: 'Y', StatusName: 'Paid' }];
+    await J(panel(wrong));
+    await settle();
+    ok('...still with the amount checked: another amount makes no pass', (await state(wrong.order.refno)).passes === 0
+       && (await state(wrong.order.refno)).status === 'mismatch', JSON.stringify(await state(wrong.order.refno)));
+
+    const viaPost = await buy('post');
+    answer = [{ Total: viaPost.order.amount, Status: 'Y', StatusName: 'Paid' }];
+    await post('/api/bkk/pay/postback', { refno: ref12(viaPost) });
+    await settle();
+    ok('...and a POST postback still works', (await state(viaPost.order.refno)).passes === 1, JSON.stringify(await state(viaPost.order.refno)));
+
+    answer = [{ Total: paid.order.amount, Status: 'Y', StatusName: 'Paid' }];
+    await J(panel(paid));
+    await settle();
+    ok('the same postback twice makes no second pass', (await state(paid.order.refno)).passes === 1, JSON.stringify(await state(paid.order.refno)));
+
+    const junkBefore = asked;
+    const junk = await J('/api/bkk/pay/postback?refno=12ab%27%3B');
+    const none = await J('/api/bkk/pay/postback');
+    await settle();
+    ok('a postback with no ref or a ref that is not a number is answered 200 and asks nothing', junk.status === 200 && none.status === 200
+       && asked === junkBefore, JSON.stringify([junk.status, none.status, asked - junkBefore]));
+    Object.keys(env).forEach(k => { delete process.env[k]; });
+    stub.close();
+  }
+
   console.log(`\n${PASS} passed, ${FAIL} failed`);
   srv.close(); await pool.end();
   process.exit(FAIL ? 1 : 0);
