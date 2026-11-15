@@ -2017,7 +2017,8 @@ const ok = (name, cond, extra = '') => {
        && cls('Mysore (2nd batch)', '07:30').attended === 2 && cls('Evening Yin', '18:00').attended === 1
        && JSON.stringify(rv_.bySource) === JSON.stringify([{ source: 'rezerv', n: 5 }]), JSON.stringify([rv_.byClass, rv_.bySource]));
     const mday = d => ((rm.byDay || []).find(x => x.date === d) || {}).total;
-    ok('report: money total, VAT and count', rm.total === 9600 + 1500 + 14000 - 1500 && rm.vat === 628 && rm.count === 4, JSON.stringify(rm));
+    // The count is payments that brought money in (15 Nov 2026): the refund is in the money, not in the count.
+    ok('report: money total, VAT and count', rm.total === 9600 + 1500 + 14000 - 1500 && rm.vat === 628 && rm.count === 3, JSON.stringify(rm));
     ok('report: a payment at 23:30 and one at 00:15 Bangkok land on the right days', mday('2026-10-15') === 9600 && mday('2026-10-16') === 14000,
        JSON.stringify(rm.byDay));
     const by = (list, k, v) => (list || []).find(x => x[k] === v) || {};
@@ -3634,6 +3635,384 @@ const ok = (name, cond, extra = '') => {
 
     await pool.query('DELETE FROM bkk_bookings WHERE id = ANY($1::int[])', [seats]);
     clock = bkkAt('2026-11-11T23:59:00');
+  }
+
+  // ── one sale, one row (15 Nov 2026) ────────────────────────────────────────
+  // The owner saw one person's payment many times over in Payments: Rezerv's ฿0
+  // lines, sales recorded in both systems, a second Activate, a desk sale sent
+  // twice. Made-up people only.
+  console.log('\n:: Payments: one sale, one row (the page\'s own sorting) ::');
+  {
+    const fs = require('fs'), vm = require('vm'), path = require('path');
+    const page = fs.readFileSync(path.join(__dirname, '../public/bkk-admin.html'), 'utf8');
+    const seg = page.slice(page.indexOf('  const HOUR = 3600e3;'), page.indexOf('  const ordPill'));
+    const ctx = { PAY_MODE: 'gateway', bkkYmd: (ms = Date.now()) => new Date(ms + 7 * 3600e3).toISOString().slice(0, 10),
+      cls: t => t, ymdLong: d => d };
+    vm.createContext(ctx);
+    vm.runInContext(seg + '\n;this.po = { sortOrders, ordClass };', ctx);
+    const { sortOrders, ordClass } = ctx.po;
+    const NOW = Date.parse('2026-11-15T03:00:00Z');
+    let fid = 0;
+    const at = h => new Date(NOW - h * 3600e3).toISOString();
+    const row = o => ({ id: ++fid, member_id: 1, member_code: 'OSA1', member_name: 'Ana Example', product_id: 3, name_en: '3 months unlimited',
+      item_name: null, status: 'paid', amount_thb: 20865, base_thb: 19500, fee_thb: 0, vat_thb: 1365, method: 'cash', source: null,
+      slot_id: null, class_date: null, created_at: at(2), gateway_note: null, twin_of: null, ...o });
+    const ids = list => list.map(o => o.id).join();
+
+    const rzReal = row({ source: 'rezerv', method: 'card', created_at: at(30) });
+    const rzZero = [1, 2, 3].map(k => row({ source: 'rezerv', method: 'other', amount_thb: 0, base_thb: 0, vat_thb: 0,
+      created_at: at(30 - k / 60), gateway_note: 'Free | promo bonus' }));
+    const s1 = sortOrders([rzReal, ...rzZero], NOW);
+    ok('1 real Rezerv payment and 3 ฿0 Rezerv lines: nothing in the main list, one row in the Rezerv fold with "+3 at ฿0"',
+       s1.main.length === 0 && ids(s1.rz) === String(rzReal.id) && s1.rzAll === 4 && s1.bonusN[rzReal.id] === 3, JSON.stringify([ids(s1.main), ids(s1.rz), s1.bonusN]));
+
+    const desk = row({ member_id: 2, member_code: 'OSB2', member_name: 'Ben Example', created_at: at(5) });
+    const deskCopy = row({ member_id: 2, member_code: 'OSB2', member_name: 'Ben Example', source: 'rezerv', method: 'other',
+      amount_thb: 0, base_thb: 0, vat_thb: 0, created_at: at(4), gateway_note: 'Free' });
+    const s2 = sortOrders([deskCopy, desk], NOW);
+    ok('a desk sale and its ฿0 Rezerv copy: the desk row in the main list with the Rezerv note, the Rezerv row in the fold',
+       ids(s2.main) === String(desk.id) && s2.alsoRz[desk.id] === deskCopy && ids(s2.rz) === String(deskCopy.id) && !s2.bonusN[desk.id],
+       JSON.stringify([ids(s2.main), ids(s2.rz), Object.keys(s2.alsoRz)]));
+    // A twin (the import paired it) still says so, from another profile it never does.
+    const twin = { ...deskCopy, id: ++fid, status: 'twin', twin_of: desk.id };
+    const other = row({ member_id: 9, member_code: 'OSZ9', member_name: 'Zed Example', source: 'rezerv', amount_thb: 0, created_at: at(4) });
+    const s2b = sortOrders([twin, other, desk], NOW);
+    ok('...a Rezerv line kept as the twin of that sale says it too, and another person\'s ฿0 line says nothing about it',
+       s2b.alsoRz[desk.id] === twin && s2b.rz.length === 2, JSON.stringify(Object.keys(s2b.alsoRz)));
+
+    const t1 = row({ member_id: 3, member_code: 'OSC3', member_name: 'Cai Example', method: 'online', status: 'pending', created_at: at(1) });
+    const t2 = { ...t1, id: ++fid, created_at: at(0.5) };
+    const s3 = sortOrders([t2, t1], NOW);
+    ok('two unpaid tries 30 minutes apart: one row in the main list (the newer), the older one in Unpaid tries, counted on it',
+       ids(s3.main) === String(t2.id) && ids(s3.tries) === String(t1.id) && s3.triesN[t2.id] === 1, JSON.stringify([ids(s3.main), ids(s3.tries), s3.triesN]));
+
+    const paid = row({ member_id: 4, member_code: 'OSD4', member_name: 'Dee Example', method: 'online', created_at: at(3) });
+    const again = { ...paid, id: ++fid, status: 'pending', created_at: at(2) };
+    const s4 = sortOrders([again, paid], NOW);
+    ok('a try made after a paid order for the same package folds onto that paid row: "tapped Buy again after paying"',
+       ids(s4.main) === String(paid.id) && ids(s4.tries) === String(again.id) && s4.againN[paid.id] === 1 && !s4.triesN[paid.id],
+       JSON.stringify([ids(s4.main), s4.againN, s4.triesN]));
+
+    const d1 = row({ member_id: 5, member_code: 'OSE5', member_name: 'Eli Example', created_at: at(1) });
+    const d2 = { ...d1, id: ++fid, created_at: new Date(Date.parse(d1.created_at) + 5 * 60e3).toISOString() };
+    const s5 = sortOrders([d2, d1], NOW);
+    ok('two paid desk rows 5 minutes apart: both in the main list, the newer marked 2nd',
+       s5.main.length === 2 && s5.nth[d2.id] === 2 && !s5.nth[d1.id], JSON.stringify(s5.nth));
+    const o1 = { ...d1, id: ++fid, method: 'online', created_at: new Date(Date.parse(d1.created_at) + 60 * 60e3).toISOString() };
+    ok('...and an online payment after them is the 3rd, online and desk counted together',
+       sortOrders([o1, d2, d1], NOW).nth[o1.id] === 3);
+
+    const di = o => row({ member_id: 6, member_code: 'OSF6', member_name: 'Fay Example', product_id: 1, name_en: 'Drop-in', amount_thb: 1605,
+      method: 'online', ...o });
+    const dA = di({ slot_id: 11, class_date: '2026-11-16', class_title: 'Mysore 5.30am (1st batch)', class_day: '2026-11-16', created_at: at(3) });
+    const dB = di({ slot_id: 12, class_date: '2026-11-17', class_title: 'Led Primary', class_day: '2026-11-17', created_at: at(2) });
+    const s6 = sortOrders([dB, dA], NOW);
+    ok('drop-ins for two different classes stay 2 rows, each with its own class and day',
+       s6.main.length === 2 && !s6.nth[dB.id] && ordClass(dA) !== ordClass(dB) && ordClass(dA).includes('Mysore') && ordClass(dB).includes('2026-11-17'),
+       JSON.stringify([ordClass(dA), ordClass(dB)]));
+
+    const old = row({ member_id: 7, member_code: 'OSG7', member_name: 'Gus Example', created_at: at(24 * 40) });
+    const late = { ...old, id: ++fid, method: 'online', status: 'paid', created_at: at(1) };
+    const rzPaid = row({ member_id: 7, member_code: 'OSG7', member_name: 'Gus Example', source: 'rezerv', created_at: at(48) });
+    const rzRefund = { ...rzPaid, id: ++fid, status: 'refund', amount_thb: -20865, created_at: at(47) };
+    const s7 = sortOrders([late, rzRefund, rzPaid, old], NOW);
+    ok('a refund and every aybkk.net row with money stay as rows: an old payment, a newer one, the Rezerv payment and its refund',
+       ids(s7.main) === [late.id, old.id].join() && ids(s7.rz) === [rzRefund.id, rzPaid.id].join() && !s7.bonusN[rzPaid.id], JSON.stringify([ids(s7.main), ids(s7.rz)]));
+
+    const n1 = row({ member_id: 8, member_code: 'OSH8', member_name: 'Hana Example' });
+    const n2 = row({ member_id: 9, member_code: 'OSI9', member_name: 'example, hana.', product_id: 5, name_en: '1 month unlimited' });
+    const n3 = row({ member_id: 10, member_code: 'OSJ10', member_name: 'Ivy Example' });
+    const s8 = sortOrders([n1, n2, n3], NOW);
+    ok('two member codes with one name (any case, punctuation or word order) each say "same name as" the other; a third name says nothing',
+       s8.sameName[n1.id] === 'OSI9' && s8.sameName[n2.id] === 'OSH8' && !s8.sameName[n3.id], JSON.stringify(s8.sameName));
+  }
+
+  console.log('\n:: one sale, one row: counts, guards and repairs ::');
+  {
+    const q1 = async (sql, args = []) => (await pool.query(sql, args)).rows[0] || {};
+    const bkkD = ms => new Date(ms + 7 * 3600e3).toISOString().slice(0, 10);
+    const today = bkkD(Date.now());
+    const addDay = (d, k) => new Date(Date.parse(d + 'T12:00:00Z') + k * 86400000).toISOString().slice(0, 10);
+    const dmy = d => { const [y, m, dd] = d.split('-'); return `${dd}/${m}/${y}`; };
+    const imp = (kind, rows) => post(`/api/bkk/admin/import/${kind}`, { rows, dryRun: false }, ADMIN);
+    const sell = (body, extra = {}) => post('/api/bkk/admin/sales', { method: 'cash', ...body, ...extra }, ADMIN);
+    const ord = refno => q1('SELECT * FROM bkk_orders WHERE refno=$1', [refno]);
+    const hist = async code => (await J(`/api/bkk/admin/members/${code}/history`, { headers: ADMIN })).body;
+    const report = async (from, to = from) => (await J(`/api/bkk/admin/report?from=${from}&to=${to}`, { headers: ADMIN })).body;
+    const person = async (rz, name, email) => {
+      await imp('members', [{ rezervId: rz, name, email }]);
+      return (await q1('SELECT * FROM bkk_members WHERE rezerv_id=$1', [rz]));
+    };
+
+    // ── counts are payments, money is money ──
+    const cnt = await person('OS-100', 'Kim Example', 'kim.os@example.test');
+    const cday = '2025-06-17';
+    const cImp = await imp('payments', [
+      { rezervId: 'OS-P1', memberRezervId: 'OS-100', date: `${dmy(cday)} 09:00`, amount: 20865, item: '3 months Unlimited', method: 'CARD' },
+      ...[2, 3, 4].map(k => ({ rezervId: `OS-P${k}`, memberRezervId: 'OS-100', date: `${dmy(cday)} 09:0${k}`, amount: '0.00',
+        item: '3 months Unlimited', method: 'Free', note: 'promo bonus' }))]);
+    const cRep = await report(cday), cH = await hist(cnt.code);
+    ok('1 paid line and 3 ฿0 lines: Payments 1, Packages sold 1, by item 1, the money unchanged, no empty "other ฿0" line',
+       cImp.body.added === 4 && cRep.money.count === 1 && cRep.passes.sold === 1 && cRep.money.total === 20865
+       && cRep.money.byItem[0].n === 1 && cRep.money.byMethod.reduce((s, x) => s + x.n, 0) === 1
+       && !cRep.money.byMethod.some(x => x.method === 'other'), JSON.stringify([cImp.body.added, cRep.money, cRep.passes.sold]));
+    ok('...and the profile says 1 payment, paid ฿20,865', cH.summary.payments === 1 && cH.summary.totalPaid === 20865, JSON.stringify(cH.summary));
+
+    // ── the orders list: the class of a drop-in, and how many there are in all ──
+    const sch = (await J('/api/bkk/schedule?days=7', { headers: ADMIN })).body.classes.filter(c => !c.isOnline && c.seatsLeft > 2);
+    const cl = sch[0], cl2 = sch.find(c => c.slotId !== cl.slotId || c.date !== cl.date);
+    const dropSale = await sell({ productCode: 'dropin', name: 'Lin Example', email: 'lin.os@example.test', slotId: cl.slotId, date: cl.date });
+    const ol = (await J('/api/bkk/admin/orders?limit=5', { headers: ADMIN })).body;
+    const dRow = (ol.orders || []).find(o => String(o.refno) === dropSale.body.order.refno) || {};
+    ok('the payments list gives a drop-in its class and class day, and the number of rows past the limit',
+       dropSale.status === 200 && dRow.class_title === cl.title && dRow.class_day === cl.date && ol.orders.length === 5 && ol.total > 5,
+       JSON.stringify([dropSale.body, dRow.class_title, dRow.class_day, ol.total]));
+
+    // ── Activate on a try whose package is paid already ──
+    const mia = { name: 'Mia Example', email: 'mia.os@example.test' };
+    const miaDesk = await sell({ productCode: 'unlim1', ...mia, requestId: 'os-mia-1' });
+    const miaTry = await post('/api/bkk/orders', { productCode: 'unlim1', ...mia });
+    const fa1 = await post(`/api/bkk/admin/orders/${miaTry.body.order.id}/force-activate`, {}, ADMIN);
+    ok('Activate on a try whose package was paid within 72 hours answers 409 with that payment: ref, when, method',
+       fa1.status === 409 && fa1.body.paidAlready && fa1.body.paidAlready.refno === miaDesk.body.order.refno
+       && fa1.body.paidAlready.method === 'cash' && !!fa1.body.paidAlready.at && (await ord(miaTry.body.order.refno)).status === 'pending',
+       JSON.stringify(fa1.body));
+    const fa2 = await post(`/api/bkk/admin/orders/${miaTry.body.order.id}/force-activate`, { confirm: true }, ADMIN);
+    const miaRow = await ord(miaTry.body.order.refno);
+    ok('...with confirm it goes ahead, and the note names the paid ref', fa2.status === 200 && miaRow.status === 'paid'
+       && miaRow.gateway_note === `MANUAL ACTIVATION by admin, paid already as ref ${miaDesk.body.order.refno}`, miaRow.gateway_note);
+    const miaOther = await post('/api/bkk/orders', { productCode: 'pack8', ...mia });
+    const oldTry = await post('/api/bkk/orders', { productCode: 'unlim3', ...mia });
+    const oldPaid = await sell({ productCode: 'unlim3', ...mia, requestId: 'os-mia-2' });
+    await pool.query(`UPDATE bkk_orders SET created_at = now() - interval '4 days', verified_at = now() - interval '4 days' WHERE refno=$1`,
+      [oldPaid.body.order.refno]);
+    const fa3 = await post(`/api/bkk/admin/orders/${miaOther.body.order.id}/force-activate`, {}, ADMIN);
+    const fa4 = await post(`/api/bkk/admin/orders/${oldTry.body.order.id}/force-activate`, {}, ADMIN);
+    ok('...another package, or a payment more than 72 hours away, activates with no question', fa3.status === 200 && fa4.status === 200,
+       JSON.stringify([fa3.body, fa4.body]));
+    const manualRep = (await report(today)).money.manual;
+    ok('Reports count what was activated by hand in the range, and its money', manualRep.n >= 3
+       && manualRep.total >= (await ord(miaTry.body.order.refno)).amount_thb, JSON.stringify(manualRep));
+
+    // ── desk sales: one id, one sale ──
+    const nia = { productCode: 'unlim1', name: 'Nia Example', email: 'nia.os@example.test' };
+    const s1 = await sell(nia, { requestId: 'os-nia-1' }), s2 = await sell(nia, { requestId: 'os-nia-1' });
+    const niaN = async () => (await q1(`SELECT count(*)::int AS n FROM bkk_orders o JOIN bkk_members m ON m.id=o.member_id
+      WHERE lower(m.email)='nia.os@example.test'`)).n;
+    ok('the same sale id sent twice, one after the other: 1 order, the second reply is the first sale (repeat)',
+       s1.status === 200 && s2.status === 200 && s2.body.repeat === true && s2.body.order.refno === s1.body.order.refno && (await niaN()) === 1,
+       JSON.stringify([s1.body, s2.body]));
+    const both = await Promise.all([1, 2].map(() => sell({ productCode: 'pack8', name: 'Oli Example', email: 'oli.os@example.test' }, { requestId: 'os-oli-1' })));
+    const oliN = await q1(`SELECT count(*)::int AS n, count(DISTINCT o.member_id)::int AS m FROM bkk_orders o WHERE o.request_id='os-oli-1'`);
+    const oliM = await q1(`SELECT count(*)::int AS n FROM bkk_members WHERE lower(email)='oli.os@example.test'`);
+    ok('...sent twice at once for a new person: 1 order, 1 profile, both replies the same sale',
+       both.every(b => b.status === 200) && both[0].body.order.refno === both[1].body.order.refno && both.some(b => b.body.repeat)
+       && oliN.n === 1 && oliM.n === 1, JSON.stringify([both.map(b => b.body), oliN, oliM]));
+    const blank = await Promise.all([1, 2].map(() => sell({ productCode: 'dropin', name: 'Pat Noemail Example' }, { requestId: 'os-pat-1' })));
+    ok('...and for a new person with no email: 1 order, 1 profile', blank.every(b => b.status === 200)
+       && (await q1(`SELECT count(*)::int AS n FROM bkk_members WHERE name='Pat Noemail Example'`)).n === 1
+       && (await q1(`SELECT count(*)::int AS n FROM bkk_orders WHERE request_id='os-pat-1'`)).n === 1, JSON.stringify(blank.map(b => b.body)));
+    const s3 = await sell(nia, { requestId: 'os-nia-2' });
+    ok('the same person, package and class sold at the desk 15 minutes ago or less: 409 repeatOf, nothing sold',
+       s3.status === 409 && s3.body.repeatOf && s3.body.repeatOf.refno === s1.body.order.refno && s3.body.repeatOf.method === 'cash'
+       && s3.body.repeatOf.amount === s1.body.order.amount && (await niaN()) === 1, JSON.stringify(s3.body));
+    const s4 = await sell(nia, { requestId: 'os-nia-2', confirmRepeat: true });
+    ok('...confirmRepeat sells it', s4.status === 200 && !s4.body.repeat && s4.body.order.refno !== s1.body.order.refno && (await niaN()) === 2,
+       JSON.stringify(s4.body));
+    const ona = { productCode: 'unlim1', name: 'Ona Example', email: 'ona.os@example.test' };
+    const onaWeb = await post('/api/bkk/orders', ona);
+    await pool.query(`UPDATE bkk_orders SET status='paid', verified_at=now() - interval '2 days', created_at=now() - interval '2 days',
+      gateway_note='confirmed' WHERE id=$1`, [onaWeb.body.order.id]);
+    const onaDesk = await sell(ona, { requestId: 'os-ona-1' });
+    ok('...and so does a desk sale of what the student paid for online in the last 72 hours',
+       onaDesk.status === 409 && onaDesk.body.repeatOf.refno === onaWeb.body.order.refno && onaDesk.body.repeatOf.method === 'online', JSON.stringify(onaDesk.body));
+
+    // ── the Rezerv import finds the aybkk.net sale it copies ──
+    const tw = await person('OS-200', 'Quinn Example', 'quinn.os@example.test');
+    const twSale = await sell({ productCode: 'unlim3', name: tw.name, email: tw.email, requestId: 'os-quinn-1' });
+    const twPay = { rezervId: 'OS-T1', memberRezervId: 'OS-200', date: `${dmy(today)} 08:00`, amount: '0.00', item: '3 months Unlimited', method: 'Free' };
+    const tw1 = await imp('payments', [twPay]);
+    const twRow = await q1(`SELECT * FROM bkk_orders WHERE source='rezerv' AND source_ref='OS-T1'`);
+    const twDesk = await ord(twSale.body.order.refno);
+    const twH = await hist(tw.code);
+    ok('a desk sale and a ฿0 Rezerv line for it the same day: the Rezerv line is its twin, with the note, and a note for the import',
+       tw1.body.added === 1 && twRow.status === 'twin' && twRow.twin_of === twDesk.id
+       && twRow.gateway_note.startsWith(`entered in Rezerv for check-in; paid on aybkk.net ref ${twSale.body.order.refno}`)
+       && tw1.body.warnings.some(w => w.code === 'twinOfAybkk' && w.vals[0] === twSale.body.order.refno), JSON.stringify([tw1.body, twRow]));
+    ok('...the profile counts 1 payment and the desk amount', twH.summary.payments === 1 && twH.summary.totalPaid === twDesk.amount_thb,
+       JSON.stringify(twH.summary));
+    const tw2 = await imp('payments', [twPay]);
+    ok('...importing it again: already there, nothing changes', tw2.body.matched === 1 && tw2.body.added === 0
+       && (await q1(`SELECT status FROM bkk_orders WHERE source='rezerv' AND source_ref='OS-T1'`)).status === 'twin', JSON.stringify(tw2.body));
+    const mt = await person('OS-201', 'Rae Example', 'rae.os@example.test');
+    const mtSale = await sell({ productCode: 'unlim1', name: mt.name, email: mt.email, requestId: 'os-rae-1' });
+    const mt1 = await imp('payments', [{ rezervId: 'OS-T2', memberRezervId: 'OS-201', date: `${dmy(addDay(today, -1))} 18:00`,
+      amount: mtSale.body.order.amount, item: '1 Month unlimited', method: 'CASH' }]);
+    ok('a Rezerv line with money for a package paid here within 3 days stays paid, and asks a person (maybeTwin)',
+       (await q1(`SELECT status, twin_of FROM bkk_orders WHERE source_ref='OS-T2'`)).status === 'paid'
+       && mt1.body.warnings.some(w => w.code === 'maybeTwin' && w.vals[0] === mtSale.body.order.refno), JSON.stringify(mt1.body));
+    const far = await person('OS-202', 'Sam Example', 'sam.os@example.test');
+    await sell({ productCode: 'unlim3', name: far.name, email: far.email, requestId: 'os-sam-1' });
+    const far1 = await imp('payments', [
+      { rezervId: 'OS-T3', memberRezervId: 'OS-202', date: `${dmy(addDay(today, -10))} 08:00`, amount: 0, item: '3 months Unlimited', method: 'Free' },
+      { rezervId: 'OS-T4', memberRezervId: 'OS-202', date: `${dmy(today)} 08:00`, amount: 0, item: 'Drop-in', method: 'Free' }]);
+    const farRows = (await pool.query(`SELECT status, twin_of FROM bkk_orders WHERE source_ref IN ('OS-T3','OS-T4') ORDER BY source_ref`)).rows;
+    ok('10 days apart, or another package: no link, no warning', far1.body.added === 2 && farRows.every(r => r.status === 'paid' && r.twin_of === null)
+       && !far1.body.warnings.some(w => ['twinOfAybkk', 'maybeTwin'].includes(w.code)), JSON.stringify([farRows, far1.body.warnings]));
+    const two = await person('OS-203', 'Tia Example', 'tia.os@example.test');
+    const twoA = await sell({ productCode: 'unlim1', name: two.name, email: two.email, requestId: 'os-tia-1' });
+    const twoB = await sell({ productCode: 'unlim1', name: two.name, email: two.email, requestId: 'os-tia-2', confirmRepeat: true });
+    const fourZero = [5, 6, 7, 8].map(k => ({ rezervId: `OS-T${k}`, memberRezervId: 'OS-203', date: `${dmy(today)} 07:0${k}`, amount: 0,
+      item: '1 Month unlimited', method: 'Free' }));
+    const two1 = await imp('payments', fourZero);
+    const twoRows = (await pool.query(`SELECT o.status, t.refno::text AS of FROM bkk_orders o LEFT JOIN bkk_orders t ON t.id=o.twin_of
+      WHERE o.source_ref = ANY($1) ORDER BY o.source_ref`, [fourZero.map(r => r.rezervId)])).rows;
+    ok('2 aybkk.net sales and 4 ฿0 Rezerv lines: exactly 2 twins, one for each sale, the other 2 stay',
+       twoB.status === 200 && twoRows.filter(r => r.status === 'twin').length === 2 && twoRows.filter(r => r.status === 'paid').length === 2
+       && [...new Set(twoRows.filter(r => r.of).map(r => r.of))].sort().join() === [twoA.body.order.refno, twoB.body.order.refno].sort().join(),
+       JSON.stringify(twoRows));
+    ok('...and importing them again matches all 4', (await imp('payments', fourZero)).body.matched === 4);
+    // One Rezerv payment from a file with Rezerv's id, then again from one without it.
+    const rr = await imp('payments', [{ memberRezervId: 'OS-201', date: `${dmy(addDay(today, -30))} 10:00`, amount: 1605, item: 'Drop-in', method: 'CARD' }]);
+    const rr0 = await q1(`SELECT count(*)::int AS n FROM bkk_orders WHERE member_id=$1 AND source='rezerv'`, [mt.id]);
+    const rr2 = await imp('payments', [{ rezervId: 'OS-T9', memberRezervId: 'OS-201', date: `${dmy(addDay(today, -30))} 10:00`, amount: 1605,
+      item: 'drop-in', method: 'CARD' }]);
+    ok('one Rezerv payment from a file without its id and again with it: already there (rezervTwin), not added twice',
+       rr.body.added === 1 && rr2.body.matched === 1 && rr2.body.added === 0 && rr2.body.warnings.some(w => w.code === 'rezervTwin')
+       && (await q1(`SELECT count(*)::int AS n FROM bkk_orders WHERE member_id=$1 AND source='rezerv'`, [mt.id])).n === rr0.n, JSON.stringify(rr2.body));
+
+    // ── and the pass it copies ──
+    const ps = await person('OS-300', 'Uma Example', 'uma.os@example.test');
+    const psSale = await sell({ productCode: 'unlim3', name: ps.name, email: ps.email, requestId: 'os-uma-1' });
+    const psPass = { rezervId: 'OS-M1', memberRezervId: 'OS-300', plan: '3 months Unlimited', status: 'Active',
+      start: dmy(addDay(today, -1)), until: dmy(addDay(today, 88)) };
+    const ps1 = await imp('passes', [psPass]);
+    const psRows = async () => (await pool.query(`SELECT p.id, p.status, p.source, p.order_id, p.note, p.twin_of FROM bkk_passes p
+      WHERE p.member_id=$1 ORDER BY p.id`, [ps.id])).rows;
+    const pr1 = await psRows(), orderPass = pr1.find(p => p.order_id);
+    const rzPass = pr1.find(p => p.source === 'rezerv');
+    ok('a desk sale and the Rezerv membership for it: 1 live pass (the sale\'s) and 1 void Rezerv pass that says why, and a person is asked',
+       ps1.body.added === 1 && pr1.length === 2 && orderPass.status === 'active' && rzPass.status === 'void' && rzPass.twin_of === orderPass.id
+       && rzPass.note.startsWith(`voided: same sale as aybkk.net ref ${psSale.body.order.refno}`)
+       && ps1.body.warnings.some(w => w.code === 'twinPass' && w.vals[0] === psSale.body.order.refno), JSON.stringify([ps1.body, pr1]));
+    const ps2 = await imp('passes', [psPass]);
+    ok('...importing it again keeps it void', ps2.body.matched === 1 && (await psRows()).find(p => p.source === 'rezerv').status === 'void',
+       JSON.stringify(ps2.body));
+    const book = await post('/api/bkk/bookings', { memberCode: ps.code, slotId: cl.slotId, date: cl.date }, ADMIN);
+    const bookRow = await q1(`SELECT pass_id FROM bkk_bookings WHERE member_id=$1 AND status='booked' ORDER BY id DESC LIMIT 1`, [ps.id]);
+    ok('...and a booking uses the pass of the sale', book.status === 200 && bookRow.pass_id === orderPass.id, JSON.stringify([book.body, bookRow]));
+    const ps3 = await imp('passes', [{ rezervId: 'OS-M2', memberRezervId: 'OS-300', plan: '3 months Unlimited', status: 'Active',
+      start: dmy(addDay(today, 89)), until: dmy(addDay(today, 178)) }]);
+    const bonus = (await psRows()).find(p => p.source === 'rezerv' && p.id !== rzPass.id) || {};
+    ok('a promo bonus pass from Rezerv for the same sale is no twin: it stays live', ps3.body.added === 1 && bonus.status === 'active'
+       && !ps3.body.warnings.some(w => w.code === 'twinPass'), JSON.stringify([ps3.body, bonus]));
+
+    // ── what is already in the data: a list first, then only what a rule settles ──
+    const mk = async (rz, name) => person(rz, name, `${name.split(' ')[0].toLowerCase()}.dbl@example.test`);
+    const pa = await mk('OS-400', 'Vic Example'), pb = await mk('OS-401', 'Wen Example'), pc = await mk('OS-402', 'Xia Example');
+    const pd1 = await mk('OS-403', 'Yan Example'), pd2 = await mk('OS-404', 'Zoe Example'), pd3 = await mk('OS-405', 'Abe Example');
+    const sa = await sell({ productCode: 'unlim1', name: pa.name, email: pa.email, requestId: 'os-dbl-a' });
+    const prodId = async code => (await q1('SELECT id FROM bkk_products WHERE code=$1', [code])).id;
+    const plant = (m, ref, amount, item, at, code) => pool.query(`INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb,
+        status,gateway_note,verified_at,created_at,method,item_name,source,source_ref)
+      VALUES ($1,$2,$3,$4,0,0,$4,'paid','moved from Rezerv',$5,$5,'other',$6,'rezerv',$7) RETURNING id, refno::text`,
+      [String(800000000000 + Math.floor(Math.random() * 99999999)), code, m.id, amount, at, item, ref]).then(r => r.rows[0]);
+    const aCopy = await plant(pa, 'OS-D1', 0, '1 Month unlimited', new Date().toISOString(), await prodId('unlim1'));
+    const bAt = new Date(Date.now() - 5 * 86400e3).toISOString();
+    const bFirst = await plant(pb, 'TRX_9001', 1605, 'Drop-in', bAt, await prodId('dropin'));
+    const bCopy = await plant(pb, 'h:0123456789abcdef01234567', 1605, 'Drop-in', bAt, await prodId('dropin'));
+    const bReal2 = await plant(pb, 'TRX_9002', 1605, 'Drop-in', bAt, await prodId('dropin'));
+    const scSale = await sell({ productCode: 'unlim3', name: pc.name, email: pc.email, requestId: 'os-dbl-c' });
+    const cRz = (await pool.query(`INSERT INTO bkk_passes (member_id,product_id,kind,daily_cap,valid_days,valid_from,valid_until,note,source,source_ref)
+      VALUES ($1,$2,'unlimited',2,90,$3,$4,'moved from Rezerv','rezerv','OS-DM1') RETURNING id`,
+      [pc.id, await prodId('unlim3'), today, addDay(today, 89)])).rows[0];
+    await pool.query(`INSERT INTO bkk_bookings (slot_id,class_date,start_at,member_id,pass_id,status,cover,source)
+      VALUES ($1,$2,$3,$4,$5,'booked','pass','staff')`, [cl2.slotId, cl2.date, cl2.startAt, pc.id, cRz.id]);
+    const d1a = await sell({ productCode: 'pack8', name: pd1.name, email: pd1.email, requestId: 'os-dbl-d1a' });
+    const d1b = await sell({ productCode: 'pack8', name: pd1.name, email: pd1.email, requestId: 'os-dbl-d1b', confirmRepeat: true });
+    const d2Desk = await sell({ productCode: 'unlim1', name: pd2.name, email: pd2.email, requestId: 'os-dbl-d2' });
+    const d2Try = await post('/api/bkk/orders', { productCode: 'unlim1', name: pd2.name, email: pd2.email });
+    await post(`/api/bkk/admin/orders/${d2Try.body.order.id}/force-activate`, { confirm: true }, ADMIN);
+    const d3Web = await post('/api/bkk/orders', { productCode: 'unlim1', name: pd3.name, email: pd3.email });
+    await pool.query(`UPDATE bkk_orders SET status='paid', verified_at=now() - interval '1 day', created_at=now() - interval '1 day',
+      gateway_note='confirmed' WHERE id=$1`, [d3Web.body.order.id]);
+    const d3Desk = await sell({ productCode: 'unlim1', name: pd3.name, email: pd3.email, requestId: 'os-dbl-d3', confirmRepeat: true });
+    const mine = new Set([pa, pb, pc, pd1, pd2, pd3].map(m => m.code));
+    const look = async () => ((await J('/api/bkk/admin/doubles', { headers: ADMIN })).body.items || []).filter(x => mine.has(x.member.code));
+    const L1 = await look(), L1b = await look();
+    const kinds = L => L.map(x => `${x.kind}:${x.member.code}`).sort().join();
+    const want = [`a:${pa.code}`, `b:${pb.code}`, `c:${pc.code}`, `d:${pd1.code}`, `d:${pd2.code}`, `d:${pd3.code}`].sort().join();
+    const it = k => L1.find(x => x.kind === k) || {};
+    ok('the doubles list shows exactly the planted pairs, one of each kind and three of kind d, with the same ids each time',
+       kinds(L1) === want && L1.map(x => x.id).join() === L1b.map(x => x.id).join() && L1.every(x => x.reason && x.apply), kinds(L1));
+    ok('...a: the ฿0 Rezerv line and the sale it copies; b: the copy from the second file, never the second real payment',
+       it('a').orders[0].id === aCopy.id && it('a').orders[1].refno === sa.body.order.refno
+       && it('b').orders[0].id === bCopy.id && it('b').orders[1].id === bFirst.id && !L1.some(x => x.orders && x.orders[0].id === bReal2.id),
+       JSON.stringify([it('a').orders, it('b').orders]));
+    ok('...c: both passes, with the class booked ahead on the Rezerv one; d: desk twice, by hand next to paid, online and desk',
+       it('c').passes.length === 2 && it('c').passes[0].source === 'rezerv' && it('c').passes[0].bookingsAhead === 1
+       && it('c').reason.includes(scSale.body.order.refno)
+       && L1.filter(x => x.kind === 'd').map(x => x.reason.split(': ')[1]).sort().join('|')
+         === ['one was activated by hand next to a paid order.', 'paid online and sold at the desk within 72 hours.',
+           'sold at the desk twice within 30 minutes.'].join('|')
+       && !!d1a.body.order && !!d1b.body.order && !!d2Desk.body.order && !!d3Desk.body.order, JSON.stringify([it('c'), L1.filter(x => x.kind === 'd').map(x => x.reason)]));
+    const snap = async () => JSON.stringify((await pool.query(`SELECT id, status, twin_of, gateway_note FROM bkk_orders WHERE member_id = ANY($1) ORDER BY id`,
+      [[pa, pb, pc, pd1, pd2, pd3].map(m => m.id)])).rows) + JSON.stringify((await pool.query(`SELECT id, status, note FROM bkk_passes
+      WHERE member_id = ANY($1) ORDER BY id`, [[pa, pb, pc, pd1, pd2, pd3].map(m => m.id)])).rows);
+    const ap1 = await post('/api/bkk/admin/doubles/apply', { ids: L1.map(x => x.id) }, ADMIN);
+    const aRow = await q1('SELECT status, twin_of, gateway_note FROM bkk_orders WHERE id=$1', [aCopy.id]);
+    const bRow = await q1('SELECT status, gateway_note FROM bkk_orders WHERE id=$1', [bCopy.id]);
+    ok('apply changes only a and b: the ฿0 line becomes the twin, the copy from the second file becomes void with the note',
+       ap1.status === 200 && ap1.body.applied.map(x => x.kind).sort().join() === 'a,b' && ap1.body.skipped.length === 4
+       && aRow.status === 'twin' && aRow.twin_of === (await ord(sa.body.order.refno)).id
+       && bRow.status === 'void' && bRow.gateway_note.startsWith(`same Rezerv payment as order ${bFirst.refno}, imported twice`)
+       && (await q1('SELECT status FROM bkk_orders WHERE id=$1', [bFirst.id])).status === 'paid'
+       && (await q1('SELECT status FROM bkk_orders WHERE id=$1', [bReal2.id])).status === 'paid', JSON.stringify([ap1.body, aRow, bRow]));
+    const s0 = await snap();
+    const ap2 = await post('/api/bkk/admin/doubles/apply', { ids: L1.map(x => x.id) }, ADMIN);
+    ok('...applying again changes nothing', ap2.status === 200 && ap2.body.applied.length === 0 && (await snap()) === s0, JSON.stringify(ap2.body));
+    ok('...c and d are never applied: both passes live, every order still paid, and they are still listed',
+       (await q1(`SELECT count(*)::int AS n FROM bkk_passes WHERE member_id=$1 AND status='active'`, [pc.id])).n === 2
+       && (await q1(`SELECT count(*)::int AS n FROM bkk_orders WHERE member_id = ANY($1) AND status='paid'`, [[pd1.id, pd2.id, pd3.id]])).n === 6
+       && kinds(await look()) === [`c:${pc.code}`, `d:${pd1.code}`, `d:${pd2.code}`, `d:${pd3.code}`].sort().join()
+       && (await post('/api/bkk/admin/doubles/apply', { ids: 'all' }, ADMIN)).status === 400
+       && (await J('/api/bkk/admin/doubles')).status === 401, kinds(await look()));
+    const paH = await hist(pa.code), pbH = await hist(pb.code);
+    ok('...and a twin or void row is no money: one payment on the profile with the copy, the two real ones on the other',
+       paH.summary.payments === 1 && paH.summary.totalPaid === (await ord(sa.body.order.refno)).amount_thb
+       && pbH.summary.payments === 2 && pbH.summary.totalPaid === 3210, JSON.stringify([paH.summary, pbH.summary]));
+
+    // ── a person voids an aybkk.net order they checked ──
+    const vo = { name: 'Bea Example', email: 'bea.os@example.test' };
+    const vA = await sell({ productCode: 'pack8', ...vo, requestId: 'os-void-1' });
+    const vB = await sell({ productCode: 'pack8', ...vo, requestId: 'os-void-2', confirmRepeat: true });
+    const r0 = await report(today);
+    const cash0 = (((await J('/api/bkk/admin/today', { headers: ADMIN })).body.money || []).find(m => m.method === 'cash') || {}).total || 0;
+    const vB0 = await ord(vB.body.order.refno);
+    ok('voiding needs a reason', (await post(`/api/bkk/admin/orders/${vB0.id}/void`, {}, ADMIN)).status === 400);
+    const v1 = await post(`/api/bkk/admin/orders/${vB0.id}/void`, { reason: 'recorded twice, one slip in the bank' }, ADMIN);
+    const r1 = await report(today);
+    const cash1 = (((await J('/api/bkk/admin/today', { headers: ADMIN })).body.money || []).find(m => m.method === 'cash') || {}).total || 0;
+    const vRow = await ord(vB.body.order.refno);
+    const vPass = await q1('SELECT status FROM bkk_passes WHERE order_id=$1', [vB0.id]);
+    ok('a void order: "Void:" and the reason, its unused pass voided, and Reports and Money in today lower by its amount and by one sale',
+       v1.status === 200 && vRow.status === 'void' && vRow.gateway_note.startsWith(`Void: recorded twice, one slip in the bank (by staff, ${today})`)
+       && vPass.status === 'void' && r1.money.total === r0.money.total - vB0.amount_thb && r1.money.count === r0.money.count - 1
+       && r1.passes.sold === r0.passes.sold - 1 && cash1 === cash0 - vB0.amount_thb, JSON.stringify([v1.body, r0.money.total, r1.money.total, cash0, cash1]));
+    ok('...voiding it again changes nothing', (await post(`/api/bkk/admin/orders/${vB0.id}/void`, { reason: 'again' }, ADMIN)).body.already === true
+       && (await ord(vB.body.order.refno)).gateway_note === vRow.gateway_note);
+    const vA0 = await ord(vA.body.order.refno);
+    await post('/api/bkk/bookings', { memberCode: vA.body.member.code, slotId: cl2.slotId, date: cl2.date }, ADMIN);
+    const v2 = await post(`/api/bkk/admin/orders/${vA0.id}/void`, { reason: 'test' }, ADMIN);
+    ok('an order whose pass has a class booked on it is not voided: 409, and nothing changes',
+       v2.status === 409 && v2.body.classUsed === true && (await ord(vA.body.order.refno)).status === 'paid'
+       && (await q1('SELECT status FROM bkk_passes WHERE order_id=$1', [vA0.id])).status === 'active', JSON.stringify(v2.body));
+    ok('a Rezerv line is never voided here: the doubles check does that',
+       (await post(`/api/bkk/admin/orders/${twRow.id}/void`, { reason: 'test' }, ADMIN)).status === 409
+       && (await post(`/api/bkk/admin/orders/${twRow.id}/void`, { reason: 'test' })).status === 401);
+    const beaH = await hist(vA.body.member.code);
+    ok('...and the profile leaves the void order out of what was paid', beaH.summary.payments === 1 && beaH.summary.totalPaid === vA0.amount_thb,
+       JSON.stringify(beaH.summary));
   }
 
   console.log('\n— Bangkok calendar dates —');

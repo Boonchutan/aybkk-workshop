@@ -464,6 +464,10 @@ const WARN_CODES = {
   // A student made next to one who holds that email, phone or name: the server's rule, never a merge.
   clashEmail: 'note', clashPhone: 'note', clashOtherEmail: 'note',
   passStatus: 'ask', badVat: 'ask', badFreeze: 'ask', leftOver: 'ask',
+  // One sale in both systems (15 Nov 2026): a ฿0 copy of an aybkk.net sale is
+  // kept as its twin, never money. A copy with money, a second pass for that
+  // sale, or a Rezerv payment already here from another file: a person looks.
+  twinOfAybkk: 'note', maybeTwin: 'ask', twinPass: 'ask', rezervTwin: 'ask',
 };
 const NO_CODE = '(no code)', UNKNOWN_CODE = '(unknown code)';
 const OWN_CODES = new Set([...KINDS.flatMap(k => Object.keys(SKIP_CODES[k])), ...Object.keys(WARN_CODES)]);
