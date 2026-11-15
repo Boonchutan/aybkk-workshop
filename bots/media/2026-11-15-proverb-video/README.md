@@ -6,3 +6,9 @@ Boonchu's video (Drive AYBKK/03_Reels_Content/สุภาษิต, 85 s, 4K ve
 - Safety: the 'สึนามิ' answer kept as he said, but no wave picture or scary sound (real victims in Thailand). No monk picture for แพ้เป็นพระ.
 - Tools: render.py (timeline.json -> mp4 via PIL + ffmpeg), synth.py (fallback sound effects).
 - No names of family members in this public repo.
+
+## Draft 2 (15 Nov), Boonchu's timing rule
+- A sticker never shows before the spoken word. Sticker = word end + 0.25 s. Sound = word end + 0.5 s.
+- All sound effects at 60% of draft 1 (`sfx_gain` 0.6 in timeline.json).
+- ชี้โพรง gets a tree-trunk-with-hole sticker (stk/treehole.png, drawn in PIL), then ชีต้า gets 🐆.
+- Newest sticker owns the big spot; older ones in the same line move to a small row at the top.

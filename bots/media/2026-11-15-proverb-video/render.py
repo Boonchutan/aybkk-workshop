@@ -61,18 +61,30 @@ def overlay(fr,t):
     for it in T['items']:
         if not (it['q']<=t<it['end']+0.25): continue
         fade=1.0 if t<it['end'] else max(0,1-(t-it['end'])/0.25)
-        # stickers
-        st=[s for s in it['stk'] if s[1]<=t]
-        for i,s in enumerate(st):
-            newer=[x for x in st[i+1:]]
+        pass
+    # stickers (global: may run past their item's end; the newest sticker owns the main spot)
+    ALL=[]
+    for k,it in enumerate(T['items']):
+        for s in it['stk']: ALL.append((k,s,max(it['end'],s[1]+1.4)))
+    act=[(k,s,h) for k,s,h in ALL if s[1]<=t<h+0.25]
+    if act:
+        kk=max(k for k,s,h in act if True) if False else None
+        newest=max(act,key=lambda x:x[1][1]); kk=newest[0]
+        grp=[x for x in act if x[0]==kk]
+        for i,(k,s,h) in enumerate(grp):
+            fade=1.0 if t<h else max(0,1-(t-h)/0.25)
+            newer=[x for x in grp[i+1:]]
             if not newer:
-                dt=t-s[1]; sc=popscale(dt); bob=6*np.sin((t-s[1])*4.0)
+                sc=popscale(t-s[1]); bob=6*np.sin((t-s[1])*4.0)
                 paste_c(fr,stk(s[0],300),MAIN[0],MAIN[1]+bob,sc,fade)
             else:
-                tm=ease((t-newer[0][1])/0.3); slot=len([x for x in st[:i]])
-                tx=1000-slot*125; ty=ROWY+0
+                tm=ease((t-newer[0][1][1])/0.3); slot=i
+                tx=1000-slot*125; ty=ROWY
                 cx=MAIN[0]+(tx-MAIN[0])*tm; cy=MAIN[1]+(ty-MAIN[1])*tm; sz=1-(1-110/300)*tm
                 paste_c(fr,stk(s[0],300),cx,cy,sz,fade)
+    for it in T['items']:
+        if not (it['q']<=t<it['end']+0.25): continue
+        fade=1.0 if t<it['end'] else max(0,1-(t-it['end'])/0.25)
         # mom pill
         mp=it['_mom']
         if 'momok' in it and t>=it['momok'][0]: mp=it['_momok']
@@ -106,10 +118,10 @@ def load(key):
     if ww.getframerate()!=SR:
         n=int(len(x)*SR/ww.getframerate()); x=np.interp(np.linspace(0,len(x)-1,n),np.arange(len(x)),x)
     return x/(np.abs(x).max()+1e-9)
-GAIN={'pop':0.35,'ding':0.4,'gong':0.5}
+GAIN={'pop':0.35,'ding':0.4,'gong':0.5}; G6=T.get('sfx_gain',1.0)
 for it in T['items']:
     for s in it['stk']:
-        x=load(s[2])*GAIN.get(s[2],0.55); i0=int(s[1]*SR); i1=min(len(a),i0+len(x)); a[i0:i1]+=x[:i1-i0,None]
+        x=load(s[2])*GAIN.get(s[2],0.55)*G6; i0=int((s[3] if len(s)>3 else s[1])*SR); i1=min(len(a),i0+len(x)); a[i0:i1]+=x[:i1-i0,None]
 pk=np.abs(a).max();
 if pk>0.98: a=a/pk*0.98
 ww=wave.open(D+'/mix.wav','w'); ww.setnchannels(2); ww.setsampwidth(2); ww.setframerate(SR); ww.writeframes((a*32767).astype(np.int16).tobytes()); ww.close()
