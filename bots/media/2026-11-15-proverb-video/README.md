@@ -31,3 +31,9 @@ Boonchu's video (Drive AYBKK/03_Reels_Content/สุภาษิต, 85 s, 4K ve
 - Small English line above every Thai line (title, Mom, Boone, real proverb). Boone's answer Thai 70 px, English 34 px.
 - Less clutter: title only 0-3 s; Mom's line fades out when the real proverb comes in; tall answers lift up so nothing overlaps.
 - Drive upload from the cloud session is capped at 10 MB, so the 95 MB mp4 could not go to Drive for the Edits job.
+
+## Draft 7 (15 Nov): plain title/footer, face-safe stickers, QA passed
+- Title box on screen the whole video (Liberation Sans Bold + Noto Sans Thai, black on white 50%). Footer real answer small (EN 24 / TH 30, 3 px gap).
+- Stickers placed off every face (YuNet face boxes in faces/faces.json, 45 px margin, full pop-in size), above the text block.
+- No cross-fades between text blocks; item 8 real line now shows (held 1.3 s).
+- 3 independent frame checkers: 0 issues (348 frames checked).
