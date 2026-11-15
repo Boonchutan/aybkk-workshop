@@ -1,0 +1,30 @@
+[
+ {
+  "photo": "14-213",
+  "id": "FL5",
+  "word": "AUTOPILOT",
+  "line": "Repeat it enough, and a move can go on AUTOPILOT. Done while you think of something else. In finger-tapping scans, the same brain areas still ran it, with less activity.",
+  "credit": "WU ET AL. · 2004 (retold)",
+  "t": 200,
+  "tight": false,
+  "wwidth": 810,
+  "wpos": [
+   210,
+   60
+  ],
+  "ink_w": "light",
+  "sz": 42,
+  "cws": [
+   607
+  ],
+  "sxy": [
+   60,
+   991
+  ],
+  "ink_s": "light",
+  "wburn": 0.25,
+  "sburn": 0.25,
+  "wm": "right",
+  "line_br": "Repeat it enough, and a move | can go on AUTOPILOT. Done | while you think of something | else. In finger-tapping scans, | the same brain areas still | ran it, with less activity."
+ }
+]

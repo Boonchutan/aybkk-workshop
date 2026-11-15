@@ -1,0 +1,30 @@
+[
+ {
+  "photo": "14-308",
+  "id": "FL1",
+  "word": "HARD",
+  "line": "Start feels HARD? We blame oxygen, not you. An exercise science review says it can take 2 to 4 minutes to catch up, longer if you push. And your muscles?",
+  "credit": "JONES & POOLE \u00b7 2005 (retold)",
+  "t": 80,
+  "tight": false,
+  "wwidth": 810,
+  "wpos": [
+   60,
+   60
+  ],
+  "ink_w": "light",
+  "sz": 44,
+  "cws": [
+   607
+  ],
+  "sxy": [
+   "R",
+   980
+  ],
+  "ink_s": "light",
+  "wm": "left",
+  "sright": true,
+  "sburn": 0.25,
+  "wburn": 0.28
+ }
+]

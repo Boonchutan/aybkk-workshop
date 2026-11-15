@@ -5,4 +5,4 @@ Drive folder 'best 30 nov 13-14 carousel' (1IaLQV0W_Xn49bN0JlFhwUNAhcrniQLPh): 3
 Words: HARD, WARM, CLUMSY, LOCK, AUTOPILOT, WATCH, ZONE, YEARS, CHEAPER, TOMORROW on photos 308, 326, 771, 121, 213, 099, 183, 220, 244, 282.
 Texts: writer + facts critic + story critic (23 fixes), then Plato: slide 7 dropped 'out of step with it', slide 9 'no control group' -> 'no group to compare'.
 Yellow-shirt rule was deleted 4 Nov: yellow tanks are fine. Colour check: no outlier (max b* 11.7).
-Status: layout running (set FL). Not posted; waits for Boonchu's go.
+Status: 10 slides laid out and checked (all GRID OK, all passed). Not posted; waits for his go.

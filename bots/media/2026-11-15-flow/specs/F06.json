@@ -1,0 +1,33 @@
+[
+ {
+  "photo": "14-099",
+  "id": "FL6",
+  "word": "WATCH",
+  "line": "Don't grab the wheel. Runners told to WATCH their steps or breath used more oxygen. Same speed. Feeling the body cost nothing extra. We say, learn the count, then feel.",
+  "credit": "SCHUCKER ET AL. 2014 · SCHUCKER & PARRINGTON 2019 (retold)",
+  "t": 150,
+  "tight": false,
+  "wwidth": 720,
+  "wpos": [
+   60,
+   60
+  ],
+  "ink_w": "light",
+  "sz": 42,
+  "cws": [
+   607
+  ],
+  "sxy": [
+   60,
+   834
+  ],
+  "ink_s": "light",
+  "wburn": 0.3,
+  "line_br": "Don't grab the wheel. | Runners told to WATCH | their steps or breath | used more oxygen. | Same speed. Feeling | the body cost nothing | extra. We say, learn | the count, then feel.",
+  "sburn": 0.35,
+  "wmxy": [
+   660,
+   1254
+  ]
+ }
+]

@@ -1,0 +1,36 @@
+[
+ {
+  "photo": "14-771",
+  "id": "FL3",
+  "word": "CLUMSY",
+  "line": "And your head? In lab tests, thinking during exercise got a bit CLUMSY. For 20 minutes. Then quick choices got a little better. Our advice? Don't judge the start.",
+  "credit": "LAMBOURNE & TOMPOROWSKI · 2010 (retold)",
+  "t": 90,
+  "tight": false,
+  "wwidth": 720,
+  "wpos": [
+   890,
+   60
+  ],
+  "ink_w": "light",
+  "sz": 42,
+  "cws": [
+   607
+  ],
+  "sxy": [
+   60,
+   60
+  ],
+  "ink_s": "light",
+  "wm": "left",
+  "wmxy": [
+   60,
+   1228
+  ],
+  "wrot": -90,
+  "wburn": 0.25,
+  "wshadow": 1.5,
+  "sburn": 0.4,
+  "line_br": "And your head? In lab tests, | thinking during exercise got | a bit CLUMSY. For 20 minutes. | Then quick choices got | a little better. Our advice? | Don't judge the start."
+ }
+]
