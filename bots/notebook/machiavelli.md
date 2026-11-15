@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-11-15T00:10:08.270Z
+Inbox last read: 2026-11-15T06:10:08.637Z
 
 ## Standing orders from Boonchu
 - 2026-11-08 BRAND COLOURS CHANGED (Boonchu picked "L1 Grande Galerie", the Louvre palette, for aybkk.net; PR on branch claude/louvre-palette, Neo): Louvre red #7E262E (hero band, headings), oxblood #5F1C23 (deep sections), honey parquet #D6A35C (buttons, offer bars; same hue as the new maple floor), limestone #F4EDE2 (page), soft brass #84621F (prices, gilt), pyramid steel blue #2F507F (links only). The old aubergine #3E1442 + mustard #F2C94C + pink is retired on the website. Posters, carousels, the timetable poster and the review QR card still use aubergine and gold: move them to the Louvre palette only after Boonchu says go for each piece. Small text rule from the same day: nothing under 15 px on the site; keep the grid.
@@ -135,7 +135,7 @@ Inbox last read: 2026-11-15T00:10:08.270Z
 
 - 2026-10-04 (Plato chat handoff): weekly "Letter from the Shala" (Halbert skeleton, judge 31 Dec 2026). Letter #1 sends MON 5 OCT (LINE OA, WeChat, Telegram), #2 Mon 12 Oct. Plato drafts weekly. Machi tracks weekly score: replies, bookings from P.S. link, "TT" replies (not opens). Still open: who checks the Chinese and Russian versions each week.
 
-- 2026-11-02 07:08: COURSE PRICES new choice set after default B (1 Nov): A send prices or B move sales one more week, by 19:00 Sun 8 Nov. Default B = sales Tue 8 Dec, start Tue 15 Dec. 2026-11-08 19:08: no answer, default B applied (sales Tue 8 Dec, start Tue 15 Dec). Next choice by 19:00 Sun 15 Nov. 14 Nov 07:08: reminded (1 day), default B = sales Tue 15 Dec, start Tue 22 Dec. 15 Nov 07:08: reminded, due 19:00 today (1st nudge today).
+- 2026-11-02 07:08: COURSE PRICES new choice set after default B (1 Nov): A send prices or B move sales one more week, by 19:00 Sun 8 Nov. Default B = sales Tue 8 Dec, start Tue 15 Dec. 2026-11-08 19:08: no answer, default B applied (sales Tue 8 Dec, start Tue 15 Dec). Next choice by 19:00 Sun 15 Nov. 14 Nov 07:08: reminded (1 day), default B = sales Tue 15 Dec, start Tue 22 Dec. 15 Nov 07:08: reminded, due 19:00 today (1st nudge today). 15 Nov 13:08: 2nd nudge (last today).
 - 2026-11-04 19:08: Inbox 19:08: 1 new in 1 LINE thread, 1 hot (class booking question for Tue 10 Nov, may be answered). Course prices (Sun 8 Nov) and serious lead (Sat 7 Nov) not repeated (2 nudges today). No reminders due since 13:08, no wins. Next step given: close the DUO PACK LINE lead (promo ends 11 Nov) and answer the 10 Nov booking.
 
 ## Log
@@ -280,3 +280,4 @@ Inbox last read: 2026-11-15T00:10:08.270Z
 - 2026-11-14 13:08: check-in. Course prices (1 day) led; waiting students 2nd nudge (last today), both due 19:00 (prices Sun). No reminders due since 07:08. Inbox 13:08: 1 LINE thread with news, 1 needs a reply, 1 hot.
 - 2026-11-14 19:08: waiting students: no answer by 19:00, default applied (no reply sent). Course prices not repeated (2 nudges today), due 19:00 Sun 15 Nov. No reminders due since 13:08. No win reported; next step given: answer the returning package student (4th ask). Inbox 19:08: 1 LINE thread with news, 1 needs a reply, 1 hot.
 - 2026-11-15 07:08: Carne posted (0 new leads; teacher-training follow-up drafted; serious lead 29 days silent); Plato paused (expected). No @Machi requests. Course prices: choice by 19:00 today (1st nudge). Serious lead send or close: choice by 19:00 today, default stays open (Carne checks Sat 21 Nov). Reminders: Mysore trip flights/hotel (daily), Japan Feb trip dates, Rezerv import (daily). Inbox 07:08: 1 LINE thread with news, 1 needs a reply, 1 hot (returning package student, 5th ask). No wins this week (9 to 15 Nov). Board rebuilt.
+- 2026-11-15 13:08: check-in. Course prices led (due 19:00 today, 2nd nudge, last today); serious lead send or close 2nd nudge (last today), due 19:00. No reminders due since 07:08. Inbox 13:08: 0 new, 0 hot.

@@ -8,3 +8,4 @@ Reminders: Mysore family trip: flights and hotel booked? Japan February trip: da
 Reel: Plato's daily run is paused (expected). Carne posted: 0 new leads, teacher-training follow-up drafted.
 Score: wins this week (Mon 9 to Sun 15 Nov): none reported. Last win 6 Nov.
 Inbox 07:08: 1 LINE thread with news, 1 needs a reply, 1 hot.
+13:08 check-in: course prices due 19:00 today (2nd nudge), serious lead choice due 19:00. Inbox: 0 new, 0 hot.
