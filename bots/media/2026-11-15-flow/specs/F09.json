@@ -1,34 +1,32 @@
 [
  {
-  "photo": "14-244",
+  "photo": "14-644",
   "id": "FL9",
   "word": "CHEAPER",
   "line": "Practice gets CHEAPER, too. In 9 soldiers, sun salutations needed about 30% less oxygen at month 11 than month 3. Small study, no group to compare. Army training may have helped.",
   "credit": "SINHA & SINHA · 2014 (retold)",
-  "t": 40,
+  "t": 265,
   "tight": false,
   "wwidth": 720,
   "wpos": [
-   92,
-   60
+   60,
+   400
   ],
   "wrot": -90,
   "ink_w": "light",
-  "wshadow": 1.6,
-  "wburn": 0.3,
-  "sz": 44,
+  "wshadow": 1.7,
+  "wburn": 0.25,
+  "sz": 40,
   "cws": [
-   607
+   353
   ],
   "sxy": [
-   413,
+   "R",
    60
   ],
-  "ink_s": "light",
-  "sburn": 0.35,
-  "wmxy": [
-   660,
-   1250
-  ]
+  "sright": true,
+  "ink_s": "dark",
+  "line_br": "Practice gets | CHEAPER, too. | In 9 soldiers, | sun salutations | needed about | 30% less oxygen | at month 11 than | month 3. Small | study, no group to | compare. Army | training may | have helped.",
+  "wm": "right"
  }
 ]
