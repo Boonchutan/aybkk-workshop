@@ -52,8 +52,7 @@ const ok = (name, cond, extra = '') => {
   const bkkAt = s => Date.parse(s + '+07:00');
   let clock = bkkAt('2026-11-11T23:59:00');
   const now = () => clock;
-  mountBkk(app, { pgPool: pool, cloudinary: fakeCloud, fetch: fakeFetch, now });
-  await new Promise(r => setTimeout(r, 1500));           // let schema init finish
+  await mountBkk(app, { pgPool: pool, cloudinary: fakeCloud, fetch: fakeFetch, now });
   const srv = app.listen(0);
   const port = srv.address().port;
   const B = `http://127.0.0.1:${port}`;
@@ -118,7 +117,7 @@ const ok = (name, cond, extra = '') => {
         to_char(p.valid_from,'YYYY-MM-DD') AS f, p.valid_until - p.valid_from AS span
       FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id JOIN bkk_members m ON m.id=p.member_id WHERE m.code=$1`, [code])).rows[0];
     // A boot only: the schema step runs when the API is mounted.
-    const boot = async (db = pool) => { mountBkk(express(), { pgPool: db, now }); await new Promise(r => setTimeout(r, 1500)); };
+    const boot = (db = pool) => mountBkk(express(), { pgPool: db, now });
 
     const new8 = await prod('pack8'), new10 = await prod('pack10');
     ok('a new database has the 8-class pack on sale and the 10-class pack off sale, listed after it', new8 && new8.active
@@ -228,7 +227,7 @@ const ok = (name, cond, extra = '') => {
     const passOf = async name => (await pool.query(`SELECT p.valid_days, p.source, pr.code,
         to_char(p.valid_from,'YYYY-MM-DD') AS f, to_char(p.valid_until,'YYYY-MM-DD') AS u
       FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id JOIN bkk_members m ON m.id=p.member_id WHERE m.name=$1`, [name])).rows[0];
-    const boot = async (db = pool) => { mountBkk(express(), { pgPool: db, now }); await new Promise(r => setTimeout(r, 1500)); };
+    const boot = (db = pool) => mountBkk(express(), { pgPool: db, now });
     const sell = async name => {
       const o = await post('/api/bkk/orders', { productCode: 'pack8', name, email: name.toLowerCase().replace(/ /g, '.') + '@example.com' });
       await post(`/api/bkk/admin/orders/${o.body.order.id}/force-activate`, {}, ADMIN);
@@ -777,8 +776,7 @@ const ok = (name, cond, extra = '') => {
     const boot = async () => {
       const errs = [], logErr = console.error;
       console.error = (...a) => errs.push(a.join(' '));
-      mountBkk(express(), { pgPool: pool, now });
-      await new Promise(r => setTimeout(r, 1500));
+      await mountBkk(express(), { pgPool: pool, now });
       console.error = logErr;
       return errs.filter(e => /schema init failed/.test(e));
     };

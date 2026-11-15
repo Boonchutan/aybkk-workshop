@@ -4793,7 +4793,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   });
 
   const booted = initSchema();
-  booted
+  // Resolves once the schema, seed and price switch are done (never rejects), so
+  // a test can wait for the boot instead of guessing how long it takes.
+  return booted
     .then(() => {
       console.log('✓ bkk-api mounted (/api/bkk/*)'); letterPurge(); sweepFaces();
       return switchPrices().catch(e => console.error('✗ bkk: price switch failed:', e.message));

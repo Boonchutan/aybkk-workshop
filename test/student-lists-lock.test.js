@@ -155,7 +155,9 @@ const LOCKED = [
   await pool.query(`INSERT INTO journal_entries (student_id, session_date) VALUES ($1, '2026-11-01')`, [ids[0]]);
 
   PORT = await freePort();
-  const env = { ...process.env, PORT: String(PORT), MISSION_CONTROL_PORT: String(PORT), DATABASE_URL: DB,
+  // server.js asks for SSL on any database outside Railway; the CI database has none.
+  const noSsl = DB + (DB.includes('?') ? '&' : '?') + 'sslmode=disable';
+  const env = { ...process.env, PORT: String(PORT), MISSION_CONTROL_PORT: String(PORT), DATABASE_URL: noSsl,
     BKK_ADMIN_KEY: KEY, TRANSMISSION_KEY: 'lock-test-transmission', MAIL_DRY_RUN: '1',
     NEO4J_URI: 'bolt://127.0.0.1:9', LOCK_TEST_SERVER: path.join(ROOT, 'server.js'),
     UPLOAD_DIR: fs.mkdtempSync(path.join(os.tmpdir(), 'lock-uploads-')),
