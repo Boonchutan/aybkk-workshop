@@ -205,6 +205,12 @@
 
 - 2026-11-01 SFX LEVEL (Boonchu: 'The sound effect ping so loud that my voice is low. Lower sound effect ping to 40%'). Always: normalize his voice first (ffmpeg loudnorm I=-16 TP=-1.5), then every effect at 40% of his voice level (99.9th-percentile voice peak), tones (ping, chime, sparkle) x0.7 softer. Never scale effects to full scale (the old 0.89*0.40 rule made them louder than a quiet take). Tool: bots/tools/reel-edit/ep5/sfx5.py.
 
+- 2026-11-15 STICKER TIMING (Boonchu, proverb video: 'the sticker cannot appear before the spoken word'). A sticker shows 0.25 s after the word ends; its sound 0.25 s after that (word end + 0.5 s). Example: ชี้โพรง, 0.25 s, tree-trunk-with-hole sticker; "ชีต้า", 0.25 s, 🐆, 0.25 s, sound. Draw a custom sticker when no emoji fits (tree hole, monk). พระ = monk: show a monk with hands in prayer (wai), calm, never a joke about the monk.
+
+- 2026-11-15 SFX LEVELS FOR FAMILY/FUN VIDEOS (Boonchu: 'ping and ding still loud. keep it at 40% but animal sound at 60%'; 'lower the elephant, too loud'). Normalize the voice first, then set each effect's peak against the voice peak (99.9th percentile): animal sounds 60%, other effects 40%, ping/ding/bell/gong 40% x 0.7, laugh 40%. Use real recordings (CC0 or public domain only, licence checked), never synth sounds when a real one exists. When Mom laughs, add a small 2-second laugh at 40%. Fire gets a fire whoosh.
+
+- 2026-11-15 THAI TEXT ON VIDEO (Boonchu: 'the word ขี้ has ี and ้, you must align them so it's not overlapped and unreadable'). Stacked Thai marks (ขี้, ปี่, ที่) sit above the line, so lay out each line by its real glyph box (font.getbbox), leave room above line 1, and push the next line down when the marks would hit the line above. Check every Thai word with stacked marks in a zoomed frame before sending.
+
 ## Jobs from Machi
 - REPLACED 15 Oct by GOOGLE BUSINESS PHOTO POSTS (next entry); kept for history. Was: 2026-10-15 (Google report): WEEKLY GOOGLE BUSINESS PROFILE POST. Once a week, turn the week's best Reel into a Google post: 1 photo or the video, under 300 characters, alternate English and Thai, button "Book" to https://aybkk.net/start/maps. Posts may mention the promotion (the profile description may not). Draft only; Boonchu or Claude in Chrome posts it.
 - 2026-10-15 (Boonchu: "choose some photos with many people in the frame to post in google business. you can do every wednesday, friday and sunday"): GOOGLE BUSINESS PHOTO POSTS.
