@@ -25,3 +25,4 @@ Boonchu's video (Drive AYBKK/03_Reels_Content/สุภาษิต, 85 s, 4K ve
 - พระ: custom monk sticker (stk/monk.png: Noto bald person + Noto folded hands, eyes closed, saffron robe) at word end + 0.25 s, small glass bell at + 0.5 s.
 - Fire: real flare whoosh on 🔥. Laugh: 2 s CC0 chuckle at 40% when Mom laughs (40.1 s and 83.6 s).
 - Levels vs the normalized voice's mono 99.9% peak: animals 0.60, other effects 0.40, ding/bell/gong 0.28, laugh 0.40 (checked in mix.wav).
+- Boonchu, 15 Nov: 'it all good'. Draft 4 approved. Timing and sound rules saved as standing orders in plato.md.
