@@ -328,6 +328,7 @@ Guardrails: never use the "back injury" story from Boonchu Persuasion Framework 
 - 2026-09-28: At 53, cannot read anything close in low light. Buys reading glasses at the eye shop. [USED 2026-09-28, dristi Reel]
 - 2026-09-27: Three days of rain in Bangkok, stuck at home, and so is half the city. [USED: Vritra part 1 (27 Sep) and part 2 (28 Sep)]
 
+- 2026-11-15: His wife asked their son (about 5) to finish Thai proverbs on video; his answers were funny ('ตกน้ำไม่ไหล ตกไฟ... มีช้างช่วย', 'สอนจระเข้ให้... โยคะ'). The son likes the song 'Hotel Party'. [USED 2026-11-15, family Reel 'ฟัง gen Alpha ต่อคำสุภาษิตไทย', bots/media/2026-11-15-proverb-video/]
 - 2026-11-03 (his own words, for a talking Reel): 'I used to think 99% of men loves challenge. After first year of yoga, it appears that girls are the bad ass. Some are so weak but they resist. Some has lots of fear but keep doing. Most of them just more resilience. I don't know what to say, bro.' [USED: talking Reel draft 3 Nov]
 
 ## Stories used
