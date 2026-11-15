@@ -212,6 +212,8 @@
 
 - 2026-11-15 THAI TEXT ON VIDEO (Boonchu: 'the word ขี้ has ี and ้, you must align them so it's not overlapped and unreadable'). Stacked Thai marks (ขี้, ปี่, ที่) sit above the line, so lay out each line by its real glyph box (font.getbbox), leave room above line 1, and push the next line down when the marks would hit the line above. Check every Thai word with stacked marks in a zoomed frame before sending.
 
+- 2026-11-15 VIDEO TEXT: BILINGUAL, NOT CLUTTERED (Boonchu: 'can we do english caption too? you can make it small line above the thai caption'; then 'maybe boone captions are a bit too big'; 'a lot of text looks clutter'). Each Thai line gets a small English line above it, about half the size, same colour. The main answer is Thai 70 px, not 88. At most 2 text blocks on screen at once: the title shows only in the first 3 s, and the question fades out when the next block (the real answer) comes in. Show the English translation plainly, no explaining.
+
 ## Jobs from Machi
 - REPLACED 15 Oct by GOOGLE BUSINESS PHOTO POSTS (next entry); kept for history. Was: 2026-10-15 (Google report): WEEKLY GOOGLE BUSINESS PROFILE POST. Once a week, turn the week's best Reel into a Google post: 1 photo or the video, under 300 characters, alternate English and Thai, button "Book" to https://aybkk.net/start/maps. Posts may mention the promotion (the profile description may not). Draft only; Boonchu or Claude in Chrome posts it.
 - 2026-10-15 (Boonchu: "choose some photos with many people in the frame to post in google business. you can do every wednesday, friday and sunday"): GOOGLE BUSINESS PHOTO POSTS.
