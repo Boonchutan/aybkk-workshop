@@ -346,6 +346,13 @@
       qOutMailBad: 'Type KEEP or REMOVE. Nothing was changed.',
       outDone: (n, k, gone) => `Done. ${n}'s profile has a new code and ${k} old link(s) stopped.${gone ? `\nRemoved email: ${gone} (put it back with Change email if that was a mistake).` : ''}\nSend ${n} a new sign-in link now.`,
       linkBtn: 'Sign-in link', linkCopied: 'Copied. Paste it into their LINE, WhatsApp or WeChat.', linkCopyHand: 'Copy this and send it to them:',
+      mergeBtn: 'Merge a double', qMergeFrom: n => `${n} has a second profile?\n\nType the code of the OTHER profile. Its passes, classes, payments and photos move to this one, and ${n} keeps this code.`,
+      qMergeSure: (k, f, d) => `Careful: the ${d.join(' and ')} are different.\n\n${k.name}: ${k.email || '-'} ${k.phone || ''}\n${f.name}: ${f.email || '-'} ${f.phone || ''}\n\nThis may be two people with the same name. Type SAME only if you know it is one student.`,
+      mergeNo: 'Nothing was merged.',
+      mergePlan: j => `Keep: ${j.keep.name} (${j.keep.code}) ${j.keep.email || ''}\nFold in: ${j.fold.name} (${j.fold.code}) ${j.fold.email || ''}\n\nMoves: ${j.moved.passes} passes, ${j.moved.bookings} classes, ${j.moved.orders} payments, ${j.moved.photo_members} photos, ${j.moved.notes} notes.${j.seatsCancelled ? `\n${j.seatsCancelled} class(es) were booked on both: one copy is cancelled.` : ''}${j.journalLeft ? `\n\nBoth have a practice journal: entries written under ${j.fold.code} stay there and do not show on this profile. To keep that journal, merge the other way round.` : ''}${j.left.checks || j.left.photos ? `\nStays on ${j.fold.code} (this profile already has the same day or photo): ${j.left.checks} check(s), ${j.left.photos} photo tag(s).` : ''}\n\nThe other code and email lead to this profile from now on. Undo is on this card.`,
+      mergeDone: n => `Done. ${n} has one profile now.`,
+      foldedL: 'Merged in:', undoBtn: 'Undo', qUndo: c => `Take ${c} back out as its own profile? Everything that moved goes back.`,
+      undoDone: j => `Undone.${j.fieldsKept && j.fieldsKept.length ? `\nChanged on the kept profile since, so not moved back: ${j.fieldsKept.join(', ')}.` : ''}${j.seatsNotBack ? `\n${j.seatsNotBack} cancelled class(es) not booked again: the seat is taken or the pack is used up.` : ''}${j.twinsUndone && j.twinsUndone.passes ? `\n${j.twinsUndone.passes} Rezerv pass(es) kept void as the copy of the other profile's sale are live again: check each student has one pass.` : ''}`,
       impTitle: 'Move students from Rezerv', impBtn: 'Import',
       impHelp: 'One student per line: name | email | plan | end date | classes left (packs only). Email can be empty now and added later by importing the same line again with the email. Safe to run twice: nobody and no pass is added twice.',
       impDone: j => `Done. ${j.members} students (${j.newMembers} new), ${j.passes} passes added, ${j.emailsAdded} emails filled in.`,
@@ -434,6 +441,12 @@
       outBtn: 'ออกจากระบบทุกเครื่อง', qOut: n => `ออกจากระบบโปรไฟล์ของ ${n} ในทุกเครื่องไหม?\n\nใช้เมื่อคนผิดเปิดโปรไฟล์ของ ${n} ทุกคนที่เปิดอยู่ (รวมคนผิด) จะเข้าไม่ได้อีก ลิงก์เก่าใช้ไม่ได้ แล้วส่งลิงก์ใหม่ให้ ${n}`,
       outDone: (n, k, gone) => `เรียบร้อย โปรไฟล์ของ ${n} ได้รหัสใหม่ ลิงก์เก่า ${k} ลิงก์ใช้ไม่ได้แล้ว${gone ? `\nลบอีเมลแล้ว: ${gone} (ถ้าผิด ใส่คืนด้วยปุ่มเปลี่ยนอีเมล)` : ''}\nส่งลิงก์ใหม่ให้ ${n} เลย`,
       linkBtn: 'ลิงก์เข้าโปรไฟล์', linkCopied: 'คัดลอกแล้ว วางในไลน์ WhatsApp หรือ WeChat ของนักเรียนได้เลย', linkCopyHand: 'คัดลอกข้อความนี้แล้วส่งให้นักเรียน:',
+      mergeBtn: 'รวมโปรไฟล์ซ้ำ', qMergeFrom: n => `${n} มีโปรไฟล์ที่สองใช่ไหม?\n\nพิมพ์รหัสของโปรไฟล์อีกอัน แพ็กเกจ คลาส การชำระเงิน และรูป จะย้ายมาที่โปรไฟล์นี้ ${n} ใช้รหัสนี้ต่อ`,
+      qMergeSure: (k, f, d) => `ระวัง: ${d.map(x => x === 'email' ? 'อีเมล' : 'เบอร์โทร').join(' และ ')}ไม่ตรงกัน\n\n${k.name}: ${k.email || '-'} ${k.phone || ''}\n${f.name}: ${f.email || '-'} ${f.phone || ''}\n\nอาจเป็นคนละคนที่ชื่อเหมือนกัน พิมพ์ SAME เฉพาะเมื่อแน่ใจว่าเป็นคนเดียวกัน`,
+      mergeNo: 'ยังไม่ได้รวม',
+      mergePlan: j => `เก็บ: ${j.keep.name} (${j.keep.code}) ${j.keep.email || ''}\nรวมเข้ามา: ${j.fold.name} (${j.fold.code}) ${j.fold.email || ''}\n\nย้าย: แพ็กเกจ ${j.moved.passes} คลาส ${j.moved.bookings} การชำระเงิน ${j.moved.orders} รูป ${j.moved.photo_members} โน้ต ${j.moved.notes}${j.seatsCancelled ? `\nมี ${j.seatsCancelled} คลาสที่จองไว้ทั้งสองโปรไฟล์: ยกเลิกอันที่ซ้ำ` : ''}${j.journalLeft ? `\n\nทั้งสองโปรไฟล์มีบันทึกการฝึก: บันทึกของ ${j.fold.code} จะอยู่ที่เดิม ไม่แสดงในโปรไฟล์นี้ ถ้าอยากเก็บบันทึกนั้น ให้รวมกลับด้าน` : ''}${j.left.checks || j.left.photos ? `\nอยู่ที่ ${j.fold.code} ต่อ (โปรไฟล์นี้มีวันหรือรูปเดียวกันแล้ว): ผลตรวจ ${j.left.checks} รูป ${j.left.photos}` : ''}\n\nรหัสและอีเมลของอีกอันจะพามาที่โปรไฟล์นี้ ยกเลิกการรวมได้ที่การ์ดนี้`,
+      mergeDone: n => `เรียบร้อย ${n} มีโปรไฟล์เดียวแล้ว`,
+      foldedL: 'รวมเข้ามาแล้ว:', undoBtn: 'ยกเลิกการรวม', qUndo: c => `แยก ${c} ออกเป็นโปรไฟล์ของตัวเองอีกครั้งไหม? ทุกอย่างที่ย้ายมาจะกลับไป`, undoDone: j => `แยกออกแล้ว${j.fieldsKept && j.fieldsKept.length ? `\nมีการแก้ในโปรไฟล์ที่เก็บไว้หลังรวม จึงไม่ย้ายกลับ: ${j.fieldsKept.join(', ')}` : ''}${j.seatsNotBack ? `\nมี ${j.seatsNotBack} คลาสที่ยกเลิกไว้ไม่ได้จองคืน: ที่นั่งถูกใช้แล้วหรือแพ็กเกจหมดแล้ว` : ''}${j.twinsUndone && j.twinsUndone.passes ? `\nแพ็กเกจจาก Rezerv ${j.twinsUndone.passes} ใบที่ยกเลิกไว้เพราะเป็นสำเนาการขายของอีกโปรไฟล์ กลับมาใช้งานได้แล้ว: ตรวจว่านักเรียนแต่ละคนมีแพ็กเกจเดียว` : ''}`,
       impTitle: 'ย้ายนักเรียนจาก Rezerv', impBtn: 'นำเข้า',
       impHelp: 'บรรทัดละหนึ่งคน: ชื่อ | อีเมล | แพ็กเกจ | วันหมดอายุ | ครั้งที่เหลือ (เฉพาะแพ็กครั้ง) อีเมลเว้นว่างไว้ก่อนได้ แล้วนำเข้าบรรทัดเดิมพร้อมอีเมลภายหลัง กดซ้ำได้ ไม่มีชื่อหรือบัตรซ้ำ',
       impDone: j => `เสร็จแล้ว นักเรียน ${j.members} คน (ใหม่ ${j.newMembers}) เพิ่มบัตร ${j.passes} ใบ เติมอีเมล ${j.emailsAdded} คน`,
@@ -543,7 +556,7 @@
     rNotSeenH: 'Not seen for 14 days', rNotSeenHelp: 'Has a pass they can use, but no class in the last 14 days. Counted from today. Send them a message.',
     neverCame: 'never came',
     ciTitle: 'Move everything from Rezerv (CSV files)',
-    ciHelp: 'Export each list from Rezerv as a CSV file. Import Students first, then Passes (the memberships file, then the packages file), Visits and Payments, one file per year. Columns and date order are matched for you. Check shows what will happen and saves nothing. Running the same file again adds nothing twice.',
+    ciHelp: 'Export each list from Rezerv as a CSV file. Import Students first, then Payments, then Passes (the memberships file, then the packages file), then Visits, one file per year. Columns and date order are matched for you. Check shows what will happen and saves nothing. Running the same file again adds nothing twice.',
     ciKind: 'What is in the file?', ciFile: 'CSV file',
     kind_members: 'Students', kind_visits: 'Visits (classes booked or attended)', kind_payments: 'Payments',
     kind_passes: 'Passes (Rezerv memberships and packages)',
@@ -618,7 +631,7 @@
     rNotSeenH: 'ไม่ได้มา 14 วัน', rNotSeenHelp: 'มีแพ็กเกจที่ใช้ได้ แต่ไม่ได้มาเรียนใน 14 วันล่าสุด นับจากวันนี้ ลองส่งข้อความหา',
     neverCame: 'ยังไม่เคยมา',
     ciTitle: 'ย้ายข้อมูลทั้งหมดจาก Rezerv (ไฟล์ CSV)',
-    ciHelp: 'ดาวน์โหลดแต่ละรายการจาก Rezerv เป็นไฟล์ CSV นำเข้านักเรียนก่อน แล้วจึงแพ็กเกจ (ไฟล์ memberships ก่อน แล้วไฟล์ packages) การเข้าเรียน และการชำระเงิน ทีละไฟล์ต่อปี ระบบจับคู่คอลัมน์และลำดับวันที่ให้เอง ปุ่มตรวจสอบจะแสดงผลที่จะเกิดขึ้นโดยยังไม่บันทึก นำเข้าไฟล์เดิมซ้ำได้ ไม่มีข้อมูลซ้ำ',
+    ciHelp: 'ดาวน์โหลดแต่ละรายการจาก Rezerv เป็นไฟล์ CSV นำเข้านักเรียนก่อน แล้วการชำระเงิน แล้วแพ็กเกจ (ไฟล์ memberships ก่อน แล้วไฟล์ packages) แล้วการเข้าเรียน ทีละไฟล์ต่อปี ระบบจับคู่คอลัมน์และลำดับวันที่ให้เอง ปุ่มตรวจสอบจะแสดงผลที่จะเกิดขึ้นโดยยังไม่บันทึก นำเข้าไฟล์เดิมซ้ำได้ ไม่มีข้อมูลซ้ำ',
     ciKind: 'ในไฟล์คืออะไร', ciFile: 'ไฟล์ CSV',
     kind_members: 'นักเรียน', kind_visits: 'การเข้าเรียน (คลาสที่จองหรือมาเรียน)', kind_payments: 'การชำระเงิน',
     kind_passes: 'แพ็กเกจ (memberships และ packages ใน Rezerv)',
@@ -678,6 +691,7 @@
     ci_badPlan: v => `แพ็กเกจ "${v}" ไม่ใช่แพ็กเกจของเรา (เวิร์กช็อป หรืออ่านไม่ได้): ไม่เก็บเป็นแพ็กเกจ`,
     ci_passStatus: v => `อ่านสถานะแพ็กเกจ "${v}" ไม่ได้: ถือว่าไม่มีสถานะ`,
     ci_neverStarted: v => `ยังไม่เคยเริ่มใช้ และ Rezerv เป็น ${v}: ไม่มีอะไรต้องเก็บ`,
+    ci_copyOfSale: (pkg, d) => `${pkg} เดียวกันขายใน aybkk.net แล้ว (${ymdLong(d, true)}) และ Rezerv ไม่มีการชำระเงินของอันนี้: เป็นสำเนา ไม่เก็บ`,
     ci_passOff: v => `Rezerv เป็น ${v}: เก็บเป็นประวัติ ใช้เข้าเรียนไม่ได้`,
     ci_badFreeze: v => `อ่านวันที่พัก "${v}" ไม่ได้: ไม่ได้ใส่`,
     ci_freezeLater: (a, b) => `Rezerv มีการพักแพ็กเกจตั้งแต่ ${ymdLong(a, true)}${b ? ' ถึง ' + ymdLong(b, true) : ''}: กดพักในระบบนี้ในวันนั้น`,
@@ -871,12 +885,11 @@
     rzPassBack: 'แพ็กเกจจาก Rezerv ของการขายครั้งเดียวกันกลับมาใช้งานได้แล้ว',
     ordPill: { twin: 'ขายครั้งเดียวกัน', void: 'ยกเลิกแล้ว' },
     ci_twinOfAybkk: r => `รายการ ฿0 ของการขายที่จ่ายบน aybkk.net (เลขอ้างอิง ${r}): เก็บไว้เป็นการขายครั้งเดียวกัน ไม่นับเป็นเงินเข้า`,
-    ci_maybeTwin: (r, pkg) => `aybkk.net มีการขาย${pkg ? ' ' + (TH_BY_EN[pkg] || pkg) : 'แพ็กเกจนี้'} ที่จ่ายแล้วภายใน 3 วัน (เลขอ้างอิง ${r}): เก็บเป็นชำระแล้ว ตรวจว่าไม่ใช่การขายครั้งเดียวที่ลงไว้สองที่`,
+    ci_maybeTwin: (r, pkg) => `aybkk.net มีการขาย${pkg ? ' ' + (TH_BY_EN[pkg] || pkg) : 'แพ็กเกจนี้'} ที่จ่ายแล้วภายใน 5 วัน (เลขอ้างอิง ${r}): เก็บเป็นชำระแล้ว ตรวจว่าไม่ใช่การขายครั้งเดียวที่ลงไว้สองที่`,
     ci_rezervTwin: r => `การชำระเงินนี้จาก Rezerv มีอยู่แล้วเป็นรายการ ${r} (จากไฟล์ที่มีหรือไม่มีรหัส Rezerv): ไม่เพิ่มซ้ำ`,
     ci_twinPass: (r, used, total, from) => `เป็นการขายเดียวกับแพ็กเกจ aybkk.net ของเลขอ้างอิง ${r}: เก็บเป็นแพ็กเกจที่ยกเลิกแล้ว นักเรียนจึงมีแพ็กเกจเดียว`
       + (used ? `; ใช้ไปใน Rezerv ${used} จาก ${total} ครั้ง นับรวมในแพ็กเกจนั้นแล้ว` : '')
       + (from ? `; แพ็กเกจนั้นเริ่มวันที่ ${from} ตาม Rezerv` : ''),
-    ci_nearPass: (r, pkg) => `aybkk.net มีแพ็กเกจ ${TH_BY_EN[pkg] || pkg} ที่ใช้งานอยู่ จ่ายภายใน 3 วัน (เลขอ้างอิง ${r}): เก็บไว้ใช้งาน ตรวจว่านักเรียนมีแพ็กเกจเดียว ไม่ใช่สองแพ็กเกจ`,
   });
   Object.assign(STR.th.words, { twin: 'ขายครั้งเดียวกัน' });
   // A name opens the profile, which starts with what they can use today; a
@@ -1044,7 +1057,7 @@
       <b>${T('impTitle')}</b>
       <p class="muted">${esc(T('impHelp'))}</p>
       <textarea id="imp" rows="8" style="width:100%;font:13px/1.5 ui-monospace,monospace;padding:10px;border:1.5px solid var(--line);border-radius:7px;background:var(--wall);color:var(--ink)"
-        placeholder="Mei Xu | mei@example.com | 1 month | 3 Oct 2026&#10;Diane Rostaing | | 10 class pack | 12 Dec 2026 | 7"></textarea>
+        placeholder="Mei Xu | mei@example.com | 1 month | 3 Oct 2026&#10;Anna Lee | | 10 class pack | 12 Dec 2026 | 7"></textarea>
       <p><button class="btn pink" onclick="importRezerv()">${T('impBtn')}</button></p>
       <div id="impOut"></div>
     </div>`;
@@ -1094,7 +1107,10 @@
       <p style="margin-top:8px"><button class="btn" onclick="bookFor('${esc(m.code)}')">${T('bookBtn')}</button>
         <button class="btn pink" onclick="signinLink('${esc(m.code)}')">${T('linkBtn')}</button>
         <button class="btn gray" onclick="changeEmail('${esc(m.code)}')">${T('emailBtn')}</button>
-        <button class="btn red" onclick="signOutAll('${esc(m.code)}')">${T('outBtn')}</button></p>
+        <button class="btn red" onclick="signOutAll('${esc(m.code)}')">${T('outBtn')}</button>
+        <button class="btn gray" onclick="mergeInto('${esc(m.code)}')">${T('mergeBtn')}</button></p>
+      ${(m.folded || []).length ? `<p class="muted">${T('foldedL')} ${m.folded.map(f => `${esc(f.code)}${f.email ? ' · ' + esc(f.email) : ''}
+        <button class="btn sm gray" onclick="unmerge('${esc(f.code)}')">${T('undoBtn')}</button>`).join(' ')}</p>` : ''}
       <div id="sl_${esc(m.code)}"></div>
     </div>`).join('');
   };
@@ -1151,6 +1167,30 @@
     $('#q').value = j.member.code;
     await findStudents();
     alert(T('outDone', now.name, j.linksStopped, j.removedEmail));
+  };
+
+  // Two profiles for one student (a Rezerv import, a second email): fold the
+  // other into this one. The server shows what would move before anything does.
+  window.mergeInto = async (code) => {
+    const m = FOUND[code]; if (!m) return;
+    const from = (ask(T('qMergeFrom', m.name), '') || '').toUpperCase(); if (!from) return;
+    const send = body => api(`/api/bkk/admin/members/${encodeURIComponent(code)}/merge`,
+      { method: 'POST', body: JSON.stringify({ from, ...body }) });
+    const p = await shout(await send({ dryRun: true })); if (!p) return;
+    const body = {};
+    if (p.differs.length) {
+      const a = ask(T('qMergeSure', p.keep, p.fold, p.differs), ''); if (a === null) return;
+      if (a.toUpperCase() !== 'SAME') { alert(T('mergeNo')); return; }
+      body.sure = true;
+    }
+    if (!confirm(T('mergePlan', p))) return;
+    if (await shout(await send(body))) { alert(T('mergeDone', p.keep.name)); findStudents(); }
+  };
+  window.unmerge = async (code) => {
+    if (!confirm(T('qUndo', code))) return;
+    const r = await api(`/api/bkk/admin/members/${encodeURIComponent(code)}/unmerge`, { method: 'POST', body: '{}' });
+    const j = await shout(r);
+    if (j) { alert(T('undoDone', j)); findStudents(); }
   };
 
   // A link M pastes into the student's LINE, WhatsApp or WeChat: the short one,
@@ -1906,8 +1946,8 @@
   const pkgKey = o => String(o.name_en || o.item_name || '').toLowerCase();
   const crossPkg = (a, b) => a.id !== b.id && a.member_id != null && a.member_id === b.member_id
     && ((a.product_id != null && a.product_id === b.product_id) || (!!pkgKey(a) && pkgKey(a) === pkgKey(b)));
-  // Near packages the two systems may each have used for one sale: the server asks a person about these.
-  const FAM = { pack8m1: 'pack8', unlim12: 'unlim12m' };
+  // One package under two names, as the server's PKG_FAMILY: one sale may sit under either.
+  const FAM = { unlim6m: 'unlim6', unlim12m: 'unlim12', pack8m1: 'pack8' };
   const fam = o => o.product_code ? FAM[o.product_code] || o.product_code : '';
   const nearPkg = (a, b) => crossPkg(a, b) || (a.id !== b.id && a.member_id != null && a.member_id === b.member_id
     && !!fam(a) && fam(a) === fam(b));
@@ -1946,14 +1986,15 @@
       const k = ours.filter(p => paidHere(p) && samePkg(p, o) && after(o, p) && ordAt(o) - ordAt(p) <= 72 * HOUR).length;
       if (k) nth[o.id] = k + 1;
     }
-    // The same package in Rezerv within 3 days of the payment, seen without opening
-    // the fold: its own twin always, and any Rezerv line not linked to another sale.
+    // The same package (or its family) in Rezerv within 5 days of the payment, as
+    // the import pairs them, seen without opening the fold: its own twin always,
+    // and any Rezerv line not linked to another sale.
     // Settled (grey) only when every such line is linked to this sale and the server
     // sees no live Rezerv pass for it; a line not linked first, as that is the one to check.
     for (const o of main) if (o.status !== 'void') {
       const gap = x => Math.abs(ordAt(x) - ordAt(o));
       const near = rz.filter(x => x.twin_of === o.id
-        || (x.status === 'paid' && x.twin_of == null && nearPkg(x, o) && payApart(x, o) <= 3));
+        || (x.status === 'paid' && x.twin_of == null && nearPkg(x, o) && payApart(x, o) <= 5));
       if (!near.length) continue;
       const open = near.filter(x => x.twin_of !== o.id);
       alsoRz[o.id] = (open.length ? open : near).sort((a, b) => gap(a) - gap(b))[0];

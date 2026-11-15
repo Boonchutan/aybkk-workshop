@@ -140,6 +140,7 @@ const LOCKED = [
   ['/api/graph/visualize?type=students', r => r.status === 200],
   ['/admin/line-status', r => r.status === 200 && /LINE pipeline/.test(r.text)],
   ['/rosters/hefei.json', r => r.status === 200 && Array.isArray(r.json.students)],
+  ['/api/calendar', r => r.status === 200 && Array.isArray(r.json.lanes) && Array.isArray(r.json.events)],
   // The cards and print files left git; the paths stay locked in case one is put back by hand.
   ['/qr-cards/manifest.json', r => r.status === 404],
   ['/qr-cards/hefei/manifest.json', r => r.status === 404],
@@ -162,7 +163,9 @@ fs.writeFileSync(path.join(PRIVATE, 'rosters', 'hefei.json'), JSON.stringify({ w
   await pool.query(`INSERT INTO journal_entries (student_id, session_date) VALUES ($1, '2026-11-01')`, [ids[0]]);
 
   PORT = await freePort();
-  const env = { ...process.env, PORT: String(PORT), MISSION_CONTROL_PORT: String(PORT), DATABASE_URL: DB,
+  // server.js asks for SSL on any database outside Railway; the CI database has none.
+  const noSsl = DB + (DB.includes('?') ? '&' : '?') + 'sslmode=disable';
+  const env = { ...process.env, PORT: String(PORT), MISSION_CONTROL_PORT: String(PORT), DATABASE_URL: noSsl,
     BKK_ADMIN_KEY: KEY, TRANSMISSION_KEY: 'lock-test-transmission', MAIL_DRY_RUN: '1',
     NEO4J_URI: 'bolt://127.0.0.1:9', LOCK_TEST_SERVER: path.join(ROOT, 'server.js'),
     UPLOAD_DIR: fs.mkdtempSync(path.join(os.tmpdir(), 'lock-uploads-')), PRIVATE_DATA_DIR: PRIVATE,
@@ -299,6 +302,7 @@ fs.writeFileSync(path.join(PRIVATE, 'rosters', 'hefei.json'), JSON.stringify({ w
 
   console.log('\n— writes that answer with student data need the key —');
   for (const [m, p, body] of [['PUT', '/api/students/lock-test-x', {}], ['POST', '/api/notion/sync', {}], ['POST', '/api/sync/notion', {}],
+    ['PUT', '/api/calendar', { lanes: [], events: [] }],
     ['POST', '/api/teacher/comment', { studentId: 'lock-test-x', teacherName: 'T', comment: 'c' }],
     ['POST', '/api/teacher/assessment', { studentId: 'lock-test-x', teacherName: 'T' }]]) {
     const r = await request(m, p, {}, body);
