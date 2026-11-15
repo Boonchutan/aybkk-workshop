@@ -258,8 +258,6 @@ function mountBkk(app, opts = {}) {
   const pool = opts.pgPool;
   const cloudinary = opts.cloudinary || null;
   const httpFetch = opts.fetch || fetch;
-  // PaySolutions' inquiry API. Tests put a fake gateway here.
-  const gatewayFetch = opts.gatewayFetch || fetch;
   // Tests move the clock the 12 Nov price switch and the face links read.
   const nowMs = typeof opts.now === 'function' ? opts.now : Date.now;
   // No key set means no admin at all: the repo is public, so a default key
@@ -1025,13 +1023,19 @@ function mountBkk(app, opts = {}) {
   // ── payment confirmation ──────────────────────────────────────────────────
   // The postback carries NO trustworthy signature (PaySolutions' own plugins
   // accept it blindly). It only tells us *which* order to go and verify.
-  app.post('/api/bkk/pay/postback', express_urlencoded_safe, async (req, res) => {
-    const refno = String((req.body && (req.body.refno || req.body.refNo)) || req.query.refno || '').trim();
+  // The merchant panel sends it as a GET with the fields in the query string
+  // (15 Nov 2026: the route took POST only, so every postback was turned away
+  // and a payment waited for the student's own page to check it). Both are taken.
+  const postback = async (req, res) => {
+    const pick = o => o && (o.refno || o.refNo);
+    const refno = String(pick(req.body) || pick(req.query) || '').trim();
     res.json({ ok: true });                        // always 200 — never leak state
-    if (!refno) return;
+    if (!/^\d{1,12}$/.test(refno)) return;
     try { await verifyAndActivate(Number(refno)); }
     catch (e) { console.error('[bkk pay] verify failed:', e.message); }
-  });
+  };
+  app.post('/api/bkk/pay/postback', express_urlencoded_safe, postback);
+  app.get('/api/bkk/pay/postback', postback);
 
   // Student's browser comes back here; also triggers a verify so activation is
   // not dependent on the postback arriving.
@@ -1103,10 +1107,11 @@ function mountBkk(app, opts = {}) {
   // is written out literally rather than normalised. merchantID is the LAST 5
   // DIGITS of the merchant id, in both header and body. Unused body fields take
   // the literal placeholders the docs specify ("X", "QWERTY").
+  const PAID_STATUS = new Set(['CP', 'Y']);
   async function inquire(cfg, order) {
     const url = `${cfg.inquiryBase.replace(/\/$/, '')}/order/orderdetailpost`;
     const mid5 = String(cfg.merchantId).slice(-5);
-    const r = await gatewayFetch(url, {
+    const r = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -1132,10 +1137,9 @@ function mountBkk(app, opts = {}) {
     if (!d) return { paid: false, note: `no record (http ${r.status})` };
     const status = String(d.Status ?? '').toUpperCase();
     const named = String(d.StatusName ?? '').trim();
-    // Paid: "CP", or "Y" with the name "Paid". Two students paid on 15 Nov 2026
-    // and the gateway answered Y / Paid; read as unpaid, they got no pass.
-    // PaySolutions publishes no list of these codes outside its merchant panel.
-    const paid = status === 'CP' || (status === 'Y' && /^paid$/i.test(named));
+    // The docs show "CP" (COMPLETE); the live account answers "Y" (Paid) for a
+    // finished payment (15 Nov 2026). Either is paid; the amount is still checked.
+    const paid = PAID_STATUS.has(status);
     // Total comes back as a JSON number (3900.0), not a string.
     const amount = d.Total == null ? null : Number(d.Total);
     return {
@@ -1143,7 +1147,7 @@ function mountBkk(app, opts = {}) {
       // A name that says paid on a code we do not take: a person must look.
       looksPaid: !paid && /\b(paid|success|complete)/i.test(named) && !/\b(un|not\s*)paid|fail|cancel|void|refund|reject|expire/i.test(named),
       note: paid ? 'confirmed'
-        : `http ${r.status} status=${status || 'unknown'} ${named}`.trim(),
+        : `http ${r.status} status=${status || 'unknown'} ${named} total=${d.Total ?? 'none'}`.trim(),
     };
   }
 

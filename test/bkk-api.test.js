@@ -4355,62 +4355,172 @@ const ok = (name, cond, extra = '') => {
        JSON.stringify(credit.body));
   }
 
-  console.log('\n— PaySolutions: "Y" / "Paid" is paid, and a late answer is still caught (15 Nov 2026) —');
+  console.log('\n-- PaySolutions says "Y Paid" (15 Nov 2026) --');
   {
-    const keys = ['PAYSO_MERCHANT_ID', 'PAYSO_SECRET_KEY', 'PAYSO_API_KEY'];
-    keys.forEach(k => { process.env[k] = 'test-only-12345'; });
-    const answers = new Map();          // 12-digit refno -> what the gateway says ('' = no record)
-    const gate = async (url, init) => {
-      const a = answers.get(JSON.parse(init.body).refno);
-      return new Response(a == null ? '' : JSON.stringify([a]), { status: 200 });
-    };
-    const gapp = express();
-    gapp.use(express.json());
-    await mountBkk(gapp, { pgPool: pool, gatewayFetch: gate, paySweepMs: 250, now });
-    const gsrv = gapp.listen(0);
-    const G = `http://127.0.0.1:${gsrv.address().port}`;
-    const gpost = (p, b) => fetch(G + p, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) })
-      .then(async r => ({ status: r.status, body: await r.json().catch(() => ({})) }));
-    const gcheck = refno => fetch(`${G}/api/bkk/pay/check/${refno}`).then(r => r.json());
-    const r12 = refno => String(refno).padStart(12, '0');
-    const buy = async tag => (await gpost('/api/bkk/orders', { productCode: 'pack8', name: `Gate ${tag}`, email: `gate.${tag}@example.com` })).body;
-    const row = refno => pool.query('SELECT status, gateway_note FROM bkk_orders WHERE refno=$1', [refno]).then(r => r.rows[0]);
-    const passesOf = code => J('/api/bkk/me/' + code).then(r => r.body.passes.length);
+    const http = require('http');
+    const one = async (sql, args = []) => (await pool.query(sql, args)).rows[0] || {};
+    let answer = null;
+    const stub = http.createServer((req, res) => {
+      req.resume();
+      req.on('end', () => { res.setHeader('Content-Type', 'application/json'); res.end(answer == null ? '' : JSON.stringify(answer)); });
+    });
+    await new Promise(r => stub.listen(0, '127.0.0.1', r));
+    const env = { PAYSO_MERCHANT_ID: '00012345', PAYSO_SECRET_KEY: 'test-only', PAYSO_API_KEY: 'test-only',
+      PAYSO_INQUIRY_BASE: `http://127.0.0.1:${stub.address().port}` };
+    Object.assign(process.env, env);
+    const buy = async n => (await post('/api/bkk/orders', { productCode: 'pack8', name: `Status ${n} Example`, email: `status.${n}@example.com` })).body;
+    const state = async refno => one(`SELECT o.status, o.gateway_note, (SELECT count(*)::int FROM bkk_passes p WHERE p.order_id=o.id) AS passes
+      FROM bkk_orders o WHERE o.refno=$1`, [refno]);
+    const check = async (o, a) => { answer = a; return (await J('/api/bkk/pay/check/' + o.order.refno)).body; };
 
-    const a = await buy('yes');
-    answers.set(r12(a.order.refno), { Status: 'Y', StatusName: 'Paid', Total: a.order.amount });
-    const ca = await gcheck(a.order.refno);
-    ok('the gateway answering Y / Paid with the right amount is a payment: the pass is made', ca.status === 'paid'
-       && (await passesOf(a.member.code)) === 1, JSON.stringify([ca, await row(a.order.refno)]));
-    const b = await buy('short');
-    answers.set(r12(b.order.refno), { Status: 'Y', StatusName: 'Paid', Total: b.order.amount - 1 });
-    ok('...but never with a different amount', (await gcheck(b.order.refno)).status === 'mismatch' && (await passesOf(b.member.code)) === 0);
-    const c = await buy('cp');
-    answers.set(r12(c.order.refno), { Status: 'CP', StatusName: 'Completed', Total: c.order.amount });
-    ok('CP is still a payment', (await gcheck(c.order.refno)).status === 'paid' && (await passesOf(c.member.code)) === 1);
-    const d = await buy('odd');
-    answers.set(r12(d.order.refno), { Status: 'Y', StatusName: 'Pending', Total: d.order.amount });
-    const dc = await gcheck(d.order.refno);
-    const e = await buy('name');
-    answers.set(r12(e.order.refno), { Status: 'XX', StatusName: 'Paid', Total: e.order.amount });
-    const ec = await gcheck(e.order.refno);
-    ok('Y with another name, or "Paid" on a code we do not know, makes no pass and is written down', dc.status === 'pending'
-       && ec.status === 'pending' && (await row(e.order.refno)).gateway_note === 'http 200 status=XX Paid'
-       && (await passesOf(d.member.code)) === 0 && (await passesOf(e.member.code)) === 0, JSON.stringify([dc, ec]));
+    const y = await buy('y');
+    const yChk = await check(y, [{ ReferenceNo: String(y.order.refno).padStart(12, '0'), Total: y.order.amount, Status: 'Y', StatusName: 'Paid' }]);
+    const yRow = await state(y.order.refno);
+    ok('"Y Paid" at the right amount is a payment: the order is paid and the pass is made', yChk.status === 'paid'
+       && yRow.status === 'paid' && yRow.passes === 1, JSON.stringify([yChk, yRow]));
+    const cp = await buy('cp');
+    const cpChk = await check(cp, { Total: cp.order.amount, Status: 'CP', StatusName: 'COMPLETE' });
+    ok('..."CP COMPLETE" as in the docs still is', cpChk.status === 'paid' && (await state(cp.order.refno)).passes === 1, JSON.stringify(cpChk));
+    const wrong = await buy('wrong');
+    const wChk = await check(wrong, [{ Total: wrong.order.amount - 1, Status: 'Y', StatusName: 'Paid' }]);
+    const wRow = await state(wrong.order.refno);
+    ok('...but "Y Paid" for another amount makes no pass: it waits as a mismatch', wChk.status === 'mismatch'
+       && wRow.status === 'mismatch' && wRow.passes === 0, JSON.stringify([wChk, wRow]));
+    const none = await buy('none');
+    const nChk = await check(none, [{ Status: 'Y', StatusName: 'Paid' }]);
+    ok('...and "Y Paid" with no amount makes no pass either', nChk.status === 'mismatch' && (await state(none.order.refno)).passes === 0,
+       JSON.stringify(nChk));
+    const unpaid = await buy('unpaid');
+    const uChk = await check(unpaid, [{ Total: unpaid.order.amount, Status: 'N', StatusName: 'Unpaid' }]);
+    const uRow = await state(unpaid.order.refno);
+    ok('another status is not paid, and the note keeps what PaySolutions said, the amount included', uChk.status === 'pending'
+       && uRow.status === 'pending' && uRow.passes === 0 && uRow.gateway_note === `http 200 status=N Unpaid total=${unpaid.order.amount}`,
+       JSON.stringify(uRow));
+    const empty = await check(unpaid, null);
+    ok('...and no answer at all is still "no record"', empty.status === 'pending' && /^no record/.test(empty.note || ''), JSON.stringify(empty));
+    const again = await check(y, [{ Total: y.order.amount, Status: 'Y', StatusName: 'Paid' }]);
+    ok('asking again about a paid order makes no second pass', again.status === 'paid' && (await state(y.order.refno)).passes === 1,
+       JSON.stringify(again));
+    Object.keys(env).forEach(k => { delete process.env[k]; });
+    stub.close();
+  }
+
+  console.log('\n-- the PaySolutions postback comes as a GET (15 Nov 2026) --');
+  {
+    const http = require('http');
+    const one = async (sql, args = []) => (await pool.query(sql, args)).rows[0] || {};
+    let answer = null, asked = 0;
+    const stub = http.createServer((req, res) => {
+      req.resume();
+      req.on('end', () => { asked++; res.setHeader('Content-Type', 'application/json'); res.end(answer == null ? '' : JSON.stringify(answer)); });
+    });
+    await new Promise(r => stub.listen(0, '127.0.0.1', r));
+    const env = { PAYSO_MERCHANT_ID: '00012345', PAYSO_SECRET_KEY: 'test-only', PAYSO_API_KEY: 'test-only',
+      PAYSO_INQUIRY_BASE: `http://127.0.0.1:${stub.address().port}` };
+    Object.assign(process.env, env);
+    const buy = async n => (await post('/api/bkk/orders', { productCode: 'pack8', name: `Postback ${n} Example`, email: `postback.${n}@example.com` })).body;
+    const state = async refno => one(`SELECT o.status, (SELECT count(*)::int FROM bkk_passes p WHERE p.order_id=o.id) AS passes
+      FROM bkk_orders o WHERE o.refno=$1`, [refno]);
+    const settle = () => new Promise(r => setTimeout(r, 400));
+    const ref12 = o => String(o.order.refno).padStart(12, '0');
+    const panel = o => `/api/bkk/pay/postback?refno=${ref12(o)}&merchantid=00012345&customeremail=postback%40example.com`
+      + `&productdetail=AYBKK&total=${o.order.amount}.00&cardtype=PP`;
+
+    const forged = await buy('forged');
+    answer = null;
+    const fRes = await J(panel(forged));
+    await settle();
+    ok('a GET postback is answered 200, and with no payment at PaySolutions it makes no pass', fRes.status === 200
+       && (await state(forged.order.refno)).status === 'pending' && (await state(forged.order.refno)).passes === 0,
+       JSON.stringify([fRes.status, await state(forged.order.refno)]));
+
+    const paid = await buy('paid');
+    answer = [{ Total: paid.order.amount, Status: 'Y', StatusName: 'Paid' }];
+    const before = asked;
+    const pRes = await J(panel(paid));
+    await settle();
+    const pRow = await state(paid.order.refno);
+    ok('a GET postback the way the merchant panel sends it asks PaySolutions and turns a paid order on', pRes.status === 200
+       && asked === before + 1 && pRow.status === 'paid' && pRow.passes === 1, JSON.stringify([pRes.status, asked - before, pRow]));
+
+    const wrong = await buy('wrong');
+    answer = [{ Total: wrong.order.amount + 100, Status: 'Y', StatusName: 'Paid' }];
+    await J(panel(wrong));
+    await settle();
+    ok('...still with the amount checked: another amount makes no pass', (await state(wrong.order.refno)).passes === 0
+       && (await state(wrong.order.refno)).status === 'mismatch', JSON.stringify(await state(wrong.order.refno)));
+
+    const viaPost = await buy('post');
+    answer = [{ Total: viaPost.order.amount, Status: 'Y', StatusName: 'Paid' }];
+    await post('/api/bkk/pay/postback', { refno: ref12(viaPost) });
+    await settle();
+    ok('...and a POST postback still works', (await state(viaPost.order.refno)).passes === 1, JSON.stringify(await state(viaPost.order.refno)));
+
+    answer = [{ Total: paid.order.amount, Status: 'Y', StatusName: 'Paid' }];
+    await J(panel(paid));
+    await settle();
+    ok('the same postback twice makes no second pass', (await state(paid.order.refno)).passes === 1, JSON.stringify(await state(paid.order.refno)));
+
+    const junkBefore = asked;
+    const junk = await J('/api/bkk/pay/postback?refno=12ab%27%3B');
+    const none = await J('/api/bkk/pay/postback');
+    await settle();
+    ok('a postback with no ref or a ref that is not a number is answered 200 and asks nothing', junk.status === 200 && none.status === 200
+       && asked === junkBefore, JSON.stringify([junk.status, none.status, asked - junkBefore]));
+    Object.keys(env).forEach(k => { delete process.env[k]; });
+    stub.close();
+  }
+
+  console.log('\n-- PaySolutions: a late answer is still caught, an odd one is flagged (15 Nov 2026) --');
+  {
+    const http = require('http');
+    const answers = new Map();          // 12-digit refno -> what PaySolutions says (none = no record)
+    const stub = http.createServer((req, res) => {
+      let body = '';
+      req.on('data', c => { body += c; });
+      req.on('end', () => {
+        let ref = ''; try { ref = JSON.parse(body).refno; } catch (_) {}
+        const a = answers.get(ref);
+        res.setHeader('Content-Type', 'application/json'); res.end(a == null ? '' : JSON.stringify([a]));
+      });
+    });
+    await new Promise(r => stub.listen(0, '127.0.0.1', r));
+    const env = { PAYSO_MERCHANT_ID: '00012345', PAYSO_SECRET_KEY: 'test-only', PAYSO_API_KEY: 'test-only',
+      PAYSO_INQUIRY_BASE: `http://127.0.0.1:${stub.address().port}` };
+    Object.assign(process.env, env);
+    const r12 = o => String(o.order.refno).padStart(12, '0');
+    const buy = async n => (await post('/api/bkk/orders', { productCode: 'pack8', name: `Sweep ${n} Example`, email: `sweep.${n}@example.com` })).body;
+    const row = refno => pool.query(`SELECT o.status, o.gateway_note, (SELECT count(*)::int FROM bkk_passes p WHERE p.order_id=o.id) AS passes
+      FROM bkk_orders o WHERE o.refno=$1`, [refno]).then(r => r.rows[0]);
+
+    const odd = await buy('odd');
+    answers.set(r12(odd), { Total: odd.order.amount, Status: 'XX', StatusName: 'Paid' });
+    const oChk = (await J('/api/bkk/pay/check/' + odd.order.refno)).body;
+    const oRow = await row(odd.order.refno);
+    ok('"Paid" on a code we do not take makes no pass, and the answer is written down for a person', oChk.status === 'pending'
+       && oRow.passes === 0 && oRow.gateway_note === `http 200 status=XX Paid total=${odd.order.amount}`, JSON.stringify(oRow));
 
     // Nobody comes back to the page and no postback arrives: the sweep asks again.
+    const sapp = express();
+    sapp.use(express.json());
+    await mountBkk(sapp, { pgPool: pool, paySweepMs: 250, now });
     const late = await buy('late');
     const old = await buy('old');
     await pool.query(`UPDATE bkk_orders SET created_at = now() - interval '10 minutes' WHERE refno=$1`, [late.order.refno]);
     await pool.query(`UPDATE bkk_orders SET created_at = now() - interval '30 hours' WHERE refno=$1`, [old.order.refno]);
-    answers.set(r12(late.order.refno), { Status: 'Y', StatusName: 'Paid', Total: late.order.amount });
-    answers.set(r12(old.order.refno), { Status: 'CP', StatusName: 'Completed', Total: old.order.amount });
+    answers.set(r12(late), { Total: late.order.amount, Status: 'Y', StatusName: 'Paid' });
+    answers.set(r12(old), { Total: old.order.amount, Status: 'CP', StatusName: 'COMPLETE' });
     await new Promise(r => setTimeout(r, 1200));
+    const lRow = await row(late.order.refno);
     ok('a payment confirmed after the student left is picked up by the sweep, with no page or postback',
-       (await row(late.order.refno)).status === 'paid' && (await passesOf(late.member.code)) === 1, JSON.stringify(await row(late.order.refno)));
+       lRow.status === 'paid' && lRow.passes === 1, JSON.stringify(lRow));
     ok('...an order older than a day is left for a person', (await row(old.order.refno)).status === 'pending');
-    gsrv.close();
-    keys.forEach(k => { delete process.env[k]; });
+    const fresh = await buy('fresh');
+    answers.set(r12(fresh), { Total: fresh.order.amount, Status: 'Y', StatusName: 'Paid' });
+    await new Promise(r => setTimeout(r, 800));
+    ok('...and an order under 2 minutes old is left to the student\'s own page', (await row(fresh.order.refno)).status === 'pending');
+    Object.keys(env).forEach(k => { delete process.env[k]; });
+    stub.close();
   }
 
   console.log(`\n${PASS} passed, ${FAIL} failed`);
