@@ -902,7 +902,7 @@ const MYSORE = 'Mysore 5.30am (1st batch)';
     const w1 = await cli(['run-all', W1, '--save']);
     const sell = async (p, productCode) => (await fetch(API + '/api/bkk/admin/sales', { method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-bkk-key': KEY },
-      body: JSON.stringify({ productCode, name: p.name, email: p.email, method: 'cash', requestId: `cli-${p.rz}` }) })).json();
+      body: JSON.stringify({ productCode, name: p.name, email: p.email, method: 'cash', requestId: `cli-${p.rz}-${productCode}` }) })).json();
     const fSale = await sell(fay, 'unlim3'), gSale = await sell(gus, 'unlim1');
     ok('two desk sales on aybkk.net for students who came over from Rezerv', w1.code === 0 && !!fSale.order && !!gSale.order,
        JSON.stringify([w1.code, fSale.success, gSale.success]));
@@ -939,6 +939,14 @@ const MYSORE = 'Mysore 5.30am (1st batch)';
        w5a.code === 0 && w5b.code === 1 && /^Rule: warning-needs-a-person: .*rezervTwin 1\.$/m.test(w5b.err)
        && (await one(`SELECT count(*)::int AS n FROM bkk_orders o JOIN bkk_members m ON m.id=o.member_id
          WHERE m.rezerv_id=$1 AND o.source='rezerv'`, [gus.rz])).n === 1, w5a.all + w5b.all);
+    // Rezerv's 8 classes in 1 month next to a pack of 8 in 2 months sold here: a person says if it is one sale.
+    const gPack = await sell(gus, 'pack8');
+    const W6 = folder('twin-near');
+    put(W6, PACKS_FILE, csv(PACKAGES, [pack(gus, 64, '8 classes / 1 month', 'Active', T0, addD(T0, 29), 8, 8)]));
+    const w6 = await since(() => cli(['run-all', W6, '--save']));
+    ok('a Rezerv pack under the near package of a pack sold here stops run-all for a person (nearPass), nothing saved',
+       !!gPack.order && !gPack.repeat && w6.code === 1 && /^Rule: warning-needs-a-person: .*nearPass 1\.$/m.test(w6.err)
+       && (await one(`SELECT count(*)::int AS n FROM bkk_passes WHERE source='rezerv' AND source_ref=$1`, [trx(964)])).n === 0, w6.all);
   }
 
   console.log('\n— the codes this tool knows are the server\'s —');
@@ -965,8 +973,8 @@ const MYSORE = 'Mysore 5.30am (1st batch)';
        KINDS.map(k => `${k}:${Object.keys(SKIP_CODES[k]).filter(c => SKIP_CODES[k][c] === 'ok')}`).join(' ')
        === 'members: passes:neverStarted payments:notMoney visits:waitlist');
     ok('...the notes run-all stops on: a status, a VAT or a pause date the server could not read, more classes left than the pack holds, '
-       + 'and one sale that may be in both systems or a Rezerv payment already here from another file',
-       Object.keys(WARN_CODES).filter(c => WARN_CODES[c] === 'ask').sort().join() === 'badFreeze,badVat,leftOver,maybeTwin,passStatus,rezervTwin,twinPass');
+       + 'and one sale that may be in both systems (also under a near package) or a Rezerv payment already here from another file',
+       Object.keys(WARN_CODES).filter(c => WARN_CODES[c] === 'ask').sort().join() === 'badFreeze,badVat,leftOver,maybeTwin,nearPass,passStatus,rezervTwin,twinPass');
     ok('...and a ฿0 Rezerv copy of an aybkk.net sale is a note: kept as its twin, never money', WARN_CODES.twinOfAybkk === 'note');
     ok('a batch is given two minutes, and rows go to aybkk.net or my.aybkk.com only',
        DEFAULT_TIMEOUT_MS === 120000 && SERVERS.join() === 'aybkk.net,my.aybkk.com', `${DEFAULT_TIMEOUT_MS} ${SERVERS}`);

@@ -205,6 +205,7 @@
     line-height:1.5;color:var(--soft);vertical-align:1px}
   .onote{display:block;margin-top:3px;font-size:12.5px;line-height:1.4;color:var(--soft);overflow-wrap:anywhere}
   .onote.warn{color:#8a5a00;font-weight:700}
+  .gone{color:var(--soft);text-decoration:line-through}
   .reloadbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 16px;
     background:#fff3d6;color:#6b520e;font-weight:700;font-size:14.5px;cursor:pointer;border-bottom:1px solid var(--line)}
   .reloadbar span{flex:1 1 200px}
@@ -212,7 +213,8 @@
   .sellout:empty{display:none}
   .sellout .btn{margin-top:8px;min-height:44px}
   .sellout .sub{display:block;font-size:12.5px;margin-top:2px}
-  @media (max-width:640px),(pointer:coarse){.link.who,.ordact .btn,#chkAll,.tdh .btn,.btn.back{min-height:44px}}
+  @media (max-width:640px),(pointer:coarse){.link.who,.ordact .btn,#chkAll,.tdh .btn,.btn.back{min-height:44px}
+    .btn.rfr{min-height:44px;min-width:44px}}
   /* Today: each class opens, so "+ Add student" is one tap away (Nov 2026). */
   .tdh{display:flex;align-items:flex-start;gap:10px}
   .tdh>div{flex:1;min-width:0}
@@ -799,7 +801,7 @@
     triesH: n => `Unpaid tries (${n})`,
     triesSub: 'The student left the payment page. Nothing to do unless they say they paid.',
     nTries: n => `+${n} unpaid ${n === 1 ? 'try' : 'tries'}`,
-    nthPay: n => `${n === 2 ? '2nd' : n === 3 ? '3rd' : n + 'th'} payment for this package in 3 days`,
+    nthPay: n => `${n === 2 ? '2nd' : n === 3 ? '3rd' : n + 'th'} payment for this package in 3 days: check the bank or PaySolutions, then tell the owner`,
     ordPill: { paid: 'Paid', pending: 'Pending', failed: 'Failed', mismatch: 'Wrong amount', refund: 'Refund' },
     // Without the PaySolutions keys nothing can be checked, so only a later payment folds a line away.
     triesSubLink: 'The student paid for the same thing later. Nothing to do unless they say they paid twice.',
@@ -816,7 +818,7 @@
     triesH: n => `กดซื้อแต่ไม่ได้จ่าย (${n})`,
     triesSub: 'นักเรียนออกจากหน้าจ่ายเงินไปก่อน ไม่ต้องทำอะไร เว้นแต่นักเรียนบอกว่าจ่ายแล้ว',
     nTries: n => `กดซื้อแต่ไม่ได้จ่ายอีก ${n} ครั้ง`,
-    nthPay: n => `จ่ายแพ็กเกจนี้เป็นครั้งที่ ${n} ใน 3 วัน`,
+    nthPay: n => `จ่ายแพ็กเกจนี้เป็นครั้งที่ ${n} ใน 3 วัน: ตรวจในบัญชีธนาคารหรือ PaySolutions แล้วแจ้งเจ้าของ`,
     triesSubLink: 'นักเรียนจ่ายแพ็กเกจเดียวกันทีหลังแล้ว ไม่ต้องทำอะไร เว้นแต่นักเรียนบอกว่าจ่ายสองครั้ง',
     ordersHelpLink: 'ทุกครั้งที่นักเรียนกดซื้อ จะมีรายการใหม่ที่นี่ แม้ยังไม่จ่าย หน้านี้ยังไม่ได้เชื่อมต่อ PaySolutions แพ็กเกจจึงไม่เปิดเอง ให้ตรวจว่าเงินเข้าแล้ว แล้วกดเปิดใช้ รายการจะย้ายไปอยู่ใน "กดซื้อแต่ไม่ได้จ่าย" ด้านล่างเฉพาะเมื่อนักเรียนกดซื้อใหม่ หรือจ่ายแพ็กเกจเดียวกันแล้ว ทุกครั้งที่เปิดใช้จากหน้านี้จะบันทึกว่าทำด้วยมือ',
   });
@@ -829,14 +831,20 @@
     rzHelp: 'Records moved from Rezerv on 13 Nov. ฿0 lines are passes entered in Rezerv; the money is written in the note.',
     nBonus: n => `+${n} at ฿0 (bonus months or passes given)`,
     alsoRz: (d, amt) => `Also in Rezerv on ${d} (${amt}): check they have one pass`,
+    alsoRzLinked: (d, amt) => `Also in Rezerv on ${d} (${amt}), linked as the same sale`,
     nAgain: n => `Tapped Buy again after paying${n > 1 ? ` (${n} times)` : ''}`,
-    sameName: c => `Same name as another profile (${c})`,
+    sameName: c => `Same name as another profile (${c}): check if it is one person, then tell the owner`,
     byHand: 'Activated by hand', twinOf: r => `Same sale as ref ${r}`,
     qPaidAlready: (d, r, m) => `This student already paid for this on ${d} (ref ${r}, ${m}). Activate anyway?`,
     qRepeat: (d, r, m, amt) => `This student already paid for this on ${d}: ${amt} ${m} (ref ${r}). Sell again anyway?`,
     sellLost: 'No reply. Check Payments before you sell again.', retry: 'Retry',
     sellRetryHelp: 'Retry sends the same sale again. It is never sold twice.',
+    sellSending: 'Sending the sale...', sellPending: 'A sale has no answer yet. Tap Retry on it first.',
     rManual: (n, amt) => `Activated by hand: ${n}, ${amt}`,
+    nRefunds: n => n === 1 ? '1 refund' : `${n} refunds`,
+    rzTwice: r => `Same Rezerv payment as order ${r}, imported twice`,
+    voidNote: (r, d) => `Void: ${r} (by staff, ${d})`,
+    rzPassBack: 'The Rezerv pass for the same sale is live again.',
   });
   Object.assign(STR.en.ordPill, { twin: 'Same sale', void: 'Void' });
   Object.assign(STR.en.words, { twin: 'same sale', void: 'void' });
@@ -847,19 +855,28 @@
     rzHelp: 'ข้อมูลที่ย้ายมาจาก Rezerv เมื่อ 13 พ.ย. รายการ ฿0 คือแพ็กเกจที่ลงไว้ใน Rezerv ยอดเงินจริงเขียนไว้ในหมายเหตุ',
     nBonus: n => `+${n} รายการ ฿0 (เดือนแถม หรือแพ็กเกจที่ให้)`,
     alsoRz: (d, amt) => `มีใน Rezerv ด้วย วันที่ ${d} (${amt}): ตรวจว่านักเรียนมีแพ็กเกจเดียว`,
+    alsoRzLinked: (d, amt) => `มีใน Rezerv ด้วย วันที่ ${d} (${amt}) ผูกไว้เป็นการขายครั้งเดียวกันแล้ว`,
     nAgain: n => `กดซื้ออีกครั้งหลังจ่ายแล้ว${n > 1 ? ` (${n} ครั้ง)` : ''}`,
-    sameName: c => `ชื่อเดียวกับโปรไฟล์อื่น (${c})`,
+    sameName: c => `ชื่อเดียวกับโปรไฟล์อื่น (${c}): ตรวจว่าเป็นคนเดียวกันไหม แล้วแจ้งเจ้าของ`,
     byHand: 'เปิดใช้ด้วยมือ', twinOf: r => `ขายครั้งเดียวกับเลขอ้างอิง ${r}`,
     qPaidAlready: (d, r, m) => `นักเรียนคนนี้จ่ายแพ็กเกจนี้แล้วเมื่อ ${d} (เลขอ้างอิง ${r}, ${m}) จะเปิดใช้อีกครั้งไหม?`,
     qRepeat: (d, r, m, amt) => `นักเรียนคนนี้จ่ายแพ็กเกจนี้แล้วเมื่อ ${d}: ${amt} ${m} (เลขอ้างอิง ${r}) จะขายอีกครั้งไหม?`,
     sellLost: 'ไม่มีการตอบกลับ ดูในหน้าการชำระเงินก่อนขายอีกครั้ง', retry: 'ลองอีกครั้ง',
     sellRetryHelp: 'ลองอีกครั้งจะส่งการขายเดิม ไม่ขายซ้ำ',
+    sellSending: 'กำลังส่งการขาย...', sellPending: 'มีการขายที่ยังไม่มีการตอบกลับ กดลองอีกครั้งที่รายการนั้นก่อน',
     rManual: (n, amt) => `เปิดใช้ด้วยมือ: ${n} รายการ ${amt}`,
+    nRefunds: n => `คืนเงิน ${n} รายการ`,
+    rzTwice: r => `การชำระเดียวกับรายการ ${r} จาก Rezerv ที่นำเข้ามาสองครั้ง`,
+    voidNote: (r, d) => `ยกเลิกแล้ว: ${r} (โดยพนักงาน ${d})`,
+    rzPassBack: 'แพ็กเกจจาก Rezerv ของการขายครั้งเดียวกันกลับมาใช้งานได้แล้ว',
     ordPill: { twin: 'ขายครั้งเดียวกัน', void: 'ยกเลิกแล้ว' },
     ci_twinOfAybkk: r => `รายการ ฿0 ของการขายที่จ่ายบน aybkk.net (เลขอ้างอิง ${r}): เก็บไว้เป็นการขายครั้งเดียวกัน ไม่นับเป็นเงินเข้า`,
-    ci_maybeTwin: r => `aybkk.net มีการขายแพ็กเกจนี้ที่จ่ายแล้วภายใน 3 วัน (เลขอ้างอิง ${r}): เก็บเป็นชำระแล้ว ตรวจว่าไม่ใช่การขายครั้งเดียวที่ลงไว้สองที่`,
+    ci_maybeTwin: (r, pkg) => `aybkk.net มีการขาย${pkg ? ' ' + (TH_BY_EN[pkg] || pkg) : 'แพ็กเกจนี้'} ที่จ่ายแล้วภายใน 3 วัน (เลขอ้างอิง ${r}): เก็บเป็นชำระแล้ว ตรวจว่าไม่ใช่การขายครั้งเดียวที่ลงไว้สองที่`,
     ci_rezervTwin: r => `การชำระเงินนี้จาก Rezerv มีอยู่แล้วเป็นรายการ ${r} (จากไฟล์ที่มีหรือไม่มีรหัส Rezerv): ไม่เพิ่มซ้ำ`,
-    ci_twinPass: r => `เป็นการขายเดียวกับแพ็กเกจ aybkk.net ของเลขอ้างอิง ${r}: เก็บเป็นแพ็กเกจที่ยกเลิกแล้ว นักเรียนจึงมีแพ็กเกจเดียว`,
+    ci_twinPass: (r, used, total, from) => `เป็นการขายเดียวกับแพ็กเกจ aybkk.net ของเลขอ้างอิง ${r}: เก็บเป็นแพ็กเกจที่ยกเลิกแล้ว นักเรียนจึงมีแพ็กเกจเดียว`
+      + (used ? `; ใช้ไปใน Rezerv ${used} จาก ${total} ครั้ง นับรวมในแพ็กเกจนั้นแล้ว` : '')
+      + (from ? `; แพ็กเกจนั้นเริ่มวันที่ ${from} ตาม Rezerv` : ''),
+    ci_nearPass: (r, pkg) => `aybkk.net มีแพ็กเกจ ${TH_BY_EN[pkg] || pkg} ที่ใช้งานอยู่ จ่ายภายใน 3 วัน (เลขอ้างอิง ${r}): เก็บไว้ใช้งาน ตรวจว่านักเรียนมีแพ็กเกจเดียว ไม่ใช่สองแพ็กเกจ`,
   });
   Object.assign(STR.th.words, { twin: 'ขายครั้งเดียวกัน' });
   // A name opens the profile, which starts with what they can use today; a
@@ -1014,8 +1031,8 @@
     <div class="box">
       <b>${T('sellTitle')}</b>
       <p class="muted">${T('sellHelp')}</p>
-      <p><button class="btn pink" onclick="sellDesk()">${T('sellBtn')}</button></p>
-      <div id="sellOut" class="sellout" role="status" aria-live="polite">${SELL ? sellLostHtml() : ''}</div>
+      <p><button class="btn pink" id="sellBtn" onclick="sellDesk()"${SELL && SELL.busy ? ' disabled' : ''}>${T('sellBtn')}</button></p>
+      <div id="sellOut" class="sellout" role="status" aria-live="polite">${sellOutHtml()}</div>
     </div>
     <div class="box">
       <b>${T('giveTitle')}</b>
@@ -1168,7 +1185,10 @@
       body = { reason: ask(T('qWhy'), '') || '' };
     }
     const r = await api(`/api/bkk/admin/passes/${id}/${what}`, { method: 'POST', body: JSON.stringify(body) });
-    if (await shout(r)) findStudents();
+    const j = await shout(r);
+    // The Rezerv copy of a voided pass is the sale's pass again: said, so nobody voids it by mistake.
+    if (j && (j.rezervPassBack || []).length) alert(T('rzPassBack'));
+    if (j) findStudents();
   };
 
   window.grantPass = async () => {
@@ -1190,6 +1210,8 @@
   };
 
   window.sellDesk = async () => {
+    // One sale at a time: a sale with no answer is finished with Retry, never sold again here.
+    if (SELL) { if (!SELL.busy) alert(T('sellPending')); return; }
     const d = await fetch('/api/bkk/products').then(r => r.json());
     const ps = d.products || [];
     const withVat = p => p.price_thb + Math.round(p.price_thb * (d.vatPct || 0) / 100);
@@ -1206,38 +1228,63 @@
     if (!method) return alert(T('pick123'));
     if (!confirm(T('confirmSale', name, pkgName(p), '฿' + withVat(p).toLocaleString(), W(method)))) return;
     // One id for this sale, made once: Retry after a lost reply sends it again, and the server answers with the first sale.
-    SELL = { productCode: p.code, name, email, phone, method, requestId: newId() };
+    SELL = { productCode: p.code, name, email, phone, method, requestId: newId(),
+      what: [name, pkgName(p), '฿' + withVat(p).toLocaleString(), W(method)].join(' · ') };
     await sendSale();
   };
-  // A sale on its way, or one whose reply was lost: kept until the server answers.
-  let SELL = null;
-  const sellLostHtml = () => `<div class="flash warn"><b>${esc(T('sellLost'))}</b><span class="sub">${esc(T('sellRetryHelp'))}</span>
-    <br><button class="btn" onclick="sellRetry()">${esc(T('retry'))}</button></div>`;
+  // A sale on its way (busy), or one whose reply was lost: kept until the server
+  // answers, in this tab's session too, so a reload still offers Retry with the same id.
+  const SELL_KEY = 'aybkk_desk_sale';
+  let SELL = (() => {
+    try { const x = JSON.parse(sessionStorage.getItem(SELL_KEY) || 'null'); return x && x.requestId ? { ...x, busy: false } : null; }
+    catch (_) { return null; }
+  })();
+  const keepSell = () => {
+    try { if (SELL) sessionStorage.setItem(SELL_KEY, JSON.stringify(SELL)); else sessionStorage.removeItem(SELL_KEY); } catch (_) {}
+  };
+  const SALE_WAIT = 20e3;
+  const sellOutHtml = () => !SELL ? '' : SELL.busy ? `<p class="muted">${esc(T('sellSending'))}</p>`
+    : `<div class="flash warn"><b>${esc(T('sellLost'))}</b><span class="sub">${esc(SELL.what || SELL.name)}</span>
+      <span class="sub">${esc(T('sellRetryHelp'))}</span><button class="btn" onclick="sellRetry()">${esc(T('retry'))}</button></div>`;
+  const paintSell = () => {
+    if ($('#sellOut')) $('#sellOut').innerHTML = sellOutHtml();
+    if ($('#sellBtn')) $('#sellBtn').disabled = !!(SELL && SELL.busy);
+  };
+  // A reply that never comes is a lost reply too: after SALE_WAIT the same Retry box shows.
+  const apiWait = (url, opts, ms) => {
+    const c = window.AbortController ? new AbortController() : null;
+    const t = c && setTimeout(() => c.abort(), ms);
+    return api(url, c ? { ...opts, signal: c.signal } : opts).finally(() => clearTimeout(t));
+  };
   async function sendSale() {
-    const out = () => $('#sellOut');
+    const sale = SELL;
+    if (!sale || sale.busy) return;
+    sale.busy = true; keepSell(); paintSell();
+    const { what, busy, ...body } = sale;
     let r = null, j = {};
     try {
-      r = await api('/api/bkk/admin/sales', { method: 'POST', body: JSON.stringify(SELL) });
+      r = await apiWait('/api/bkk/admin/sales', { method: 'POST', body: JSON.stringify(body) }, SALE_WAIT);
       j = await r.json();
     } catch (_) { if (r && r.ok) r = null; }
+    sale.busy = false;
+    // Another sale took its place meanwhile: this answer is not for the box any more.
+    if (SELL !== sale) return;
     // No answer, or a server that fell over after it may have sold: only the same id may try again.
-    if (!r || r.status >= 500 || (r.ok && !j.order)) { if (out()) out().innerHTML = sellLostHtml(); else alert(T('sellLost')); return; }
+    if (!r || r.status >= 500 || (r.ok && !j.order)) { keepSell(); paintSell(); if (!$('#sellOut')) alert(T('sellLost')); return; }
     if (r.status === 409 && j.repeatOf) {
       const x = j.repeatOf;
       if (confirm(T('qRepeat', whenPaid(x.at), x.refno, W(x.method), '฿' + Number(x.amount).toLocaleString()))) {
-        SELL.confirmRepeat = true;
+        sale.confirmRepeat = true;
         return sendSale();
       }
-      SELL = null; if (out()) out().innerHTML = ''; return;
+      SELL = null; keepSell(); paintSell(); return;
     }
-    const name = SELL.name;
-    SELL = null;
-    if (out()) out().innerHTML = '';
+    SELL = null; keepSell(); paintSell();
     if (!r.ok) { alert(j.error || T('failed')); return; }
     alert(T('doneSale', '฿' + j.order.amount.toLocaleString(), W(j.order.method), j.order.refno, j.member.name, j.member.code));
-    renderStudents(name);
+    renderStudents(sale.name);
   }
-  window.sellRetry = () => { if (SELL) sendSale(); };
+  window.sellRetry = () => { if (SELL && !SELL.busy) sendSale(); };
 
   window.bookFor = async (code) => {
     const d = await api('/api/bkk/schedule?days=14').then(r => r.json());
@@ -1747,7 +1794,7 @@
     AD.busy = true; AD.err = ''; paintAdd();
     let r = null, d = {};
     try {
-      r = await api('/api/bkk/admin/walkin', { method: 'POST', body: JSON.stringify(body) });
+      r = await apiWait('/api/bkk/admin/walkin', { method: 'POST', body: JSON.stringify(body) }, SALE_WAIT);
       d = await r.json().catch(() => ({}));
     } catch (_) { d = { error: T('addNoNet') }; }
     AD.busy = false;
@@ -1859,6 +1906,14 @@
   const pkgKey = o => String(o.name_en || o.item_name || '').toLowerCase();
   const crossPkg = (a, b) => a.id !== b.id && a.member_id != null && a.member_id === b.member_id
     && ((a.product_id != null && a.product_id === b.product_id) || (!!pkgKey(a) && pkgKey(a) === pkgKey(b)));
+  // Near packages the two systems may each have used for one sale: the server asks a person about these.
+  const FAM = { pack8m1: 'pack8', unlim12: 'unlim12m' };
+  const fam = o => o.product_code ? FAM[o.product_code] || o.product_code : '';
+  const nearPkg = (a, b) => crossPkg(a, b) || (a.id !== b.id && a.member_id != null && a.member_id === b.member_id
+    && !!fam(a) && fam(a) === fam(b));
+  // The day the money came in, as the server pairs a sale with its Rezerv copy.
+  const payDay = o => bkkYmd(Date.parse(o.verified_at || o.created_at) || 0);
+  const payApart = (a, b) => Math.abs(Date.parse(payDay(a)) - Date.parse(payDay(b))) / 864e5;
   const after = (a, b) => ordAt(a) > ordAt(b) || (ordAt(a) === ordAt(b) && a.id > b.id);
   const ordDay = o => bkkYmd(ordAt(o));
   const daysApart = (a, b) => Math.abs(Date.parse(ordDay(a)) - Date.parse(ordDay(b))) / 864e5;
@@ -1877,7 +1932,7 @@
     const isTry = o => unpaid(o) && ((gw() && now - ordAt(o) > 24 * HOUR)
       || ours.some(p => (p.status === 'paid' || unpaid(p)) && samePkg(p, o) && after(p, o)) || !!paidBefore(o));
     const tries = ours.filter(isTry), main = ours.filter(o => !isTry(o));
-    const triesN = {}, againN = {}, nth = {}, alsoRz = {}, bonusN = {}, sameName = {};
+    const triesN = {}, againN = {}, nth = {}, alsoRz = {}, rzLinked = {}, bonusN = {}, sameName = {};
     // Each try is counted once: on the payment it came after, or the nearest order for the same package left in view.
     for (const t of tries) {
       const p = paidBefore(t);
@@ -1891,11 +1946,18 @@
       const k = ours.filter(p => paidHere(p) && samePkg(p, o) && after(o, p) && ordAt(o) - ordAt(p) <= 72 * HOUR).length;
       if (k) nth[o.id] = k + 1;
     }
-    // The same package in Rezerv within 3 days (its copy first), seen without opening the fold.
+    // The same package in Rezerv within 3 days of the payment, seen without opening
+    // the fold: its own twin always, and any Rezerv line not linked to another sale.
+    // Settled (grey) only when every such line is linked to this sale and the server
+    // sees no live Rezerv pass for it; a line not linked first, as that is the one to check.
     for (const o of main) if (o.status !== 'void') {
-      const near = rz.filter(x => (x.status === 'paid' || x.status === 'twin') && crossPkg(x, o) && daysApart(x, o) <= 3)
-        .sort((a, b) => (b.twin_of === o.id) - (a.twin_of === o.id) || Math.abs(ordAt(a) - ordAt(o)) - Math.abs(ordAt(b) - ordAt(o)))[0];
-      if (near) alsoRz[o.id] = near;
+      const gap = x => Math.abs(ordAt(x) - ordAt(o));
+      const near = rz.filter(x => x.twin_of === o.id
+        || (x.status === 'paid' && x.twin_of == null && nearPkg(x, o) && payApart(x, o) <= 3));
+      if (!near.length) continue;
+      const open = near.filter(x => x.twin_of !== o.id);
+      alsoRz[o.id] = (open.length ? open : near).sort((a, b) => gap(a) - gap(b))[0];
+      if (!open.length && !o.rz_pass) rzLinked[o.id] = true;
     }
     // In the fold, a ฿0 line goes onto the same person's nearest Rezerv payment within 3 days.
     const rzPaid = rz.filter(x => x.status === 'paid' && x.amount_thb > 0), rzRows = [];
@@ -1917,7 +1979,7 @@
       const c = codes.get(normName(o.member_name));
       if (c && c.size > 1) sameName[o.id] = [...c].filter(x => x !== o.member_code).join(', ');
     }
-    return { main, tries, rz: rzRows, rzAll: rz.length, triesN, againN, nth, alsoRz, bonusN, sameName };
+    return { main, tries, rz: rzRows, rzAll: rz.length, triesN, againN, nth, alsoRz, rzLinked, bonusN, sameName };
   }
   // The class a drop-in was bought for, and the day of it; what Rezerv called a line it named otherwise.
   const dayShort = (d, weekday) => ymdLong(d, weekday, String(d).slice(0, 4) === bkkYmd().slice(0, 4));
@@ -1933,22 +1995,30 @@
   const ordRow = (o, s) => {
     const rz = s.alsoRz[o.id];
     const notes = [s.triesN[o.id] && T('nTries', s.triesN[o.id]), s.againN[o.id] && T('nAgain', s.againN[o.id]),
-      s.nth[o.id] && [T('nthPay', s.nth[o.id]), true], rz && [T('alsoRz', dayShort(ordDay(rz)), baht(rz.amount_thb)), true],
+      s.nth[o.id] && [T('nthPay', s.nth[o.id]), true],
+      rz && [T(s.rzLinked[o.id] ? 'alsoRzLinked' : 'alsoRz', dayShort(ordDay(rz)), baht(rz.amount_thb)), !s.rzLinked[o.id]],
       s.bonusN[o.id] && T('nBonus', s.bonusN[o.id]), s.sameName[o.id] && [T('sameName', s.sameName[o.id]), true]]
       .filter(Boolean).map(n => Array.isArray(n) ? n : [n, false]);
     const zero = o.status === 'paid' && o.amount_thb === 0, cl = ordClass(o);
     // A twin's note starts with the ref it copies, which the line above it says already.
     const note = o.status === 'twin' ? String(o.gateway_note || '').split(' | ').slice(1).join(' | ') : String(o.gateway_note || '');
+    // A void row says why, first and whole, in the page's language.
+    const said = () => {
+      if (o.status !== 'void') return note.slice(0, 60);
+      const first = note.split(' | ')[0], v = first.match(/^Void: (.*) \(by staff, (\d{4}-\d{2}-\d{2})\)$/),
+        b = first.match(/^same Rezerv payment as order (\d+), imported twice$/);
+      return (v ? T('voidNote', v[1], v[2]) : b ? T('rzTwice', b[1]) : first).slice(0, 160);
+    };
     return `<tr>
       <td>${o.member_code ? whoBtn(o.member_code, o.member_name, 'who-' + o.id) : `<b>${esc(o.member_name || '–')}</b>`}<br><span class="muted">${esc(o.email || '')}<br>${esc(o.member_code)}</span>
         ${notes.map(([n, w]) => `<span class="onote${w ? ' warn' : ''}">${esc(n)}</span>`).join('')}</td>
-      <td>${esc(pkgName(o))}${cl ? `<span class="onote">${esc(cl)}</span>` : '<br>'}<b>฿${o.amount_thb.toLocaleString()}</b>
+      <td>${esc(pkgName(o))}${cl ? `<span class="onote">${esc(cl)}</span>` : '<br>'}<b${o.status === 'void' ? ' class="gone"' : ''}>฿${o.amount_thb.toLocaleString()}</b>
         <br><span class="muted">${o.base_thb.toLocaleString()} + ${T('fee')} ${o.fee_thb.toLocaleString()} + ${T('vat')} ${(o.vat_thb || 0).toLocaleString()}</span></td>
       <td><span class="pill ${zero ? 'zero' : esc(o.status)}">${esc(ordPill(o))}</span> <span class="muted">${esc(W(o.method || 'online'))}</span>${isRz(o) ? ' <span class="badge">Rezerv</span>' : ''}<br>
         <span class="muted">${o.created_at ? ordWhen(o) : ''}</span>
         ${byHand(o) && o.status === 'paid' ? `<br><span class="pill hand">${esc(T('byHand'))}</span>` : ''}
-        ${o.status === 'twin' && o.twin_refno ? `<span class="onote warn">${esc(T('twinOf', o.twin_refno))}</span>` : ''}
-        ${note ? `<span class="onote">${esc(o.status === 'void' && /^Void: /.test(note) ? note.split(' | ')[0].slice(0, 160) : note.slice(0, 60))}</span>` : ''}
+        ${o.status === 'twin' && o.twin_refno ? `<span class="onote">${esc(T('twinOf', o.twin_refno))}</span>` : ''}
+        ${note ? `<span class="onote">${esc(said())}</span>` : ''}
         <span class="${chkCls(CHK[o.id])}" id="chk-${o.id}" role="status">${chkInner(CHK[o.id])}</span></td>
       <td class="muted ref" data-l="${esc(T('thRef'))}" style="word-break:break-all;font-size:12px">${o.refno}</td>
       <td><div class="ordact">${[gw() && unpaid(o) && `<button class="btn sm" id="chkb-${o.id}" onclick="chkPay(${o.id})">${T('chkPay')}</button>`,
@@ -1972,7 +2042,7 @@
     const now = Date.now(), s = sortOrders(ORD, now);
     const fresh = gw() ? ORD.filter(o => online(o) && o.status === 'pending' && now - ordAt(o) < 72 * HOUR).length : 0;
     $('#view').innerHTML = `<div class="box"><b>${T('payments')}</b>
-      <button class="btn gray" style="float:right" onclick="tab('orders')">↻</button>
+      <button class="btn gray rfr" style="float:right" onclick="tab('orders')" aria-label="${esc(T('reload'))}">↻</button>
       ${ORD_TOTAL > ORD.length ? `<br><span class="muted">${esc(T('ordNewest', ORD.length.toLocaleString(), ORD_TOTAL.toLocaleString()))}</span>` : ''}
       ${fresh ? `<p><button class="btn sm" id="chkAll" onclick="chkAll()">${T('chkAll')}</button>
         <span class="muted" id="chkAllMsg" role="status"></span></p>` : ''}
@@ -2315,7 +2385,9 @@
     const days = [...rows.keys()].sort().map(k => { const b = rows.get(k); return `<tr>
       <td class="nowrap">${esc(long ? monthName(k) : ymdLong(k, true))}</td><td class="n">${b.came}</td>
       <td class="n">${b.booked}</td><td class="n">${b.money ? baht(b.money) : ''}</td></tr>`; });
-    const money = (list, label) => list.map(x => `<tr><td>${esc(label(x))}</td><td class="n">${x.n}</td><td class="n">${baht(x.total)}</td></tr>`);
+    // A refund is money going back: said on its own, never a count of 0 next to a minus.
+    const nPaid = x => x.refunds ? (x.n ? `${x.n} + ${T('nRefunds', x.refunds)}` : T('nRefunds', x.refunds)) : String(x.n);
+    const money = (list, label) => list.map(x => `<tr><td>${esc(label(x))}</td><td class="n">${esc(nPaid(x))}</td><td class="n">${baht(x.total)}</td></tr>`);
     const moneyHeads = first => [[first], [T('thCount'), 'n'], [T('thTotal'), 'n']];
     // The call lists are worked from a phone: History sits under the name, never off to the side.
     const who = (x, k) => `${whoBtn(x.code, x.name, `who-${k}-${x.code}`)}<br><span class="muted">${esc(x.code)}</span> ${histBtn(x.code)}`;
@@ -2333,7 +2405,7 @@
       <div class="box"><b>${T('rMoneyH')}</b>
         <div class="tiles">${tile(T('kMoney'), baht(m.total))}${tile(T('kVat'), baht(m.vat))}
           ${tile(T('kPayments'), String(m.count))}${tile(T('kSold'), String(d.passes.sold))}</div>
-        ${m.manual ? `<p class="muted">${esc(T('rManual', m.manual.n, baht(m.manual.total)))}</p>` : ''}
+        ${m.manual && m.manual.n ? `<p class="muted">${esc(T('rManual', m.manual.n, baht(m.manual.total)))}</p>` : ''}
         ${m.byMethod.length ? `<p><b>${T('rByMethod')}</b></p>${tbl(moneyHeads(T('thMethod')), money(m.byMethod, x => W(x.method || 'online')))}` : ''}
         ${m.byItem.length ? `<p><b>${T('rByItem')}</b></p>${tbl(moneyHeads(T('thItem')), money(m.byItem, x => itemName(x.item)
           + (x.price && m.byItem.some(y => y !== x && y.item === x.item) ? ' · ' + baht(x.price) : '')))}` : ''}

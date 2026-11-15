@@ -3725,6 +3725,32 @@ const ok = (name, cond, extra = '') => {
     const s8 = sortOrders([n1, n2, n3], NOW);
     ok('two member codes with one name (any case, punctuation or word order) each say "same name as" the other; a third name says nothing',
        s8.sameName[n1.id] === 'OSI9' && s8.sameName[n2.id] === 'OSH8' && !s8.sameName[n3.id], JSON.stringify(s8.sameName));
+
+    // Review fixes: the server pairs by the day the money came in, and a twin is always this sale's.
+    const late2 = row({ member_id: 11, member_code: 'OSK11', member_name: 'Kai Example', method: 'online',
+      created_at: '2026-11-11T16:50:00Z', verified_at: '2026-11-11T17:20:00Z' });
+    const lateTwin = row({ member_id: 11, member_code: 'OSK11', member_name: 'Kai Example', source: 'rezerv', status: 'twin', method: 'other',
+      amount_thb: 0, base_thb: 0, vat_thb: 0, twin_of: late2.id, created_at: '2026-11-15T01:00:00Z' });
+    const s9 = sortOrders([lateTwin, late2], NOW);
+    ok('a sale tapped before Bangkok midnight and paid after it keeps its Rezerv note: the twin is always its own, and settled (grey)',
+       s9.alsoRz[late2.id] === lateTwin && s9.rzLinked[late2.id] === true, JSON.stringify([Object.keys(s9.alsoRz), s9.rzLinked]));
+    const s9b = sortOrders([lateTwin, { ...late2, rz_pass: true }], NOW);
+    ok('...but while the server sees a live Rezerv pass for that sale it still asks to check the passes',
+       s9b.alsoRz[late2.id] === lateTwin && !s9b.rzLinked[late2.id]);
+    const loose = row({ member_id: 11, member_code: 'OSK11', member_name: 'Kai Example', source: 'rezerv', method: 'other',
+      amount_thb: 0, base_thb: 0, vat_thb: 0, created_at: '2026-11-13T01:00:00Z' });
+    const s9c = sortOrders([loose, lateTwin, late2], NOW);
+    ok('...and a Rezerv line not linked to it is the one the note names, with a warning',
+       s9c.alsoRz[late2.id] === loose && !s9c.rzLinked[late2.id]);
+    const otherSale = row({ member_id: 11, member_code: 'OSK11', member_name: 'Kai Example', created_at: '2026-11-12T03:00:00Z' });
+    ok('...a Rezerv line linked to another sale says nothing on this one',
+       !sortOrders([lateTwin, otherSale], NOW).alsoRz[otherSale.id]);
+    const p8 = row({ member_id: 12, member_code: 'OSL12', member_name: 'Lia Example', product_id: 2, product_code: 'pack8',
+      name_en: '8 classes / 2 months', created_at: at(3) });
+    const p8m1 = row({ member_id: 12, member_code: 'OSL12', member_name: 'Lia Example', product_id: 7, product_code: 'pack8m1',
+      name_en: '8 classes / 1 month', source: 'rezerv', method: 'other', amount_thb: 0, created_at: at(2) });
+    ok('a Rezerv line under the near package (8 classes in 1 month next to 2 months) gets the note too',
+       sortOrders([p8m1, p8], NOW).alsoRz[p8.id] === p8m1);
   }
 
   console.log('\n:: one sale, one row: counts, guards and repairs ::');
@@ -4013,6 +4039,151 @@ const ok = (name, cond, extra = '') => {
     const beaH = await hist(vA.body.member.code);
     ok('...and the profile leaves the void order out of what was paid', beaH.summary.payments === 1 && beaH.summary.totalPaid === vA0.amount_thb,
        JSON.stringify(beaH.summary));
+
+    // ── review fixes (15 Nov 2026) ──
+    // A void is final: the public payment check, the postback and Activate never bring it back.
+    const stubApp = express(); stubApp.use(express.json());
+    let stubAns = null;
+    stubApp.post('/order/orderdetailpost', (req, res) => stubAns ? res.json([stubAns]) : res.send(''));
+    const stubSrv = stubApp.listen(0, '127.0.0.1');
+    await new Promise(r => stubSrv.once('listening', r));
+    const gwEnv = { PAYSO_MERCHANT_ID: '000000012345', PAYSO_SECRET_KEY: 'test-only', PAYSO_API_KEY: 'test-only',
+      PAYSO_INQUIRY_BASE: `http://127.0.0.1:${stubSrv.address().port}` };
+    Object.assign(process.env, gwEnv);
+    try {
+      const gw1 = await post('/api/bkk/orders', { productCode: 'unlim1', name: 'Vera Example', email: 'vera.os@example.test' });
+      stubAns = { Status: 'CP', Total: gw1.body.order.amount };
+      const gwPaid = (await J('/api/bkk/pay/check/' + gw1.body.order.refno)).body;
+      const gwId = (await ord(gw1.body.order.refno)).id;
+      const gwVoid = await post(`/api/bkk/admin/orders/${gwId}/void`, { reason: 'paid twice, one sent back' }, ADMIN);
+      const gwRep0 = await report(today);
+      const gwChk = (await J('/api/bkk/pay/check/' + gw1.body.order.refno)).body;
+      await post('/api/bkk/pay/postback', { refno: String(gw1.body.order.refno) });
+      await new Promise(r => setTimeout(r, 300));
+      const gwFa = await post(`/api/bkk/admin/orders/${gwId}/force-activate`, { confirm: true }, ADMIN);
+      const gwRow = await ord(gw1.body.order.refno), gwRep1 = await report(today);
+      const gwLive = (await q1(`SELECT count(*)::int AS n FROM bkk_passes WHERE order_id=$1 AND status <> 'void'`, [gwId])).n;
+      ok('a void online order stays void: the public check, the postback and Activate (409) never make it paid or give a pass',
+         gwPaid.status === 'paid' && gwVoid.status === 200 && gwChk.status === 'void' && gwFa.status === 409 && gwRow.status === 'void'
+         && gwRow.gateway_note.startsWith('Void: paid twice, one sent back') && gwLive === 0
+         && gwRep1.money.total === gwRep0.money.total && gwRep1.money.count === gwRep0.money.count, JSON.stringify([gwChk, gwFa.body, gwRow.gateway_note]));
+      stubAns = null;
+      await J('/api/bkk/pay/check/' + vB.body.order.refno);
+      ok('...and a void desk sale keeps its "Void:" note when the public check asks about it',
+         (await ord(vB.body.order.refno)).gateway_note === vRow.gateway_note);
+    } finally {
+      for (const k of Object.keys(gwEnv)) delete process.env[k];
+      stubSrv.close();
+    }
+
+    // Many desk sales at once never use up the database pool.
+    const many = await Promise.all(Array.from({ length: 12 }, (_, i) => sell({ productCode: 'dropin', name: `Pool Example ${i}`,
+      email: `pool${i}.os@example.test` }, { requestId: `os-pool-${i}` })));
+    const after12 = await J('/api/bkk/products');
+    ok('12 desk sales at once, each with its own id: all sold, and the rest of the app still answers',
+       many.every(r => r.status === 200 && r.body.order) && after12.status === 200, JSON.stringify(many.map(r => r.status)));
+
+    // Doubles b is one to one, and a different time is a different payment.
+    const pe = await mk('OS-410', 'Eve Example');
+    const eAt = '2026-11-10T09:00:00+07:00';
+    const eHash = await plant(pe, 'h:aaaaaaaaaaaaaaaaaaaaaaaa', 1605, 'Drop-in', eAt, await prodId('dropin'));
+    const eId1 = await plant(pe, 'TRX_5001', 1605, 'Drop-in', eAt, await prodId('dropin'));
+    const eId2 = await plant(pe, 'TRX_5002', 1605, 'Drop-in', eAt, await prodId('dropin'));
+    const eLate = await plant(pe, 'h:bbbbbbbbbbbbbbbbbbbbbbbb', 1605, 'Drop-in', '2026-11-10T18:00:00+07:00', await prodId('dropin'));
+    const eList = ((await J('/api/bkk/admin/doubles', { headers: ADMIN })).body.items || []).filter(x => x.member.code === pe.code);
+    ok('a hash row and two Rezerv ids of the same payment shape: one copy, never both ids against one row; 18:00 is another payment',
+       eList.length === 1 && eList[0].kind === 'b' && eList[0].orders[1].id === eHash.id && eList[0].orders[0].id === eId1.id
+       && !eList.some(x => x.orders[0].id === eLate.id || x.orders[0].id === eId2.id) && /09:00/.test(eList[0].reason), JSON.stringify(eList));
+    await post('/api/bkk/admin/doubles/apply', { ids: eList.map(x => x.id) }, ADMIN);
+    const eH = await hist(pe.code);
+    ok('...applied: 3 payments stay on the profile', eH.summary.payments === 3 && eH.summary.totalPaid === 3 * 1605, JSON.stringify(eH.summary));
+
+    // The import's copy check is one to one too, and keeps the time.
+    const pf = await person('OS-411', 'Fia Example', 'fia.os@example.test');
+    const fA = await imp('payments', [{ rezervId: 'TRX_7002', memberRezervId: 'OS-411', date: '10/11/2026 10:00', amount: 1605, item: 'Drop-in', method: 'CARD' }]);
+    const fLines = [10, 18].map(h => ({ memberRezervId: 'OS-411', date: `10/11/2026 ${h}:00`, amount: 1605, item: 'Drop-in', method: 'CARD' }));
+    const fB = await imp('payments', fLines);
+    const fB2 = await imp('payments', fLines);
+    ok('one Rezerv id at 10:00, then a file without ids at 10:00 and 18:00: the 10:00 line is the copy, the 18:00 one is added',
+       fA.body.added === 1 && fB.body.added === 1 && fB.body.matched === 1 && fB.body.warnings.filter(w => w.code === 'rezervTwin').length === 1
+       && fB2.body.added === 0 && fB2.body.matched === 2 && (await hist(pf.code)).summary.payments === 2, JSON.stringify([fB.body, fB2.body]));
+
+    // A money line asks a person whatever came before it in the file.
+    const pg = await person('OS-412', 'Gia Example', 'gia.os@example.test');
+    const gSale = await sell({ productCode: 'unlim3', name: pg.name, email: pg.email, requestId: 'os-gia-1' });
+    const gImp = await imp('payments', [
+      { rezervId: 'OS-G1', memberRezervId: 'OS-412', date: `${dmy(today)} 07:11`, amount: 0, item: '3 months Unlimited', method: 'Free' },
+      { rezervId: 'OS-G2', memberRezervId: 'OS-412', date: `${dmy(today)} 07:10`, amount: 15600, item: '3 months Unlimited', method: 'TRANSFER' }]);
+    ok('a ฿0 line first, then a line with money for the same sale: the ฿0 line is the twin and the money line still asks (maybeTwin)',
+       gImp.body.added === 2 && gImp.body.warnings.some(w => w.code === 'twinOfAybkk')
+       && gImp.body.warnings.some(w => w.code === 'maybeTwin' && w.vals[0] === gSale.body.order.refno), JSON.stringify(gImp.body.warnings));
+    const gE = ((await J('/api/bkk/admin/doubles', { headers: ADMIN })).body.items || []).filter(x => x.member.code === pg.code);
+    ok('...and the doubles list shows that line for a person to decide (kind e), and never applies it',
+       gE.length === 1 && gE[0].kind === 'e' && gE[0].orders[1].refno === gSale.body.order.refno
+       && (await post('/api/bkk/admin/doubles/apply', { ids: [gE[0].id] }, ADMIN)).body.applied.length === 0, JSON.stringify(gE));
+    const gRz = await q1(`SELECT id FROM bkk_orders WHERE source_ref='OS-G2'`);
+    const gNo = await post(`/api/bkk/admin/orders/${gRz.id}/void`, { reason: 'test' }, ADMIN);
+    ok('...and the Rezerv line is not voided here, with a reply that names the list', gNo.status === 409 && /kind|\(e\)/.test(gNo.body.error),
+       gNo.body.error);
+
+    // Voiding the sale brings back the Rezerv pass that was kept void as its copy, with what was used on it.
+    const ph = await person('OS-413', 'Hal Example', 'hal.os@example.test');
+    const hSale = await sell({ productCode: 'pack8', name: ph.name, email: ph.email, requestId: 'os-hal-1' });
+    const hImp = await imp('passes', [{ rezervId: 'OS-HM1', memberRezervId: 'OS-413', plan: '8 classes / 2 months', status: 'Active',
+      start: dmy(today), until: dmy(addDay(today, 59)), classesLeft: 5 }]);
+    const hPass = async () => (await pool.query(`SELECT id, status, source, credits_used, to_char(valid_from,'YYYY-MM-DD') AS f, note, twin_of
+      FROM bkk_passes WHERE member_id=$1 ORDER BY id`, [ph.id])).rows;
+    const h1 = await hPass(), hOrd = h1.find(p => !p.source), hRz = h1.find(p => p.source === 'rezerv');
+    ok('the Rezerv copy of a pack: void, and the 3 classes used in Rezerv and its start day go onto the pass kept, said in the warning',
+       hRz.status === 'void' && hOrd.status === 'active' && hOrd.credits_used === 3 && hOrd.f === today
+       && hImp.body.warnings.some(w => w.code === 'twinPass' && w.vals[1] === 3 && w.vals[3] === today), JSON.stringify([h1, hImp.body.warnings]));
+    const hId = (await ord(hSale.body.order.refno)).id;
+    const hV = await post(`/api/bkk/admin/orders/${hId}/void`, { reason: 'the money was taken in Rezerv' }, ADMIN);
+    const h2 = await hPass(), hH = await hist(ph.code);
+    ok('...voiding the sale: its pass void, the Rezerv pass live again with its own 3 used, and the profile has a pass',
+       hV.status === 200 && hV.body.rezervPassBack.length === 1 && h2.find(p => !p.source).status === 'void'
+       && h2.find(p => p.source === 'rezerv').status === 'active' && h2.find(p => p.source === 'rezerv').twin_of === null
+       && !/voided:/.test(h2.find(p => p.source === 'rezerv').note) && hH.summary.activePass && hH.summary.activePass.creditsLeft === 5,
+       JSON.stringify([hV.body, h2, hH.summary.activePass]));
+    await imp('passes', [{ rezervId: 'OS-HM1', memberRezervId: 'OS-413', plan: '8 classes / 2 months', status: 'Active',
+      start: dmy(today), until: dmy(addDay(today, 59)), classesLeft: 5 }]);
+    ok('...importing it again keeps it live', (await hPass()).find(p => p.source === 'rezerv').status === 'active');
+    const pi = await person('OS-414', 'Ida Example', 'ida.os@example.test');
+    await sell({ productCode: 'unlim3', name: pi.name, email: pi.email, requestId: 'os-ida-1' });
+    await imp('passes', [{ rezervId: 'OS-IM1', memberRezervId: 'OS-414', plan: '3 months Unlimited', status: 'Active',
+      start: dmy(today), until: dmy(addDay(today, 89)) }]);
+    const iOrdPass = await q1(`SELECT id FROM bkk_passes WHERE member_id=$1 AND source IS NULL`, [pi.id]);
+    const iV = await post(`/api/bkk/admin/passes/${iOrdPass.id}/void`, { reason: 'test' }, ADMIN);
+    ok('...and voiding that pass on the profile does the same', iV.status === 200 && iV.body.rezervPassBack.length === 1
+       && (await q1(`SELECT status FROM bkk_passes WHERE member_id=$1 AND source='rezerv'`, [pi.id])).status === 'active', JSON.stringify(iV.body));
+
+    // A near package (8 classes in 1 month in Rezerv, 2 months here) is asked about, never linked.
+    const pj = await person('OS-415', 'Jai Example', 'jai.os@example.test');
+    const jSale = await sell({ productCode: 'pack8', name: pj.name, email: pj.email, requestId: 'os-jai-1' });
+    const jPass = await imp('passes', [{ rezervId: 'OS-JM1', memberRezervId: 'OS-415', plan: '8 classes / 1 month', status: 'Active',
+      start: dmy(today), until: dmy(addDay(today, 29)), classesLeft: 8 }]);
+    const jPay = await imp('payments', [{ rezervId: 'OS-J1', memberRezervId: 'OS-415', date: `${dmy(today)} 07:10`, amount: 0,
+      item: '8 classes / 1 month', method: 'Free' }]);
+    const jList = ((await J('/api/bkk/admin/doubles', { headers: ADMIN })).body.items || []).filter(x => x.member.code === pj.code);
+    ok('a Rezerv pass and ฿0 line under the near package: both kept live and paid, a person is asked (nearPass, maybeTwin), and listed (c, e)',
+       jPass.body.warnings.some(w => w.code === 'nearPass' && w.vals[0] === jSale.body.order.refno)
+       && jPay.body.warnings.some(w => w.code === 'maybeTwin' && w.vals[0] === jSale.body.order.refno)
+       && (await q1(`SELECT count(*)::int AS n FROM bkk_passes WHERE member_id=$1 AND status='active'`, [pj.id])).n === 2
+       && (await q1(`SELECT status FROM bkk_orders WHERE source_ref='OS-J1'`)).status === 'paid'
+       && jList.map(x => x.kind).sort().join() === 'c,e', JSON.stringify([jPass.body.warnings, jPay.body.warnings, jList.map(x => x.kind)]));
+    const jRow = ((await J('/api/bkk/admin/orders?limit=2000', { headers: ADMIN })).body.orders || []).find(o => String(o.refno) === jSale.body.order.refno);
+    ok('...and the payments list tells the page that sale has a live Rezerv pass next to it',
+       jRow && jRow.rz_pass === true && jRow.product_code === 'pack8', JSON.stringify(jRow && [jRow.rz_pass, jRow.product_code]));
+
+    // A refund is not a payment: Reports say it on its own.
+    const pk = await person('OS-416', 'Kit Example', 'kit.os@example.test');
+    const kDay = '2025-03-04';
+    await imp('payments', [{ rezervId: 'OS-K1', memberRezervId: 'OS-416', date: `${dmy(kDay)} 09:00`, amount: 1605, item: 'Drop-in',
+      method: 'CARD', status: 'Refunded' }]);
+    const kRep = await report(kDay);
+    const kM = kRep.money.byMethod.find(x => x.total < 0) || {};
+    ok('a refund on its own in Reports: no payment counted, 1 refund, the money back', kRep.money.count === 0 && kRep.money.refunds === 1
+       && kM.n === 0 && kM.refunds === 1 && kRep.money.total === -1605, JSON.stringify(kRep.money));
   }
 
   console.log('\n— Bangkok calendar dates —');
