@@ -2,6 +2,8 @@
 process.env.BKK_ADMIN_KEY = 'testkey';
 process.env.MAIL_DRY_RUN = '1';   // capture mail in an outbox instead of sending
 process.env.BKK_TIMERS = 'off';   // the payment watch runs only when a test calls it
+delete process.env.TELEGRAM_BOT_TOKEN;   // a ping goes to the Telegram stub only, when a block sets one
+process.env.TELEGRAM_API_BASE = 'http://127.0.0.1:9';
 const crypto = require('crypto');
 const express = require('express');
 const { Pool } = require('pg');
@@ -4415,7 +4417,7 @@ const ok = (name, cond, extra = '') => {
     const HOUR = 3600000, MIN = 60000;
     // PaySolutions on 127.0.0.1: an answer per 12-digit ref, a status code, a delay, or no answer at all.
     const asked = [];
-    const pay = { code: 200, answers: {}, delay: 0, hang: false };
+    const pay = { code: 200, answers: {}, delay: 0, delays: {}, hang: false };
     const stub = http.createServer((req, res) => {
       let body = ''; req.on('data', c => { body += c; });
       req.on('end', () => {
@@ -4426,7 +4428,7 @@ const ok = (name, cond, extra = '') => {
           const a = pay.answers[ref];
           res.statusCode = pay.code; res.setHeader('Content-Type', 'application/json');
           res.end(a == null ? '' : JSON.stringify(a));
-        }, pay.delay);
+        }, pay.delays[ref] ?? pay.delay);
       });
     });
     // Telegram on 127.0.0.1: every message kept.
@@ -4435,7 +4437,7 @@ const ok = (name, cond, extra = '') => {
       let body = ''; req.on('data', c => { body += c; });
       req.on('end', () => {
         let j = {}; try { j = JSON.parse(body); } catch (_) {}
-        tg.push({ url: req.url, chat: String(j.chat_id), text: String(j.text || '') });
+        tg.push({ url: req.url, chat: String(j.chat_id), text: String(j.text || ''), preview: j.link_preview_options });
         res.statusCode = tgCode; res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(tgCode === 200 ? { ok: true, result: {} } : { ok: false, error_code: tgCode, description: 'Internal Server Error' }));
       });
@@ -4568,23 +4570,26 @@ const ok = (name, cond, extra = '') => {
     pay.code = 401;
     const tF = tg.length;
     const f1 = await sweep();
-    await until(() => tg.length > tF); await wait(200);
+    await wait(300);
     const FAILING = '⚠ PaySolutions check is failing (http 401): online payments will not turn on by themselves.';
-    ok('PaySolutions refusing the check (http 401) pings once for the whole shala, and the run stops at the first refusal',
-       f1.due === 2 && f1.asked === 1 && tg.length === tF + 1 && tg[tF].text === FAILING, JSON.stringify([f1, tg.slice(tF)]));
+    ok('PaySolutions refusing the check once (http 401) is not news yet: no ping, and the run stops at the first refusal',
+       f1.due === 2 && f1.asked === 1 && tg.length === tF, JSON.stringify([f1, tg.slice(tF)]));
     const f2 = await sweep(11 * MIN);
+    await until(() => tg.length > tF); await wait(200);
+    ok('...refused again 11 minutes later (twice in a row): one ping for the whole shala',
+       f2.asked === 1 && tg.length === tF + 1 && tg[tF].text === FAILING, JSON.stringify([f2, tg.slice(tF)]));
+    await sweep(22 * MIN);
     await wait(300);
     const f1Row = await st(F1);
-    ok('...refused again 11 minutes later: no second ping inside 3 hours, the order still pending, its note keeps the code',
-       f2.asked === 1 && tg.length === tF + 1 && f1Row.status === 'pending' && f1Row.passes === 0 && /http 401/.test(f1Row.gateway_note),
-       JSON.stringify([f2, f1Row]));
-    await sweep(3 * HOUR + 5 * MIN);
+    ok('...a third refusal: no second ping inside 3 hours, the order still pending, its note keeps the code',
+       tg.length === tF + 1 && f1Row.status === 'pending' && f1Row.passes === 0 && /http 401/.test(f1Row.gateway_note), JSON.stringify(f1Row));
+    await sweep(3 * HOUR + 15 * MIN);
     await until(() => tg.length > tF + 1);
-    ok('...3 hours on, a refusal pings again', tg.length === tF + 2 && tg[tF + 1].text === FAILING, JSON.stringify(tg.slice(tF)));
+    ok('...3 hours after the ping, a refusal pings again', tg.length === tF + 2 && tg[tF + 1].text === FAILING, JSON.stringify(tg.slice(tF)));
     pay.code = 200;
     process.env.PAYSO_INQUIRY_BASE = 'http://127.0.0.1:9';
     const NE = await order({ age: 10 });
-    const ne = await sweep(3 * HOUR + 6 * MIN);
+    const ne = await sweep(3 * HOUR + 16 * MIN);
     process.env.PAYSO_INQUIRY_BASE = env.PAYSO_INQUIRY_BASE;
     await wait(300);
     const neRow = await st(NE);
@@ -4596,11 +4601,28 @@ const ok = (name, cond, extra = '') => {
     const TO = await order({ age: 10 });
     pay.hang = true;
     const t0 = Date.now();
-    const to = await slow.paySweep({ now: NOW + 3 * HOUR + 7 * MIN });
+    const to = await slow.paySweep({ now: NOW + 3 * HOUR + 17 * MIN });
     pay.hang = false;
     ok('a PaySolutions that never answers is given up after the timeout: not paid, said so, the status unchanged',
        Date.now() - t0 < 5000 && to.orders[0] && to.orders[0].refno === TO.refno && to.orders[0].note === 'inquiry failed: timeout after 0.3 s'
        && (await st(TO)).status === 'pending', JSON.stringify(to));
+    const tW = tg.length;
+    await order({ age: 10 });
+    const back = await sweep(3 * HOUR + 30 * MIN);
+    await until(() => tg.length > tW); await wait(200);
+    const WORKS = tg.slice(tW).filter(m => m.text.startsWith('✓ PaySolutions check works again'));
+    await order({ age: 10 });
+    await sweep(3 * HOUR + 45 * MIN); await wait(200);
+    ok('...PaySolutions answering again sends one "works again", naming when it started failing; the next answer sends nothing',
+       back.asked >= 1 && WORKS.length === 1 && / \(failing since \w{3} \d+ \w{3} \d\d:\d\d, timeout after 0\.3 s\)\.$/.test(WORKS[0].text)
+       && tg.length === tW + 1, JSON.stringify(tg.slice(tW)));
+    const blip = await order({ age: -(3 * 60 + 40) });
+    pay.code = 502;
+    await sweep(3 * HOUR + 46 * MIN);
+    pay.code = 200; paidAt(blip);
+    await sweep(3 * HOUR + 57 * MIN); await wait(300);
+    ok('one failed check alone (a blip) pings nothing, and the next answer turns the order on and says nothing', tg.length === tW + 1
+       && (await st(blip)).status === 'paid', JSON.stringify(tg.slice(tW)));
 
     NOW += 49 * HOUR;
     const sch = (await J('/api/bkk/schedule?days=14', { headers: ADMIN })).body.classes.filter(c => !c.isOnline);
@@ -4632,8 +4654,9 @@ const ok = (name, cond, extra = '') => {
        !pingsOf(P2).length && !pingsOf(P3).length && !pingsOf(P4).length && !pingsOf(Q1).length
        && pingsOf(Q2).length === 1 && /Possible double payment: Drop-in/.test(pingsOf(Q2)[0].text), JSON.stringify(tg.slice(tD)));
     const nb = pingsOf(NB);
-    ok('paid, but the class could not be booked: a ping naming the student', nb.length === 1
+    ok('paid, but the class could not be booked: a ping naming the student, saying they keep a 1-class credit', nb.length === 1
        && nb[0].text.startsWith('⚠ Paid, but could not book') && nb[0].text.includes(`(${NB.member.code})`)
+       && nb[0].text.endsWith('They keep a 1-class credit: book them by hand.')
        && (await st(NB)).status === 'paid', JSON.stringify(nb));
     ok('per-sale pings are off by default: none of those 7 online payments sent one', !tg.slice(tD).some(m => m.text.startsWith('💳')));
 
@@ -4678,6 +4701,12 @@ const ok = (name, cond, extra = '') => {
     const bad4 = await post('/api/bkk/admin/settings', { paySweep: 'yes' }, ADMIN);
     ok('settings: on/off and an HH:MM time only, and a refused change saves nothing', [bad1, bad2, bad3, bad4].every(r => r.status === 400)
        && (await settingsNow()).payWatch.pingEachSale === 'off', JSON.stringify([bad1.body, bad2.body, bad3.body, bad4.body]));
+    const bad5 = await post('/api/bkk/admin/settings', { pingEachSale: 'on', links: { instagram: 'not a link' } }, ADMIN);
+    const bad6 = await post('/api/bkk/admin/settings', { dailyMoneyAt: ['06:15'] }, ADMIN);
+    const bad7 = await post('/api/bkk/admin/settings', { pingEachSale: ['on'] }, ADMIN);
+    const sN = (await settingsNow()).payWatch;
+    ok('...a bad link next to a good switch saves neither; a time or a switch inside a list is refused', [bad5, bad6, bad7].every(r => r.status === 400)
+       && sN.pingEachSale === 'off' && sN.dailyMoneyAt === '21:00', JSON.stringify([bad5.body, bad6.body, bad7.body, sN]));
     const good = await post('/api/bkk/admin/settings', { paySweep: false, dailyMoney: 'on', dailyMoneyAt: '7:30' }, ADMIN);
     ok('...7:30 is kept as 07:30, and the switches answer back', good.status === 200 && good.body.payWatch.dailyMoneyAt === '07:30'
        && good.body.payWatch.paySweep === 'off', JSON.stringify(good.body));
@@ -4693,15 +4722,162 @@ const ok = (name, cond, extra = '') => {
        JSON.stringify([timerRun, button.body]));
     await post('/api/bkk/admin/settings', { paySweep: 'on', dailyMoneyAt: '21:00' }, ADMIN);
 
+    console.log('  races, doubles, safe text and retries (review fixes)');
+    NOW += 49 * HOUR;
+    const firstLines = o => pingsOf(o).map(m => m.text.split('\n')[0]);
+    // Staff turn an order on by hand while the sweep still waits for PaySolutions.
+    const byHandMidSweep = async (o, run) => {
+      pay.delays[o.r12] = 400;
+      const going = run();
+      await wait(100);
+      const fa = await post(`/api/bkk/admin/orders/${o.id}/force-activate`, {}, ADMIN);
+      const r = await going; await wait(400);
+      delete pay.delays[o.r12];
+      return { fa, r, row: await st(o) };
+    };
+    const R2 = await order({ age: 10 }); paidAt(R2, R2.amount - 1);
+    const x2 = await byHandMidSweep(R2, () => sweep());
+    ok('turned on by hand while PaySolutions answers the sweep a wrong amount: still paid, one pass, the hand note kept, no "wrong amount" ping',
+       x2.fa.status === 200 && x2.row.status === 'paid' && x2.row.passes === 1 && x2.row.gateway_note === 'MANUAL ACTIVATION by admin'
+       && !pingsOf(R2).length && JSON.stringify(x2.r.orders) === JSON.stringify([{ refno: R2.refno, before: 'pending', after: 'paid', note: 'already on' }])
+       && x2.r.paid === 0, JSON.stringify([x2, firstLines(R2)]));
+    const R3 = await order({ age: 70 });
+    pay.answers[R3.r12] = [{ Total: R3.amount, Status: 'N', StatusName: 'Unpaid' }];
+    const x3 = await byHandMidSweep(R3, () => sweep(MIN));
+    ok('...or answers "not paid" for an order over an hour old: the hand note stays, and no "not paid" ping for a paid order',
+       x3.row.status === 'paid' && x3.row.gateway_note === 'MANUAL ACTIVATION by admin' && !pingsOf(R3).length, JSON.stringify([x3.row, firstLines(R3)]));
+    const R4 = await order({ age: 10 });
+    const x4 = await byHandMidSweep(R4, () => slow.paySweep({ now: NOW + 2 * MIN }));
+    ok('...or does not answer in time: the hand note stays, and the sweep says it was already on',
+       JSON.stringify(x4.r.orders) === JSON.stringify([{ refno: R4.refno, before: 'pending', after: 'paid', note: 'already on' }])
+       && x4.row.status === 'paid' && x4.row.gateway_note === 'MANUAL ACTIVATION by admin', JSON.stringify([x4.r, x4.row]));
+
+    const E1 = await order({ age: 70 }), E2 = await order({ age: 70 }), E3 = await order({ age: 70 });
+    pay.answers[E1.r12] = {}; pay.answers[E2.r12] = { data: null }; pay.answers[E3.r12] = { status: 'error', message: 'Data not found' };
+    await sweep(3 * MIN); await wait(300);
+    const eRows = await Promise.all([E1, E2, E3].map(st));
+    ok('an answer with no Status ({}, no data, an error message) is no record: no "not paid" ping', eRows.every(r => r.gateway_note === 'no record (http 200)')
+       && ![E1, E2, E3].some(o => pingsOf(o).length), JSON.stringify(eRows.map(r => r.gateway_note)));
+    const S1 = await order({ age: 80 });
+    pay.answers[S1.r12] = [{ Total: S1.amount, Status: 'N', StatusName: 'Unpaid' }];
+    const S2 = await order({ age: 75, status: 'paid', member: S1.member });
+    await sweep(4 * MIN);
+    await until(() => pingsOf(S1).length);
+    const s1p = (pingsOf(S1)[0] || {}).text || '';
+    ok('not paid an hour on while the student paid the same package on a later order: the ping names that ref and says to refund one if both paid',
+       s1p.startsWith('⚠ Not paid after 84 min. PaySolutions says: status N (Unpaid)')
+       && new RegExp(`They paid ref ${S2.refno} \\(\\d\\d \\w{3} \\d\\d:\\d\\d\\)\\. If PaySolutions shows money for this one too, refund one\\.$`).test(s1p), s1p);
+
+    const NF = await order({ age: 10, name: 'Ana ๐๘๑๒๓๔๕๖๗๘ ０８１２３ ana＠example．com refund-help.example/form www.example example.com Example' });
+    paidAt(NF, NF.amount - 1);
+    await sweep(5 * MIN);
+    await until(() => pingsOf(NF).length);
+    const nf = pingsOf(NF)[0] || {};
+    ok('a phone in Thai or wide digits, a wide @, a link or a domain in a name never reach the ping, and Telegram shows no link preview',
+       (nf.text || '').includes(`\nAna Example (${NF.member.code}) ·`) && !!nf.preview && nf.preview.is_disabled === true, JSON.stringify(nf));
+
+    process.env.PAYSO_SECRET_KEY = 'test-only\nsecond-line';
+    const KE = await order({ age: 10 });
+    const ke = await J('/api/bkk/pay/check/' + KE.refno);
+    process.env.PAYSO_SECRET_KEY = env.PAYSO_SECRET_KEY;
+    const keRow = await st(KE);
+    await wait(200);
+    ok('a key with a line break pasted in never shows: the public check and the note say only that the request could not be sent',
+       ke.body.note === 'inquiry failed: request could not be sent' && keRow.gateway_note === 'inquiry failed: request could not be sent'
+       && !tg.some(m => m.text.includes('second-line')), JSON.stringify([ke.body, keRow]));
+    await J('/api/bkk/pay/check/' + KE.refno);
+
+    const NBH = await order({ age: 90, product: drop.id, slotId: c1.slotId, date: back28(c1.date), amount: 1605 });
+    const nbh = await post(`/api/bkk/admin/orders/${NBH.id}/force-activate`, {}, ADMIN);
+    await wait(400);
+    ok('turned on by hand for a class that has ended: the page tells staff, and no "could not book" ping', nbh.status === 200
+       && !!nbh.body.bookingError && !pingsOf(NBH).length, JSON.stringify([nbh.body, firstLines(NBH)]));
+
+    const tDD = tg.length;
+    const deskWho = { productCode: 'dropin', name: 'Dropin Example', email: 'dropin.watch@example.com', method: 'cash' };
+    const dd1 = await post('/api/bkk/admin/sales', deskWho, ADMIN);
+    const dd2 = await post('/api/bkk/admin/sales', { ...deskWho, method: 'transfer' }, ADMIN);
+    await wait(500);
+    ok('two drop-ins sold at the desk with no class (a regular paying each visit): no "double payment" ping',
+       dd1.status === 200 && dd2.status === 200 && !tg.slice(tDD).some(m => m.text.includes('double payment')), JSON.stringify(tg.slice(tDD)));
+    const hm = await one(`INSERT INTO bkk_members (code,name,email) VALUES ('BPWATCHDESK8','Pack Example','pack.watch@example.com') RETURNING id`);
+    await paidBefore(hm, { hours: 3 });
+    const tH = tg.length;
+    const hs = await post('/api/bkk/admin/sales', { productCode: 'pack8', name: 'Pack Example', email: 'pack.watch@example.com', method: 'cash',
+      slotId: c1.slotId, date: c1.date }, ADMIN);
+    await until(() => tg.length > tH); await wait(200);
+    ok('8 classes sold at the desk with a class, 3 hours after an online 8 classes with none: a "double payment" ping (the class counts for a drop-in only)',
+       hs.status === 200 && tg.slice(tH).filter(m => m.text.startsWith(`⚠ Possible double payment: ${pack8.name_en}`)).length === 1, JSON.stringify(tg.slice(tH)));
+    for (let i = 0; i < 3; i++) {
+      const T1 = await order({ age: 10 }), T2 = await order({ age: 10, member: T1.member });
+      paidAt(T1); paidAt(T2);
+      const tT = tg.length;
+      await Promise.all([J('/api/bkk/pay/check/' + T1.refno), J('/api/bkk/pay/check/' + T2.refno)]);
+      await wait(600);
+      const tt = tg.slice(tT).filter(m => m.text.startsWith('⚠ Possible double payment'));
+      ok(`two payments for one package turned on at the same moment: one "double payment" ping for the pair (try ${i + 1})`, tt.length === 1, JSON.stringify(tt));
+    }
+
+    await watch.resendAlerts({ now: NOW });
+    tgCode = 502;
+    const RT = await order({ age: 10 }); paidAt(RT, 1);
+    await sweep(6 * MIN);
+    await until(async () => !!(await one(`SELECT retry_text FROM bkk_pay_alerts WHERE order_id=$1 AND kind='mismatch'`, [RT.id])).retry_text);
+    const kept = await one(`SELECT retry_text, tries FROM bkk_pay_alerts WHERE order_id=$1 AND kind='mismatch'`, [RT.id]);
+    const rs1 = await watch.resendAlerts({ now: NOW + 7 * MIN });
+    tgCode = 200;
+    const rs2 = await watch.resendAlerts({ now: NOW + 8 * MIN });
+    const rs3 = await watch.resendAlerts({ now: NOW + 18 * MIN });
+    const rs4 = await watch.resendAlerts({ now: NOW + 40 * MIN });
+    const done = await one(`SELECT retry_text, tries FROM bkk_pay_alerts WHERE order_id=$1 AND kind='mismatch'`, [RT.id]);
+    ok('a ping Telegram refused (502) is kept and tried again 10 minutes apart until it gets through, then never again',
+       /^⚠ Wrong amount/.test(kept.retry_text || '') && kept.tries === 1 && rs1.due === 1 && rs1.sent === 0 && rs2.due === 0 && rs3.due === 1 && rs3.sent === 1
+       && rs4.due === 0 && done.retry_text === null && done.tries === 3 && pingsOf(RT).length === 3, JSON.stringify([kept, rs1, rs2, rs3, rs4, done, pingsOf(RT).length]));
+    tgCode = 502;
+    const RX = await order({ age: 10 }); paidAt(RX, 1);
+    await sweep(9 * MIN);
+    await until(async () => !!(await one(`SELECT retry_text FROM bkk_pay_alerts WHERE order_id=$1 AND kind='mismatch'`, [RX.id])).retry_text);
+    const rx = [await watch.resendAlerts({ now: NOW + 20 * MIN }), await watch.resendAlerts({ now: NOW + 31 * MIN }), await watch.resendAlerts({ now: NOW + 60 * MIN })];
+    tgCode = 200;
+    ok('...a ping Telegram keeps refusing is tried 3 times in all, then dropped (the Settings line shows the failure)', rx.map(r => r.due).join() === '1,1,0'
+       && pingsOf(RX).length === 3 && (await one(`SELECT retry_text FROM bkk_pay_alerts WHERE order_id=$1 AND kind='mismatch'`, [RX.id])).retry_text === null
+       && (await settingsNow()).telegram.last.ok === false, JSON.stringify([rx, pingsOf(RX).length]));
+
+    NOW += 49 * HOUR;
+    const LD = await order({ age: 10 }), LD2 = await order({ age: 10 });
+    paidAt(LD); paidAt(LD2); pay.delays[LD.r12] = 600;
+    const ldRun = sweep();
+    await wait(250);
+    const cut = await one(`SELECT count(pg_terminate_backend(l.pid))::int AS n FROM pg_locks l JOIN pg_stat_activity a ON a.pid = l.pid
+      WHERE l.locktype = 'advisory' AND l.granted AND a.datname = current_database()`);
+    const ld = await ldRun;
+    delete pay.delays[LD.r12];
+    const ldNext = await sweep(MIN);
+    const ldLocks = await one(`SELECT count(*)::int AS n FROM pg_locks WHERE locktype='advisory' AND granted`);
+    ok('the database ends the sweep\'s lock connection mid-run: no crash, the order in hand is turned on, the run stops, the next run takes the rest',
+       cut.n === 1 && ld.ran && ld.asked === 1 && (await st(LD)).status === 'paid' && ldNext.ran && ldNext.asked === 1
+       && (await st(LD2)).status === 'paid' && ldLocks.n === 0, JSON.stringify([cut, ld, ldNext, ldLocks]));
+
+    NOW += 49 * HOUR;
+    const SL = [await order({ age: 10 }), await order({ age: 10 }), await order({ age: 10 })];
+    SL.forEach(o => { pay.delays[o.r12] = 150; });
+    const sl = await slow.paySweep({ now: NOW });
+    SL.forEach(o => { delete pay.delays[o.r12]; });
+    ok('a slow PaySolutions (an answer slower than a third of the timeout) ends the run after that answer: the rest wait, the button stays short',
+       sl.ran && sl.due === 3 && sl.asked === 1 && sl.orders[0].note === 'no record (http 200)', JSON.stringify(sl));
+    await pool.query(`DELETE FROM bkk_settings WHERE key='pay_check_failing'`);
+
     console.log('  the daily money line');
-    const DAY = '2026-08-04';
+    const DAY = '2026-08-04', PREV = '2026-08-03';
     const at = (d, hm) => new Date(bkkAt(`${d}T${hm}:00`));
-    const row = f => pool.query(`INSERT INTO bkk_orders (refno,product_id,base_thb,amount_thb,status,source,method,gateway_note,created_at,verified_at)
-      VALUES ($1,$2,$3,$3,$4,$5,$6,$7,$8,$9)`, [++direct, pack8.id, f.amount, f.status || 'paid', f.source || null, f.method || 'online',
-      f.note || null, f.created || f.paid, f.paid || null]);
+    const row = f => pool.query(`INSERT INTO bkk_orders (refno,product_id,base_thb,amount_thb,status,source,method,gateway_note,created_at,verified_at,checked_at)
+      VALUES ($1,$2,$3,$3,$4,$5,$6,$7,$8,$9,$10)`, [++direct, pack8.id, f.amount, f.status || 'paid', f.source || null, f.method || 'online',
+      f.note || null, f.created || f.paid, f.paid || null, f.checked || null]);
     const tick = (d, hm) => watch.moneyTick({ now: at(d, hm).getTime() });
     const marker = async d => (await one(`SELECT count(*)::int AS n FROM bkk_settings WHERE key=$1`, ['daily_money_sent_' + d])).n;
-    ok('a day with no sales says so in one short line', await watch.moneyLine(DAY, at(DAY, '21:05').getTime()) === 'AYBKK money, Tue 4 Aug 2026: No sales today.');
+    const lineOf = d => tg.filter(m => m.text.startsWith('AYBKK money,') && m.text.includes(` to ${d}`));
+    ok('a time with no sales says so in one short line, naming both ends',
+       await watch.moneyLine({ from: at(PREV, '21:00').getTime(), until: at(DAY, '21:05').getTime() }) === 'AYBKK money, Mon 3 Aug 21:00 to Tue 4 Aug 21:05: No sales.');
     for (const f of [
       { amount: 1000, paid: at(DAY, '00:30') }, { amount: 2500, paid: at(DAY, '15:00') },
       { amount: 400, paid: at(DAY, '18:00'), note: 'MANUAL ACTIVATION by admin' },
@@ -4709,29 +4885,32 @@ const ok = (name, cond, extra = '') => {
       { amount: -300, paid: at(DAY, '12:00'), status: 'refund' },
       { amount: 0, paid: at(DAY, '09:00'), source: 'rezerv' }, { amount: 5000, paid: at(DAY, '09:00'), source: 'rezerv', method: 'card' },
       { amount: -1000, paid: at(DAY, '09:30'), source: 'rezerv', status: 'refund' },
-      { amount: 999, paid: at('2026-08-03', '23:59') },
-      { amount: 900, created: at(DAY, '10:00'), status: 'mismatch' },
+      { amount: 999, paid: at(PREV, '20:59') }, { amount: 350, paid: at(PREV, '21:30') },
+      { amount: 900, created: at(DAY, '10:00'), checked: at(DAY, '10:05'), status: 'mismatch' },
       { amount: 800, created: at(DAY, '19:00'), status: 'pending' }, { amount: 600, created: at(DAY, '20:30'), status: 'pending' },
+      { amount: 650, paid: at(DAY, '21:30') },
     ]) await row(f);
     const early = await tick(DAY, '20:59');
     const tL = tg.length;
     const sent = await tick(DAY, '21:05');
-    const LINE = ['AYBKK money, Tue 4 Aug 2026', 'Online sales: 3, ฿3,900', 'Desk sales: 2, ฿1,900 (cash 1, ฿700; transfer 1, ฿1,200)',
-      'Total: ฿5,800 (VAT included)', 'Refunds: 1, ฿300', 'Activated by hand: 1',
-      'Open problems: mismatch 1, online orders started but not paid over 1 hour 1'].join('\n');
-    ok('not before its time; at 21:05 the line has the right totals (Rezerv rows, a wrong amount and an unpaid order are not money)',
+    const LINE = ['AYBKK money, Mon 3 Aug 21:00 to Tue 4 Aug 21:05', 'Online sales: 4, ฿4,250', 'Desk sales: 2, ฿1,900 (cash 1, ฿700; transfer 1, ฿1,200)',
+      'Total: ฿6,150 (VAT included)', 'Refunds: 1, ฿300', 'Activated by hand: 1',
+      'New problems: mismatch 1, online orders started but not paid over 1 hour 1'].join('\n');
+    ok('not before its time; the first line covers from yesterday at the set time (a sale after yesterday\'s line is in it), with the right totals',
        early.skipped === 'not yet' && sent.sent === true && sent.text === LINE && tg.length === tL + 1 && tg[tL].text === LINE
        && tg[tL].chat === '4242', JSON.stringify([early, sent.text]));
     const again = await tick(DAY, '21:30');
     ok('...claimed once: a second call that day sends nothing', again.skipped === 'already' && tg.length === tL + 1 && await marker(DAY) === 1);
     const twice = await Promise.all([tick('2026-08-05', '21:01'), tick('2026-08-05', '21:01')]);
-    ok('two at once the next day: one line, and a day with no sales still says what is open',
+    ok('two at once the next day: one line, from the end of the last one, so the 21:30 sale after it is in this one; each problem counted once',
        twice.filter(x => x.sent).length === 1 && twice.some(x => x.skipped === 'already') && tg.length === tL + 2
-       && tg[tL + 1].text === 'AYBKK money, Wed 5 Aug 2026: No sales today.\nOpen problems: mismatch 1, online orders started but not paid over 1 hour 2',
+       && tg[tL + 1].text === ['AYBKK money, Tue 4 Aug 21:05 to Wed 5 Aug 21:01', 'Online sales: 1, ฿650', 'Desk sales: 0, ฿0',
+         'Total: ฿650 (VAT included)', 'Activated by hand: 0', 'New problems: mismatch 0, online orders started but not paid over 1 hour 1'].join('\n'),
        JSON.stringify([twice, tg.slice(tL)]));
     const late = await tick('2026-08-06', '23:50');
     const nextMorning = await tick('2026-08-07', '00:10');
-    ok('a server down at 21:00 sends when it is back the same day, never on the next day', late.sent === true && nextMorning.skipped === 'not yet'
+    ok('a server down at 21:00 sends when it is back the same day, never on the next day; a time with no sales is one short line',
+       late.sent === true && late.text === 'AYBKK money, Wed 5 Aug 21:01 to Thu 6 Aug 23:50: No sales.' && nextMorning.skipped === 'not yet'
        && await marker('2026-08-07') === 0 && tg.length === tL + 3, JSON.stringify([late, nextMorning]));
     await post('/api/bkk/admin/settings', { dailyMoney: 'off' }, ADMIN);
     const offDay = await tick('2026-08-08', '21:05');
@@ -4739,11 +4918,42 @@ const ok = (name, cond, extra = '') => {
     delete process.env.TELEGRAM_BOT_TOKEN;
     const noTg = await tick('2026-08-09', '21:05');
     process.env.TELEGRAM_BOT_TOKEN = env.TELEGRAM_BOT_TOKEN;
+    await row({ amount: 1100, paid: at('2026-08-08', '12:00') });
     const before730 = await tick('2026-08-10', '07:29'), at731 = await tick('2026-08-10', '07:31');
-    ok('switched off it sends nothing and claims nothing; with no Telegram it claims nothing; another time is kept',
+    ok('switched off it sends nothing and claims nothing; with no Telegram it claims nothing; another time is kept, and its line covers the days in between',
        offDay.skipped === 'off' && await marker('2026-08-08') === 0 && noTg.skipped === 'telegram not set' && await marker('2026-08-09') === 0
-       && before730.skipped === 'not yet' && at731.sent === true && tg.length === tL + 4, JSON.stringify([offDay, noTg, before730, at731]));
+       && before730.skipped === 'not yet' && at731.sent === true && tg.length === tL + 4
+       && at731.text.startsWith('AYBKK money, Thu 6 Aug 23:50 to Mon 10 Aug 07:31\nOnline sales: 1, ฿1,100\n'), JSON.stringify([offDay, noTg, before730, at731]));
+    await post('/api/bkk/admin/settings', { dailyMoneyAt: '00:00' }, ADMIN);
+    await row({ amount: 1300, paid: at('2026-08-10', '18:00') });
+    const midnight = await tick('2026-08-11', '00:01');
+    ok('a line set for 00:00 covers the day that just ended', midnight.sent === true
+       && midnight.text.startsWith('AYBKK money, Mon 10 Aug 07:31 to Tue 11 Aug 00:01\nOnline sales: 1, ฿1,300\n'), JSON.stringify(midnight));
     await post('/api/bkk/admin/settings', { dailyMoneyAt: '21:00' }, ADMIN);
+    const capped = await tick('2026-08-25', '21:05');
+    ok('...and after two weeks without a line, the next covers one week at most', capped.sent === true
+       && capped.text.startsWith('AYBKK money, Tue 18 Aug 21:05 to Tue 25 Aug 21:05'), JSON.stringify(capped));
+    await pool.query(`INSERT INTO bkk_settings (key,value) VALUES ('pay_check_failing', $1::jsonb)`,
+      [JSON.stringify({ since: at('2026-08-25', '20:10').toISOString(), why: 'http 401', fails: 3, pinged: true, pingedAt: at('2026-08-25', '20:30').toISOString() })]);
+    const failingLine = await watch.moneyLine({ from: at('2026-08-25', '21:05').getTime(), until: at('2026-08-26', '00:00').getTime() });
+    await pool.query(`DELETE FROM bkk_settings WHERE key='pay_check_failing'`);
+    ok('while the check is failing (after its ping), the line says since when', failingLine
+       === 'AYBKK money, Tue 25 Aug 21:05 to Wed 26 Aug 00:00: No sales.\nPaySolutions check: failing since Tue 25 Aug 20:10 (http 401)', failingLine);
+    tgCode = 502;
+    const fl = [await tick('2026-08-26', '21:01'), await tick('2026-08-26', '21:05'), await tick('2026-08-26', '21:12')];
+    tgCode = 200;
+    const fl2 = [await tick('2026-08-26', '21:23'), await tick('2026-08-26', '21:40')];
+    ok('a line Telegram refused is sent again 10 minutes on (not sooner), until it gets through, then not again',
+       fl[0].sent === false && fl[1].skipped === 'already' && fl[2].sent === false && fl2[0].sent === true && fl2[1].skipped === 'already'
+       && lineOf('Wed 26 Aug').length === 3 && fl2[0].text.startsWith('AYBKK money, Tue 25 Aug 21:05 to Wed 26 Aug 21:23'), JSON.stringify([fl, fl2]));
+    await row({ amount: 1700, paid: at('2026-08-27', '12:00') });
+    tgCode = 502;
+    const fx = [await tick('2026-08-27', '21:01'), await tick('2026-08-27', '21:12'), await tick('2026-08-27', '21:23'), await tick('2026-08-27', '21:34')];
+    tgCode = 200;
+    const nextDay = await tick('2026-08-28', '21:01');
+    ok('...3 tries at most; then the next day\'s line covers that day too, so its sales still reach a line',
+       fx.slice(0, 3).every(x => x.sent === false && x.error) && fx[3].skipped === 'already' && lineOf('Thu 27 Aug').length === 3
+       && nextDay.sent === true && nextDay.text.startsWith('AYBKK money, Wed 26 Aug 21:23 to Fri 28 Aug 21:01\nOnline sales: 1, ฿1,700\n'), JSON.stringify([fx, nextDay]));
 
     ok('no ping or line holds an email, a phone or a note, and each went to the one private chat', tg.length >= 12
        && tg.every(m => !/@|example\.com|\d{3}-\d{3}-\d{4}/.test(m.text) && m.chat === '4242' && m.url === '/bottg-test-token/sendMessage'),

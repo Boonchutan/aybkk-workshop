@@ -36,11 +36,14 @@ const PAY_WATCH = {
   everyMs: 10 * 60000, firstMs: 2 * 60000,     // the sweep timer, and its first run after boot
   minAgeMin: 5, maxAgeH: 48,                   // an order this old is asked about (the student may still be paying before)
   youngH: 2, youngGapMin: 10, oldGapMin: 60,   // under 2 hours old: asked every 10 minutes at most, then hourly
-  perRun: 30,
-  stuckMin: 60,                                // not paid after this: a status ping, and "open" in the money line
+  perRun: 30,                                  // and a run starts no new inquiry after 4 timeouts' worth of time,
+                                               // or after one answer slower than a third of the timeout
+  stuckMin: 60,                                // not paid after this: a status ping, and a problem in the money line
   doubleH: 72,                                 // a second paid order for the same package this close is a possible double
-  failGapH: 3,                                 // "the check is failing" pings at most this often
-  mismatchDays: 30,                            // a wrong amount counts as open this long in the money line
+  failAfter: 2, failMin: 20,                   // "the check is failing" after 2 failures in a row, or 20 minutes of them,
+  failGapH: 3,                                 // and at most this often
+  sendTries: 3, retryMin: 10,                  // a ping or money line Telegram refused is tried again, 10 minutes apart
+  lineMaxDays: 7,                              // a money line covers the time since the last one, at most this far back
 };
 const MANUAL_NOTE = 'MANUAL ACTIVATION by admin';
 
@@ -552,6 +555,9 @@ function mountBkk(app, opts = {}) {
       order_id INTEGER NOT NULL REFERENCES bkk_orders(id) ON DELETE CASCADE,
       kind TEXT NOT NULL, sent_at TIMESTAMPTZ DEFAULT now(),
       PRIMARY KEY (order_id, kind))`);
+    // A ping Telegram refused keeps its text here until a retry gets it through.
+    await q(`ALTER TABLE bkk_pay_alerts ADD COLUMN IF NOT EXISTS retry_text TEXT`);
+    await q(`ALTER TABLE bkk_pay_alerts ADD COLUMN IF NOT EXISTS tries INTEGER NOT NULL DEFAULT 1`);
 
     // Catalogue: a package added to SEED_PRODUCTS reaches a running shala on the
     // next boot. ON CONFLICT leaves existing rows alone, so a price changed or a
@@ -1077,17 +1083,17 @@ function mountBkk(app, opts = {}) {
 
     const verdict = out.verdict = await inquire(cfg, o);
     await q(`UPDATE bkk_orders SET checked_at = to_timestamp($2::double precision / 1000) WHERE id = $1`, [o.id, now]);
+    await (verdict.failed ? checkFailing(verdict.why, now) : checkWorks()).catch(e => console.error('[bkk pay] check health failed:', e.message));
+    // Staff (or another path) may have turned the order on while PaySolutions
+    // was being asked: a paid order keeps its status and its note.
+    const alreadyPaid = async () => ({ status: 'paid', already: true, ...await orderBooking(o) });
     if (!verdict.paid) {
-      await q(`UPDATE bkk_orders SET gateway_note = $2 WHERE id = $1`,
+      const upd = await q(`UPDATE bkk_orders SET gateway_note = $2 WHERE id = $1 AND status <> 'paid' RETURNING id`,
         [o.id, (verdict.note || 'not confirmed').slice(0, 300)]);
-      if (verdict.failed) checkFailing(verdict.why, now).catch(e => console.error('[bkk pay] alert failed:', e.message));
+      if (!upd.rows.length) return alreadyPaid();
       // A record that is not paid an hour on: a status this code does not know
       // ("Y Paid" was one, 15 Nov 2026) looks exactly like this.
-      else if (verdict.record && now - new Date(o.created_at).getTime() >= PAY_WATCH.stuckMin * 60000) {
-        alertSoon(o, 'status', `⚠ Not paid after ${Math.floor((now - new Date(o.created_at).getTime()) / 60000)} min. `
-          + `PaySolutions says: status ${gwText(verdict.status) || 'none'} (${gwText(verdict.statusName) || 'no name'})`,
-          'If PaySolutions shows the money, turn the order on by hand in Payments.');
-      }
+      if (!verdict.failed && verdict.record && now - new Date(o.created_at).getTime() >= PAY_WATCH.stuckMin * 60000) stuckPing(o, verdict, now);
       return { status: o.status, note: verdict.note };
     }
     // Amount must match what we asked for. A confirmed payment with no amount
@@ -1095,8 +1101,9 @@ function mountBkk(app, opts = {}) {
     // is the one thing a payer could have altered, and it is exactly what must
     // be checked before a pass is created.
     if (verdict.amount == null || Math.round(Number(verdict.amount)) !== o.amount_thb) {
-      await q(`UPDATE bkk_orders SET status='mismatch', gateway_note=$2 WHERE id=$1`,
+      const upd = await q(`UPDATE bkk_orders SET status='mismatch', gateway_note=$2 WHERE id=$1 AND status <> 'paid' RETURNING id`,
         [o.id, `amount ${verdict.amount} != ${o.amount_thb}`]);
+      if (!upd.rows.length) return alreadyPaid();
       console.warn(`[bkk pay] AMOUNT MISMATCH refno=${refno} gateway=${verdict.amount} expected=${o.amount_thb}`);
       alertSoon(o, 'mismatch', `⚠ Wrong amount: PaySolutions says ${verdict.amount == null ? 'no amount'
         : '฿' + thb(Math.round(Number(verdict.amount)))}, the order is ฿${thb(o.amount_thb)}. No pass was made.`,
@@ -1109,50 +1116,103 @@ function mountBkk(app, opts = {}) {
 
   // ── problem pings (15 Nov 2026) ───────────────────────────────────────────
   // Each names the student (name and member code), the package, the amount and
-  // the ref. Never an email, a phone or anything a student wrote: a word with
-  // an @, a + or a digit is not part of a name.
+  // the ref. Never an email, a phone, a link or anything a student wrote: a word
+  // with an @, a +, a digit in any script, a slash or a dot before letters is not
+  // part of a name.
   const thb = n => Math.round(Number(n) || 0).toLocaleString('en-US');
   const pingName = s => String(s || '').replace(/[\u0000-\u001f\u007f]/g, ' ').split(/\s+/)
-    .filter(w => w && !/[@+\d]/.test(w)).join(' ').slice(0, 60) || 'Student';
+    .filter(w => w && !/[@+＠＋/\\:]|\p{Nd}|www\.|[.．]\p{L}{2,}/iu.test(w)).join(' ').slice(0, 60) || 'Student';
   const gwText = s => String(s || '').replace(/\S*@\S*/g, ' ').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 40);
+  // "Sun 15 Nov 21:05", Bangkok time.
+  const bkkClock = ms => { const t = new Date(ms + 7 * 3600000).toISOString(); return `${classWhen(t.slice(0, 10), '').slice(0, -7)} ${t.slice(11, 16)}`; };
   async function orderLine(o) {
     const r = (await q(`SELECT m.name, m.code, pr.name_en FROM bkk_orders o
       LEFT JOIN bkk_members m ON m.id=o.member_id LEFT JOIN bkk_products pr ON pr.id=o.product_id
       WHERE o.id=$1`, [o.id])).rows[0] || {};
     return `${pingName(r.name)} (${r.code || 'no member code'}) · ${r.name_en || 'no package'} · ฿${thb(o.amount_thb)} · ref ${o.refno}`;
   }
-  // Claimed before it is sent, so a restart or a second server never sends it again.
-  async function alertOnce(o, kind, head, tail) {
+  // Claimed before it is sent, so a restart or a second server never sends it
+  // again. claimId: the order the claim is kept on (a double keeps one per pair).
+  async function alertOnce(o, kind, head, tail, claimId = o.id) {
     const mine = await q(`INSERT INTO bkk_pay_alerts (order_id, kind) VALUES ($1,$2)
-      ON CONFLICT DO NOTHING RETURNING order_id`, [o.id, kind]);
+      ON CONFLICT DO NOTHING RETURNING order_id`, [claimId, kind]);
     if (!mine.rows.length) return false;
-    await notify([head, await orderLine(o), tail].filter(Boolean).join('\n'));
+    const text = [head, await orderLine(o), tail].filter(Boolean).join('\n');
+    // Telegram said no, or could not be reached: nothing arrived, so resendAlerts tries again.
+    if ((await notify(text)).retry) await q(`UPDATE bkk_pay_alerts SET retry_text=$3 WHERE order_id=$1 AND kind=$2`, [claimId, kind, text]);
     return true;
   }
   const alertSoon = (...args) => alertOnce(...args).catch(e => console.error('[bkk pay] alert failed:', e.message));
-  // One ping for the whole shala every few hours, whichever order found it.
+  // Each refused ping, 10 minutes apart, 3 tries in all. A timeout is never
+  // tried again: that message may have arrived.
+  async function resendAlerts({ now = nowMs() } = {}) {
+    const due = (await q(`UPDATE bkk_pay_alerts SET tries = tries + 1, sent_at = $1
+      WHERE retry_text IS NOT NULL AND tries < $2 AND sent_at <= $1::timestamptz - make_interval(mins => $3)
+      RETURNING order_id, kind, retry_text, tries`, [new Date(now), PAY_WATCH.sendTries, PAY_WATCH.retryMin])).rows;
+    let sent = 0;
+    for (const a of due) {
+      const r = await notify(a.retry_text);
+      if (r.ok) sent++;
+      if (!r.retry || a.tries >= PAY_WATCH.sendTries) await q(`UPDATE bkk_pay_alerts SET retry_text=NULL WHERE order_id=$1 AND kind=$2`, [a.order_id, a.kind]);
+    }
+    return { due: due.length, sent };
+  }
+  // A record still not paid an hour on. A later paid order for the same package
+  // usually means a declined try the student paid again; it can also be a double.
+  function stuckPing(o, verdict, now) {
+    (async () => {
+      const later = (await q(`SELECT x.refno, to_char(coalesce(x.verified_at, x.created_at) AT TIME ZONE 'Asia/Bangkok', 'DD Mon HH24:MI') AS at
+        FROM bkk_orders x WHERE x.member_id=$1 AND x.product_id=$2 AND x.id<>$3 AND x.status='paid' AND x.amount_thb > 0
+          AND x.source IS DISTINCT FROM 'rezerv' AND x.created_at >= $4 ORDER BY x.created_at LIMIT 1`,
+        [o.member_id, o.product_id, o.id, o.created_at])).rows[0];
+      await alertOnce(o, 'status', `⚠ Not paid after ${Math.floor((now - new Date(o.created_at).getTime()) / 60000)} min. `
+        + `PaySolutions says: status ${gwText(verdict.status) || 'none'} (${gwText(verdict.statusName) || 'no name'})`,
+        later ? `They paid ref ${later.refno} (${later.at}). If PaySolutions shows money for this one too, refund one.`
+          : 'If PaySolutions shows the money, turn the order on by hand in Payments.');
+    })().catch(e => console.error('[bkk pay] alert failed:', e.message));
+  }
+  // The check failing, for the whole shala: one ping once it failed twice in a
+  // row or for 20 minutes (one blip is not news), at most every 3 hours, and one
+  // "works again" when an answer comes back after that ping.
+  const FAILING = 'pay_check_failing';
   async function checkFailing(why, now) {
     const at = new Date(now).toISOString();
-    const mine = await q(`INSERT INTO bkk_settings (key,value) VALUES ('pay_check_failing', $1::jsonb)
-      ON CONFLICT (key) DO UPDATE SET value=$1::jsonb, updated_at=now()
-      WHERE (bkk_settings.value->>'pingedAt')::timestamptz <= $2::timestamptz - make_interval(hours => $3)
-      RETURNING key`, [JSON.stringify({ pingedAt: at, why }), at, PAY_WATCH.failGapH]);
-    if (mine.rows.length) await notify(`⚠ PaySolutions check is failing (${gwText(why)}): online payments will not turn on by themselves.`);
+    const v = (await q(`INSERT INTO bkk_settings (key,value) VALUES ($1, jsonb_build_object('since', $2::text, 'fails', 1, 'why', $3::text))
+      ON CONFLICT (key) DO UPDATE SET value = bkk_settings.value || jsonb_build_object('since', coalesce(bkk_settings.value->>'since', $2::text),
+        'fails', coalesce((bkk_settings.value->>'fails')::int, 0) + 1, 'why', $3::text), updated_at=now()
+      RETURNING value`, [FAILING, at, why])).rows[0].value;
+    if (v.fails < PAY_WATCH.failAfter && now - Date.parse(v.since) < PAY_WATCH.failMin * 60000) return;
+    const mine = await q(`UPDATE bkk_settings SET value = value || jsonb_build_object('pingedAt', $2::text, 'pinged', true), updated_at=now()
+      WHERE key=$1 AND value ? 'since'
+        AND coalesce((value->>'pingedAt')::timestamptz, '-infinity') <= $2::timestamptz - make_interval(hours => $3) RETURNING key`,
+      [FAILING, at, PAY_WATCH.failGapH]);
+    if (!mine.rows.length) return;
+    notify(`⚠ PaySolutions check is failing (${gwText(why)}): online payments will not turn on by themselves.`)
+      .then(r => r.retry && q(`UPDATE bkk_settings SET value = (value - 'pinged') || '{"pingedAt":"1970-01-01T00:00:00Z"}'::jsonb
+        WHERE key=$1 AND value->>'pingedAt' = $2`, [FAILING, at])).catch(e => console.error('[bkk pay] alert failed:', e.message));
   }
-  // Another paid order above ฿0 (not Rezerv) for the same package, and for a
-  // drop-in the same class, within 72 hours: the student may have paid twice.
+  async function checkWorks() {
+    const r = await q(`WITH old AS (SELECT value FROM bkk_settings WHERE key=$1 AND value ? 'since' FOR UPDATE)
+      UPDATE bkk_settings s SET value = s.value - 'since' - 'fails' - 'why' - 'pinged', updated_at=now()
+      FROM old WHERE s.key=$1 RETURNING old.value AS was`, [FAILING]);
+    const was = r.rows[0] && r.rows[0].was;
+    if (was && was.pinged) notify(`✓ PaySolutions check works again (failing since ${bkkClock(Date.parse(was.since))}, ${gwText(was.why)}).`);
+  }
+  // Another paid order above ฿0 (not Rezerv) for the same package within 72
+  // hours, and for a drop-in the same class (both must name one): the student
+  // may have paid twice. One ping per pair, whichever of the two turned on last.
   async function doubleCheck(o, pr) {
-    const other = (await q(`SELECT x.refno, x.amount_thb, x.method,
+    const other = (await q(`SELECT x.id, x.refno, x.amount_thb, x.method,
         to_char(coalesce(x.verified_at, x.created_at) AT TIME ZONE 'Asia/Bangkok', 'DD Mon HH24:MI') AS at
       FROM bkk_orders o JOIN bkk_orders x ON x.member_id=o.member_id AND x.product_id=o.product_id AND x.id<>o.id
-        AND x.slot_id IS NOT DISTINCT FROM o.slot_id AND x.class_date IS NOT DISTINCT FROM o.class_date
+        AND (NOT $3::boolean OR (x.slot_id = o.slot_id AND x.class_date = o.class_date))
       WHERE o.id=$1 AND x.status='paid' AND x.amount_thb > 0 AND x.source IS DISTINCT FROM 'rezerv'
         AND coalesce(x.verified_at, x.created_at) > coalesce(o.verified_at, now()) - make_interval(hours => $2)
-      ORDER BY coalesce(x.verified_at, x.created_at) DESC LIMIT 1`, [o.id, PAY_WATCH.doubleH])).rows[0];
+      ORDER BY coalesce(x.verified_at, x.created_at) DESC LIMIT 1`, [o.id, PAY_WATCH.doubleH, singleClass(pr)])).rows[0];
     if (!other) return;
-    await alertOnce(o, 'double', `⚠ Possible double payment: ${pr.name_en} was already paid ${other.at}`
+    await alertOnce(o, `double:${Math.max(o.id, other.id)}`, `⚠ Possible double payment: ${pr.name_en} was already paid ${other.at}`
       + ` (ref ${other.refno}, ฿${thb(other.amount_thb)}, ${other.method || 'online'}). This one is ${o.method || 'online'}.`,
-      'Check the bank or PaySolutions; refund one if it is a double.');
+      'Check the bank or PaySolutions; refund one if it is a double.', Math.min(o.id, other.id));
   }
 
   // The class a paid drop-in booked, for the "you are booked into…" message.
@@ -1186,6 +1246,7 @@ function mountBkk(app, opts = {}) {
   // failed: PaySolutions did not answer properly (no 200, a timeout, the network),
   // so nothing can turn on by itself. record: it answered with a record for the order.
   const inquiryMs = Number(opts.inquiryTimeoutMs) || PAY_WATCH.inquiryMs;
+  const runMs = inquiryMs * 4, slowMs = inquiryMs / 3;
   async function inquire(cfg, order) {
     const url = `${cfg.inquiryBase.replace(/\/$/, '')}/order/orderdetailpost`;
     const mid5 = String(cfg.merchantId).slice(-5);
@@ -1209,9 +1270,11 @@ function mountBkk(app, opts = {}) {
       });
       text = (await r.text()).trim();
     } catch (e) {
+      // Never e.message: Node quotes a bad header value in it, and that value is the secret key.
+      const code = String((e.cause && e.cause.code) || '');
       const cause = e.name === 'TimeoutError' || e.name === 'AbortError' ? `timeout after ${+(inquiryMs / 1000).toFixed(1)} s`
-        : (e.cause && e.cause.code) || e.message || 'network error';
-      return { paid: false, failed: true, why: cause, note: `inquiry failed: ${cause}`.slice(0, 200) };
+        : /^[A-Z][A-Z0-9_]{1,40}$/.test(code) ? code : 'request could not be sent';
+      return { paid: false, failed: true, why: cause, note: `inquiry failed: ${cause}` };
     }
     const http = r.status, failed = http !== 200, why = `http ${http}`;
     // Documented failure mode: an unsuccessful payment returns no body at all.
@@ -1222,8 +1285,9 @@ function mountBkk(app, opts = {}) {
     const d = Array.isArray(j) ? j[0] : (j.data || j);
     // Carry the HTTP status in every note: an unpaid order and a rejected API
     // key both come back "not paid", and the code is what tells them apart.
-    if (!d) return { paid: false, http, failed, why, note: `no record (http ${http})` };
-    const status = String(d.Status ?? '').toUpperCase();
+    const status = d && typeof d === 'object' ? String(d.Status ?? '').trim().toUpperCase() : '';
+    // An answer with no Status ({}, {"data":null}, an error message) is no record.
+    if (!status) return { paid: false, http, failed, why, note: `no record (http ${http})` };
     // The docs show "CP" (COMPLETE); the live account answers "Y" (Paid) for a
     // finished payment (15 Nov 2026). Either is paid; the amount is still checked.
     const paid = PAID_STATUS.has(status);
@@ -1232,7 +1296,7 @@ function mountBkk(app, opts = {}) {
     return {
       paid, amount, raw: d, http, failed, why, record: true, status, statusName: String(d.StatusName ?? ''),
       note: paid ? 'confirmed'
-        : `http ${http} status=${status || 'unknown'} ${d.StatusName || ''} total=${d.Total ?? 'none'}`.trim(),
+        : `http ${http} status=${status} ${d.StatusName || ''} total=${d.Total ?? 'none'}`.trim(),
     };
   }
 
@@ -1294,11 +1358,12 @@ function mountBkk(app, opts = {}) {
     console.log(`✓ bkk: pass activated for order ${order.id} (${pr.name_en})${cls ? (booked
       ? `, booked ${cls.name} ${cls.when}` : `, could NOT book ${cls.name} ${cls.when}: ${seat.error}`) : ''}`);
     // A ping for each sale only when Boonchu asks for it (ping_each_sale): the
-    // sales go in the daily money line. Problems always ping, staff's own
-    // activations by hand never as a sale.
+    // sales go in the daily money line. Problems always ping; staff's own
+    // activation by hand pings neither as a sale nor as "not booked" (the page
+    // tells them), only as a possible double.
     (async () => {
-      if (cls && !booked) await alertOnce(order, 'nobook',
-        `⚠ Paid, but could not book ${cls.name}, ${cls.when}: ${seat.error}. Book them by hand.`);
+      if (cls && !booked && !opts.byHand) await alertOnce(order, 'nobook',
+        `⚠ Paid, but could not book ${cls.name}, ${cls.when}: ${seat.error}.`, 'They keep a 1-class credit: book them by hand.');
       if (!opts.byHand && await getSetting('ping_each_sale', 'off') === 'on') {
         const lines = [`💳 AYBKK payment (${order.method || 'online'})`, `${pr.name_en} · ฿${order.amount_thb}`, `refno ${order.refno}`];
         if (booked) lines.push(`📅 ${seat.already ? 'Already on the list' : 'Booked'}: ${cls.name}, ${cls.when}`
@@ -1346,15 +1411,19 @@ function mountBkk(app, opts = {}) {
     let out;
     try {
       const base = (process.env.TELEGRAM_API_BASE || 'https://api.telegram.org').replace(/\/+$/, '');
+      // No link previews: a link in a name or a status never shows up as a card.
       const r = await fetch(`${base}/bot${token}/sendMessage`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: chat, text }), signal: AbortSignal.timeout(10000),
+        body: JSON.stringify({ chat_id: chat, text, link_preview_options: { is_disabled: true } }), signal: AbortSignal.timeout(10000),
       });
       const j = await r.json().catch(() => ({}));
+      // retry: Telegram answered no, or was never reached, so nothing arrived. A
+      // timeout may have arrived, so it is never sent again.
       out = r.ok && j.ok !== false ? { ok: true }
-        : { ok: false, error: `http ${r.status}${j.description ? ': ' + j.description : ''}` };
+        : { ok: false, retry: true, error: `http ${r.status}${j.description ? ': ' + j.description : ''}` };
     } catch (e) {
-      out = { ok: false, error: e.name === 'TimeoutError' ? 'timeout' : (e.cause && e.cause.code) || e.message || 'network error' };
+      const timeout = e.name === 'TimeoutError';
+      out = { ok: false, retry: !timeout, error: timeout ? 'timeout' : (e.cause && e.cause.code) || e.message || 'network error' };
     }
     const at = new Date().toISOString();
     if (!out.ok) out.error = String(out.error).split(token).join('[token]').slice(0, 160);
@@ -2596,6 +2665,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (!manual && (await payWatchSettings()).paySweep === 'off') return { ran: false, reason: 'off', orders: [] };
     const lock = await pool.connect();
     let held = false, broken = false;
+    // The pool stops listening once a client is checked out: a connection lost
+    // mid-run would otherwise be an uncaught error that ends the server.
+    const dropped = e => { broken = true; console.error('[bkk pay] sweep lock connection lost:', e.message); };
+    lock.on('error', dropped);
     try {
       try { held = (await lock.query(`SELECT pg_try_advisory_lock(${SWEEP_LOCK}) AS ok`)).rows[0].ok; }
       catch (e) { broken = true; throw e; }
@@ -2611,22 +2684,27 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         ORDER BY checked_at NULLS FIRST, created_at, id LIMIT $7`,
         [new Date(now), W.minAgeMin, W.maxAgeH, W.youngH, W.youngGapMin, W.oldGapMin, W.perRun])).rows;
       const orders = [];
+      const t0 = Date.now();
       for (const o of due) {
-        const out = {};
+        // Lock lost (another server may run now), or out of time: the rest wait for the next run.
+        if (broken || Date.now() - t0 > runMs) break;
+        const out = {}, t1 = Date.now();
         let after = o.status, note = null;
         try {
           const r = await verifyAndActivate(Number(o.refno), { now, out });
           after = r.status;
-          note = r.status === 'paid' ? 'turned on' : r.status === 'mismatch' ? 'the amount does not match' : r.note || null;
+          note = r.status === 'paid' ? (r.already ? 'already on' : 'turned on') : r.status === 'mismatch' ? 'the amount does not match' : r.note || null;
         } catch (e) { note = `check failed: ${e.message}`.slice(0, 200); }
         orders.push({ refno: String(o.refno), before: o.status, after, note });
         // PaySolutions is not answering: the rest would only wait for the same
         // timeout. They are asked first next time (never checked, or checked longest ago).
-        if (out.verdict && out.verdict.failed) break;
+        // A slow answer: the next ones would likely be as slow, and the button waits for them all.
+        if ((out.verdict && out.verdict.failed) || Date.now() - t1 > slowMs) break;
       }
-      return { ran: true, due: due.length, asked: orders.length, paid: orders.filter(x => x.after === 'paid').length, orders };
+      return { ran: true, due: due.length, asked: orders.length, paid: orders.filter(x => x.note === 'turned on').length, orders };
     } finally {
-      if (held) await lock.query(`SELECT pg_advisory_unlock(${SWEEP_LOCK})`).catch(() => { broken = true; });
+      if (held && !broken) await lock.query(`SELECT pg_advisory_unlock(${SWEEP_LOCK})`).catch(() => { broken = true; });
+      lock.removeListener('error', dropped);
       lock.release(broken);
     }
   }
@@ -2637,32 +2715,36 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     catch (e) { res.status(500).json({ error: e.message }); }
   });
 
-  // The daily money line: the day's sales in one Telegram message instead of a
-  // ping each. Money stays in Boonchu's private chat. Sales are paid orders above
-  // ฿0 that are not Rezerv history, on the Bangkok day the money came in.
+  // The daily money line: the sales since the last line in one Telegram message
+  // instead of a ping each, so a sale after the send time is in the next line,
+  // never in none. Money stays in Boonchu's private chat. Sales are paid orders
+  // above ฿0 that are not Rezerv history, at the time the money came in.
   const MONEY_MARK = 'daily_money_sent_';
-  async function moneyLine(date, now = nowMs()) {
-    const day = `(coalesce(o.verified_at, o.created_at) AT TIME ZONE 'Asia/Bangkok')::date = $1::date`;
-    const [sales, refunds, open] = await Promise.all([
+  async function moneyLine({ from, until }) {
+    const win = `coalesce(o.verified_at, o.created_at) > $1::timestamptz AND coalesce(o.verified_at, o.created_at) <= $2::timestamptz`;
+    const span = [new Date(from), new Date(until)];
+    const [sales, refunds, open, failing] = await Promise.all([
       q(`SELECT o.method, count(*)::int AS n, sum(o.amount_thb)::int AS thb,
-           count(*) FILTER (WHERE o.gateway_note = $2)::int AS hand
-         FROM bkk_orders o WHERE o.status='paid' AND o.amount_thb > 0 AND o.source IS DISTINCT FROM 'rezerv' AND ${day}
-         GROUP BY o.method ORDER BY o.method`, [date, MANUAL_NOTE]),
+           count(*) FILTER (WHERE o.gateway_note = $3)::int AS hand
+         FROM bkk_orders o WHERE o.status='paid' AND o.amount_thb > 0 AND o.source IS DISTINCT FROM 'rezerv' AND ${win}
+         GROUP BY o.method ORDER BY o.method`, [...span, MANUAL_NOTE]),
       q(`SELECT count(*)::int AS n, coalesce(sum(abs(o.amount_thb)), 0)::int AS thb FROM bkk_orders o
-         WHERE o.status='refund' AND o.source IS DISTINCT FROM 'rezerv' AND ${day}`, [date]),
-      q(`SELECT count(*) FILTER (WHERE status='mismatch' AND created_at > $1::timestamptz - make_interval(days => $2))::int AS mismatch,
+         WHERE o.status='refund' AND o.source IS DISTINCT FROM 'rezerv' AND ${win}`, span),
+      // Each problem once: a wrong amount found in this line's time, and an
+      // online order that turned 1 hour old in it still not paid.
+      q(`SELECT count(*) FILTER (WHERE status='mismatch' AND checked_at > $1::timestamptz AND checked_at <= $2::timestamptz)::int AS mismatch,
            count(*) FILTER (WHERE status='pending' AND method='online' AND amount_thb > 0
-             AND created_at <= $1::timestamptz - make_interval(mins => $3)
-             AND created_at > $1::timestamptz - make_interval(hours => $4))::int AS stuck
-         FROM bkk_orders WHERE source IS NULL AND created_at <= $1::timestamptz`,
-        [new Date(now), PAY_WATCH.mismatchDays, PAY_WATCH.stuckMin, PAY_WATCH.maxAgeH]),
+             AND created_at > $1::timestamptz - make_interval(mins => $3) AND created_at <= $2::timestamptz - make_interval(mins => $3))::int AS stuck
+         FROM bkk_orders WHERE source IS NULL`, [...span, PAY_WATCH.stuckMin]),
+      getSetting(FAILING, null),
     ]);
     const sum = (rows, k) => rows.reduce((a, r) => a + r[k], 0);
     const online = sales.rows.filter(r => r.method === 'online'), desk = sales.rows.filter(r => r.method !== 'online');
     const rf = refunds.rows[0], op = open.rows[0];
-    const head = `AYBKK money, ${dayName(date)}`;
-    const problems = `Open problems: mismatch ${op.mismatch}, online orders started but not paid over 1 hour ${op.stuck}`;
-    if (!sales.rows.length && !rf.n) return [`${head}: No sales today.`, (op.mismatch || op.stuck) && problems].filter(Boolean).join('\n');
+    const head = `AYBKK money, ${bkkClock(from)} to ${bkkClock(until)}`;
+    const problems = `New problems: mismatch ${op.mismatch}, online orders started but not paid over 1 hour ${op.stuck}`;
+    const check = failing && failing.since && failing.pinged && `PaySolutions check: failing since ${bkkClock(Date.parse(failing.since))} (${gwText(failing.why)})`;
+    if (!sales.rows.length && !rf.n) return [`${head}: No sales.`, (op.mismatch || op.stuck) && problems, check].filter(Boolean).join('\n');
     return [head,
       `Online sales: ${sum(online, 'n')}, ฿${thb(sum(online, 'thb'))}`,
       `Desk sales: ${sum(desk, 'n')}, ฿${thb(sum(desk, 'thb'))}`
@@ -2670,26 +2752,41 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       `Total: ฿${thb(sum(sales.rows, 'thb'))} (VAT included)`,
       rf.n && `Refunds: ${rf.n}, ฿${thb(rf.thb)}`,
       `Activated by hand: ${sum(sales.rows, 'hand')}`,
-      problems].filter(Boolean).join('\n');
+      problems, check].filter(Boolean).join('\n');
   }
   // Due from daily_money_at until the end of that Bangkok day: a server that was
   // down at the time sends when it is back, never on the next day. The day's
-  // marker is claimed before anything is sent, so two servers or a restart send it once.
+  // marker is claimed before anything is sent, so two servers or a restart send
+  // it once. A send Telegram refused is claimed again 10 minutes on, 3 tries in
+  // all; if none gets through, the next line still covers that time.
   async function moneyTick({ now = nowMs() } = {}) {
     const s = await payWatchSettings();
     if (s.dailyMoney !== 'on') return { sent: false, skipped: 'off' };
     if (!telegramSet()) return { sent: false, skipped: 'telegram not set' };
     const date = ymd(new Date(now));
-    if (now < Date.parse(`${date}T${s.dailyMoneyAt}:00${TZ_OFFSET}`)) return { sent: false, skipped: 'not yet', date };
-    const key = MONEY_MARK + date;
-    const mine = await q(`INSERT INTO bkk_settings (key,value) VALUES ($1,$2::jsonb) ON CONFLICT (key) DO NOTHING RETURNING key`,
-      [key, JSON.stringify({ state: 'sending', at: new Date(now).toISOString() })]);
+    const dueAt = Date.parse(`${date}T${s.dailyMoneyAt}:00${TZ_OFFSET}`);
+    if (now < dueAt) return { sent: false, skipped: 'not yet', date };
+    const key = MONEY_MARK + date, at = new Date(now).toISOString();
+    const mine = await q(`INSERT INTO bkk_settings (key,value) VALUES ($1, jsonb_build_object('state', 'sending', 'at', $2::text, 'tries', 1))
+      ON CONFLICT (key) DO UPDATE SET updated_at=now(), value = bkk_settings.value || jsonb_build_object('state', 'sending', 'at', $2::text,
+        'tries', coalesce((bkk_settings.value->>'tries')::int, 1) + 1)
+      WHERE bkk_settings.value->>'state' = 'failed' AND bkk_settings.value->>'retry' = 'true'
+        AND coalesce((bkk_settings.value->>'tries')::int, 1) < $3
+        AND (bkk_settings.value->>'at')::timestamptz <= $2::timestamptz - make_interval(mins => $4)
+      RETURNING key`, [key, at, PAY_WATCH.sendTries, PAY_WATCH.retryMin]);
     if (!mine.rows.length) return { sent: false, skipped: 'already', date };
+    // From the end of the last line that got through (a week back at most), or
+    // yesterday at the set time for the first line.
+    const last = (await q(`SELECT value->>'until' AS until FROM bkk_settings
+      WHERE left(key, length($1)) = $1 AND key < $2 AND value->>'state' = 'sent' AND value ? 'until'
+      ORDER BY key DESC LIMIT 1`, [MONEY_MARK, key])).rows[0];
+    const from = Math.min(now, last ? Math.max(Date.parse(last.until), now - PAY_WATCH.lineMaxDays * 86400000) : dueAt - 86400000);
     let text = null, r;
-    try { text = await moneyLine(date, now); r = await notify(text); }
+    try { text = await moneyLine({ from, until: now }); r = await notify(text); }
     catch (e) { r = { ok: false, error: e.message }; }
     await q(`UPDATE bkk_settings SET value = value || $2::jsonb, updated_at=now() WHERE key=$1`,
-      [key, JSON.stringify(r.ok ? { state: 'sent' } : { state: 'failed', error: String(r.error).slice(0, 160) })]);
+      [key, JSON.stringify(r.ok ? { state: 'sent', from: new Date(from).toISOString(), until: at }
+        : { state: 'failed', retry: !!r.retry, error: String(r.error).slice(0, 160) })]);
     q(`DELETE FROM bkk_settings WHERE left(key, length($1)) = $1 AND updated_at < now() - interval '30 days'`, [MONEY_MARK])
       .catch(() => {});
     return { sent: !!r.ok, date, text, error: r.ok ? undefined : r.error };
@@ -2699,7 +2796,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // BKK_TIMERS=off) and calls paySweep and moneyTick itself.
   function startPayWatch() {
     const sweep = () => paySweep().catch(e => console.error('[bkk pay] sweep failed:', e.message));
-    const line = () => moneyTick().catch(e => console.error('[bkk money] daily line failed:', e.message));
+    const line = () => resendAlerts().catch(e => console.error('[bkk pay] resend failed:', e.message))
+      .then(() => moneyTick()).catch(e => console.error('[bkk money] daily line failed:', e.message));
     setTimeout(sweep, PAY_WATCH.firstMs).unref();
     setInterval(sweep, PAY_WATCH.everyMs).unref();
     setInterval(line, 60000).unref();
@@ -2898,25 +2996,17 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       }
       for (const [field, [key]] of Object.entries(PAY_KEYS)) {
         if (b[field] === undefined) continue;
-        const val = b[field] === true ? 'on' : b[field] === false ? 'off' : String(b[field]);
+        const val = b[field] === true ? 'on' : b[field] === false ? 'off' : b[field];
         if (!['on', 'off'].includes(val)) return res.status(400).json({ error: `${field} must be on or off` });
         team.push([key, val]);
       }
       if (b.dailyMoneyAt !== undefined) {
-        const at = String(b.dailyMoneyAt).trim().replace(/^(\d):/, '0$1:');
+        const at = typeof b.dailyMoneyAt === 'string' ? b.dailyMoneyAt.trim().replace(/^(\d):/, '0$1:') : '';
         if (!isClock(at)) return res.status(400).json({ error: 'dailyMoneyAt must be a Bangkok time, HH:MM' });
         team.push([MONEY_AT[0], at]);
       }
-      for (const [key, val] of team) {
-        await q(`INSERT INTO bkk_settings (key,value) VALUES ($1,$2)
-                 ON CONFLICT (key) DO UPDATE SET value=$2, updated_at=now()`, [key, JSON.stringify(val)]);
-      }
-      if (req.body.surchargePct !== undefined) {
-        await q(`INSERT INTO bkk_settings (key,value) VALUES ('surcharge_pct',$1)
-                 ON CONFLICT (key) DO UPDATE SET value=$1, updated_at=now()`,
-          [JSON.stringify(Number(req.body.surchargePct))]);
-      }
-      const links = req.body.links || {};
+      if (b.surchargePct !== undefined) team.push(['surcharge_pct', Number(b.surchargePct)]);
+      const links = b.links || {};
       for (const k of LINK_KEYS) {
         if (links[k] === undefined) continue;
         const url = String(links[k] || '').trim();
@@ -2925,9 +3015,12 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         if (url && !/^https?:\/\/[^\s]+$/i.test(url)) {
           return res.status(400).json({ error: `${k} must be a full https:// link, or empty to remove` });
         }
+        team.push(['link_' + k, url]);
+      }
+      // Everything is checked before anything is saved: a 400 saves nothing.
+      for (const [key, val] of team) {
         await q(`INSERT INTO bkk_settings (key,value) VALUES ($1,$2)
-                 ON CONFLICT (key) DO UPDATE SET value=$2, updated_at=now()`,
-          ['link_' + k, JSON.stringify(url)]);
+                 ON CONFLICT (key) DO UPDATE SET value=$2, updated_at=now()`, [key, JSON.stringify(val)]);
       }
       res.json({ success: true, surchargePct: await surcharge(), teamBrief: await teamSettings(),
         payWatch: await payWatchSettings(), telegram: await telegramStatus() });
@@ -5203,7 +5296,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       return switchPrices().catch(e => console.error('✗ bkk: price switch failed:', e.message));
     })
     .catch(e => console.error('✗ bkk-api schema init failed:', e.message))
-    .then(() => ({ paySweep, moneyTick, moneyLine }));
+    .then(() => ({ paySweep, moneyTick, moneyLine, resendAlerts }));
 }
 
 // PaySolutions posts application/x-www-form-urlencoded; make sure that body is

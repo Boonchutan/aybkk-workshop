@@ -7,6 +7,7 @@ process.env.BKK_TIMERS = 'off';   // the payment watch runs only when a test cal
 process.env.HELPDESK_LINE_CHANNEL_SECRET = 'desk-secret';
 process.env.HELPDESK_LINE_ACCESS_TOKEN = 'desk-token';
 delete process.env.TELEGRAM_BOT_TOKEN;
+process.env.TELEGRAM_API_BASE = 'http://127.0.0.1:9';
 delete process.env.ANTHROPIC_API_KEY;
 const crypto = require('crypto');
 const express = require('express');

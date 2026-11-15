@@ -874,7 +874,7 @@
     pwNone: 'Nothing to check: no online payment is waiting, or each was asked in the last 10 minutes (every hour once it is 2 hours old).',
     pwBusy: 'A check is already running. Try again in a minute.',
     pwDone: (n, m) => `Asked ${n}, turned on ${m}`,
-    pwStopped: 'PaySolutions did not answer, so the rest wait for the next check.',
+    pwStopped: 'PaySolutions did not answer, or was slow, so the rest wait for the next check.',
   });
   Object.assign(STR.th, {
     pwTitle: 'เฝ้าดูการจ่ายเงิน',
@@ -887,7 +887,7 @@
     pwNone: 'ไม่มีรายการต้องตรวจ: ไม่มีการจ่ายออนไลน์ที่รออยู่ หรือเพิ่งถามไปไม่ถึง 10 นาที (ถ้าเกิน 2 ชั่วโมง ถามทุกชั่วโมง)',
     pwBusy: 'กำลังตรวจอยู่แล้ว ลองใหม่ในอีกสักครู่',
     pwDone: (n, m) => `ถามแล้ว ${n} รายการ เปิดใช้แล้ว ${m}`,
-    pwStopped: 'PaySolutions ไม่ตอบ รายการที่เหลือจะตรวจในรอบถัดไป',
+    pwStopped: 'PaySolutions ไม่ตอบหรือตอบช้า รายการที่เหลือจะตรวจในรอบถัดไป',
   });
   const T =(k, ...a) => { const v = STR[LANG][k] ?? STR.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
   const W = w => STR[LANG].words[w] || w;
@@ -2695,7 +2695,7 @@
     out.innerHTML = say(T('pwDone', j.asked, j.paid), j.paid ? 'flash' : 'muted')
       + `<table>${j.orders.map(o => `<tr><td><span class="muted">${esc(T('thRef'))} ${esc(o.refno)}</span><br>
         <span class="pill ${esc(o.before)}">${esc(word(o.before))}</span> → <span class="pill ${esc(o.after)}">${esc(word(o.after))}</span>
-        ${o.note ? `<br><span class="muted" style="overflow-wrap:anywhere">${esc(o.note)}</span>` : ''}</td></tr>`).join('')}</table>`
+        ${o.note && !['paid', 'mismatch'].includes(o.after) ? `<br><span class="muted" style="overflow-wrap:anywhere">${esc(o.note)}</span>` : ''}</td></tr>`).join('')}</table>`
       + (j.due > j.asked ? say(T('pwStopped'), 'muted') : '');
   };
   let TEES = [];

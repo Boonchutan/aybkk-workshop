@@ -612,6 +612,9 @@ if (process.env.DATABASE_URL) {
     connectionString: process.env.DATABASE_URL,
     ssl: isInternal ? false : { rejectUnauthorized: false }
   });
+  // An idle connection the database drops (a restart, a failover) is an 'error'
+  // event on the pool; with no listener it would end the whole server.
+  pgPool.on('error', e => console.error('✗ PostgreSQL idle connection lost:', e.message));
   pgPool.query('SELECT 1').then(() => console.log('✓ PostgreSQL connected')).catch(e => console.error('✗ PostgreSQL failed:', e.message));
 } else {
   console.log('⚠ No DATABASE_URL — PostgreSQL features disabled');
