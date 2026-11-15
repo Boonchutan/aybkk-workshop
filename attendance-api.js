@@ -12,7 +12,7 @@ const { staffOnly, isStaff } = require('./lib/staff-key');
 
 function mountAttendance(app, opts = {}) {
   const pgPool = opts.pgPool || null;
-  const rosterFile = opts.rosterFile || path.join(__dirname, 'public', 'rosters', 'hefei.json');
+  const rosterFile = opts.rosterFile;
   const dataDir = opts.dataDir || (fs.existsSync('/data') ? '/data' : path.join(__dirname, 'data'));
   try { fs.mkdirSync(dataDir, { recursive: true }); } catch {}
   const storeFile = path.join(dataDir, 'attendance.json');

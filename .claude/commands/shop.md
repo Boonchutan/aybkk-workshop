@@ -18,7 +18,7 @@ Do NOT use for: marketing copy, student journals, or workshop orientation pages.
   style, Shantell Sans self-hosted at `/fonts/shantell-var.woff2`
   (never use Google Fonts .com — blocked in China; .cn mirror only).
 - **`public/shop-admin.html`** — admin console, key via `X-Shop-Key`
-  (env `SHOP_ADMIN_KEY`, default `aybkk2026`).
+  (env `SHOP_ADMIN_KEY`, no default).
 - **`shop-seed.json`** — the source of truth Boonchu edits through Claude.
   Loaded at boot by shop-api. Fields:
   - `version` (int) — bump to trigger sync of existing products

@@ -1,3 +1,4 @@
+require('dotenv').config();
 // log-action.js - Log agent actions with subject/action/result tags
 // Usage: node log-action.js <agentId> <subject> <action> <result> [notes]
 const neo4j = require('neo4j-driver');
@@ -15,7 +16,7 @@ const timestamp = new Date().toISOString();
 async function main() {
   const driver = neo4j.driver(
     'bolt://localhost:7687',
-    neo4j.auth.basic('neo4j', 'aybkk_neo4j_2026')
+    neo4j.auth.basic(process.env.NEO4J_USER || 'neo4j', process.env.NEO4J_PASSWORD)
   );
   const session = driver.session();
 

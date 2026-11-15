@@ -1,7 +1,7 @@
 // Student lists and counts need the staff key (X-Bkk-Key = BKK_ADMIN_KEY).
 // Runs the real server.js on a local port against a throwaway Postgres, with Neo4j
-// replaced by an empty stand-in. Made-up students only. A failure prints the status
-// and the top-level keys, never a body: some locked routes read the committed roster.
+// replaced by an empty stand-in. Made-up students only, rosters included. A failure prints
+// the status and the top-level keys, never a body.
 const crypto = require('crypto');
 const http = require('http');
 const net = require('net');
@@ -140,10 +140,17 @@ const LOCKED = [
   ['/api/graph/visualize?type=students', r => r.status === 200],
   ['/admin/line-status', r => r.status === 200 && /LINE pipeline/.test(r.text)],
   ['/rosters/hefei.json', r => r.status === 200 && Array.isArray(r.json.students)],
-  ['/qr-cards/manifest.json', r => r.status === 200],
-  ['/qr-cards/hefei/manifest.json', r => r.status === 200],
-  ['/downloads/hefei-cards-print.zip', r => r.status === 200],
+  // The cards and print files left git; the paths stay locked in case one is put back by hand.
+  ['/qr-cards/manifest.json', r => r.status === 404],
+  ['/qr-cards/hefei/manifest.json', r => r.status === 404],
+  ['/downloads/hefei-cards-print.zip', r => r.status === 404],
 ];
+
+// Rosters live outside git (the repo is public): a made-up one in a throwaway private dir.
+const PRIVATE = fs.mkdtempSync(path.join(os.tmpdir(), 'lock-private-'));
+fs.mkdirSync(path.join(PRIVATE, 'rosters'));
+fs.writeFileSync(path.join(PRIVATE, 'rosters', 'hefei.json'), JSON.stringify({ workshop: 'hefei', sessions: [],
+  students: [{ id: 'HEFEI-901', name: '测试 (Locktest)', slug: 'locktest', journalId: 'lock-roster-1' }] }));
 
 (async () => {
   const pool = new Pool({ connectionString: DB });
@@ -158,7 +165,7 @@ const LOCKED = [
   const env = { ...process.env, PORT: String(PORT), MISSION_CONTROL_PORT: String(PORT), DATABASE_URL: DB,
     BKK_ADMIN_KEY: KEY, TRANSMISSION_KEY: 'lock-test-transmission', MAIL_DRY_RUN: '1',
     NEO4J_URI: 'bolt://127.0.0.1:9', LOCK_TEST_SERVER: path.join(ROOT, 'server.js'),
-    UPLOAD_DIR: fs.mkdtempSync(path.join(os.tmpdir(), 'lock-uploads-')),
+    UPLOAD_DIR: fs.mkdtempSync(path.join(os.tmpdir(), 'lock-uploads-')), PRIVATE_DATA_DIR: PRIVATE,
     EXAM_BACKUP_DIR: fs.mkdtempSync(path.join(os.tmpdir(), 'lock-exam-')) };
   for (const k of ['SHOP_ADMIN_KEY', 'RAILWAY_ENVIRONMENT', 'RUN_BOT', 'ENABLE_TUNNEL', 'NOTION_API_KEY', 'TELEGRAM_BOT_TOKEN',
     'ANTHROPIC_API_KEY', 'OPENROUTER_API_KEY', 'HELPDESK_LINE_ACCESS_TOKEN', 'HELPDESK_LINE_CHANNEL_SECRET', 'LINE_CHANNEL_SECRET',
@@ -207,6 +214,23 @@ const LOCKED = [
   const csv = await request('GET', '/api/orientations/ru?format=csv', STAFF);
   ok('...and a keyed answer is not cached either', /no-store/.test(csv.headers['cache-control'] || ''));
 
+  console.log('\n— rosters arrive by upload, never by git —');
+  const roster = { workshop: 'zhuhai', sessions: [], students: [{ id: 'ZHUHAI-901', name: 'Locktest Upload', journalId: 'lock-up-1' }] };
+  ok('an upload without the key → 401', (await request('PUT', '/api/bkk/admin/rosters/zhuhai', {}, roster)).status === 401);
+  for (const bad of ['zhu.hai', '..%2Fzhuhai', 'zhuhai%00', 'a'.repeat(41)]) {
+    ok(`a roster named ${bad.slice(0, 12)} is refused`, (await request('PUT', '/api/bkk/admin/rosters/' + bad, STAFF, roster)).status === 400);
+  }
+  ok('a roster without a students list is refused', (await request('PUT', '/api/bkk/admin/rosters/zhuhai', STAFF, { workshop: 'zhuhai' })).status === 400);
+  const put = await request('PUT', '/api/bkk/admin/rosters/zhuhai', STAFF, roster);
+  ok('staff can upload a roster', put.status === 200 && put.json.ok === true, shape(put));
+  const saved = path.join(PRIVATE, 'rosters', 'zhuhai.json');
+  ok('...it lands in the private dir, readable by the server only', fs.existsSync(saved) && (fs.statSync(saved).mode & 0o077) === 0);
+  ok('...and is served to staff', (await request('GET', '/rosters/zhuhai.json', STAFF)).json?.students?.[0]?.id === 'ZHUHAI-901');
+  ok('...and to nobody else', (await request('GET', '/rosters/zhuhai.json')).status === 401);
+  ok('a roster that is not on the server → 404 for staff', (await request('GET', '/rosters/nowhere.json', STAFF)).status === 404);
+  const bound = await request('POST', '/api/orientations', {}, { name: 'Locktest Roster', studentCode: 'HEFEI-901', language: 'en', location: 'hefei' });
+  ok('an orientation with a card code still binds to the roster journal id', bound.status === 200 && JSON.stringify(bound.json || {}).includes('lock-roster-1'), shape(bound));
+
   console.log('\n— what stays open —');
   const signup = await request('POST', '/api/orientations/private', {}, { name: 'Locktest Signup', contact: 'locktest@example.com', contactType: 'email' });
   ok('a public sign-up form still saves without a key', signup.status === 200 && signup.json.success === true && /^private-/.test(signup.json.studentId), shape(signup));
@@ -254,9 +278,8 @@ const LOCKED = [
   await pool.query('DELETE FROM bkk_login_tokens WHERE token=$1', [inTok]);
 
   console.log('\n— printed Hefei codes do not give the roster —');
-  // Read at runtime from the committed roster; nothing from it is printed.
-  const roster = JSON.parse(fs.readFileSync(path.join(ROOT, 'public', 'rosters', 'hefei.json'), 'utf8')).students;
-  const one = roster.find(x => x.slug && x.journalId && x.id && x.name);
+  const hefei = JSON.parse(fs.readFileSync(path.join(PRIVATE, 'rosters', 'hefei.json'), 'utf8')).students;
+  const one = hefei.find(x => x.slug && x.journalId && x.id && x.name);
   for (const [label, p] of [['code', one.id], ['slug', one.slug], ['other id + ?name=', 'gz-lock-test?name=' + encodeURIComponent(one.name)]]) {
     for (const route of ['pass', 'mine']) {
       const r = await request('GET', `/api/attendance/${route}/${p.includes('?') ? p : encodeURIComponent(p)}`);
@@ -287,7 +310,7 @@ const LOCKED = [
   for (const f of ['journal.html', 'student-report.html']) {
     const src = fs.readFileSync(path.join(ROOT, 'public', f), 'utf8');
     ok(`${f} has no journal ids in it`, !/['"][0-9a-f]{6,8}-[0-9a-f]{2,4}-[0-9a-f]{2,4}-[0-9a-f]{2,4}-[0-9a-f]{8,12}['"]/i.test(src)
-      && !roster.some(x => src.includes(x.journalId)));
+      && !hefei.some(x => src.includes(x.journalId)));
   }
 
   console.log('\n— the teacher bot lists members to teachers only —');

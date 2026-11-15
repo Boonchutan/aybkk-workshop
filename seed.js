@@ -1,3 +1,4 @@
+require('dotenv').config();
 /**
  * Seed script for Mission Control
  * Creates sample students with progress checks
@@ -10,7 +11,7 @@ const driver = neo4j.driver(
   process.env.NEO4J_URI || 'bolt://localhost:7687',
   neo4j.auth.basic(
     process.env.NEO4J_USER || 'neo4j',
-    'aybkk_neo4j_2026'
+    process.env.NEO4J_PASSWORD
   )
 );
 

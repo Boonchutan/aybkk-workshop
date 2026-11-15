@@ -11,12 +11,12 @@ from neo4j import GraphDatabase
 # Config
 BASE_URL = "https://alfredos-mac-mini.tail54b8d2.ts.net/student.html"
 LOGO_PATH = "/Users/alfredoagent/mission-control/public/aybkk-logo.jpg"
-OUTPUT_DIR = "/Users/alfredoagent/mission-control/public/qr-cards"
+OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "private-data", "qr-cards")
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Get students from Neo4j
-d = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "aybkk_neo4j_2026"))
+d = GraphDatabase.driver("bolt://localhost:7687", auth=(os.environ.get("NEO4J_USER", "neo4j"), os.environ["NEO4J_PASSWORD"]))
 with d.session() as session:
     result = session.run("""
         MATCH (s:Student)

@@ -1,8 +1,9 @@
+require('dotenv').config();
 // Check Railway PostgreSQL for Russia students
 const { Client } = require('pg');
 
 const client = new Client({
-  connectionString: 'postgresql://postgres:bzKcqKFQmBRyohbHcEEUROvFQRBmZbgQ@monorail.proxy.rlwy.net:38567/railway',
+  connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
 

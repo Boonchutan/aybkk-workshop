@@ -27,3 +27,17 @@ exam-submissions/
 rezerv-export/
 rezerv-*.csv
 *.details.json
+
+# Files that name students: rosters, QR cards, print files, journals. never commit (the repo is public).
+# They live in private-data/ on your computer and on the Railway volume (/data/private).
+private-data/
+public/rosters/
+public/qr-cards/
+public/downloads/
+*-cards-print/
+*-students.json
+*-students.csv
+journal-students.json
+journal-checkins.json
+teacher-comments.json
+__pycache__/

@@ -1,3 +1,4 @@
+require('dotenv').config();
 /**
  * Import students from CSV into Neo4j
  * Sorts: Active members with most completed classes first, inactive at bottom
@@ -12,7 +13,7 @@ const driver = neo4j.driver(
   process.env.NEO4J_URI || 'bolt://localhost:7687',
   neo4j.auth.basic(
     process.env.NEO4J_USER || 'neo4j',
-    'aybkk_neo4j_2026'
+    process.env.NEO4J_PASSWORD
   )
 );
 

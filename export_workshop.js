@@ -1,7 +1,8 @@
+require('dotenv').config();
 // Export all workshop (Russia) students from Railway
 const { Client } = require('pg');
 const client = new Client({
-  connectionString: 'postgresql://postgres:bzKcqKFQmBRyohbHcEEUROvFQRBmZbgQ@monorail.proxy.rlwy.net:38567/railway',
+  connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
 

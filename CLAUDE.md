@@ -1,7 +1,7 @@
 # AYBKK Workshop — Claude Code Guide
 
 This is the Mission Control repo for Ashtanga Yoga Bangkok (AYBKK), covering:
-- Student tracking for the Huizhou workshop (43 students, March–April 2026)
+- Student tracking for the Huizhou workshop (March–April 2026)
 - Agent monitoring dashboard (Neo4j graph backend)
 - Marketing strategy for the China high-ticket cohort (180,000 THB, 10 to 12 students, 2026)
 
@@ -112,6 +112,12 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
   It prints counts and reason codes only (names go to `--details`, mode 0600) and sends `x-bkk-key` only when `BKK_ADMIN_KEY` is set. Test: `test/rezerv-import-cli.test.js`.
   Rows go only to `https://aybkk.net`, `https://my.aybkk.com` or a test server on this machine. `run-all <dir>` only looks; `run-all <dir> --save` saves, and stops at the first file a person must see. Rezerv exports and details files name students and this repo is public: keep them outside the repo (or in the git-ignored `rezerv-export/`); the tool refuses a path git would take.
 - **Student lists are private:** student lists and any count of students, members, bookings or practice at the shala are private: never in public pages, posts, Reels, captions, PR text or the public repo, and every route that lists students needs the admin key (`staffOnly` in `lib/staff-key.js`, header `X-Bkk-Key`; team pages load `/staff-key.js`).
+  Files that name students (workshop rosters, QR cards, print files, journals, class photos) live in the git-ignored
+  `private-data/` on a computer and in `/data/private` on the Railway volume. Rosters reach the server by
+  `PUT /api/bkk/admin/rosters/<city>` (`x-bkk-key`), never by git.
+- **No secrets in code:** passwords, keys and tokens come from `.env` / Railway variables only, never a typed-in
+  fallback. `test/repo-hygiene.test.js` (CI: `repo-hygiene.yml`, every push) fails on a password, key or token in a
+  tracked file, and on a tracked file that names students.
 - **Inline JS gate:** After every Write/Edit, `scripts/check-inline-js.js` runs automatically (PostToolUse hook). If it fails, fix the JS syntax before proceeding.
 - **package-lock.json** is tracked in git (intentional — see `.gitignore`)
 - **Obsidian vault:** Boonchu's vault ("1st obsidian vault") syncs with Google Drive. ONE note per topic — never create companion/extra notes (e.g. "X students", "X links") next to an existing note. The Drive connector cannot edit or delete existing files, so to update a vault note, put the complete updated note content in the chat reply for Boonchu to paste in himself.

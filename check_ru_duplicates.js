@@ -1,3 +1,4 @@
+require('dotenv').config();
 // Quick check: are any of the 23 students already in Neo4j?
 const fs = require('fs');
 const neo4j = require('neo4j-driver');
@@ -19,7 +20,7 @@ for (const cid of chatIds) {
 }
 console.log('StudentIds to check:', studentIds.slice(0, 5));
 
-const driver = neo4j.driver('bolt://localhost:7687', neo4j.auth.basic('neo4j', 'aybkk_neo4j_2026'), { encrypted: 'ENCRYPTION_OFF' });
+const driver = neo4j.driver('bolt://localhost:7687', neo4j.auth.basic(process.env.NEO4J_USER || 'neo4j', process.env.NEO4J_PASSWORD), { encrypted: 'ENCRYPTION_OFF' });
 const session = driver.session();
 
 async function main() {

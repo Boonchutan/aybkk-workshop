@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+require('dotenv').config();
 /**
  * Update Team Memory in Neo4j with all AYBKK systems and credentials
  */
@@ -7,7 +8,7 @@ const neo4j = require('neo4j-driver');
 
 const driver = neo4j.driver(
   'bolt://localhost:7687',
-  neo4j.auth.basic('neo4j', 'aybkk_neo4j_2026')
+  neo4j.auth.basic(process.env.NEO4J_USER || 'neo4j', process.env.NEO4J_PASSWORD)
 );
 
 const memoryText = JSON.stringify({

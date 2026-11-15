@@ -1,6 +1,7 @@
+require('dotenv').config();
 const { Client } = require('pg');
 const client = new Client({
-  connectionString: 'postgresql://postgres:aybkk_neo4j_2026@monorail.proxy.rlwy.net:38567/railway',
+  connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
 
