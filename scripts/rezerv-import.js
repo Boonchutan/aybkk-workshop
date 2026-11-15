@@ -679,15 +679,17 @@ function partOrder(rest) {
   const d = rest.match(/(?:^|[^0-9])(\d{1,2})(?![0-9])/);
   return d && +d[1] >= 1 && +d[1] <= 12 ? +d[1] : 0;
 }
+// Payments before passes: a pass whose Rezerv payment is already in is never
+// taken for a free copy of an aybkk.net sale (copyOfSale).
 const NAMED = [
   [/^rezerv-students(-.*)?\.csv$/, 'members', 1],
-  [/^rezerv-passes-memberships(-.*)?\.csv$/, 'passes', 2],
-  [/^rezerv-passes-packages(-.*)?\.csv$/, 'passes', 3],
-  [/^rezerv-payments-(\d{4})(.*)\.csv$/, 'payments', 4],
+  [/^rezerv-payments-(\d{4})(.*)\.csv$/, 'payments', 2],
+  [/^rezerv-passes-memberships(-.*)?\.csv$/, 'passes', 3],
+  [/^rezerv-passes-packages(-.*)?\.csv$/, 'passes', 4],
   [/^rezerv-visits-upcoming(-.*)?\.csv$/, 'visits', 6],
   [/^rezerv-visits-(\d{4})(.*)\.csv$/, 'visits', 5],
 ];
-const EXPECTED = ['rezerv-students-*.csv', 'rezerv-passes-memberships-*.csv', 'rezerv-passes-packages-*.csv', 'rezerv-payments-<year>*.csv',
+const EXPECTED = ['rezerv-students-*.csv', 'rezerv-payments-<year>*.csv', 'rezerv-passes-memberships-*.csv', 'rezerv-passes-packages-*.csv',
   'rezerv-visits-<year>*.csv', 'rezerv-visits-upcoming-*.csv'];
 const NEVER = ['voided', 'refunded', 'class-attendance'];
 // A file name can carry a student's name or email. Only a name made of these is ever printed, or read as an export.
@@ -711,7 +713,7 @@ function planDir(dir) {
     if (never) { ignored.push([name, `its name says ${never}`]); continue; }
     const hit = namedStep(name);
     if (!hit) { ignored.push([name, 'its name is not one this tool knows']); continue; }
-    const yearly = hit.group === 4 || hit.group === 5;
+    const yearly = hit.group === 2 || hit.group === 5;
     steps.push({ name, kind: hit.kind, group: hit.group, year: yearly ? +hit.m[1] : 0, part: yearly ? partOrder(hit.m[2]) : 0 });
   }
   steps.sort((a, b) => a.group - b.group || a.year - b.year || a.part - b.part || a.name.localeCompare(b.name, 'en', { numeric: true }));

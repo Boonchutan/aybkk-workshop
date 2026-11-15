@@ -3951,14 +3951,15 @@ const ok = (name, cond, extra = '') => {
     const dry = await merge(K, { from: F.toLowerCase(), dryRun: true });
     ok('a dry run says what would move', dry.status === 200 && dry.body.dryRun === true && dry.body.moved.passes === 1
        && dry.body.moved.bookings === 2 && dry.body.moved.orders === 1 && dry.body.moved.notes === 1
-       && dry.body.moved.photo_members === 1 && dry.body.moved.login_tokens === 1 && dry.body.moved.checks === 1
+       && dry.body.moved.photo_members === 1 && dry.body.moved.login_tokens === undefined && dry.body.moved.checks === 1
        && dry.body.seatsCancelled === 1 && dry.body.differs.length === 0, JSON.stringify(dry.body));
     ok('...and changes nothing', JSON.stringify(await countOn(F)) === JSON.stringify(before)
        && !(await one('SELECT merged_into FROM bkk_members WHERE code=$1', [F])).merged_into, JSON.stringify(await countOn(F)));
 
     const done = await merge(K, { from: F });
-    ok('the merge moves passes, classes, payments, notes, photos and links', done.status === 200 && done.body.dryRun === false
-       && JSON.stringify(await countOn(F)) === JSON.stringify({ passes: 0, bookings: 0, orders: 0, notes: 0, checks: 1, photos: 0, links: 0 }),
+    ok('the merge moves passes, classes, payments, notes and photos; sign-in links stay with the code they were made for',
+       done.status === 200 && done.body.dryRun === false
+       && JSON.stringify(await countOn(F)) === JSON.stringify({ passes: 0, bookings: 0, orders: 0, notes: 0, checks: 1, photos: 0, links: 1 }),
        JSON.stringify([done.body, await countOn(F)]));
     const k1 = await one(`SELECT *, to_char(joined_on,'YYYY-MM-DD') AS joined FROM bkk_members WHERE code=$1`, [K]);
     const f1 = await one('SELECT * FROM bkk_members WHERE code=$1', [F]);
@@ -3978,14 +3979,21 @@ const ok = (name, cond, extra = '') => {
     ok('a check on a day the kept profile already has stays behind', done.body.left.checks === 1, JSON.stringify(done.body.left));
 
     const meOld = await J('/api/bkk/me/' + F);
-    ok("the double's code opens the kept profile and tells the phone the new code", meOld.status === 200
-       && meOld.body.movedTo === K && meOld.body.member.code === K && meOld.body.passes.length === 2, JSON.stringify(meOld.body).slice(0, 300));
-    ok("...the kept code itself says nothing about moving", (await J('/api/bkk/me/' + K)).body.movedTo === undefined);
+    ok("the double's code opens the kept profile, and the phone keeps its own code (nothing to undo there)", meOld.status === 200
+       && meOld.body.movedTo === undefined && meOld.body.member.code === K && meOld.body.passes.length === 2, JSON.stringify(meOld.body).slice(0, 300));
+    const chk = await post(`/api/bkk/me/${F}/checks`, { restingHr: 58 });
+    ok("...a proof check saved with the double's code lands on the kept profile, and reads back through either code", chk.status === 200
+       && (await one(`SELECT member_id FROM bkk_checks WHERE resting_hr=58`)).member_id === kid
+       && (await J(`/api/bkk/me/${F}/checks`)).body.checks.some(c => c.restingHr === 58)
+       && (await J(`/api/bkk/me/${K}/checks`)).body.checks.some(c => c.restingHr === 58), JSON.stringify(chk.body));
+    await pool.query('DELETE FROM bkk_checks WHERE resting_hr=58');
     const otherCls = (await J('/api/bkk/schedule?days=14', { headers: ADMIN })).body.classes
       .find(c => !c.isOnline && c.kind !== 'test' && c.seatsLeft > 2 && c.date > todayB && !(c.slotId === cls.slotId && c.date === cls.date));
     const viaOld = await post('/api/bkk/bookings', { memberCode: F, slotId: otherCls.slotId, date: otherCls.date });
     ok("a booking made with the double's code lands on the kept profile", viaOld.status === 200
        && (await one('SELECT member_id FROM bkk_bookings WHERE id=$1', [viaOld.body.booking.id])).member_id === kid, JSON.stringify(viaOld.body));
+    const matOld = await post(`/api/bkk/bookings/${viaOld.body.booking.id}/mat`, { memberCode: F, needMat: true });
+    ok("...and the double's code can tick the mat on it (a page left open across the merge)", matOld.status === 200, JSON.stringify(matOld.body));
 
     const found = (await J('/api/bkk/admin/members?q=mira merge', { headers: ADMIN })).body.members;
     ok('staff search shows one Mira, with the merged code and an undo', found.length === 1 && found[0].code === K
@@ -4027,16 +4035,21 @@ const ok = (name, cond, extra = '') => {
     await pool.query(`UPDATE bkk_login_tokens SET created_at = created_at - interval '2 hours' WHERE created_at > now() - interval '1 hour'`);
     const sent0 = outbox.filter(m => m.tag === 'signin').length;
     await post('/api/bkk/login/request', { email: 'lek.two@example.com' });
-    const tok = await one(`SELECT member_id FROM bkk_login_tokens WHERE email='lek.two@example.com' ORDER BY created_at DESC LIMIT 1`);
+    const tok = await one(`SELECT token, member_id FROM bkk_login_tokens WHERE email='lek.two@example.com' ORDER BY created_at DESC LIMIT 1`);
     const mail = outbox.filter(m => m.tag === 'signin').slice(sent0);
-    ok("signing in with the double's email opens the kept profile, by mail to that address", tok.member_id === await idOf(K2)
-       && mail.length === 1 && mail[0].to === 'lek.two@example.com', JSON.stringify([tok, mail.map(m => m.to)]));
+    const page = await (await fetch(`${B}/api/bkk/login/${tok.token}`, { method: 'POST' })).text();
+    ok("signing in with the double's email: mail to that address, the phone gets the double's code, which opens the kept profile",
+       tok.member_id === await idOf(F2) && mail.length === 1 && mail[0].to === 'lek.two@example.com' && page.includes(JSON.stringify(F2))
+       && (await J('/api/bkk/me/' + F2)).body.member.code === K2, JSON.stringify([tok.member_id, mail.map(m => m.to)]));
+    const byMail = (await J('/api/bkk/admin/members?q=lek.two', { headers: ADMIN })).body.members || [];
+    ok("staff search finds the kept profile by the double's email, and the card shows that email", byMail.map(m => m.code).join() === K2
+       && byMail[0].folded[0].email === 'lek.two@example.com', JSON.stringify(byMail));
     const K3 = 'BMRGKEEP00003';
     await pool.query(`INSERT INTO bkk_members (code,name) VALUES ($1,'Lek Same')`, [K3]);
     await merge(K3, { from: K2 });
     ok('a profile merged twice: the earlier double now points at the last one',
        (await one('SELECT merged_into FROM bkk_members WHERE code=$1', [F2])).merged_into === await idOf(K3)
-       && (await J('/api/bkk/me/' + F2)).body.movedTo === K3);
+       && (await J('/api/bkk/me/' + F2)).body.member.code === K3);
     ok('...undo of the first merge waits for the later one', (await unmerge(F2)).status === 409);
     ok('...undo the later one, then the first', (await unmerge(K2)).status === 200 && (await unmerge(F2)).status === 200
        && (await one('SELECT merged_into FROM bkk_members WHERE code=$1', [F2])).merged_into === null);
@@ -4044,11 +4057,18 @@ const ok = (name, cond, extra = '') => {
     // Undo puts every row and field back.
     ok('undo needs the staff key', (await unmerge(F, {})).status === 401);
     ok('a profile that was never merged has nothing to undo', (await unmerge(K)).status === 409);
+    const viaPass = (await one('SELECT pass_id FROM bkk_bookings WHERE id=$1', [viaOld.body.booking.id])).pass_id;
+    const viaOnPack = (await one('SELECT product_id FROM bkk_passes WHERE id=$1', [viaPass])).product_id
+      === (await one(`SELECT id FROM bkk_products WHERE code='pack8'`)).id;
     const back = await unmerge(F);
     const k2 = await one(`SELECT *, to_char(joined_on,'YYYY-MM-DD') AS joined FROM bkk_members WHERE code=$1`, [K]);
     const f2 = await one('SELECT * FROM bkk_members WHERE code=$1', [F]);
     ok('undo puts back every row that moved', back.status === 200
-       && JSON.stringify(await countOn(F)) === JSON.stringify(before), JSON.stringify([back.body, await countOn(F), before]));
+       && JSON.stringify(await countOn(F)) === JSON.stringify({ ...before, bookings: before.bookings + (viaOnPack ? 1 : 0) }),
+       JSON.stringify([back.body, await countOn(F), before, viaOnPack]));
+    const via = await one(`SELECT b.member_id AS bm, p.member_id AS pm FROM bkk_bookings b JOIN bkk_passes p ON p.id=b.pass_id WHERE b.id=$1`,
+      [viaOld.body.booking.id]);
+    ok('...and a class booked since stays with the pass that paid for it', via.bm === via.pm, JSON.stringify(via));
     ok('...and every field', f2.merged_into === null && f2.merge_log === null && f2.email === 'mira.merge@example.com'
        && f2.photo_id === 'faces/fold1' && f2.journal_id === 'bkk-jfold' && f2.lang === 'th'
        && k2.email === null && k2.photo_id === null && k2.journal_id === null && k2.lang === null && k2.joined === '2026-11-13',
@@ -4059,7 +4079,129 @@ const ok = (name, cond, extra = '') => {
       WHERE p.member_id=$1 AND pr.code='pack8'`, [fid]);
     ok('...and the cancelled seat is booked again, its class used again', seats2.length === 2
        && seats2.every(s => s.status === 'booked') && pack2.credits_used === 1, JSON.stringify([seats2, pack2]));
-    ok("...and the double's code opens its own profile again", (await J('/api/bkk/me/' + F)).body.movedTo === undefined);
+    ok("...and the double's code opens its own profile again", (await J('/api/bkk/me/' + F)).body.member.code === F);
+
+    // Sign out everywhere covers what was merged in: its code, its email, its links.
+    const K5 = 'BMRGKEEP00005', F5 = 'BMRGFOLD00005';
+    await pool.query(`INSERT INTO bkk_members (code,name,email) VALUES ($1,'Nok Out','nok.one@example.com'), ($2,'Nok Out','nok.two@example.com')`, [K5, F5]);
+    await merge(K5, { from: F5, sure: true });
+    const f5id = await idOf(F5);
+    await pool.query(`INSERT INTO bkk_login_tokens (token,member_id,email,ip,expires_at) VALUES ('mrgtok5',$1,'nok.two@example.com','staff', now() + interval '7 days')`, [f5id]);
+    const out1 = await post(`/api/bkk/admin/members/${K5}/signout`, { expectEmail: 'nok.one@example.com', clearEmail: true }, ADMIN);
+    ok("signing out a profile asks about every email that opens it, the merged-in one too", out1.status === 409
+       && out1.body.email === 'nok.one@example.com, nok.two@example.com', JSON.stringify(out1.body));
+    const out2 = await post(`/api/bkk/admin/members/${K5}/signout`, { expectEmail: out1.body.email, clearEmail: true }, ADMIN);
+    const f5 = await one('SELECT code, email FROM bkk_members WHERE id=$1', [f5id]);
+    await pool.query(`UPDATE bkk_login_tokens SET created_at = created_at - interval '2 hours' WHERE created_at > now() - interval '1 hour'`);
+    const n5 = (await one(`SELECT count(*)::int AS n FROM bkk_login_tokens WHERE email='nok.two@example.com'`)).n;
+    await post('/api/bkk/login/request', { email: 'nok.two@example.com' });
+    ok("...and then the merged-in code, email and links stop opening it as well", out2.status === 200
+       && (await J('/api/bkk/me/' + F5)).status === 404 && f5.code !== F5 && f5.email === null
+       && (await one(`SELECT expires_at <= now() AS dead FROM bkk_login_tokens WHERE token='mrgtok5'`)).dead === true
+       && (await one(`SELECT count(*)::int AS n FROM bkk_login_tokens WHERE email='nok.two@example.com'`)).n === n5,
+       JSON.stringify([out2.body, f5]));
+    ok('...while undo still works on the new code shown on the card', (await unmerge(f5.code)).status === 200);
+
+    // Undo: newest merge first; a class booked since goes with its pass; what was
+    // bought since with the double's email goes back; a seat comes back only if free.
+    const K6 = 'BMRGKEEP00006', F6 = 'BMRGFOLD00006', G6 = 'BMRGFOLD00016';
+    await pool.query(`INSERT INTO bkk_members (code,name,rezerv_id) VALUES ($1,'Pim Undo','RZ-M6')`, [K6]);
+    await pool.query(`INSERT INTO bkk_members (code,name,email) VALUES ($1,'Pim Undo','pim.undo@example.com'), ($2,'Pim Undo',NULL)`, [F6, G6]);
+    await post('/api/bkk/admin/passes', { memberCode: F6, productCode: 'pack8' }, ADMIN);
+    await merge(K6, { from: F6 });
+    await merge(K6, { from: G6 });
+    ok('two merges into one profile: the older one cannot be undone first', (await unmerge(F6)).status === 409);
+    ok('...the newer one can', (await unmerge(G6)).status === 200);
+    const k6id = await idOf(K6), f6id = await idOf(F6);
+    const free = (await J('/api/bkk/schedule?days=14', { headers: ADMIN })).body.classes
+      .filter(c => !c.isOnline && c.kind !== 'test' && c.seatsLeft > 2 && c.date > todayB);
+    const b6 = await post('/api/bkk/bookings', { memberCode: K6, slotId: free[1].slotId, date: free[1].date });
+    const buy6 = await post('/api/bkk/orders', { productCode: 'pack8', name: 'Pim Undo', email: 'pim.undo@example.com' });
+    const r0 = outbox.filter(m => m.tag === 'receipt').length;
+    await post(`/api/bkk/admin/orders/${buy6.body.order.id}/force-activate`, {}, ADMIN);
+    await new Promise(r => setTimeout(r, 300));
+    const rc = outbox.filter(m => m.tag === 'receipt').slice(r0);
+    const o6 = await one('SELECT member_id, mail_to FROM bkk_orders WHERE id=$1', [buy6.body.order.id]);
+    const rtok = await one(`SELECT member_id FROM bkk_login_tokens WHERE ip='receipt' ORDER BY created_at DESC LIMIT 1`);
+    ok("checkout with an email the merge moved to the kept profile: the pass, the receipt and its link are all the kept profile's",
+       b6.status === 200 && o6.member_id === k6id && o6.mail_to === null && rc.length === 1 && rc[0].to === 'pim.undo@example.com'
+       && rtok.member_id === k6id, JSON.stringify([b6.body, o6, rc.map(m => m.to), rtok]));
+    const undo6 = await unmerge(F6);
+    const b6row = await one('SELECT b.member_id AS bm, p.member_id AS pm FROM bkk_bookings b JOIN bkk_passes p ON p.id=b.pass_id WHERE b.id=$1',
+      [b6.body.booking.id]);
+    ok('undo: the class booked since on the moved pack goes back with the pack', undo6.status === 200
+       && b6row.bm === f6id && b6row.pm === f6id, JSON.stringify([undo6.body, b6row]));
+
+    // The same student, two emails: a purchase with the double's email after the merge.
+    const K7 = 'BMRGKEEP00007', F7 = 'BMRGFOLD00007';
+    await pool.query(`INSERT INTO bkk_members (code,name,email) VALUES ($1,'Joy Two','joy.one@example.com'), ($2,'Joy Two','joy.two@example.com')`, [K7, F7]);
+    await merge(K7, { from: F7, sure: true });
+    const k7id = await idOf(K7), f7id = await idOf(F7);
+    const buy7 = await post('/api/bkk/orders', { productCode: 'pack8', name: 'Joy Two', email: 'joy.two@example.com' });
+    const r7 = outbox.filter(m => m.tag === 'receipt').length;
+    await post(`/api/bkk/admin/orders/${buy7.body.order.id}/force-activate`, {}, ADMIN);
+    await new Promise(r => setTimeout(r, 300));
+    const rc7 = outbox.filter(m => m.tag === 'receipt').slice(r7);
+    const tok7 = await one(`SELECT member_id FROM bkk_login_tokens WHERE ip='receipt' AND email='joy.two@example.com' ORDER BY created_at DESC LIMIT 1`);
+    ok("...the pass goes on the kept profile, the receipt to the address typed, its link signs in as the double",
+       (await one('SELECT member_id, mail_to FROM bkk_orders WHERE id=$1', [buy7.body.order.id])).member_id === k7id
+       && rc7.length === 1 && rc7[0].to === 'joy.two@example.com' && tok7.member_id === f7id, JSON.stringify([rc7.map(m => m.to), tok7]));
+    const undo7 = await unmerge(F7);
+    ok('...and an undo takes that sale and its pass back to the double', undo7.status === 200 && undo7.body.since.orders === 1
+       && undo7.body.since.passes === 1 && (await one('SELECT member_id FROM bkk_orders WHERE id=$1', [buy7.body.order.id])).member_id === f7id,
+       JSON.stringify(undo7.body));
+
+    // A seat the merge cancelled does not come back when its student holds that class again.
+    const K8 = 'BMRGKEEP00008', F8 = 'BMRGFOLD00008';
+    await pool.query(`INSERT INTO bkk_members (code,name) VALUES ($1,'Ton Seat'), ($2,'Ton Seat')`, [K8, F8]);
+    await post('/api/bkk/admin/passes', { memberCode: K8, productCode: 'unlim1' }, ADMIN);
+    await post('/api/bkk/admin/passes', { memberCode: F8, productCode: 'unlim1' }, ADMIN);
+    const c8 = free[2];
+    const k8 = await post('/api/bkk/bookings', { memberCode: K8, slotId: c8.slotId, date: c8.date });
+    const f8 = await post('/api/bkk/bookings', { memberCode: F8, slotId: c8.slotId, date: c8.date });
+    await pool.query('UPDATE bkk_bookings SET checked_in_at=now() WHERE id=$1', [f8.body.booking.id]);
+    const f8pass = (await one('SELECT pass_id FROM bkk_bookings WHERE id=$1', [f8.body.booking.id])).pass_id;
+    await merge(K8, { from: F8 });
+    const k8st = (await one('SELECT status FROM bkk_bookings WHERE id=$1', [k8.body.booking.id])).status;
+    // The double's seat is cancelled and its pass voided since, so the class is booked again on the kept profile's own pass.
+    await pool.query(`UPDATE bkk_bookings SET status='cancelled' WHERE id=$1`, [f8.body.booking.id]);
+    await pool.query(`UPDATE bkk_passes SET status='void' WHERE id=$1`, [f8pass]);
+    const again8 = await post('/api/bkk/bookings', { memberCode: K8, slotId: c8.slotId, date: c8.date });
+    const undo8 = await unmerge(F8);
+    ok("the checked-in seat is the one kept; after the student books that class again, undo still works and says the seat stayed cancelled",
+       k8st === 'cancelled' && again8.status === 200 && undo8.status === 200 && undo8.body.seatsNotBack === 1
+       && (await one('SELECT status FROM bkk_bookings WHERE id=$1', [k8.body.booking.id])).status === 'cancelled', JSON.stringify([k8st, again8.body, undo8.body]));
+    const cancelOld = await post(`/api/bkk/bookings/${again8.body.booking.id}/cancel`, { memberCode: F8 });
+    ok('...and once undone, the double cannot cancel the kept profile\'s class', cancelOld.status === 409, JSON.stringify(cancelOld.body));
+
+    // Rezerv after a merge: the double's own spelling, phone and identical rows still find the student.
+    const K9 = 'BMRGKEEP00009', F9 = 'BMRGFOLD00009';
+    await pool.query(`INSERT INTO bkk_members (code,name,email,rezerv_id) VALUES ($1,'Fah Keeper','fah.keeper@example.com','RZ-M9')`, [K9]);
+    await pool.query(`INSERT INTO bkk_members (code,name,phone,rezerv_id) VALUES ($1,'Fah K','089-555-0909','RZ-M10')`, [F9]);
+    const k9id = await idOf(K9);
+    const k9orders = async () => (await one(`SELECT count(*)::int AS n FROM bkk_orders WHERE member_id=$1 AND source='rezerv'`, [k9id])).n;
+    const d9 = addD(todayB, -6);
+    const pay9 = [{ name: 'Fah K', date: d9, amount: '1,605', item: 'Drop-in', status: 'Paid' }];
+    const vis9 = [{ memberRezervId: 'RZ-M9', name: 'Fah Keeper', date: d9, time: '06:00', className: 'Twin Class', status: 'Attended' },
+      { memberRezervId: 'RZ-M10', name: 'Fah K', date: d9, time: '06:00', className: 'Twin Class', status: 'Attended' }];
+    const p9a = await imp('payments', pay9), v9a = await imp('visits', vis9);
+    ok('setup: before the merge, the payment by name and the same class on both accounts land on each profile',
+       p9a.body.added === 1 && v9a.body.added === 2, JSON.stringify([p9a.body, v9a.body]));
+    await merge(K9, { from: F9 });
+    const m9 = (await one('SELECT count(*)::int AS n FROM bkk_members')).n, o9 = await k9orders();
+    const p9b = await imp('payments', pay9), v9b = await imp('visits', vis9);
+    const byPhone = await imp('payments', [{ phone: '0895550909', date: addD(todayB, -5), amount: '1,605', item: 'Drop-in', status: 'Paid' }]);
+    ok("after the merge, a payment named only with the double's spelling is found again, not added on a new profile",
+       p9b.body.added === 0 && p9b.body.matched === 1 && (await one('SELECT count(*)::int AS n FROM bkk_members')).n === m9, JSON.stringify(p9b.body));
+    ok('...the same class on both accounts in one file adds nothing twice', v9b.body.added === 0 && v9b.body.matched === 2, JSON.stringify(v9b.body));
+    ok("...and a new payment found by the double's phone lands on the kept profile", byPhone.body.added === 1
+       && (await k9orders()) === o9 + 1 && (await one('SELECT count(*)::int AS n FROM bkk_members')).n === m9, JSON.stringify(byPhone.body));
+    const win9 = [{ memberRezervId: 'RZ-M10', name: 'Fah K', date: addD(todayB, -4), amount: '1,605', item: 'Drop-in', status: 'Paid' }];
+    const w9a = await imp('payments', win9);
+    await unmerge(F9);
+    const w9b = await imp('payments', win9);
+    ok('a Rezerv row imported while merged is not added again after an undo', w9a.body.added === 1 && w9b.body.added === 0
+       && w9b.body.matched === 1, JSON.stringify([w9a.body, w9b.body]));
 
     // A Rezerv pass staff copied by hand from an aybkk.net sale.
     console.log('\n— a Rezerv copy of an aybkk.net sale is not a second pass —');
@@ -4080,6 +4222,17 @@ const ok = (name, cond, extra = '') => {
     const paid = await imp('passes', [{ name: 'Copy Sale', email: 'copy.sale@example.com', plan: '1 month unlimited',
       start: addD(todayB, 3), until: addD(todayB, 32), rezervId: 'RZP-COPY3' }]);
     ok('...and one Rezerv was paid for is a real second pass', paid.body.added === 1, JSON.stringify(paid.body));
+    const six = await post('/api/bkk/admin/sales', { productCode: 'unlim6m', name: 'Six Copy', email: 'six.copy@example.com', method: 'cash' }, ADMIN);
+    const sixCopy = await imp('passes', [{ name: 'Six Copy', email: 'six.copy@example.com', plan: '6 months unlimited',
+      start: addD(todayB, 1), until: addD(todayB, 180), rezervId: 'RZP-SIX1' }]);
+    ok("Rezerv's name for the same package is the same package: a 6-month copy is skipped too", six.status === 200
+       && sixCopy.body.added === 0 && sixCopy.body.skipped.map(x => x.code).join() === 'copyOfSale', JSON.stringify(sixCopy.body));
+    await pool.query(`UPDATE bkk_passes p SET valid_from = $2::date FROM bkk_members m
+      WHERE m.id=p.member_id AND m.email=$1 AND p.order_id IS NOT NULL`, ['six.copy@example.com', addD(todayB, 30)]);
+    const sixLate = await imp('passes', [{ name: 'Six Copy', email: 'six.copy@example.com', plan: '6 months unlimited',
+      start: addD(todayB, 3), until: addD(todayB, 182), rezervId: 'RZP-SIX2' }]);
+    ok('...and a copy dated near the sale is still a copy when the pass here starts weeks later', sixLate.body.added === 0
+       && sixLate.body.skipped.map(x => x.code).join() === 'copyOfSale', JSON.stringify(sixLate.body));
   }
 
   console.log(`\n${PASS} passed, ${FAIL} failed`);

@@ -2281,15 +2281,8 @@
       photo: (d.photo && d.photo.small) || '', large: (d.photo && d.photo.large) || '' };
     drawAcct();
   }
-  // Two profiles of one student merged at the shala: the old code answers with
-  // the kept one's, and this phone keeps that from now on.
-  const takeMoved = d => {
-    if (!d || !d.movedTo) return false;
-    try { localStorage.setItem('aybkk_member', d.movedTo); } catch (_) {}
-    return true;
-  };
   async function loadMine() {
-    let code = myCode();
+    const code = myCode();
     if (!code) return;
     let d = null, gone = false;
     try {
@@ -2298,7 +2291,6 @@
       else if (r.status === 404) gone = (await r.json().catch(() => ({}))).error === 'not found';
     } catch (_) {}
     if (code !== myCode()) return;
-    if (takeMoved(d)) code = d.movedTo;
     // A dead code stays on the phone until My account explains it (renderMe forgets it
     // there), but the button stops looking signed in.
     if (gone) ACCT_WHO = { code, name: '', gone: true, photo: '', large: '' };
@@ -2789,7 +2781,7 @@
   let ME_SEQ = 0;
   async function renderMe(gone) {
     const seq = ++ME_SEQ;
-    let code = myCode();
+    const code = myCode();
     if (!code) {
       REV.code = '';
       $('#view').innerHTML = `${gone ? `<p class="msg bad">${esc(t('meGone'))}</p>` : ''}<p class="note">${esc(t('meNone'))}</p>
@@ -2814,7 +2806,6 @@
       // the API's own answer counts; an outage must not sign everyone out.
       if (res.status === 404 && d.error === 'not found') { forgetMe(); return renderMe(true); }
       if (d.error) throw new Error(d.error);
-      if (takeMoved(d)) { code = d.movedTo; drawAcct(); }
       setMine(code, d);
       if (REV.code !== code) REV = { code, renewals: 0, w12: null, thanks: false };
       REV.renewals = Math.max(0, Math.floor(Number(d.renewals)) || 0);
