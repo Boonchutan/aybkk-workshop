@@ -1132,6 +1132,7 @@ function mountBkk(app, opts = {}) {
   // is written out literally rather than normalised. merchantID is the LAST 5
   // DIGITS of the merchant id, in both header and body. Unused body fields take
   // the literal placeholders the docs specify ("X", "QWERTY").
+  const PAID_STATUS = new Set(['CP', 'Y']);
   async function inquire(cfg, order) {
     const url = `${cfg.inquiryBase.replace(/\/$/, '')}/order/orderdetailpost`;
     const mid5 = String(cfg.merchantId).slice(-5);
@@ -1160,13 +1161,15 @@ function mountBkk(app, opts = {}) {
     // key both come back "not paid", and the code is what tells them apart.
     if (!d) return { paid: false, note: `no record (http ${r.status})` };
     const status = String(d.Status ?? '').toUpperCase();
-    const paid = status === 'CP';
+    // The docs show "CP" (COMPLETE); the live account answers "Y" (Paid) for a
+    // finished payment (15 Nov 2026). Either is paid; the amount is still checked.
+    const paid = PAID_STATUS.has(status);
     // Total comes back as a JSON number (3900.0), not a string.
     const amount = d.Total == null ? null : Number(d.Total);
     return {
       paid, amount, raw: d,
       note: paid ? 'confirmed'
-        : `http ${r.status} status=${status || 'unknown'} ${d.StatusName || ''}`.trim(),
+        : `http ${r.status} status=${status || 'unknown'} ${d.StatusName || ''} total=${d.Total ?? 'none'}`.trim(),
     };
   }
 
@@ -3004,7 +3007,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
          ORDER BY b.start_at, m.name`, [today]);
       const money = (await q(
         `SELECT method, count(*)::int AS n, sum(amount_thb)::int AS total FROM bkk_orders
-         WHERE status='paid' AND (verified_at AT TIME ZONE 'Asia/Bangkok')::date = (now() AT TIME ZONE 'Asia/Bangkok')::date
+         WHERE status='paid' AND amount_thb > 0
+           AND (verified_at AT TIME ZONE 'Asia/Bangkok')::date = (now() AT TIME ZONE 'Asia/Bangkok')::date
          GROUP BY method ORDER BY method`)).rows;
       // Today's whole timetable, booked or not: the door built its tabs from
       // bookings, so a class nobody had booked could not take a walk-in.
