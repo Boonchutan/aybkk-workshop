@@ -172,6 +172,13 @@
   .tile.hot b{color:var(--pink)}
   .flash{border-radius:7px;padding:8px 10px;font-size:14px;margin:10px 0 0;background:#e6f6ec;color:#187a43}
   .flash.warn{background:#fff3d6;color:#6b520e}
+  .flash small{display:block;font-size:12px;font-weight:400;overflow-wrap:anywhere}
+  /* Settings: the payment watch (15 Nov 2026). */
+  .pw .pwl{display:flex;align-items:center;gap:9px;margin:8px 0;cursor:pointer}
+  .pw .pwl input{width:auto;margin:0;flex:none}
+  .pw .pwrow{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px}
+  .pw .pwrow .pwl{margin-right:0}
+  .pw input[type=time]{padding:6px 8px;font-size:15px}
   .rr{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:10px 0;border-top:1px solid var(--line)}
   /* The student's face, or their initials, so staff can put a name to a face (9 Nov 2026). */
   .rr .av{flex:none;display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;
@@ -854,6 +861,33 @@
     hereOver: 'คลาสจบแล้ว: บันทึกว่ามาเรียน', addGoCame: 'เพิ่มว่ามาเรียน',
     hNoPassOn: (n, d) => `${n} ไม่มีแพ็กเกจ aybkk.net ที่ใช้ได้วันที่ ${d} เลือกแพ็กเกจ Rezerv หรือ Drop-in`,
     hitPassFrom: d => `แพ็กเกจ aybkk.net เริ่ม ${d}`,
+  });
+  // Settings: the payment watch and Telegram's health (15 Nov 2026).
+  Object.assign(STR.en, {
+    pwTitle: 'Payment watch',
+    pwHelp: 'The server asks PaySolutions again about online payments that did not turn on, and turns on the paid ones (amount checked). Telegram pings you only when something is wrong; the day\'s sales come in one message.',
+    pwSweep: 'Check stuck online payments every 10 minutes', pwEach: 'Ping me for every sale',
+    pwDaily: 'Daily money line at', pwBkk: 'Bangkok time', pwSaved: 'Saved',
+    tgNotSet: 'Telegram: not set', tgNone: 'Telegram: set, nothing sent yet',
+    tgOk: t => `Telegram: working (last sent ${t})`, tgFail: t => `Telegram: last send failed at ${t}`,
+    pwRun: 'Check stuck payments now', pwRunWait: 'Checking…',
+    pwNone: 'Nothing to check: no online payment is waiting, or each was asked in the last 10 minutes (every hour once it is 2 hours old).',
+    pwBusy: 'A check is already running. Try again in a minute.',
+    pwDone: (n, m) => `Asked ${n}, turned on ${m}`,
+    pwStopped: 'PaySolutions did not answer, so the rest wait for the next check.',
+  });
+  Object.assign(STR.th, {
+    pwTitle: 'เฝ้าดูการจ่ายเงิน',
+    pwHelp: 'ระบบถาม PaySolutions อีกครั้งเองสำหรับการจ่ายออนไลน์ที่ยังไม่เปิดใช้ และเปิดใช้ให้เมื่อจ่ายแล้ว (ตรวจยอดเงินด้วย) Telegram แจ้งเฉพาะเมื่อมีปัญหา ส่วนยอดขายของวันส่งรวมเป็นข้อความเดียว',
+    pwSweep: 'ตรวจการจ่ายออนไลน์ที่ค้างทุก 10 นาที', pwEach: 'แจ้งฉันทุกครั้งที่มีการขาย',
+    pwDaily: 'สรุปยอดเงินรายวัน เวลา', pwBkk: 'เวลากรุงเทพ', pwSaved: 'บันทึกแล้ว',
+    tgNotSet: 'Telegram: ยังไม่ได้ตั้งค่า', tgNone: 'Telegram: ตั้งค่าแล้ว ยังไม่เคยส่ง',
+    tgOk: t => `Telegram: ใช้งานได้ (ส่งล่าสุด ${t})`, tgFail: t => `Telegram: ส่งไม่สำเร็จครั้งล่าสุดเมื่อ ${t}`,
+    pwRun: 'ตรวจการจ่ายที่ค้างตอนนี้', pwRunWait: 'กำลังตรวจ…',
+    pwNone: 'ไม่มีรายการต้องตรวจ: ไม่มีการจ่ายออนไลน์ที่รออยู่ หรือเพิ่งถามไปไม่ถึง 10 นาที (ถ้าเกิน 2 ชั่วโมง ถามทุกชั่วโมง)',
+    pwBusy: 'กำลังตรวจอยู่แล้ว ลองใหม่ในอีกสักครู่',
+    pwDone: (n, m) => `ถามแล้ว ${n} รายการ เปิดใช้แล้ว ${m}`,
+    pwStopped: 'PaySolutions ไม่ตอบ รายการที่เหลือจะตรวจในรอบถัดไป',
   });
   const T =(k, ...a) => { const v = STR[LANG][k] ?? STR.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
   const W = w => STR[LANG].words[w] || w;
@@ -1876,6 +1910,8 @@
       : note === 'gateway not configured' ? { text: T('chkNoGw') }
       // A refused key also comes back "not paid": only the HTTP code tells them apart.
       : /\b(http|inquiry) 40[13]\b/.test(note) ? { text: T('chkKey'), raw: note }
+      // No answer (timeout, network) or a server error is not "not paid".
+      : /^inquiry failed:|\b(http|inquiry) (?!200\b)\d{3}\b/.test(note) ? { text: T('chkErr'), raw: note }
       : { text: T('chkNot'), raw: note };
     const out = $(`#chk-${o.id}`);
     if (out) { out.className = chkCls(c); out.innerHTML = chkInner(c); }
@@ -2555,10 +2591,11 @@
     TEES = await api('/api/bkk/admin/tees').then(r => r.json())
       .then(d => d.tees || []).catch(() => []);
     const { counts: letter = [], doors = [] } = await api('/api/bkk/admin/newsletter').then(r => r.json()).catch(() => ({}));
+    const PW = await api('/api/bkk/admin/settings').then(r => r.ok ? r.json() : null).catch(() => null);
     if (current !== 'settings' || SUB) return;
     const byStatus = {};
     for (const c of letter) byStatus[c.status] = (byStatus[c.status] || 0) + c.n;
-    $('#view').innerHTML = `<div class="box">
+    $('#view').innerHTML = `${PW ? pwBox(PW) : ''}<div class="box">
       <b>${T('feeTitle')}</b>
       <p class="muted">${T('feeHelp')}</p>
       <p><input id="sur" type="number" min="0" max="20" step="0.5" value="${p.surchargePct}" style="width:90px"> %
@@ -2604,6 +2641,63 @@
       <p><button class="btn pink" onclick="addTeam()">${T('addTeam')}</button></p>
       </div>`;
   }
+  // The payment watch: its switches, the money line's time, whether Telegram gets
+  // through, and a check of stuck online payments on demand (15 Nov 2026).
+  const PW_ON = { paySweep: 'pwSweep', pingEachSale: 'pwEach', dailyMoney: 'pwDaily' };
+  const pwWhen = iso => bkkYmd(Date.parse(iso)) === bkkYmd() ? time(iso) : `${day(iso)} ${time(iso)}`;
+  const tgHtml = t => {
+    const l = !t || !t.set ? { text: T('tgNotSet'), warn: true }
+      : t.last && !t.last.ok ? { text: T('tgFail', pwWhen(t.last.at)), warn: true, raw: t.last.error }
+      : t.last && t.last.okAt ? { text: T('tgOk', pwWhen(t.last.okAt)) } : { text: T('tgNone'), plain: true };
+    return `<p class="${l.plain ? 'muted' : 'flash' + (l.warn ? ' warn' : '')}" id="tgLine" role="status">${esc(l.text)}${l.raw ? `<small>${esc(l.raw)}</small>` : ''}</p>`;
+  };
+  const pwBox = d => {
+    const s = d.payWatch || {};
+    const sw = k => `<label class="pwl"><input type="checkbox" id="${PW_ON[k]}"${s[k] === 'on' ? ' checked' : ''}><span>${T(PW_ON[k])}</span></label>`;
+    return `<div class="box pw"><b>${T('pwTitle')}</b>
+      <p class="muted">${T('pwHelp')}</p>
+      ${sw('paySweep')}${sw('pingEachSale')}
+      <div class="pwrow">${sw('dailyMoney')}<input type="time" id="pwAt" value="${esc(s.dailyMoneyAt || '21:00')}" aria-label="${esc(T('pwDaily') + ' (' + T('pwBkk') + ')')}">
+        <span class="muted">${T('pwBkk')}</span></div>
+      <p><button class="btn" onclick="savePw()">${T('save')}</button> <span class="muted" id="pwMsg" role="status"></span></p>
+      ${tgHtml(d.telegram)}
+      <p style="margin-top:12px"><button class="btn gray" id="pwRun" onclick="runSweep()">${T('pwRun')}</button></p>
+      <div id="pwOut" role="status"></div></div>`;
+  };
+  window.savePw = async () => {
+    const at = $('#pwAt').value;
+    const body = { paySweep: $('#pwSweep').checked, pingEachSale: $('#pwEach').checked, dailyMoney: $('#pwDaily').checked };
+    if (at) body.dailyMoneyAt = at;
+    const j = await shout(await api('/api/bkk/admin/settings', { method: 'POST', body: JSON.stringify(body) }));
+    if (!j || current !== 'settings' || SUB) return;
+    if ($('#pwMsg')) $('#pwMsg').textContent = T('pwSaved');
+    if (j.telegram && $('#tgLine')) $('#tgLine').outerHTML = tgHtml(j.telegram);
+  };
+  let PW_RUN = false;
+  window.runSweep = async () => {
+    if (PW_RUN) return;
+    PW_RUN = true;
+    const btn = on => { const b = $('#pwRun'); if (b) { b.disabled = !on; b.textContent = T(on ? 'pwRun' : 'pwRunWait'); } };
+    btn(false);
+    let r = null, j = {};
+    try {
+      r = await api('/api/bkk/admin/pay/sweep', { method: 'POST' }).catch(() => null);
+      j = r ? await r.json().catch(() => ({})) : {};
+    } finally { PW_RUN = false; }
+    const out = $('#pwOut');
+    if (current !== 'settings' || SUB || !out) return;
+    btn(true);
+    const word = st => st === 'pending' ? T('notPaidYet') : (STR[LANG].ordPill || {})[st] || W(st);
+    const say = (text, cls = 'flash warn', raw = '') => `<p class="${cls}">${esc(text)}${raw ? `<small>${esc(raw)}</small>` : ''}</p>`;
+    if (!r || !r.ok) { out.innerHTML = say(T('chkErr'), 'flash warn', j.error || (r ? `http ${r.status}` : '')); return; }
+    if (!j.ran) { out.innerHTML = say(T(j.reason === 'busy' ? 'pwBusy' : 'chkNoGw')); return; }
+    if (!j.orders.length) { out.innerHTML = say(T('pwNone'), 'muted'); return; }
+    out.innerHTML = say(T('pwDone', j.asked, j.paid), j.paid ? 'flash' : 'muted')
+      + `<table>${j.orders.map(o => `<tr><td><span class="muted">${esc(T('thRef'))} ${esc(o.refno)}</span><br>
+        <span class="pill ${esc(o.before)}">${esc(word(o.before))}</span> → <span class="pill ${esc(o.after)}">${esc(word(o.after))}</span>
+        ${o.note ? `<br><span class="muted" style="overflow-wrap:anywhere">${esc(o.note)}</span>` : ''}</td></tr>`).join('')}</table>`
+      + (j.due > j.asked ? say(T('pwStopped'), 'muted') : '');
+  };
   let TEES = [];
   const teeForm = x => `<div class="teeRow" data-id="${x.id || ''}" style="border-top:1px solid #eee;padding:10px 0">
       ${x.photo ? `<img src="${esc(x.photo)}" alt="" style="width:64px;height:64px;object-fit:cover;border-radius:6px;float:right">` : ''}

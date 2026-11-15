@@ -3,6 +3,7 @@
 // Every name here is made up.
 process.env.BKK_ADMIN_KEY = 'testkey';
 process.env.MAIL_DRY_RUN = '1';
+process.env.BKK_TIMERS = 'off';   // the payment watch runs only when a test calls it
 process.env.HELPDESK_LINE_CHANNEL_SECRET = 'desk-secret';
 process.env.HELPDESK_LINE_ACCESS_TOKEN = 'desk-token';
 delete process.env.TELEGRAM_BOT_TOKEN;
