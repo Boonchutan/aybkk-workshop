@@ -6187,11 +6187,13 @@ const ok = (name, cond, extra = '') => {
     ok('setup: one Rezerv visit imported since is taken from the keeper\'s pass', (await onto(rv4, { passId: pk })).status === 200);
     const um2 = await post(`/api/bkk/admin/members/${F}/unmerge`, {}, ADMIN);
     const owner = async id => (await one('SELECT member_id FROM bkk_bookings WHERE id=$1', [id])).member_id;
-    ok('undoing the merge: a visit taken from the keeper\'s pass stays with it; one on the double\'s pass and one on no pass go back',
-       um2.status === 200 && await owner(rv1) === kid && await owner(rv2) === fid && await owner(rv3) === fid
-       && await owner(rv4) === kid && await owner(rv5) === fid
-       && (await one('SELECT member_id FROM bkk_passes WHERE id=$1', [pf2])).member_id === fid
-       && (await pOf(pk)).credits_used === 2 && (await pOf(pf2)).credits_used === 1, JSON.stringify(um2.body));
+    ok('undoing the merge: the double\'s Rezerv visits taken from the keeper\'s pass go back to Rezerv and the double, and the pass gets them back',
+       um2.status === 200 && um2.body.movesUndone === 2 && await owner(rv1) === fid && await owner(rv4) === fid
+       && (await bOf(rv1)).pass_id === null && (await bOf(rv1)).cover === 'rezerv' && !(await bOf(rv4)).moved_at
+       && (await pOf(pk)).credits_used === 0 && /the other student's, as a merge was undone/.test((await pOf(pk)).note), JSON.stringify(um2.body));
+    ok('...one on the double\'s own pass goes back with that pass, and one on no pass goes back as it was',
+       await owner(rv3) === fid && (await bOf(rv3)).pass_id === pf2 && await owner(rv2) === fid && await owner(rv5) === fid
+       && (await one('SELECT member_id FROM bkk_passes WHERE id=$1', [pf2])).member_id === fid && (await pOf(pf2)).credits_used === 1);
 
     // Rezerv may have paid already: a person checks first.
     const tw = await mk('TWIN');
@@ -6286,6 +6288,52 @@ const ok = (name, cond, extra = '') => {
     ok('merging keeps the seat taken from the pass and cancels the unpaid one; the class stays used', mg2.status === 200
        && (await st(fseat)).status === 'booked' && (await st(kseat)).status === 'cancelled' && (await pOf(pmf)).credits_used === 1,
        JSON.stringify([mg2.body, await st(fseat), await st(kseat)]));
+
+    // A class already on a pass that day, and a Rezerv row with no time: maybe the same class.
+    const sd = await mk('SAMEDAY');
+    const psd = await pass(sd, 'pack8', { used: 1, from: d(-5), until: d(55) });
+    await rz(sd, d(-1), { pass: psd, source: 'student', t: '07:00' });
+    const notime = await rz(sd, d(-1), { slot: null, t: '00:00' });
+    const sdd = await onto(notime, { dryRun: true });
+    ok('a Rezerv row with no time on a day they already have a class on the pass: the dry run asks for a check', sdd.status === 200
+       && sdd.body.needSure === true && sdd.body.checks.some(k => k.why === 'sameDay' && k.time === '07:00'), JSON.stringify(sdd.body));
+    ok('...and without sure:true nothing is taken', (await onto(notime)).status === 409 && (await pOf(psd)).credits_used === 1);
+    const other = await rz(sd, d(-2), { slot: null, t: '18:00' });
+    await rz(sd, d(-2), { pass: psd, source: 'student', t: '07:00' });
+    const odd = await onto(other, { dryRun: true });
+    ok('...but a class at another time that day is no check', odd.status === 200 && !odd.body.needSure, JSON.stringify(odd.body));
+
+    // A Rezerv copy of the pass paired after the move may have counted the class: undo and a staff cancel keep it used.
+    const ab = await mk('ABSORB');
+    const pab = await pass(ab, 'pack8', { from: d(-5), until: d(55) });
+    const abv = await rz(ab, d(-1)), abw = await rz(ab, d(-2));
+    await onto(abv); await onto(abw);
+    await pool.query(`UPDATE bkk_passes SET credits_used=3 WHERE id=$1`, [pab]);
+    await pool.query(`INSERT INTO bkk_passes (member_id,product_id,kind,credits_total,credits_used,valid_days,valid_from,valid_until,status,source,twin_of,twin_undo)
+      SELECT $1, id, kind, credits, 3, valid_days, $2::date, $3::date, 'void', 'rezerv', $4, jsonb_build_object('used', 1, 'status', 'active', 'on', $5::text)
+      FROM bkk_products WHERE code='pack8'`, [ab, d(-5), d(55), pab, d(0)]);
+    const abu = await onto(abv, { undo: true, dryRun: true });
+    ok('undo after the Rezerv copy came over: refused, the class stays used, and it says why', abu.status === 409
+       && abu.body.carried && abu.body.carried.classes === 3 && abu.body.carried.on === d(0) && (await pOf(pab)).credits_used === 3,
+       JSON.stringify(abu.body));
+    const abc = await post(`/api/bkk/bookings/${abw}/cancel`, {}, ADMIN);
+    ok('...and a staff cancel gives no class back either', abc.status === 200 && abc.body.creditReturned === false
+       && (await pOf(pab)).credits_used === 3, JSON.stringify(abc.body));
+
+    // A later Rezerv visits file never cancels a class staff took from the pass.
+    const imp = (kind, rows) => post(`/api/bkk/admin/import/${kind}`, { rows, dryRun: false }, ADMIN);
+    const iv = (await one(`INSERT INTO bkk_members (code,name,rezerv_id,source) VALUES ('BTESTOPIMP01','Onto Import','RZ-ONTO1','rezerv') RETURNING id`)).id;
+    const piv = await pass(iv, 'pack8', { from: d(-5), until: d(55) });
+    const row = { rezervId: 'V-ONTO-1', memberRezervId: 'RZ-ONTO1', name: 'Onto Import', date: d(-1), time: '06:00', className: 'Onto Rezerv class' };
+    const i1 = await imp('visits', [{ ...row, status: 'Attended' }]);
+    const ivb = (await one(`SELECT id FROM bkk_bookings WHERE member_id=$1 AND source='rezerv'`, [iv])).id;
+    ok('setup: the Rezerv visit came in as came, and is taken from the pass', i1.body.added === 1 && (await onto(ivb)).status === 200
+       && (await pOf(piv)).credits_used === 1, JSON.stringify(i1.body));
+    await pool.query('UPDATE bkk_bookings SET checked_in_at=NULL WHERE id=$1', [ivb]);
+    const i2 = await imp('visits', [{ ...row, status: 'Cancelled' }]);
+    const ivr = await bOf(ivb);
+    ok('a later file saying cancelled leaves it on the pass as staff left it', i2.body.matched === 1 && ivr.status === 'booked'
+       && ivr.pass_id === piv && (await pOf(piv)).credits_used === 1, JSON.stringify([i2.body, ivr]));
 
     await pool.query(`DELETE FROM bkk_bookings WHERE member_id IN (SELECT id FROM bkk_members WHERE code LIKE 'BTESTOP%')`);
     await pool.query(`DELETE FROM bkk_passes WHERE member_id IN (SELECT id FROM bkk_members WHERE code LIKE 'BTESTOP%')`);
