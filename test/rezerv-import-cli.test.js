@@ -9,6 +9,9 @@ const TAG = [...stamp].map(d => 'qwertyuiop'[d]).join('');
 const KEY = `cli-test-key-${TAG.slice(-6)}`;
 process.env.BKK_ADMIN_KEY = KEY;
 process.env.MAIL_DRY_RUN = '1';
+process.env.BKK_TIMERS = 'off';   // the payment watch runs only when a test calls it
+delete process.env.TELEGRAM_BOT_TOKEN;
+process.env.TELEGRAM_API_BASE = 'http://127.0.0.1:9';
 const fs = require('fs'), os = require('os'), path = require('path'), http = require('http'), https = require('https');
 const { spawn, execFileSync } = require('child_process');
 const express = require('express');

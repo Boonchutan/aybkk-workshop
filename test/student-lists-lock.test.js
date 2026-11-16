@@ -164,13 +164,17 @@ fs.writeFileSync(path.join(PRIVATE, 'rosters', 'hefei.json'), JSON.stringify({ w
 
   PORT = await freePort();
   // server.js asks for SSL on any database outside Railway; the CI database has none.
-  const noSsl = DB + (DB.includes('?') ? '&' : '?') + 'sslmode=disable';
+  const noSsl = DB + (DB.includes('?') ? '&' : '?') + 'sslmode=disable&application_name=lock-test-server';
   const env = { ...process.env, PORT: String(PORT), MISSION_CONTROL_PORT: String(PORT), DATABASE_URL: noSsl,
     BKK_ADMIN_KEY: KEY, TRANSMISSION_KEY: 'lock-test-transmission', MAIL_DRY_RUN: '1',
     NEO4J_URI: 'bolt://127.0.0.1:9', LOCK_TEST_SERVER: path.join(ROOT, 'server.js'),
     UPLOAD_DIR: fs.mkdtempSync(path.join(os.tmpdir(), 'lock-uploads-')), PRIVATE_DATA_DIR: PRIVATE,
-    EXAM_BACKUP_DIR: fs.mkdtempSync(path.join(os.tmpdir(), 'lock-exam-')) };
-  for (const k of ['SHOP_ADMIN_KEY', 'RAILWAY_ENVIRONMENT', 'RUN_BOT', 'ENABLE_TUNNEL', 'NOTION_API_KEY', 'TELEGRAM_BOT_TOKEN',
+    EXAM_BACKUP_DIR: fs.mkdtempSync(path.join(os.tmpdir(), 'lock-exam-')),
+    // Empty, not deleted: server.js runs dotenv, which fills in a missing key from a
+    // developer's .env. No payment watch timers, and Telegram only ever a dead local port.
+    TELEGRAM_BOT_TOKEN: '', BOONCHU_CHAT_ID: '', PAYSO_MERCHANT_ID: '', PAYSO_SECRET_KEY: '', PAYSO_API_KEY: '',
+    BKK_TIMERS: 'off', TELEGRAM_API_BASE: 'http://127.0.0.1:9' };
+  for (const k of ['SHOP_ADMIN_KEY', 'RAILWAY_ENVIRONMENT', 'RUN_BOT', 'ENABLE_TUNNEL', 'NOTION_API_KEY',
     'ANTHROPIC_API_KEY', 'OPENROUTER_API_KEY', 'HELPDESK_LINE_ACCESS_TOKEN', 'HELPDESK_LINE_CHANNEL_SECRET', 'LINE_CHANNEL_SECRET',
     'LINE_CHANNEL_ACCESS_TOKEN', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET']) delete env[k];
   const child = spawn(process.execPath, ['-e', PRELOAD], { cwd: ROOT, env, stdio: ['ignore', 'pipe', 'pipe'] });
@@ -326,6 +330,15 @@ fs.writeFileSync(path.join(PRIVATE, 'rosters', 'hefei.json'), JSON.stringify({ w
   ok('a stranger pressing Start still gets the Russia sign-up', runs[6] && runs[6].messages === 1);
   const noAdmin = await botRun([[7005, '/export']], { BOONCHU_CHAT_ID: '' });
   ok('/export gives nothing to anyone while BOONCHU_CHAT_ID is unset', noAdmin.length === 1 && noAdmin[0].messages === 0, JSON.stringify(noAdmin.map(r => r.messages)));
+
+  console.log('\n-- the server outlives a database connection the database ends --');
+  await request('GET', '/api/bkk/schedule?days=3');
+  const cut = (await pool.query(`SELECT count(pg_terminate_backend(pid))::int AS n FROM pg_stat_activity
+    WHERE application_name = 'lock-test-server' AND state = 'idle'`)).rows[0].n;
+  await new Promise(r => setTimeout(r, 500));
+  const after = child.exitCode === null ? (await request('GET', '/api/bkk/schedule?days=3')).status : null;
+  ok('its idle connections ended, the server still runs and answers', cut > 0 && child.exitCode === null && after === 200,
+    `${cut} ended, exit ${child.exitCode}, ${after}\n${log.slice(-400)}`);
 
   await pool.query(`DELETE FROM journal_entries WHERE student_id = ANY($1::int[])`, [ids]);
   await pool.query(`DELETE FROM students WHERE name LIKE 'Locktest %'`);
