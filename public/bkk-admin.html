@@ -359,7 +359,7 @@
       mergePlan: j => `Keep: ${j.keep.name} (${j.keep.code}) ${j.keep.email || ''}\nFold in: ${j.fold.name} (${j.fold.code}) ${j.fold.email || ''}\n\nMoves: ${j.moved.passes} passes, ${j.moved.bookings} classes, ${j.moved.orders} payments, ${j.moved.photo_members} photos, ${j.moved.notes} notes.${j.seatsCancelled ? `\n${j.seatsCancelled} class(es) were booked on both: one copy is cancelled.` : ''}${j.journalLeft ? `\n\nBoth have a practice journal: entries written under ${j.fold.code} stay there and do not show on this profile. To keep that journal, merge the other way round.` : ''}${j.left.checks || j.left.photos ? `\nStays on ${j.fold.code} (this profile already has the same day or photo): ${j.left.checks} check(s), ${j.left.photos} photo tag(s).` : ''}\n\nThe other code and email lead to this profile from now on. Undo is on this card.`,
       mergeDone: n => `Done. ${n} has one profile now.`,
       foldedL: 'Merged in:', undoBtn: 'Undo', qUndo: c => `Take ${c} back out as its own profile? Everything that moved goes back.`,
-      undoDone: j => `Undone.${j.fieldsKept && j.fieldsKept.length ? `\nChanged on the kept profile since, so not moved back: ${j.fieldsKept.join(', ')}.` : ''}${j.seatsNotBack ? `\n${j.seatsNotBack} cancelled class(es) not booked again: the seat is taken or the pack is used up.` : ''}${j.twinsUndone && j.twinsUndone.passes ? `\n${j.twinsUndone.passes} Rezerv pass(es) kept void as the copy of the other profile's sale are live again: check each student has one pass.` : ''}${j.movesUndone ? `\n${j.movesUndone} Rezerv class(es) of the other profile taken from a pass here are back on Rezerv, and the pass has them back.` : ''}`,
+      undoDone: j => `Undone.${j.fieldsKept && j.fieldsKept.length ? `\nChanged on the kept profile since, so not moved back: ${j.fieldsKept.join(', ')}.` : ''}${j.seatsNotBack ? `\n${j.seatsNotBack} cancelled class(es) not booked again: the seat is taken or the pack is used up.` : ''}${j.twinsUndone && j.twinsUndone.passes ? `\n${j.twinsUndone.passes} Rezerv pass(es) kept void as the copy of the other profile's sale are live again: check each student has one pass.` : ''}`,
       impTitle: 'Move students from Rezerv', impBtn: 'Import',
       impHelp: 'One student per line: name | email | plan | end date | classes left (packs only). Email can be empty now and added later by importing the same line again with the email. Safe to run twice: nobody and no pass is added twice.',
       impDone: j => `Done. ${j.members} students (${j.newMembers} new), ${j.passes} passes added, ${j.emailsAdded} emails filled in.`,
@@ -453,7 +453,7 @@
       mergeNo: 'ยังไม่ได้รวม',
       mergePlan: j => `เก็บ: ${j.keep.name} (${j.keep.code}) ${j.keep.email || ''}\nรวมเข้ามา: ${j.fold.name} (${j.fold.code}) ${j.fold.email || ''}\n\nย้าย: แพ็กเกจ ${j.moved.passes} คลาส ${j.moved.bookings} การชำระเงิน ${j.moved.orders} รูป ${j.moved.photo_members} โน้ต ${j.moved.notes}${j.seatsCancelled ? `\nมี ${j.seatsCancelled} คลาสที่จองไว้ทั้งสองโปรไฟล์: ยกเลิกอันที่ซ้ำ` : ''}${j.journalLeft ? `\n\nทั้งสองโปรไฟล์มีบันทึกการฝึก: บันทึกของ ${j.fold.code} จะอยู่ที่เดิม ไม่แสดงในโปรไฟล์นี้ ถ้าอยากเก็บบันทึกนั้น ให้รวมกลับด้าน` : ''}${j.left.checks || j.left.photos ? `\nอยู่ที่ ${j.fold.code} ต่อ (โปรไฟล์นี้มีวันหรือรูปเดียวกันแล้ว): ผลตรวจ ${j.left.checks} รูป ${j.left.photos}` : ''}\n\nรหัสและอีเมลของอีกอันจะพามาที่โปรไฟล์นี้ ยกเลิกการรวมได้ที่การ์ดนี้`,
       mergeDone: n => `เรียบร้อย ${n} มีโปรไฟล์เดียวแล้ว`,
-      foldedL: 'รวมเข้ามาแล้ว:', undoBtn: 'ยกเลิกการรวม', qUndo: c => `แยก ${c} ออกเป็นโปรไฟล์ของตัวเองอีกครั้งไหม? ทุกอย่างที่ย้ายมาจะกลับไป`, undoDone: j => `แยกออกแล้ว${j.fieldsKept && j.fieldsKept.length ? `\nมีการแก้ในโปรไฟล์ที่เก็บไว้หลังรวม จึงไม่ย้ายกลับ: ${j.fieldsKept.join(', ')}` : ''}${j.seatsNotBack ? `\nมี ${j.seatsNotBack} คลาสที่ยกเลิกไว้ไม่ได้จองคืน: ที่นั่งถูกใช้แล้วหรือแพ็กเกจหมดแล้ว` : ''}${j.twinsUndone && j.twinsUndone.passes ? `\nแพ็กเกจจาก Rezerv ${j.twinsUndone.passes} ใบที่ยกเลิกไว้เพราะเป็นสำเนาการขายของอีกโปรไฟล์ กลับมาใช้งานได้แล้ว: ตรวจว่านักเรียนแต่ละคนมีแพ็กเกจเดียว` : ''}${j.movesUndone ? `\nคลาส Rezerv ของอีกโปรไฟล์ ${j.movesUndone} คลาสที่หักจากแพ็กเกจที่นี่ กลับไปเป็น Rezerv และแพ็กเกจได้คืนแล้ว` : ''}`,
+      foldedL: 'รวมเข้ามาแล้ว:', undoBtn: 'ยกเลิกการรวม', qUndo: c => `แยก ${c} ออกเป็นโปรไฟล์ของตัวเองอีกครั้งไหม? ทุกอย่างที่ย้ายมาจะกลับไป`, undoDone: j => `แยกออกแล้ว${j.fieldsKept && j.fieldsKept.length ? `\nมีการแก้ในโปรไฟล์ที่เก็บไว้หลังรวม จึงไม่ย้ายกลับ: ${j.fieldsKept.join(', ')}` : ''}${j.seatsNotBack ? `\nมี ${j.seatsNotBack} คลาสที่ยกเลิกไว้ไม่ได้จองคืน: ที่นั่งถูกใช้แล้วหรือแพ็กเกจหมดแล้ว` : ''}${j.twinsUndone && j.twinsUndone.passes ? `\nแพ็กเกจจาก Rezerv ${j.twinsUndone.passes} ใบที่ยกเลิกไว้เพราะเป็นสำเนาการขายของอีกโปรไฟล์ กลับมาใช้งานได้แล้ว: ตรวจว่านักเรียนแต่ละคนมีแพ็กเกจเดียว` : ''}`,
       impTitle: 'ย้ายนักเรียนจาก Rezerv', impBtn: 'นำเข้า',
       impHelp: 'บรรทัดละหนึ่งคน: ชื่อ | อีเมล | แพ็กเกจ | วันหมดอายุ | ครั้งที่เหลือ (เฉพาะแพ็กครั้ง) อีเมลเว้นว่างไว้ก่อนได้ แล้วนำเข้าบรรทัดเดิมพร้อมอีเมลภายหลัง กดซ้ำได้ ไม่มีชื่อหรือบัตรซ้ำ',
       impDone: j => `เสร็จแล้ว นักเรียน ${j.members} คน (ใหม่ ${j.newMembers}) เพิ่มบัตร ${j.passes} ใบ เติมอีเมล ${j.emailsAdded} คน`,
@@ -545,6 +545,7 @@
     ontoQ: (c, w, p, n) => `Take ${c} on ${w} from ${p}? ${n == null ? 'Unlimited: no class is used.' : `It uses 1 class: ${n} left after.`}`,
     ontoUndoQ: (c, w, p, n) => `Put ${c} on ${w} back on Rezerv? ${n == null ? p : `${p} gets 1 class back: ${n} left after.`}`,
     ontoDone: (p, n) => n == null ? `Done. ${p}.` : `Done. ${p}: ${n} left.`,
+    undoMovedFirst: ds => `Rezerv classes taken from a pass on these profiles: ${ds}. Press Undo on each in the profile's visits first, then undo the merge.`,
     ontoSame: (c, t) => `Check first: they already have ${c || 'a class'}${t ? ' at ' + t : ''} on a pass that day. This may be the same class.`,
     ontoCarried: (n, d) => `This class stays on the pass: on ${d} the Rezerv import counted ${n} class${n === 1 ? '' : 'es'} used on its Rezerv copy, and this one may be among them. If it was a mistake, give the class back with Extend on the pass.`,
     ontoNotBegun: d => `Their pass had not begun on that day (${d ? `it begins ${d}` : 'it begins on its first class'}). This button never changes a pass's days.`,
@@ -629,6 +630,7 @@
     ontoQ: (c, w, p, n) => `หัก ${c} วันที่ ${w} จาก ${p}? ${n == null ? 'แพ็กเกจไม่จำกัด: ไม่เสียครั้ง' : `ใช้ 1 ครั้ง เหลือ ${n} ครั้ง`}`,
     ontoUndoQ: (c, w, p, n) => `คืน ${c} วันที่ ${w} กลับไปเป็น Rezerv? ${n == null ? p : `${p} ได้คืน 1 ครั้ง เหลือ ${n} ครั้ง`}`,
     ontoDone: (p, n) => n == null ? `เรียบร้อย ${p}` : `เรียบร้อย ${p}: เหลือ ${n} ครั้ง`,
+    undoMovedFirst: ds => `มีคลาส Rezerv ที่หักจากแพ็กเกจในโปรไฟล์เหล่านี้: ${ds} กด ยกเลิกการหัก ที่แต่ละคลาสในประวัติก่อน แล้วค่อยยกเลิกการรวม`,
     ontoSame: (c, t) => `ตรวจก่อน: วันนั้นมี ${c || 'คลาส'}${t ? ' ' + t : ''} ที่หักจากแพ็กเกจแล้ว อาจเป็นคลาสเดียวกัน`,
     ontoCarried: (n, d) => `คลาสนี้ยังหักจากแพ็กเกจอยู่: เมื่อ ${d} การนำเข้าจาก Rezerv นับ ${n} ครั้งที่ใช้ในสำเนา Rezerv ของแพ็กเกจนี้ คลาสนี้อาจอยู่ในนั้น ถ้าหักผิด ให้คืนครั้งด้วยปุ่ม ยืดวัน ที่แพ็กเกจ`,
     ontoNotBegun: d => `วันนั้นแพ็กเกจยังไม่เริ่ม (${d ? `เริ่ม ${d}` : 'เริ่มเมื่อเรียนคลาสแรก'}) ปุ่มนี้ไม่เปลี่ยนวันของแพ็กเกจ`,
@@ -1256,6 +1258,8 @@
   window.unmerge = async (code) => {
     if (!confirm(T('qUndo', code))) return;
     const r = await api(`/api/bkk/admin/members/${encodeURIComponent(code)}/unmerge`, { method: 'POST', body: '{}' });
+    const j0 = r.ok ? null : await r.clone().json().catch(() => ({}));
+    if (j0 && j0.movedClasses) { alert(T('undoMovedFirst', j0.movedClasses.map(d => ymdLong(d)).join(', '))); return; }
     const j = await shout(r);
     if (j) { alert(T('undoDone', j)); findStudents(); }
   };
@@ -1729,7 +1733,7 @@
     const hrs = j.cutoffHours ?? (String(j.message || '').match(/(\d+)\s*h/) || [])[1];
     const rezerv = b.cover === 'rezerv' && !b.passName;
     CV.flash = { kind: j.creditReturned || rezerv ? 'ok' : 'warn', fresh: true,
-      text: T('bkCancelled', b.name, !!j.creditReturned, hrs, rezerv) };
+      text: j.carried ? T('ontoCarried', j.carried.classes, ymdLong(j.carried.on)) : T('bkCancelled', b.name, !!j.creditReturned, hrs, rezerv) };
     loadClass();
   };
   window.cvClose = async () => {
