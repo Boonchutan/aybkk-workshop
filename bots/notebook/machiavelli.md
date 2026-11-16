@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-11-16T00:10:22.333Z
+Inbox last read: 2026-11-16T06:11:15.571Z
 
 ## Standing orders from Boonchu
 - 2026-11-08 BRAND COLOURS CHANGED (Boonchu picked "L1 Grande Galerie", the Louvre palette, for aybkk.net; PR on branch claude/louvre-palette, Neo): Louvre red #7E262E (hero band, headings), oxblood #5F1C23 (deep sections), honey parquet #D6A35C (buttons, offer bars; same hue as the new maple floor), limestone #F4EDE2 (page), soft brass #84621F (prices, gilt), pyramid steel blue #2F507F (links only). The old aubergine #3E1442 + mustard #F2C94C + pink is retired on the website. Posters, carousels, the timetable poster and the review QR card still use aubergine and gold: move them to the Louvre palette only after Boonchu says go for each piece. Small text rule from the same day: nothing under 15 px on the site; keep the grid.
@@ -283,3 +283,4 @@ Inbox last read: 2026-11-16T00:10:22.333Z
 - 2026-11-15 13:08: check-in. Course prices led (due 19:00 today, 2nd nudge, last today); serious lead send or close 2nd nudge (last today), due 19:00. No reminders due since 07:08. Inbox 13:08: 0 new, 0 hot.
 - 2026-11-15 19:08: Course prices: no answer by 19:00, default B applied (sales Tue 15 Dec, start Tue 22 Dec; next choice by 19:00 Sun 22 Nov). Serious lead: default applied (stays open, nothing sent, Carne checks Sat 21 Nov). Keyword test reminder checked: log empty, test not started, no ask. No win reported; next step given: answer the returning package student (orientation next week, how to book). Inbox 19:08: 0 new, 0 hot.
 - 2026-11-16 07:08: Carne posted (0 new leads, 2 open; serious lead 30 days silent; keyword test has no numbers, paste or call off); Plato paused (expected). No @Machi requests. Choices by 19:00 today: serious lead (default stays open) and keyword test (default stays on hold). Course prices next choice Sun 22 Nov (6 days). Reminders: Mysore trip flights/hotel (daily), Rezerv import (daily). Inbox 07:08: 0 new, 0 hot; returning package student (14 Nov) still last from them, led with it. No wins this week. Board rebuilt.
+- 2026-11-16 13:08: check-in. Serious lead and keyword test still waiting (due 19:00 today, 2nd nudge, last today). No reminders due since 07:08. Inbox 13:08: 4 threads with news, 4 hot (1 booking problem on the new website: 2 booked classes missing, flagged to Boonchu; 1 possible 12-month payment slip, Boonchu to check). No orientation class in the 7-day schedule.
