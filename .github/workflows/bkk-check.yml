@@ -48,7 +48,7 @@ jobs:
           # Actions logs on this public repo are public: no seat or booking numbers here.
           for c in cs[:8]:
               left = c.get('seatsLeft', 0)
-              print(f"  {c['startAt'][:16]}  {c['title'][:34]:34} {'full' if left < 1 else 'open'}")
+              print(f"  {c['startAt'][:16]}  {c['title'][:34]:34} {'closed' if c.get('closed') else 'full' if left < 1 else 'open'}")
           print('booking counts hidden without the key:', 'yes' if not any('booked' in c or 'capacity' in c for c in cs) else 'NO')
           EOF
 

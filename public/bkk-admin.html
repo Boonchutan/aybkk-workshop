@@ -1377,7 +1377,8 @@
 
   window.bookFor = async (code) => {
     const d = await api('/api/bkk/schedule?days=14').then(r => r.json());
-    const list = (d.classes || []).slice(0, 40);
+    // Classes still to come, as before the timetable kept today's started ones.
+    const list = (d.classes || []).filter(c => !c.started).slice(0, 40);
     const pick = ask(T('qWhichClass') + '\n' + list.map((c, i) =>
       `${i + 1}. ${day(c.startAt)} ${time(c.startAt)} ${cls(c.title)} (${T('seatsLeft', c.seatsLeft)})`).join('\n'), '1');
     if (!pick) return;

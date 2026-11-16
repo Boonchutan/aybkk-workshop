@@ -28,6 +28,10 @@ const LETTER_PER_DAY = 60;                     // the same mail account sends re
 const LETTER_ASKS_PER_DAY = 3;                 // confirm mails to one address
 const CANCEL_CUTOFF_HOURS = 5;                 // cancel ≥5h before start → credit back
 const LATE_ADD_DAYS = 7;                       // staff put someone who came on a class that is over, this many days back
+// A student can still book a class (or buy a drop-in for it) this many minutes
+// after it starts (Boonchu, 16 Nov 2026): Mysore 60, every other class 30.
+// bookCloseAt is the one place that reads it.
+const BOOK_LATE_MIN = { mysore: 60, default: 30 };
 const VAT_PCT = 7;                             // Thai VAT, charged on price + online fee
 // The payment watch (Boonchu, 15 Nov 2026): stuck online payments are asked
 // about again by the server itself, and Telegram hears only about problems.
@@ -743,6 +747,11 @@ function mountBkk(app, opts = {}) {
   const refno12 = n => String(n).padStart(12, '0');
   const bkkNow = () => new Date();
   const startAtISO = (dateStr, hhmm) => `${dateStr}T${hhmm}:00${TZ_OFFSET}`;
+  const bkkISO = ms => new Date(ms + 7 * 3600000).toISOString().slice(0, 16) + ':00' + TZ_OFFSET;
+  // When a student's booking for this slot on this day closes, in ms (BOOK_LATE_MIN).
+  const bookCloseAt = (slot, dateStr) => Date.parse(startAtISO(dateStr, slot.start_time))
+    + (Object.hasOwn(BOOK_LATE_MIN, slot.kind) ? BOOK_LATE_MIN[slot.kind] : BOOK_LATE_MIN.default) * 60000;
+  const BOOK_CLOSED = 'booking for this class has closed';
   // Calendar date in Bangkok, NOT UTC. toISOString() would put 01:00 Bangkok on
   // the previous day — and 05:30 Mysore is booked in exactly those hours.
   const ymd = d => new Date(d.getTime() + 7 * 3600000).toISOString().slice(0, 10);
@@ -897,16 +906,19 @@ function mountBkk(app, opts = {}) {
   // booking page only needs "full", "last 1-3" and "spots free"; the real numbers would
   // say how many practise in each class.
   const PUBLIC_SEATS_MAX = 4;
+  // A class that has started stays listed until the end of its Bangkok day, with
+  // bookUntil (bookCloseAt) and, once they hold, started and closed. The days
+  // start today, so no earlier day's class is ever listed.
   app.get('/api/bkk/schedule', async (req, res) => {
     const staff = isAdmin(req);
     if (staff) res.set('Cache-Control', 'private, no-store');
     try {
       const days = Math.min(SCHEDULE_DAYS, Math.max(1, parseInt(req.query.days) || 14));
       const slots = (await q('SELECT * FROM bkk_class_slots WHERE active')).rows;
-      const from = new Date();
+      const nowMs = bkkNow().getTime();
       const dates = [];
       for (let i = 0; i < days; i++) {
-        const d = new Date(from.getTime() + i * 86400000);
+        const d = new Date(nowMs + i * 86400000);
         dates.push(ymd(d));
       }
       const overrides = (await q(
@@ -927,12 +939,13 @@ function mountBkk(app, opts = {}) {
           // ?? not || — an override capacity of 0 ("closed today") is a real value.
           const cap = (ov && ov.capacity != null) ? ov.capacity : s.capacity;
           const booked = (counts.find(c => c.slot_id === s.id && ymd(new Date(c.class_date)) === dstr) || {}).n || 0;
-          const startAt = startAtISO(dstr, s.start_time);
-          if (new Date(startAt) < bkkNow()) continue;         // hide past classes
+          const startAt = startAtISO(dstr, s.start_time), closeMs = bookCloseAt(s, dstr);
           out.push({
             slotId: s.id, date: dstr, startAt, title: s.title, kind: s.kind,
             teachers: rotationTeacher(s.code, dstr) || s.teachers || '', durationMin: s.duration_min,
-            isOnline: s.is_online,
+            isOnline: s.is_online, bookUntil: bkkISO(closeMs),
+            ...(nowMs >= Date.parse(startAt) ? { started: true } : {}),
+            ...(nowMs >= closeMs ? { closed: true } : {}),
             ...(staff ? { capacity: cap, booked, seatsLeft: Math.max(0, cap - booked) }
               : { seatsLeft: Math.min(PUBLIC_SEATS_MAX, Math.max(0, cap - booked)) }),
           });
@@ -2211,12 +2224,18 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const stays = passes.filter(p => (['active', 'frozen'].includes(p.status) || usedUp(p)) && p.product_code !== 'dropin'
         && !(p.kind === 'credits' && Number(p.credits_total) === 1)).length;
       // classDate is the Bangkok day as text: class_date comes back as a JS
-      // Date, which a browser in another timezone can shift a day.
-      const bookings = (await q(
-        `SELECT b.*, to_char(b.class_date,'YYYY-MM-DD') AS "classDate", s.title, s.start_time, s.is_online FROM bkk_bookings b
+      // Date, which a browser in another timezone can shift a day. bookings are
+      // the classes to come; startedToday, today's seats in a class that has
+      // begun, which the timetable still lists and marks as booked.
+      const seats = (await q(
+        `SELECT b.*, to_char(b.class_date,'YYYY-MM-DD') AS "classDate", s.title, s.start_time, s.is_online,
+           b.start_at >= now() AS ahead FROM bkk_bookings b
          JOIN bkk_class_slots s ON s.id=b.slot_id
-         WHERE b.member_id=$1 AND b.status='booked' AND b.start_at >= now()
+         WHERE b.member_id=$1 AND b.status='booked'
+           AND (b.start_at >= now() OR b.class_date = (now() AT TIME ZONE 'Asia/Bangkok')::date)
          ORDER BY b.start_at`, [m.id])).rows;
+      const bookings = seats.filter(b => b.ahead).map(({ ahead, ...b }) => b);
+      const startedToday = seats.filter(b => !b.ahead).map(b => ({ id: b.id, slot_id: b.slot_id, classDate: b.classDate }));
       // Only what a teacher chose to share. Notes kept for the team never
       // appear here — the student is not the audience for all of them.
       const notes = (await q(
@@ -2248,7 +2267,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
           validFrom: p.valid_from, validUntil: p.valid_until, dailyCap: p.daily_cap,
         })),
         renewals: Math.max(0, stays - 1),
-        bookings,
+        bookings, startedToday,
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
@@ -2279,13 +2298,14 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (new Date(`${date}T12:00:00${TZ_OFFSET}`).getUTCDay() !== slot.weekday)
       throw new Error('that class is not on that day');
     const startAt = startAtISO(date, slot.start_time);
-    // Students cannot book a class that has begun. Staff can, for the whole
-    // length of the class — someone walks in at 05:35 and has to be put on the
-    // list before they can be checked in.
+    // Students can book until bookCloseAt (BOOK_LATE_MIN after the start). Staff
+    // can, for the whole length of the class: someone walks in at 05:35 and has
+    // to be put on the list before they can be checked in.
+    if (!staff && bkkNow().getTime() >= bookCloseAt(slot, date)) throw new Error(BOOK_CLOSED);
     const startedAgoMin = (bkkNow() - new Date(startAt)) / 60000;
-    const graceMin = staff ? (slot.duration_min || 120) : 0;
+    const graceMin = slot.duration_min || 120;
     const over = staff && startedAgoMin > graceMin;
-    if (startedAgoMin > graceMin && !(over && late)) throw new Error(endedMsg || 'that class has already started');
+    if (staff && startedAgoMin > graceMin && !late) throw new Error(endedMsg || 'that class has already started');
     if (over && date < bkkDaysAgo(LATE_ADD_DAYS)) throw new Error(`that class was more than ${LATE_ADD_DAYS} days ago`);
 
     const ov = (await db.query(
@@ -5733,7 +5753,6 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // A Rezerv class moved over with no slot is one read-only class per
   // (day, title, start time). key is what the page sends back for one class.
   const CAL_TIME = `to_char(b.start_at AT TIME ZONE 'Asia/Bangkok','HH24:MI')`;
-  const bkkISO = ms => new Date(ms + 7 * 3600000).toISOString().slice(0, 16) + ':00' + TZ_OFFSET;
   function calClass({ slot, date, ov, n = {}, time, title }) {
     const counts = { booked: n.booked || 0, checkedIn: n.checkedIn || 0, noShows: n.noShows || 0 };
     if (!slot) {
