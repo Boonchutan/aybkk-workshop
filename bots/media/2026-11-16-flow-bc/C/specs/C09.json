@@ -1,0 +1,31 @@
+[
+ {
+  "t": 130,
+  "tight": false,
+  "wwidth": 810,
+  "wpos": [
+   60,
+   60
+  ],
+  "ink_w": "light",
+  "sz": 40,
+  "cws": [
+   607
+  ],
+  "sxy": [
+   "R",
+   268
+  ],
+  "ink_s": "light",
+  "photo": "14-715",
+  "id": "FC9",
+  "word": "COUNTS",
+  "line": "Real exercise, though? An hour of flow yoga COUNTS as medium effort, a bit easier than fast walking. Heart rate makes it look harder. Not Ashtanga.",
+  "credit": "SHERMAN ET AL. \u00b7 2017 (retold)",
+  "wshadow": 1.6,
+  "wburn": 0.25,
+  "sright": true,
+  "sburn": 0.4,
+  "wm": "left"
+ }
+]

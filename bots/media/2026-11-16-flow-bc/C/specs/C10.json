@@ -1,0 +1,35 @@
+[
+ {
+  "t": 0,
+  "tight": false,
+  "wwidth": 810,
+  "wpos": [
+   60,
+   60
+  ],
+  "ink_w": "light",
+  "sz": 42,
+  "cws": [
+   353
+  ],
+  "sxy": [
+   "R",
+   658
+  ],
+  "ink_s": "light",
+  "photo": "14-200",
+  "id": "FC10",
+  "word": "ENOUGH",
+  "line": "Is 540 ENOUGH? More movement, longer life, up to 450 to 750 medium-effort minutes a week. A link, not proof. Our math? 6 mornings of 90.",
+  "credit": "AREM ET AL. · 2015 (retold)",
+  "wburn": 0.25,
+  "sright": true,
+  "sburn": 0.3,
+  "wm": "center",
+  "wmxy": [
+   360,
+   1250
+  ],
+  "line_br": "Is 540 ENOUGH? | More movement, | longer life, up to | 450 to 750 | medium-effort | minutes a week. | A link, not proof. | Our math? | 6 mornings of 90."
+ }
+]
