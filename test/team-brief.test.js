@@ -72,7 +72,8 @@ const fakeDriver = { session: () => ({
   // As in server.js: the help desk webhook is left out of the JSON parser.
   const jsonBody = express.json();
   app.use((req, res, next) => HELPDESK_PATH_RE.test(req.path) ? next() : jsonBody(req, res, next));
-  mountBkk(app, { pgPool: pool, cloudinary: fakeCloud });
+  // Wait for its schema, not a guess: on a slow run the seeds below wrote bkk_members.source before it existed.
+  await mountBkk(app, { pgPool: pool, cloudinary: fakeCloud });
   mountInbox(app, { pgPool: pool, ai: null, notify: async () => true });
   const team = mountTeam(app, { pgPool: pool, cloudinary: fakeCloud, fetch: lineFetch, driver: fakeDriver,
     now: () => clock, notify: async t => { told.push(t); return true; } });

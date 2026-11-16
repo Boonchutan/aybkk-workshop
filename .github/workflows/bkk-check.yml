@@ -44,7 +44,7 @@ jobs:
           except Exception:
               print('schedule: NOT JSON ->', open('/tmp/s.json').read()[:200]); raise SystemExit(0)
           cs = d.get('classes', [])
-          print(f"classes in next 7 days: {len(cs)}")
+          print(f"classes today and the next 6 days: {len(cs)}")
           # Actions logs on this public repo are public: no seat or booking numbers here.
           for c in cs[:8]:
               left = c.get('seatsLeft', 0)

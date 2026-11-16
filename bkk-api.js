@@ -745,12 +745,18 @@ function mountBkk(app, opts = {}) {
   const newRefno = () => Number(String(Date.now()).slice(-8) +
     String(Math.floor(Math.random() * 10000)).padStart(4, '0'));
   const refno12 = n => String(n).padStart(12, '0');
-  const bkkNow = () => new Date();
+  // The class clock: the booking window, the timetable and the door read it. Tests set
+  // opts.clock to hit a window's edge to the millisecond (opts.now is the money clock).
+  const classClock = typeof opts.clock === 'function' ? opts.clock : Date.now;
+  const bkkNow = () => new Date(classClock());
   const startAtISO = (dateStr, hhmm) => `${dateStr}T${hhmm}:00${TZ_OFFSET}`;
   const bkkISO = ms => new Date(ms + 7 * 3600000).toISOString().slice(0, 16) + ':00' + TZ_OFFSET;
-  // When a student's booking for this slot on this day closes, in ms (BOOK_LATE_MIN).
-  const bookCloseAt = (slot, dateStr) => Date.parse(startAtISO(dateStr, slot.start_time))
-    + (Object.hasOwn(BOOK_LATE_MIN, slot.kind) ? BOOK_LATE_MIN[slot.kind] : BOOK_LATE_MIN.default) * 60000;
+  // When a student's booking for this slot on this day closes, in ms: BOOK_LATE_MIN after the
+  // start, and never past the end of its Bangkok day, when the timetable stops listing it.
+  const bookCloseAt = (slot, dateStr) => Math.min(
+    Date.parse(startAtISO(dateStr, slot.start_time))
+      + (Object.hasOwn(BOOK_LATE_MIN, slot.kind) ? BOOK_LATE_MIN[slot.kind] : BOOK_LATE_MIN.default) * 60000,
+    Date.parse(startAtISO(dateStr, '00:00')) + 86400000);
   const BOOK_CLOSED = 'booking for this class has closed';
   // Calendar date in Bangkok, NOT UTC. toISOString() would put 01:00 Bangkok on
   // the previous day — and 05:30 Mysore is booked in exactly those hours.
@@ -952,8 +958,10 @@ function mountBkk(app, opts = {}) {
         }
       }
       out.sort((a, b) => a.startAt.localeCompare(b.startAt));
-      // to: the last day loaded, so a page knows a later day is not "no class".
-      res.json({ classes: out, moonDays: Object.fromEntries(moon), to: dates[dates.length - 1], cutoffHours: CANCEL_CUTOFF_HOURS });
+      // to: the last day loaded, so a page knows a later day is not "no class". now: this
+      // server's clock, so a phone set a few minutes off still grays a class at bookUntil.
+      res.json({ classes: out, moonDays: Object.fromEntries(moon), to: dates[dates.length - 1], cutoffHours: CANCEL_CUTOFF_HOURS,
+        now: nowMs });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 

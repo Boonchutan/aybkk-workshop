@@ -633,6 +633,7 @@
   .cal .ct .tm{display:block;width:100%;background:none;border:0;margin:2px 0;padding:6px 0;font:inherit;color:inherit;letter-spacing:inherit;
     line-height:inherit;text-align:left;cursor:pointer}
   .cal .ct .tm.mine{color:var(--promo-hi)}
+  .cal .ct .tm.shut{opacity:.6}
   .cal .ct .tm .ol{display:block;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
   .cal .bk{display:inline-block;width:6px;height:6px;margin-left:4px;border-radius:50%;background:var(--promo-hi);vertical-align:2px}
   .cal .legend .lmine{color:var(--promo-hi);font-weight:700}
@@ -2208,6 +2209,12 @@
     return fetch(url, { signal: c.signal }).finally(() => clearTimeout(timer));
   };
   const getJSON = url => fetchT(url).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  // Class times are read on the server's clock (the schedule's now): a phone set a few minutes
+  // fast must not gray a class the server still books, nor a slow one keep Book live.
+  let SKEW = 0;
+  const clock = () => Date.now() + SKEW;
+  const noteClock = s => { if (s && Number.isFinite(s.now)) SKEW = s.now - Date.now(); return s; };
+  const getSchedule = () => getJSON(SCHEDULE_URL).then(noteClock);
   const SKEL = $('#view').innerHTML;
   async function load() {
     // The posters are a bonus: the timetable never waits for them or fails with them.
@@ -2217,7 +2224,7 @@
     });
     try {
       const [s, p] = await Promise.all([
-        getJSON(SCHEDULE_URL),
+        getSchedule(),
         getJSON('/api/bkk/products'),
         loadMine(),
       ]);
@@ -2249,13 +2256,16 @@
   let LOADED_AT = 0, LOAD_TRY = 0, REFETCH = null, DRAWN = '', DIRTY = false;
   const phases = () => CLASSES.map(c => isClosed(c) ? 2 : isStarted(c) ? 1 : 0).join('');
   const focusSel = el => {
-    const d = el.dataset || {}, k = ['act', 'cls', 'day', 'id', 'slot', 'date', 'v', 'dir'].filter(x => d[x] != null);
+    const d = el.dataset || {}, k = ['act', 'cls', 'day', 'id', 'slot', 'date', 'v', 'dir', 'mat', 'matbk'].filter(x => d[x] != null);
     return k.length ? el.tagName.toLowerCase() + k.map(x => `[data-${x}="${CSS.escape(d[x])}"]`).join('') : '';
   };
   function quietRedraw() {
     if (current !== 'schedule' || !LOADED || document.hidden) return;
     const a = document.activeElement;
-    if ($('#dlg').open || (a && a.matches && a.matches('input, select, textarea'))) return;
+    // A ticked box keeps its tick across a redraw (MAT_WANT, need_mat): only typing, or a mat
+    // change still on its way to the server, holds it back.
+    if ($('#dlg').open || (a && a.matches && a.matches('input:not([type=checkbox]), select, textarea'))
+      || $('#view input[data-matbk]:disabled')) return;
     const y = scrollY, box = $('#view .wkbox'), x = box ? box.scrollLeft : null;
     const sel = a && a !== document.body && $('#view').contains(a) ? focusSel(a) : '';
     renderSchedule();
@@ -2268,33 +2278,51 @@
   function refetch() {
     if (REFETCH) return REFETCH;
     LOAD_TRY = Date.now();
-    REFETCH = Promise.all([getJSON(SCHEDULE_URL), loadMine()]).then(([s]) => {
+    REFETCH = Promise.all([getSchedule(), loadMine()]).then(([s]) => {
       if (!Array.isArray(s.classes)) return;
-      CLASSES = s.classes; MOON = s.moonDays || {}; takeSchedule(s); LOADED_AT = Date.now(); DIRTY = true;
+      CLASSES = s.classes; MOON = s.moonDays || {}; takeSchedule(s); LOADED_AT = Date.now(); DIRTY = true; rollDay();
     }).catch(() => {}).finally(() => { REFETCH = null; tick(); });
     return REFETCH;
   }
+  // A tab still open after Bangkok midnight moves to the new day (the old one has left the list).
+  const rollDay = () => { if (selDate && selDate < bkkToday()) { selDate = bkkToday(); DIRTY = true; } };
+  // Besides the 30 second check, one timer for the next start or bookUntil, so a class grays on the minute.
+  let EDGE = null;
+  function armEdge() {
+    clearTimeout(EDGE);
+    const now = clock();
+    let next = Infinity;
+    for (const c of CLASSES) for (const iso of [c.startAt, c.bookUntil]) {
+      const ms = iso ? Date.parse(iso) : NaN;
+      if (ms > now && ms < next) next = ms;
+    }
+    if (next < Infinity) EDGE = setTimeout(tick, Math.min(next - now + 50, 864e5));
+  }
   function tick() {
     if (!LOADED || document.hidden) return;
-    if (Date.now() - LOAD_TRY >= 15 * 60e3) { refetch(); return; }
     // The drop-in form: a class whose booking closed can no longer be picked.
     const bc = $('#dlg').open && $('#bc');
     if (bc) for (const o of bc.options) {
       const c = o.value && CLASSES.find(x => clsKey(x) === o.value);
       if (c && isClosed(c)) o.disabled = true;
     }
+    rollDay();
     if (DIRTY || phases() !== DRAWN) quietRedraw();
+    armEdge();
+    if (Date.now() - LOAD_TRY >= 15 * 60e3) refetch();
   }
   setInterval(tick, 30e3);
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) return;
     loadTheme();
-    if (LOADED && Date.now() - LOADED_AT > 5 * 60e3) refetch(); else tick();
+    // What the clock already says is drawn at once; the fresh seats follow when the refetch lands.
+    tick();
+    if (LOADED && Date.now() - LOADED_AT > 5 * 60e3) refetch();
   });
 
   // The calendar shows Bangkok's "today" regardless of the visitor's timezone —
   // a student in China is 1h ahead and must not see tomorrow highlighted.
-  const bkkToday = () => new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10);
+  const bkkToday = () => new Date(clock() + 7 * 3600e3).toISOString().slice(0, 10);
   let selDate = null, calMonth = null;         // calMonth = 'YYYY-MM'
   // calWeek = the Sunday the week view starts on. OPEN = the class the student
   // is inside ('slotId|date'); OPEN_Y = where they were on the calendar.
@@ -2329,10 +2357,10 @@
   // "Last 3 spots" and under, else "Spots available". Staff pages keep their numbers.
   const seatsText = c => c.seatsLeft < 1 ? t('full') : c.seatsLeft <= 3 ? t('lastSpots', c.seatsLeft) : t('spotsFree');
   const seatsCls = c => c.seatsLeft > 3 ? 'quiet' : c.seatsLeft > 0 ? 'last' : 'full';
-  // Booking closes at bookUntil, a while after the start (the server's rule). The server's
-  // own closed counts too, for a phone whose clock is behind. Instants, not the phone's zone.
-  const isClosed = c => !!c.closed || (!!c.bookUntil && Date.now() >= Date.parse(c.bookUntil));
-  const isStarted = c => !!c.started || Date.now() >= Date.parse(c.startAt);
+  // Booking closes at bookUntil, a while after the start (the server's rule), read on the server's
+  // clock; its own closed counts too. Instants, not the phone's zone.
+  const isClosed = c => !!c.closed || (!!c.bookUntil && clock() >= Date.parse(c.bookUntil));
+  const isStarted = c => !!c.started || clock() >= Date.parse(c.startAt);
   const closesLine = c => !isClosed(c) && isStarted(c) && c.bookUntil
     ? `<div class="closes">${esc(t('closesAt', fmtTime(c.bookUntil)))}</div>` : '';
   const CLOSED_RE = /booking for this class has closed/;
@@ -2381,7 +2409,7 @@
   // After a booking or a cancel: new seat counts and booked marks, same screen.
   async function refreshSchedule() {
     try {
-      const [s] = await Promise.all([fetch(SCHEDULE_URL).then(r => r.json()), loadMine()]);
+      const [s] = await Promise.all([fetch(SCHEDULE_URL).then(r => r.json()).then(noteClock), loadMine()]);
       if (Array.isArray(s.classes)) { CLASSES = s.classes; MOON = s.moonDays || {}; takeSchedule(s); LOADED_AT = Date.now(); }
     } catch (_) {}
     if (current === 'schedule') renderSchedule();
@@ -2407,12 +2435,12 @@
       // when this student booked it: the day's dot always has a marked time.
       if (c.isOnline && !mine) continue;
       const g = byKind[c.kind] = byKind[c.kind] || { times: [], who: [] };
-      g.times.push({ x: fmtTime(c.startAt).replace(/^0/, ''), key, title: c.title, mine, online: c.isOnline });
+      g.times.push({ x: fmtTime(c.startAt).replace(/^0/, ''), key, title: c.title, mine, online: c.isOnline, shut: !!key && !mine && isClosed(c) });
       if (!c.isOnline) for (const w of teacherList(c)) if (!g.who.includes(w)) g.who.push(w);
     }
     const tm = x => x.key
-      ? `<button type="button" class="tm${x.mine ? ' mine' : ''}" data-cls="${esc(x.key)}" aria-label="${
-          esc(x.x + ' ' + clsName(x.title) + (x.online ? ', ' + t('online') : '') + (x.mine ? ', ' + t('bookedByYou') : ''))}">${
+      ? `<button type="button" class="tm${x.mine ? ' mine' : x.shut ? ' shut' : ''}" data-cls="${esc(x.key)}" aria-label="${
+          esc(x.x + ' ' + clsName(x.title) + (x.online ? ', ' + t('online') : '') + (x.mine ? ', ' + t('bookedByYou') : x.shut ? ', ' + t('bookClosed') : ''))}">${
           x.mine ? '<span aria-hidden="true">✓</span>' : ''}${esc(x.x)}${x.online ? `<span class="ol">${esc(t('online'))}</span>` : ''}</button>`
       : `<i>${esc(x.x)}</i>`;
     const sat = new Date(iso + 'T12:00:00Z').getUTCDay() === 6;
@@ -2533,8 +2561,8 @@
     let html = `<div class="day" id="dayList">${esc(dayLabel)}</div>`;
     if (!dayClasses.length) html += `<p class="note">${esc(t('noDay'))}</p>`;
     for (const c of dayClasses) {
-      // A seat already booked keeps its look; Cancel stays while booking is open, and the mat
-      // until the start (the server's own rules). A class nobody here booked grays out at bookUntil.
+      // A seat already booked keeps its look; Cancel and the mat go at the start (a started seat
+      // may already be a visit checked in at the door). A class nobody here booked grays out at bookUntil.
       const key = clsKey(c), b = my.map.get(key), full = c.seatsLeft < 1, shut = isClosed(c), begun = isStarted(c);
       html += `<div class="cls ${full && !b && !shut ? 'full' : ''} ${shut && !b ? 'shut' : ''} ${b ? 'mine' : ''}" data-cls="${esc(key)}">
         <div class="t">${fmtTime(c.startAt)}</div>
@@ -2546,7 +2574,7 @@
           ${b ? '' : shut ? `<div class="seats quiet">${esc(t('bookClosed'))}</div>`
             : `<div class="seats ${seatsCls(c)}">${esc(seatsText(c))}</div>${full ? '' : closesLine(c)}`}
         </div>
-        ${b ? (shut || !b.id ? '' : `<button type="button" class="btn ghost" data-act="cancel" data-id="${Number(b.id)}">${esc(t('cancelBk'))}</button>`)
+        ${b ? (begun || !b.id ? '' : `<button type="button" class="btn ghost" data-act="cancel" data-id="${Number(b.id)}">${esc(t('cancelBk'))}</button>`)
           : shut ? '' : `<button type="button" class="btn" ${full ? 'disabled' : ''} data-act="book" data-slot="${Number(c.slotId)}" data-date="${esc(c.date)}">${esc(t('book'))}</button>`}
         ${b ? (begun ? '' : matRow(c, b)) : full || shut ? '' : matRow(c, b)}
       </div>`;
@@ -2562,7 +2590,7 @@
     const end = new Date(Date.parse(c.startAt) + (Number(c.durationMin) || 0) * 60e3).toISOString();
     const state = b ? `<div class="mystate yes"><div class="big">✓ ${esc(t('youBooked'))}</div>
         ${begun ? '' : matBox(c, b)}
-        ${shut || !b.id ? '' : `<button type="button" class="btn ghost" data-act="cancel" data-id="${Number(b.id)}">${esc(t('cancelBk'))}</button>
+        ${begun || !b.id ? '' : `<button type="button" class="btn ghost" data-act="cancel" data-id="${Number(b.id)}">${esc(t('cancelBk'))}</button>
         <p class="note">${esc(t('cancelRule', CANCEL_HOURS))}</p>`}</div>`
       : shut ? `<div class="mystate full"><div class="big">${esc(t('bookClosed'))}</div></div>`
       : full ? `<div class="mystate full"><div class="big">${esc(t('full'))}</div></div>`
@@ -2581,7 +2609,7 @@
   }
 
   function renderSchedule() {
-    DRAWN = phases(); DIRTY = false;
+    DRAWN = phases(); DIRTY = false; armEdge();
     if (myCode() && MINE.code !== myCode() && !MINE_LOAD)
       MINE_LOAD = loadMine().then(() => { MINE_LOAD = null; if (current === 'schedule') renderSchedule(); });
     if (OPEN) return renderClass();
@@ -3436,7 +3464,7 @@
     const picker = !single ? '' : opts.length
       ? `<label>${esc(t('dropWhich'))}</label><select id="bc"><option value="">${esc(t('dropPick'))}</option>${
           opts.map(c => `<option value="${esc(key(c))}"${c.isOnline ? ' data-online="1"' : ''} ${key(c) === preKey ? 'selected' : ''}>${
-            esc(clsWhen(c.startAt))} · ${esc(clsName(c.title))}</option>`).join('')}</select>`
+            esc(clsWhen(c.startAt))} · ${esc(clsName(c.title))}${isStarted(c) && c.bookUntil ? ' · ' + esc(t('closesAt', fmtTime(c.bookUntil))) : ''}</option>`).join('')}</select>`
       : `<div class="msg bad">${esc(t('dropNone'))}</div>`;
     $('#dlgIn').innerHTML = `<h3>${esc(pkgName(p))} · ${baht(p.total_thb)}</h3>
       ${intro ? `<p class="note" style="margin:0 0 4px">${esc(intro)}</p>` : ''}
