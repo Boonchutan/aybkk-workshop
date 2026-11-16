@@ -545,6 +545,11 @@
     ontoQ: (c, w, p, n) => `Take ${c} on ${w} from ${p}? ${n == null ? 'Unlimited: no class is used.' : `It uses 1 class: ${n} left after.`}`,
     ontoUndoQ: (c, w, p, n) => `Put ${c} on ${w} back on Rezerv? ${n == null ? p : `${p} gets 1 class back: ${n} left after.`}`,
     ontoDone: (p, n) => n == null ? `Done. ${p}.` : `Done. ${p}: ${n} left.`,
+    ontoStarts: (f, u) => `Its days start from this class: ${f} to ${u}.`,
+    ontoDaysBack: (f, u) => f === '…' ? 'Its days are cleared: they start again on its next class.' : `Its days go back to ${f} to ${u}.`,
+    ontoDaysKept: (f, u) => `Its days stay ${f} to ${u}.`,
+    ontoRz: (n, f, u) => `Check Rezerv first: a Rezerv package of theirs (${n}, ${f} to ${u}) ran that day, so Rezerv may have paid for this class.`,
+    ontoCopy: (n, d) => `Check Rezerv first: this pass already took ${n} class${n === 1 ? '' : 'es'} used on its Rezerv copy (brought over ${d}). This class may be one of them.`,
     thDate: 'Date', thTime: 'Time', thClass: 'Class', thFrom: 'From', thItem: 'Item', thAmount: 'Amount',
     thMethod: 'Paid by', thClasses: 'Classes', thValid: 'Valid', thNote: 'Note', thTeacher: 'Teacher',
     thHr: 'Resting HR', thSleep: 'Sleep', thFeel: 'Feel', thCount: 'Count', thTotal: 'Total', thAvg: 'Per class',
@@ -624,6 +629,11 @@
     ontoQ: (c, w, p, n) => `หัก ${c} วันที่ ${w} จาก ${p}? ${n == null ? 'แพ็กเกจไม่จำกัด: ไม่เสียครั้ง' : `ใช้ 1 ครั้ง เหลือ ${n} ครั้ง`}`,
     ontoUndoQ: (c, w, p, n) => `คืน ${c} วันที่ ${w} กลับไปเป็น Rezerv? ${n == null ? p : `${p} ได้คืน 1 ครั้ง เหลือ ${n} ครั้ง`}`,
     ontoDone: (p, n) => n == null ? `เรียบร้อย ${p}` : `เรียบร้อย ${p}: เหลือ ${n} ครั้ง`,
+    ontoStarts: (f, u) => `แพ็กเกจเริ่มนับวันจากคลาสนี้: ${f} ถึง ${u}`,
+    ontoDaysBack: (f, u) => f === '…' ? 'วันของแพ็กเกจกลับไปเริ่มนับเมื่อจองคลาสถัดไป' : `วันของแพ็กเกจกลับเป็น ${f} ถึง ${u}`,
+    ontoDaysKept: (f, u) => `วันของแพ็กเกจยังเป็น ${f} ถึง ${u}`,
+    ontoRz: (n, f, u) => `ตรวจใน Rezerv ก่อน: วันนั้นมีแพ็กเกจ Rezerv (${n}, ${f} ถึง ${u}) อยู่ Rezerv อาจหักคลาสนี้ไปแล้ว`,
+    ontoCopy: (n, d) => `ตรวจใน Rezerv ก่อน: แพ็กเกจนี้นับรวม ${n} ครั้งที่ใช้ใน Rezerv มาแล้ว (ย้ายมาเมื่อ ${d}) คลาสนี้อาจเป็นหนึ่งในนั้น`,
     thDate: 'วันที่', thTime: 'เวลา', thClass: 'คลาส', thFrom: 'มาจาก', thItem: 'รายการ', thAmount: 'ยอดเงิน',
     thMethod: 'ชำระโดย', thClasses: 'ครั้ง', thValid: 'ช่วงเวลา', thNote: 'หมายเหตุ', thTeacher: 'ครู',
     thHr: 'ชีพจรขณะพัก', thSleep: 'การนอน', thFeel: 'ความรู้สึก', thCount: 'จำนวน', thTotal: 'รวม', thAvg: 'เฉลี่ยต่อคลาส',
@@ -2317,24 +2327,33 @@
   };
   window.histMore = k => { HIST_ALL[k] = true; paintHistory(); };
   // Take a Rezerv class they came to from their aybkk.net pass, or undo that
-  // (16 Nov 2026). A dry run first, so the question names the pass and what is left.
+  // (16 Nov 2026). A dry run first, so the question names the pass, what is
+  // left, new days and anything to check in Rezerv; then the same pass is sent.
   window.ontoPass = async (id, undo = false) => {
     const v = HIST && HIST.visits.find(x => Number(x.id) === id);
     if (!v) return;
-    const send = dryRun => api(`/api/bkk/admin/bookings/${id}/onto-pass`, { method: 'POST',
-      body: JSON.stringify({ dryRun, undo }) }).catch(() => null);
+    const send = body => api(`/api/bkk/admin/bookings/${id}/onto-pass`, { method: 'POST',
+      body: JSON.stringify({ undo, ...body }) }).catch(() => null);
     const left = p => p.kind === 'unlimited' ? null : p.creditsLeft;
     const pname = p => itemName((LANG === 'th' && p.nameTh) || p.name || '–');
+    const day = d => d ? ymdLong(d) : '…';
     const when = [ymdLong(v.date, true), v.time].filter(Boolean).join(' '), c = cls(v.class || '');
-    const r1 = await send(true);
+    const r1 = await send({ dryRun: true });
     if (!r1) { alert(T('addNoNet')); return; }
     const j1 = await shout(r1);
-    if (!j1 || !confirm(undo ? T('ontoUndoQ', c, when, pname(j1.pass), left(j1.pass)) : T('ontoQ', c, when, pname(j1.pass), left(j1.pass)))) return;
-    const r2 = await send(false);
+    if (!j1) return;
+    const k = j1.check;
+    const q = [undo ? T('ontoUndoQ', c, when, pname(j1.pass), left(j1.pass)) : T('ontoQ', c, when, pname(j1.pass), left(j1.pass)),
+      j1.starts ? T('ontoStarts', day(j1.starts.from), day(j1.starts.until)) : '',
+      j1.days ? T('ontoDaysBack', day(j1.days.from), day(j1.days.until)) : '',
+      !k ? '' : k.why === 'rezerv' ? T('ontoRz', itemName(k.name), day(k.from), day(k.until)) : T('ontoCopy', k.classes, day(k.on))];
+    if (!confirm(q.filter(Boolean).join('\n\n'))) return;
+    const r2 = await send(undo ? {} : { passId: j1.pass.id, sure: !!j1.needSure });
     if (!r2) { alert(T('addNoNet')); return; }
     const j2 = await shout(r2);
     if (!j2) return;
-    alert(T('ontoDone', pname(j2.pass), left(j2.pass)));
+    alert([T('ontoDone', pname(j2.pass), left(j2.pass)),
+      j2.daysKept ? T('ontoDaysKept', day(j2.daysKept.from), day(j2.daysKept.until)) : ''].filter(Boolean).join('\n'));
     const code = HIST.member.code, seq = ++HIST_SEQ, y = window.scrollY;
     const r = await api(`/api/bkk/admin/members/${encodeURIComponent(code)}/history`).catch(() => null);
     const j = r ? await r.json().catch(() => ({})) : {};
@@ -2404,11 +2423,14 @@
 
     // A past "booked" that never got a check-in reads differently from one still to come.
     const vState = v => v.status === 'booked' ? (v.upcoming ? 'upcoming' : 'past') : v.status;
-    // A Rezerv visit they came to on a day an aybkk.net pass of theirs ran, with a
-    // class left, can be taken from it. The server checks pauses and the rest.
-    const passFor = d => h.passes.some(p => p.source !== 'rezerv' && (p.status === 'active' || p.status === 'frozen')
-      && (!p.validFrom || p.validFrom <= d) && (!p.validUntil || p.validUntil >= d)
-      && (p.kind === 'unlimited' || p.creditsLeft > 0));
+    // A Rezerv visit they came to while an aybkk.net pass of theirs with a class
+    // left ran, or after it was made here and before its days began. The server
+    // checks pauses and the rest.
+    const passFor = d => h.passes.some(p => {
+      const start = [p.validFrom, p.createdAt && bkkYmd(Date.parse(p.createdAt))].filter(Boolean).sort()[0];
+      return p.source !== 'rezerv' && (p.status === 'active' || p.status === 'frozen') && (p.kind === 'unlimited' || p.creditsLeft > 0)
+        && (!start || start <= d) && (!p.validUntil || p.validUntil >= d);
+    });
     const visits = cut('visits', h.visits).map(v => {
       const st = vState(v);
       return `<tr><td class="nowrap">${esc(ymdLong(v.date, true))}</td><td>${esc(v.time || '')}</td>
@@ -2418,8 +2440,9 @@
           ${v.cancelReason ? `<br><span class="muted">${esc(v.cancelReason)}</span>` : ''}</td>
         <td class="muted">${esc([W(v.source || 'aybkk'), v.cover === 'rezerv' && v.source !== 'rezerv' ? 'Rezerv' : '',
           v.moved ? T('ontoMoved') : ''].filter(Boolean).join(' · '))}${
-          v.status !== 'attended' ? '' : v.moved ? ` <button class="btn gray sm" onclick="ontoPass(${Number(v.id)}, true)">${esc(T('ontoUndoBtn'))}</button>`
-          : v.cover === 'rezerv' && !v.passId && passFor(v.date) ? ` <button class="btn gray sm" onclick="ontoPass(${Number(v.id)})">${esc(T('ontoBtn'))}</button>` : ''}</td></tr>`;
+          v.moved ? ` <button class="btn gray sm" onclick="ontoPass(${Number(v.id)}, true)">${esc(T('ontoUndoBtn'))}</button>`
+          : v.status === 'attended' && v.cover === 'rezerv' && !v.passId && passFor(v.date)
+            ? ` <button class="btn gray sm" onclick="ontoPass(${Number(v.id)})">${esc(T('ontoBtn'))}</button>` : ''}</td></tr>`;
     });
     const pays = cut('payments', h.payments).map(o => `<tr>
       <td class="nowrap">${esc(ymdLong(o.date))}${o.time && !(o.source === 'rezerv' && o.time === '00:00') ? `<br><span class="muted">${esc(o.time)}</span>` : ''}</td>
