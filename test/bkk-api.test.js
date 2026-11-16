@@ -6326,6 +6326,24 @@ const ok = (name, cond, extra = '') => {
        um8.status === 200 && await owner(door8) === k8 && (await bOf(door8)).pass_id === null && (await pOf(pf8)).credits_used === 0
        && um8.body.moves.undone === 1, JSON.stringify(um8.body));
 
+    // Kept used through an undone merge (the keeper's own Rezerv copy may have counted it): off the pass, so only Extend gives it back.
+    const K10 = 'BTESTOPKEEP10', F10 = 'BTESTOPFOLD10';
+    const k10 = (await one(`INSERT INTO bkk_members (code,name,email) VALUES ($1,'Onto Stays','onto.stays@example.com') RETURNING id`, [K10])).id;
+    const f10 = (await one(`INSERT INTO bkk_members (code,name) VALUES ($1,'Onto Stays') RETURNING id`, [F10])).id;
+    const pk10 = await pass(k10, 'pack8', { used: 3, from: d(-5), until: d(25) });
+    await post(`/api/bkk/admin/members/${K10}/merge`, { from: F10 }, ADMIN);
+    const v10 = await rz(k10, d(-1), { via: f10 });
+    await onto(v10, { passId: pk10 });
+    await pool.query(`INSERT INTO bkk_passes (member_id,product_id,kind,credits_total,credits_used,valid_days,valid_from,valid_until,status,source,twin_of,twin_undo,via_member)
+      SELECT $1, id, kind, credits, 4, valid_days, $2::date, $3::date, 'void', 'rezerv', $4,
+        jsonb_build_object('used', 0, 'status', 'active', 'on', $5::text, 'at', now()), $1
+      FROM bkk_products WHERE code='pack8'`, [k10, d(-5), d(25), pk10, d(0)]);
+    const um10 = await post(`/api/bkk/admin/members/${F10}/unmerge`, {}, ADMIN);
+    ok('undoing the merge: the double\'s class the keeper\'s own Rezerv copy may have counted goes back to the double, stays used, and is off the pass',
+       um10.status === 200 && um10.body.moves.keptUsed === 1 && await owner(v10) === f10 && (await bOf(v10)).pass_id === null
+       && (await pOf(pk10)).credits_used === 4 && /still used/.test((await pOf(pk10)).note)
+       && (await onto(v10, { undo: true, dryRun: true })).status === 409, JSON.stringify(um10.body));
+
     // Rezerv may have paid already: a person checks first.
     const tw = await mk('TWIN');
     const pt = await pass(tw, 'pack8', { used: 3, from: d(-5), until: d(55) });
