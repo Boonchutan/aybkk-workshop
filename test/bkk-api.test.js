@@ -6275,6 +6275,38 @@ const ok = (name, cond, extra = '') => {
     ok('undoing the merge: those two go back to Rezerv first, then the double\'s seat is booked again on its pass', um6.status === 200
        && um6.body.seatsNotBack === 0 && (await bOf(fseat6)).status === 'booked' && (await pOf(pf6)).credits_used === 7, JSON.stringify(um6.body));
 
+    // The kept student's own class, cancelled and kept used for the double's Rezerv copy: once the undo takes that copy away, it comes back.
+    const K7 = 'BTESTOPKEEP07', F7 = 'BTESTOPFOLD07';
+    const k7 = (await one(`INSERT INTO bkk_members (code,name,email) VALUES ($1,'Onto Own','onto.own@example.com') RETURNING id`, [K7])).id;
+    const f7 = (await one(`INSERT INTO bkk_members (code,name) VALUES ($1,'Onto Own') RETURNING id`, [F7])).id;
+    const pk7 = await pass(k7, 'pack8', { from: d(-5), until: d(25) });
+    await post(`/api/bkk/admin/members/${K7}/merge`, { from: F7 }, ADMIN);
+    const v7 = await rz(k7, d(-1), { via: k7 });
+    await onto(v7);
+    await pool.query(`UPDATE bkk_passes SET credits_used=2 WHERE id=$1`, [pk7]);
+    await pool.query(`INSERT INTO bkk_passes (member_id,product_id,kind,credits_total,credits_used,valid_days,valid_from,valid_until,status,source,twin_of,twin_undo,via_member)
+      SELECT $1, id, kind, credits, 2, valid_days, $2::date, $3::date, 'void', 'rezerv', $4,
+        jsonb_build_object('used', 1, 'status', 'active', 'on', $5::text, 'at', now()), $6
+      FROM bkk_products WHERE code='pack8'`, [k7, d(-5), d(25), pk7, d(0), f7]);
+    const c7 = await post(`/api/bkk/bookings/${v7}/cancel`, {}, ADMIN);
+    const um7 = await post(`/api/bkk/admin/members/${F7}/unmerge`, {}, ADMIN);
+    ok('the kept student\'s cancelled class kept used for the double\'s copy: the undo takes the copy away and gives the class back',
+       c7.body.creditReturned === false && um7.status === 200 && (await pOf(pk7)).credits_used === 0 && (await bOf(v7)).pass_id === null
+       && await owner(v7) === k7, JSON.stringify([um7.body, await pOf(pk7)]));
+
+    // The kept student's own door visit covered by Rezerv, taken from the double's pass, stays with them.
+    const K8 = 'BTESTOPKEEP08', F8 = 'BTESTOPFOLD08';
+    const k8 = (await one(`INSERT INTO bkk_members (code,name,email) VALUES ($1,'Onto Door','onto.door@example.com') RETURNING id`, [K8])).id;
+    const f8 = (await one(`INSERT INTO bkk_members (code,name) VALUES ($1,'Onto Door') RETURNING id`, [F8])).id;
+    const pf8 = await pass(f8, 'pack8', { from: d(-5), until: d(25) });
+    const door8 = await rz(k8, d(-1), { source: 'door' });
+    await post(`/api/bkk/admin/members/${K8}/merge`, { from: F8 }, ADMIN);
+    await onto(door8, { passId: pf8 });
+    const um8 = await post(`/api/bkk/admin/members/${F8}/unmerge`, {}, ADMIN);
+    ok('the kept student\'s own door visit (covered by Rezerv) taken from the double\'s pass stays with them, and that pass gets the class back',
+       um8.status === 200 && await owner(door8) === k8 && (await bOf(door8)).pass_id === null && (await pOf(pf8)).credits_used === 0
+       && um8.body.moves.undone === 1, JSON.stringify(um8.body));
+
     // Rezerv may have paid already: a person checks first.
     const tw = await mk('TWIN');
     const pt = await pass(tw, 'pack8', { used: 3, from: d(-5), until: d(55) });
@@ -6357,6 +6389,20 @@ const ok = (name, cond, extra = '') => {
     const close = await post('/api/bkk/admin/classes/cancel', { slotId: slot, date: d(-8), reason: 'test' }, ADMIN);
     ok('closing that class gives the class back and takes it off the pass', close.status === 200 && (await pOf(pst)).credits_used === 0
        && (await bOf(sv2)).status === 'cancelled' && (await bOf(sv2)).pass_id === null, JSON.stringify(close.body));
+
+    // Closing a class with a moved class a Rezerv copy may have counted: it stays used and the reply says so.
+    const ck = await mk('CLOSEKEPT');
+    const pck = await pass(ck, 'pack8', { from: d(-12), until: d(50) });
+    const ckv = await rz(ck, d(-9));
+    await onto(ckv);
+    await pool.query(`INSERT INTO bkk_passes (member_id,product_id,kind,credits_total,credits_used,valid_days,valid_from,valid_until,status,source,twin_of,twin_undo)
+      SELECT $1, id, kind, credits, 1, valid_days, $2::date, $3::date, 'void', 'rezerv', $4,
+        jsonb_build_object('used', 0, 'status', 'active', 'on', $5::text, 'at', now())
+      FROM bkk_products WHERE code='pack8'`, [ck, d(-12), d(50), pck, d(0)]);
+    const ckc = await post('/api/bkk/admin/classes/cancel', { slotId: slot, date: d(-9), reason: 'test' }, ADMIN);
+    ok('closing a class: a moved class a Rezerv copy may have counted stays used, the reply counts it, and its student gets no mail',
+       ckc.status === 200 && ckc.body.keptUsed === 1 && ckc.body.notified === 0 && (await pOf(pck)).credits_used === 1
+       && (await bOf(ckv)).pass_id === pck && /closed, still used/.test((await pOf(pck)).note), JSON.stringify(ckc.body));
 
     // The check-in taken off after the move: Undo is still offered, and works.
     const ux = await mk('UNCHECK');

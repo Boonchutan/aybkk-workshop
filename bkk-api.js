@@ -1813,11 +1813,11 @@ function mountBkk(app, opts = {}) {
         AND b.via_member = ANY($3::int[]) AND NOT (b.status='booked' AND EXISTS (SELECT 1 FROM bkk_bookings o WHERE o.member_id=$1
           AND o.slot_id=b.slot_id AND o.class_date=b.class_date AND o.status='booked')) RETURNING b.id`, [F, K, fam]).then(ids);
       // A class goes with the pass that paid for it, unless that student already holds a seat in it,
-      // or it is the kept student's own Rezerv class staff took from it (it stays with them; below).
+      // or it is the kept student's own Rezerv-covered class staff took from it (it stays with them; below).
       since.bookings = await client.query(`UPDATE bkk_bookings b SET member_id=$1 WHERE b.member_id=$2 AND b.pass_id = ANY($3::int[])
         AND NOT (b.status='booked' AND EXISTS (SELECT 1 FROM bkk_bookings o WHERE o.member_id=$1 AND o.slot_id=b.slot_id
           AND o.class_date=b.class_date AND o.status='booked'))
-        AND NOT (b.moved_at IS NOT NULL AND b.source='rezerv' AND NOT (b.id = ANY($4::int[]))
+        AND NOT (b.moved_at IS NOT NULL AND NOT (b.id = ANY($4::int[]))
           AND (b.via_member IS NULL OR NOT b.via_member = ANY($5::int[]))) RETURNING b.id`,
         [F, K, [...(L.rows.bkk_passes || []), ...since.passes], L.rows.bkk_bookings || [], fam]).then(ids);
       // A Rezerv copy and the sale it copies belong to one student. A pair this
@@ -1855,7 +1855,21 @@ function mountBkk(app, opts = {}) {
         [F, K, bkkToday()])).rows.length;
       // Now, with the pairs this undo splits taken apart, the pass gets each such
       // class back unless a Rezerv copy still paired with it may have counted it.
+      // So does a cancelled one kept used on its own student's pass for a copy
+      // this undo took apart.
       const moves = { undone: 0, keptUsed: 0 };
+      const loose = (await client.query(`SELECT b.id, b.pass_id, to_char(b.class_date,'YYYY-MM-DD') AS d FROM bkk_bookings b
+        WHERE b.moved_at IS NOT NULL AND b.status='cancelled' AND coalesce(b.cancel_reason, '') NOT LIKE 'merged:%'
+          AND b.pass_id = ANY($1::int[]) AND NOT (b.id = ANY($2::int[])) FOR UPDATE`, [split.map(x => x.aid), apart.map(x => x.id)])).rows;
+      for (const u of loose) {
+        await client.query('SELECT 1 FROM bkk_passes WHERE id=$1 FOR UPDATE', [u.pass_id]);
+        if (await moveAbsorbed(client, u.id)) continue;
+        await client.query(`UPDATE bkk_passes SET credits_used = GREATEST(0, credits_used - 1),
+            note = coalesce(note || ' | ', '') || $2 WHERE id=$1 AND kind <> 'unlimited'`,
+          [u.pass_id, `cancelled class ${u.d} given back: the Rezerv copy that kept it used went with a merge undone on ${bkkToday()}`]);
+        await client.query(`UPDATE bkk_bookings SET pass_id=NULL, cover='rezerv', moved_at=NULL WHERE id=$1`, [u.id]);
+        moves.undone++;
+      }
       for (const u of apart) {
         await client.query('SELECT 1 FROM bkk_passes WHERE id=$1 FOR UPDATE', [u.pass_id]);
         const kept = await moveAbsorbed(client, u.id);
@@ -5866,11 +5880,18 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       // The shala cancelled, not the student — the credit always comes back,
       // whatever the notice period was.
       // A Rezerv class staff took from a pass: as a staff cancel, it goes back to
-      // Rezerv with its class, unless a Rezerv copy may have counted it.
+      // Rezerv with its class, unless a Rezerv copy may have counted it. Then it
+      // stays used, the pass says so, and that student gets no mail of a credit.
+      const keptUsed = new Set();
       for (const b of hit) {
         if (b.pass_id && b.moved_at) {
           await client.query('SELECT 1 FROM bkk_passes WHERE id=$1 FOR UPDATE', [b.pass_id]);
-          if (await moveAbsorbed(client, b.id)) continue;
+          if (await moveAbsorbed(client, b.id)) {
+            keptUsed.add(b.member_id);
+            await client.query(`UPDATE bkk_passes SET note = coalesce(note || ' | ', '') || $2 WHERE id=$1`,
+              [b.pass_id, `class ${date} closed, still used (a Rezerv copy may have counted it)`]);
+            continue;
+          }
           await client.query(`UPDATE bkk_bookings SET pass_id=NULL, cover='rezerv', moved_at=NULL WHERE id=$1`, [b.id]);
         }
         if (b.pass_id) {
@@ -5885,7 +5906,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         `SELECT m.name, m.email, m.lang, s.title, s.start_time
          FROM bkk_members m, bkk_class_slots s
          WHERE m.id = ANY($1::int[]) AND s.id = $2`,
-        [hit.map(b => b.member_id), slotId])).rows : [];
+        [hit.map(b => b.member_id).filter(id => !keptUsed.has(id)), slotId])).rows : [];
       for (const p of people) {
         if (!p.email) continue;
         const t = render('classCancelled', p.lang || 'en',
@@ -5894,7 +5915,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
           .catch(e => console.error('[bkk] cancel mail failed:', e.message));
       }
       console.log(`✓ bkk: class ${slotId} on ${date} cancelled — ${hit.length} booking(s) released`);
-      res.json({ success: true, released: hit.length, notified: people.filter(p => p.email).length });
+      res.json({ success: true, released: hit.length, notified: people.filter(p => p.email).length, keptUsed: keptUsed.size });
     } catch (e) {
       await client.query('ROLLBACK'); res.status(500).json({ error: e.message });
     } finally { client.release(); }

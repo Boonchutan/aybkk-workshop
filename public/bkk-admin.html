@@ -398,6 +398,7 @@
       qClose: (title, date) => `Close ${title} on ${date}?\nEveryone booked gets their credit back and an email.`,
       qReason: 'Reason (students see this)',
       closed: (r, n) => `Closed. ${r} booking(s) released, ${n} emailed.`,
+      closedKept: n => `${n} Rezerv class(es) taken from a pass stay used: a Rezerv copy may have counted them. Check the pass, and give the class back with Extend if not.`,
       moneyToday: 'Money in today', sales: n => `${n} sale${n === 1 ? '' : 's'}`,
       countDrawer: 'Count the cash drawer against the cash line before you go home.',
       noSales: 'No sales yet today.', today: 'Today', noBookings: 'No bookings today.',
@@ -492,6 +493,7 @@
       qClose: (title, date) => `ปิดคลาส ${title} วันที่ ${date}?\nนักเรียนที่จองไว้ทุกคนจะได้ครั้งคืนและได้รับอีเมล`,
       qReason: 'เหตุผล (นักเรียนจะเห็นข้อความนี้)',
       closed: (r, n) => `ปิดแล้ว คืนการจอง ${r} รายการ ส่งอีเมล ${n} คน`,
+      closedKept: n => `คลาส Rezerv ${n} คลาสที่หักจากแพ็กเกจ ยังนับว่าใช้แล้ว เพราะสำเนาจาก Rezerv อาจนับไว้แล้ว: ตรวจแพ็กเกจ ถ้าไม่ใช่ ให้คืนด้วยปุ่ม ยืดวัน`,
       moneyToday: 'เงินเข้าวันนี้', sales: n => `${n} รายการ`,
       countDrawer: 'นับเงินในลิ้นชักให้ตรงกับยอดเงินสด ก่อนกลับบ้าน',
       noSales: 'วันนี้ยังไม่มียอดขาย', today: 'วันนี้', noBookings: 'วันนี้ไม่มีการจอง',
@@ -1739,7 +1741,7 @@
     const r = await api('/api/bkk/admin/classes/cancel', { method: 'POST',
       body: JSON.stringify({ slotId: c.slotId, date: c.date, reason }) });
     const j = await shout(r);
-    if (j) { alert(T('closed', j.released, j.notified)); CV.flash = null; loadClass(); }
+    if (j) { alert(T('closed', j.released, j.notified) + (j.keptUsed ? '\n' + T('closedKept', j.keptUsed) : '')); CV.flash = null; loadClass(); }
   };
   window.cvReopen = async () => {
     const c = CV.data && CV.data.class;
