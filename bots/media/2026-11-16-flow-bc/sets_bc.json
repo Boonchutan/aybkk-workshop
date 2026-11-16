@@ -1,0 +1,384 @@
+{
+ "plan": {
+  "used_ids": [
+   "energy-01",
+   "energy-02",
+   "BRAIN-5",
+   "MC-5",
+   "MC-2",
+   "MC-8",
+   "MC-9",
+   "BRAIN-3",
+   "ASH-11",
+   "ASH-07",
+   "BENLIM-06"
+  ],
+  "sets": [
+   {
+    "set": "B",
+    "title": "Inside the Hour",
+    "arc": "Picks up the clock where set A stops (after the hard start) and runs to the hours after practice. One thread: first the body (heart, sweat, fuel), then the mind (mood, calm chemicals, the quiet 'me'), then what is left after practice. It lands on CALM so the reader wants to come back. Slide plan (id, suggested big word, point, honest label, credit): 1 energy-04 DRIFT: the effort stays the same, yet after 10 to 20 minutes the heart beats faster and pumps less with each beat. Scientists still argue why (open loop). Review, not yoga. COYLE & GONZALEZ-ALONSO · 2001. 2 ASH-03 PEAK: in a 90-minute flow class the heart was fastest in the sun salutations, then stayed fairly high for 45 minutes. Flow yoga, not Ashtanga; heart rate only. TSOPANIDOU ET AL. · 2018. 3 energy-10 SWEAT: the more sweat you do not drink back, the hotter you get and the harder the heart works. Lab cycling. Do NOT advise drinking during Mysore practice; at most 'our reading'. MONTAIN & COYLE · 1992. 4 energy-06 FUEL: after about 40 minutes of easy exercise, leg muscles took more and more of their energy from fat in the blood, about 60% by hour 4. Small 1974 study; a fuel shift, never fat loss. AHLBORG ET AL. · 1974. 5 BRAIN-9 MOOD: in a 45-minute run, a drug blocked endorphins and mood still went up and worry went down, so endorphins are not the whole story. Randomised, 63 people, a run not yoga. SIEBERS ET AL. · 2021. 6 BRAIN-10 BLISS: during a marathon, a calming 'bliss' chemical in the blood kept climbing the longer they ran. Blood levels, a link, not proof. SIEBERS ET AL. · 2026. 7 BRAIN-6 QUIET: in the zone, the clearest sign is the brain areas that think about 'me' going quiet, not the thinking brain shutting down. A review that calls this early science. Do not repeat set A's front-brain line. HARRIS ET AL. · 2017. 8 BRAIN-11 GROW: in 4 hours of rowing, the brain released 2 to 3 times more of a 'brain fertilizer' protein (BDNF). Small study, 8 people. RASMUSSEN ET AL. · 2009. 9 ASH-12 BUSY: right after the primary series, the brain's balance-and-movement centre (cerebellum) took a slightly bigger share of the brain's fuel. Total fuel did not change. Small scan of 10 people. VAN AALST ET AL. · 2020. 10 BRAIN-12 CALM: after 60 minutes of their own yoga practice (6 of the 8 had Ashtanga training), practitioners had about 27% more GABA, the brain's main 'calm-down' chemical. Readers had no change. Tiny study, and it did not show a calmer day. Close with a habit line (same time tomorrow). STREETER ET AL. · 2007.",
+    "finding_ids": [
+     "energy-04",
+     "ASH-03",
+     "energy-10",
+     "energy-06",
+     "BRAIN-9",
+     "BRAIN-10",
+     "BRAIN-6",
+     "BRAIN-11",
+     "ASH-12",
+     "BRAIN-12"
+    ]
+   },
+   {
+    "set": "C",
+    "title": "What the Habit Builds",
+    "arc": "What coming back again and again builds, working from the outside in: muscle, then blood, then heat, then movement skill and the brain, then sleep and rest, and last the lifetime question of how much is enough. It opens on the only Ashtanga training trial and closes on the habit (minutes a week). It does not repeat set A's CHEAPER, AUTOPILOT or heart slides. Slide plan (id, suggested big word, point, honest label, credit): 1 ASH-08 STRONGER: women aged 35 to 50 did Ashtanga twice a week for 8 months and got 11.4% stronger on the leg press. Arteries, blood pressure and heart rate did not change (open loop: so what else does it build?). Randomised, only 35 minutes of asanas per class. KIM ET AL. · 2012. 2 BENLIM-03 POWER: total training time may be a key factor in building more mitochondria, the power plants in muscle. Harder effort helps each one work better. Review, the authors say 'may'. GRANATA ET AL. · 2018. 3 BENLIM-05 SUGAR: during practice and for a while after, muscles pull more sugar out of the blood. Over time, training grows more tiny blood vessels in muscle. Review, and not every study agrees on the dose. BIRD & HAWLEY · 2017. 4 BENLIM-12 HEAT: training in the heat again and again over 1 to 2 weeks helps the body cope (ties to Bangkok heat and set B's SWEAT). Expert advice for athletes, not studied in yoga rooms. RACINAIS ET AL. · 2015. 5 MC-10 FEEL: walkers in robot leg braces moved to the cheapest step within minutes, even for savings under 5%, but most people first had to FEEL the cheaper way. A teacher's hands can show it: our reading, a walking study. Do not reuse the big word CHEAPER from set A. SELINGER ET AL. · 2015. 6 MC-3 DAILY: after 4 weeks of 15 minutes of daily practice, the work for a learned move shifted inside a deep brain area, from its thinking part to its movement part. Finger study, 14 people. LEHERICY ET AL. · 2005. 7 BENLIM-08 SLEEP: people who exercise regularly fall asleep a bit faster and sleep better. Review of 66 studies, small to moderate effects, not yoga. KREDLOW ET AL. · 2015. 8 BENLIM-10 REST: hard training pays off only with enough recovery. Without it you get tired, slower and moody. Expert consensus in athletes; a link to the weekly rest day is our reading. MEEUSEN ET AL. · 2013. 9 ASH-05 COUNTS: an hour of flow yoga counted as moderate exercise (3.6 METs), a little easier than brisk walking. The heart rate makes it look harder. Flow yoga, not Ashtanga; no full Mysore practice has been measured. SHERMAN ET AL. · 2017. 10 BENLIM-02 ENOUGH: in about 660,000 adults, moving more went with a lower risk of dying, up to 3 to 5 times the WHO minimum (about 450 to 750 minutes a week), then it levelled off, with no sign of harm even at 10 times. A link, not proof. Any 6-mornings sum (6 x 90 = 540 minutes) must be labelled our reading. Close on the habit. AREM ET AL. · 2015.",
+    "finding_ids": [
+     "ASH-08",
+     "BENLIM-03",
+     "BENLIM-05",
+     "BENLIM-12",
+     "MC-10",
+     "MC-3",
+     "BENLIM-08",
+     "BENLIM-10",
+     "ASH-05",
+     "BENLIM-02"
+    ]
+   }
+  ]
+ },
+ "sets": [
+  {
+   "set": "B",
+   "title": "Keep Going",
+   "slides": [
+    {
+     "n": 1,
+     "finding_id": "energy-04",
+     "word": "DRIFT",
+     "line": "Same effort... yet 10 to 20 minutes in, your heart starts to DRIFT. Faster beats, less blood in each. A review, not yoga. What's going on?",
+     "credit": "COYLE & GONZÁLEZ-ALONSO · 2001 (retold)",
+     "caption_line": "1. DRIFT: At the same effort, after 10 to 20 minutes the heart beats a bit faster and pumps a bit less blood each beat. A review, not yoga. Scientists still argue why.",
+     "photo_wish": "COVER: a calm standing asana, ideally a beginner, wide room shot with empty wall or window for the big word."
+    },
+    {
+     "n": 2,
+     "finding_id": "ASH-03",
+     "word": "PEAK",
+     "line": "And yoga? In a 90-minute flow class, not Ashtanga, sun salutations were the heart's PEAK, on average. Then 45 minutes, fairly high. Our advice? Don't race.",
+     "credit": "TSOPANIDOU ET AL. · 2018 (retold)",
+     "caption_line": "2. PEAK: In a 90-minute flow yoga class (not Ashtanga), heart rate was highest on average in the sun salutations, about 72% of its top speed, then about 69% for the next 45 minutes.",
+     "photo_wish": "Sun salutation in motion: jump back, chaturanga or upward dog, several students moving at once. NOTE: 'Our advice? Don't race.' is our teacher view, not a study result, so it needs Boonchu's yes. PEAK stays as the big word with 'on average' added; the 72% and 69% went to the caption to keep 26 words."
+    },
+    {
+     "n": 3,
+     "finding_id": "energy-10",
+     "word": "SWEAT",
+     "line": "Now add SWEAT. In a warm lab, 8 cyclists rode 2 hours. Small study, not yoga. The less water they drank... the more their hearts drifted.",
+     "credit": "MONTAIN & COYLE · 1992 (retold)",
+     "caption_line": "3. SWEAT: 8 cyclists rode 2 hours in a 33 °C lab. The less water they drank, the hotter they got and the harder their hearts worked. Small study, not yoga, not drinking advice.",
+     "photo_wish": "KEPT: 'The less water they drank' instead of 'the less sweat they drank back': same meaning, simpler English. The slide says 'warm lab' (the paper's own word) and the caption gives 33 °C. The optional swap of slides 2 and 3 was not done, to keep the same structure. Photo: sweat you can see on a back or arms, in a forward bend or a twist."
+    },
+    {
+     "n": 4,
+     "finding_id": "energy-06",
+     "word": "FUEL",
+     "line": "Meanwhile, the FUEL shifts. Small lab study, not yoga. After 40 easy minutes, legs ran more on fat... over half by hour 4. Not fat loss.",
+     "credit": "AHLBORG ET AL. · 1974 (retold)",
+     "caption_line": "4. FUEL: In a small lab study (6 people, not yoga), after 40 easy minutes the legs ran more and more on fat in the blood, about 60% by hour 4. Not fat loss.",
+     "photo_wish": "KEPT: 'Small lab study' stays on the slide (fact fix) instead of moving to the caption (style fix 8): 6 people is small, and the reader should see that label. Photo: a long steady hold, standing balance (Utthita Hasta Padangusthasana) or Navasana."
+    },
+    {
+     "n": 5,
+     "finding_id": "BRAIN-9",
+     "word": "MOOD",
+     "line": "Now the mind. Do endorphins, the body's painkillers, lift your MOOD? With their effect blocked, a 45-minute run still lifted mood more than walking. Not yoga.",
+     "credit": "SIEBERS ET AL. · 2021 (retold)",
+     "caption_line": "5. MOOD: In a fair test with 63 people, a medicine blocked the effect of endorphins, the body's own painkillers. A 45-minute run still lifted mood and eased worry more than walking.",
+     "photo_wish": "Backbend (Urdhva Dhanurasana), or a student with a soft smile between asanas. NOTE: the slide says 'with their effect blocked', so neither 'drug' nor 'medicine' is on the slide; the caption names the medicine."
+    },
+    {
+     "n": 6,
+     "finding_id": "BRAIN-10",
+     "word": "BLISS",
+     "line": "So what lifts it? Maybe the body's 'BLISS' chemical. In 19 marathon runners, its blood level kept climbing the longer they ran. A link, not proof.",
+     "credit": "SIEBERS ET AL. · 2026 (retold)",
+     "caption_line": "6. BLISS: In 19 trained runners, the blood level of a 'bliss' chemical kept rising through a marathon. Only the blood was checked: a link, not proof.",
+     "photo_wish": "Backbend catching the ankles, or an open-chest asana with a relaxed face."
+    },
+    {
+     "n": 7,
+     "finding_id": "BRAIN-6",
+     "word": "QUIET",
+     "line": "Then, lost in it. Where does 'me' go? Early science from sport and lab studies, not yoga, shows clear signs. The brain's 'me' parts QUIET down.",
+     "credit": "HARRIS ET AL. · 2017 (retold)",
+     "caption_line": "7. QUIET: A review of brain-scan studies (sport and lab, not yoga) found clear signs that, in the zone, brain parts that think about 'me' quiet down. The authors call it early science.",
+     "photo_wish": "Seated forward bend, eyes down, still room, nobody looking at the camera. NOTE: no 'we' line here, because the new 'sport and lab, not yoga' label uses the 26 words; it ends on the QUIET payoff instead of a caution."
+    },
+    {
+     "n": 8,
+     "finding_id": "BRAIN-11",
+     "word": "GROW",
+     "line": "During exercise, the brain lets out 'fertiliser' for cells to GROW. 8 rowers, 4 hours: 2 to 3 times more. Small study, growth untested. And Ashtanga?",
+     "credit": "RASMUSSEN ET AL. · 2009 (retold)",
+     "caption_line": "8. GROW: In a small study of 8 people rowing 4 hours, the brain let out 2 to 3 times more 'brain fertiliser' than at rest. It helps cells grow, but growth was not tested.",
+     "photo_wish": "Teacher helping a student go deeper in an asana. NOTE: the style fix opener 'Keep going...' was not used: the fact check shows the release was rest versus exercise, not rising with time."
+    },
+    {
+     "n": 9,
+     "finding_id": "ASH-12",
+     "word": "SHARE",
+     "line": "Right after the primary series, a small study scanned 10 students. The balance centre's SHARE of brain fuel rose slightly, about 3%. Its actual use? Unchanged.",
+     "credit": "VAN AALST ET AL. · 2020 (retold)",
+     "caption_line": "9. SHARE: After the primary series, a small scan of 10 Ashtanga students: the balance centre took a slightly bigger share of brain fuel than at rest. Actual use, there and overall, did not change.",
+     "photo_wish": "Balance on the hands: handstand or arm balance. NOTE: big word changed from BUSY to SHARE (fact fix): only the balance centre's share of fuel rose, not its actual use."
+    },
+    {
+     "n": 10,
+     "finding_id": "BRAIN-12",
+     "word": "CALM",
+     "line": "And after an hour of yoga? 8 regulars had about 27% more CALM-down chemical in one brain area. Tiny study, mood not checked. Same time tomorrow?",
+     "credit": "STREETER ET AL. · 2007 (retold)",
+     "caption_line": "10. CALM: After an hour of yoga, 8 regulars had about 27% more GABA, a calm-down chemical, in the brain area scanned. A different group who read did not. Tiny study, not a fair test, mood not checked.",
+     "photo_wish": "Rest: final lying-down rest, or a quiet seated finish in lotus. NOTE: '(mostly men)' left out of caption 10 for length, and 6 of 11 is barely 'mostly'; 'a different group' and 'not a fair test' carry the point."
+    }
+   ],
+   "question": "After practice, which do you notice first, your body or your mind?"
+  },
+  {
+   "set": "C",
+   "title": "What the Habit Builds",
+   "slides": [
+    {
+     "n": 1,
+     "finding_id": "ASH-08",
+     "word": "STRONGER",
+     "line": "Twice a week, and legs got STRONGER. In a small study, 16 women did Ashtanga for 8 months. 35 minutes of asanas a class. Heart? Same.",
+     "credit": "KIM ET AL. · 2012 (retold)",
+     "caption_line": "1. STRONGER: In a small study, 16 women aged 35 to 50 did Ashtanga twice a week for 8 months. Their legs pushed 11.4% more weight. Other strength tests, heart and blood pressure numbers did not change.",
+     "photo_wish": "KEPT: cut 'What else grows?' as the fact check asked (this trial found no other gain), so the style note to keep it is not followed; slide 2 now picks up from the legs instead. Caption says 'legs pushed 11.4% more weight', not 'legs got 11.4% stronger': the paper (PMC3737865) also tested knee extension and knee flexion, and only the leg press changed. COVER. A standing asana with strong bent legs (Utkatasana or Virabhadrasana), best a woman student who is a beginner or an older student. STRONGER is a kind word, so a clearly seen student is fine."
+    },
+    {
+     "n": 2,
+     "finding_id": "BENLIM-03",
+     "word": "POWER",
+     "line": "Inside the muscle live tiny POWER plants. Hours of training over weeks may build more. Harder effort helps each one work better. Endurance studies, not yoga.",
+     "credit": "GRANATA ET AL. · 2018 (retold)",
+     "caption_line": "2. POWER: In endurance studies, not yoga, the total time you train over weeks may be key to building more mitochondria, the tiny power plants in muscle. Harder effort helps each one work better.",
+     "photo_wish": "KEPT: the caption says 'over weeks' but leaves out 'not one long session', to stay near set A's caption length; it makes no claim that a long session beats short ones. Vinyasa in motion: a jump back or Chaturanga, with the work in the arms and legs easy to see."
+    },
+    {
+     "n": 3,
+     "finding_id": "BENLIM-05",
+     "word": "SUGAR",
+     "line": "Then the blood. Muscles pull more SUGAR out, during exercise and for a while after. Over time, more tiny blood vessels grow. Exercise studies, not yoga.",
+     "credit": "BIRD & HAWLEY · 2017 (retold)",
+     "caption_line": "3. SUGAR: During exercise and for a while after, muscles take more sugar out of the blood. Over time, more tiny blood vessels grow in muscle. Exercise studies, not yoga. How much is best? Not all agree.",
+     "photo_wish": "KEPT: the 'not every study agrees' hedge stays in the caption (the fact check calls it correct, and slide 10 asks how much is enough), but as a short plain line, not a bracket. Group shot in the middle of practice, many students working in the standing asanas, so no single student carries the word SUGAR."
+    },
+    {
+     "n": 4,
+     "finding_id": "BENLIM-12",
+     "word": "HEAT",
+     "line": "And new to Bangkok HEAT? Experts say train in it again and again, for 1 to 2 weeks, and it gets easier. Sports advice, not yoga.",
+     "credit": "RACINAIS ET AL. · 2015 (retold)",
+     "caption_line": "4. HEAT: Sports experts say training in the heat again and again for 1 to 2 weeks helps a body new to the heat get used to it. This is advice for athletes, not yoga.",
+     "photo_wish": "Sweat and warm morning light: a deep forward fold or twist with sweat on the skin and a towel on the mat. Group or from-behind photo."
+    },
+    {
+     "n": 5,
+     "finding_id": "MC-10",
+     "word": "FEEL",
+     "line": "Bodies hunt the easy way. Walkers in robot leg braces found it fast. Later tests? Most had to FEEL it first. Our guess? A teacher's hands.",
+     "credit": "SELINGER ET AL. · 2015 · 2019 (retold)",
+     "caption_line": "5. FEEL: Walkers in robot leg braces found the new way of stepping that cost the least energy within minutes. Later tests from the same lab found most people first had to feel the easier way.",
+     "photo_wish": "KEPT: the fact check's 'Later tests: most had to FEEL it first' instead of the style line 'found it in minutes, once they could FEEL it', because the style line still squeezes two papers into one result. 'Within minutes' became 'fast' and 'The body hunts' became 'Bodies hunt' to stay at 26 words. Credit checked at the source: the 2019 paper is Selinger, Wong, Simha & Donelan, J Exp Biol 222:jeb198234 (most walkers kept their old step until shown cheaper ones). Teacher helping: Boonchu giving a hands-on adjustment in a standing or seated asana (check his clothes for that day). Keep text off faces and hands."
+    },
+    {
+     "n": 6,
+     "finding_id": "MC-3",
+     "word": "DAILY",
+     "line": "And the brain? 14 people tapped a finger pattern DAILY. In 4 weeks, inside one part, activity moved from thinking side to movement side. Small study.",
+     "credit": "LEHERICY ET AL. · 2005 (retold)",
+     "caption_line": "6. DAILY: 14 people practised a finger pattern 15 minutes a day for 4 weeks. Activity moved inside a deep part of the brain, from its thinking side to its movement side. Small study, not yoga.",
+     "photo_wish": "KEPT: '15 minutes' left off the slide (it stays in the caption) to fit the small-study label and the 'inside one part' fix in 26 words. 'tapped a finger pattern' instead of the style's 'practised', to match set A's finger-tapping. An experienced student in a steady, well-practised asana (a balance or a bind, e.g. Utthita Hasta Padangusthasana or Marichyasana), calm focus."
+    },
+    {
+     "n": 7,
+     "finding_id": "BENLIM-08",
+     "word": "SLEEP",
+     "line": "Then the night. A review of 66 studies says regular exercise helps you fall asleep a bit faster and SLEEP better. Small changes, mostly. Not yoga.",
+     "credit": "KREDLOW ET AL. · 2015 (retold)",
+     "caption_line": "7. SLEEP: A review of 66 studies found that people who exercise regularly fall asleep a bit faster and sleep better, with mostly small effects (not a yoga review).",
+     "photo_wish": "Rest: lying down in the final rest at the end of practice, soft light, taken from the side or from behind."
+    },
+    {
+     "n": 8,
+     "finding_id": "BENLIM-10",
+     "word": "REST",
+     "line": "But hard training works only with enough REST. Too little? Experts say athletes can get tired, slower, moody. Our reading? The day off is practice too.",
+     "credit": "MEEUSEN ET AL. · 2013 (retold)",
+     "caption_line": "8. REST: Sports experts agree that hard training pays off only with enough rest, and too little rest can leave athletes tired, slower and moody (linking this to our weekly day off is our reading).",
+     "photo_wish": "KEPT: 'Sports experts agree' became 'Experts say athletes can' and 'part of the practice' became 'practice too', to fit the fact fix (can, athletes, too little rest) in 26 words. A quiet seated closing asana (Padmasana, eyes closed), still and calm at the end of practice."
+    },
+    {
+     "n": 9,
+     "finding_id": "ASH-05",
+     "word": "COUNTS",
+     "line": "Real exercise, though? An hour of flow yoga COUNTS as medium effort, a bit easier than fast walking. Heart rate makes it look harder. Not Ashtanga.",
+     "credit": "SHERMAN ET AL. · 2017 (retold)",
+     "caption_line": "9. COUNTS: In 38 adults, an hour of flow yoga counted as medium exercise, a little easier than fast walking, though heart rate made it look harder. Flow yoga, not Ashtanga.",
+     "photo_wish": "Wide shot of the full Mysore room, many students each moving at their own pace."
+    },
+    {
+     "n": 10,
+     "finding_id": "BENLIM-02",
+     "word": "ENOUGH",
+     "line": "Is 540 ENOUGH? More movement, longer life, up to 450 to 750 medium-effort minutes a week. A link, not proof. Our math? 6 mornings of 90.",
+     "credit": "AREM ET AL. · 2015 (retold)",
+     "caption_line": "10. ENOUGH: In about 660,000 adults, moving more went with a longer life, up to 450 to 750 medium-effort minutes a week. Most of the gain came by the basic 150. A link, not proof. Not yoga.",
+     "photo_wish": "KEPT: opener stays 'Is 540 ENOUGH?' without the style's 'So', because 'So' plus the fact fix 'medium-effort' runs to 27 words; 'medium-effort' echoes slide 9's 'medium effort', so it still connects. The optional slide add 'Most gain came by 150' is left to the caption. The caption skips '31% vs 39% lower death risk' (death-risk wording and two numbers a child must compare) and 'our conversion' (450 to 750 is just 3 to 5 times the 150-minute guideline, in medium-effort minutes). WHO is gone, so nothing names the wrong guideline. A long-time or older student in a strong finishing asana (backbend, headstand or handstand) that shows years of practice, early morning light. Keep the head, hands and elbows fully in frame."
+    }
+   ],
+   "question": "How many mornings a week are you on the mat?"
+  }
+ ],
+ "photos": {
+  "sets": [
+   {
+    "set": "B",
+    "map": [
+     {
+      "n": 1,
+      "pid": "14-344",
+      "decile": 7,
+      "why": "COVER DRIFT: strongest and clearest photo left for B (cover score 8). Calm Gomukhasana B, face lifted, eyes nearly shut, room behind her in the same pose. Big white word goes on the dark ceiling band (y90-310). She is kneeling, not standing, and not a beginner: no calm standing beginner shot fits the mix."
+     },
+     {
+      "n": 2,
+      "pid": "14-213",
+      "decile": 3,
+      "why": "PEAK: three students do the same move at the same moment in a led class, so several are moving at once. It is the leg-up step, not a sun salutation (none of the 20 photos shows one)."
+     },
+     {
+      "n": 3,
+      "pid": "14-531",
+      "decile": 9,
+      "why": "SWEAT: you can see sweat and muscle on his back and arms. He is going over on his hands, not in a forward bend or twist. The teacher's light hand on his hip is in the photo."
+     },
+     {
+      "n": 4,
+      "pid": "14-326",
+      "decile": 6,
+      "why": "FUEL: a long steady hold on one knee (Vatayanasana, a balance), with sweat on her skin. Her face is not clearly visible."
+     },
+     {
+      "n": 5,
+      "pid": "14-472",
+      "decile": 8,
+      "why": "MOOD: Urdhva Dhanurasana, the exact backbend asked for, with a calm, steady face."
+     },
+     {
+      "n": 6,
+      "pid": "14-099",
+      "decile": 2,
+      "why": "BLISS: a kneeling backbend with her hands on her heels (camel), chest open, eyes closed, head released. The teacher watches from the back."
+     },
+     {
+      "n": 7,
+      "pid": "14-253",
+      "decile": 5,
+      "why": "QUIET: the whole room folds forward together, heads hidden, nobody looking at the camera, hazy light. It is a standing fold, not a seated one."
+     },
+     {
+      "n": 8,
+      "pid": "14-010",
+      "decile": 1,
+      "why": "GROW: TEACHER HELPING (this set's one). The teacher spots her upside down with one light hand on her back while she goes into a deeper backbend. Her face is hidden."
+     },
+     {
+      "n": 9,
+      "pid": "14-771",
+      "decile": 10,
+      "why": "SHARE: balance on the hands. She is going up toward a handstand, palms down, while the teacher lifts her hips. This is a second teacher-help photo."
+     },
+     {
+      "n": 10,
+      "pid": "14-221",
+      "decile": 4,
+      "why": "CALM: sitting still, hands in prayer, eyes closed, jaw soft. It reads as a quiet seated finish. No lying-down rest photo exists among these 20."
+     }
+    ]
+   },
+   {
+    "set": "C",
+    "map": [
+     {
+      "n": 1,
+      "pid": "14-323",
+      "decile": 6,
+      "why": "COVER STRONGER: cover score 8, a woman seen clearly in a strong kneeling Vatayanasana with bent legs, wide bright room, dark ceiling for the big white word. She is not older or a beginner. The two older-woman photos (14-244, 14-200) cannot be the cover without breaking the mix."
+     },
+     {
+      "n": 2,
+      "pid": "14-244",
+      "decile": 4,
+      "why": "POWER: Tittibhasana arm balance, her whole weight on her two arms, the work easy to see. Older student, sweat, wet hair."
+     },
+     {
+      "n": 3,
+      "pid": "14-442",
+      "decile": 8,
+      "why": "SUGAR: a group shot of the whole room in a standing backbend at once. Every face is hidden or small, so no single student carries the word SUGAR."
+     },
+     {
+      "n": 4,
+      "pid": "14-307",
+      "decile": 5,
+      "why": "HEAT: sweat on his back, warm green morning light, a whole row working in the same pose. It is Mayurasana, not a fold or twist."
+     },
+     {
+      "n": 5,
+      "pid": "14-410",
+      "decile": 7,
+      "why": "FEEL: TEACHER HELPING, hands on in a seated side-bend twist (Parighasana). One hand on her arm, one on her ankle. Mustard ASHTANGA/AYBKK tank: check this is Boonchu's outfit that day. Keep text off both faces and his hands."
+     },
+     {
+      "n": 6,
+      "pid": "14-081",
+      "decile": 1,
+      "why": "DAILY: steady, well-practised Krounchasana, leg straight up, calm upward gaze. The row behind does the same."
+     },
+     {
+      "n": 7,
+      "pid": "14-599",
+      "decile": 9,
+      "why": "SLEEP (weakest match): none of the 20 is a final-rest shot. A student lying on her back in rest shows at lower right, behind a teacher-assisted scorpion. Keep the word away from the scorpion and her face."
+     },
+     {
+      "n": 8,
+      "pid": "14-183",
+      "decile": 2,
+      "why": "REST: seated, eyes closed, still and inward in a bound twist, soft light. The closest match to a quiet seated close."
+     },
+     {
+      "n": 9,
+      "pid": "14-715",
+      "decile": 10,
+      "why": "COUNTS (compromise): low-angle shot of a teacher-assisted drop-back, with other students practising behind. Not the wide full-room shot asked for. The only wide room shot left (442) went to SUGAR, which needs it more."
+     },
+     {
+      "n": 10,
+      "pid": "14-200",
+      "decile": 3,
+      "why": "ENOUGH: an older long-time student in a strong Intermediate leg-up on two hands, calm focus, bright hall. Her head, hands and elbows are in frame. Not a backbend, headstand or handstand."
+     }
+    ]
+   }
+  ],
+  "notes": "I checked the mix rule with a script. Each set takes exactly one photo from each of the 10 deciles. No two neighbouring slides come from neighbouring deciles, and no 3 slides in a row rise or fall. Neither set uses any of set A's 10 photos, and all 20 others are used once.\nDecile order by slide: B = 7,3,9,6,8,2,5,1,10,4. C = 6,4,8,5,7,1,9,2,10,3.\nDeciles: D1 010/081/089, D2 099/121/183, D3 200/209/213, D4 220/221/244, D5 253/282/307, D6 308/323/326, D7 344/391/410, D8 424/442/472, D9 505/531/599, D10 644/715/771.\n\nSame student, checked by eye: the curly-haired woman (orange or mustard AYB top, navy star shorts) is in 5 of the 20 photos: 213, 307, 323, 344, 442. With 5 photos and 2 sets, one set must hold her 3 times, so the rule cannot be fully met. Best split: B has 344 and 213. C has 323 (clear face), 442 (face hidden) and 307 (soft, in the background). Ask Boonchu if that is OK. She is also on both covers (B 344, C 323).\nThe shirtless man with curly hair and a grey watch (213, 307, 531) is split B 213 and 531, C 307. I think 183 is a different man (straight hair, a mole). In 323 the man at the left edge has his face hidden.\n14-221 and 14-244 are very likely the same older woman. 771 may be her too. That makes at most 2 per set.\nThe grey-bra, teal-shorts student is the main subject of 326 (B). She also shows small in the background of 771 and 344 (both B), face hidden or blurred.\n\nTeacher helping: B has 010 and 771. C has 410, 599 and 715, plus a teacher watching in 323.\n\nWishes the mix rule made impossible: C SLEEP (no lying-rest photo among the 20, 599 is a proxy), C COUNTS (715 is not a wide room shot), and the covers are not standing beginners or older students. There is no sun salutation photo either."
+ }
+}

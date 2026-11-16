@@ -217,6 +217,9 @@
 
 - 2026-11-15 VIDEO QA BEFORE SENDING (learned on the proverb video; 3 checkers found what Plato missed). Stickers never touch a face: find faces (OpenCV YuNet, 4 frames a second) and place each sticker where its full pop-in size stays 45 px off every face, above the text block. Text handovers never cross-fade: the old block finishes fading before the new one starts, so at most 2 changing text blocks show at any moment. Every item's real-answer line must be on screen at least 1.3 s (hold the next question a moment if needed). Run an independent frame check of the whole video before sending it to Boonchu.
 
+- 2026-11-16 USE THE WHOLE PHOTO FOLDER (Boonchu: 'best 30 nov 13-14 carousel ... i told you to research and use 30 photos from this folder'). When he gives a 'best N' folder for carousels, plan N/10 sets of 10 and use every photo once (30 photos = sets A, B, C), each set with the class-time mix. Plato made only set A from 30 and had to be told.
+- 2026-11-16 WORK IN PARALLEL (Boonchu: 'no, you do both. find some help or assign some work to other agent. i need them work at the same time now'). When two jobs come in, never queue one behind the other: start a background workflow or agent for one and keep doing the other.
+
 ## Jobs from Machi
 - REPLACED 15 Oct by GOOGLE BUSINESS PHOTO POSTS (next entry); kept for history. Was: 2026-10-15 (Google report): WEEKLY GOOGLE BUSINESS PROFILE POST. Once a week, turn the week's best Reel into a Google post: 1 photo or the video, under 300 characters, alternate English and Thai, button "Book" to https://aybkk.net/start/maps. Posts may mention the promotion (the profile description may not). Draft only; Boonchu or Claude in Chrome posts it.
 - 2026-10-15 (Boonchu: "choose some photos with many people in the frame to post in google business. you can do every wednesday, friday and sunday"): GOOGLE BUSINESS PHOTO POSTS.
