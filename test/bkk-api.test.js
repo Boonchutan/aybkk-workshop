@@ -6046,6 +6046,157 @@ const ok = (name, cond, extra = '') => {
     tgs.close();
   }
 
+  // ── a Rezerv class they came to, taken from their aybkk.net pass (16 Nov 2026) ──
+  console.log('\n— a Rezerv class taken from the pass —');
+  {
+    const one = async (sql, args = []) => (await pool.query(sql, args)).rows[0] || {};
+    const todayB = new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10);
+    const d = k => new Date(Date.parse(todayB + 'T12:00:00Z') + k * 86400000).toISOString().slice(0, 10);
+    const at = (day, t = '06:30') => `${day}T${t}:00+07:00`;
+    const slot = (await one(`INSERT INTO bkk_class_slots (code,title,kind,weekday,start_time,duration_min,capacity,is_online,active)
+      VALUES ('test_onto','Onto Led Primary','test',1,'06:30',90,30,false,false) RETURNING id`)).id;
+    const mk = async (key, name = 'Onto ' + key) => (await one(`INSERT INTO bkk_members (code,name,email) VALUES ($1,$2,$3) RETURNING id`,
+      ['BTESTOP' + key, name, `onto.${key.toLowerCase()}@example.com`])).id;
+    const pass = async (member, code, o = {}) => (await one(`INSERT INTO bkk_passes
+        (member_id,product_id,kind,credits_total,credits_used,daily_cap,valid_days,valid_from,valid_until,status,frozen_from,frozen_until,source)
+      SELECT $1::int, id, kind, credits, $3::int, daily_cap, valid_days, $4::date, $5::date, $6::text, $7::date, $8::date, $9::text
+      FROM bkk_products WHERE code=$2 RETURNING id`,
+      [member, code, o.used || 0, o.from || null, o.until || null, o.status || 'active', o.ffrom || null, o.funtil || null,
+       o.source === undefined ? 'order' : o.source])).id;
+    // A Rezerv visit: on the list from Rezerv, checked in at our door unless in: false.
+    const rz = async (member, day, o = {}) => (await one(`INSERT INTO bkk_bookings
+        (slot_id,class_date,start_at,member_id,pass_id,status,checked_in_at,cover,source,via_member)
+      VALUES ($1,$2,$3,$4,$5,'booked',$6,$7,$8,$9) RETURNING id`,
+      [o.slot === null ? null : slot, day, at(day, o.t), member, o.pass || null, o.in === false ? null : at(day, o.t),
+       o.cover || (o.pass ? 'pass' : 'rezerv'), o.source || 'rezerv', o.via || null])).id;
+    const onto = (id, body = {}, h = ADMIN) => post(`/api/bkk/admin/bookings/${id}/onto-pass`, body, h);
+    const pOf = async id => one(`SELECT credits_used, to_char(valid_from,'YYYY-MM-DD') AS f, to_char(valid_until,'YYYY-MM-DD') AS u, note
+      FROM bkk_passes WHERE id=$1`, [id]);
+    const bOf = async id => one('SELECT pass_id, cover, moved_at, status FROM bkk_bookings WHERE id=$1', [id]);
+    const hist = async key => (await J(`/api/bkk/admin/members/BTESTOP${key}/history`, { headers: ADMIN })).body;
+
+    // 8 classes from four days ago; one taken at the door; today's class came in from Rezerv.
+    const dan = await mk('EIGHT');
+    const p8 = await pass(dan, 'pack8', { used: 1, from: d(-4), until: d(55) });
+    await rz(dan, d(-2), { pass: p8, source: 'door', t: '07:00' });
+    const today = await rz(dan, d(0));
+    const h0 = await hist('EIGHT');
+    const v0 = h0.visits.find(v => v.id === today);
+    ok('setup: the Rezerv class shows on the profile as came, on Rezerv, on no pass, not moved',
+       v0 && v0.status === 'attended' && v0.cover === 'rezerv' && v0.passId === null && v0.moved === false, JSON.stringify(v0));
+
+    ok('taking a class from a pass needs the staff key', (await onto(today, {}, {})).status === 401);
+    ok('an unknown booking is a 404', (await onto(999999999)).status === 404 && (await onto('12x')).status === 404);
+    ok('a pass id that is not a number is refused', (await onto(today, { passId: 'abc' })).status === 400);
+    const before = JSON.stringify([await pOf(p8), await bOf(today)]);
+    const dry = await onto(today, { dryRun: true });
+    ok('a dry run names the pass and what would be left: 6 of 8', dry.status === 200 && dry.body.dryRun === true
+       && dry.body.pass.id === p8 && dry.body.pass.creditsLeft === 6 && dry.body.pass.creditsTotal === 8, JSON.stringify(dry.body));
+    ok('...and changes nothing', JSON.stringify([await pOf(p8), await bOf(today)]) === before, before);
+
+    const done = await onto(today, { reason: 'booked in Rezerv after buying here' });
+    const p8a = await pOf(p8), ba = await bOf(today);
+    ok('moved: the pass has 6 classes left, the class is on it, and its note says so', done.status === 200 && done.body.dryRun === false
+       && done.body.pass.creditsLeft === 6 && p8a.credits_used === 2 && ba.pass_id === p8 && ba.cover === 'pass' && !!ba.moved_at
+       && p8a.note.includes(`class ${d(0)} 06:30 moved from Rezerv onto this pass: booked in Rezerv after buying here`)
+       && p8a.f === d(-4) && p8a.u === d(55), JSON.stringify([done.body, p8a, ba]));
+    const h1 = await hist('EIGHT');
+    const v1 = h1.visits.find(v => v.id === today), m1 = (h1.membership || []).find(p => p.passId === p8) || {};
+    ok('...the profile shows it taken from the pass, and the pass at 6 left', v1.moved === true && v1.passId === p8
+       && v1.cover === 'pass' && m1.creditsLeft === 6, JSON.stringify([v1, m1]));
+    ok('...the same class cannot be taken twice', (await onto(today)).status === 409 && (await pOf(p8)).credits_used === 2);
+
+    const undoDry = await onto(today, { undo: true, dryRun: true });
+    ok('undo, dry run: 7 left after, nothing changed', undoDry.status === 200 && undoDry.body.pass.creditsLeft === 7
+       && (await pOf(p8)).credits_used === 2 && (await bOf(today)).pass_id === p8, JSON.stringify(undoDry.body));
+    const undo = await onto(today, { undo: true });
+    const bu = await bOf(today);
+    ok('undo puts it back on Rezerv and gives the class back', undo.status === 200 && undo.body.pass.creditsLeft === 7
+       && (await pOf(p8)).credits_used === 1 && bu.pass_id === null && bu.cover === 'rezerv' && !bu.moved_at
+       && (await pOf(p8)).note.endsWith(`class ${d(0)} 06:30 put back on Rezerv`), JSON.stringify([undo.body, bu]));
+    ok('...and a class not moved here cannot be undone', (await onto(today, { undo: true })).status === 409
+       && (await onto(await rz(dan, d(-1), { pass: p8, source: 'door' }), { undo: true })).status === 409);
+    ok('moved again: 6 left (as the desk will do)', (await onto(today)).body.pass.creditsLeft === 6 && (await pOf(p8)).credits_used === 2);
+
+    // What cannot be moved.
+    const future = await rz(dan, d(2), { in: false });
+    const fr = await onto(future);
+    ok('a class they have not come to stays as it is', fr.status === 409 && /came to/.test(fr.body.error) && (await bOf(future)).pass_id === null,
+       JSON.stringify(fr.body));
+    const early = await rz(dan, d(-6));
+    const er = await onto(early);
+    ok('a class before the pass began is refused', er.status === 409 && /no aybkk\.net pass/.test(er.body.error), JSON.stringify(er.body));
+    const doorPass = await rz(dan, d(-3), { cover: 'pass', source: 'door' });
+    ok('only a class on Rezerv can be moved', (await onto(doorPass)).status === 409);
+
+    const rzOnly = await mk('RZONLY');
+    await pass(rzOnly, 'pack8', { from: d(-10), until: d(20), source: 'rezerv' });
+    const ro = await rz(rzOnly, d(0));
+    ok('a pass moved from Rezerv is never used: Rezerv counted its classes', (await onto(ro)).status === 409 && (await bOf(ro)).pass_id === null);
+
+    const full = await mk('FULL');
+    const pf = await pass(full, 'pack8', { used: 8, from: d(-10), until: d(20) });
+    ok('a pass with no class left is refused', (await onto(await rz(full, d(0)))).status === 409 && (await pOf(pf)).credits_used === 8);
+
+    const paused = await mk('PAUSED');
+    await pass(paused, 'pack8', { status: 'frozen', from: d(-10), until: d(40), ffrom: d(-3), funtil: d(5) });
+    ok('a pass paused on the class day is refused', (await onto(await rz(paused, d(0)))).status === 409);
+    ok('another student\'s pass is refused', (await onto(await rz(paused, d(-1)), { passId: p8 })).status === 409
+       && (await pOf(p8)).credits_used === 2);
+
+    // A pass not started yet starts on that class, and undo un-starts it.
+    const fresh = await mk('FRESH');
+    const pn = await pass(fresh, 'pack8');
+    const fv = await rz(fresh, d(-1));
+    const fm = await onto(fv);
+    const pn1 = await pOf(pn), vd = (await one('SELECT valid_days FROM bkk_passes WHERE id=$1', [pn])).valid_days;
+    ok('a pass not started yet starts on the class day', fm.status === 200 && pn1.f === d(-1) && pn1.u === d(-1 + vd) && pn1.credits_used === 1,
+       JSON.stringify([fm.body, pn1]));
+    await onto(fv, { undo: true });
+    const pn2 = await pOf(pn);
+    ok('...and undo leaves it not started again, with the class back', pn2.f === null && pn2.u === null && pn2.credits_used === 0, JSON.stringify(pn2));
+    const fv2 = await rz(fresh, d(0));
+    await onto(fv);
+    await onto(fv2);
+    await onto(fv, { undo: true });
+    const pn3 = await pOf(pn);
+    ok('...but a pass with another class on it keeps its days', pn3.f === d(-1) && pn3.credits_used === 1, JSON.stringify(pn3));
+
+    // Unlimited: nothing to take, the class is just on it.
+    const un = await mk('UNLIM');
+    const pu = await pass(un, 'unlim1', { from: d(-5), until: d(25) });
+    const um = await onto(await rz(un, d(0)));
+    ok('an unlimited pass takes the class and uses no class', um.status === 200 && um.body.pass.creditsLeft === null
+       && (await pOf(pu)).credits_used === 0, JSON.stringify(um.body));
+
+    // Undoing a merge: a Rezerv visit taken from the keeper's pass stays with that pass.
+    const K = 'BTESTOPKEEP01', F = 'BTESTOPFOLD01';
+    const kid = (await one(`INSERT INTO bkk_members (code,name,email) VALUES ($1,'Onto Merge','onto.keep@example.com') RETURNING id`, [K])).id;
+    const fid = (await one(`INSERT INTO bkk_members (code,name) VALUES ($1,'Onto Merge') RETURNING id`, [F])).id;
+    const pk = await pass(kid, 'pack8', { from: d(-5), until: d(25) });
+    const pf2 = await pass(fid, 'pack8', { from: d(-5), until: d(25) });
+    const rv1 = await rz(fid, d(-1), { via: fid }), rv2 = await rz(fid, d(-2), { via: fid }), rv3 = await rz(fid, d(-3), { via: fid });
+    const mg = await post(`/api/bkk/admin/members/${K}/merge`, { from: F }, ADMIN);
+    ok('setup: merged, both Rezerv visits on the keeper', mg.status === 200
+       && (await one('SELECT count(*)::int AS n FROM bkk_bookings WHERE member_id=$1', [kid])).n === 3, JSON.stringify(mg.body));
+    ok('setup: one taken from the keeper\'s pass, one from the double\'s', (await onto(rv1, { passId: pk })).status === 200
+       && (await onto(rv3, { passId: pf2 })).status === 200);
+    // Imported after the merge, through the double's Rezerv profile.
+    const rv4 = await rz(kid, d(-4), { via: fid }), rv5 = await rz(kid, d(-5), { via: fid });
+    ok('setup: one Rezerv visit imported since is taken from the keeper\'s pass', (await onto(rv4, { passId: pk })).status === 200);
+    const um2 = await post(`/api/bkk/admin/members/${F}/unmerge`, {}, ADMIN);
+    const owner = async id => (await one('SELECT member_id FROM bkk_bookings WHERE id=$1', [id])).member_id;
+    ok('undoing the merge: a visit taken from the keeper\'s pass stays with it; one on the double\'s pass and one on no pass go back',
+       um2.status === 200 && await owner(rv1) === kid && await owner(rv2) === fid && await owner(rv3) === fid
+       && await owner(rv4) === kid && await owner(rv5) === fid
+       && (await one('SELECT member_id FROM bkk_passes WHERE id=$1', [pf2])).member_id === fid
+       && (await pOf(pk)).credits_used === 2 && (await pOf(pf2)).credits_used === 1, JSON.stringify(um2.body));
+
+    await pool.query(`DELETE FROM bkk_bookings WHERE member_id IN (SELECT id FROM bkk_members WHERE code LIKE 'BTESTOP%')`);
+    await pool.query(`DELETE FROM bkk_passes WHERE member_id IN (SELECT id FROM bkk_members WHERE code LIKE 'BTESTOP%')`);
+    await pool.query(`DELETE FROM bkk_class_slots WHERE id=$1`, [slot]);
+  }
+
   console.log(`\n${PASS} passed, ${FAIL} failed`);
   srv.close(); await pool.end();
   process.exit(FAIL ? 1 : 0);

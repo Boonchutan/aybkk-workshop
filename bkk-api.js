@@ -467,6 +467,9 @@ function mountBkk(app, opts = {}) {
     // The door's add sheet sends one id per person added, so a second tap after
     // a lost reply finds the first one's seat instead of adding them again.
     await q(`ALTER TABLE bkk_bookings ADD COLUMN IF NOT EXISTS request_id TEXT`);
+    // Staff moved this Rezerv-covered class onto an aybkk.net pass (16 Nov 2026):
+    // when, so the move, and only the move, can be undone.
+    await q(`ALTER TABLE bkk_bookings ADD COLUMN IF NOT EXISTS moved_at TIMESTAMPTZ`);
 
     // findOrCreateMember and login/request both take the first row for an email
     // with no ORDER BY. Two rows for one address means one of them — and any
@@ -1780,8 +1783,11 @@ function mountBkk(app, opts = {}) {
       if ((await client.query('SELECT 1 FROM bkk_members WHERE merged_into=$1 AND id<>$2 AND merged_at > $3',
         [K, F, f.merged_at])).rows.length) return await stop(409, { error: 'another profile was merged into this one since: undo that one first' });
       const ids = r => r.rows.map(x => x.id);
+      // A Rezerv class staff took from a pass since stays with that pass: the
+      // bookings query below brings it back if its pass goes back.
       for (const t of ['bkk_orders', 'bkk_passes', 'bkk_bookings', 'bkk_notes', 'bkk_checks']) {
-        await client.query(`UPDATE ${t} SET member_id=$1 WHERE member_id=$2 AND id = ANY($3::int[])`, [F, K, L.rows[t] || []]);
+        await client.query(`UPDATE ${t} SET member_id=$1 WHERE member_id=$2 AND id = ANY($3::int[])${t !== 'bkk_bookings' ? ''
+          : ' AND (moved_at IS NULL OR pass_id = ANY($4::int[]))'}`, [F, K, L.rows[t] || [], ...t === 'bkk_bookings' ? [L.rows.bkk_passes || []] : []]);
       }
       await client.query(`UPDATE bkk_photo_members SET member_id=$1 WHERE member_id=$2 AND photo_id = ANY($3::int[])`,
         [F, K, L.rows.bkk_photo_members || []]);
@@ -1797,8 +1803,9 @@ function mountBkk(app, opts = {}) {
       since.passes = await client.query(`UPDATE bkk_passes SET member_id=$1 WHERE member_id=$2
         AND (order_id = ANY($3::int[]) OR (source='rezerv' AND via_member = ANY($4::int[]))) RETURNING id`,
         [F, K, [...(L.rows.bkk_orders || []), ...since.orders], fam]).then(ids);
+      // A Rezerv visit staff moved onto a pass goes with that pass (the next query).
       since.visits = await client.query(`UPDATE bkk_bookings b SET member_id=$1 WHERE b.member_id=$2 AND b.source='rezerv'
-        AND b.via_member = ANY($3::int[]) AND NOT (b.status='booked' AND EXISTS (SELECT 1 FROM bkk_bookings o WHERE o.member_id=$1
+        AND b.via_member = ANY($3::int[]) AND b.pass_id IS NULL AND NOT (b.status='booked' AND EXISTS (SELECT 1 FROM bkk_bookings o WHERE o.member_id=$1
           AND o.slot_id=b.slot_id AND o.class_date=b.class_date AND o.status='booked')) RETURNING b.id`, [F, K, fam]).then(ids);
       // A class goes with the pass that paid for it, unless that student already holds a seat in it.
       since.bookings = await client.query(`UPDATE bkk_bookings b SET member_id=$1 WHERE b.member_id=$2 AND b.pass_id = ANY($3::int[])
@@ -4578,7 +4585,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const [visits, pays, passes, notes, photos, checks, active] = await Promise.all([
         q(`SELECT b.id, to_char(b.class_date,'YYYY-MM-DD') AS date, ${VISIT_TIME} AS time,
              coalesce(s.title, b.class_title) AS class, b.status, b.checked_in_at, b.cancelled_at, b.cancel_reason,
-             b.cover, b.source, b.slot_id, b.start_at, b.pass_id, s.is_online, s.duration_min
+             b.cover, b.source, b.slot_id, b.start_at, b.pass_id, b.moved_at, s.is_online, s.duration_min
            FROM bkk_bookings b LEFT JOIN bkk_class_slots s ON s.id=b.slot_id
            WHERE b.member_id=$1 ORDER BY b.class_date DESC, b.start_at DESC, b.id DESC`, [m.id]),
         q(`SELECT o.id, to_char(${PAY_AT} AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS date,
@@ -4633,7 +4640,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         passes: passes.rows.map(passOut),
         visits: visits.rows.map(v => ({ id: v.id, date: v.date, time: v.time, class: v.class, status: visitStatusOut(v),
           checkedInAt: v.checked_in_at, cancelledAt: v.cancelled_at, cancelReason: v.cancel_reason,
-          cover: v.cover, source: v.source, upcoming: upcoming(v) })),
+          cover: v.cover, source: v.source, upcoming: upcoming(v), passId: v.pass_id, moved: !!v.moved_at })),
         payments: pays.rows.map(o => ({ id: o.id, date: o.date, time: o.time, item: o.item, amount: o.amount_thb,
           base: o.base_thb, fee: o.fee_thb, vat: o.vat_thb, method: o.method, status: o.status,
           source: o.source || 'aybkk', refno: String(o.refno), note: o.gateway_note })),
@@ -4912,6 +4919,77 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (!r.rows.length) return res.status(404).json({ error: 'pass not found' });
       res.json({ success: true, pass: r.rows[0] });
     } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // A class they came to on a Rezerv booking while they held an aybkk.net pass
+  // (16 Nov 2026): nothing here paid for it, so staff move it onto the pass and
+  // it takes a class, as a booking here would have. The pass must have been live
+  // on the class day. A pass moved from Rezerv already counted its classes
+  // there, so it is never one. dryRun shows the pass and what is left, and keeps
+  // nothing. undo puts a moved class back on Rezerv and gives the class back.
+  app.post('/api/bkk/admin/bookings/:id/onto-pass', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    if (!/^\d{1,9}$/.test(req.params.id)) return res.status(404).json({ error: 'booking not found' });
+    const { passId = null, dryRun = false, undo = false } = req.body || {};
+    if (passId != null && !/^\d{1,9}$/.test(String(passId))) return res.status(400).json({ error: 'passId must be a pass id' });
+    const why = String((req.body || {}).reason || '').replace(/[\u0000-\u001f\u007f|]/g, ' ').trim().slice(0, 120);
+    const fail = (status, error) => { throw Object.assign(new Error(error), { status }); };
+    const FIRST_DAY = ' (its first class: its days start then)';
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const b = (await client.query(`SELECT b.*, to_char(b.class_date,'YYYY-MM-DD') AS d, ${VISIT_TIME} AS t
+        FROM bkk_bookings b WHERE b.id=$1 FOR UPDATE`, [Number(req.params.id)])).rows[0];
+      if (!b) fail(404, 'booking not found');
+      const what = `class ${[b.d, b.t].filter(Boolean).join(' ')}`;
+      const note = text => client.query(`UPDATE bkk_passes SET note = coalesce(note || ' | ', '') || $2 WHERE id=$1`,
+        [pass.id, why ? `${text}: ${why}` : text]);
+      let pass;
+      if (undo) {
+        if (!b.moved_at || !b.pass_id) fail(409, 'this class was not moved onto a pass here');
+        if (b.status !== 'booked') fail(409, 'already ' + b.status);
+        pass = (await client.query('SELECT * FROM bkk_passes WHERE id=$1 FOR UPDATE', [b.pass_id])).rows[0];
+        await client.query(`UPDATE bkk_passes SET credits_used = GREATEST(0, credits_used - 1)
+          WHERE id=$1 AND kind <> 'unlimited'`, [pass.id]);
+        await client.query(`UPDATE bkk_bookings SET pass_id=NULL, cover='rezerv', moved_at=NULL WHERE id=$1`, [b.id]);
+        // The move started the pass's days and nothing else is on it: not started again.
+        if ((pass.note || '').includes(`${what} moved from Rezerv onto this pass${FIRST_DAY}`)
+          && !(await client.query('SELECT 1 FROM bkk_bookings WHERE pass_id=$1 LIMIT 1', [pass.id])).rows.length) {
+          await client.query(`UPDATE bkk_passes SET valid_from=NULL, valid_until=NULL WHERE id=$1 AND valid_from=$2::date`, [pass.id, b.d]);
+        }
+        await note(`${what} put back on Rezerv`);
+      } else {
+        if (b.pass_id) fail(409, 'this class is already on a pass');
+        if (b.cover !== 'rezerv') fail(409, 'only a class on Rezerv can be moved onto a pass');
+        if (b.status !== 'booked' || !b.checked_in_at) fail(409, 'only a class they came to can be moved onto a pass');
+        pass = (await client.query(
+          `SELECT p.* FROM bkk_passes p
+           WHERE p.member_id=$1 AND ${PASS_LIVE_ON('$2::date')} AND p.source IS DISTINCT FROM 'rezerv'
+             AND (p.kind='unlimited' OR p.credits_used < p.credits_total) ${passId ? 'AND p.id=$3' : ''}
+           ORDER BY p.valid_from NULLS LAST, p.id LIMIT 1 FOR UPDATE`,
+          passId ? [b.member_id, b.d, Number(passId)] : [b.member_id, b.d])).rows[0];
+        if (!pass) fail(409, passId ? `that pass cannot take this class: not theirs, from Rezerv, not live on ${b.d}, or no class left`
+          : `no aybkk.net pass with a class left was live on ${b.d}`);
+        // The pass's first class starts its days, as a booking here would.
+        const first = !pass.valid_from && !pass.valid_until;
+        if (first) {
+          const vu = new Date(`${b.d}T00:00:00${TZ_OFFSET}`);
+          vu.setDate(vu.getDate() + pass.valid_days);
+          await client.query('UPDATE bkk_passes SET valid_from=$2, valid_until=$3 WHERE id=$1', [pass.id, b.d, ymd(vu)]);
+        }
+        if (pass.kind !== 'unlimited') await client.query('UPDATE bkk_passes SET credits_used = credits_used + 1 WHERE id=$1', [pass.id]);
+        await client.query(`UPDATE bkk_bookings SET pass_id=$2, cover='pass', moved_at=now() WHERE id=$1`, [b.id, pass.id]);
+        await note(`${what} moved from Rezerv onto this pass${first ? FIRST_DAY : ''}`);
+      }
+      const after = (await client.query(`SELECT p.*, pr.name_en, pr.name_th, ${PASS_DATES}
+        FROM bkk_passes p LEFT JOIN bkk_products pr ON pr.id=p.product_id WHERE p.id=$1`, [pass.id])).rows[0];
+      await client.query(dryRun ? 'ROLLBACK' : 'COMMIT');
+      res.json({ success: true, dryRun: !!dryRun, undo: !!undo,
+        booking: { id: b.id, date: b.d, time: b.t, cover: undo ? 'rezerv' : 'pass' }, pass: passOut(after) });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      res.status(e.status || 500).json({ error: e.message });
+    } finally { client.release(); }
   });
 
   // ── the teaching team ─────────────────────────────────────────────────────

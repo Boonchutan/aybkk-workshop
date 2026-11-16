@@ -541,6 +541,10 @@
     tLeftN: n => n === 1 ? '1 class left' : `${n} classes left`, tUntil: d => `until ${d}`,
     tStartsFirst: 'starts on the first booking', tMissed: 'No-shows · cancelled', tPhotos: n => `${n} photos`,
     hVisits: 'Visits', hPays: 'Payments', hPasses: 'Passes', hNotes: 'Teacher notes', hChecks: '12-week checks',
+    ontoBtn: 'Take from pass', ontoUndoBtn: 'Undo', ontoMoved: 'taken from pass',
+    ontoQ: (c, w, p, n) => `Take ${c} on ${w} from ${p}? ${n == null ? 'Unlimited: no class is used.' : `It uses 1 class: ${n} left after.`}`,
+    ontoUndoQ: (c, w, p, n) => `Put ${c} on ${w} back on Rezerv? ${n == null ? p : `${p} gets 1 class back: ${n} left after.`}`,
+    ontoDone: (p, n) => n == null ? `Done. ${p}.` : `Done. ${p}: ${n} left.`,
     thDate: 'Date', thTime: 'Time', thClass: 'Class', thFrom: 'From', thItem: 'Item', thAmount: 'Amount',
     thMethod: 'Paid by', thClasses: 'Classes', thValid: 'Valid', thNote: 'Note', thTeacher: 'Teacher',
     thHr: 'Resting HR', thSleep: 'Sleep', thFeel: 'Feel', thCount: 'Count', thTotal: 'Total', thAvg: 'Per class',
@@ -616,6 +620,10 @@
     tLeftN: n => `เหลือ ${n} ครั้ง`, tUntil: d => `ถึง ${d}`,
     tStartsFirst: 'เริ่มเมื่อจองคลาสแรก', tMissed: 'จองแล้วไม่มา · ยกเลิก', tPhotos: n => `รูป ${n} รูป`,
     hVisits: 'การเข้าเรียน', hPays: 'การชำระเงิน', hPasses: 'แพ็กเกจ', hNotes: 'คำแนะนำครู', hChecks: 'เช็กผล 12 สัปดาห์',
+    ontoBtn: 'หักจากแพ็กเกจ', ontoUndoBtn: 'ยกเลิกการหัก', ontoMoved: 'หักจากแพ็กเกจแล้ว',
+    ontoQ: (c, w, p, n) => `หัก ${c} วันที่ ${w} จาก ${p}? ${n == null ? 'แพ็กเกจไม่จำกัด: ไม่เสียครั้ง' : `ใช้ 1 ครั้ง เหลือ ${n} ครั้ง`}`,
+    ontoUndoQ: (c, w, p, n) => `คืน ${c} วันที่ ${w} กลับไปเป็น Rezerv? ${n == null ? p : `${p} ได้คืน 1 ครั้ง เหลือ ${n} ครั้ง`}`,
+    ontoDone: (p, n) => n == null ? `เรียบร้อย ${p}` : `เรียบร้อย ${p}: เหลือ ${n} ครั้ง`,
     thDate: 'วันที่', thTime: 'เวลา', thClass: 'คลาส', thFrom: 'มาจาก', thItem: 'รายการ', thAmount: 'ยอดเงิน',
     thMethod: 'ชำระโดย', thClasses: 'ครั้ง', thValid: 'ช่วงเวลา', thNote: 'หมายเหตุ', thTeacher: 'ครู',
     thHr: 'ชีพจรขณะพัก', thSleep: 'การนอน', thFeel: 'ความรู้สึก', thCount: 'จำนวน', thTotal: 'รวม', thAvg: 'เฉลี่ยต่อคลาส',
@@ -2308,6 +2316,32 @@
     else tab(f.tab);
   };
   window.histMore = k => { HIST_ALL[k] = true; paintHistory(); };
+  // Take a Rezerv class they came to from their aybkk.net pass, or undo that
+  // (16 Nov 2026). A dry run first, so the question names the pass and what is left.
+  window.ontoPass = async (id, undo = false) => {
+    const v = HIST && HIST.visits.find(x => Number(x.id) === id);
+    if (!v) return;
+    const send = dryRun => api(`/api/bkk/admin/bookings/${id}/onto-pass`, { method: 'POST',
+      body: JSON.stringify({ dryRun, undo }) }).catch(() => null);
+    const left = p => p.kind === 'unlimited' ? null : p.creditsLeft;
+    const pname = p => itemName((LANG === 'th' && p.nameTh) || p.name || '–');
+    const when = [ymdLong(v.date, true), v.time].filter(Boolean).join(' '), c = cls(v.class || '');
+    const r1 = await send(true);
+    if (!r1) { alert(T('addNoNet')); return; }
+    const j1 = await shout(r1);
+    if (!j1 || !confirm(undo ? T('ontoUndoQ', c, when, pname(j1.pass), left(j1.pass)) : T('ontoQ', c, when, pname(j1.pass), left(j1.pass)))) return;
+    const r2 = await send(false);
+    if (!r2) { alert(T('addNoNet')); return; }
+    const j2 = await shout(r2);
+    if (!j2) return;
+    alert(T('ontoDone', pname(j2.pass), left(j2.pass)));
+    const code = HIST.member.code, seq = ++HIST_SEQ, y = window.scrollY;
+    const r = await api(`/api/bkk/admin/members/${encodeURIComponent(code)}/history`).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (seq !== HIST_SEQ || SUB !== 'history') return;
+    if (!r || !r.ok) { alert(j.error || T('failed')); return; }
+    HIST = j; paintHistory(); window.scrollTo(0, y);
+  };
   window.histCsv = what => { if (HIST) csvDownload(what, { member: HIST.member.code }); };
 
   // What they can use today, first thing on the profile (Nov 2026): each pass
@@ -2370,6 +2404,11 @@
 
     // A past "booked" that never got a check-in reads differently from one still to come.
     const vState = v => v.status === 'booked' ? (v.upcoming ? 'upcoming' : 'past') : v.status;
+    // A Rezerv visit they came to on a day an aybkk.net pass of theirs ran, with a
+    // class left, can be taken from it. The server checks pauses and the rest.
+    const passFor = d => h.passes.some(p => p.source !== 'rezerv' && (p.status === 'active' || p.status === 'frozen')
+      && (!p.validFrom || p.validFrom <= d) && (!p.validUntil || p.validUntil >= d)
+      && (p.kind === 'unlimited' || p.creditsLeft > 0));
     const visits = cut('visits', h.visits).map(v => {
       const st = vState(v);
       return `<tr><td class="nowrap">${esc(ymdLong(v.date, true))}</td><td>${esc(v.time || '')}</td>
@@ -2377,7 +2416,10 @@
         <td><span class="pill ${st}">${esc(W(st === 'upcoming' ? 'booked' : st))}</span>
           ${st === 'attended' && v.checkedInAt && v.source !== 'rezerv' ? `<br><span class="muted">${esc(T('inAt', time(v.checkedInAt)))}</span>` : ''}
           ${v.cancelReason ? `<br><span class="muted">${esc(v.cancelReason)}</span>` : ''}</td>
-        <td class="muted">${esc([W(v.source || 'aybkk'), v.cover === 'rezerv' && v.source !== 'rezerv' ? 'Rezerv' : ''].filter(Boolean).join(' · '))}</td></tr>`;
+        <td class="muted">${esc([W(v.source || 'aybkk'), v.cover === 'rezerv' && v.source !== 'rezerv' ? 'Rezerv' : '',
+          v.moved ? T('ontoMoved') : ''].filter(Boolean).join(' · '))}${
+          v.status !== 'attended' ? '' : v.moved ? ` <button class="btn gray sm" onclick="ontoPass(${Number(v.id)}, true)">${esc(T('ontoUndoBtn'))}</button>`
+          : v.cover === 'rezerv' && !v.passId && passFor(v.date) ? ` <button class="btn gray sm" onclick="ontoPass(${Number(v.id)})">${esc(T('ontoBtn'))}</button>` : ''}</td></tr>`;
     });
     const pays = cut('payments', h.payments).map(o => `<tr>
       <td class="nowrap">${esc(ymdLong(o.date))}${o.time && !(o.source === 'rezerv' && o.time === '00:00') ? `<br><span class="muted">${esc(o.time)}</span>` : ''}</td>
