@@ -28,8 +28,24 @@ const LETTER_PER_DAY = 60;                     // the same mail account sends re
 const LETTER_ASKS_PER_DAY = 3;                 // confirm mails to one address
 const CANCEL_CUTOFF_HOURS = 5;                 // cancel ≥5h before start → credit back
 const LATE_ADD_DAYS = 7;                       // staff put someone who came on a class that is over, this many days back
-const PAY_SWEEP_MS = 10 * 60 * 1000;           // re-ask PaySolutions about online orders still pending
 const VAT_PCT = 7;                             // Thai VAT, charged on price + online fee
+// The payment watch (Boonchu, 15 Nov 2026): stuck online payments are asked
+// about again by the server itself, and Telegram hears only about problems.
+const PAY_WATCH = {
+  inquiryMs: 15000,                            // one PaySolutions inquiry, at most
+  everyMs: 10 * 60000, firstMs: 2 * 60000,     // the sweep timer, and its first run after boot
+  minAgeMin: 5, maxAgeH: 48,                   // an order this old is asked about (the student may still be paying before)
+  youngH: 2, youngGapMin: 10, oldGapMin: 60,   // under 2 hours old: asked every 10 minutes at most, then hourly
+  perRun: 30,                                  // and a run starts no new inquiry after 4 timeouts' worth of time,
+                                               // or after one answer slower than a third of the timeout
+  stuckMin: 60,                                // not paid after this: a status ping, and a problem in the money line
+  doubleH: 72,                                 // a second paid order for the same package this close is a possible double
+  failAfter: 2, failMin: 20,                   // "the check is failing" after 2 failures in a row, or 20 minutes of them,
+  failGapH: 3,                                 // and at most this often
+  sendTries: 3, retryMin: 10,                  // a ping or money line Telegram refused is tried again, 10 minutes apart
+  lineMaxDays: 7,                              // a money line covers the time since the last one, at most this far back
+};
+const MANUAL_NOTE = 'MANUAL ACTIVATION by admin';
 
 // ── seed data (from aybkk.com, captured 2026-08-05) ─────────────────────────
 // price_thb is the BASE price. The online surcharge is a setting, applied at
@@ -503,6 +519,21 @@ function mountBkk(app, opts = {}) {
     // A drop-in bought for a class carries the tick on its order to the seat.
     await q(`ALTER TABLE bkk_bookings ADD COLUMN IF NOT EXISTS need_mat BOOLEAN NOT NULL DEFAULT false`);
     await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS need_mat BOOLEAN NOT NULL DEFAULT false`);
+    // One sale, one row (15 Nov 2026). request_id: the desk's id for one sale, so
+    // a second tap after a lost reply finds the first sale. twin_of: a Rezerv line
+    // that is a copy of an aybkk.net sale (status 'twin') or of its pass (a void
+    // pass), one to one. Neither is ever money or a sale.
+    await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS request_id TEXT`);
+    await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_orders_request_id ON bkk_orders (request_id) WHERE request_id IS NOT NULL`);
+    await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS twin_of INTEGER REFERENCES bkk_orders(id)`);
+    await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_orders_twin_of ON bkk_orders (twin_of) WHERE twin_of IS NOT NULL`);
+    await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS twin_of INTEGER REFERENCES bkk_passes(id)`);
+    await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_passes_twin_of ON bkk_passes (twin_of) WHERE twin_of IS NOT NULL`);
+    // On a void Rezerv twin pass, what taking the pair apart puts back: used (the
+    // classes the import added to the pass kept), from and until (the dates it
+    // gave that pass, and untilWas before them), and status (what Rezerv says of
+    // this one now, so it comes back paused, or stays void if Rezerv stopped it).
+    await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS twin_undo JSONB`);
     // The student's own face (9 Nov 2026), so teachers can greet them by name.
     // photo_id is a private Cloudinary asset. photo_tries counts uploads on
     // photo_tries_on (a Bangkok day), to cap them.
@@ -529,6 +560,19 @@ function mountBkk(app, opts = {}) {
       await q(`ALTER TABLE ${t} ADD COLUMN IF NOT EXISTS via_member INTEGER`);
     }
     await q(`CREATE INDEX IF NOT EXISTS bkk_members_merged ON bkk_members (merged_into) WHERE merged_into IS NOT NULL`);
+    // The payment watch (15 Nov 2026): when PaySolutions was last asked about an
+    // order, and which problem pings an order already sent, so a restart never
+    // sends one twice.
+    await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS checked_at TIMESTAMPTZ`);
+    await q(`CREATE INDEX IF NOT EXISTS bkk_orders_waiting ON bkk_orders (checked_at NULLS FIRST, created_at)
+             WHERE status = 'pending' AND source IS NULL`);
+    await q(`CREATE TABLE IF NOT EXISTS bkk_pay_alerts (
+      order_id INTEGER NOT NULL REFERENCES bkk_orders(id) ON DELETE CASCADE,
+      kind TEXT NOT NULL, sent_at TIMESTAMPTZ DEFAULT now(),
+      PRIMARY KEY (order_id, kind))`);
+    // A ping Telegram refused keeps its text here until a retry gets it through.
+    await q(`ALTER TABLE bkk_pay_alerts ADD COLUMN IF NOT EXISTS retry_text TEXT`);
+    await q(`ALTER TABLE bkk_pay_alerts ADD COLUMN IF NOT EXISTS tries INTEGER NOT NULL DEFAULT 1`);
 
     // Catalogue: a package added to SEED_PRODUCTS reaches a running shala on the
     // next boot. ON CONFLICT leaves existing rows alone, so a price changed or a
@@ -736,6 +780,24 @@ function mountBkk(app, opts = {}) {
   // When money came in, as a Bangkok day.
   const PAY_AT = `coalesce(o.verified_at, o.created_at)`;
   const PAY_DAY = `(${PAY_AT} AT TIME ZONE 'Asia/Bangkok')::date`;
+  // The same two for another alias, and one package across both systems: Rezerv's
+  // old 6 months and the one sold here from 12 Nov 2026 share a name, not an id.
+  const payAt = a => `coalesce(${a}.verified_at, ${a}.created_at)`;
+  const payDay = a => `(${payAt(a)} AT TIME ZONE 'Asia/Bangkok')::date`;
+  const pkgOf = a => `(SELECT lower(name_en) FROM bkk_products WHERE id=${a}.product_id)`;
+  // One package under two names: Rezerv's plan text can land on either, and one
+  // sale may sit under both (8 classes in 1 month or in 2, a 12- or 13-month
+  // year). The import and the doubles list take a family for one package.
+  const PKG_FAMILY = { unlim6: ['unlim6', 'unlim6m'], unlim6m: ['unlim6', 'unlim6m'], unlim12: ['unlim12', 'unlim12m'],
+    unlim12m: ['unlim12', 'unlim12m'], pack8: ['pack8', 'pack8m1'], pack8m1: ['pack8', 'pack8m1'] };
+  const famId = id => `(SELECT CASE code ${Object.keys(PKG_FAMILY).map(c => `WHEN '${c}' THEN '${PKG_FAMILY[c][0]}'`).join(' ')}
+    ELSE code END FROM bkk_products WHERE id=${id})`;
+  const famOf = a => famId(`${a}.product_id`);
+  // A Rezerv copy and the aybkk.net sale it copies sit this many Bangkok days apart at most.
+  const COPY_DAYS = 5;
+  // Two Rezerv times for one payment: the same minute, or one file that gives no time (00:00).
+  const sameTime = (a, b) => `(${a} = ${b} OR ${a} = '00:00' OR ${b} = '00:00')`;
+  const hhmm = a => `to_char(${a}.created_at AT TIME ZONE 'Asia/Bangkok','HH24:MI')`;
   const realYmd = d => {
     if (!isYmd(d)) return false;
     const t = Date.parse(`${d}T00:00:00Z`);
@@ -1046,24 +1108,34 @@ function mountBkk(app, opts = {}) {
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
-  async function verifyAndActivate(refno) {
+  // now: the payment watch's clock (paySweep passes its own); out.verdict: what
+  // PaySolutions answered, for the sweep.
+  async function verifyAndActivate(refno, { now = nowMs(), out = {} } = {}) {
     const o = (await q('SELECT * FROM bkk_orders WHERE refno = $1', [refno])).rows[0];
     if (!o) return { status: 'unknown' };
     if (o.status === 'paid') return { status: 'paid', already: true, ...await orderBooking(o) };
     // A Rezerv payment is history: it never goes near the gateway or a pass.
     if (o.source === 'rezerv') return { status: o.status };
+    // Voided by staff after a check with the bank or PaySolutions: final. Never
+    // asked again, and its "Void:" note stays (15 Nov 2026).
+    if (o.status === 'void' || o.status === 'twin') return { status: o.status };
 
     const cfg = paysoConfig();
     if (!cfg) return { status: o.status, note: 'gateway not configured' };
 
-    const verdict = await inquire(cfg, o);
+    const verdict = out.verdict = await inquire(cfg, o);
+    await q(`UPDATE bkk_orders SET checked_at = to_timestamp($2::double precision / 1000) WHERE id = $1`, [o.id, now]);
+    await (verdict.failed ? checkFailing(verdict.why, now) : checkWorks()).catch(e => console.error('[bkk pay] check health failed:', e.message));
+    // Staff (or another path) may have turned the order on while PaySolutions
+    // was being asked: a paid order keeps its status and its note.
+    const alreadyPaid = async () => ({ status: 'paid', already: true, ...await orderBooking(o) });
     if (!verdict.paid) {
-      const note = (verdict.note || 'not confirmed').slice(0, 300);
-      await q(`UPDATE bkk_orders SET gateway_note = $2 WHERE id = $1`, [o.id, note]);
-      // Said once per new answer, so a re-check every few minutes is not a flood.
-      if (verdict.looksPaid && o.gateway_note !== note) {
-        notify(`⚠️ AYBKK payment: the gateway says "${note}" for order ${refno} (฿${o.amount_thb}), and no pass was made. Check it in PaySolutions, then activate it in the admin if the money is there.`);
-      }
+      const upd = await q(`UPDATE bkk_orders SET gateway_note = $2 WHERE id = $1 AND status <> 'paid' RETURNING id`,
+        [o.id, (verdict.note || 'not confirmed').slice(0, 300)]);
+      if (!upd.rows.length) return alreadyPaid();
+      // A record that is not paid an hour on: a status this code does not know
+      // ("Y Paid" was one, 15 Nov 2026) looks exactly like this.
+      if (!verdict.failed && verdict.record && now - new Date(o.created_at).getTime() >= PAY_WATCH.stuckMin * 60000) stuckPing(o, verdict, now);
       return { status: o.status, note: verdict.note };
     }
     // Amount must match what we asked for. A confirmed payment with no amount
@@ -1071,13 +1143,119 @@ function mountBkk(app, opts = {}) {
     // is the one thing a payer could have altered, and it is exactly what must
     // be checked before a pass is created.
     if (verdict.amount == null || Math.round(Number(verdict.amount)) !== o.amount_thb) {
-      await q(`UPDATE bkk_orders SET status='mismatch', gateway_note=$2 WHERE id=$1`,
+      const upd = await q(`UPDATE bkk_orders SET status='mismatch', gateway_note=$2 WHERE id=$1 AND status <> 'paid' RETURNING id`,
         [o.id, `amount ${verdict.amount} != ${o.amount_thb}`]);
+      if (!upd.rows.length) return alreadyPaid();
       console.warn(`[bkk pay] AMOUNT MISMATCH refno=${refno} gateway=${verdict.amount} expected=${o.amount_thb}`);
+      alertSoon(o, 'mismatch', `⚠ Wrong amount: PaySolutions says ${verdict.amount == null ? 'no amount'
+        : '฿' + thb(Math.round(Number(verdict.amount)))}, the order is ฿${thb(o.amount_thb)}. No pass was made.`,
+        'Look in PaySolutions before you do anything.');
       return { status: 'mismatch' };
     }
     await activateOrder(o, verdict);
     return { status: 'paid', ...await orderBooking(o) };
+  }
+
+  // ── problem pings (15 Nov 2026) ───────────────────────────────────────────
+  // Each names the student (name and member code), the package, the amount and
+  // the ref. Never an email, a phone, a link or anything a student wrote: a word
+  // with an @, a +, a digit in any script, a slash or a dot before letters is not
+  // part of a name.
+  const thb = n => Math.round(Number(n) || 0).toLocaleString('en-US');
+  const pingName = s => String(s || '').replace(/[\u0000-\u001f\u007f]/g, ' ').split(/\s+/)
+    .filter(w => w && !/[@+＠＋/\\:]|\p{Nd}|www\.|[.．]\p{L}{2,}/iu.test(w)).join(' ').slice(0, 60) || 'Student';
+  const gwText = s => String(s || '').replace(/\S*@\S*/g, ' ').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 40);
+  // "Sun 15 Nov 21:05", Bangkok time.
+  const bkkClock = ms => { const t = new Date(ms + 7 * 3600000).toISOString(); return `${classWhen(t.slice(0, 10), '').slice(0, -7)} ${t.slice(11, 16)}`; };
+  async function orderLine(o) {
+    const r = (await q(`SELECT m.name, m.code, pr.name_en FROM bkk_orders o
+      LEFT JOIN bkk_members m ON m.id=o.member_id LEFT JOIN bkk_products pr ON pr.id=o.product_id
+      WHERE o.id=$1`, [o.id])).rows[0] || {};
+    return `${pingName(r.name)} (${r.code || 'no member code'}) · ${r.name_en || 'no package'} · ฿${thb(o.amount_thb)} · ref ${o.refno}`;
+  }
+  // Claimed before it is sent, so a restart or a second server never sends it
+  // again. claimId: the order the claim is kept on (a double keeps one per pair).
+  async function alertOnce(o, kind, head, tail, claimId = o.id) {
+    const mine = await q(`INSERT INTO bkk_pay_alerts (order_id, kind) VALUES ($1,$2)
+      ON CONFLICT DO NOTHING RETURNING order_id`, [claimId, kind]);
+    if (!mine.rows.length) return false;
+    const text = [head, await orderLine(o), tail].filter(Boolean).join('\n');
+    // Telegram said no, or could not be reached: nothing arrived, so resendAlerts tries again.
+    if ((await notify(text)).retry) await q(`UPDATE bkk_pay_alerts SET retry_text=$3 WHERE order_id=$1 AND kind=$2`, [claimId, kind, text]);
+    return true;
+  }
+  const alertSoon = (...args) => alertOnce(...args).catch(e => console.error('[bkk pay] alert failed:', e.message));
+  // Each refused ping, 10 minutes apart, 3 tries in all. A timeout is never
+  // tried again: that message may have arrived.
+  async function resendAlerts({ now = nowMs() } = {}) {
+    const due = (await q(`UPDATE bkk_pay_alerts SET tries = tries + 1, sent_at = $1
+      WHERE retry_text IS NOT NULL AND tries < $2 AND sent_at <= $1::timestamptz - make_interval(mins => $3)
+      RETURNING order_id, kind, retry_text, tries`, [new Date(now), PAY_WATCH.sendTries, PAY_WATCH.retryMin])).rows;
+    let sent = 0;
+    for (const a of due) {
+      const r = await notify(a.retry_text);
+      if (r.ok) sent++;
+      if (!r.retry || a.tries >= PAY_WATCH.sendTries) await q(`UPDATE bkk_pay_alerts SET retry_text=NULL WHERE order_id=$1 AND kind=$2`, [a.order_id, a.kind]);
+    }
+    return { due: due.length, sent };
+  }
+  // A record still not paid an hour on. A later paid order for the same package
+  // usually means a declined try the student paid again; it can also be a double.
+  function stuckPing(o, verdict, now) {
+    (async () => {
+      const later = (await q(`SELECT x.refno, to_char(coalesce(x.verified_at, x.created_at) AT TIME ZONE 'Asia/Bangkok', 'DD Mon HH24:MI') AS at
+        FROM bkk_orders x WHERE x.member_id=$1 AND x.product_id=$2 AND x.id<>$3 AND x.status='paid' AND x.amount_thb > 0
+          AND x.source IS DISTINCT FROM 'rezerv' AND x.created_at >= $4 ORDER BY x.created_at LIMIT 1`,
+        [o.member_id, o.product_id, o.id, o.created_at])).rows[0];
+      await alertOnce(o, 'status', `⚠ Not paid after ${Math.floor((now - new Date(o.created_at).getTime()) / 60000)} min. `
+        + `PaySolutions says: status ${gwText(verdict.status) || 'none'} (${gwText(verdict.statusName) || 'no name'})`,
+        later ? `They paid ref ${later.refno} (${later.at}). If PaySolutions shows money for this one too, refund one.`
+          : 'If PaySolutions shows the money, turn the order on by hand in Payments.');
+    })().catch(e => console.error('[bkk pay] alert failed:', e.message));
+  }
+  // The check failing, for the whole shala: one ping once it failed twice in a
+  // row or for 20 minutes (one blip is not news), at most every 3 hours, and one
+  // "works again" when an answer comes back after that ping.
+  const FAILING = 'pay_check_failing';
+  async function checkFailing(why, now) {
+    const at = new Date(now).toISOString();
+    const v = (await q(`INSERT INTO bkk_settings (key,value) VALUES ($1, jsonb_build_object('since', $2::text, 'fails', 1, 'why', $3::text))
+      ON CONFLICT (key) DO UPDATE SET value = bkk_settings.value || jsonb_build_object('since', coalesce(bkk_settings.value->>'since', $2::text),
+        'fails', coalesce((bkk_settings.value->>'fails')::int, 0) + 1, 'why', $3::text), updated_at=now()
+      RETURNING value`, [FAILING, at, why])).rows[0].value;
+    if (v.fails < PAY_WATCH.failAfter && now - Date.parse(v.since) < PAY_WATCH.failMin * 60000) return;
+    const mine = await q(`UPDATE bkk_settings SET value = value || jsonb_build_object('pingedAt', $2::text, 'pinged', true), updated_at=now()
+      WHERE key=$1 AND value ? 'since'
+        AND coalesce((value->>'pingedAt')::timestamptz, '-infinity') <= $2::timestamptz - make_interval(hours => $3) RETURNING key`,
+      [FAILING, at, PAY_WATCH.failGapH]);
+    if (!mine.rows.length) return;
+    notify(`⚠ PaySolutions check is failing (${gwText(why)}): online payments will not turn on by themselves.`)
+      .then(r => r.retry && q(`UPDATE bkk_settings SET value = (value - 'pinged') || '{"pingedAt":"1970-01-01T00:00:00Z"}'::jsonb
+        WHERE key=$1 AND value->>'pingedAt' = $2`, [FAILING, at])).catch(e => console.error('[bkk pay] alert failed:', e.message));
+  }
+  async function checkWorks() {
+    const r = await q(`WITH old AS (SELECT value FROM bkk_settings WHERE key=$1 AND value ? 'since' FOR UPDATE)
+      UPDATE bkk_settings s SET value = s.value - 'since' - 'fails' - 'why' - 'pinged', updated_at=now()
+      FROM old WHERE s.key=$1 RETURNING old.value AS was`, [FAILING]);
+    const was = r.rows[0] && r.rows[0].was;
+    if (was && was.pinged) notify(`✓ PaySolutions check works again (failing since ${bkkClock(Date.parse(was.since))}, ${gwText(was.why)}).`);
+  }
+  // Another paid order above ฿0 (not Rezerv) for the same package within 72
+  // hours, and for a drop-in the same class (both must name one): the student
+  // may have paid twice. One ping per pair, whichever of the two turned on last.
+  async function doubleCheck(o, pr, byHand) {
+    const other = (await q(`SELECT x.id, x.refno, x.amount_thb, x.method,
+        to_char(coalesce(x.verified_at, x.created_at) AT TIME ZONE 'Asia/Bangkok', 'DD Mon HH24:MI') AS at
+      FROM bkk_orders o JOIN bkk_orders x ON x.member_id=o.member_id AND x.product_id=o.product_id AND x.id<>o.id
+        AND (NOT $3::boolean OR (x.slot_id = o.slot_id AND x.class_date = o.class_date))
+      WHERE o.id=$1 AND x.status='paid' AND x.amount_thb > 0 AND x.source IS DISTINCT FROM 'rezerv'
+        AND coalesce(x.verified_at, x.created_at) > coalesce(o.verified_at, now()) - make_interval(hours => $2)
+      ORDER BY coalesce(x.verified_at, x.created_at) DESC LIMIT 1`, [o.id, PAY_WATCH.doubleH, singleClass(pr)])).rows[0];
+    if (!other) return;
+    await alertOnce(o, `double:${Math.max(o.id, other.id)}`, `⚠ Possible double payment: ${pr.name_en} was already paid ${other.at}`
+      + ` (ref ${other.refno}, ฿${thb(other.amount_thb)}, ${other.method || 'online'}). `
+      + (byHand ? 'Staff activated this one by hand.' : `This one is ${o.method || 'online'}.`),
+      'Check the bank or PaySolutions; refund one if it is a double.', Math.min(o.id, other.id));
   }
 
   // The class a paid drop-in booked, for the "you are booked into…" message.
@@ -1108,46 +1286,60 @@ function mountBkk(app, opts = {}) {
   // DIGITS of the merchant id, in both header and body. Unused body fields take
   // the literal placeholders the docs specify ("X", "QWERTY").
   const PAID_STATUS = new Set(['CP', 'Y']);
+  // failed: PaySolutions did not answer properly (no 200, a timeout, the network),
+  // so nothing can turn on by itself. record: it answered with a record for the order.
+  const inquiryMs = Number(opts.inquiryTimeoutMs) || PAY_WATCH.inquiryMs;
+  const runMs = inquiryMs * 4, slowMs = inquiryMs / 3;
   async function inquire(cfg, order) {
     const url = `${cfg.inquiryBase.replace(/\/$/, '')}/order/orderdetailpost`;
     const mid5 = String(cfg.merchantId).slice(-5);
-    const r = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        merchantID: mid5,
-        merchantSecretKey: cfg.secret,
-        apikey: cfg.apiKey,
-      },
-      body: JSON.stringify({
-        merchantID: mid5,
-        orderNo: 'X',
-        refno: refno12(order.refno),
-        productDetail: 'QWERTY',
-      }),
-    });
-    const text = (await r.text()).trim();
+    let r, text;
+    try {
+      r = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          merchantID: mid5,
+          merchantSecretKey: cfg.secret,
+          apikey: cfg.apiKey,
+        },
+        body: JSON.stringify({
+          merchantID: mid5,
+          orderNo: 'X',
+          refno: refno12(order.refno),
+          productDetail: 'QWERTY',
+        }),
+        signal: AbortSignal.timeout(inquiryMs),
+      });
+      text = (await r.text()).trim();
+    } catch (e) {
+      // Never e.message: Node quotes a bad header value in it, and that value is the secret key.
+      const code = String((e.cause && e.cause.code) || '');
+      const cause = e.name === 'TimeoutError' || e.name === 'AbortError' ? `timeout after ${+(inquiryMs / 1000).toFixed(1)} s`
+        : /^[A-Z][A-Z0-9_]{1,40}$/.test(code) ? code : 'request could not be sent';
+      return { paid: false, failed: true, why: cause, note: `inquiry failed: ${cause}` };
+    }
+    const http = r.status, failed = http !== 200, why = `http ${http}`;
     // Documented failure mode: an unsuccessful payment returns no body at all.
-    if (!text) return { paid: false, note: `no record (http ${r.status})` };
+    if (!text) return { paid: false, http, failed, why, note: `no record (http ${http})` };
     let j = null; try { j = JSON.parse(text); } catch (_) {}
-    if (!j) return { paid: false, note: `inquiry ${r.status}: ${text.slice(0, 120)}` };
+    if (!j) return { paid: false, http, failed: true, why: failed ? why : 'an answer that is not JSON',
+      note: `inquiry ${http}: ${text.slice(0, 120)}` };
     const d = Array.isArray(j) ? j[0] : (j.data || j);
     // Carry the HTTP status in every note: an unpaid order and a rejected API
     // key both come back "not paid", and the code is what tells them apart.
-    if (!d) return { paid: false, note: `no record (http ${r.status})` };
-    const status = String(d.Status ?? '').toUpperCase();
-    const named = String(d.StatusName ?? '').trim();
+    const status = d && typeof d === 'object' ? String(d.Status ?? '').trim().toUpperCase() : '';
+    // An answer with no Status ({}, {"data":null}, an error message) is no record.
+    if (!status) return { paid: false, http, failed, why, note: `no record (http ${http})` };
     // The docs show "CP" (COMPLETE); the live account answers "Y" (Paid) for a
     // finished payment (15 Nov 2026). Either is paid; the amount is still checked.
     const paid = PAID_STATUS.has(status);
     // Total comes back as a JSON number (3900.0), not a string.
     const amount = d.Total == null ? null : Number(d.Total);
     return {
-      paid, amount, raw: d,
-      // A name that says paid on a code we do not take: a person must look.
-      looksPaid: !paid && /\b(paid|success|complete)/i.test(named) && !/\b(un|not\s*)paid|fail|cancel|void|refund|reject|expire/i.test(named),
+      paid, amount, raw: d, http, failed, why, record: true, status, statusName: String(d.StatusName ?? ''),
       note: paid ? 'confirmed'
-        : `http ${r.status} status=${status || 'unknown'} ${named} total=${d.Total ?? 'none'}`.trim(),
+        : `http ${http} status=${status} ${d.StatusName || ''} total=${d.Total ?? 'none'}`.trim(),
     };
   }
 
@@ -1164,9 +1356,9 @@ function mountBkk(app, opts = {}) {
       await client.query('BEGIN');
       const upd = await client.query(
         `UPDATE bkk_orders SET status='paid', verified_at=now(), gateway_ref=$2, gateway_note=$3
-         WHERE id=$1 AND status <> 'paid' RETURNING slot_id, to_char(class_date,'YYYY-MM-DD') AS class_date`,
+         WHERE id=$1 AND status IN ('pending','failed','mismatch') RETURNING slot_id, to_char(class_date,'YYYY-MM-DD') AS class_date`,
         [order.id, verdict.raw ? JSON.stringify(verdict.raw).slice(0, 400) : null, verdict.note || null]);
-      if (!upd.rows.length) { await client.query('ROLLBACK'); return null; }   // already activated
+      if (!upd.rows.length) { await client.query('ROLLBACK'); return null; }   // already activated, or void
       const pass = (await client.query(
         `INSERT INTO bkk_passes (member_id,product_id,order_id,kind,credits_total,daily_cap,valid_days)
          VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
@@ -1208,11 +1400,21 @@ function mountBkk(app, opts = {}) {
     const booked = cls && !seat.error;
     console.log(`✓ bkk: pass activated for order ${order.id} (${pr.name_en})${cls ? (booked
       ? `, booked ${cls.name} ${cls.when}` : `, could NOT book ${cls.name} ${cls.when}: ${seat.error}`) : ''}`);
-    const lines = [`💳 AYBKK payment (${order.method || 'online'})`, `${pr.name_en} · ฿${order.amount_thb}`, `refno ${order.refno}`];
-    if (booked) lines.push(`📅 ${seat.already ? 'Already on the list' : 'Booked'}: ${cls.name}, ${cls.when}`
-      + (seat.overCapacity ? `\n⚠ over capacity: ${seat.taken + 1} for ${seat.capacity} places` : ''));
-    else if (cls) lines.push(`⚠ Paid, but could not book ${cls.name}, ${cls.when}: ${seat.error}. Book them by hand.`);
-    notify(lines.join('\n'));
+    // A ping for each sale only when Boonchu asks for it (ping_each_sale): the
+    // sales go in the daily money line. Problems always ping; staff's own
+    // activation by hand pings neither as a sale nor as "not booked" (the page
+    // tells them), only as a possible double.
+    (async () => {
+      if (cls && !booked && !opts.byHand) await alertOnce(order, 'nobook',
+        `⚠ Paid, but could not book ${cls.name}, ${cls.when}: ${seat.error}.`, 'They keep a 1-class credit: book them by hand.');
+      if (!opts.byHand && await getSetting('ping_each_sale', 'off') === 'on') {
+        const lines = [`💳 AYBKK payment (${order.method || 'online'})`, `${pr.name_en} · ฿${order.amount_thb}`, `refno ${order.refno}`];
+        if (booked) lines.push(`📅 ${seat.already ? 'Already on the list' : 'Booked'}: ${cls.name}, ${cls.when}`
+          + (seat.overCapacity ? `\n⚠ over capacity: ${seat.taken + 1} for ${seat.capacity} places` : ''));
+        await notify(lines.join('\n'));
+      }
+      await doubleCheck(order, pr, opts.byHand);
+    })().catch(e => console.error('[bkk pay] ping failed:', e.message));
     // After COMMIT, and awaited only so failures are logged. The pass already
     // exists; a mail server having a bad day must not undo a paid order.
     emailReceipt(order, pr, cls && { ...cls, booked }).catch(e => console.error('[bkk] receipt failed:', e.message));
@@ -1243,39 +1445,36 @@ function mountBkk(app, opts = {}) {
     await sendMail({ to: via.email, subject: t.subject, html: t.html, text: t.text, tag: 'receipt' });
   }
 
-  // A payment can be confirmed after the student's page stopped asking and
-  // after PaySolutions' one postback: re-ask about online orders still pending,
-  // a few at a time. Each answer is the same check as ever. The last 2 hours
-  // every round, the rest of the last day once an hour: most pending orders
-  // were never paid, and each check is a call to PaySolutions.
-  let sweeping = false, lastLongSweep = 0;
-  async function sweepPayments() {
-    if (sweeping || !paysoConfig()) return;
-    sweeping = true;
-    try {
-      const long = Date.now() - lastLongSweep >= 3600e3;
-      if (long) lastLongSweep = Date.now();
-      const due = (await q(`SELECT refno FROM bkk_orders
-        WHERE status='pending' AND source IS NULL AND method='online'
-          AND created_at BETWEEN now() - ($1 || ' hours')::interval AND now() - interval '2 minutes'
-        ORDER BY created_at DESC LIMIT 25`, [long ? '26' : '2'])).rows;
-      for (const o of due) {
-        try { await verifyAndActivate(Number(o.refno)); }
-        catch (e) { console.error('[bkk pay] sweep:', e.message); }
-      }
-    } catch (e) { console.error('[bkk pay] sweep failed:', e.message); }
-    finally { sweeping = false; }
-  }
-
+  // Boonchu's private Telegram chat. Never throws. The last result is kept
+  // ('telegram_last') so the admin page can say whether the pings get through.
+  const telegramSet = () => !!(process.env.TELEGRAM_BOT_TOKEN && process.env.BOONCHU_CHAT_ID);
+  const tgBase = () => (process.env.TELEGRAM_API_BASE || 'https://api.telegram.org').replace(/\/+$/, '');
   async function notify(text) {
+    const token = process.env.TELEGRAM_BOT_TOKEN, chat = process.env.BOONCHU_CHAT_ID;
+    if (!token || !chat) return { ok: false, error: 'not set' };
+    let out;
     try {
-      const token = process.env.TELEGRAM_BOT_TOKEN, chat = process.env.BOONCHU_CHAT_ID;
-      if (!token || !chat) return;
-      await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      const base = tgBase();
+      // No link previews: a link in a name or a status never shows up as a card.
+      const r = await fetch(`${base}/bot${token}/sendMessage`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: chat, text }),
+        body: JSON.stringify({ chat_id: chat, text, link_preview_options: { is_disabled: true } }), signal: AbortSignal.timeout(10000),
       });
-    } catch (_) {}
+      const j = await r.json().catch(() => ({}));
+      // retry: Telegram answered no, or was never reached, so nothing arrived. A
+      // timeout may have arrived, so it is never sent again.
+      out = r.ok && j.ok !== false ? { ok: true }
+        : { ok: false, retry: true, error: `http ${r.status}${j.description ? ': ' + j.description : ''}` };
+    } catch (e) {
+      const timeout = e.name === 'TimeoutError';
+      out = { ok: false, retry: !timeout, error: timeout ? 'timeout' : (e.cause && e.cause.code) || e.message || 'network error' };
+    }
+    const at = new Date().toISOString();
+    if (!out.ok) out.error = String(out.error).split(token).join('[token]').slice(0, 160);
+    await q(`INSERT INTO bkk_settings (key,value) VALUES ('telegram_last',$1::jsonb)
+             ON CONFLICT (key) DO UPDATE SET value = bkk_settings.value || $1::jsonb, updated_at=now()`,
+      [JSON.stringify(out.ok ? { ok: true, at, okAt: at, error: null } : { ok: false, at, error: out.error })]).catch(() => {});
+    return out;
   }
 
   // ── sign in by email ──────────────────────────────────────────────────────
@@ -1606,6 +1805,30 @@ function mountBkk(app, opts = {}) {
         AND NOT (b.status='booked' AND EXISTS (SELECT 1 FROM bkk_bookings o WHERE o.member_id=$1 AND o.slot_id=b.slot_id
           AND o.class_date=b.class_date AND o.status='booked')) RETURNING b.id`,
         [F, K, [...(L.rows.bkk_passes || []), ...since.passes]]).then(ids);
+      // A Rezerv copy and the sale it copies belong to one student. A pair this
+      // undo leaves on two profiles was paired across two people while merged: the
+      // Rezerv pass kept void for the other one's pass is live again (no pass
+      // lost), and the ฿0 Rezerv line is no longer that sale's twin (it stays ฿0).
+      // The classes and start day the import put on the pass kept come off it
+      // first: they were the other student's. One Rezerv payment voided as
+      // imported twice, with its copy now on the other profile, is a payment again.
+      const across = `((r.member_id=$1 AND a.member_id=$2) OR (r.member_id=$2 AND a.member_id=$1))`;
+      const split = (await client.query(`SELECT r.id AS rid, a.id AS aid FROM bkk_passes r JOIN bkk_passes a ON a.id=r.twin_of
+        WHERE r.source='rezerv' AND ${across}`, [F, K])).rows;
+      await twinCarryBack(client, split.map(x => x.rid));
+      const twinsBack = await twinPassBack(client, split.map(x => x.aid),
+        `the aybkk.net pass it was kept void for is on another profile since a merge was undone on ${bkkToday()}`);
+      const twinsOff = (await client.query(`UPDATE bkk_orders r SET status='paid', twin_of=NULL,
+          gateway_note = regexp_replace(coalesce(r.gateway_note,''), '^entered in Rezerv for check-in; paid on aybkk\\.net ref ',
+            'not the twin of aybkk.net ref ') || ' | that sale is on another profile since a merge was undone on ' || $3
+        FROM bkk_orders a WHERE a.id=r.twin_of AND r.source='rezerv' AND r.status='twin' AND ${across} RETURNING r.id`,
+        [F, K, bkkToday()])).rows.length;
+      const paysBack = (await client.query(`UPDATE bkk_orders r SET status = CASE WHEN r.amount_thb < 0 THEN 'refund' ELSE 'paid' END,
+          gateway_note = regexp_replace(r.gateway_note, '^same Rezerv payment as order (\\d+), imported twice',
+            'not the same Rezerv payment as order \\1') || ' | that order is on another profile since a merge was undone on ' || $3
+        FROM bkk_orders a WHERE a.source='rezerv' AND r.source='rezerv' AND r.status='void'
+          AND r.gateway_note LIKE 'same Rezerv payment as order ' || a.refno::text || ', imported twice%' AND ${across} RETURNING r.id`,
+        [F, K, bkkToday()])).rows.length;
       // A seat the merge cancelled comes back only if its student holds no other
       // seat in that class now, and its pass still has the class to give.
       let seatsNotBack = 0;
@@ -1646,7 +1869,8 @@ function mountBkk(app, opts = {}) {
       console.log(`✓ bkk: ${f.code} taken back out of member ${K}`);
       res.json({ success: true, code: f.code, fieldsBack: still.filter(k => k !== 'photo_at'),
         fieldsKept: back.filter(k => !still.includes(k) && k !== 'photo_at'), seatsNotBack,
-        since: Object.fromEntries(Object.entries(since).map(([k, v]) => [k, v.length])) });
+        since: Object.fromEntries(Object.entries(since).map(([k, v]) => [k, v.length])),
+        twinsUndone: { passes: twinsBack.length, orders: twinsOff, payments: paysBack } });
     } catch (e) {
       await client.query('ROLLBACK').catch(() => {});
       res.status(500).json({ error: e.message });
@@ -2299,16 +2523,32 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (src === 'aybkk') where.push('o.source IS NULL');
       else if (src) { args.push(src); where.push(`o.source = $${args.length}`); }
       const limit = Math.min(2000, Math.max(1, parseInt(req.query.limit) || 200));
+      const cond = where.length ? 'WHERE ' + where.join(' AND ') : '';
       // name_en falls back to what Rezerv called it, so a payment for a package
-      // that is not in the catalogue still says what was bought.
-      const r = await q(
-        `SELECT o.*, coalesce(pr.name_en, o.item_name) AS name_en, pr.name_th,
-           coalesce(pr.name_en, o.item_name) AS item, m.name AS member_name, m.email, m.code AS member_code
+      // that is not in the catalogue still says what was bought. A drop-in says
+      // its class; a Rezerv copy of a sale here says that sale's ref. rz_pass: a
+      // sale here next to a live Rezerv pass of the same package family that starts
+      // within 5 days of the sale or of its pass, as the import pairs them, so the
+      // student may hold two passes for it.
+      const t = args.length + 1;
+      const [r, n] = await Promise.all([q(
+        `SELECT o.*, coalesce(pr.name_en, o.item_name) AS name_en, pr.name_th, pr.code AS product_code,
+           coalesce(pr.name_en, o.item_name) AS item, m.name AS member_name, m.email, m.code AS member_code,
+           cs.title AS class_title, to_char(o.class_date,'YYYY-MM-DD') AS class_day, tw.refno::text AS twin_refno,
+           CASE WHEN o.source IS NULL AND o.status='paid' THEN EXISTS (SELECT 1 FROM bkk_passes rp
+             WHERE rp.member_id=o.member_id AND rp.source='rezerv' AND rp.status IN ('active','frozen')
+               AND (rp.valid_until IS NULL OR rp.valid_until >= $${t}::date) AND rp.valid_from IS NOT NULL
+               AND (abs(${PAY_DAY} - rp.valid_from) <= ${COPY_DAYS} OR EXISTS (SELECT 1 FROM bkk_passes ap
+                 WHERE ap.order_id=o.id AND abs(ap.valid_from - rp.valid_from) <= ${COPY_DAYS}))
+               AND ${famOf('rp')} = ${famOf('o')}) END AS rz_pass
          FROM bkk_orders o LEFT JOIN bkk_products pr ON pr.id=o.product_id
          LEFT JOIN bkk_members m ON m.id=o.member_id
-         ${where.length ? 'WHERE ' + where.join(' AND ') : ''}
-         ORDER BY o.created_at DESC, o.id DESC LIMIT ${limit}`, args);
-      res.json({ orders: r.rows });
+         LEFT JOIN bkk_class_slots cs ON cs.id=o.slot_id
+         LEFT JOIN bkk_orders tw ON tw.id=o.twin_of
+         ${cond}
+         ORDER BY o.created_at DESC, o.id DESC LIMIT ${limit}`, [...args, bkkToday()]),
+        q(`SELECT count(*)::int AS n FROM bkk_orders o ${cond}`, args)]);
+      res.json({ orders: r.rows, total: n.rows[0].n });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -2318,16 +2558,21 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   const DESK_METHODS = ['cash', 'transfer', 'card'];
   // With a class (slotId, date), the sale also books it: staff timing (until the
   // class ends) and over capacity allowed, since the person is at the desk.
-  async function deskSale({ member, pr, method, slotId, date, checkIn, source, requestId, late }) {
+  // saleId: the desk's own id for this sale (bkk_orders.request_id), unique.
+  // mailTo: a folded profile's email typed for the sale, as checkout keeps it,
+  // so the receipt goes there and an undo of that merge takes the sale back.
+  async function deskSale({ member, pr, method, slotId, date, checkIn, source, requestId, late, saleId, mailTo }) {
     const { vat, total } = breakdown(pr.price_thb, 0);
     let o = null;
     for (let attempt = 0; attempt < 5 && !o; attempt++) {
       try {
         o = (await q(
-          `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb,method,slot_id,class_date)
-           VALUES ($1,$2,$3,$4,0,$5,$6,$7,$8,$9) RETURNING *`,
-          [newRefno(), pr.id, member.id, pr.price_thb, vat, total, method, slotId || null, slotId ? date : null])).rows[0];
+          `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb,method,slot_id,class_date,request_id,mail_to)
+           VALUES ($1,$2,$3,$4,0,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+          [newRefno(), pr.id, member.id, pr.price_thb, vat, total, method, slotId || null, slotId ? date : null, saleId || null,
+           mailTo || null])).rows[0];
       } catch (e) {
+        if (e.constraint === 'bkk_orders_request_id') throw e;
         if (!/duplicate key/.test(e.message) || attempt === 4) throw e;
       }
     }
@@ -2335,12 +2580,55 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     return { o, vat, total, act };
   }
 
+  // The sale a desk id already made, answered as it was the first time. One that
+  // was recorded but never switched on (the first try failed half way) is switched on now.
+  async function saleDone(rid) {
+    const o = (await q(`SELECT o.*, m.code, m.name AS member_name
+      FROM bkk_orders o JOIN bkk_members m ON m.id=o.member_id WHERE o.request_id=$1`, [rid])).rows[0];
+    if (!o) return null;
+    if (o.status === 'pending') await activateOrder(o, { note: `${o.method} at the desk` });
+    return { success: true, repeat: true, member: { code: o.code, name: o.member_name },
+      order: { refno: String(o.refno), amount: o.amount_thb, vat: o.vat_thb, method: o.method } };
+  }
+
+  // One desk sale per id at a time in this process: the second waits, then finds
+  // the first. Nothing holds a database connection while it waits (a held one
+  // while the sale asked for more could use up the pool and stop every route).
+  // Between processes the unique request_id is the guard.
+  const SALE_TURNS = new Map();
+  async function inTurn(key, fn) {
+    const before = SALE_TURNS.get(key) || Promise.resolve();
+    let done;
+    const mine = new Promise(r => { done = r; });
+    const tail = before.then(() => mine);
+    SALE_TURNS.set(key, tail);
+    await before;
+    try { return await fn(); } finally {
+      done();
+      if (SALE_TURNS.get(key) === tail) SALE_TURNS.delete(key);
+    }
+  }
+
+  // A sale staff tap at the desk. requestId (made once per sale on the page) makes
+  // a second tap after a lost reply answer with the first sale, also when both
+  // arrive at once. The same person, package and class sold at the desk in the
+  // last 15 minutes, or paid online in the last 72 hours, answers 409 repeatOf
+  // until confirmRepeat is sent (15 Nov 2026: one sale must be one row).
   app.post('/api/bkk/admin/sales', async (req, res) => {
     if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
+    const rid = req.body && req.body.requestId ? String(req.body.requestId).slice(0, 64) : null;
+    if (rid) return inTurn(rid, () => deskSaleRoute(req, res, rid));
+    return deskSaleRoute(req, res, null);
+  });
+  async function deskSaleRoute(req, res, rid) {
     try {
       const { productCode, name, email, phone, method, slotId, checkIn } = req.body || {};
       if (!DESK_METHODS.includes(method)) return res.status(400).json({ error: 'method must be cash, transfer or card' });
       if (!(name || '').trim()) return res.status(400).json({ error: 'name is required' });
+      if (rid) {
+        const first = await saleDone(rid);
+        if (first) return res.json(first);
+      }
       await switchPrices();
       const pr = (await q('SELECT * FROM bkk_products WHERE code = $1 AND active', [productCode])).rows[0];
       if (!pr) return res.status(404).json({ error: 'product not found' });
@@ -2351,14 +2639,40 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
           await classCheck(pool, slotId, date, { staff: true, endedMsg: CLASS_ENDED });
         } catch (e) { return res.status(409).json({ error: e.message }); }
       }
+      // Only someone already here can have bought it before: a new person is made after the check.
+      const em = String(email || '').trim().toLowerCase();
+      // The profile the sale lands on: an email of a profile merged into another one leads there.
+      const typed = em ? await rawByEmail(pool, em) : null;
+      const known = typed ? await liveMember(pool, typed) : null;
+      if (known && req.body.confirmRepeat !== true) {
+        const p = (await q(
+          `SELECT o.refno, ${PAY_AT} AS at, o.method, o.amount_thb FROM bkk_orders o
+           WHERE o.member_id=$1 AND o.product_id=$2 AND o.source IS NULL AND o.status='paid'
+             AND o.slot_id IS NOT DISTINCT FROM $3::int AND o.class_date IS NOT DISTINCT FROM $4::date
+             AND ((o.method = ANY($5) AND o.created_at > now() - interval '15 minutes')
+               OR (o.method = 'online' AND ${PAY_AT} > now() - interval '72 hours'))
+           ORDER BY ${PAY_AT} DESC, o.id DESC LIMIT 1`,
+          [known.id, pr.id, slotId ? Number(slotId) : null, slotId ? date : null, DESK_METHODS])).rows[0];
+        if (p) return res.status(409).json({
+          error: `This student already paid for ${pr.name_en} (${p.method}, ref ${p.refno}). Check Payments before you sell again.`,
+          repeatOf: { refno: String(p.refno), at: p.at, method: p.method, amount: p.amount_thb } });
+      }
       const member = await findOrCreateMember({ name, email, phone });
-      const { o, vat, total, act } = await deskSale({ member, pr, method,
-        slotId: slotId ? Number(slotId) : null, date, checkIn: !!checkIn });
+      let sale;
+      try {
+        sale = await deskSale({ member, pr, method, slotId: slotId ? Number(slotId) : null, date, checkIn: !!checkIn, saleId: rid,
+          mailTo: typed && typed.id !== member.id ? em : null });
+      } catch (e) {
+        const first = e.constraint === 'bkk_orders_request_id' && await saleDone(rid);
+        if (first) return res.json(first);
+        throw e;
+      }
+      const { o, vat, total, act } = sale;
       res.json({ success: true, member: { code: member.code, name: member.name },
         order: { refno: String(o.refno), amount: total, vat, method },
         booking: act && act.booking || undefined, bookingError: act && act.bookingError || undefined });
     } catch (e) { res.status(500).json({ error: e.message }); }
-  });
+  }
 
   // The door: whoever is here goes on the class list, checked in. A student with
   // an aybkk.net pass uses it; most students still hold a Rezerv package that is
@@ -2417,14 +2731,16 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     catch (e) { return res.status(409).json({ error: e.message }); }
     const checkIn = over || b.checkIn !== false;
     const source = checkIn ? 'door' : 'staff';
-    let member;
+    let member, mailTo = null;
     try {
       if (b.memberCode) {
         member = await memberByCode(b.memberCode);
         if (!member) return res.status(404).json({ error: 'member not found' });
       } else {
         if (!String(b.name || '').trim()) return res.status(400).json({ error: 'name is required for a new person' });
+        const typed = await rawByEmail(pool, b.email);
         member = await findOrCreateMember({ name: b.name, email: b.email, phone: b.phone });
+        if (typed && typed.id !== member.id) mailTo = String(b.email).trim().toLowerCase();
       }
     } catch (e) { return res.status(500).json({ error: e.message }); }
 
@@ -2459,7 +2775,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const pr = (await q(`SELECT * FROM bkk_products WHERE code='dropin' AND active`)).rows[0];
       if (!pr) return res.status(404).json({ error: 'the drop-in is not on sale' });
       const { o, act } = await deskSale({ member, pr, method: b.method, slotId, date, checkIn,
-        source, requestId: rid, late });
+        source, requestId: rid, late, mailTo });
       if (act && act.unsold) return await listed(act.seat);
       // Paid, but the seat went in the moment between: the money and the pass
       // stand, and the shala has the Telegram ping to put them on by hand.
@@ -2478,9 +2794,480 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (!o) return res.status(404).json({ error: 'not found' });
       if (o.status === 'paid') return res.json({ success: true, already: true });
       if (o.source === 'rezerv') return res.status(409).json({ error: 'a payment moved from Rezerv is history: it cannot be activated' });
-      const act = await activateOrder(o, { note: 'MANUAL ACTIVATION by admin' });
+      if (!['pending', 'failed', 'mismatch'].includes(o.status)) return res.status(409).json({
+        error: `This order is ${o.status}: it cannot be activated. Sell or book it again if the student should have a pass.` });
+      // Activate on a try whose package the student already paid for (another
+      // order, either system, the same class for a drop-in) makes a second pass
+      // from nothing: asked first, and the paid ref goes in the note (15 Nov 2026).
+      const paid = (await q(
+        `SELECT x.refno, ${payAt('x')} AS at, x.method FROM bkk_orders x JOIN bkk_orders o ON o.id=$1
+         WHERE x.member_id=o.member_id AND x.id<>o.id AND x.status='paid' AND x.amount_thb > 0
+           AND (x.product_id=o.product_id OR ${pkgOf('x')} = ${pkgOf('o')})
+           AND x.slot_id IS NOT DISTINCT FROM o.slot_id AND x.class_date IS NOT DISTINCT FROM o.class_date
+           AND abs(extract(epoch FROM ${payAt('x')} - o.created_at)) <= 72 * 3600
+         ORDER BY abs(extract(epoch FROM ${payAt('x')} - o.created_at)), x.id LIMIT 1`, [o.id])).rows[0];
+      if (paid && (req.body || {}).confirm !== true) return res.status(409).json({
+        error: `This student already paid for this (ref ${paid.refno}). Send confirm to activate anyway.`,
+        paidAlready: { refno: String(paid.refno), at: paid.at, method: paid.method } });
+      const act = await activateOrder(o, { note: MANUAL_NOTE + (paid ? `, paid already as ref ${paid.refno}` : '') }, { byHand: true });
       res.json({ success: true, booking: act && act.booking || undefined, bookingError: act && act.bookingError || undefined });
     } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // ── the payment watch (15 Nov 2026) ───────────────────────────────────────
+  // An order whose postback never came, from a student who closed the page
+  // before the return check, stayed "not paid" until a person acted, and the
+  // student might pay twice. The server asks PaySolutions again every 10
+  // minutes, through verifyAndActivate: the postback's own path, amount
+  // checked. Nothing else here turns a pass on.
+  const PAY_KEYS = { paySweep: ['pay_sweep', 'on'], pingEachSale: ['ping_each_sale', 'off'], dailyMoney: ['daily_money', 'on'] };
+  const MONEY_AT = ['daily_money_at', '21:00'];
+  const isClock = v => /^([01]\d|2[0-3]):[0-5]\d$/.test(String(v));
+  async function payWatchSettings() {
+    const r = await q(`SELECT key, value FROM bkk_settings WHERE key = ANY($1::text[])`,
+      [[...Object.values(PAY_KEYS).map(([k]) => k), MONEY_AT[0]]]);
+    const v = k => (r.rows.find(x => x.key === k) || {}).value;
+    const out = {};
+    for (const [field, [key, dflt]] of Object.entries(PAY_KEYS)) out[field] = ['on', 'off'].includes(v(key)) ? v(key) : dflt;
+    out.dailyMoneyAt = isClock(v(MONEY_AT[0])) ? v(MONEY_AT[0]) : MONEY_AT[1];
+    return out;
+  }
+
+  // One runner at a time across servers: a session lock on a connection of its
+  // own, held only for the run (no transaction stays open) and always given back.
+  const SWEEP_LOCK = `hashtext('bkk_pay_sweep')`;
+  async function paySweep({ now = nowMs(), manual = false } = {}) {
+    if (!paysoConfig() || paymentStatus().mode !== 'gateway') return { ran: false, reason: 'gateway not configured', orders: [] };
+    if (!manual && (await payWatchSettings()).paySweep === 'off') return { ran: false, reason: 'off', orders: [] };
+    const lock = await pool.connect();
+    let held = false, broken = false;
+    // The pool stops listening once a client is checked out: a connection lost
+    // mid-run would otherwise be an uncaught error that ends the server.
+    const dropped = e => { broken = true; console.error('[bkk pay] sweep lock connection lost:', e.message); };
+    lock.on('error', dropped);
+    try {
+      try { held = (await lock.query(`SELECT pg_try_advisory_lock(${SWEEP_LOCK}) AS ok`)).rows[0].ok; }
+      catch (e) { broken = true; throw e; }
+      if (!held) return { ran: false, reason: 'busy', orders: [] };
+      const W = PAY_WATCH;
+      const due = (await q(`SELECT refno, status FROM bkk_orders
+        WHERE status='pending' AND source IS NULL AND method='online' AND amount_thb > 0
+          AND created_at <= $1::timestamptz - make_interval(mins => $2)
+          AND created_at >= $1::timestamptz - make_interval(hours => $3)
+          AND (checked_at IS NULL
+            OR (created_at > $1::timestamptz - make_interval(hours => $4) AND checked_at <= $1::timestamptz - make_interval(mins => $5))
+            OR (created_at <= $1::timestamptz - make_interval(hours => $4) AND checked_at <= $1::timestamptz - make_interval(mins => $6)))
+        ORDER BY checked_at NULLS FIRST, created_at, id LIMIT $7`,
+        [new Date(now), W.minAgeMin, W.maxAgeH, W.youngH, W.youngGapMin, W.oldGapMin, W.perRun])).rows;
+      const orders = [];
+      const t0 = Date.now();
+      for (const o of due) {
+        // Lock lost (another server may run now), or out of time: the rest wait for the next run.
+        if (broken || Date.now() - t0 > runMs) break;
+        const out = {}, t1 = Date.now();
+        let after = o.status, note = null;
+        try {
+          const r = await verifyAndActivate(Number(o.refno), { now, out });
+          after = r.status;
+          note = r.status === 'paid' ? (r.already ? 'already on' : 'turned on') : r.status === 'mismatch' ? 'the amount does not match' : r.note || null;
+        } catch (e) { note = `check failed: ${e.message}`.slice(0, 200); }
+        orders.push({ refno: String(o.refno), before: o.status, after, note });
+        // PaySolutions is not answering: the rest would only wait for the same
+        // timeout. They are asked first next time (never checked, or checked longest ago).
+        // A slow answer: the next ones would likely be as slow, and the button waits for them all.
+        if ((out.verdict && out.verdict.failed) || Date.now() - t1 > slowMs) break;
+      }
+      return { ran: true, due: due.length, asked: orders.length, paid: orders.filter(x => x.note === 'turned on').length, orders };
+    } finally {
+      if (held && !broken) await lock.query(`SELECT pg_advisory_unlock(${SWEEP_LOCK})`).catch(() => { broken = true; });
+      lock.removeListener('error', dropped);
+      lock.release(broken);
+    }
+  }
+
+  app.post('/api/bkk/admin/pay/sweep', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try { res.json(await paySweep({ manual: true })); }
+    catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // The daily money line: the sales since the last line in one Telegram message
+  // instead of a ping each, so a sale after the send time is in the next line,
+  // never in none. Money stays in Boonchu's private chat. Sales are paid orders
+  // above ฿0 that are not Rezerv history, at the time the money came in.
+  const MONEY_MARK = 'daily_money_sent_';
+  async function moneyLine({ from, until }) {
+    const win = `coalesce(o.verified_at, o.created_at) > $1::timestamptz AND coalesce(o.verified_at, o.created_at) <= $2::timestamptz`;
+    const span = [new Date(from), new Date(until)];
+    const [sales, refunds, open, failing] = await Promise.all([
+      q(`SELECT o.method, count(*)::int AS n, sum(o.amount_thb)::int AS thb,
+           count(*) FILTER (WHERE o.gateway_note LIKE $3)::int AS hand
+         FROM bkk_orders o WHERE o.status='paid' AND o.amount_thb > 0 AND o.source IS DISTINCT FROM 'rezerv' AND ${win}
+         GROUP BY o.method ORDER BY o.method`, [...span, MANUAL_NOTE + '%']),
+      q(`SELECT count(*)::int AS n, coalesce(sum(abs(o.amount_thb)), 0)::int AS thb FROM bkk_orders o
+         WHERE o.status='refund' AND o.source IS DISTINCT FROM 'rezerv' AND ${win}`, span),
+      // Each problem once: a wrong amount found in this line's time, and an
+      // online order that turned 1 hour old in it still not paid.
+      q(`SELECT count(*) FILTER (WHERE status='mismatch' AND checked_at > $1::timestamptz AND checked_at <= $2::timestamptz)::int AS mismatch,
+           count(*) FILTER (WHERE status='pending' AND method='online' AND amount_thb > 0
+             AND created_at > $1::timestamptz - make_interval(mins => $3) AND created_at <= $2::timestamptz - make_interval(mins => $3))::int AS stuck
+         FROM bkk_orders WHERE source IS NULL`, [...span, PAY_WATCH.stuckMin]),
+      getSetting(FAILING, null),
+    ]);
+    const sum = (rows, k) => rows.reduce((a, r) => a + r[k], 0);
+    const online = sales.rows.filter(r => r.method === 'online'), desk = sales.rows.filter(r => r.method !== 'online');
+    const rf = refunds.rows[0], op = open.rows[0];
+    const head = `AYBKK money, ${bkkClock(from)} to ${bkkClock(until)}`;
+    const problems = `New problems: mismatch ${op.mismatch}, online orders started but not paid over 1 hour ${op.stuck}`;
+    const check = failing && failing.since && failing.pinged && `PaySolutions check: failing since ${bkkClock(Date.parse(failing.since))} (${gwText(failing.why)})`;
+    if (!sales.rows.length && !rf.n) return [`${head}: No sales.`, (op.mismatch || op.stuck) && problems, check].filter(Boolean).join('\n');
+    return [head,
+      `Online sales: ${sum(online, 'n')}, ฿${thb(sum(online, 'thb'))}`,
+      `Desk sales: ${sum(desk, 'n')}, ฿${thb(sum(desk, 'thb'))}`
+        + (desk.length ? ` (${desk.map(r => `${r.method} ${r.n}, ฿${thb(r.thb)}`).join('; ')})` : ''),
+      `Total: ฿${thb(sum(sales.rows, 'thb'))} (VAT included)`,
+      rf.n && `Refunds: ${rf.n}, ฿${thb(rf.thb)}`,
+      `Activated by hand: ${sum(sales.rows, 'hand')}`,
+      problems, check].filter(Boolean).join('\n');
+  }
+  // Due from daily_money_at until the end of that Bangkok day: a server that was
+  // down at the time sends when it is back, never on the next day. The day's
+  // marker is claimed before anything is sent, so two servers or a restart send
+  // it once. A send Telegram refused is claimed again 10 minutes on, 3 tries in
+  // all; if none gets through, the next line still covers that time.
+  async function moneyTick({ now = nowMs() } = {}) {
+    const s = await payWatchSettings();
+    if (s.dailyMoney !== 'on') return { sent: false, skipped: 'off' };
+    if (!telegramSet()) return { sent: false, skipped: 'telegram not set' };
+    const date = ymd(new Date(now));
+    const dueAt = Date.parse(`${date}T${s.dailyMoneyAt}:00${TZ_OFFSET}`);
+    if (now < dueAt) return { sent: false, skipped: 'not yet', date };
+    const key = MONEY_MARK + date, at = new Date(now).toISOString();
+    const mine = await q(`INSERT INTO bkk_settings (key,value) VALUES ($1, jsonb_build_object('state', 'sending', 'at', $2::text, 'tries', 1))
+      ON CONFLICT (key) DO UPDATE SET updated_at=now(), value = bkk_settings.value || jsonb_build_object('state', 'sending', 'at', $2::text,
+        'tries', coalesce((bkk_settings.value->>'tries')::int, 1) + 1)
+      WHERE bkk_settings.value->>'state' = 'failed' AND bkk_settings.value->>'retry' = 'true'
+        AND coalesce((bkk_settings.value->>'tries')::int, 1) < $3
+        AND (bkk_settings.value->>'at')::timestamptz <= $2::timestamptz - make_interval(mins => $4)
+      RETURNING key`, [key, at, PAY_WATCH.sendTries, PAY_WATCH.retryMin]);
+    if (!mine.rows.length) return { sent: false, skipped: 'already', date };
+    // From the end of the last line that got through (a week back at most), or
+    // yesterday at the set time for the first line.
+    const last = (await q(`SELECT value->>'until' AS until FROM bkk_settings
+      WHERE left(key, length($1)) = $1 AND key < $2 AND value->>'state' = 'sent' AND value ? 'until'
+      ORDER BY key DESC LIMIT 1`, [MONEY_MARK, key])).rows[0];
+    const from = Math.min(now, last ? Math.max(Date.parse(last.until), now - PAY_WATCH.lineMaxDays * 86400000) : dueAt - 86400000);
+    let text = null, r;
+    try { text = await moneyLine({ from, until: now }); r = await notify(text); }
+    catch (e) { r = { ok: false, error: e.message }; }
+    await q(`UPDATE bkk_settings SET value = value || $2::jsonb, updated_at=now() WHERE key=$1`,
+      [key, JSON.stringify(r.ok ? { state: 'sent', from: new Date(from).toISOString(), until: at }
+        : { state: 'failed', retry: !!r.retry, error: String(r.error).slice(0, 160) })]);
+    q(`DELETE FROM bkk_settings WHERE left(key, length($1)) = $1 AND updated_at < now() - interval '30 days'`, [MONEY_MARK])
+      .catch(() => {});
+    return { sent: !!r.ok, date, text, error: r.ok ? undefined : r.error };
+  }
+
+  // server.js runs both on a clock; a test turns them off (timers: false, or
+  // BKK_TIMERS=off) and calls paySweep and moneyTick itself.
+  function startPayWatch() {
+    const sweep = () => paySweep().catch(e => console.error('[bkk pay] sweep failed:', e.message));
+    const line = () => resendAlerts().catch(e => console.error('[bkk pay] resend failed:', e.message))
+      .then(() => moneyTick()).catch(e => console.error('[bkk money] daily line failed:', e.message));
+    setTimeout(sweep, PAY_WATCH.firstMs).unref();
+    setInterval(sweep, PAY_WATCH.everyMs).unref();
+    setInterval(line, 60000).unref();
+  }
+
+  async function telegramStatus() {
+    const last = await getSetting('telegram_last', null);
+    return { set: telegramSet(), last: last && typeof last === 'object'
+      ? { ok: !!last.ok, at: last.at || null, okAt: last.okAt || null, error: last.ok ? null : last.error || null } : null };
+  }
+  // A Rezerv pass the import kept void as the copy of an aybkk.net pass is that
+  // sale's pass again once the aybkk.net pass is voided: the student keeps one
+  // pass, not none. Its own dates and classes used come back with it, paused if
+  // Rezerv has it paused. One Rezerv stopped since stays void, no longer paired.
+  // The note loses "voided:", so a later import leaves it as it is. said: why,
+  // after "live again: ". Gives the ids that are live again.
+  async function twinPassBack(db, passIds, said) {
+    if (!passIds.length) return [];
+    return (await db.query(`UPDATE bkk_passes SET status = coalesce(twin_undo->>'status', 'active'), twin_of=NULL, twin_undo=NULL,
+        note = regexp_replace(coalesce(note,''), '^voided: same sale as aybkk\\.net ref \\d+( \\| )?', '') || ' | '
+          || CASE WHEN twin_undo->>'status' = 'void' THEN 'not paired now, still void as Rezerv stopped it: ' ELSE 'live again: ' END || $2
+      WHERE twin_of = ANY($1) AND source='rezerv' AND status='void' RETURNING id, status`, [passIds, said])).rows
+      .filter(r => r.status !== 'void').map(r => r.id);
+  }
+
+  // An undo that takes a twin pair apart: the pass kept gives back what the
+  // import carried onto it from the other student's Rezerv pass. The classes it
+  // added come off; a start day it gave, if the pass still starts then, becomes
+  // the first class booked on it (ending its own days later), or none.
+  async function twinCarryBack(db, rezervIds) {
+    for (const id of rezervIds) {
+      const r = (await db.query(`SELECT r.twin_undo AS u, a.id, to_char(a.valid_from,'YYYY-MM-DD') AS f,
+          (SELECT to_char(min(b.class_date),'YYYY-MM-DD') FROM bkk_bookings b WHERE b.pass_id=a.id AND b.status <> 'cancelled') AS first
+        FROM bkk_passes r JOIN bkk_passes a ON a.id=r.twin_of WHERE r.id=$1 FOR UPDATE OF a`, [id])).rows[0];
+      if (!r || !r.u) continue;
+      const dated = !!r.u.from && r.f === r.u.from;
+      await db.query(`UPDATE bkk_passes SET credits_used = GREATEST(0, credits_used - $2::int),
+          valid_from = CASE WHEN $3::boolean THEN $4::date ELSE valid_from END,
+          valid_until = CASE WHEN NOT $3::boolean THEN valid_until WHEN $4::date IS NOT NULL THEN $4::date + valid_days ELSE $5::date END
+        WHERE id=$1`, [r.id, Number(r.u.used) || 0, dated, r.first, r.u.untilWas || null]);
+    }
+  }
+
+  // A paid aybkk.net order a person has checked against the bank or PaySolutions
+  // and found recorded twice (15 Nov 2026). Never deleted: the row says "Void:"
+  // and why, drops out of all money and counts, and its pass goes too, but only
+  // while no class was booked or used on it. Rezerv lines go through /doubles.
+  app.post('/api/bkk/admin/orders/:id/void', async (req, res) => {
+    if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
+    const reason = String((req.body || {}).reason || '').replace(/\s+/g, ' ').trim().slice(0, 200);
+    if (!reason) return res.status(400).json({ error: 'reason is required' });
+    if (!/^\d+$/.test(String(req.params.id))) return res.status(404).json({ error: 'not found' });
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const o = (await client.query('SELECT * FROM bkk_orders WHERE id=$1 FOR UPDATE', [req.params.id])).rows[0];
+      const stop = async (code, body) => { await client.query('ROLLBACK'); return res.status(code).json(body); };
+      if (!o) return await stop(404, { error: 'not found' });
+      if (o.source) return await stop(409, { error: 'A payment moved from Rezerv is not voided here. GET /api/bkk/admin/doubles lists the Rezerv lines a rule can settle (a, b) and the ones a person decides (e). If an aybkk.net order is the copy, void that order instead.' });
+      if (o.status === 'void') return await stop(200, { success: true, already: true });
+      if (o.status !== 'paid') return await stop(409, { error: 'only a paid order can be voided' });
+      // Classes the import carried over from the Rezerv copy of this pass were used
+      // on that pass, which comes back: they do not stop the void.
+      const passes = (await client.query(
+        `SELECT p.id, p.status, p.credits_used, coalesce(tw.credits_used, 0) AS carried,
+           EXISTS (SELECT 1 FROM bkk_bookings b WHERE b.pass_id=p.id AND b.status <> 'cancelled') AS booked
+         FROM bkk_passes p LEFT JOIN bkk_passes tw ON tw.twin_of=p.id AND tw.source='rezerv'
+         WHERE p.order_id=$1 FOR UPDATE OF p`, [o.id])).rows;
+      if (passes.some(p => p.status !== 'void' && (p.booked || p.credits_used > p.carried))) return await stop(409, { classUsed: true,
+        error: 'A class is booked or used on this pass. Cancel that booking first, or keep this sale.' });
+      const said = `Void: ${reason} (by staff, ${bkkToday()})`;
+      const gone = (await client.query(`UPDATE bkk_passes SET status='void', note = coalesce(note || ' | ', '') || $2
+        WHERE order_id=$1 AND status <> 'void' RETURNING id`, [o.id, `voided: order ${o.refno} void`])).rows.map(p => p.id);
+      const back = await twinPassBack(client, gone, `aybkk.net order ${o.refno} was made void on ${bkkToday()}`);
+      await client.query(`UPDATE bkk_orders SET status='void', gateway_note = $2 || coalesce(' | ' || gateway_note, '') WHERE id=$1`,
+        [o.id, said]);
+      await client.query('COMMIT');
+      res.json({ success: true, refno: String(o.refno), note: said, passesVoided: gone.length, rezervPassBack: back });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      res.status(500).json({ error: e.message });
+    } finally { client.release(); }
+  });
+
+  // ── one sale shown twice, already in the data (15 Nov 2026) ───────────────
+  // GET lists what looks like one sale recorded twice, and changes nothing.
+  // POST applies only the two kinds a rule can settle, by the ids the list gave:
+  //   a  a ฿0 Rezerv line that is the copy of an aybkk.net sale: status 'twin'
+  //   b  one Rezerv payment imported twice under two refs: the later copy 'void'
+  // c (two live passes for one sale), d (two paid aybkk.net orders that may be
+  // one sale) and e (a Rezerv line with money next to an aybkk.net sale) need a
+  // person: Void pass on the profile, or POST orders/:id/void. a, c and e take the
+  // import's family and 5 days, so the list shows what the import calls a copy.
+  const refKind = r => /^h:/.test(r) ? 'h' : 'id:' + String(r).replace(/\d+/g, '9');
+  const hashBase = r => String(r).replace(/#\d+$/, '');
+  const greedy = (rows, a, b) => {
+    const usedA = new Set(), usedB = new Set(), out = [];
+    for (const r of rows) {
+      if (usedA.has(r[a]) || usedB.has(r[b])) continue;
+      usedA.add(r[a]); usedB.add(r[b]); out.push(r);
+    }
+    return out;
+  };
+  async function findDoubles(db) {
+    const today = bkkToday();
+    const items = [];
+    const who = r => ({ code: r.code, name: r.name });
+    const ref = v => String(v);
+    // The import's pairing of a Rezerv line with a sale here: the same package
+    // family within 5 Bangkok days, the same package first, then the nearest. A
+    // class credit Rezerv gave back is no sale.
+    const lineNear = `JOIN bkk_orders k ON k.member_id=r.member_id AND k.source IS NULL AND k.status='paid' AND k.amount_thb > 0
+        AND ${famOf('k')} = ${famOf('r')} AND abs(${payDay('k')} - ${payDay('r')}) <= ${COPY_DAYS}`;
+    const lineOrder = `(k.product_id=r.product_id OR ${pkgOf('k')} = ${pkgOf('r')}) DESC, abs(${payDay('k')} - ${payDay('r')}),
+        abs(extract(epoch FROM ${payAt('k')} - ${payAt('r')})), r.id, k.id`;
+    const noCredit = rows => rows.filter(r => !creditBack(r.rraw || ''));
+    // (a) ฿0 Rezerv lines next to a paid aybkk.net sale not paired yet, one to one.
+    const a = noCredit((await db.query(`SELECT r.id AS rid, r.refno AS rref, r.item_name AS rraw, to_char(${payDay('r')},'YYYY-MM-DD') AS rday,
+        k.id AS kid, k.refno AS kref, k.method AS kmethod, k.amount_thb AS kamount, to_char(${payDay('k')},'YYYY-MM-DD') AS kday,
+        coalesce(pr.name_en, r.item_name) AS item, kp.name_en AS kitem, m.code, m.name
+      FROM bkk_orders r ${lineNear} AND NOT EXISTS (SELECT 1 FROM bkk_orders x WHERE x.twin_of=k.id)
+      JOIN bkk_members m ON m.id=r.member_id LEFT JOIN bkk_products pr ON pr.id=r.product_id
+      LEFT JOIN bkk_products kp ON kp.id=k.product_id
+      WHERE r.source='rezerv' AND r.status='paid' AND r.amount_thb=0 AND r.twin_of IS NULL
+      ORDER BY ${lineOrder}`)).rows);
+    for (const r of greedy(a, 'rid', 'kid')) items.push({ id: `a-${r.rid}-${r.kid}`, kind: 'a', member: who(r),
+      orders: [{ id: r.rid, refno: ref(r.rref), day: r.rday, source: 'rezerv', amount: 0 },
+        { id: r.kid, refno: ref(r.kref), day: r.kday, source: 'aybkk', method: r.kmethod, amount: r.kamount }],
+      reason: `A ฿0 ${r.item} line from Rezerv (${r.rday}) next to ${r.kitem} paid on aybkk.net (ref ${r.kref}, ${r.kmethod}, ${r.kday}): staff entered the sale in Rezerv for check-in.`,
+      apply: `Mark the Rezerv line as the same sale as ref ${r.kref} (status twin). It stays in the list and never counts as money.` });
+    // (b) one Rezerv payment imported twice: same person, day, amount and item,
+    // the same minute (or one file with no time), two refs of different shapes
+    // (Rezerv's id and a hash, or two id columns), or two hashes. Two ids of one
+    // shape are two payments, and h:x#2 is the second of two identical lines in
+    // one file. One to one on both sides: a row kept for one copy keeps no other.
+    const b = (await db.query(`SELECT x.id AS xid, x.refno AS xref, x.source_ref AS xsrc, x.amount_thb, x.created_at AS xat,
+        k.id AS kid, k.refno AS kref, k.source_ref AS ksrc, k.created_at AS kat, to_char(${payDay('x')},'YYYY-MM-DD') AS day,
+        to_char(x.created_at AT TIME ZONE 'Asia/Bangkok','HH24:MI') AS xtime, to_char(k.created_at AT TIME ZONE 'Asia/Bangkok','HH24:MI') AS ktime,
+        coalesce(pr.name_en, x.item_name) AS item, m.code, m.name
+      FROM bkk_orders x JOIN bkk_orders k ON k.source='rezerv' AND k.member_id=x.member_id AND k.id < x.id
+        AND ${payDay('k')} = ${payDay('x')} AND k.amount_thb = x.amount_thb
+        AND lower(coalesce(k.item_name,'')) = lower(coalesce(x.item_name,'')) AND k.source_ref <> x.source_ref
+        AND k.status IN ('paid','refund','twin') AND ${sameTime(hhmm('k'), hhmm('x'))}
+      JOIN bkk_members m ON m.id=x.member_id LEFT JOIN bkk_products pr ON pr.id=x.product_id
+      WHERE x.source='rezerv' AND x.status IN ('paid','refund')
+      ORDER BY x.id, (${hhmm('k')} = ${hhmm('x')}) DESC, k.id`)).rows;
+    const gone = new Set(), kept = new Set();
+    for (const r of b) {
+      if (gone.has(r.xid) || gone.has(r.kid) || kept.has(r.kid) || kept.has(r.xid)) continue;
+      const kx = refKind(r.xsrc), kk = refKind(r.ksrc);
+      const twice = kx !== kk || (kx === 'h' && hashBase(r.xsrc) !== hashBase(r.ksrc));
+      if (!twice) continue;
+      gone.add(r.xid); kept.add(r.kid);
+      items.push({ id: `b-${r.xid}-${r.kid}`, kind: 'b', member: who(r),
+        orders: [{ id: r.xid, refno: ref(r.xref), day: r.day, time: r.xtime, source: 'rezerv', amount: r.amount_thb },
+          { id: r.kid, refno: ref(r.kref), day: r.day, time: r.ktime, source: 'rezerv', amount: r.amount_thb }],
+        reason: `The same Rezerv payment (${r.item}, ฿${r.amount_thb}, ${r.day}) is here twice, as order ${r.kref} (${r.ktime}) and order ${r.xref} (${r.xtime}), from two files.`,
+        apply: `Void order ${r.xref} with the note "same Rezerv payment as order ${r.kref}, imported twice". Order ${r.kref} stays.` });
+    }
+    // (c) two live passes for one sale: an aybkk.net pass and a Rezerv pass of the
+    // same package family that starts within 5 days of the sale or of that pass,
+    // and no Rezerv payment above ฿0 for that family within 5 days of its start
+    // (then the import keeps both, and e lists that payment). A class credit is
+    // never a copy: its note says so (CREDIT_NOTE), and for a Rezerv drop-in
+    // imported before that note, the reason says it may be one.
+    const c = (await db.query(`SELECT r.id AS rid, a.id AS aid, o.refno, to_char(${payDay('o')},'YYYY-MM-DD') AS paid_on,
+        coalesce(pr.name_en, 'pass') AS item, pr.code = 'dropin' AS dropin, m.code, m.name
+      FROM bkk_passes r JOIN bkk_passes a ON a.member_id=r.member_id AND a.source IS DISTINCT FROM 'rezerv'
+        AND a.status IN ('active','frozen') AND ${famOf('a')} = ${famOf('r')}
+        AND (a.valid_until IS NULL OR a.valid_until >= $1::date)
+      JOIN bkk_orders o ON o.id=a.order_id AND o.source IS DISTINCT FROM 'rezerv' AND o.status='paid'
+      JOIN bkk_members m ON m.id=r.member_id LEFT JOIN bkk_products pr ON pr.id=r.product_id
+      WHERE r.source='rezerv' AND r.status IN ('active','frozen') AND (r.valid_until IS NULL OR r.valid_until >= $1::date)
+        AND r.valid_from IS NOT NULL
+        AND (abs(${payDay('o')} - r.valid_from) <= ${COPY_DAYS} OR abs(a.valid_from - r.valid_from) <= ${COPY_DAYS})
+        AND NOT EXISTS (SELECT 1 FROM bkk_passes x WHERE x.twin_of=a.id)
+        AND coalesce(r.note, '') NOT LIKE '%${CREDIT_NOTE}%'
+        AND NOT EXISTS (SELECT 1 FROM bkk_orders y WHERE y.member_id=r.member_id AND y.source='rezerv' AND y.status='paid'
+          AND y.amount_thb > 0 AND ${famOf('y')} = ${famOf('r')} AND abs(${payDay('y')} - r.valid_from) <= ${COPY_DAYS})
+      ORDER BY (a.product_id=r.product_id OR ${pkgOf('a')} = ${pkgOf('r')}) DESC,
+        LEAST(abs(${payDay('o')} - r.valid_from), abs(a.valid_from - r.valid_from)), r.id, a.id`, [today])).rows;
+    const pairs = greedy(c, 'rid', 'aid');
+    const ids = [...new Set(pairs.flatMap(p => [p.rid, p.aid]))];
+    const use = ids.length ? (await db.query(`SELECT p.id, p.source, p.kind, p.credits_total, p.credits_used,
+        to_char(p.valid_from,'YYYY-MM-DD') AS valid_from, to_char(p.valid_until,'YYYY-MM-DD') AS valid_until,
+        count(b.id) FILTER (WHERE b.status='booked' AND (b.checked_in_at IS NOT NULL OR b.class_date < $2::date))::int AS used,
+        count(b.id) FILTER (WHERE b.status='booked' AND b.checked_in_at IS NULL AND b.class_date >= $2::date)::int AS ahead
+      FROM bkk_passes p LEFT JOIN bkk_bookings b ON b.pass_id=p.id WHERE p.id = ANY($1) GROUP BY p.id`, [ids, today])).rows : [];
+    const pass = id => { const p = use.find(x => x.id === id);
+      return { id, source: p.source === 'rezerv' ? 'rezerv' : 'aybkk', from: p.valid_from, until: p.valid_until,
+        classesUsed: p.used, bookingsAhead: p.ahead, ...(p.kind === 'credits' ? { creditsUsed: p.credits_used, creditsTotal: p.credits_total } : {}) }; };
+    for (const r of pairs) {
+      const rz = pass(r.rid), ay = pass(r.aid);
+      items.push({ id: `c-${r.rid}-${r.aid}`, kind: 'c', member: who(r), passes: [rz, ay],
+        reason: `Two live ${r.item} passes for what looks like one sale: one from Rezerv (${rz.from} to ${rz.until}, ${rz.classesUsed} classes used, ${rz.bookingsAhead} booked ahead) and the aybkk.net pass of ref ${r.refno} (paid ${r.paid_on}; ${ay.from ? `${ay.from} to ${ay.until}` : 'starts on the first class'}, ${ay.classesUsed} classes used, ${ay.bookingsAhead} booked ahead).${r.dropin ? ' If the Rezerv one is a class Rezerv gave back for a cancelled class, it is no copy: keep both.' : ''}`,
+        apply: 'Nothing here. A person chooses which pass to keep and voids the other with Void pass on the profile.' });
+    }
+    // (d) two paid aybkk.net orders, same person, package and class, that may be
+    // one sale: sold at the desk twice within 30 minutes, Activate by hand next to
+    // a paid order, or paid online and sold at the desk within 72 hours.
+    const d = (await db.query(`SELECT n.id AS nid, n.refno AS nref, n.method AS nmethod, n.gateway_note AS nnote, n.amount_thb AS namount,
+        p.id AS pid, p.refno AS pref, p.method AS pmethod, p.gateway_note AS pnote, p.amount_thb AS pamount,
+        to_char(${payAt('n')} AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD HH24:MI') AS nat,
+        to_char(${payAt('p')} AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD HH24:MI') AS pat,
+        abs(extract(epoch FROM n.created_at - p.created_at)) AS made_gap, abs(extract(epoch FROM ${payAt('n')} - ${payAt('p')})) AS paid_gap,
+        coalesce(pr.name_en, n.item_name) AS item, m.code, m.name
+      FROM bkk_orders n JOIN bkk_orders p ON p.member_id=n.member_id AND p.id < n.id AND p.source IS NULL AND p.status='paid'
+        AND p.amount_thb > 0 AND p.product_id=n.product_id
+        AND p.slot_id IS NOT DISTINCT FROM n.slot_id AND p.class_date IS NOT DISTINCT FROM n.class_date
+      JOIN bkk_members m ON m.id=n.member_id LEFT JOIN bkk_products pr ON pr.id=n.product_id
+      WHERE n.source IS NULL AND n.status='paid' AND n.amount_thb > 0
+        AND abs(extract(epoch FROM ${payAt('n')} - ${payAt('p')})) <= 72 * 3600
+      ORDER BY n.id, p.id`)).rows;
+    const desk = x => DESK_METHODS.includes(x), byHand = x => /^MANUAL ACTIVATION/.test(x || '');
+    for (const r of d) {
+      const why2 = desk(r.nmethod) && desk(r.pmethod) && r.made_gap <= 30 * 60 ? 'sold at the desk twice within 30 minutes'
+        : byHand(r.nnote) || byHand(r.pnote) ? 'one was activated by hand next to a paid order'
+        : desk(r.nmethod) !== desk(r.pmethod) ? 'paid online and sold at the desk within 72 hours' : null;
+      if (!why2) continue;
+      items.push({ id: `d-${r.nid}-${r.pid}`, kind: 'd', member: who(r),
+        orders: [{ id: r.pid, refno: ref(r.pref), at: r.pat, method: r.pmethod, amount: r.pamount, byHand: byHand(r.pnote) },
+          { id: r.nid, refno: ref(r.nref), at: r.nat, method: r.nmethod, amount: r.namount, byHand: byHand(r.nnote) }],
+        reason: `Two paid ${r.item} orders (ref ${r.pref} and ref ${r.nref}): ${why2}.`,
+        apply: 'Nothing here. Check the bank or PaySolutions. If one sale was recorded twice, void that order with POST /api/bkk/admin/orders/:id/void and a reason.' });
+    }
+    // (e) a Rezerv line with money next to an aybkk.net sale (the import's
+    // maybeTwin): the same sale typed in at its price, or a second sale. No rule
+    // can settle it: never applied.
+    const e = noCredit((await db.query(`SELECT r.id AS rid, r.refno AS rref, r.item_name AS rraw, r.amount_thb AS ramount, r.method AS rmethod,
+        to_char(${payDay('r')},'YYYY-MM-DD') AS rday, coalesce(r.item_name, pr.name_en) AS ritem,
+        k.id AS kid, k.refno AS kref, k.method AS kmethod, k.amount_thb AS kamount, to_char(${payDay('k')},'YYYY-MM-DD') AS kday,
+        kp.name_en AS kitem, m.code, m.name
+      FROM bkk_orders r ${lineNear}
+      JOIN bkk_members m ON m.id=r.member_id LEFT JOIN bkk_products pr ON pr.id=r.product_id
+      LEFT JOIN bkk_products kp ON kp.id=k.product_id
+      WHERE r.source='rezerv' AND r.status='paid' AND r.amount_thb > 0 AND r.twin_of IS NULL
+      ORDER BY ${lineOrder}`)).rows);
+    // One item for each Rezerv line, with its nearest sale, as the import warns on each line.
+    const eOne = e.filter((r, i) => e.findIndex(x => x.rid === r.rid) === i);
+    for (const r of eOne) items.push({ id: `e-${r.rid}-${r.kid}`, kind: 'e', member: who(r),
+      orders: [{ id: r.rid, refno: ref(r.rref), day: r.rday, source: 'rezerv', method: r.rmethod, amount: r.ramount, item: r.ritem },
+        { id: r.kid, refno: ref(r.kref), day: r.kday, source: 'aybkk', method: r.kmethod, amount: r.kamount, item: r.kitem }],
+      reason: `A ${r.ritem} line from Rezerv (฿${r.ramount}, ${r.rday}) next to ${r.kitem} paid on aybkk.net (ref ${r.kref}, ฿${r.kamount}, ${r.kmethod}, ${r.kday}): it may be one sale entered in both, or two sales.`,
+      apply: `Nothing here. Check the bank or PaySolutions, and the student's passes. If the aybkk.net order is the copy, void it with POST /api/bkk/admin/orders/${r.kid}/void and a reason (a Rezerv pass kept void for it comes back). If the Rezerv line is the copy, tell the owner: a Rezerv line with money is not changed by these tools.` });
+    return items;
+  }
+
+  app.get('/api/bkk/admin/doubles', async (req, res) => {
+    if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
+    try {
+      const items = await findDoubles(pool);
+      const n = k => items.filter(x => x.kind === k).length;
+      res.json({ items, counts: { a: n('a'), b: n('b'), c: n('c'), d: n('d'), e: n('e') } });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Only ids the list gives now, and only kinds a and b: applying twice finds
+  // them gone the second time and changes nothing.
+  app.post('/api/bkk/admin/doubles/apply', async (req, res) => {
+    if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
+    const want = Array.isArray((req.body || {}).ids) ? [...new Set(req.body.ids.map(String))].slice(0, 2000) : null;
+    if (!want || !want.length) return res.status(400).json({ error: 'ids must be a list of ids from GET /api/bkk/admin/doubles' });
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      // Never next to a Rezerv import, which reads the same rows.
+      await client.query(`SELECT pg_advisory_xact_lock(hashtext('bkk_import'))`);
+      const now = new Map((await findDoubles(client)).map(x => [x.id, x]));
+      const applied = [], skipped = [];
+      for (const id of want) {
+        const it = now.get(id);
+        if (!it) { skipped.push({ id, why: 'not in the list now (done already, or changed)' }); continue; }
+        let done;
+        if (it.kind === 'a') {
+          const [r, k] = it.orders;
+          done = await client.query(`UPDATE bkk_orders SET status='twin', twin_of=$2,
+              gateway_note = $3 || coalesce(' | ' || gateway_note, '') WHERE id=$1 AND status='paid' AND twin_of IS NULL`,
+            [r.id, k.id, `entered in Rezerv for check-in; paid on aybkk.net ref ${k.refno}`]);
+        } else if (it.kind === 'b') {
+          const [x, k] = it.orders;
+          done = await client.query(`UPDATE bkk_orders SET status='void',
+              gateway_note = $2 || coalesce(' | ' || gateway_note, '') WHERE id=$1 AND status IN ('paid','refund')`,
+            [x.id, `same Rezerv payment as order ${k.refno}, imported twice`]);
+        } else { skipped.push({ id, why: 'a person decides this one: it is never applied here' }); continue; }
+        if (done.rowCount) applied.push({ id, kind: it.kind });
+        else skipped.push({ id, why: 'not in the list now (done already, or changed)' });
+      }
+      await client.query('COMMIT');
+      if (applied.length) console.log(`✓ bkk: doubles applied ${applied.length}`);
+      res.json({ success: true, applied, skipped });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      res.status(500).json({ error: e.message });
+    } finally { client.release(); }
   });
 
   app.post('/api/bkk/start-event', async (req, res) => {
@@ -2591,7 +3378,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
          ORDER BY b.start_at, m.name`, [today]);
       const money = (await q(
         `SELECT method, count(*)::int AS n, sum(amount_thb)::int AS total FROM bkk_orders
-         WHERE status='paid' AND (verified_at AT TIME ZONE 'Asia/Bangkok')::date = (now() AT TIME ZONE 'Asia/Bangkok')::date
+         WHERE status='paid' AND amount_thb > 0
+           AND (verified_at AT TIME ZONE 'Asia/Bangkok')::date = (now() AT TIME ZONE 'Asia/Bangkok')::date
          GROUP BY method ORDER BY method`)).rows;
       // Today's whole timetable, booked or not: the door built its tabs from
       // bookings, so a class nobody had booked could not take a walk-in.
@@ -2646,6 +3434,45 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       evening: v('team_brief_evening') === 'on' ? 'on' : 'off', lang: v('team_brief_lang') === 'en' ? 'en' : 'th' };
   };
 
+  // What the Settings tab shows. Telegram: whether the token and chat are set
+  // (never their values) and how the last send went.
+  app.get('/api/bkk/admin/settings', async (req, res) => {
+    if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
+    res.set('Cache-Control', 'private, no-store');
+    try {
+      res.json({ surchargePct: await surcharge(), teamBrief: await teamSettings(),
+        payWatch: await payWatchSettings(), telegram: await telegramStatus(), payment: { mode: paymentStatus().mode } });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // A test ping on demand, for the day pings stop arriving: which bot the
+  // server's token belongs to (its @name and id, both public) and Telegram's own
+  // answer, so a wrong or replaced token, a missing chat or a bot never started
+  // shows on the page. Never the token or the chat id.
+  app.post('/api/bkk/admin/telegram/test', async (req, res) => {
+    if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
+    res.set('Cache-Control', 'private, no-store');
+    try {
+      const token = process.env.TELEGRAM_BOT_TOKEN;
+      const out = { tokenSet: !!token, chatSet: !!process.env.BOONCHU_CHAT_ID, bot: null, botError: null, sent: false, error: null };
+      if (token) {
+        try {
+          const r = await fetch(`${tgBase()}/bot${token}/getMe`, { signal: AbortSignal.timeout(10000) });
+          const j = await r.json().catch(() => ({}));
+          if (r.ok && j.ok && j.result) out.bot = { username: j.result.username ? String(j.result.username).slice(0, 64) : null,
+            id: Number.isFinite(Number(j.result.id)) ? Number(j.result.id) : null };
+          else out.botError = `http ${r.status}${j.description ? ': ' + String(j.description).split(token).join('[token]').slice(0, 120) : ''}`;
+        } catch (e) { out.botError = e.name === 'TimeoutError' ? 'timeout' : (e.cause && e.cause.code) || 'network error'; }
+      }
+      if (out.tokenSet && out.chatSet && !out.botError) {
+        const n = await notify('✓ AYBKK test ping from the admin page. If you see this, payment pings reach you.');
+        out.sent = !!n.ok; out.error = n.ok ? null : n.error;
+      }
+      out.telegram = await telegramStatus();
+      res.json(out);
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
   app.post('/api/bkk/admin/settings', async (req, res) => {
     if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
     try {
@@ -2657,16 +3484,19 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         if (!allowed.includes(val)) return res.status(400).json({ error: `${field} must be ${allowed.join(' or ')}` });
         team.push([key, val]);
       }
-      for (const [key, val] of team) {
-        await q(`INSERT INTO bkk_settings (key,value) VALUES ($1,$2)
-                 ON CONFLICT (key) DO UPDATE SET value=$2, updated_at=now()`, [key, JSON.stringify(val)]);
+      for (const [field, [key]] of Object.entries(PAY_KEYS)) {
+        if (b[field] === undefined) continue;
+        const val = b[field] === true ? 'on' : b[field] === false ? 'off' : b[field];
+        if (!['on', 'off'].includes(val)) return res.status(400).json({ error: `${field} must be on or off` });
+        team.push([key, val]);
       }
-      if (req.body.surchargePct !== undefined) {
-        await q(`INSERT INTO bkk_settings (key,value) VALUES ('surcharge_pct',$1)
-                 ON CONFLICT (key) DO UPDATE SET value=$1, updated_at=now()`,
-          [JSON.stringify(Number(req.body.surchargePct))]);
+      if (b.dailyMoneyAt !== undefined) {
+        const at = typeof b.dailyMoneyAt === 'string' ? b.dailyMoneyAt.trim().replace(/^(\d):/, '0$1:') : '';
+        if (!isClock(at)) return res.status(400).json({ error: 'dailyMoneyAt must be a Bangkok time, HH:MM' });
+        team.push([MONEY_AT[0], at]);
       }
-      const links = req.body.links || {};
+      if (b.surchargePct !== undefined) team.push(['surcharge_pct', Number(b.surchargePct)]);
+      const links = b.links || {};
       for (const k of LINK_KEYS) {
         if (links[k] === undefined) continue;
         const url = String(links[k] || '').trim();
@@ -2675,11 +3505,15 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         if (url && !/^https?:\/\/[^\s]+$/i.test(url)) {
           return res.status(400).json({ error: `${k} must be a full https:// link, or empty to remove` });
         }
-        await q(`INSERT INTO bkk_settings (key,value) VALUES ($1,$2)
-                 ON CONFLICT (key) DO UPDATE SET value=$2, updated_at=now()`,
-          ['link_' + k, JSON.stringify(url)]);
+        team.push(['link_' + k, url]);
       }
-      res.json({ success: true, surchargePct: await surcharge(), teamBrief: await teamSettings() });
+      // Everything is checked before anything is saved: a 400 saves nothing.
+      for (const [key, val] of team) {
+        await q(`INSERT INTO bkk_settings (key,value) VALUES ($1,$2)
+                 ON CONFLICT (key) DO UPDATE SET value=$2, updated_at=now()`, [key, JSON.stringify(val)]);
+      }
+      res.json({ success: true, surchargePct: await surcharge(), teamBrief: await teamSettings(),
+        payWatch: await payWatchSettings(), telegram: await telegramStatus() });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -2830,12 +3664,12 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // one of our classes ("Mysore 5.30am (1st batch) (Refunded credits)") is a
   // one-class credit; "Mysore with <guest teachers>" is a workshop, not ours.
   const CLASS_CREDIT = /^(?!.*\b(workshop|with)\b)(\[online\]\s*)?(mysore|led\s+(primary|intermediate)|self[\s-]*practice)\b/i;
+  // A class credit Rezerv gives back (a cancelled class) is no sale: never the copy of one.
+  const creditBack = s => CLASS_CREDIT.test(s) || /refunded\s*credits?/i.test(s);
+  const CREDIT_NOTE = 'a class Rezerv gave back';
   const IMPORT_PLANS = [[/^1\s*month/i, 'unlim1'], [/^2\s*months?/i, 'unlim2'], [/^3\s*months?/i, 'unlim3'],
     [/^6\s*months?/i, 'unlim6'], [/^(12\s*months?|1\s*years?)\b/i, 'unlim12'], [/^10[\s-]*class/i, 'pack10'],
     [/^8[\s-]*class.*\b1\s*(month|mo)\b/i, 'pack8m1'], [/^8[\s-]*class/i, 'pack8'], [/^drop[\s-]*in\b/i, 'dropin'], [CLASS_CREDIT, 'dropin']];
-  // One package under two names: Rezerv's plan text can land on either.
-  const PKG_FAMILY = { unlim6: ['unlim6', 'unlim6m'], unlim6m: ['unlim6', 'unlim6m'], unlim12: ['unlim12', 'unlim12m'],
-    unlim12m: ['unlim12', 'unlim12m'], pack8: ['pack8', 'pack8m1'], pack8m1: ['pack8', 'pack8m1'] };
   const RETIRED_PLANS = {
     unlim2: { en: '2 months unlimited', th: '2 เดือน ไม่จำกัด', price: 18200, days: 60, sort: 40 },
     unlim6: { en: '6 months unlimited', th: '6 เดือน ไม่จำกัด', price: 45000, days: 180, sort: 60 },
@@ -2957,6 +3791,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     payStatus: v => `payment status "${v}" not understood`,
     notMoney: v => `payment status "${v}": no money came in, so it is not kept`,
     payVoided: id => `payment ${id} was voided in Rezerv: it no longer counts as money`,
+    twinOfAybkk: ref => `a ฿0 line for the sale paid on aybkk.net as ref ${ref}: kept as the same sale, not counted as money`,
+    maybeTwin: (ref, pkg) => `aybkk.net has a paid sale of ${pkg || 'this package'} within 5 days (ref ${ref}): kept as paid; check it is not one sale entered twice`,
+    rezervTwin: ref => `the same Rezerv payment is here already as order ${ref}, from a file with or without Rezerv's id: not added again`,
+    twinPass: (ref, used, total, from, until, paused) => `the same sale as the aybkk.net pass of ref ${ref}: kept as a void pass, so the student has one pass`
+      + (used ? `; the ${used} of ${total} classes used in Rezerv now count on that pass` : '')
+      + (from ? `; that pass now starts on ${from}, as in Rezerv${until ? `, and ends on ${until}` : ''}` : '')
+      + (paused ? `; Rezerv has it paused${paused !== '-' ? ` from ${paused}` : ''}: the pass kept is not paused here` : ''),
     badPlan: v => `package "${v}" is not one of ours (a workshop, or not understood): not kept as a pass`,
     passStatus: v => `pass status "${v}" not understood: read as no status`,
     neverStarted: v => `never started, and Rezerv says ${v}: nothing to keep`,
@@ -3347,16 +4188,51 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         || (had.item_name || '') !== (item || ''))) return { skip: why('idReused', own, 'payment') };
       return { result: 'matched' };
     }
+    // The same Rezerv payment already here from another file: one with Rezerv's
+    // id, one without it (a hash), at the same minute or with no time in one of
+    // them. One to one in a run: a second line with no row left to be its copy
+    // is a second payment, and is added. A person looks, as only they can tell
+    // two real payments of the same day and amount from one payment twice.
+    const hm = when.time || '00:00';
+    if (!ctx.copied) ctx.copied = [];
+    const copy = (await db.query(`SELECT o.id, o.refno FROM bkk_orders o
+      WHERE o.source='rezerv' AND o.member_id=$1 AND ${PAY_DAY}=$2::date AND o.amount_thb=$3
+        AND lower(coalesce(o.item_name,''))=lower($4) AND (o.source_ref LIKE 'h:%') <> ($5 LIKE 'h:%')
+        AND o.status IN ('paid','refund','twin') AND ${sameTime(hhmm('o'), '$6')} AND o.id <> ALL($7::int[])
+      ORDER BY (${hhmm('o')} = $6) DESC, o.id LIMIT 1`,
+      [who.member.id, when.date, amt, item || '', ref, hm, ctx.copied])).rows[0];
+    if (copy) { ctx.copied.push(copy.id); warn(why('rezervTwin', String(copy.refno))); return { result: 'matched' }; }
     const pr = await itemProduct(db, item);
+    const at = startAtISO(when.date, when.time || '00:00');
+    // Sold on aybkk.net and entered in Rezerv too (staff still check in there):
+    // a paid sale here of the same package family within 5 Bangkok days, the
+    // same package first, then the nearest. A ฿0 line is the copy of one not
+    // paired yet: kept, never money. A line with money may be the same sale typed
+    // in at its price, or a second sale: a person decides, whether or not a ฿0
+    // line of that sale came first in the file. A refund (a ฿0 one too), and a
+    // class credit Rezerv gives back, are no sale.
+    const near = extra => db.query(`SELECT o.id, o.refno, px.name_en FROM bkk_orders o
+      JOIN bkk_products px ON px.id=o.product_id
+      WHERE o.source IS NULL AND o.status='paid' AND o.amount_thb > 0 AND o.member_id=$1
+        AND px.code = ANY($4::text[]) AND abs(${PAY_DAY} - $2::date) <= ${COPY_DAYS} ${extra}
+      ORDER BY (o.product_id=$5 OR lower(px.name_en) = lower($6)) DESC, abs(${PAY_DAY} - $2::date),
+        abs(extract(epoch FROM ${PAY_AT} - $3::timestamptz)), o.id LIMIT 1`,
+      [who.member.id, when.date, at, PKG_FAMILY[pr.code] || [pr.code], pr.id, pr.name_en]).then(r => r.rows[0]);
+    const sale = !!pr && st !== 'refund' && amt >= 0 && !creditBack(item || '');
+    const twin = sale && amt === 0 ? await near('AND NOT EXISTS (SELECT 1 FROM bkk_orders x WHERE x.twin_of=o.id)') : null;
+    const maybe = sale && amt > 0 ? await near('') : null;
+    if (twin) warn(why('twinOfAybkk', String(twin.refno)));
+    else if (maybe) warn(why('maybeTwin', String(maybe.refno), maybe.name_en));
     let refno = newRefno();
     for (let i = 0; i < 10 && (await db.query('SELECT 1 FROM bkk_orders WHERE refno=$1', [refno])).rows.length; i++) refno = newRefno();
-    const at = startAtISO(when.date, when.time || '00:00');
+    const said = [methodRaw, note].filter(Boolean).join(' | ');
     await db.query(
       `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb,status,gateway_note,
-         verified_at,created_at,method,item_name,source,source_ref,via_member)
-       VALUES ($1,$2,$3,$4,0,$5,$6,$7,$8,$9,$9,$10,$11,'rezerv',$12,$13)`,
-      [refno, pr ? pr.id : null, who.member.id, amt - vat, vat, amt, amt < 0 ? 'refund' : 'paid',
-       [methodRaw, note].filter(Boolean).join(' | ') || 'moved from Rezerv', at, payMethod(methodRaw), item, ref, who.refId]);
+         verified_at,created_at,method,item_name,source,source_ref,twin_of,via_member)
+       VALUES ($1,$2,$3,$4,0,$5,$6,$7,$8,$9,$9,$10,$11,'rezerv',$12,$13,$14)`,
+      [refno, pr ? pr.id : null, who.member.id, amt - vat, vat, amt, twin ? 'twin' : st === 'refund' || amt < 0 ? 'refund' : 'paid',
+       twin ? [`entered in Rezerv for check-in; paid on aybkk.net ref ${twin.refno}`, said].filter(Boolean).join(' | ')
+         : said || 'moved from Rezerv', at, payMethod(methodRaw), item, ref, twin ? twin.id : null, who.refId]);
     return { result: 'added' };
   }
 
@@ -3435,7 +4311,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const frozen = !off && !later && (state === 'frozen' || (fFrom && fFrom <= ctx.today && (!fUntil || fUntil >= ctx.today)));
     if (!off && later) warn(why('freezeLater', fFrom, fUntil || ''));
     const status = off ? 'void' : frozen ? 'frozen' : 'active';
-    const note = ['moved from Rezerv', off ? `${said} in Rezerv` : null,
+    // CREDIT_NOTE marks a class credit, which the doubles list never takes for a copy.
+    const note = ['moved from Rezerv', creditBack(planRaw) ? CREDIT_NOTE : null, off ? `${said} in Rezerv` : null,
       fFrom || fUntil ? `paused in Rezerv ${fFrom || '?'} to ${fUntil || '?'}` : null].filter(Boolean).join(' | ');
 
     const who = await importStudent(db, row, ctx, warn);
@@ -3445,7 +4322,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (!ctx.made) await fillMember(db, m, who.f, warn);
     // Rezerv's own pass id first: a pause or extra days here move the end date.
     const ref = importId(row.rezervId) || null;
-    const COLS = 'id, member_id, status, source, note, source_ref';
+    const COLS = 'id, member_id, status, source, note, source_ref, twin_of';
     let had = ref ? (await db.query(`SELECT ${COLS} FROM bkk_passes WHERE source='rezerv' AND source_ref=$1`, [ref])).rows[0] : null;
     if (had && had.member_id !== m.id) return { skip: why('idReused', ref, 'pass') };
     // No pass id, or a pass that came over without one: the same package and
@@ -3454,46 +4331,104 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         AND ($4::text IS NULL OR source_ref IS NULL)
         AND (valid_until=$3 OR ($4::text IS NOT NULL AND source='rezerv' AND valid_from=$5::date))
       ORDER BY valid_until=$3 DESC, id LIMIT 1`, [m.id, pr.id, until.date, ref, start ? start.date : null])).rows[0];
+    const from = start ? start.date
+      : new Date(Date.parse(until.date + 'T00:00:00Z') - (pr.valid_days - 1) * 86400e3).toISOString().slice(0, 10);
+    const used = left != null ? Math.max(0, total - left) : 0;
+    const pause = [later ? null : fFrom, later ? null : fUntil];
+    const copy = { used, total, from, until: until.date, started: from <= ctx.today, status, paused: frozen ? fFrom || '-' : '' };
     if (had) {
       const tag = had.source === 'rezerv' ? had.source_ref || ref : null;
+      if (tag !== had.source_ref) await db.query('UPDATE bkk_passes SET source_ref=$2 WHERE id=$1', [had.id, tag]);
+      // A twin stays void as the copy of the pass kept. What Rezerv says of it
+      // now is what it comes back as if that pair is taken apart.
+      if (had.source === 'rezerv' && had.status === 'void' && had.twin_of) {
+        const ch = await db.query(`UPDATE bkk_passes SET twin_undo = coalesce(twin_undo, '{}'::jsonb) || jsonb_build_object('status', $2::text),
+            frozen_from=$3, frozen_until=$4,
+            note = CASE WHEN $2 = 'void' AND coalesce(twin_undo->>'status', '') <> 'void' THEN note || ' | ' || $5 ELSE note END
+          WHERE id=$1 AND (coalesce(twin_undo->>'status', 'active') <> $2
+            OR frozen_from IS DISTINCT FROM $3::date OR frozen_until IS DISTINCT FROM $4::date) RETURNING id`,
+          [had.id, status, ...pause, `${said} in Rezerv`]);
+        return { result: ch.rows.length ? 'updated' : 'matched' };
+      }
       // Rezerv lists some passes twice, one copy "Inactive": the copy still in
-      // use wins, in either order. Never one staff voided here.
+      // use wins, in either order. Never one staff voided here. One that is the
+      // copy of a sale here stays void as its twin, as a new one would.
       if (!off && had.status === 'void' && had.source === 'rezerv' && !/voided:/.test(had.note || '')) {
-        await db.query('UPDATE bkk_passes SET status=$2, frozen_from=$3, frozen_until=$4, note=$5, source_ref=$6 WHERE id=$1',
-          [had.id, status, later ? null : fFrom, later ? null : fUntil, note, tag]);
+        const c = await copyOf(db, m, pr, from, planRaw);
+        if (c.skip) return c;
+        if (c.twin) {
+          const undo = await carryOnto(db, c.twin, copy, warn);
+          await db.query(`UPDATE bkk_passes SET twin_of=$2, twin_undo=$3, credits_used=$4, frozen_from=$5, frozen_until=$6, note=$7 WHERE id=$1`,
+            [had.id, c.twin.id, undo, used, ...pause, `voided: same sale as aybkk.net ref ${c.twin.refno} | ${note}`]);
+          return { result: 'updated' };
+        }
+        await db.query('UPDATE bkk_passes SET status=$2, frozen_from=$3, frozen_until=$4, note=$5 WHERE id=$1',
+          [had.id, status, ...pause, note]);
         return { result: 'updated' };
       }
-      if (tag !== had.source_ref) await db.query('UPDATE bkk_passes SET source_ref=$2 WHERE id=$1', [had.id, tag]);
       return { result: 'matched' };
     }
     if (off && until.date >= ctx.today) warn(why('passOff', said));
-    const from = start ? start.date
-      : new Date(Date.parse(until.date + 'T00:00:00Z') - (pr.valid_days - 1) * 86400e3).toISOString().slice(0, 10);
-    // Staff copied aybkk.net sales into Rezerv as free passes (Nov 2026), and each
-    // copy came back here as a second pass. The same package sold here within 5
-    // days of the sale or of its start, and no Rezerv payment for it: the copy.
-    // Payments import before passes, so a pass Rezerv was paid for is known here.
-    // A class credit Rezerv gives back (a cancelled class) is no sale: never a copy.
-    if (!off && !CLASS_CREDIT.test(planRaw) && !/refunded\s*credits?/i.test(planRaw)) {
-      const fam = PKG_FAMILY[pr.code] || [pr.code];
-      const sold = (await db.query(`SELECT to_char(${PAY_DAY},'YYYY-MM-DD') AS d
-        FROM bkk_passes p JOIN bkk_orders o ON o.id=p.order_id JOIN bkk_products px ON px.id=p.product_id
-        WHERE p.member_id=$1 AND px.code = ANY($2::text[]) AND o.status='paid' AND o.source IS DISTINCT FROM 'rezerv'
-          AND (abs(${PAY_DAY} - $3::date) <= 5 OR abs(p.valid_from - $3::date) <= 5)
-          AND NOT EXISTS (SELECT 1 FROM bkk_orders r JOIN bkk_products rx ON rx.id=r.product_id
-            WHERE r.member_id=$1 AND rx.code = ANY($2::text[]) AND r.source='rezerv' AND r.status='paid' AND r.amount_thb > 0
-              AND abs((coalesce(r.verified_at, r.created_at) AT TIME ZONE 'Asia/Bangkok')::date - $3::date) <= 5)
-        LIMIT 1`, [m.id, fam, from])).rows[0];
-      if (sold) return { skip: why('copyOfSale', pr.name_en, sold.d) };
-    }
+    const c = off ? {} : await copyOf(db, m, pr, from, planRaw);
+    if (c.skip) return c;
+    const twin = c.twin || null;
+    const undo = twin ? await carryOnto(db, twin, copy, warn) : null;
     await db.query(`INSERT INTO bkk_passes
         (member_id,product_id,order_id,kind,credits_total,credits_used,daily_cap,valid_days,valid_from,valid_until,note,source,
-         status,frozen_from,frozen_until,source_ref,via_member)
-      VALUES ($1,$2,NULL,$3,$4,$5,$6,$7,$8,$9,$10,'rezerv',$11,$12,$13,$14,$15)`,
-      [m.id, pr.id, pr.kind, total, left != null ? Math.max(0, total - left) : 0,
-       pr.daily_cap, pr.valid_days, from, until.date, note, status,
-       later ? null : fFrom, later ? null : fUntil, ref, who.refId]);
+         status,frozen_from,frozen_until,source_ref,twin_of,via_member,twin_undo)
+      VALUES ($1,$2,NULL,$3,$4,$5,$6,$7,$8,$9,$10,'rezerv',$11,$12,$13,$14,$15,$16,$17)`,
+      [m.id, pr.id, pr.kind, total, used,
+       pr.daily_cap, pr.valid_days, from, until.date,
+       twin ? `voided: same sale as aybkk.net ref ${twin.refno} | ${note}` : note, twin ? 'void' : status,
+       ...pause, ref, twin ? twin.id : null, who.refId, undo]);
     return { result: 'added' };
+  }
+
+  // Staff copied aybkk.net sales into Rezerv to check students in (Nov 2026),
+  // and each copy came back here as a second pass: one sale, one pass. The copy:
+  // a pass here of the same package family from a sale paid within 5 days of
+  // this one's start, or starting within 5 days of it, and no Rezerv payment
+  // above ฿0 for that family in those days (payments import before passes, so
+  // a pass Rezerv was paid for is known here). A class credit Rezerv gives back
+  // (a cancelled class) is no sale: never a copy. The nearest live pass here not
+  // paired yet, the same package first, stays (twin), and the Rezerv one is kept
+  // void as its twin, one to one; "voided:" keeps a later import from bringing
+  // it back. With each such pass paired already, or none live, the copy is not
+  // kept (skip). A new pass holds no booking (a Rezerv visit never takes a
+  // pass), so nothing is left without one.
+  async function copyOf(db, m, pr, from, planRaw) {
+    if (creditBack(planRaw)) return {};
+    const hits = (await db.query(`SELECT p.id, p.valid_from, o.refno, to_char(${PAY_DAY},'YYYY-MM-DD') AS d,
+        p.status IN ('active','frozen') AND NOT EXISTS (SELECT 1 FROM bkk_passes x WHERE x.twin_of=p.id) AS free,
+        (p.product_id=$4 OR lower(px.name_en) = lower($5)) AS same
+      FROM bkk_passes p JOIN bkk_orders o ON o.id=p.order_id JOIN bkk_products px ON px.id=p.product_id
+      WHERE p.member_id=$1 AND px.code = ANY($2::text[]) AND o.status='paid' AND o.source IS DISTINCT FROM 'rezerv'
+        AND (abs(${PAY_DAY} - $3::date) <= ${COPY_DAYS} OR abs(p.valid_from - $3::date) <= ${COPY_DAYS})
+        AND NOT EXISTS (SELECT 1 FROM bkk_orders r JOIN bkk_products rx ON rx.id=r.product_id
+          WHERE r.member_id=$1 AND rx.code = ANY($2::text[]) AND r.source='rezerv' AND r.status='paid' AND r.amount_thb > 0
+            AND abs(${payDay('r')} - $3::date) <= ${COPY_DAYS})
+      ORDER BY 5 DESC, 6 DESC, LEAST(abs(${PAY_DAY} - $3::date), abs(p.valid_from - $3::date)), p.id`,
+      [m.id, PKG_FAMILY[pr.code] || [pr.code], from, pr.id, pr.name_en])).rows;
+    if (hits.length && !hits[0].free) return { skip: why('copyOfSale', pr.name_en, hits[0].d) };
+    return { twin: hits[0] || null };
+  }
+
+  // What the student used in Rezerv goes onto the pass they keep: the classes,
+  // and for one not started here, the start day of one started in Rezerv. It
+  // then ends as Rezerv says for the same package; a package of the family with
+  // another length (8 classes in 1 or 2 months, a 12- or 13-month year) runs its
+  // own days from that start, as its first class would make it. Warns, and
+  // gives what an undo that takes the pair apart puts back (twin_undo).
+  async function carryOnto(db, twin, { used, total, from, until, started, status, paused }, warn) {
+    const k = (await db.query(`SELECT credits_used, to_char(valid_from,'YYYY-MM-DD') AS f, to_char(valid_until,'YYYY-MM-DD') AS u
+      FROM bkk_passes WHERE id=$1 FOR UPDATE`, [twin.id])).rows[0];
+    const dated = !k.f && started;
+    const now = (await db.query(`UPDATE bkk_passes SET credits_used = LEAST(coalesce(credits_total, $2), GREATEST(credits_used, $2)),
+        valid_from = CASE WHEN $3::boolean THEN $4::date ELSE valid_from END,
+        valid_until = CASE WHEN NOT $3::boolean THEN valid_until WHEN $6::boolean THEN $5::date ELSE $4::date + valid_days END
+      WHERE id=$1 RETURNING credits_used, to_char(valid_until,'YYYY-MM-DD') AS u`, [twin.id, used, dated, from, until, twin.same])).rows[0];
+    warn(why('twinPass', String(twin.refno), used, total || '', dated ? from : '', dated ? now.u : '', paused));
+    return { used: now.credits_used - k.credits_used, status, ...(dated ? { from, until: now.u, untilWas: k.u } : {}) };
   }
 
   const IMPORTERS = { members: importMemberRow, visits: importVisit, payments: importPayment, passes: importPass };
@@ -3685,7 +4620,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
           noShows: visits.rows.filter(v => v.status === 'noshow' || (v.status === 'booked' && !v.checked_in_at && v.date < today)).length,
           cancellations: visits.rows.filter(v => v.status === 'cancelled').length,
           totalPaid: money.reduce((s, o) => s + o.amount_thb, 0),
-          payments: money.filter(o => o.status === 'paid').length,
+          // A ฿0 line (a Rezerv bonus or a pass entered for check-in) is not a payment.
+          payments: money.filter(o => o.status === 'paid' && o.amount_thb > 0).length,
           activePass: active ? { name: active.name_en, kind: active.kind,
             until: pgDate(active.valid_until),
             creditsLeft: active.kind === 'unlimited' ? null : active.credits_total - active.credits_used } : null,
@@ -3731,6 +4667,14 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const all = async (sql, args = [from, to]) => (await q(sql, args)).rows;
       const inRange = `b.class_date BETWEEN $1::date AND $2::date`;
       const paid = `o.status IN ('paid','refund') AND ${PAY_DAY} BETWEEN $1::date AND $2::date`;
+      // Counts are payments, money is money: a ฿0 line from Rezerv (a bonus, or a
+      // pass entered for check-in) adds no payment and no sale (15 Nov 2026).
+      const nPay = `count(*) FILTER (WHERE o.amount_thb > 0)::int`;
+      // A refund is money going back, not a payment: counted on its own.
+      const nBack = `count(*) FILTER (WHERE o.amount_thb < 0)::int`;
+      const manual = `o.status='paid' AND o.gateway_note LIKE 'MANUAL ACTIVATION%'`;
+      // A group of ฿0 lines only (no payment, no money) is no line in a table.
+      const noZero = `(count(*) FILTER (WHERE o.amount_thb <> 0) > 0)`;
       const [v, first, vDay, vClass, vSource, mTot, mDay, mMethod, mItem, mSource, sold, expiring, notSeen] = await Promise.all([
         all(`SELECT count(*) FILTER (WHERE ${ATTENDED})::int AS total,
                count(*) FILTER (WHERE b.status='booked')::int AS booked,
@@ -3750,19 +4694,23 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
              WHERE b.status='booked' AND ${inRange} GROUP BY 1,2 ORDER BY 2 NULLS LAST, 1`),
         all(`SELECT coalesce(b.source,'aybkk') AS source, count(*)::int AS n FROM bkk_bookings b
              WHERE ${ATTENDED} AND ${inRange} GROUP BY 1 ORDER BY n DESC, 1`),
-        all(`SELECT coalesce(sum(o.amount_thb),0)::int AS total, coalesce(sum(o.vat_thb),0)::int AS vat, count(*)::int AS n
+        all(`SELECT coalesce(sum(o.amount_thb),0)::int AS total, coalesce(sum(o.vat_thb),0)::int AS vat, ${nPay} AS n, ${nBack} AS refunds,
+               count(*) FILTER (WHERE ${manual})::int AS manual_n,
+               coalesce(sum(o.amount_thb) FILTER (WHERE ${manual}),0)::int AS manual_total
              FROM bkk_orders o WHERE ${paid}`),
         all(`SELECT to_char(${PAY_DAY},'YYYY-MM-DD') AS date, sum(o.amount_thb)::int AS total
              FROM bkk_orders o WHERE ${paid} GROUP BY 1 ORDER BY 1`),
-        all(`SELECT o.method, count(*)::int AS n, sum(o.amount_thb)::int AS total
-             FROM bkk_orders o WHERE ${paid} GROUP BY 1 ORDER BY total DESC, 1`),
+        all(`SELECT o.method, ${nPay} AS n, ${nBack} AS refunds, sum(o.amount_thb)::int AS total
+             FROM bkk_orders o WHERE ${paid} GROUP BY 1 HAVING ${noZero} ORDER BY total DESC, 1`),
         // By package, not by name: the old Rezerv 6-month and the 12 Nov 2026 one share a name.
-        all(`SELECT coalesce(pr.name_en, o.item_name, 'other') AS item, pr.price_thb AS price, count(*)::int AS n, sum(o.amount_thb)::int AS total
-             FROM bkk_orders o LEFT JOIN bkk_products pr ON pr.id=o.product_id WHERE ${paid} GROUP BY pr.id, 1, 2 ORDER BY total DESC, 1`),
-        all(`SELECT coalesce(o.source,'aybkk') AS source, count(*)::int AS n, sum(o.amount_thb)::int AS total
-             FROM bkk_orders o WHERE ${paid} GROUP BY 1 ORDER BY total DESC, 1`),
+        all(`SELECT coalesce(pr.name_en, o.item_name, 'other') AS item, pr.price_thb AS price, ${nPay} AS n, ${nBack} AS refunds,
+               sum(o.amount_thb)::int AS total
+             FROM bkk_orders o LEFT JOIN bkk_products pr ON pr.id=o.product_id WHERE ${paid} GROUP BY pr.id, 1, 2 HAVING ${noZero}
+             ORDER BY total DESC, 1`),
+        all(`SELECT coalesce(o.source,'aybkk') AS source, ${nPay} AS n, ${nBack} AS refunds, sum(o.amount_thb)::int AS total
+             FROM bkk_orders o WHERE ${paid} GROUP BY 1 HAVING ${noZero} ORDER BY total DESC, 1`),
         all(`SELECT count(*)::int AS n FROM bkk_orders o
-             WHERE o.status='paid' AND o.product_id IS NOT NULL AND ${PAY_DAY} BETWEEN $1::date AND $2::date`),
+             WHERE o.status='paid' AND o.amount_thb > 0 AND o.product_id IS NOT NULL AND ${PAY_DAY} BETWEEN $1::date AND $2::date`),
         // Ends within 14 days, and nothing after it to carry on with.
         all(`SELECT m.code, m.name, pr.name_en AS item, to_char(p.valid_until,'YYYY-MM-DD') AS until
              FROM bkk_passes p JOIN bkk_members m ON m.id=p.member_id LEFT JOIN bkk_products pr ON pr.id=p.product_id
@@ -3797,7 +4745,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
           byClass: vClass.map(c => ({ ...c, avgPerClass: c.classes ? Math.round(c.attended / c.classes * 10) / 10 : 0 })),
           bySource: vSource,
         },
-        money: { total: mt.total, vat: mt.vat, count: mt.n, byDay: mDay, byMethod: mMethod, byItem: mItem, bySource: mSource },
+        money: { total: mt.total, vat: mt.vat, count: mt.n, refunds: mt.refunds, byDay: mDay, byMethod: mMethod, byItem: mItem, bySource: mSource,
+          manual: { n: mt.manual_n, total: mt.manual_total } },
         passes: { sold: sold[0].n, expiringNext14: expiring },
         notSeen: notSeen.map(n => ({ code: n.code, name: n.name, lastVisit: n.last_visit, pass: n.pass, until: n.until })),
       });
@@ -3939,7 +4888,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
          WHERE id=$1 AND status <> 'void' RETURNING *`,
         [req.params.id, `voided: ${reason || 'no reason given'}`]);
       if (!r.rows.length) return res.status(409).json({ error: 'pass not found, or already void' });
-      res.json({ success: true, pass: r.rows[0] });
+      // The Rezerv copy of this pass, kept void by the import, is the sale's pass again.
+      const back = await twinPassBack(pool, [r.rows[0].id], `aybkk.net pass ${r.rows[0].id} was made void on ${bkkToday()}`);
+      res.json({ success: true, pass: r.rows[0], rezervPassBack: back });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -4942,14 +5893,17 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
 
   const booted = initSchema();
   // Resolves once the schema, seed and price switch are done (never rejects), so
-  // a test can wait for the boot instead of guessing how long it takes.
+  // a test can wait for the boot instead of guessing how long it takes. It
+  // resolves to the payment watch, which a test runs on its own clock.
+  const timers = opts.timers !== false && process.env.BKK_TIMERS !== 'off';
   return booted
     .then(() => {
       console.log('✓ bkk-api mounted (/api/bkk/*)'); letterPurge(); sweepFaces();
-      setInterval(sweepPayments, opts.paySweepMs || PAY_SWEEP_MS).unref();
+      if (timers) startPayWatch();
       return switchPrices().catch(e => console.error('✗ bkk: price switch failed:', e.message));
     })
-    .catch(e => console.error('✗ bkk-api schema init failed:', e.message));
+    .catch(e => console.error('✗ bkk-api schema init failed:', e.message))
+    .then(() => ({ paySweep, moneyTick, moneyLine, resendAlerts }));
 }
 
 // PaySolutions posts application/x-www-form-urlencoded; make sure that body is

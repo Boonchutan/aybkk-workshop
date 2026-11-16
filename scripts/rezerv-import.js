@@ -446,7 +446,7 @@ const WHO_CODES = { excelId: 'ask', noWho: 'ask', notFound: 'ask', sharePhone: '
 const SKIP_CODES = {
   members: { excelId: 'ask', noName: 'ask', sharePhone: 'ask', sameName: 'ask', duplicate: 'ask' },
   passes: { ...WHO_CODES, neverStarted: 'ok',
-    // A Rezerv copy, made by hand at 0 THB, of a pass sold on aybkk.net: designed to stay out.
+    // A Rezerv copy of a pass sold on aybkk.net that has its twin already, or is not live: designed to stay out.
     copyOfSale: 'ok',
     // "A workshop, or not understood": only a person can tell which.
     badPlan: 'ask', badUntil: 'ask', badStart: 'ask', startsAfterEnd: 'ask', noPackage: 'ask', badLeft: 'ask',
@@ -466,6 +466,11 @@ const WARN_CODES = {
   // A student made next to one who holds that email, phone or name: the server's rule, never a merge.
   clashEmail: 'note', clashPhone: 'note', clashOtherEmail: 'note',
   passStatus: 'ask', badVat: 'ask', badFreeze: 'ask', leftOver: 'ask',
+  // One sale in both systems (15 Nov 2026): a ฿0 copy of an aybkk.net sale is
+  // kept as its twin, never money. A copy with money, a Rezerv pass kept void
+  // as the twin of a pass sold here, or a Rezerv payment already here from
+  // another file: a person looks.
+  twinOfAybkk: 'note', maybeTwin: 'ask', twinPass: 'ask', rezervTwin: 'ask',
 };
 const NO_CODE = '(no code)', UNKNOWN_CODE = '(unknown code)';
 const OWN_CODES = new Set([...KINDS.flatMap(k => Object.keys(SKIP_CODES[k])), ...Object.keys(WARN_CODES)]);
