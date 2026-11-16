@@ -1746,3 +1746,4 @@ Carnegie, 2 Nov. New 180K leads: 0 (inbox: 1 LINE chat, a shala student paying f
 Due today: 0. Overdue: 0. Serious: 1, silent 16 days, open, next check Sat 7 Nov, nothing sent.
 Still open for Boonchu: close the serious lead or send the last note (draft in Carne's 31 Oct session)? And "is the online Led class invite only?" (16th day).
 No new Batch Sheet; keyword test on hold, so no Monday score. No requests for Carne in team chat.
+- 2026-11-16 Plato: Google photo posts for Wed 18, Fri 20, Sun 22 Nov waiting for Boonchu's go in the Plato chat (3 picks + 1 spare, bots/media/2026-11-18-gbp/). Last week's 3 picks never got a go, so nothing posted 11-15 Nov.
