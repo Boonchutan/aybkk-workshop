@@ -10,3 +10,4 @@ Score: wins this week (from Mon 16 Nov): none yet. Last week: none. Last win 6 N
 Inbox 07:08: 0 new, 0 hot (1 older LINE thread still open).
 
 13:08 check-in: serious lead and keyword test still waiting (due 19:00 today). Inbox: 4 new threads, 4 hot (1 booking problem on the new website, 1 possible payment slip).
+19:08 check-in: serious lead and keyword test defaults applied (no answer). Course prices next choice Sun 22 Nov (6 days). Inbox 19:08: 3 new, 0 need a reply.
