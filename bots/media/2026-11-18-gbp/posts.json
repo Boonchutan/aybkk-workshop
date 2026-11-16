@@ -1,9 +1,9 @@
 {
  "1 Wed 18 Nov": {
-  "file": "gbp-2026-11-18-183.jpg",
-  "src": "12 Nov AYBKK Nov12th2026-183 (Drive 1qjNx5GFuIbs_pqEIg6ScRdc_gnwSkyR0), teacher in white tee and glasses presses a student's back in a seated forward fold; crop 0-100% x, 27-77% y",
-  "en": "At home, you stop the fold where it starts to feel tight. Here, the teacher's hands on your back show you there is a little more room. Every morning, one breath deeper.",
-  "th": "อยู่บ้าน ก้มถึงตรงที่เริ่มตึงก็หยุด ที่นี่ มือครูบนหลังช่วยให้รู้ว่ายังไปได้อีกนิด ทุกเช้า ลึกขึ้นทีละลมหายใจ",
+  "file": "gbp-2026-11-18-164.jpg",
+  "src": "14 Nov AYBKK Nov14th2026-164 (Drive 12JHyYEvLSbNGoxi22WHsjzJNnbaQdR18), wide bright room toward the fern window wall, about 9 students seated, seen from behind; crop x 0.27-1.0 (cuts the sepia mural), y 0.22-0.585",
+  "en": "At home, the morning gets busy and practice slides to tomorrow. Here, the room fills at the same time every day, and your mat is in it. Same time, so you don't need willpower.",
+  "th": "อยู่บ้าน เช้าวุ่นๆ การฝึกก็เลื่อนไปพรุ่งนี้ ที่นี่ ห้องเต็มในเวลาเดิมทุกวัน และเสื่อของคุณก็อยู่ในนั้น เวลาเดิมทุกวัน ไม่ต้องพึ่งแค่ความตั้งใจ",
   "cta": "https://aybkk.net/start/gp-261118"
  },
  "2 Fri 20 Nov": {
@@ -21,13 +21,15 @@
   "cta": "https://aybkk.net/start/gp-261122"
  },
  "4 alt": {
-  "file": "gbp-alt-054.jpg",
-  "src": "12 Nov AYBKK Nov12th2026-054 (Drive 1T4mspgdugNb773wvjXXNSq6O5kMJVbIn), teacher in brown top guides a student's arms from behind, her face turned away; blurred pink shorts at the right edge",
-  "en": "At home, you guess where your arms should go. Here, the teacher stands behind you and guides them into line. Tomorrow, your body finds it on its own.",
-  "th": "อยู่บ้าน ได้แต่เดาว่าแขนควรอยู่ตรงไหน ที่นี่ ครูยืนข้างหลังแล้วช่วยจัดแขนให้เข้าที่ พรุ่งนี้ ร่างกายหาตำแหน่งเองได้",
-  "cta": "(use the date of the slot it replaces)"
+  "file": "gbp-alt-003.jpg",
+  "src": "10 Nov AYBKK Nov10th2026-003 (Drive 1LLKcr4awXZM5URkuGLAID0sd6iZh6IL_), full Led Primary room in Down Dog, about 25 people, no faces; weak point: many raised hips; crop y 0.33-0.83",
+  "en": "On your own, Down Dog is where you check your phone. In led class, the whole room holds it for five breaths together. Five breaths feel shorter with company.",
+  "th": "ฝึกเอง พอถึงท่าสุนัขก้มหน้าก็หยิบมือถือ ในคลาส Led ทั้งห้องค้างท่าไว้ห้าลมหายใจพร้อมกัน ห้าลมหายใจสั้นลง เมื่อมีเพื่อนฝึกด้วย",
+  "cta": "(date of the slot it replaces)"
  },
  "failed_check": "13Nov-158 headstand soles to camera + student face; 11Nov-012 teacher not confirmed + deep backbend in front; 16Nov-014 and 16Nov-004 rears in shorts toward camera; 13Nov-071 leg-behind-head in front; 11Nov-093 clear student face",
  "scan": "1,464 photos (10, 11, 12, 13, 14, 16 Nov), 6 scouts + 1 checker; checker passed 183, 006, 233, 003, 005, 054, 038, 094",
- "status": "2026-11-16 previews sent to Boonchu in the Plato chat; waiting for go"
+ "status": "2026-11-16 new Wed pick + spare sent; Fri 006 and Sun 233 kept; waiting for go",
+ "rejected_by_boonchu": "183 (old Wed) and 054 (old spare): close-ups of one teacher helping one student. Boonchu 16 Nov: 'The first one and last are not good. Find another good one'",
+ "round2": "Wide-room re-scan 16 Nov: 6 scouts + checker. Passed: 14Nov-164 only. Failed: 14Nov-013 (one head fills 40%), 16Nov-026 (clear student face), 11Nov-077 (clear profile), 13Nov-148 (guru drawings on the windows), 16Nov-025 (hips toward camera)."
 }
