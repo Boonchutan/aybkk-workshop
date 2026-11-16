@@ -1827,10 +1827,19 @@ function mountBkk(app, opts = {}) {
       // The classes and start day the import put on the pass kept come off it
       // first: they were the other student's. One Rezerv payment voided as
       // imported twice, with its copy now on the other profile, is a payment again.
+      // A Rezerv class staff took from a pass, now on another profile than that
+      // pass (still on the list, or cancelled with the class kept used): it stays
+      // with its student, back on Rezerv. Picked before the split below, so the
+      // split never dates the pass from it.
+      const apart = (await client.query(`SELECT b.id, b.pass_id, to_char(b.class_date,'YYYY-MM-DD') AS d
+        FROM bkk_bookings b JOIN bkk_passes p ON p.id=b.pass_id
+        WHERE b.moved_at IS NOT NULL AND b.member_id = ANY($1::int[]) AND p.member_id = ANY($1::int[]) AND b.member_id <> p.member_id
+          AND (b.status='booked' OR (b.status='cancelled' AND coalesce(b.cancel_reason, '') NOT LIKE 'merged:%'))
+        FOR UPDATE OF b`, [[K, ...fam]])).rows;
       const across = `((r.member_id=$1 AND a.member_id=$2) OR (r.member_id=$2 AND a.member_id=$1))`;
       const split = (await client.query(`SELECT r.id AS rid, a.id AS aid FROM bkk_passes r JOIN bkk_passes a ON a.id=r.twin_of
         WHERE r.source='rezerv' AND ${across}`, [F, K])).rows;
-      await twinCarryBack(client, split.map(x => x.rid));
+      await twinCarryBack(client, split.map(x => x.rid), apart.map(x => x.id));
       const twinsBack = await twinPassBack(client, split.map(x => x.aid),
         `the aybkk.net pass it was kept void for is on another profile since a merge was undone on ${bkkToday()}`);
       const twinsOff = (await client.query(`UPDATE bkk_orders r SET status='paid', twin_of=NULL,
@@ -1844,11 +1853,27 @@ function mountBkk(app, opts = {}) {
         FROM bkk_orders a WHERE a.source='rezerv' AND r.source='rezerv' AND r.status='void'
           AND r.gateway_note LIKE 'same Rezerv payment as order ' || a.refno::text || ', imported twice%' AND ${across} RETURNING r.id`,
         [F, K, bkkToday()])).rows.length;
+      // Now, with the pairs this undo splits taken apart, the pass gets each such
+      // class back unless a Rezerv copy still paired with it may have counted it.
+      const moves = { undone: 0, keptUsed: 0 };
+      for (const u of apart) {
+        await client.query('SELECT 1 FROM bkk_passes WHERE id=$1 FOR UPDATE', [u.pass_id]);
+        const kept = await moveAbsorbed(client, u.id);
+        if (kept) moves.keptUsed++;
+        else await client.query(`UPDATE bkk_passes SET credits_used = GREATEST(0, credits_used - 1) WHERE id=$1 AND kind <> 'unlimited'`, [u.pass_id]);
+        await client.query(`UPDATE bkk_passes SET note = coalesce(note || ' | ', '') || $2 WHERE id=$1`, [u.pass_id,
+          `class ${u.d} put back on Rezerv${kept ? ', still used (a Rezerv copy may have counted it)' : ''}: another student's, as a merge was undone on ${bkkToday()}`]);
+        await client.query(`UPDATE bkk_bookings SET pass_id=NULL, cover='rezerv', moved_at=NULL WHERE id=$1`, [u.id]);
+        moves.undone++;
+      }
       // A seat the merge cancelled comes back only if its student holds no other
-      // seat in that class now, and its pass still has the class to give.
+      // seat in that class now, and its pass still has the class to give. One staff
+      // took from a pass now on another profile comes back as a Rezerv class: the
+      // merge gave its class back already.
       let seatsNotBack = 0;
       for (const s of L.seats || []) {
-        const seat = (await client.query(`SELECT b.slot_id, to_char(b.class_date,'YYYY-MM-DD') AS d, b.start_at > now() AS ahead
+        const seat = (await client.query(`SELECT b.slot_id, to_char(b.class_date,'YYYY-MM-DD') AS d, b.start_at > now() AS ahead,
+            b.moved_at IS NOT NULL AND (SELECT p.member_id FROM bkk_passes p WHERE p.id=b.pass_id) IS DISTINCT FROM b.member_id AS apart
           FROM bkk_bookings b WHERE b.id=$1 AND b.status='cancelled' AND b.cancel_reason LIKE 'merged:%'
             AND NOT EXISTS (SELECT 1 FROM bkk_bookings o WHERE o.member_id=b.member_id AND o.slot_id=b.slot_id
               AND o.class_date=b.class_date AND o.status='booked')`, [s.id])).rows[0];
@@ -1861,29 +1886,11 @@ function mountBkk(app, opts = {}) {
             [seat.slot_id, seat.d])).rows[0];
           can = !!c && !c.off && (await seatsTaken(client, seat.slot_id, seat.d)) < c.cap;
         }
-        if (can && s.pass) can = (await client.query(`UPDATE bkk_passes SET credits_used = credits_used + 1
+        if (can && s.pass && !seat.apart) can = (await client.query(`UPDATE bkk_passes SET credits_used = credits_used + 1
           WHERE id=$1 AND (kind='unlimited' OR credits_used < credits_total) RETURNING id`, [s.pass])).rows.length > 0;
         if (!can) { seatsNotBack++; continue; }
-        await client.query(`UPDATE bkk_bookings SET status='booked', cancelled_at=NULL, cancel_reason=NULL WHERE id=$1`, [s.id]);
-      }
-      // A Rezerv class staff took from a pass, now on another profile than that
-      // pass: it stays with its student, back on Rezerv, and the pass gets the
-      // class back, unless a Rezerv copy still paired with the pass may have
-      // counted it (after the split above, a copy this undo took apart cannot).
-      const moves = { undone: 0, keptUsed: 0 };
-      const apart = (await client.query(`SELECT b.id, b.pass_id, to_char(b.class_date,'YYYY-MM-DD') AS d
-        FROM bkk_bookings b JOIN bkk_passes p ON p.id=b.pass_id
-        WHERE b.moved_at IS NOT NULL AND b.status='booked' AND b.member_id = ANY($1::int[]) AND p.member_id = ANY($1::int[])
-          AND b.member_id <> p.member_id FOR UPDATE OF b`, [[K, ...fam]])).rows;
-      for (const u of apart) {
-        await client.query('SELECT 1 FROM bkk_passes WHERE id=$1 FOR UPDATE', [u.pass_id]);
-        const kept = await moveAbsorbed(client, u.id);
-        if (kept) moves.keptUsed++;
-        else await client.query(`UPDATE bkk_passes SET credits_used = GREATEST(0, credits_used - 1) WHERE id=$1 AND kind <> 'unlimited'`, [u.pass_id]);
-        await client.query(`UPDATE bkk_passes SET note = coalesce(note || ' | ', '') || $2 WHERE id=$1`, [u.pass_id,
-          `class ${u.d} put back on Rezerv${kept ? ', still used (a Rezerv copy may have counted it)' : ''}: another student's, as a merge was undone on ${bkkToday()}`]);
-        await client.query(`UPDATE bkk_bookings SET pass_id=NULL, cover='rezerv', moved_at=NULL WHERE id=$1`, [u.id]);
-        moves.undone++;
+        await client.query(`UPDATE bkk_bookings SET status='booked', cancelled_at=NULL, cancel_reason=NULL${seat.apart
+          ? `, pass_id=NULL, cover='rezerv', moved_at=NULL` : ''} WHERE id=$1`, [s.id]);
       }
       const back = MERGE_FIELDS.filter(k => k in (L.fields || {}));
       const keepNow = (await client.query('SELECT * FROM bkk_members WHERE id=$1', [K])).rows[0];
@@ -2492,6 +2499,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (!isAdmin(req) && (!who || b.mcode !== who.code)) throw new Error('not your booking');
       if (b.slot_id == null) throw new Error(REZERV_READONLY);
       if (b.status !== 'booked') throw new Error('already ' + b.status);
+      if (b.moved_at && !isAdmin(req)) throw new Error('staff took this class from your pass: ask the shala');
 
       const hoursLeft = (new Date(b.start_at) - bkkNow()) / 3600000;
       // Staff taking off someone they put on a class after it was over (the
@@ -3042,11 +3050,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // import carried onto it from the other student's Rezerv pass. The classes it
   // added come off; a start day it gave, if the pass still starts then, becomes
   // the first class booked on it (ending its own days later), or none.
-  async function twinCarryBack(db, rezervIds) {
+  // skip: bookings about to come off the pass (another student's moved classes), never its first class.
+  async function twinCarryBack(db, rezervIds, skip = []) {
     for (const id of rezervIds) {
       const r = (await db.query(`SELECT r.twin_undo AS u, a.id, to_char(a.valid_from,'YYYY-MM-DD') AS f,
-          (SELECT to_char(min(b.class_date),'YYYY-MM-DD') FROM bkk_bookings b WHERE b.pass_id=a.id AND b.status <> 'cancelled') AS first
-        FROM bkk_passes r JOIN bkk_passes a ON a.id=r.twin_of WHERE r.id=$1 FOR UPDATE OF a`, [id])).rows[0];
+          (SELECT to_char(min(b.class_date),'YYYY-MM-DD') FROM bkk_bookings b WHERE b.pass_id=a.id AND b.status <> 'cancelled'
+            AND NOT (b.id = ANY($2::int[]))) AS first
+        FROM bkk_passes r JOIN bkk_passes a ON a.id=r.twin_of WHERE r.id=$1 FOR UPDATE OF a`, [id, skip])).rows[0];
       if (!r || !r.u) continue;
       const dated = !!r.u.from && r.f === r.u.from;
       await db.query(`UPDATE bkk_passes SET credits_used = GREATEST(0, credits_used - $2::int),
@@ -5850,12 +5860,19 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         `UPDATE bkk_bookings SET status='cancelled', cancelled_at=now(),
            cancel_reason=$3
          WHERE slot_id=$1 AND class_date=$2 AND status='booked'
-         RETURNING id, member_id, pass_id`,
+         RETURNING id, member_id, pass_id, moved_at`,
         [slotId, date, `class cancelled: ${reason || 'no reason given'}`])).rows;
 
       // The shala cancelled, not the student — the credit always comes back,
       // whatever the notice period was.
+      // A Rezerv class staff took from a pass: as a staff cancel, it goes back to
+      // Rezerv with its class, unless a Rezerv copy may have counted it.
       for (const b of hit) {
+        if (b.pass_id && b.moved_at) {
+          await client.query('SELECT 1 FROM bkk_passes WHERE id=$1 FOR UPDATE', [b.pass_id]);
+          if (await moveAbsorbed(client, b.id)) continue;
+          await client.query(`UPDATE bkk_bookings SET pass_id=NULL, cover='rezerv', moved_at=NULL WHERE id=$1`, [b.id]);
+        }
         if (b.pass_id) {
           await client.query(
             `UPDATE bkk_passes SET credits_used = GREATEST(0, credits_used - 1)
