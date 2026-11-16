@@ -1,0 +1,36 @@
+[
+ {
+  "t": 0,
+  "tight": false,
+  "wwidth": 720,
+  "wpos": [
+   152,
+   60
+  ],
+  "ink_w": "light",
+  "sz": 42,
+  "cws": [
+   607
+  ],
+  "sxy": [
+   413,
+   60
+  ],
+  "ink_s": "light",
+  "photo": "14-221",
+  "id": "FB10",
+  "word": "CALM",
+  "line": "And after an hour of yoga? 8 regulars had about 27% more CALM-down chemical in one brain area. Tiny study, mood not checked. Same time tomorrow?",
+  "credit": "STREETER ET AL. · 2007 (retold)",
+  "wburn": 0.3,
+  "wrot": -90,
+  "wshadow": 1.8,
+  "sburn": 0.4,
+  "wm": "right",
+  "wmxy": [
+   660,
+   1250
+  ],
+  "line_br": "And after an hour of yoga? | 8 regulars had about 27% | more CALM-down chemical | in one brain area. | Tiny study, mood not checked. | Same time tomorrow?"
+ }
+]

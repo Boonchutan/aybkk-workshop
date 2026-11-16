@@ -1,0 +1,31 @@
+[
+ {
+  "t": 60,
+  "tight": false,
+  "wwidth": 540,
+  "wpos": [
+   480,
+   60
+  ],
+  "ink_w": "light",
+  "sz": 42,
+  "cws": [
+   353
+  ],
+  "sxy": [
+   "R",
+   372
+  ],
+  "ink_s": "light",
+  "photo": "14-326",
+  "id": "FB4",
+  "word": "FUEL",
+  "line": "Meanwhile, the FUEL shifts. Small lab study, not yoga. After 40 easy minutes, legs ran more on fat... over half by hour 4. Not fat loss.",
+  "credit": "AHLBORG ET AL. · 1974 (retold)",
+  "wshadow": 1.3,
+  "sright": true,
+  "sburn": 0.4,
+  "line_br": "Meanwhile, | the FUEL shifts. | Small lab study, | not yoga. After | 40 easy minutes, | legs ran more on | fat... over half | by hour 4. | Not fat loss.",
+  "wm": "left"
+ }
+]

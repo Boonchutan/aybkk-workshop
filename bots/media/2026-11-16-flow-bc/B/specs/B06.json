@@ -1,0 +1,34 @@
+[
+ {
+  "tight": false,
+  "wwidth": 720,
+  "wpos": [
+   60,
+   60
+  ],
+  "ink_w": "light",
+  "wshadow": 1.8,
+  "wburn": 0.3,
+  "photo": "14-099",
+  "id": "FB6",
+  "word": "BLISS",
+  "line": "So what lifts it? Maybe the body's 'BLISS' chemical. In 19 marathon runners, its blood level kept climbing the longer they ran. A link, not proof.",
+  "credit": "SIEBERS ET AL. · 2026 (retold)",
+  "t": 150,
+  "sz": 40,
+  "cws": [
+   607
+  ],
+  "sxy": [
+   60,
+   963
+  ],
+  "ink_s": "dark",
+  "line_br": "So what lifts it? | Maybe the body's | 'BLISS' chemical. | In 19 marathon runners, | its blood level kept | climbing the longer they | ran. A link, not proof.",
+  "wm": "right",
+  "wmxy": [
+   660,
+   1250
+  ]
+ }
+]

@@ -1,0 +1,32 @@
+[
+ {
+  "photo": "14-472",
+  "id": "FB5",
+  "word": "MOOD",
+  "line": "Now the mind. Do endorphins, the body's painkillers, lift your MOOD? With their effect blocked, a 45-minute run still lifted mood more than walking. Not yoga.",
+  "credit": "SIEBERS ET AL. · 2021 (retold)",
+  "tight": false,
+  "ink_w": "light",
+  "t": 8,
+  "wwidth": 540,
+  "wrot": -90,
+  "wpos": [
+   12,
+   15
+  ],
+  "wshadow": 1.3,
+  "wburn": 0.3,
+  "sz": 40,
+  "cws": [
+   607
+  ],
+  "sxy": [
+   "R",
+   60
+  ],
+  "sright": true,
+  "ink_s": "light",
+  "sburn": 0.4,
+  "wm": "center"
+ }
+]
