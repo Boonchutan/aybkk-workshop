@@ -1857,7 +1857,7 @@ function mountBkk(app, opts = {}) {
       // class back unless a Rezerv copy still paired with it may have counted it.
       // So does a cancelled one kept used on its own student's pass for a copy
       // this undo took apart.
-      const moves = { undone: 0, keptUsed: 0 };
+      const moves = { undone: 0, keptUsed: 0, givenBack: 0 };
       const loose = (await client.query(`SELECT b.id, b.pass_id, to_char(b.class_date,'YYYY-MM-DD') AS d FROM bkk_bookings b
         WHERE b.moved_at IS NOT NULL AND b.status='cancelled' AND coalesce(b.cancel_reason, '') NOT LIKE 'merged:%'
           AND b.pass_id = ANY($1::int[]) AND NOT (b.id = ANY($2::int[])) FOR UPDATE`, [split.map(x => x.aid), apart.map(x => x.id)])).rows;
@@ -1868,7 +1868,7 @@ function mountBkk(app, opts = {}) {
             note = coalesce(note || ' | ', '') || $2 WHERE id=$1 AND kind <> 'unlimited'`,
           [u.pass_id, `cancelled class ${u.d} given back: the Rezerv copy that kept it used went with a merge undone on ${bkkToday()}`]);
         await client.query(`UPDATE bkk_bookings SET pass_id=NULL, cover='rezerv', moved_at=NULL WHERE id=$1`, [u.id]);
-        moves.undone++;
+        moves.givenBack++;
       }
       for (const u of apart) {
         await client.query('SELECT 1 FROM bkk_passes WHERE id=$1 FOR UPDATE', [u.pass_id]);
@@ -4700,7 +4700,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         visits: visits.rows.map(v => ({ id: v.id, date: v.date, time: v.time, class: v.class, status: visitStatusOut(v),
           checkedInAt: v.checked_in_at, cancelledAt: v.cancelled_at, cancelReason: v.cancel_reason,
           cover: v.cover, source: v.source, upcoming: upcoming(v), passId: v.pass_id,
-          moved: !!v.moved_at && v.status === 'booked' })),
+          moved: !!v.moved_at && !!v.pass_id && (v.status === 'booked'
+            || (v.status === 'cancelled' && !/^merged:/.test(v.cancel_reason || ''))) })),
         payments: pays.rows.map(o => ({ id: o.id, date: o.date, time: o.time, item: o.item, amount: o.amount_thb,
           base: o.base_thb, fee: o.fee_thb, vat: o.vat_thb, method: o.method, status: o.status,
           source: o.source || 'aybkk', refno: String(o.refno), note: o.gateway_note })),
@@ -4994,8 +4995,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   //   a pass that day at the same time, or with no time on either (Rezerv sends
   //   some classes with no time, and the import then cannot see the seat here).
   // dryRun shows the pass, what is left and any checks, and keeps nothing. undo
-  // puts a moved class back on Rezerv and gives the class back, unless a Rezerv
-  // copy paired since may have counted it (moveAbsorbed).
+  // puts a moved class back on Rezerv and gives the class back; when a Rezerv
+  // copy paired since may have counted it (moveAbsorbed), only with sure:true.
   // A class staff took from a pass, and after that a Rezerv copy of that pass
   // that had counted classes was paired (carryOnto, at twin_undo.at): its
   // GREATEST may have taken this class in. Giving it back then (undo, a staff
@@ -5028,17 +5029,25 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const note = text => client.query(`UPDATE bkk_passes SET note = coalesce(note || ' | ', '') || $2 WHERE id=$1`,
         [pass.id, why ? `${text}: ${why}` : text]);
       if (undo) {
+        // A cancelled one still on the pass was kept used for a Rezerv copy: undo is
+        // how a person gives it back, so the booking says so and nothing gives it twice.
         if (!b.moved_at || !b.pass_id) fail(409, 'this class was not moved onto a pass here');
-        if (b.status !== 'booked') fail(409, 'already ' + b.status);
+        if (b.status !== 'booked' && b.status !== 'cancelled') fail(409, 'already ' + b.status);
+        if (/^merged:/.test(b.cancel_reason || '')) fail(409, 'a merge cancelled this seat: undoing the merge brings it back');
         pass = (await client.query('SELECT * FROM bkk_passes WHERE id=$1 FOR UPDATE', [b.pass_id])).rows[0];
         const ab = await moveAbsorbed(client, b.id);
-        if (ab) fail(409, `the Rezerv import counted ${ab.n} class${ab.n === 1 ? '' : 'es'} used on this pass's Rezerv copy on ${ab.on}, `
-          + 'after this class was moved: it may be one of them, so it stays on the pass (if it was a mistake, give the class back with extend on the pass)',
-          { carried: { classes: ab.n, on: ab.on } });
+        if (ab) {
+          out.needSure = true;
+          out.check = { why: 'carried', classes: ab.n, on: ab.on };
+          out.warning = `the Rezerv import counted ${ab.n} class${ab.n === 1 ? '' : 'es'} used on this pass's Rezerv copy on ${ab.on}, `
+            + 'after this class was moved: it may be one of them, and giving it back may give a class away';
+          if (sure !== true && !dryRun) fail(409, `${out.warning}. Check Rezerv, then send sure:true to give it back anyway.`,
+            { needSure: true, carried: { classes: ab.n, on: ab.on } });
+        }
         await client.query(`UPDATE bkk_passes SET credits_used = GREATEST(0, credits_used - 1)
           WHERE id=$1 AND kind <> 'unlimited'`, [pass.id]);
         await client.query(`UPDATE bkk_bookings SET pass_id=NULL, cover='rezerv', moved_at=NULL WHERE id=$1`, [b.id]);
-        await note(`${what} put back on Rezerv`);
+        await note(`${what} put back on Rezerv${b.status === 'cancelled' ? ' (cancelled, kept used till now)' : ''}${out.needSure ? `, after a check: ${out.warning}` : ''}`);
       } else {
         if (b.pass_id) fail(409, 'this class is already on a pass');
         if (b.cover !== 'rezerv') fail(409, 'only a class on Rezerv can be moved onto a pass');
