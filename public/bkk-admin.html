@@ -292,6 +292,8 @@
   .qrsay p{margin:0}
   .qrdone{margin:6px 0 4px;padding:18px 10px;border-radius:10px;background:#e6f6ec;color:#187a43;font-size:18px;font-weight:800}
   .qrdone.gone{background:#fff3d6;color:#6b520e;font-size:16px}
+  .qrcheck{margin:10px 0 0;font-size:15px;line-height:1.45}
+  .qrlive{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
   .qrbtns{display:flex;gap:8px;margin-top:14px}
   .qrbtns .btn{flex:1 1 0;min-height:44px}
   @media (prefers-color-scheme:dark){.rr .in,.drow .in,td .in,.hit em.ok{color:#3ddc97}.now .no{color:#ff8f86}.now{border-left-color:#3ddc97}
@@ -337,6 +339,7 @@
 <main id="view"></main>
 </div>
 <div id="qrPanel" class="qrwrap" hidden></div>
+<p id="qrLive" class="qrlive" role="status"></p>
 
 <script>
 (() => {
@@ -369,7 +372,8 @@
       outDone: (n, k, gone) => `Done. ${n}'s profile has a new code and ${k} old link(s) stopped.${gone ? `\nRemoved email: ${gone} (put it back with Change email if that was a mistake).` : ''}\nSend ${n} a new sign-in link now.`,
       linkBtn: 'Sign-in link', linkCopied: 'Copied. Paste it into their LINE, WhatsApp or WeChat.', linkCopyHand: 'Copy this and send it to them:',
       qrBtn: 'Show QR', qrLeft: t => `Works for ${t}`, qrUsed: 'Signed in on their phone ✓',
-      qrGone: 'This QR has expired. Tap Show QR for a new one.', qrClose: 'Close',
+      qrCheck: n => `Check the phone shows ${n}. If not, tap Sign out all phones.`,
+      qrGone: 'This QR has expired. Tap Show QR for a new one.', qrClose: 'Close', qrImg: 'QR code for the student to scan',
       mergeBtn: 'Merge a double', qMergeFrom: n => `${n} has a second profile?\n\nType the code of the OTHER profile. Its passes, classes, payments and photos move to this one, and ${n} keeps this code.`,
       qMergeSure: (k, f, d) => `Careful: the ${d.join(' and ')} are different.\n\n${k.name}: ${k.email || '-'} ${k.phone || ''}\n${f.name}: ${f.email || '-'} ${f.phone || ''}\n\nThis may be two people with the same name. Type SAME only if you know it is one student.`,
       mergeNo: 'Nothing was merged.',
@@ -466,7 +470,8 @@
       outDone: (n, k, gone) => `เรียบร้อย โปรไฟล์ของ ${n} ได้รหัสใหม่ ลิงก์เก่า ${k} ลิงก์ใช้ไม่ได้แล้ว${gone ? `\nลบอีเมลแล้ว: ${gone} (ถ้าผิด ใส่คืนด้วยปุ่มเปลี่ยนอีเมล)` : ''}\nส่งลิงก์ใหม่ให้ ${n} เลย`,
       linkBtn: 'ลิงก์เข้าโปรไฟล์', linkCopied: 'คัดลอกแล้ว วางในไลน์ WhatsApp หรือ WeChat ของนักเรียนได้เลย', linkCopyHand: 'คัดลอกข้อความนี้แล้วส่งให้นักเรียน:',
       qrBtn: 'แสดง QR', qrLeft: t => `ใช้ได้อีก ${t}`, qrUsed: 'นักเรียนเข้าโปรไฟล์บนมือถือแล้ว ✓',
-      qrGone: 'QR นี้หมดอายุแล้ว กด "แสดง QR" เพื่อรับอันใหม่', qrClose: 'ปิด',
+      qrCheck: n => `ดูให้แน่ใจว่ามือถือขึ้นชื่อ ${n} ถ้าไม่ใช่ กด "ออกจากระบบทุกเครื่อง"`,
+      qrGone: 'QR นี้หมดอายุแล้ว กด "แสดง QR" เพื่อรับอันใหม่', qrClose: 'ปิด', qrImg: 'QR ให้นักเรียนสแกน',
       mergeBtn: 'รวมโปรไฟล์ซ้ำ', qMergeFrom: n => `${n} มีโปรไฟล์ที่สองใช่ไหม?\n\nพิมพ์รหัสของโปรไฟล์อีกอัน แพ็กเกจ คลาส การชำระเงิน และรูป จะย้ายมาที่โปรไฟล์นี้ ${n} ใช้รหัสนี้ต่อ`,
       qMergeSure: (k, f, d) => `ระวัง: ${d.map(x => x === 'email' ? 'อีเมล' : 'เบอร์โทร').join(' และ ')}ไม่ตรงกัน\n\n${k.name}: ${k.email || '-'} ${k.phone || ''}\n${f.name}: ${f.email || '-'} ${f.phone || ''}\n\nอาจเป็นคนละคนที่ชื่อเหมือนกัน พิมพ์ SAME เฉพาะเมื่อแน่ใจว่าเป็นคนเดียวกัน`,
       mergeNo: 'ยังไม่ได้รวม',
@@ -1093,7 +1098,7 @@
   let current = 'today', SUB = null;    // SUB: a view opened on top of a tab ('history', 'class')
   window.tab = t => {
     current = t; SUB = null;
-    if (QR) closeQr(false);
+    closeQr(false);
     checkPage();
     $('#view').classList.remove('wide');
     document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.id === 't-' + t));
@@ -1297,69 +1302,90 @@
   // Show QR: the student scans this screen at the desk and is signed in on that
   // phone. One scan, 10 minutes. The panel asks every 2.5 s whether it was used,
   // and stops asking once it was, once it ran out, or once the panel is gone.
+  // Closing it (or leaving the screen) ends the QR, so a photo of it is no use.
   // The student's line is in all four languages, whatever the staff language.
   const QR_SAY = [['en', 'Scan with your phone camera'], ['th', 'สแกนด้วยกล้องมือถือ'],
     ['zh', '用手机相机扫码'], ['ru', 'Отсканируйте камерой телефона']];
-  let QR = null, QR_SEQ = 0, QR_POLL = null, QR_TICK = null, QR_FROM = null;
+  let QR = null, QR_SEQ = 0, QR_POLL = null, QR_TICK = null, QR_FROM = null, QR_BUSY = false;
   const qrStop = () => { clearTimeout(QR_POLL); clearInterval(QR_TICK); QR_POLL = QR_TICK = null; };
+  const qrEnd = short => api(`/api/bkk/admin/signin-qr/${encodeURIComponent(short)}/end`,
+    { method: 'POST', body: '{}', keepalive: true }).catch(() => null);
+  // preventScroll: on a phone held sideways the card is taller than the screen, and focus would scroll the QR away.
+  const qrFocus = () => { const b = $('#qrAgain') || $('#qrClose'); if (b) b.focus({ preventScroll: true }); };
   const qrLeft = () => { const s = Math.max(0, Math.ceil((QR.until - Date.now()) / 1000));
     return T('qrLeft', `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`); };
+  const qrMsg = () => QR.state === 'used' ? `${T('qrUsed')} ${T('qrCheck', QR.name)}` : T('qrGone');
   function paintQr() {
     const el = $('#qrPanel');
+    $('#app').inert = !!QR;                 // aria-modal alone lets Tab reach Lock behind the panel
+    $('#qrLive').textContent = QR && QR.state !== 'live' ? qrMsg() : '';
     if (!QR) { el.hidden = true; el.innerHTML = ''; return; }
-    el.innerHTML = `<div class="qrcard" role="dialog" aria-modal="true" aria-labelledby="qrName">
+    const live = QR.state === 'live';
+    el.innerHTML = `<div class="qrcard" role="dialog" aria-modal="true" aria-labelledby="qrName" aria-describedby="${live ? 'qrLeft' : 'qrMsg'}">
       <h2 id="qrName">${esc(QR.name)}</h2>
-      ${QR.state === 'live' ? `<div class="qrbox">${QR.svg}</div>
+      ${live ? `<div class="qrbox" role="img" aria-label="${esc(T('qrImg'))}">${QR.svg.replace('<svg ', '<svg aria-hidden="true" focusable="false" ')}</div>
         <p class="qrleft" id="qrLeft">${esc(qrLeft())}</p>
         <div class="qrsay">${QR_SAY.map(([l, t]) => `<p lang="${l}">${t}</p>`).join('')}</div>`
-      : `<p class="qrdone${QR.state === 'gone' ? ' gone' : ''}" role="status">${esc(T(QR.state === 'used' ? 'qrUsed' : 'qrGone'))}</p>`}
-      <div class="qrbtns">${QR.state === 'gone' ? `<button class="btn pink" onclick="showQr('${esc(QR.code)}')">${T('qrBtn')}</button>` : ''}
+      : `<div id="qrMsg"><p class="qrdone${QR.state === 'gone' ? ' gone' : ''}">${esc(T(QR.state === 'used' ? 'qrUsed' : 'qrGone'))}</p>
+        ${QR.state === 'used' ? `<p class="qrcheck">${esc(T('qrCheck', QR.name))}</p>` : ''}</div>`}
+      <div class="qrbtns">${QR.state === 'gone' ? `<button class="btn pink" id="qrAgain" onclick="showQr('${esc(QR.code)}')">${T('qrBtn')}</button>` : ''}
         <button class="btn gray" id="qrClose" onclick="closeQr()">${T('qrClose')}</button></div></div>`;
     el.hidden = false;
   }
+  const qrDone = state => { QR.state = state; qrStop(); paintQr(); qrFocus(); };
   const qrRun = (now) => {
     qrStop();
     if (!QR || QR.state !== 'live' || document.hidden) return;
     const seq = QR_SEQ, short = QR.short;
-    const tick = () => { const e = $('#qrLeft'); if (e) e.textContent = qrLeft(); };
+    // With no answer at all (no network), the screen's own clock takes the QR away a few seconds after 0:00.
+    const tick = () => {
+      if (!QR || QR.state !== 'live') return;
+      if (Date.now() >= QR.until + 5000) return qrDone('gone');
+      const e = $('#qrLeft'); if (e) e.textContent = qrLeft();
+    };
     tick();
     QR_TICK = setInterval(tick, 1000);
     const check = async () => {
       const r = await api(`/api/bkk/admin/signin-qr/${encodeURIComponent(short)}/status`).catch(() => null);
       const j = r && r.ok ? await r.json().catch(() => null) : null;
       if (seq !== QR_SEQ || !QR || QR.state !== 'live') return;
-      if ((j && (j.used || j.expired)) || (r && r.status === 404)) {
-        QR.state = j && j.used ? 'used' : 'gone';
-        qrStop(); paintQr(); $('#qrClose').focus();
-        return;
-      }
+      if (j && j.used) return qrDone('used');
+      // A failed check (a changed key, a server error) past 0:00 ends it too: the QR is dead by then.
+      if ((j && j.expired) || (r && r.status === 404) || Date.now() >= QR.until) return qrDone('gone');
       QR_POLL = setTimeout(check, 2500);
     };
     QR_POLL = setTimeout(check, now ? 0 : 2500);
   };
   window.showQr = async (code, from) => {
+    if (QR_BUSY) return;                    // a double tap would make two QRs, and the server may keep the other one
+    QR_BUSY = true;
     const seq = ++QR_SEQ;
     qrStop();
     if (from) QR_FROM = from;
-    const r = await api(`/api/bkk/admin/members/${encodeURIComponent(code)}/signin-qr`,
-      { method: 'POST', body: JSON.stringify({ origin: location.origin }) }).catch(() => null);
-    const j = r ? await r.json().catch(() => ({})) : {};
-    if (seq !== QR_SEQ) return;
-    if (!r || !r.ok) { alert(j.error || T('failed')); return; }
-    // Counted from this answer, not the server's clock, so a phone set wrong still shows the right time.
-    QR = { code, name: j.name, short: j.short_code, svg: j.svg, until: Date.now() + j.expiresIn * 1000, state: 'live' };
-    paintQr();
-    $('#qrClose').focus();
-    qrRun();
+    try {
+      const r = await api(`/api/bkk/admin/members/${encodeURIComponent(code)}/signin-qr`,
+        { method: 'POST', body: JSON.stringify({ origin: location.origin }),
+          signal: window.AbortSignal && AbortSignal.timeout ? AbortSignal.timeout(20000) : undefined }).catch(() => null);
+      const j = r ? await r.json().catch(() => ({})) : {};
+      // Closed, or staff left the screen, while it was on its way: nobody saw it, so end it.
+      if (seq !== QR_SEQ) { if (r && r.ok && j.short_code) qrEnd(j.short_code); return; }
+      if (!r || !r.ok) { alert(j.error || T('failed')); return; }
+      // Counted from this answer, not the server's clock, so a phone set wrong still shows the right time.
+      QR = { code, name: j.name, short: j.short_code, svg: j.svg, until: Date.now() + j.expiresIn * 1000, state: 'live' };
+      paintQr();
+      qrFocus();
+      qrRun();
+    } finally { QR_BUSY = false; }
   };
   window.closeQr = (back = true) => {
+    if (QR && QR.state === 'live') qrEnd(QR.short);
     QR_SEQ++; qrStop(); QR = null; paintQr();
     if (back && QR_FROM && document.contains(QR_FROM)) QR_FROM.focus();
     QR_FROM = null;
   };
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && QR) closeQr(); });
   document.addEventListener('visibilitychange', () => { if (!QR) return; if (document.hidden) qrStop(); else qrRun(true); });
-  window.addEventListener('pagehide', qrStop);
+  window.addEventListener('pagehide', () => { if (QR && QR.state === 'live') qrEnd(QR.short); qrStop(); });
 
   window.passAct = async (id, what) => {
     let body = {};
@@ -2022,7 +2048,7 @@
         ${row(T('progEmail'), `${p.members.with_email} / ${p.members.total}`)}
         ${row(T('progLinks'), `${p.links.sent} <span class="muted">(${T('progToday', p.links.sent_today)})</span>`)}
         ${row(T('progQr'), `${p.links.qr} <span class="muted">(${T('progToday', p.links.qr_today)})</span>`)}
-        ${row(T('progOpened'), `${p.links.opened} / ${p.links.sent}`)}
+        ${row(T('progOpened'), `${p.links.opened}`)}
         ${row(T('progPhotos') + `<span class="muted">${who(p.uploaders)}</span>`, `${p.photos.today} <span class="muted">(${T('progStudentsIn', p.photos.students_today)})</span>`)}
         ${row(T('progUntagged'), p.photos.untagged_today, p.photos.untagged_today > 0)}
         ${row(T('progNotes') + `<span class="muted">${who(p.notes.byTeacher)}</span>`, p.notes.today)}

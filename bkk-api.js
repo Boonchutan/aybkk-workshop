@@ -11,6 +11,7 @@
 // untrusted nudge (their own plugins accept it blindly; we do not).
 
 const crypto = require('crypto');
+const net = require('net');
 const QRCode = require('qrcode');
 const { sendMail, render } = require('./mailer');
 
@@ -1489,9 +1490,13 @@ function mountBkk(app, opts = {}) {
   // guessable and an email address is not a secret.
 
   const baseUrl = () => (process.env.PUBLIC_BASE_URL || 'https://cn.aybkk.net').replace(/\/$/, '');
-  const clientIp = req =>
-    String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() ||
-    req.socket?.remoteAddress || 'unknown';
+  // Only an address: the column also holds the 'staff', 'qr' and 'receipt' markers,
+  // and on cn.aybkk.net x-forwarded-for starts with whatever the client sent, so
+  // "x-forwarded-for: staff" made an emailed link reusable (17 Nov 2026).
+  const clientIp = req => {
+    const first = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+    return net.isIP(first) ? first : (req.socket?.remoteAddress || 'unknown');
+  };
 
   app.post('/api/bkk/login/request', async (req, res) => {
     // The answer never varies. Telling a stranger whether an address is
@@ -1569,7 +1574,7 @@ function mountBkk(app, opts = {}) {
   // but only a site on this list: anything else gets baseUrl().
   const signinOrigin = given => {
     const norm = s => { try { const u = new URL(String(s).trim()); return /^https?:$/.test(u.protocol) ? u.origin : null; } catch (_) { return null; } };
-    const ok = ['https://aybkk.net', 'https://www.aybkk.net', 'https://cn.aybkk.net', baseUrl(),
+    const ok = ['https://aybkk.net', 'https://www.aybkk.net', 'https://cn.aybkk.net', 'https://my.aybkk.com', baseUrl(),
       ...String(process.env.BKK_SIGNIN_ORIGINS || '').split(',')].map(norm).filter(Boolean);
     const o = given ? norm(given) : null;
     return o && ok.includes(o) ? o : baseUrl();
@@ -1603,7 +1608,7 @@ function mountBkk(app, opts = {}) {
       res.status(500).json({ error: e.message });
     } finally { client.release(); }
   });
-  // Only reads. expired: never used, and past its time (or ended by a newer QR or a sign-out).
+  // Only reads. expired: never used, and past its time (or ended by a newer QR, Close or a sign-out).
   app.get('/api/bkk/admin/signin-qr/:short/status', async (req, res) => {
     if (adminOnly(req, res)) return;
     try {
@@ -1611,6 +1616,19 @@ function mountBkk(app, opts = {}) {
                           WHERE short_code=$1 AND ip='qr'`, [req.params.short])).rows[0];
       if (!t) return res.status(404).json({ error: 'not found' });
       res.set('Cache-Control', 'no-store').json({ used: !!t.used_at, expired: !t.used_at && t.gone, usedAt: t.used_at });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+  // The desk closed the panel before a scan: a photo of the screen must not work
+  // for the minutes left. A used QR keeps its used_at.
+  app.post('/api/bkk/admin/signin-qr/:short/end', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const ended = (await q(`UPDATE bkk_login_tokens SET expires_at=now()
+        WHERE short_code=$1 AND ip='qr' AND used_at IS NULL AND expires_at > now()`, [req.params.short])).rowCount > 0;
+      if (!ended && !(await q(`SELECT 1 FROM bkk_login_tokens WHERE short_code=$1 AND ip='qr'`, [req.params.short])).rowCount) {
+        return res.status(404).json({ error: 'not found' });
+      }
+      res.set('Cache-Control', 'no-store').json({ success: true, ended });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 

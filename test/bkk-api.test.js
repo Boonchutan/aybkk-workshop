@@ -6443,6 +6443,201 @@ const ok = (name, cond, extra = '') => {
        && (await fetch(`${B}/api/bkk/login/${mailTok.token}`, { method: 'POST' })).status === 400);
   }
 
+  console.log('\n- Show QR, review fixes: forged markers, Close ends it, my.aybkk.com (17 Nov 2026) -');
+  {
+    const net = require('net');
+    const cara = 'BTESTQRCARA001', dee = 'BTESTQRDEE0001';
+    await pool.query(`INSERT INTO bkk_members (code,name,email) VALUES ($1,'Cara Qrexample','cara.qrexample@example.com'), ($2,'Dee Qrexample',NULL)`, [cara, dee]);
+    const qr = (code, body = {}) => post(`/api/bkk/admin/members/${code}/signin-qr`, body, ADMIN);
+    const status = short => J(`/api/bkk/admin/signin-qr/${short}/status`, { headers: ADMIN });
+    const end = (short, h = ADMIN) => post(`/api/bkk/admin/signin-qr/${short}/end`, {}, h);
+    let ipN = 0;
+    const open = code => fetch(`${B}/in/${code}`, { redirect: 'manual', headers: { 'x-forwarded-for': `10.91.0.${++ipN}` } });
+    const row = async short => (await pool.query('SELECT * FROM bkk_login_tokens WHERE short_code=$1', [short])).rows[0];
+    const links = async () => (await J('/api/bkk/admin/progress', { headers: ADMIN })).body.links;
+    const mailOf = async () => (await pool.query(`SELECT token, ip FROM bkk_login_tokens WHERE email='cara.qrexample@example.com'
+      ORDER BY created_at DESC LIMIT 1`)).rows[0];
+    const signIn = tok => fetch(`${B}/api/bkk/login/${tok}`, { method: 'POST' }).then(r => r.status);
+    // A forged marker falls back to this machine's address, which earlier tests' requests share: age
+    // those, so the per-address hourly limit has room.
+    await pool.query(`UPDATE bkk_login_tokens SET created_at = created_at - interval '2 hours'
+      WHERE ip IN ('127.0.0.1', '::ffff:127.0.0.1', '::1') AND created_at > now() - interval '1 hour'`);
+
+    await post('/api/bkk/login/request', { email: 'cara.qrexample@example.com' }, { 'x-forwarded-for': 'qr' });
+    const fq = await mailOf();
+    ok("an email link asked for with x-forwarded-for 'qr' is stored with an address, not as a desk QR",
+       !!fq && fq.ip !== 'qr' && net.isIP(fq.ip) > 0, JSON.stringify(fq));
+    const l0 = await links();
+    const caraQr = (await qr(cara)).body;
+    ok('...so Show QR for that member leaves the emailed link alone', (await fetch(`${B}/api/bkk/login/${fq.token}`)).status === 200);
+    ok('...and signing in from it is not counted as signed in by QR', (await signIn(fq.token)) === 200
+       && (await links()).qr === l0.qr && (await status(caraQr.short_code)).body.used === false);
+    await post('/api/bkk/login/request', { email: 'cara.qrexample@example.com' }, { 'x-forwarded-for': 'staff, 10.91.1.1' });
+    const fst = await mailOf();
+    ok("an email link asked for with x-forwarded-for 'staff' is not a staff link, and stays one-time",
+       !!fst && fst.token !== fq.token && fst.ip !== 'staff' && (await signIn(fst.token)) === 200 && (await signIn(fst.token)) === 400,
+       JSON.stringify(fst));
+    await post('/api/bkk/login/request', { email: 'cara.qrexample@example.com' }, { 'x-forwarded-for': '10.91.1.2, 10.91.1.3' });
+    ok('a real address in x-forwarded-for is still the one stored', (await mailOf()).ip === '10.91.1.2');
+
+    const my = await qr(cara, { origin: 'https://my.aybkk.com' });
+    ok('my.aybkk.com, which also serves the booking page, is on the list', my.status === 200
+       && my.body.short_link === `https://my.aybkk.com/in/${my.body.short_code}`, my.body.short_link);
+
+    const caraStaff = (await post(`/api/bkk/admin/members/${cara}/signin-link`, {}, ADMIN)).body;
+    const deeQr = (await qr(dee)).body;
+    const shown = (await qr(cara)).body;
+    ok('ending a QR needs the staff key', (await end(shown.short_code, {})).status === 401
+       && (await status(shown.short_code)).body.expired === false);
+    ok("...a code nobody was given, or a staff link's code, is a 404", (await end('23456789ab')).status === 404
+       && (await end(caraStaff.short_link.split('/in/')[1])).status === 404);
+    const e1 = await end(shown.short_code);
+    ok('Close ends a QR nobody scanned: status says expired and a photo of it is a dead link',
+       e1.status === 200 && e1.body.ended === true && (await status(shown.short_code)).body.expired === true
+         && (await open(shown.short_code)).status === 400, JSON.stringify(e1.body));
+    ok('...ending it again changes nothing', (await end(shown.short_code)).body.ended === false);
+    ok("...and the member's staff link and another member's QR stay live", (await open(caraStaff.short_link.split('/in/')[1])).status === 302
+       && (await status(deeQr.short_code)).body.expired === false);
+    const scanned = (await qr(dee)).body;
+    const hop = await open(scanned.short_code);
+    await signIn((hop.headers.get('location') || '').split('/').pop());
+    const usedAt = String((await row(scanned.short_code)).used_at);
+    const e2 = await end(scanned.short_code);
+    ok('ending a QR that was already scanned keeps it as used', e2.status === 200 && e2.body.ended === false
+       && (await status(scanned.short_code)).body.used === true && String((await row(scanned.short_code)).used_at) === usedAt,
+       JSON.stringify(e2.body));
+  }
+
+  console.log('\n- Show QR: the desk panel, run from the page itself (17 Nov 2026) -');
+  {
+    const fs = require('fs'), vm = require('vm'), path = require('path');
+    const page = fs.readFileSync(path.join(__dirname, '../public/bkk-admin.html'), 'utf8');
+    const seg = page.slice(page.indexOf('  // Show QR: the student scans this screen'), page.indexOf('  window.passAct = '));
+    ok('tab() closes the panel even while a QR is still on its way', /window\.tab = t => \{\s*current = t; SUB = null;\s*closeQr\(false\);/.test(page));
+    ok("progress: 'Opened their profile' is its own count, not over the staff links sent",
+       page.includes("${row(T('progOpened'), `${p.links.opened}`)}") && !page.includes('${p.links.opened} / ${p.links.sent}'));
+    // A small stand-in for the browser: elements by id, timers run by hand, a clock set by hand.
+    const panel = () => {
+      let now = Date.parse('2026-11-17T03:00:00Z');
+      const focused = [], calls = [], listeners = {}, alerts = [];
+      let timers = [], tid = 0, pending = null, statusAnswer = null;
+      const el = sel => ({ sel, hidden: true, innerHTML: '', textContent: '', inert: false, focus(o) { focused.push([sel, o]); } });
+      const els = { '#qrPanel': el('#qrPanel'), '#app': el('#app'), '#qrLive': el('#qrLive') };
+      const $ = sel => els[sel] || (els['#qrPanel'].innerHTML.includes(`id="${sel.slice(1)}"`) ? (els[sel + '@'] = els[sel + '@'] || el(sel)) : null);
+      const res = (st, body) => ({ ok: st === 200, status: st, json: async () => body });
+      const api = (url, opts = {}) => {
+        calls.push([url, opts]);
+        if (/\/signin-qr$/.test(url)) return new Promise(r => { pending = r; });
+        if (/\/status$/.test(url)) return statusAnswer ? Promise.resolve(statusAnswer()) : new Promise(() => {});
+        return Promise.resolve(res(200, { success: true, ended: true }));
+      };
+      class FakeDate extends Date { static now() { return now; } }
+      const ctx = {
+        $, api, T: (k, ...a) => `${k}${a.length ? `(${a.join(',')})` : ''}`, alert: m => alerts.push(m), Date: FakeDate,
+        esc: s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])),
+        location: { origin: 'https://aybkk.net' },
+        document: { hidden: false, contains: () => true, addEventListener: (k, f) => { listeners[k] = f; } },
+        setTimeout: f => { timers.push({ id: ++tid, f, every: false }); return tid; },
+        setInterval: f => { timers.push({ id: ++tid, f, every: true }); return tid; },
+        clearTimeout: id => { timers = timers.filter(t => t.id !== id); },
+      };
+      ctx.clearInterval = ctx.clearTimeout;
+      ctx.window = ctx;
+      ctx.addEventListener = (k, f) => { listeners[k] = f; };
+      vm.createContext(ctx);
+      vm.runInContext(seg, ctx);
+      const flush = async () => { for (let i = 0; i < 10; i++) await new Promise(r => setImmediate(r)); };
+      return {
+        ctx, els, focused, calls, listeners, alerts, flush,
+        answer: async (short = 'qrshort001') => { pending(res(200, { name: 'Ana Example', short_code: short, expiresIn: 600,
+          svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37 37"></svg>' })); await flush(); },
+        status: f => { statusAnswer = f; },
+        later: ms => { now += ms; },
+        runPolls: async () => { const due = timers.filter(t => !t.every); timers = timers.filter(t => t.every); due.forEach(t => t.f()); await flush(); },
+        runTicks: async () => { timers.filter(t => t.every).forEach(t => t.f()); await flush(); },
+        timers: () => timers.length,
+        posts: () => calls.filter(([u]) => /\/signin-qr$/.test(u)).length,
+        ends: () => calls.filter(([u]) => /\/end$/.test(u)).map(([u, o]) => [u.split('/').slice(-2)[0], o.keepalive === true]),
+        res,
+      };
+    };
+
+    {
+      const P = panel();
+      const btn = { focus() {} };
+      P.ctx.showQr('BANAEXAMPLE01', btn);
+      P.ctx.showQr('BANAEXAMPLE01', btn);
+      ok('a double tap on Show QR sends one request, not two', P.posts() === 1);
+      P.ctx.closeQr(false);
+      await P.answer('lateshort01');
+      ok('staff left the screen while the QR was on its way: no panel, no polling, and that QR is ended on the server',
+         P.els['#qrPanel'].hidden === true && P.timers() === 0 && JSON.stringify(P.ends()) === JSON.stringify([['lateshort01', true]]),
+         JSON.stringify([P.els['#qrPanel'].hidden, P.timers(), P.ends()]));
+      P.ctx.showQr('BANAEXAMPLE01', btn);
+      ok('...and Show QR works again after that', P.posts() === 2);
+    }
+    {
+      const P = panel();
+      P.ctx.showQr('BANAEXAMPLE01');
+      await P.answer();
+      const html = P.els['#qrPanel'].innerHTML;
+      ok('an open panel makes the page behind it inert, so Tab cannot reach Lock', P.els['#app'].inert === true && P.els['#qrPanel'].hidden === false);
+      ok('...focus goes to Close without scrolling the QR away', JSON.stringify(P.focused.at(-1)) === JSON.stringify(['#qrClose', { preventScroll: true }]));
+      ok('...the QR has a name for a screen reader, and the dialog is described by the countdown',
+         html.includes('class="qrbox" role="img" aria-label="qrImg"') && html.includes('<svg aria-hidden="true" focusable="false" ')
+           && html.includes('aria-describedby="qrLeft"'));
+      P.ctx.closeQr();
+      ok('Close ends the live QR on the server (keepalive, so it also goes out as the page closes)',
+         JSON.stringify(P.ends()) === JSON.stringify([['qrshort001', true]]) && P.els['#app'].inert === false && P.timers() === 0);
+    }
+    {
+      const P = panel();
+      P.ctx.showQr('BANAEXAMPLE01');
+      await P.answer();
+      P.status(() => P.res(401, { error: 'bad key' }));
+      await P.runPolls();
+      ok('a failed status check before 0:00 keeps the QR up and asks again', P.els['#qrPanel'].innerHTML.includes('class="qrbox"') && P.timers() === 2);
+      P.later(600 * 1000);
+      await P.runPolls();
+      const html = P.els['#qrPanel'].innerHTML;
+      ok('...past 0:00 it takes the QR away, says expired and stops asking', !html.includes('class="qrbox"') && html.includes('qrGone')
+         && P.timers() === 0, html.slice(0, 120));
+      ok('...with focus on its own Show QR button, and the message in the page\'s live region',
+         JSON.stringify(P.focused.at(-1)) === JSON.stringify(['#qrAgain', { preventScroll: true }]) && P.els['#qrLive'].textContent === 'qrGone');
+      ok('...an expired QR is not ended again on Close', (P.ctx.closeQr(), P.ends().length === 0));
+    }
+    {
+      const P = panel();
+      P.ctx.showQr('BANAEXAMPLE01');
+      await P.answer();
+      P.later(605 * 1000);
+      await P.runTicks();
+      ok('with no answer at all (no network), the QR goes a few seconds after 0:00 and polling stops',
+         P.els['#qrPanel'].innerHTML.includes('qrGone') && !P.els['#qrPanel'].innerHTML.includes('class="qrbox"') && P.timers() === 0);
+    }
+    {
+      const P = panel();
+      P.ctx.showQr('BANAEXAMPLE01');
+      await P.answer();
+      P.status(() => P.res(200, { used: true, expired: false, usedAt: '2026-11-17T03:01:00Z' }));
+      await P.runPolls();
+      const html = P.els['#qrPanel'].innerHTML;
+      ok('used: the panel says so and asks staff to check the phone shows the name', html.includes('qrUsed') && html.includes('qrCheck(Ana Example)')
+         && !html.includes('class="qrbox"') && P.timers() === 0, html.slice(0, 200));
+      ok('...the live region outside the card says it too, so a screen reader hears it',
+         P.els['#qrLive'].textContent === 'qrUsed qrCheck(Ana Example)' && !html.includes('role="status"'));
+      P.ctx.closeQr();
+      ok('...and closing a used panel ends nothing and empties the live region', P.ends().length === 0 && P.els['#qrLive'].textContent === '');
+    }
+    {
+      const P = panel();
+      P.ctx.showQr('BANAEXAMPLE01');
+      await P.answer('leaving0001');
+      P.listeners.pagehide();
+      ok('leaving the page with a live QR ends it', JSON.stringify(P.ends()) === JSON.stringify([['leaving0001', true]]) && P.timers() === 0);
+    }
+  }
+
   console.log(`\n${PASS} passed, ${FAIL} failed`);
   srv.close(); await pool.end();
   process.exit(FAIL ? 1 : 0);
