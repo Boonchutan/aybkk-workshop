@@ -454,8 +454,8 @@ function mountTeam(app, opts = {}) {
       : L.endDate(name(r), L.item(r.item_en), L.day(r.until)));
     if (endLines.length) lines.push('', L.endH, ...endLines);
 
-    // A seat booked on an active pass is paid for, even when the pass window
-    // starts later (a far class booked first sets it): booking accepted it.
+    // A seat booked on an active pass is paid for: booking checked that the
+    // pass covers its day (an earlier class moves a window its first class set).
     const why = s => !s.pass_id ? L.why.none : s.pass_status === 'frozen' ? L.why.frozen
       : s.pass_status !== 'active' ? L.why.void : s.until && s.until < date ? L.why.ended(L.day(s.until)) : null;
     const unpaidSeats = seats.rows.filter(s => s.cover !== 'rezerv' && why(s));

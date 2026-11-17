@@ -1307,7 +1307,7 @@
       loading: 'Loading…',
       loadFail: 'The timetable did not load. Check your connection and try again, or message us on LINE @aybkk.',
       tryAgain: 'Try again',
-      noClasses: 'No classes scheduled.', loadingMonth: 'Loading this month…',
+      noClasses: 'No classes scheduled.', loadingMonth: 'Loading this month…', loadingWeek: 'Loading this week…',
       noDay: 'No classes this day.',
       calTeachers: 'Teachers:', calClasses: 'Classes:', moonDay: 'Moon day', newMoon: 'New moon', fullMoon: 'Full moon',
       full: 'Class full', lastSpots: n => n === 1 ? 'Last spot' : `Last ${n} spots`, spotsFree: 'Spots available',
@@ -1392,7 +1392,7 @@
       loading: 'กำลังโหลด…',
       loadFail: 'โหลดตารางเรียนไม่สำเร็จ ตรวจสอบอินเทอร์เน็ตแล้วลองอีกครั้ง หรือทักเราทาง LINE @aybkk',
       tryAgain: 'ลองอีกครั้ง',
-      noClasses: 'ยังไม่มีคลาส', loadingMonth: 'กำลังโหลดเดือนนี้…',
+      noClasses: 'ยังไม่มีคลาส', loadingMonth: 'กำลังโหลดเดือนนี้…', loadingWeek: 'กำลังโหลดสัปดาห์นี้…',
       noDay: 'วันนี้ไม่มีคลาส',
       calTeachers: 'ครู:', calClasses: 'คลาส:', moonDay: 'วันพระจันทร์', newMoon: 'จันทร์ดับ', fullMoon: 'จันทร์เต็มดวง',
       full: 'เต็มแล้ว', lastSpots: n => n === 1 ? 'ที่สุดท้าย' : `เหลือ ${n} ที่สุดท้าย`, spotsFree: 'มีที่ว่าง',
@@ -1477,7 +1477,7 @@
       loading: '加载中…',
       loadFail: '课程表没有加载出来。请检查网络后再试一次，或加微信 aybkkwechat 联系我们。',
       tryAgain: '再试一次',
-      noClasses: '暂无课程安排。', loadingMonth: '正在加载本月…',
+      noClasses: '暂无课程安排。', loadingMonth: '正在加载本月…', loadingWeek: '正在加载本周…',
       noDay: '当天没有课。',
       calTeachers: '老师：', calClasses: '课程：', moonDay: '月亮日', newMoon: '新月', fullMoon: '满月',
       full: '已满', lastSpots: n => `最后 ${n} 个名额`, spotsFree: '有名额',
@@ -1562,7 +1562,7 @@
       loading: 'Загрузка…',
       loadFail: 'Расписание не загрузилось. Проверьте интернет и попробуйте ещё раз или напишите нам в LINE @aybkk.',
       tryAgain: 'Ещё раз',
-      noClasses: 'Занятий пока нет.', loadingMonth: 'Загружаем месяц…',
+      noClasses: 'Занятий пока нет.', loadingMonth: 'Загружаем месяц…', loadingWeek: 'Загружаем неделю…',
       noDay: 'В этот день занятий нет.',
       calTeachers: 'Учителя:', calClasses: 'Занятия:', moonDay: 'Лунный день', newMoon: 'Новолуние', fullMoon: 'Полнолуние',
       full: 'Мест нет', lastSpots: n => n === 1 ? 'Последнее место' : `Последние ${n} места`, spotsFree: 'Есть места',
@@ -2281,6 +2281,7 @@
     REFETCH = Promise.all([getSchedule(), loadMine()]).then(([s]) => {
       if (!Array.isArray(s.classes)) return;
       takeSchedule(s); LOADED_AT = Date.now(); DIRTY = true; rollDay();
+      refreshFar().then(ok => { if (ok) { DIRTY = true; tick(); } });
     }).catch(() => {}).finally(() => { REFETCH = null; tick(); });
     return REFETCH;
   }
@@ -2331,36 +2332,87 @@
   // last day booking is open (OPEN_UNTIL: the whole of 2027, Nov 2026). The first
   // call loads 62 days; later months load as the student moves to them (FAR),
   // and a fresh first call keeps them.
-  let CANCEL_HOURS = 5, LOAD_TO = null, OPEN_UNTIL = null, FAR = [], FAR_MOON = {}, FAR_TO = null, FAR_LOAD = null, FAR_FAIL = 0;
+  // NEAR_TO: the last day of the first call. Later days load one job at a
+  // time (FAR_Q), so a refresh and a load never write over each other.
+  let CANCEL_HOURS = 5, LOAD_TO = null, OPEN_UNTIL = null, NEAR_TO = null, FAR = [], FAR_MOON = {}, FAR_TO = null,
+    FAR_LOAD = null, FAR_FAIL = 0, FAR_Q = Promise.resolve();
   const isDay = d => /^\d{4}-\d{2}-\d{2}$/.test(d || '');
+  const farJob = job => { const p = FAR_Q.then(job); FAR_Q = p.catch(() => {}); return p; };
+  // Staff can shorten the window: days after it go, and so does a day picked there.
+  function setOpen(u) {
+    if (!isDay(u)) return;
+    OPEN_UNTIL = u;
+    const keep = c => c.date <= u;
+    FAR = FAR.filter(keep); CLASSES = CLASSES.filter(keep);
+    for (const o of [FAR_MOON, MOON]) for (const d of Object.keys(o)) if (d > u) delete o[d];
+    if (FAR_TO && FAR_TO > u) FAR_TO = u;
+    if (LOAD_TO && LOAD_TO > u) LOAD_TO = u;
+    if (selDate && selDate > u) selDate = null;
+  }
   function takeSchedule(s) {
     if (Number(s.cutoffHours) > 0) CANCEL_HOURS = Number(s.cutoffHours);
-    if (isDay(s.openUntil)) OPEN_UNTIL = s.openUntil;
     const to = isDay(s.to) ? s.to : null;
+    NEAR_TO = to;
     CLASSES = (s.classes || []).concat(to ? FAR.filter(c => c.date > to) : []);
     MOON = Object.assign({}, FAR_MOON, s.moonDays || {});
     LOAD_TO = FAR_TO && to && FAR_TO > to ? FAR_TO : to;
+    setOpen(s.openUntil);
   }
   // Loads the days after LOAD_TO up to `day` (62 at a time, never past OPEN_UNTIL).
+  // A reply that brings no new day counts as a failure, so it is not asked again at once.
   function loadTo(day) {
     if (FAR_LOAD) return FAR_LOAD;
-    FAR_LOAD = (async () => {
+    FAR_LOAD = farJob(async () => {
       while (LOAD_TO && OPEN_UNTIL && LOAD_TO < day && LOAD_TO < OPEN_UNTIL) {
         const s = noteClock(await getJSON('/api/bkk/schedule?days=62&from=' + addDays(LOAD_TO, 1)));
-        if (!Array.isArray(s.classes) || !isDay(s.to) || s.to <= LOAD_TO) break;
-        FAR = FAR.concat(s.classes); Object.assign(FAR_MOON, s.moonDays || {});
-        CLASSES = CLASSES.concat(s.classes); Object.assign(MOON, s.moonDays || {});
+        if (!Array.isArray(s.classes) || !isDay(s.to)) throw new Error('schedule');
+        setOpen(s.openUntil);
+        if (s.to <= LOAD_TO) { if (LOAD_TO < OPEN_UNTIL) throw new Error('schedule'); break; }
+        const fresh = s.classes.filter(c => c.date > LOAD_TO && c.date <= s.to);
+        FAR = FAR.concat(fresh); Object.assign(FAR_MOON, s.moonDays || {});
+        CLASSES = CLASSES.concat(fresh); Object.assign(MOON, s.moonDays || {});
         FAR_TO = LOAD_TO = s.to;
-        if (isDay(s.openUntil)) OPEN_UNTIL = s.openUntil;
       }
-    })().catch(() => { FAR_FAIL = Date.now(); }).finally(() => { FAR_LOAD = null; });
+      FAR_FAIL = 0;
+    }).catch(() => { FAR_FAIL = Date.now(); }).finally(() => { FAR_LOAD = null; });
     return FAR_LOAD;
+  }
+  // After a fresh first call, the later days on screen (and an open class) load
+  // again, so a class staff cancelled or that filled up shows as it is now. Days
+  // after them are dropped and load fresh when the student moves there.
+  function refreshFar() {
+    return farJob(async () => {
+      if (!NEAR_TO || !FAR_TO || FAR_TO <= NEAR_TO) return false;
+      const want = [calEnd(), OPEN ? OPEN.split('|')[1] : null, selDate].filter(isDay).sort().pop();
+      let last = NEAR_TO, got = [];
+      const end = () => [want || NEAR_TO, FAR_TO || NEAR_TO, OPEN_UNTIL || NEAR_TO].sort()[0];
+      while (last < end()) {
+        const s = noteClock(await getJSON('/api/bkk/schedule?days=62&from=' + addDays(last, 1)));
+        if (!Array.isArray(s.classes) || !isDay(s.to)) return false;
+        setOpen(s.openUntil);
+        if (s.to <= last) break;
+        got = got.concat(s.classes.filter(c => c.date > last && c.date <= s.to));
+        Object.assign(FAR_MOON, s.moonDays || {}); last = s.to;
+      }
+      if (last < end()) return false;
+      const near = NEAR_TO;
+      FAR = got.filter(c => c.date > near);
+      CLASSES = CLASSES.filter(c => c.date <= near).concat(FAR);
+      Object.assign(MOON, FAR_MOON);
+      FAR_TO = last > near ? last : null;
+      LOAD_TO = last > near ? last : near;
+      return true;
+    }).catch(() => false);
   }
   // The last day the calendar on screen shows; loaded first if it is not yet.
   const calEnd = () => CALVIEW === 'week' ? (calWeek ? addDays(calWeek, 6) : null)
     : calMonth ? addDays(addDays(calMonth + '-28', 7).slice(0, 7) + '-01', -1) : null;
   const calWaits = () => { const e = calEnd(); return !!(e && LOAD_TO && OPEN_UNTIL && e > LOAD_TO && LOAD_TO < OPEN_UNTIL); };
   const calMayLoad = () => calWaits() && !FAR_LOAD && Date.now() - FAR_FAIL > 30000;
+  // Under the calendar while later days are missing: loading, or a failure with Try again.
+  const farNote = key => !calWaits() ? '' : !FAR_LOAD && FAR_FAIL && Date.now() - FAR_FAIL < 30000
+    ? `<div class="note" role="status"><p>${esc(t('loadFail'))}</p><button type="button" class="btn" data-act="farRetry">${esc(t('tryAgain'))}</button></div>`
+    : `<p class="note" role="status">${esc(t(key))}</p>`;
   // Months the calendar can show: this month to the last one booking is open in.
   function calMonths(has, today) {
     if (!OPEN_UNTIL) return [...new Set([today.slice(0, 7), ...[...has].map(d => d.slice(0, 7))])].sort();
@@ -2445,7 +2497,10 @@
   async function refreshSchedule() {
     try {
       const [s] = await Promise.all([fetch(SCHEDULE_URL).then(r => r.json()).then(noteClock), loadMine()]);
-      if (Array.isArray(s.classes)) { takeSchedule(s); LOADED_AT = Date.now(); }
+      if (Array.isArray(s.classes)) {
+        takeSchedule(s); LOADED_AT = Date.now();
+        refreshFar().then(ok => { if (ok && current === 'schedule') quietRedraw(); });
+      }
     } catch (_) {}
     if (current === 'schedule') renderSchedule();
   }
@@ -2529,7 +2584,7 @@
         ${calNav('next', 'month', mi >= 0 && mi < months.length - 1 ? months[mi + 1] : '')}
       </div>
       <div class="grid">${cells}</div>
-      ${calWaits() ? `<p class="note" role="status">${esc(t('loadingMonth'))}</p>` : ''}
+      ${farNote('loadingMonth')}
       ${legend(my)}</div>`;
   }
 
@@ -2586,6 +2641,7 @@
         ${calNav('next', 'week', calWeek < w1 ? addDays(calWeek, 7) : '')}
       </div>
       <div class="wkbox"><div class="wkgrid">${cols}</div></div>
+      ${farNote('loadingWeek')}
       ${legend(my)}</div>`;
   }
 
@@ -2791,6 +2847,7 @@
         return toBook();
       }
       if (act === 'view') { setView(a.dataset.v); renderSchedule(); return focus(`[data-act="view"][data-v="${a.dataset.v}"]`); }
+      if (act === 'farRetry') { FAR_FAIL = 0; renderSchedule(); return focus('.cal .nav'); }
       if (act === 'month' || act === 'week') {
         if (act === 'month') calMonth = a.dataset.to; else goWeek(a.dataset.to);
         renderSchedule();

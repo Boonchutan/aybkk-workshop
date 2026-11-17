@@ -2542,12 +2542,38 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       pass = (await db.query(
         `SELECT p.* FROM bkk_passes p
          WHERE p.member_id=$1
-           AND ${over ? PASS_LIVE_ON('$2::date') : `p.status='active' AND (p.valid_until IS NULL OR p.valid_until >= $2::date)`}
+           AND ${over ? PASS_LIVE_ON('$2::date') : `p.status='active' AND (p.valid_from IS NULL OR p.valid_from <= $2::date)
+             AND (p.valid_until IS NULL OR p.valid_until >= $2::date)`}
            AND (p.kind='unlimited' OR p.credits_used < p.credits_total)
            ${passId ? 'AND p.id=$3' : ''}
          ORDER BY p.valid_from NULLS LAST, p.id LIMIT 1 FOR UPDATE`,
         passId ? [member.id, date, passId] : [member.id, date])).rows[0];
-      if (!pass) throw Object.assign(new Error('no active pass — please buy a package first'), { noPass: true, over });
+      // A pass covers no day before its window. One whose window its first
+      // class set (a later class booked first) starts again at this earlier
+      // class, keeping its length, while every class booked on it still fits.
+      // So a pass bought now and first booked for a class next year is never
+      // a second pass for the months before it.
+      if (!pass && !over) {
+        pass = (await db.query(
+          `SELECT p.* FROM bkk_passes p
+           WHERE p.member_id=$1 AND p.status='active' AND p.valid_from > $2::date
+             AND p.valid_until = p.valid_from + p.valid_days
+             AND (p.kind='unlimited' OR p.credits_used < p.credits_total)
+             ${passId ? 'AND p.id=$3' : ''}
+             AND NOT EXISTS (SELECT 1 FROM bkk_bookings b WHERE b.pass_id=p.id AND b.status <> 'cancelled'
+               AND (b.class_date < p.valid_from OR b.class_date > $2::date + p.valid_days))
+           ORDER BY p.valid_from, p.id LIMIT 1 FOR UPDATE OF p`,
+          passId ? [member.id, date, passId] : [member.id, date])).rows[0];
+        if (pass) pass = (await db.query(`UPDATE bkk_passes SET valid_from=$2::date, valid_until=$2::date + valid_days
+          WHERE id=$1 RETURNING *`, [pass.id, date])).rows[0];
+      }
+      if (!pass) {
+        const later = (await db.query(`SELECT to_char(min(valid_from),'YYYY-MM-DD') AS f FROM bkk_passes
+          WHERE member_id=$1 AND status='active' AND valid_from > $2::date`, [member.id, date])).rows[0].f;
+        throw Object.assign(new Error(later
+          ? `no active pass for that day: your pass starts on ${later}, so a class before it needs another package`
+          : 'no active pass — please buy a package first'), { noPass: true, over });
+      }
 
       // daily cap (memberships: 2 bookings per day)
       if (pass.daily_cap) {
@@ -3633,11 +3659,15 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
 
   // The booking window and the last month whose teachers students see. due: the
   // next month starts within 7 days and its teachers are not confirmed yet.
+  // showMonth: the one month the Show button confirms, never one already over:
+  // this month when it started with no teacher names (teachersLate). Due: it
+  // starts within 7 days, or has started.
   async function bookingSettings() {
-    const today = bkkToday(), through = await teachersThrough();
-    const next = addDaysYmd(`${today.slice(0, 7)}-28`, 7).slice(0, 7);
-    return { openUntil: await openUntil(), teachersThrough: through, nextMonth: next,
-      teachersDue: through < next && addDaysYmd(today, 7) >= `${next}-01`,
+    const today = bkkToday(), through = await teachersThrough(), cur = today.slice(0, 7);
+    const after = m => addDaysYmd(`${m}-28`, 7).slice(0, 7);
+    const show = after(through) > cur ? after(through) : cur;
+    return { openUntil: await openUntil(), teachersThrough: through, nextMonth: after(cur), showMonth: show,
+      teachersLate: through < cur, teachersDue: addDaysYmd(today, 7) >= `${show}-01`,
       min: addDaysYmd(today, SCHEDULE_DAYS - 1), max: addDaysYmd(today, OPEN_MAX_DAYS) };
   }
 

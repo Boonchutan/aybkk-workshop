@@ -436,6 +436,9 @@
       tcHelp: 'Later months show classes with no teacher name. Check the next month on the calendar a week before it starts, then show its teachers.',
       tcShow: m => `Show ${m} teachers`,
       tcDue: (m, n) => `${m} starts in ${n} day${n === 1 ? '' : 's'}: check its teachers on the calendar, then show them.`,
+      tcLate: m => `${m} has started and students see no teacher names: check its teachers on the calendar, then show them.`,
+      tcSure: m => `Students will see the teacher names for every class through ${m}.\nHave you checked them on the calendar?`,
+      tcBad: 'Could not save: pick this month or a later one.',
       feeTitle: 'Online payment fee',
       feeHelp: 'Added on top of every package price at checkout. It exists to cover the card fees — PaySolutions is cheaper than Stripe, so you may want to lower it.',
       save: 'Save', packages: 'Packages',
@@ -541,6 +544,9 @@
       tcHelp: 'เดือนหลังจากนี้จะแสดงคลาสโดยไม่มีชื่อครู ตรวจเดือนถัดไปในปฏิทินก่อนเริ่มเดือน 1 สัปดาห์ แล้วกดแสดงชื่อครู',
       tcShow: m => `แสดงชื่อครูเดือน ${m}`,
       tcDue: (m, n) => `อีก ${n} วันจะเริ่มเดือน ${m}: ตรวจชื่อครูในปฏิทิน แล้วกดแสดงชื่อครู`,
+      tcLate: m => `เดือน ${m} เริ่มแล้ว แต่นักเรียนยังไม่เห็นชื่อครู: ตรวจชื่อครูในปฏิทิน แล้วกดแสดงชื่อครู`,
+      tcSure: m => `นักเรียนจะเห็นชื่อครูของทุกคลาสถึงเดือน ${m}\nตรวจชื่อครูในปฏิทินแล้วใช่ไหม?`,
+      tcBad: 'บันทึกไม่ได้: เลือกเดือนนี้หรือเดือนหลังจากนี้',
       feeTitle: 'ค่าธรรมเนียมจ่ายออนไลน์',
       feeHelp: 'บวกเพิ่มจากราคาแพ็กเกจตอนจ่ายเงินออนไลน์ เพื่อครอบคลุมค่าธรรมเนียมบัตร PaySolutions ถูกกว่า Stripe จึงอาจลดลงได้',
       save: 'บันทึก', packages: 'แพ็กเกจ',
@@ -3294,23 +3300,27 @@
   const monthName = m => { try { return new Date(m + '-15T12:00:00Z').toLocaleDateString(locale(), { timeZone: 'UTC', month: 'long', year: 'numeric' }); } catch (_) { return m; } };
   const nextMonthOf = m => new Date(Date.parse(m + '-28T12:00:00Z') + 7 * 864e5).toISOString().slice(0, 7);
   function bookingBox(b) {
-    const show = nextMonthOf(b.teachersThrough);
-    const days = Math.round((Date.parse(b.nextMonth + '-01T12:00:00Z') - Date.parse(bkkYmd() + 'T12:00:00Z')) / 864e5);
+    const cur = bkkYmd().slice(0, 7), after = nextMonthOf(b.teachersThrough);
+    const show = b.showMonth || (after > cur ? after : cur);
+    const days = Math.round((Date.parse(show + '-01T12:00:00Z') - Date.parse(bkkYmd() + 'T12:00:00Z')) / 864e5);
     return `<div class="box"><b>${T('bkTitle')}</b>
       <p style="margin-top:10px">${esc(T('bkUntil'))}<br><input id="bkUntil" type="date" min="${esc(b.min)}" max="${esc(b.max)}" value="${esc(b.openUntil)}">
         <button class="btn" onclick="saveBooking('until')">${T('save')}</button></p>
       <p class="muted">${esc(T('bkUntilHelp'))}</p>
       <p style="margin-top:14px">${esc(T('tcThrough'))} <b>${esc(monthName(b.teachersThrough))}</b></p>
-      ${b.teachersDue ? `<p style="color:var(--red,#b42318)"><b>${esc(T('tcDue', monthName(b.nextMonth), days))}</b></p>` : ''}
+      ${b.teachersDue ? `<p style="color:var(--red,#b42318)"><b>${esc(b.teachersLate || days <= 0
+        ? T('tcLate', monthName(show)) : T('tcDue', monthName(show), days))}</b></p>` : ''}
       <p><button class="btn pink" onclick="saveBooking('show','${esc(show)}')">${esc(T('tcShow', monthName(show)))}</button>
-        <input id="tcMonth" type="month" min="${esc(bkkYmd().slice(0, 7))}" max="${esc(b.max.slice(0, 7))}" value="${esc(b.teachersThrough)}" style="margin-left:8px">
+        <input id="tcMonth" type="month" min="${esc(bkkYmd().slice(0, 7))}" max="${esc(b.max.slice(0, 7))}" value="${esc(b.teachersThrough > cur ? b.teachersThrough : cur)}" style="margin-left:8px">
         <button class="btn gray" onclick="saveBooking('month')">${T('save')}</button></p>
       <p class="muted">${esc(T('tcHelp'))}</p></div>`;
   }
   window.saveBooking = async (what, m) => {
-    const body = what === 'until' ? { bookingOpenUntil: $('#bkUntil').value }
-      : { teachersThrough: what === 'show' ? m : $('#tcMonth').value };
+    const month = what === 'show' ? m : what === 'month' ? $('#tcMonth').value : null;
+    if (month && /^\d{4}-\d{2}$/.test(month) && !confirm(T('tcSure', monthName(month)))) return;
+    const body = what === 'until' ? { bookingOpenUntil: $('#bkUntil').value } : { teachersThrough: month };
     const r = await api('/api/bkk/admin/settings', { method: 'POST', body: JSON.stringify(body) });
+    if (month && r.status === 400) return alert(T('tcBad'));
     if (await shout(r)) renderSettings();
   };
   window.saveSur = async () => {
