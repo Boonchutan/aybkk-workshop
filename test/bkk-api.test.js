@@ -116,6 +116,79 @@ const ok = (name, cond, extra = '') => {
   ok('no Mysore on Monday', !month.body.classes.some(c => c.kind === 'mysore' && isMon(c.date)));
   ok('Led Primary still on Monday', month.body.classes.some(c => c.kind === 'led_primary' && isMon(c.date)));
 
+  console.log('\n— booking open for the whole of 2027; teacher names by confirmed month (17 Nov 2026) —');
+  {
+    const today = todayList;
+    const addD = (d, n) => new Date(Date.parse(d + 'T12:00:00Z') + n * 86400000).toISOString().slice(0, 10);
+    const nextOf = m => addD(m + '-28', 7).slice(0, 7);
+    const floor = addD(today, 61), cap = addD(today, 730);
+    const dflt = '2027-12-31' < floor ? floor : '2027-12-31' > cap ? cap : '2027-12-31';
+    ok('the timetable says how far booking is open: the whole of 2027 by default (never under 2 months)',
+       (await J('/api/bkk/schedule?days=62')).body.openUntil === dflt, dflt);
+    const g0 = (await J('/api/bkk/admin/settings', { headers: ADMIN })).body.booking || {};
+    ok('Settings show it, with the month whose teachers students see', g0.openUntil === dflt && /^\d{4}-\d{2}$/.test(g0.teachersThrough)
+       && g0.min === floor && g0.max === cap && g0.nextMonth === nextOf(today.slice(0, 7))
+       && g0.teachersDue === (g0.teachersThrough < g0.nextMonth && addD(today, 7) >= g0.nextMonth + '-01'), JSON.stringify(g0));
+    const bad = async body => (await post('/api/bkk/admin/settings', body, ADMIN)).status;
+    ok('a booking window under 2 months, over 2 years, or not a date is refused',
+       await bad({ bookingOpenUntil: addD(today, 10) }) === 400 && await bad({ bookingOpenUntil: addD(today, 800) }) === 400
+       && await bad({ bookingOpenUntil: '31/12/2027' }) === 400);
+    ok('a teacher month that is not a month, or is already over, is refused',
+       await bad({ teachersThrough: '2027-13' }) === 400 && await bad({ teachersThrough: '2020-01' }) === 400);
+    ok('changing them needs the staff key', (await post('/api/bkk/admin/settings', { bookingOpenUntil: addD(today, 300) })).status === 401);
+
+    const until = addD(today, 300);
+    const set = await post('/api/bkk/admin/settings', { bookingOpenUntil: until, teachersThrough: today.slice(0, 7) }, ADMIN);
+    ok('staff open booking 300 days ahead', set.status === 200 && set.body.booking.openUntil === until
+       && (await J('/api/bkk/schedule?days=1')).body.openUntil === until, JSON.stringify(set.body.booking));
+    const far = addD(today, 150).slice(0, 7);
+    const daysIn = m => new Date(Date.UTC(Number(m.slice(0, 4)), Number(m.slice(5, 7)), 0)).getUTCDate();
+    const fm = await J(`/api/bkk/schedule?days=${daysIn(far)}&from=${far}-01`);
+    ok('a month 5 months ahead loads on its own (from=), with its classes and moon days', fm.status === 200 && fm.body.from === `${far}-01`
+       && fm.body.classes.length > 20 && fm.body.classes.every(c => c.date.startsWith(far) && c.seatsLeft >= 0)
+       && Object.keys(fm.body.moonDays).every(d => d.startsWith(far)) && Object.keys(fm.body.moonDays).length >= 1, `${fm.body.classes.length}`);
+    ok('...a day before today reads as today, and a bad from is refused',
+       (await J('/api/bkk/schedule?days=1&from=2020-01-01')).body.from === today && (await J('/api/bkk/schedule?from=2027-1-1')).status === 400);
+    const after = await J(`/api/bkk/schedule?days=10&from=${addD(until, 1)}`);
+    const edge = await J(`/api/bkk/schedule?days=62&from=${addD(until, -5)}`);
+    ok('nothing is listed after the last open day, and a call running past it stops there',
+       after.status === 200 && after.body.classes.length === 0 && after.body.to === until
+       && edge.body.to === until && edge.body.classes.every(c => c.date <= until) && edge.body.classes.length > 0, JSON.stringify([after.body.to, edge.body.to]));
+
+    // Teacher names: shown only up to the confirmed month; staff always see the plan.
+    const n1 = nextOf(today.slice(0, 7)), n2 = nextOf(n1);
+    const names = async (m, h) => (await J(`/api/bkk/schedule?days=${daysIn(m)}&from=${m}-01`, h ? { headers: h } : undefined)).body.classes
+      .filter(c => c.date.startsWith(m)).map(c => c.teachers);
+    const pubN1 = await names(n1), staffN1 = await names(n1, ADMIN);
+    ok('next month not confirmed: students see its classes with no teacher name; staff still see the names',
+       pubN1.length > 10 && pubN1.every(t => t === '') && staffN1.filter(Boolean).length > 10, JSON.stringify([pubN1.slice(0, 3), staffN1.slice(0, 3)]));
+    const conf = await post('/api/bkk/admin/settings', { teachersThrough: n1 }, ADMIN);
+    const pubN1b = await names(n1), pubN2 = await names(n2);
+    ok('staff confirm next month: its teacher names show; the month after stays without them', conf.status === 200
+       && conf.body.booking.teachersThrough === n1 && pubN1b.filter(Boolean).length > 10 && pubN2.length > 10 && pubN2.every(t => t === ''),
+       JSON.stringify([pubN1b.slice(0, 3), pubN2.slice(0, 3)]));
+
+    // Booking and drop-ins stop at the last open day.
+    await post('/api/bkk/admin/settings', { bookingOpenUntil: floor }, ADMIN);
+    const slots = (await pool.query(`SELECT id, weekday FROM bkk_class_slots WHERE active AND NOT is_online`)).rows;
+    let shut = null;
+    for (let i = 1; i <= 21 && !shut; i++) {
+      const d = addD(floor, i), wd = new Date(d + 'T12:00:00Z').getUTCDay(), sl = slots.find(x => x.weekday === wd);
+      if (sl && !moonDaysBetween(d, d).size) shut = { d, id: sl.id };
+    }
+    const who = (await pool.query(`INSERT INTO bkk_members (code,name,email) VALUES ('BTESTOPEN0001','Open Window','open.window@example.com') RETURNING code`)).rows[0].code;
+    const bk = await post('/api/bkk/bookings', { memberCode: who, slotId: shut.id, date: shut.d });
+    ok('a student cannot book a class after the last open day', bk.status === 409 && /not open yet/.test(bk.body.error), JSON.stringify(bk.body));
+    const dr = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Open Window', email: 'open.window@example.com', slotId: shut.id, date: shut.d });
+    ok('...nor buy a drop-in for one, and the reply names the last day', dr.status === 409 && dr.body.openUntil === floor
+       && dr.body.error.includes(floor), JSON.stringify(dr.body));
+    await pool.query(`UPDATE bkk_settings SET value='"2020-01-01"' WHERE key='booking_open_until'`);
+    ok('a day left behind in Settings never closes booking: it stays open the next 2 months',
+       (await J('/api/bkk/schedule?days=1')).body.openUntil === floor);
+    await pool.query(`DELETE FROM bkk_settings WHERE key IN ('booking_open_until', 'teachers_shown_through')`);
+    await pool.query(`DELETE FROM bkk_members WHERE code='BTESTOPEN0001'`);
+  }
+
   console.log('\n— 8 classes / 1 month replaced the 10-class pack (6 Nov 2026) —');
   {
     const marker = async () => (await pool.query(`SELECT count(*)::int AS n FROM bkk_settings WHERE key='pack8_replaces_pack10'`)).rows[0].n;
@@ -1504,7 +1577,8 @@ const ok = (name, cond, extra = '') => {
     const weeksOn = n => { let d = addD(dc.date, 7 * n); while (isMoon(d)) d = addD(d, 7); return d; };
     const far = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Far Off', email: 'far.off@example.com',
       slotId: dc.slotId, date: weeksOn(104) });
-    ok('a drop-in for a class two years off is refused', far.status === 409 && /next 2 months/.test(far.body.error), JSON.stringify(far.body));
+    ok('a drop-in for a class two years off is refused, naming the last day booking is open', far.status === 409
+       && /up to \d{4}-\d{2}-\d{2}/.test(far.body.error) && far.body.error.includes(far.body.openUntil), JSON.stringify(far.body));
     const month = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Month Off', email: 'month.off@example.com',
       slotId: dc.slotId, date: weeksOn(4) });
     ok('...but a class a month off, past the two-week list, is fine', month.status === 200 && month.body.order, JSON.stringify(month.body).slice(0, 160));

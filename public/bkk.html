@@ -1307,7 +1307,7 @@
       loading: 'Loading…',
       loadFail: 'The timetable did not load. Check your connection and try again, or message us on LINE @aybkk.',
       tryAgain: 'Try again',
-      noClasses: 'No classes scheduled.',
+      noClasses: 'No classes scheduled.', loadingMonth: 'Loading this month…',
       noDay: 'No classes this day.',
       calTeachers: 'Teachers:', calClasses: 'Classes:', moonDay: 'Moon day', newMoon: 'New moon', fullMoon: 'Full moon',
       full: 'Class full', lastSpots: n => n === 1 ? 'Last spot' : `Last ${n} spots`, spotsFree: 'Spots available',
@@ -1392,7 +1392,7 @@
       loading: 'กำลังโหลด…',
       loadFail: 'โหลดตารางเรียนไม่สำเร็จ ตรวจสอบอินเทอร์เน็ตแล้วลองอีกครั้ง หรือทักเราทาง LINE @aybkk',
       tryAgain: 'ลองอีกครั้ง',
-      noClasses: 'ยังไม่มีคลาส',
+      noClasses: 'ยังไม่มีคลาส', loadingMonth: 'กำลังโหลดเดือนนี้…',
       noDay: 'วันนี้ไม่มีคลาส',
       calTeachers: 'ครู:', calClasses: 'คลาส:', moonDay: 'วันพระจันทร์', newMoon: 'จันทร์ดับ', fullMoon: 'จันทร์เต็มดวง',
       full: 'เต็มแล้ว', lastSpots: n => n === 1 ? 'ที่สุดท้าย' : `เหลือ ${n} ที่สุดท้าย`, spotsFree: 'มีที่ว่าง',
@@ -1477,7 +1477,7 @@
       loading: '加载中…',
       loadFail: '课程表没有加载出来。请检查网络后再试一次，或加微信 aybkkwechat 联系我们。',
       tryAgain: '再试一次',
-      noClasses: '暂无课程安排。',
+      noClasses: '暂无课程安排。', loadingMonth: '正在加载本月…',
       noDay: '当天没有课。',
       calTeachers: '老师：', calClasses: '课程：', moonDay: '月亮日', newMoon: '新月', fullMoon: '满月',
       full: '已满', lastSpots: n => `最后 ${n} 个名额`, spotsFree: '有名额',
@@ -1562,7 +1562,7 @@
       loading: 'Загрузка…',
       loadFail: 'Расписание не загрузилось. Проверьте интернет и попробуйте ещё раз или напишите нам в LINE @aybkk.',
       tryAgain: 'Ещё раз',
-      noClasses: 'Занятий пока нет.',
+      noClasses: 'Занятий пока нет.', loadingMonth: 'Загружаем месяц…',
       noDay: 'В этот день занятий нет.',
       calTeachers: 'Учителя:', calClasses: 'Занятия:', moonDay: 'Лунный день', newMoon: 'Новолуние', fullMoon: 'Полнолуние',
       full: 'Мест нет', lastSpots: n => n === 1 ? 'Последнее место' : `Последние ${n} места`, spotsFree: 'Есть места',
@@ -2230,8 +2230,6 @@
         getJSON('/api/bkk/products'),
         loadMine(),
       ]);
-      CLASSES = s.classes || [];
-      MOON = s.moonDays || {};
       takeSchedule(s);
       LOADED_AT = LOAD_TRY = Date.now();
       PRODUCTS = p.products || [];
@@ -2282,7 +2280,7 @@
     LOAD_TRY = Date.now();
     REFETCH = Promise.all([getSchedule(), loadMine()]).then(([s]) => {
       if (!Array.isArray(s.classes)) return;
-      CLASSES = s.classes; MOON = s.moonDays || {}; takeSchedule(s); LOADED_AT = Date.now(); DIRTY = true; rollDay();
+      takeSchedule(s); LOADED_AT = Date.now(); DIRTY = true; rollDay();
     }).catch(() => {}).finally(() => { REFETCH = null; tick(); });
     return REFETCH;
   }
@@ -2329,11 +2327,46 @@
   // calWeek = the Sunday the week view starts on. OPEN = the class the student
   // is inside ('slotId|date'); OPEN_Y = where they were on the calendar.
   let CALVIEW = 'month', calWeek = null, OPEN = null, OPEN_Y = 0, CLOSE_KB = false;
-  // The server's cancel rule (CANCEL_CUTOFF_HOURS) and the last day it loaded.
-  let CANCEL_HOURS = 5, LOAD_TO = null;
+  // The server's cancel rule (CANCEL_CUTOFF_HOURS), the last day loaded, and the
+  // last day booking is open (OPEN_UNTIL: the whole of 2027, Nov 2026). The first
+  // call loads 62 days; later months load as the student moves to them (FAR),
+  // and a fresh first call keeps them.
+  let CANCEL_HOURS = 5, LOAD_TO = null, OPEN_UNTIL = null, FAR = [], FAR_MOON = {}, FAR_TO = null, FAR_LOAD = null, FAR_FAIL = 0;
+  const isDay = d => /^\d{4}-\d{2}-\d{2}$/.test(d || '');
   function takeSchedule(s) {
     if (Number(s.cutoffHours) > 0) CANCEL_HOURS = Number(s.cutoffHours);
-    LOAD_TO = /^\d{4}-\d{2}-\d{2}$/.test(s.to || '') ? s.to : null;
+    if (isDay(s.openUntil)) OPEN_UNTIL = s.openUntil;
+    const to = isDay(s.to) ? s.to : null;
+    CLASSES = (s.classes || []).concat(to ? FAR.filter(c => c.date > to) : []);
+    MOON = Object.assign({}, FAR_MOON, s.moonDays || {});
+    LOAD_TO = FAR_TO && to && FAR_TO > to ? FAR_TO : to;
+  }
+  // Loads the days after LOAD_TO up to `day` (62 at a time, never past OPEN_UNTIL).
+  function loadTo(day) {
+    if (FAR_LOAD) return FAR_LOAD;
+    FAR_LOAD = (async () => {
+      while (LOAD_TO && OPEN_UNTIL && LOAD_TO < day && LOAD_TO < OPEN_UNTIL) {
+        const s = noteClock(await getJSON('/api/bkk/schedule?days=62&from=' + addDays(LOAD_TO, 1)));
+        if (!Array.isArray(s.classes) || !isDay(s.to) || s.to <= LOAD_TO) break;
+        FAR = FAR.concat(s.classes); Object.assign(FAR_MOON, s.moonDays || {});
+        CLASSES = CLASSES.concat(s.classes); Object.assign(MOON, s.moonDays || {});
+        FAR_TO = LOAD_TO = s.to;
+        if (isDay(s.openUntil)) OPEN_UNTIL = s.openUntil;
+      }
+    })().catch(() => { FAR_FAIL = Date.now(); }).finally(() => { FAR_LOAD = null; });
+    return FAR_LOAD;
+  }
+  // The last day the calendar on screen shows; loaded first if it is not yet.
+  const calEnd = () => CALVIEW === 'week' ? (calWeek ? addDays(calWeek, 6) : null)
+    : calMonth ? addDays(addDays(calMonth + '-28', 7).slice(0, 7) + '-01', -1) : null;
+  const calWaits = () => { const e = calEnd(); return !!(e && LOAD_TO && OPEN_UNTIL && e > LOAD_TO && LOAD_TO < OPEN_UNTIL); };
+  const calMayLoad = () => calWaits() && !FAR_LOAD && Date.now() - FAR_FAIL > 30000;
+  // Months the calendar can show: this month to the last one booking is open in.
+  function calMonths(has, today) {
+    if (!OPEN_UNTIL) return [...new Set([today.slice(0, 7), ...[...has].map(d => d.slice(0, 7))])].sort();
+    const out = [];
+    for (let m = today.slice(0, 7); m <= OPEN_UNTIL.slice(0, 7); m = addDays(m + '-28', 7).slice(0, 7)) out.push(m);
+    return out;
   }
   const MONTHS = ['January','February','March','April','May','June',
     'July','August','September','October','November','December'];
@@ -2412,7 +2445,7 @@
   async function refreshSchedule() {
     try {
       const [s] = await Promise.all([fetch(SCHEDULE_URL).then(r => r.json()).then(noteClock), loadMine()]);
-      if (Array.isArray(s.classes)) { CLASSES = s.classes; MOON = s.moonDays || {}; takeSchedule(s); LOADED_AT = Date.now(); }
+      if (Array.isArray(s.classes)) { takeSchedule(s); LOADED_AT = Date.now(); }
     } catch (_) {}
     if (current === 'schedule') renderSchedule();
   }
@@ -2464,7 +2497,7 @@
 
   function monthCal(has, today, my) {
     // Today's month stays reachable even after its last class is over.
-    const months = [...new Set([today.slice(0, 7), ...[...has].map(d => d.slice(0, 7))])].sort();
+    const months = calMonths(has, today);
     if (!calMonth) calMonth = selDate.slice(0, 7);
     if (calMonth < months[0]) calMonth = months[0];
     if (calMonth > months[months.length - 1]) calMonth = months[months.length - 1];
@@ -2496,15 +2529,16 @@
         ${calNav('next', 'month', mi >= 0 && mi < months.length - 1 ? months[mi + 1] : '')}
       </div>
       <div class="grid">${cells}</div>
+      ${calWaits() ? `<p class="note" role="status">${esc(t('loadingMonth'))}</p>` : ''}
       ${legend(my)}</div>`;
   }
 
-  // Weeks inside the loaded 62 days, Sunday to Saturday. A week the student
-  // moves to brings its own day list: the first day there with classes.
-  // The last week is the last one loaded in full: a day past the load would
-  // look like a day with no class.
+  // Weeks up to the last day booking is open, Sunday to Saturday (one not loaded
+  // yet loads first). A week the student moves to brings its own day list: the
+  // first day there with classes. The last week is the last one open in full: a
+  // day past it would look like a day with no class.
   function lastWeek() {
-    const end = LOAD_TO || CLASSES[CLASSES.length - 1].date, w = weekOf(end);
+    const end = OPEN_UNTIL || LOAD_TO || CLASSES[CLASSES.length - 1].date, w = weekOf(end);
     const w1 = new Date(end + 'T12:00:00Z').getUTCDay() === 6 ? w : addDays(w, -7);
     const w0 = weekOf(bkkToday());
     return w1 < w0 ? w0 : w1;
@@ -2623,6 +2657,7 @@
     const sw = `<div class="calsw" role="group" aria-label="${esc(t('calView'))}">${['month', 'week'].map(v =>
       `<button type="button" data-act="view" data-v="${v}" aria-pressed="${CALVIEW === v}">${esc(t(v === 'month' ? 'viewMonth' : 'viewWeek'))}</button>`).join('')}</div>`;
     const cal = CALVIEW === 'week' ? weekCal(has, today, my) : monthCal(has, today, my);
+    if (calMayLoad()) loadTo(calEnd()).then(() => { if (current === 'schedule' && !OPEN) renderSchedule(); });
     // A month with its bright poster shows the poster as the month calendar (its dates are
     // tappable); the dark calendar stays for the week view and for months without a poster.
     const poster = CALVIEW === 'month' ? posterBox(calMonth, my) : '';
@@ -2647,7 +2682,7 @@
     return null;
   }
   function posterNav(has, today) {
-    const months = [...new Set([today.slice(0, 7), ...[...has].map(d => d.slice(0, 7))])].sort();
+    const months = calMonths(has, today);
     const mi = months.indexOf(calMonth);
     let label = calMonth;
     try {

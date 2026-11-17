@@ -915,8 +915,29 @@ function mountBkk(app, opts = {}) {
   });
 
   // Schedule is generated from the weekly pattern on read — no cron.
-  // 62 days covers the booking page's calendar: the rest of this month + next.
+  // One call lists 62 days at most: the booking page loads the rest of this month
+  // + next, and asks for later months (from=) as the student moves to them.
   const SCHEDULE_DAYS = 62;
+  const addDaysYmd = (d, n) => new Date(Date.parse(`${d}T12:00:00Z`) + n * 86400000).toISOString().slice(0, 10);
+  // Booking is open up to this day (Boonchu, 17 Nov 2026: the whole of 2027).
+  // Staff set it in Settings. Never less than the rolling 62 days, so a date left
+  // behind never closes booking, and never more than two years ahead.
+  const OPEN_UNTIL_DEFAULT = '2027-12-31';
+  const OPEN_MAX_DAYS = 730;
+  async function openUntil() {
+    const today = bkkToday(), floor = addDaysYmd(today, SCHEDULE_DAYS - 1), cap = addDaysYmd(today, OPEN_MAX_DAYS);
+    const v = String(await getSetting('booking_open_until', OPEN_UNTIL_DEFAULT));
+    const d = isYmd(v) ? v : OPEN_UNTIL_DEFAULT;
+    return d < floor ? floor : d > cap ? cap : d;
+  }
+  // Teacher names show on the public timetable only for months the team has
+  // confirmed, a week before each month (Boonchu, 17 Nov 2026). The setting is
+  // the last month shown, 'YYYY-MM'; staff pages always show the plan.
+  const TEACHERS_THROUGH_DEFAULT = '2026-12';
+  async function teachersThrough() {
+    const v = String(await getSetting('teachers_shown_through', TEACHERS_THROUGH_DEFAULT));
+    return /^\d{4}-\d{2}$/.test(v) ? v : TEACHERS_THROUGH_DEFAULT;
+  }
   // Without the staff key: no capacity, no booked count, and seatsLeft stops at 4. The
   // booking page only needs "full", "last 1-3" and "spots free"; the real numbers would
   // say how many practise in each class.
@@ -929,13 +950,19 @@ function mountBkk(app, opts = {}) {
     if (staff) res.set('Cache-Control', 'private, no-store');
     try {
       const days = Math.min(SCHEDULE_DAYS, Math.max(1, parseInt(req.query.days) || 14));
+      if (req.query.from !== undefined && !isYmd(req.query.from)) return res.status(400).json({ error: 'from must be YYYY-MM-DD' });
+      const today = bkkToday(), until = await openUntil(), through = staff ? null : await teachersThrough();
+      const from = req.query.from && req.query.from > today ? req.query.from : today;
       const slots = (await q('SELECT * FROM bkk_class_slots WHERE active')).rows;
       const nowMs = bkkNow().getTime();
       const dates = [];
       for (let i = 0; i < days; i++) {
-        const d = new Date(nowMs + i * 86400000);
-        dates.push(ymd(d));
+        const d = addDaysYmd(from, i);
+        if (d > until) break;
+        dates.push(d);
       }
+      if (!dates.length) return res.json({ classes: [], moonDays: {}, from, to: until, openUntil: until,
+        cutoffHours: CANCEL_CUTOFF_HOURS, now: nowMs });
       const overrides = (await q(
         `SELECT * FROM bkk_class_overrides WHERE class_date = ANY($1::date[])`, [dates])).rows;
       const counts = (await q(
@@ -957,7 +984,8 @@ function mountBkk(app, opts = {}) {
           const startAt = startAtISO(dstr, s.start_time), closeMs = bookCloseAt(s, dstr);
           out.push({
             slotId: s.id, date: dstr, startAt, title: s.title, kind: s.kind,
-            teachers: rotationTeacher(s.code, dstr) || s.teachers || '', durationMin: s.duration_min,
+            teachers: !through || dstr.slice(0, 7) <= through ? rotationTeacher(s.code, dstr) || s.teachers || '' : '',
+            durationMin: s.duration_min,
             isOnline: s.is_online, bookUntil: bkkISO(closeMs),
             ...(nowMs >= Date.parse(startAt) ? { started: true } : {}),
             ...(nowMs >= closeMs ? { closed: true } : {}),
@@ -969,8 +997,8 @@ function mountBkk(app, opts = {}) {
       out.sort((a, b) => a.startAt.localeCompare(b.startAt));
       // to: the last day loaded, so a page knows a later day is not "no class". now: this
       // server's clock, so a phone set a few minutes off still grays a class at bookUntil.
-      res.json({ classes: out, moonDays: Object.fromEntries(moon), to: dates[dates.length - 1], cutoffHours: CANCEL_CUTOFF_HOURS,
-        now: nowMs });
+      res.json({ classes: out, moonDays: Object.fromEntries(moon), from: dates[0], to: dates[dates.length - 1], openUntil: until,
+        cutoffHours: CANCEL_CUTOFF_HOURS, now: nowMs });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -993,10 +1021,10 @@ function mountBkk(app, opts = {}) {
         const { slotId, date } = req.body;
         if (!slotId || !isYmd(date) || !Number.isInteger(Number(slotId)))
           return res.status(400).json({ error: 'Pick the class for your drop-in.' });
-        // No further than the timetable shows: a seat sold for a class years
-        // off would outlive any change to the timetable before then.
-        if (date > ymd(new Date(bkkNow().getTime() + (SCHEDULE_DAYS - 1) * 86400000)))
-          return res.status(409).json({ error: 'You can buy a drop-in for the next 2 months only.' });
+        // No further than booking is open: a seat sold for a class years off
+        // would outlive any change to the timetable before then.
+        const until = await openUntil();
+        if (date > until) return res.status(409).json({ error: `You can buy a drop-in for a class up to ${until}.`, openUntil: until });
         try {
           const c = await classCheck(pool, slotId, date);
           if (await seatsTaken(pool, slotId, date) >= c.capacity) throw new Error('class is full');
@@ -2438,6 +2466,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     // can, for the whole length of the class: someone walks in at 05:35 and has
     // to be put on the list before they can be checked in.
     if (!staff && bkkNow().getTime() >= bookCloseAt(slot, date)) throw new Error(BOOK_CLOSED);
+    if (!staff && date > await openUntil()) throw new Error('booking for that class is not open yet');
     const startedAgoMin = (bkkNow() - new Date(startAt)) / 60000;
     const graceMin = slot.duration_min || 120;
     const over = staff && startedAgoMin > graceMin;
@@ -3602,6 +3631,16 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       evening: v('team_brief_evening') === 'on' ? 'on' : 'off', lang: v('team_brief_lang') === 'en' ? 'en' : 'th' };
   };
 
+  // The booking window and the last month whose teachers students see. due: the
+  // next month starts within 7 days and its teachers are not confirmed yet.
+  async function bookingSettings() {
+    const today = bkkToday(), through = await teachersThrough();
+    const next = addDaysYmd(`${today.slice(0, 7)}-28`, 7).slice(0, 7);
+    return { openUntil: await openUntil(), teachersThrough: through, nextMonth: next,
+      teachersDue: through < next && addDaysYmd(today, 7) >= `${next}-01`,
+      min: addDaysYmd(today, SCHEDULE_DAYS - 1), max: addDaysYmd(today, OPEN_MAX_DAYS) };
+  }
+
   // What the Settings tab shows. Telegram: whether the token and chat are set
   // (never their values) and how the last send went.
   app.get('/api/bkk/admin/settings', async (req, res) => {
@@ -3609,7 +3648,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     res.set('Cache-Control', 'private, no-store');
     try {
       res.json({ surchargePct: await surcharge(), teamBrief: await teamSettings(),
-        payWatch: await payWatchSettings(), telegram: await telegramStatus(), payment: { mode: paymentStatus().mode } });
+        payWatch: await payWatchSettings(), telegram: await telegramStatus(), payment: { mode: paymentStatus().mode },
+        booking: await bookingSettings() });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -3664,6 +3704,18 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         team.push([MONEY_AT[0], at]);
       }
       if (b.surchargePct !== undefined) team.push(['surcharge_pct', Number(b.surchargePct)]);
+      if (b.bookingOpenUntil !== undefined) {
+        const d = String(b.bookingOpenUntil || '').trim(), today = bkkToday();
+        if (!isYmd(d) || d < addDaysYmd(today, SCHEDULE_DAYS - 1) || d > addDaysYmd(today, OPEN_MAX_DAYS))
+          return res.status(400).json({ error: `bookingOpenUntil must be a date from ${addDaysYmd(today, SCHEDULE_DAYS - 1)} to ${addDaysYmd(today, OPEN_MAX_DAYS)}` });
+        team.push(['booking_open_until', d]);
+      }
+      if (b.teachersThrough !== undefined) {
+        const m = String(b.teachersThrough || '').trim();
+        if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(m) || m < bkkToday().slice(0, 7) || m > addDaysYmd(bkkToday(), OPEN_MAX_DAYS).slice(0, 7))
+          return res.status(400).json({ error: 'teachersThrough must be a month (YYYY-MM), this month or later' });
+        team.push(['teachers_shown_through', m]);
+      }
       const links = b.links || {};
       for (const k of LINK_KEYS) {
         if (links[k] === undefined) continue;
@@ -3681,7 +3733,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
                  ON CONFLICT (key) DO UPDATE SET value=$2, updated_at=now()`, [key, JSON.stringify(val)]);
       }
       res.json({ success: true, surchargePct: await surcharge(), teamBrief: await teamSettings(),
-        payWatch: await payWatchSettings(), telegram: await telegramStatus() });
+        payWatch: await payWatchSettings(), telegram: await telegramStatus(), booking: await bookingSettings() });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
