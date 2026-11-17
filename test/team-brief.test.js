@@ -628,7 +628,7 @@ const fakeDriver = { session: () => ({
   ok('a drop-in bought for the class carries the tick to its seat', inClass3.body.roster.some(r => r.name === 'Drop Mat' && r.needMat === true));
 
   // A far class booked first starts the pass window there; a nearer seat on
-  // the same pass was accepted, so it is paid for.
+  // the same pass moves the start to it (same length), so both are paid for.
   const inRoom = sch.filter(c => !c.isOnline && !c.started && c.seatsLeft > 0);
   const near = inRoom[0], far = inRoom.find(c => c.date > near.date);
   const pita = (await post('/api/bkk/admin/passes', { name: 'Pita Probe', email: 'pita.probe@example.com', productCode: 'unlim1' })).body.member.code;
@@ -637,8 +637,8 @@ const fakeDriver = { session: () => ({
   const win = (await pool.query(`SELECT to_char(valid_from,'YYYY-MM-DD') AS f FROM bkk_passes WHERE id=$1`, [nearBk.body.booking && nearBk.body.booking.pass_id])).rows[0];
   const nearText = (await get(`/api/bkk/admin/team/preview?kind=morning&date=${near.date}`)).body.text || '';
   const paySection = nearText.split('\n\n').find(x => x.startsWith('💳')) || '';
-  ok('a seat before the pass window starts is not listed as not paid', farBk.status === 200 && nearBk.status === 200
-     && farBk.body.booking.pass_id === nearBk.body.booking.pass_id && win && win.f === far.date
+  ok('a nearer seat moves the pass start to it, and is not listed as not paid', farBk.status === 200 && nearBk.status === 200
+     && farBk.body.booking.pass_id === nearBk.body.booking.pass_id && win && win.f === near.date
      && nearText.includes('Pita P.') && !paySection.includes('Pita P.'), JSON.stringify([far.date, near.date, win, paySection]));
   // The door's list is today's bookings.
   const today = new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10);

@@ -116,6 +116,203 @@ const ok = (name, cond, extra = '') => {
   ok('no Mysore on Monday', !month.body.classes.some(c => c.kind === 'mysore' && isMon(c.date)));
   ok('Led Primary still on Monday', month.body.classes.some(c => c.kind === 'led_primary' && isMon(c.date)));
 
+  console.log('\n— booking open for the whole of 2027; teacher names by confirmed month (17 Nov 2026) —');
+  {
+    const today = todayList;
+    const addD = (d, n) => new Date(Date.parse(d + 'T12:00:00Z') + n * 86400000).toISOString().slice(0, 10);
+    const nextOf = m => addD(m + '-28', 7).slice(0, 7);
+    const floor = addD(today, 61), cap = addD(today, 730);
+    const dflt = '2027-12-31' < floor ? floor : '2027-12-31' > cap ? cap : '2027-12-31';
+    ok('the timetable says how far booking is open: the whole of 2027 by default (never under 2 months)',
+       (await J('/api/bkk/schedule?days=62')).body.openUntil === dflt, dflt);
+    const g0 = (await J('/api/bkk/admin/settings', { headers: ADMIN })).body.booking || {};
+    ok('Settings show it, with the month whose teachers students see', g0.openUntil === dflt && /^\d{4}-\d{2}$/.test(g0.teachersThrough)
+       && g0.min === floor && g0.max === cap && g0.nextMonth === nextOf(today.slice(0, 7))
+       && /^\d{4}-\d{2}$/.test(g0.showMonth) && g0.showMonth >= today.slice(0, 7) && typeof g0.teachersDue === 'boolean', JSON.stringify(g0));
+    const bad = async body => (await post('/api/bkk/admin/settings', body, ADMIN)).status;
+    ok('a booking window under 2 months, over 2 years, or not a date is refused',
+       await bad({ bookingOpenUntil: addD(today, 10) }) === 400 && await bad({ bookingOpenUntil: addD(today, 800) }) === 400
+       && await bad({ bookingOpenUntil: '31/12/2027' }) === 400);
+    const lastM = addD(today.slice(0, 7) + '-01', -1).slice(0, 7);
+    ok('a teacher month that is not a month, or is already over (even last month), is refused; this month is fine',
+       await bad({ teachersThrough: '2027-13' }) === 400 && await bad({ teachersThrough: '2020-01' }) === 400
+       && await bad({ teachersThrough: lastM }) === 400 && await bad({ teachersThrough: today.slice(0, 7) }) === 200);
+    ok('changing them needs the staff key', (await post('/api/bkk/admin/settings', { bookingOpenUntil: addD(today, 300) })).status === 401);
+
+    const until = addD(today, 300);
+    const set = await post('/api/bkk/admin/settings', { bookingOpenUntil: until, teachersThrough: today.slice(0, 7) }, ADMIN);
+    ok('staff open booking 300 days ahead', set.status === 200 && set.body.booking.openUntil === until
+       && (await J('/api/bkk/schedule?days=1')).body.openUntil === until, JSON.stringify(set.body.booking));
+    const far = addD(today, 150).slice(0, 7);
+    const daysIn = m => new Date(Date.UTC(Number(m.slice(0, 4)), Number(m.slice(5, 7)), 0)).getUTCDate();
+    const fm = await J(`/api/bkk/schedule?days=${daysIn(far)}&from=${far}-01`);
+    ok('a month 5 months ahead loads on its own (from=), with its classes and moon days', fm.status === 200 && fm.body.from === `${far}-01`
+       && fm.body.classes.length > 20 && fm.body.classes.every(c => c.date.startsWith(far) && c.seatsLeft >= 0)
+       && Object.keys(fm.body.moonDays).every(d => d.startsWith(far)) && Object.keys(fm.body.moonDays).length >= 1, `${fm.body.classes.length}`);
+    ok('...a day before today reads as today, and a bad from is refused',
+       (await J('/api/bkk/schedule?days=1&from=2020-01-01')).body.from === today && (await J('/api/bkk/schedule?from=2027-1-1')).status === 400);
+    const after = await J(`/api/bkk/schedule?days=10&from=${addD(until, 1)}`);
+    const edge = await J(`/api/bkk/schedule?days=62&from=${addD(until, -5)}`);
+    ok('nothing is listed after the last open day, and a call running past it stops there',
+       after.status === 200 && after.body.classes.length === 0 && after.body.to === until
+       && edge.body.to === until && edge.body.classes.every(c => c.date <= until) && edge.body.classes.length > 0, JSON.stringify([after.body.to, edge.body.to]));
+
+    // Teacher names: shown only up to the confirmed month; staff always see the plan.
+    const n1 = nextOf(today.slice(0, 7)), n2 = nextOf(n1);
+    const names = async (m, h) => (await J(`/api/bkk/schedule?days=${daysIn(m)}&from=${m}-01`, h ? { headers: h } : undefined)).body.classes
+      .filter(c => c.date.startsWith(m)).map(c => c.teachers);
+    const pubN1 = await names(n1), staffN1 = await names(n1, ADMIN);
+    ok('next month not confirmed: students see its classes with no teacher name; staff still see the names',
+       pubN1.length > 10 && pubN1.every(t => t === '') && staffN1.filter(Boolean).length > 10, JSON.stringify([pubN1.slice(0, 3), staffN1.slice(0, 3)]));
+    const conf = await post('/api/bkk/admin/settings', { teachersThrough: n1 }, ADMIN);
+    const pubN1b = await names(n1), pubN2 = await names(n2);
+    ok('staff confirm next month: its teacher names show; the month after stays without them', conf.status === 200
+       && conf.body.booking.teachersThrough === n1 && pubN1b.filter(Boolean).length > 10 && pubN2.length > 10 && pubN2.every(t => t === ''),
+       JSON.stringify([pubN1b.slice(0, 3), pubN2.slice(0, 3)]));
+
+    // Booking and drop-ins stop at the last open day.
+    await post('/api/bkk/admin/settings', { bookingOpenUntil: floor }, ADMIN);
+    const slots = (await pool.query(`SELECT id, weekday FROM bkk_class_slots WHERE active AND NOT is_online`)).rows;
+    let shut = null;
+    for (let i = 1; i <= 21 && !shut; i++) {
+      const d = addD(floor, i), wd = new Date(d + 'T12:00:00Z').getUTCDay(), sl = slots.find(x => x.weekday === wd);
+      if (sl && !moonDaysBetween(d, d).size) shut = { d, id: sl.id };
+    }
+    const who = (await pool.query(`INSERT INTO bkk_members (code,name,email) VALUES ('BTESTOPEN0001','Open Window','open.window@example.com') RETURNING code`)).rows[0].code;
+    const bk = await post('/api/bkk/bookings', { memberCode: who, slotId: shut.id, date: shut.d });
+    ok('a student cannot book a class after the last open day', bk.status === 409 && /not open yet/.test(bk.body.error), JSON.stringify(bk.body));
+    const sbk = await post('/api/bkk/bookings', { memberCode: who, slotId: shut.id, date: shut.d }, ADMIN);
+    ok('...staff still can (it only asks for a pass)', sbk.status === 409 && /no active pass/.test(sbk.body.error), JSON.stringify(sbk.body));
+    const dr = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Open Window', email: 'open.window@example.com', slotId: shut.id, date: shut.d });
+    ok('...nor buy a drop-in for one, and the reply names the last day', dr.status === 409 && dr.body.openUntil === floor
+       && dr.body.error.includes(floor), JSON.stringify(dr.body));
+    await pool.query(`UPDATE bkk_settings SET value='"2020-01-01"' WHERE key='booking_open_until'`);
+    ok('a day left behind in Settings never closes booking: it stays open the next 2 months',
+       (await J('/api/bkk/schedule?days=1')).body.openUntil === floor);
+
+    // A pass first booked for a far class starts there and covers no day before
+    // it: a 1-month pass is never a pass for every month up to that class.
+    await post('/api/bkk/admin/settings', { bookingOpenUntil: addD(today, 300) }, ADMIN);
+    const pick = async from => (await J(`/api/bkk/schedule?days=14&from=${from}`)).body.classes
+      .find(c => !c.isOnline && !c.started && c.seatsLeft > 0 && c.date >= from);
+    const grant = async (code, name) => (await post('/api/bkk/admin/passes', { name, email: `${code}@example.com`, productCode: code }, ADMIN)).body.member.code;
+    const book = (m, c) => post('/api/bkk/bookings', { memberCode: m, slotId: c.slotId, date: c.date });
+    const win = async m => (await pool.query(`SELECT to_char(p.valid_from,'YYYY-MM-DD') AS f, to_char(p.valid_until,'YYYY-MM-DD') AS u,
+        p.credits_used AS used FROM bkk_passes p JOIN bkk_members m ON m.id=p.member_id WHERE m.code=$1`, [m])).rows[0];
+    const farC = await pick(addD(today, 200)), nearC = await pick(addD(today, 1)), midC = await pick(addD(today, 100));
+    const u1 = await grant('unlim1', 'Far First');
+    const fb = await book(u1, farC);
+    ok('a 1-month pass can book a class 200 days ahead first: its month starts there', fb.status === 200
+       && (await win(u1)).f === farC.date && (await win(u1)).u === addD(farC.date, 30), JSON.stringify([fb.body, await win(u1)]));
+    const nb = await book(u1, nearC), mb = await book(u1, midC);
+    ok('...then it covers no class months before that month (no free year)', nb.status === 409 && mb.status === 409
+       && /no active pass/.test(nb.body.error) && nb.body.error.includes(farC.date) && (await win(u1)).f === farC.date,
+       JSON.stringify([nb.body, mb.body]));
+    const shiftC = await pick(addD(farC.date, -20));
+    const sb = await book(u1, shiftC);
+    ok('...a class a few days before its first one moves the start there, same length, the far class still inside', sb.status === 200
+       && sb.body.booking.pass_id === fb.body.booking.pass_id && (await win(u1)).f === shiftC.date
+       && (await win(u1)).u === addD(shiftC.date, 30) && (await win(u1)).u >= farC.date, JSON.stringify(await win(u1)));
+    const tooEarly = await book(u1, await pick(addD(shiftC.date, -25)));
+    ok('...but never so far that a class already booked falls outside it', tooEarly.status === 409 && (await win(u1)).f === shiftC.date,
+       JSON.stringify(tooEarly.body));
+    const p8 = await grant('pack8', 'Far Pack');
+    const fb8 = await book(p8, farC), nb8 = await book(p8, nearC);
+    ok('the same for 8 classes: a near class is refused and uses no class', fb8.status === 200 && nb8.status === 409
+       && (await win(p8)).used === 1 && (await win(p8)).f === farC.date, JSON.stringify([nb8.body, await win(p8)]));
+    await post(`/api/bkk/bookings/${fb8.body.booking.id}/cancel`, { memberCode: p8 });
+    const nb8b = await book(p8, nearC);
+    ok('...once the far class is cancelled, a near class starts the pass there', nb8b.status === 200 && (await win(p8)).f === nearC.date
+       && (await win(p8)).u === addD(nearC.date, 60), JSON.stringify([nb8b.body, await win(p8)]));
+    for (const m of [u1, p8]) {
+      await pool.query(`DELETE FROM bkk_bookings WHERE member_id=(SELECT id FROM bkk_members WHERE code=$1)`, [m]);
+      await pool.query(`DELETE FROM bkk_passes WHERE member_id=(SELECT id FROM bkk_members WHERE code=$1)`, [m]);
+      await pool.query(`DELETE FROM bkk_members WHERE code=$1`, [m]);
+    }
+    await pool.query(`DELETE FROM bkk_settings WHERE key IN ('booking_open_until', 'teachers_shown_through')`);
+    await pool.query(`DELETE FROM bkk_members WHERE code='BTESTOPEN0001'`);
+  }
+
+  console.log('\n- the booking page loads later months: run from the page itself (17 Nov 2026) -');
+  {
+    const fs = require('fs'), vm = require('vm'), path = require('path');
+    const page = fs.readFileSync(path.join(__dirname, '../public/bkk.html'), 'utf8');
+    const seg = page.slice(page.indexOf('  const bkkToday = () =>'), page.indexOf('  const MONTHS = ['));
+    const pageDays = page.match(/  const addDays = .*\n/)[0];
+    const plus = (d, n) => new Date(Date.parse(d + 'T00:00:00Z') + n * 864e5).toISOString().slice(0, 10);
+    // A stand-in server: one class a day, 62 days a call, nothing after its last open day.
+    const make = () => {
+      const srv = { open: '2027-12-31', fail: false, calls: [], seats: {} };
+      const day = (from, n) => { const out = []; for (let i = 0; i < n; i++) { const d = plus(from, i); if (d > srv.open) break; out.push(d); } return out; };
+      const reply = from => {
+        const ds = day(from, 62);
+        return { classes: ds.map(d => ({ slotId: 1, date: d, seatsLeft: srv.seats[d] ?? 5 })), moonDays: {},
+          from, to: ds.length ? ds[ds.length - 1] : srv.open, openUntil: srv.open };
+      };
+      const ctx = { clock: () => Date.parse('2026-11-17T03:00:00Z'), t: k => k, esc: s => String(s), noteClock: x => x,
+        getJSON: async url => { const from = new URL(url, 'https://aybkk.net').searchParams.get('from'); srv.calls.push(from);
+          if (srv.fail) throw new Error('HTTP 503'); return reply(from); } };
+      vm.createContext(ctx);
+      vm.runInContext(`let CLASSES = [], MOON = {};\n${pageDays}${seg}
+        ;this.pg = { takeSchedule, loadTo, refreshFar, calWaits, calMayLoad, farNote, calEnd,
+          month: m => { CALVIEW = 'month'; calMonth = m; }, retry: () => { FAR_FAIL = 0; },
+          st: () => ({ CLASSES, LOAD_TO, OPEN_UNTIL, FAR_TO, FAR_FAIL, FAR_LOAD, selDate, n: CLASSES.length,
+            dupes: CLASSES.length - new Set(CLASSES.map(c => c.date)).size }) };`, ctx);
+      ctx.pg.takeSchedule(reply('2026-11-17'));
+      return { srv, pg: ctx.pg };
+    };
+    {
+      const { srv, pg } = make();
+      pg.month('2027-12');
+      await pg.loadTo(pg.calEnd());
+      const far = srv.calls.length;
+      pg.month('2027-03'); await pg.loadTo(pg.calEnd());
+      ok('walking to December 2027 loads each 62 days once, and back loads nothing', far === 6 && srv.calls.length === 6
+         && pg.st().LOAD_TO === '2027-12-31' && pg.st().dupes === 0 && !pg.calWaits(), JSON.stringify([srv.calls, pg.st().LOAD_TO]));
+    }
+    {
+      const { srv, pg } = make();
+      pg.month('2027-05'); await pg.loadTo(pg.calEnd());
+      const was = pg.st().LOAD_TO;
+      srv.open = '2027-04-30'; srv.calls.length = 0;
+      pg.month('2027-08');
+      await pg.loadTo(pg.calEnd()); await pg.loadTo(pg.calEnd());
+      ok('staff shorten the window: one call, the later days go, and it stops asking', was > '2027-04-30' && srv.calls.length === 1
+         && !pg.calWaits() && pg.st().OPEN_UNTIL === '2027-04-30' && pg.st().CLASSES.every(c => c.date <= '2027-04-30')
+         && pg.st().LOAD_TO === '2027-04-30' && pg.st().FAR_TO === '2027-04-30',
+         JSON.stringify([srv.calls, pg.st().LOAD_TO]));
+    }
+    {
+      const { srv, pg } = make();
+      srv.fail = true; pg.month('2027-02');
+      await pg.loadTo(pg.calEnd());
+      const failNote = pg.farNote('loadingMonth');
+      ok('a far month that fails to load says so with Try again, and is not asked again at once', pg.calWaits() && !pg.calMayLoad()
+         && /loadFail/.test(failNote) && /data-act="farRetry"/.test(failNote) && srv.calls.length === 1, failNote);
+      srv.fail = false; pg.retry();
+      ok('...Try again asks again and loads it', pg.calMayLoad() && /loadingMonth/.test(pg.farNote('loadingMonth')));
+      await pg.loadTo(pg.calEnd());
+      ok('...and the note goes', !pg.calWaits() && pg.farNote('loadingMonth') === '' && pg.st().LOAD_TO >= '2027-02-28');
+    }
+    {
+      const { srv, pg } = make();
+      pg.month('2027-12'); await pg.loadTo(pg.calEnd());
+      pg.month('2027-03');
+      srv.seats['2027-03-10'] = 0; srv.calls.length = 0;
+      pg.takeSchedule((() => { const ds = []; for (let i = 0; i < 62; i++) ds.push(plus('2026-11-17', i));
+        return { classes: ds.map(d => ({ slotId: 1, date: d, seatsLeft: 5 })), moonDays: {}, to: ds[61], openUntil: srv.open }; })());
+      const ok1 = await pg.refreshFar();
+      const c10 = pg.st().CLASSES.find(c => c.date === '2027-03-10');
+      ok('a fresh first call also reloads the later month on screen (a class that filled shows full); later ones load fresh when visited',
+         ok1 && c10 && c10.seatsLeft === 0 && srv.calls.length === 2 && pg.st().FAR_TO < '2027-06-01' && pg.st().dupes === 0
+           && !pg.calWaits(), JSON.stringify([srv.calls, pg.st().FAR_TO, c10]));
+      pg.month('2026-12'); srv.calls.length = 0;
+      await pg.refreshFar();
+      ok('...back on a near month, a refresh drops the later days and asks for nothing', srv.calls.length === 0 && pg.st().FAR_TO === null
+         && pg.st().CLASSES.every(c => c.date <= '2027-01-17'));
+    }
+  }
+
   console.log('\n— 8 classes / 1 month replaced the 10-class pack (6 Nov 2026) —');
   {
     const marker = async () => (await pool.query(`SELECT count(*)::int AS n FROM bkk_settings WHERE key='pack8_replaces_pack10'`)).rows[0].n;
@@ -1250,7 +1447,7 @@ const ok = (name, cond, extra = '') => {
   ok('progress needs the staff key', (await J('/api/bkk/admin/progress')).status === 401);
 
   console.log('\n— teachers on the timetable —');
-  const tsch = (await J("/api/bkk/schedule")).body.classes || [];
+  const tsch = (await J("/api/bkk/schedule", { headers: ADMIN })).body.classes || [];
   const { rotationTeacher } = require('../bkk-api.js');
   const wed = tsch.find(c => c.title === 'Mysore (1st batch)' && new Date(c.date + 'T12:00:00Z').getUTCDay() === 3);
   const fri = tsch.find(c => c.title === 'Mysore (1st batch)' && new Date(c.date + 'T12:00:00Z').getUTCDay() === 5);
@@ -1504,7 +1701,8 @@ const ok = (name, cond, extra = '') => {
     const weeksOn = n => { let d = addD(dc.date, 7 * n); while (isMoon(d)) d = addD(d, 7); return d; };
     const far = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Far Off', email: 'far.off@example.com',
       slotId: dc.slotId, date: weeksOn(104) });
-    ok('a drop-in for a class two years off is refused', far.status === 409 && /next 2 months/.test(far.body.error), JSON.stringify(far.body));
+    ok('a drop-in for a class two years off is refused, naming the last day booking is open', far.status === 409
+       && /up to \d{4}-\d{2}-\d{2}/.test(far.body.error) && far.body.error.includes(far.body.openUntil), JSON.stringify(far.body));
     const month = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Month Off', email: 'month.off@example.com',
       slotId: dc.slotId, date: weeksOn(4) });
     ok('...but a class a month off, past the two-week list, is fine', month.status === 200 && month.body.order, JSON.stringify(month.body).slice(0, 160));
@@ -6237,6 +6435,21 @@ const ok = (name, cond, extra = '') => {
          && !row(next, 'my2330') && !row(next, 'led2330') && (next.classes || []).every(c => c.date >= D1),
        JSON.stringify({ night, late: row(late, 'my2330'), next: row(next, 'my2330') }));
     await pool.query(`UPDATE bkk_class_slots SET active=false WHERE code LIKE 'test_edge_%'`);
+
+    // The teacher-names reminder on real days, with nothing confirmed yet.
+    await pool.query(`DELETE FROM bkk_settings WHERE key='teachers_shown_through'`);
+    const bookingOn = async d => { cc = at(d, '10:00:00'); return (await JC('/api/bkk/admin/settings', { headers: ADMIN })).body.booking || {}; };
+    const r24 = await bookingOn('2026-12-24'), r25 = await bookingOn('2026-12-25'), j3 = await bookingOn('2027-01-03'), f10 = await bookingOn('2027-02-10');
+    ok('teacher names default to December 2026; the reminder starts 7 days before January (25 Dec), not on 24 Dec',
+       r24.teachersThrough === '2026-12' && r24.teachersDue === false && r24.showMonth === '2027-01'
+         && r25.teachersDue === true && r25.teachersLate === false && r25.showMonth === '2027-01', JSON.stringify([r24, r25]));
+    ok('...and keeps warning once a month has started with no names, naming that month (never one already over)',
+       j3.teachersDue === true && j3.teachersLate === true && j3.showMonth === '2027-01'
+         && f10.teachersDue === true && f10.teachersLate === true && f10.showMonth === '2027-02', JSON.stringify([j3, f10]));
+    const conf10 = await postC('/api/bkk/admin/settings', { teachersThrough: f10.showMonth }, ADMIN);
+    ok('...its Show button month saves, and the warning goes', conf10.status === 200 && conf10.body.booking.teachersThrough === '2027-02'
+       && conf10.body.booking.teachersDue === false && conf10.body.booking.showMonth === '2027-03', JSON.stringify(conf10.body.booking));
+    await pool.query(`DELETE FROM bkk_settings WHERE key='teachers_shown_through'`);
     srvC.close();
   }
 
