@@ -7,7 +7,7 @@ Boonchu via Alex (his assistant bot): repost the most-shared Reels as Instagram 
 Slots (updated 17 Nov: #4 tribute out; #2 and #8 are the SAME clip, posted once in #2's slot using #8's sharper 1440x2560 file and #8's caption; #8 dropped):
 | Day | 07:00 | 12:30 | 19:30 |
 | Wed 18 Nov | #1 DVlUjiuCdEq SCHEDULED cmwksqe5u047cqe07pb6fad56 (audio Colors (Instrumental)) | #2/#8 SCHEDULED cmwkuqvwq04xsqe07c5qfqs8x (original count audio) | #3 DT5MGLlCYIZ SCHEDULED cmwkuqvxq04xtqe07cztq73qx (audio Good Vibes, Giulio Cercato) |
-| Thu 19 Nov | #5 DPqoaEBjEKB | #6 DcgNnNBJfE3 | #7 DVSInBZAcNY |
+| Thu 19 Nov | #5 DPqoaEBjEKB SCHEDULED cmwkv4fp504qlns084e85svx9 (Qingdao, 360p upscaled, hook 'Most come back every time we teach in China.', original count audio) | #6 DcgNnNBJfE3 SCHEDULED cmwkv4fpt04qmns08qwb7e9ts (voice audio) | #7 DVSInBZAcNY SCHEDULED cmwkv4fqg04qnns08ofz3qcrz (audio Primavera, Giulio Cercato) |
 | Fri 20 Nov | #9 DE40EiMTWmH | #10 DDjxGzaTbxh | #11 DW7ciWoAefI |
 | Sat 21 Nov | #12 DDMio1_zQPu | #13 DUxX9QYiQ_a | #14 DXjo6HBiUrh |
 | Sun 22 Nov | #15 DQFpR4Sk11M | #16 DZP6P7PJqTD | #17 DUwhH8UgczA |
