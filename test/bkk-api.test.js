@@ -25,7 +25,8 @@ const ok = (name, cond, extra = '') => {
   // Stand-in for Cloudinary: remembers uploads and the links asked for, signs nothing.
   const uploads = [], destroyed = [], urlCalls = [];
   const fakeCloud = {
-    url: (id, o) => { urlCalls.push({ id, o }); return `signed://${o.type}/${id}/${o.transformation[0].width}`; },
+    url: (id, o) => { urlCalls.push({ id, o });
+      return `signed://${o.type}/${id}/${o.transformation ? o.transformation[0].width : 'original.' + o.format}`; },
     uploader: {
       upload: async (data, o) => { const r = { public_id: `${o.folder}/${o.public_id || 'p' + (uploads.length + 1)}`,
         width: 2048, height: 1365, type: o.type, folder: o.folder, given: o.public_id, transformation: o.transformation };
@@ -699,6 +700,13 @@ const ok = (name, cond, extra = '') => {
      JSON.stringify(annPics));
   ok('the photo link is a signed private one', /^signed:\/\/authenticated\//.test(annPics[0].items[0].thumb));
   ok('each photo also has a full-size save link', /^signed:\/\/authenticated\/.+\/2048$/.test(annPics[0].items[0].save || ''), annPics[0].items[0].save);
+  ok('the photo a student taps open is the stored JPEG itself, with no resized copy made',
+     /^signed:\/\/authenticated\/.+\/original\.jpg$/.test(annPics[0].items[0].full || '')
+       && urlCalls.some(c => !c.o.transformation && c.o.format === 'jpg' && c.o.type === 'authenticated' && c.o.sign_url === true),
+     annPics[0].items[0].full);
+  ok('the tile is one fixed WebP, not one copy per browser', urlCalls.some(c => c.o.transformation
+       && c.o.transformation[0].width === 600 && c.o.transformation[0].fetch_format === 'webp')
+       && !urlCalls.some(c => c.o.transformation && c.o.transformation[0].fetch_format === 'auto' && c.o.transformation[0].width === 600));
   ok('a student who is not in the photo sees nothing', catPics.length === 0);
   const annMe = (await J(`/api/bkk/me/${ann.code}`)).body.member;
   ok('a student gets a workshop-journal id that is not their member code',

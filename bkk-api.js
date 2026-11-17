@@ -5632,17 +5632,22 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // each one. Stored as Cloudinary "authenticated" assets: no plain URL works,
   // only signed ones, and those are handed out only to the tagged students.
   // Tiles show the whole photo (no crop: a 4:5 fill cut off heads and feet).
+  // Each size and each format is one more copy Cloudinary makes and bills as a
+  // transformation, the bulk of the bill (Nov 2026), so:
+  // 'thumb' is one WebP: f_auto made a copy per browser (JPEG XL, WebP, JPEG).
+  // 'full' is what students long-press to keep and repost on Instagram: the
+  // stored JPEG itself (uploads are already capped at 2048), no copy made. The
+  // f_auto copy it once was looked soft once saved.
   // 'save' is a plain JPEG sent as a download: the WebP/AVIF that f_auto gives
   // Android can't be long-pressed into a Samsung gallery or out of LINE's browser.
-  // 'full' is what students long-press to keep and repost on Instagram, so it is
-  // a high-quality JPEG too: the f_auto copy it used to be looked soft once saved.
   const PHOTO_SIZES = {
-    thumb: { width: 600, height: 600, crop: 'limit', quality: 'auto', fetch_format: 'auto' },
-    full: { width: 2048, height: 2048, crop: 'limit', quality: 'auto:best', fetch_format: 'jpg' },
+    thumb: { width: 600, height: 600, crop: 'limit', quality: 'auto', fetch_format: 'webp' },
+    full: null,
     save: { width: 2048, height: 2048, crop: 'limit', quality: 95, fetch_format: 'jpg', flags: 'attachment:AYBKK-photo' },
   };
   const photoUrl = (publicId, kind) => cloudinary.url(publicId, {
-    type: 'authenticated', sign_url: true, secure: true, transformation: [PHOTO_SIZES[kind]],
+    type: 'authenticated', sign_url: true, secure: true,
+    ...(PHOTO_SIZES[kind] ? { transformation: [PHOTO_SIZES[kind]] } : { format: 'jpg' }),
   });
   const isDate = d => /^\d{4}-\d{2}-\d{2}$/.test(String(d || ''));
   // Who is in a photo, and how: 'main' (the photo is about them) or 'other'
