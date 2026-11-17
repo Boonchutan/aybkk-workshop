@@ -1,0 +1,346 @@
+{
+ "15": {
+  "n": 15,
+  "verdict": "pass",
+  "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/trial/out/r15/trial15.mp4",
+  "audio_mode": "original_kept",
+  "hook_lines": [
+   "Hard to practice",
+   "alone? In this room,",
+   "one teacher counts",
+   "for everyone."
+  ],
+  "hook_window": "0-4.5 s (fades 4.05-4.45 s); box x 362-702, y 70-247, 32 px",
+  "caption_lines": [
+   "This is our Monday led class in Bangkok with @boonchutanti. The teacher calls out every breath and every move.",
+   "The whole room follows the same count. One breath for each move. That flow is called vinyasa.",
+   "It is the Primary series, the first series every Ashtanga student learns.",
+   "Along the way, the teacher walks the room and helps students lift up and jump back.",
+   "A class to reset your energy, and to remember how each vinyasa should flow.",
+   "Want to try a class with us in Bangkok? Comment TRIAL and we'll message you.",
+   "#aybkk #ashtanga #ashtangabangkok #yogabangkok #bangkokyoga #primaryseries #ashtangayoga"
+  ],
+  "duration_s": 101.12,
+  "size_mb": 28.5,
+  "music_mood": "",
+  "fixes_made": "None needed.",
+  "problems_found": "No blocking problems. What I checked myself: ffprobe shows 720x1280, 30 fps, h264 + AAC 44.1 kHz stereo, 101.12 s (same as the source), 28.5 MB. The audio matches the source (correlation 0.997-1.000 in every 5 s window, no offset). My own whisper 'small' pass heard the teacher's cues at 0-12 s ('up, up, lift up, lift up, exhale down') and again at 42-96 s (cues and counts), with a steady-beat music bed mixed in the same track, so keeping the audio follows the audio rule. Frames every 0.25 s over 0-5.5 s, plus a zoom on the box edge at 1.5-3.0 s: the teacher's head comes to x of about 350 at most (1.75-2.25 s) and his face is further left. The box starts at x 362, so it covers only his shoulder or arm, never a face. The seated students' heads on the right stay at y 272 or lower, under the box bottom at 247. The box is over windows and stairs, and the only other text is the small credit at the bottom left (2 blocks). The fade is clean (faint at 4.25 s, gone by 4.5 s), and the teacher's face only reaches the box area at about 4.75 s. The title card (11-12 s) comes after the hook. The end card (94-100 s) is 'Led Primary Series By Boonchu Tanti / Your weekly charge of Ashtanga energy.' with no comment ask. Caption: every line is backed by the original caption, the burned credit and bkk-api.js (lp_mon, Monday 06:30 Led Primary with Boonchu). It has the exact CTA, 7 hashtags including all 5 required, no 'pose', and the plain words are explained (vinyasa, Primary series). Minor: the hook uses 4 lines, and the house style asks for 2-3. I measured the other layouts. A 3-line box ('Hard to practice alone? / In this room, one teacher / counts for everyone.') needs 417 px. A 4-line box with a natural break ('Hard to practice alone?' on one line) needs 392 px. Either would push into the teacher's face at 1.25-2.75 s. A 5-line box would hit the seated heads at y 272. So the current narrow layout is the only one that covers no face, and the package asked for 4-5 lines here.",
+  "remaining_issues": "1) The hook is 4 lines, and the break splits the question ('Hard to practice / alone? In this room,'). This is because the only face-free spot is a narrow block on the right. If Boonchu wants 2-3 lines, the only option is the package fallback (start the cut at 13 s), which drops the teacher's spoken cues under the hook. 2) A music bed of unknown title runs under the teacher's voice from about 12 s, mixed into the same track. If Instagram mutes or blocks it, Boonchu decides, because muting it also removes the count the hook talks about. 3) Clear student faces and close hands-on assists (a woman on her back being adjusted at 87-93 s) in a post shown to strangers. The clip is from Oct 2025, so consent is Boonchu's call."
+ },
+ "17": {
+  "n": 17,
+  "verdict": "fixed",
+  "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/trial/out/r17/trial17.mp4",
+  "audio_mode": "original_kept",
+  "hook_lines": [
+   "Strong arms are not enough",
+   "for this jump. Pull your belly in."
+  ],
+  "hook_window": "0-6.75 s (fades 6.30-6.70 s); box x 89-631, y 82-185, 34 px",
+  "caption_lines": [
+   "This is Bakasana B (crane asana, also called crow). You jump from hands and feet straight onto your arms, knees on your upper arms.",
+   "Strong arms help, but they are not enough. The breath and a strong middle hold you there.",
+   "Follow the words on screen. Breathe in and jump. Hold the belly. Breathe out slowly as the knees touch the arms. Then stay for five breaths.",
+   "Bandha means a light lock low in the belly. You breathe with it and push back with it. Then you breathe out and land.",
+   "This was our Saturday led Intermediate class (the second Ashtanga series) at AYBKK with @boonchutanti. Led means the teacher calls every breath and the whole room moves together.",
+   "Want to try a class with us in Bangkok? Comment TRIAL and we'll message you.",
+   "#aybkk #ashtanga #ashtangabangkok #yogabangkok #bangkokyoga #bakasana #armbalance #ashtangayoga"
+  ],
+  "duration_s": 32.07,
+  "size_mb": 14.3,
+  "music_mood": "",
+  "fixes_made": "I re-rendered with the hook ending at 6.75 s (fade from 6.30 s to 6.70 s) instead of 6.9 s (fade 6.45-6.85 s). Same hook PNG (I regenerated it with mkhook.py and the bytes match), same box, same recipe, original audio kept. Checked again: at 6.70 s the box is gone, and the rising 'Inhale' is at y 211, 26 px below where the box was. The audio still matches the source (correlation 0.999). I rebuilt the check sheet at /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/trial/out/r17/check17.jpg.",
+  "problems_found": "The rendered file let the fading hook overlap burned text. I zoomed on 6.4-7.0 s every 0.05 s. The burned word 'Inhale' floats up and its top reaches about y 176 at 6.77-6.82 s, inside the bottom of the hook box (y 82-185), while the box was still at about 15-25% opacity. The package said this word only rises to y 195. This breaks the rule never to overlap burned text, and it is also why the package's 'whole video' timing would not have worked. Everything else checked out. ffprobe: 720x1280, 30 fps, h264 + AAC 44.1 kHz stereo, 32.07 s (same as the source). The audio matches the source. Whisper heard the teacher's count ('sapta...' at 0-2 s, 'one' to 'five' at 13-26 s, 'ashtau' at 27-29 s). A constant low-frequency bed (about 89% of the energy below 300 Hz, steady loudness, no clear beat) sits under the count in the same track, so the audio is kept. The box is only over ceiling, fans and lamps, and covers no face. While it shows there are 2 text blocks at most (hook + one cue). Ending the hook early avoids 3 blocks at 23-26 s (cue + 'AYBKK Led Intermediate' credit). There is no comment ask at the end. Caption: backed by the original caption ('controlled breathe and core stability', 'Breathing must be done with bandha', 'Satirday led intermediate'), the burned cues, the audible count of five and bkk-api.js (li_sat). It has the exact CTA, 8 hashtags including all 5 required, no 'pose', and bandha is explained.",
+  "remaining_issues": "1) The hook shows for 0-6.75 s, not the whole video as the package planned. It has to leave before the rising 'Inhale' cue, and a later hook would make 3 text blocks at 23-26 s. 2) A soft low-tone bed of unknown origin sits under the teacher's count in the same track and cannot be removed without losing the count. If it is a commercial track, Boonchu decides. 3) One man's face is clear at 29-31 s. Consent for a post shown to strangers is Boonchu's call."
+ },
+ "18": {
+  "n": 18,
+  "verdict": "pass",
+  "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/trial/out/r18/trial18_silent.mp4",
+  "audio_mode": "muted_needs_library_track",
+  "hook_lines": [
+   "Even advanced students still",
+   "need a teacher's help."
+  ],
+  "hook_window": "0-18.5 s (fades 18.05-18.45 s); box x 169-671, y 62-165, 34 px, text centered at x 420 on purpose",
+  "caption_lines": [
+   "This was the last day of our workshop in Suzhou, China, with Boonchu and Jamsai Tanti.",
+   "It was a led class. The teacher calls each breath, and the whole room moves together.",
+   "That day the room did the second and third Ashtanga series (Intermediate and Advanced A).",
+   "Even at this level, students still get the teacher's hands-on help in backbends and handstands.",
+   "New to Ashtanga? Beginners welcome. We teach you from zero.",
+   "Want to try a class with us in Bangkok? Comment TRIAL and we'll message you.",
+   "#aybkk #ashtanga #ashtangabangkok #yogabangkok #bangkokyoga #ashtangayoga #advancedseries #yogaworkshop"
+  ],
+  "duration_s": 61.83,
+  "size_mb": 14.5,
+  "music_mood": "Calm, slow, steady pulse at about 64 bpm (I measured 63.8 bpm on the source). Cinematic or ambient, to suit the slow-motion handstands and backbends.",
+  "fixes_made": "None needed.",
+  "problems_found": "No blocking problems. ffprobe: 720x1280 (the 1440x2560 VP9 source scaled down at the same 9:16 shape, no stretching), 30 fps, h264 + AAC 44.1 kHz stereo, 14.5 MB. The video has 1855 frames, the same as the source (61.83 s), so nothing was cut. The audio stream is truly silent (volumedetect mean and max -91 dB). Audio mode: whisper heard only 'Inhale come up' at 0-2 s. Then music with a regular pulse of about 64 bpm runs to the end, with no voice. For 60 of 62 s it is a music-only edit, so muting it for a library track fits the audio rule and the earlier music swaps in this run. The alt file trial18_origaudio_alt.mp4 matches the source audio (correlation 1.000) in case Boonchu wants the original. Frames every 0.25 s over 0-20 s, plus zooms every 0.125 s at 0-0.75 s and 1.75-2.75 s and every 0.05 s at 1.6-2.3 s. The teacher's profile head stays at the left edge (x of about 130 or less), and the box starts at x 169. The zooming yellow 'AYBKK' title's top only reaches about y 199 (1.9 s), under the box bottom at 165. SUZHOU / LED INTERMEDIATE / ADVANCE A / 'Boonchu & Jamsai' all sit below the box (2 blocks at most). A raised foot at 11.5-12 s stays under the box, and feet are allowed anyway. The box is gone by 18.5 s, and the teacher's head only enters the top band at 18.75 s. After 23 s the only text is the small 'AYBKK SUZHOU WS 2026' credit at the bottom, with no comment ask at the end. Caption: backed by the original caption ('Suzhou WS / Last day: Led Intermediate + Advanced A') and the burned credits. Hands-on help in backbends and handstands is visible at 43-57 s. 'Beginners welcome. We teach you from zero.' is the approved bio line. It has the exact CTA, 8 hashtags including all 5 required, no 'pose', and plain words.",
+  "remaining_issues": "1) This is footage from the Suzhou, China workshop under a Bangkok CTA. The caption says Suzhou plainly. Boonchu should confirm he is happy to use workshop footage to sell Bangkok trials. 2) Many clear faces of workshop students and close hands-on assists in a post shown to strangers: consent is Boonchu's call. 3) The music is muted (title unknown, music-only edit) and needs a calm library track in Postiz (settings.audio). The silent file also drops the 1.4 s 'Inhale, come up' at the start. If the audio label on the original post shows a track that is safe to keep, use /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/trial/out/r18/trial18_origaudio_alt.mp4 instead. 4) The file is downscaled to 720x1280 from the sharper 1440x2560 source, as the recipe says."
+ },
+ "19": {
+  "n": 19,
+  "verdict": "pass",
+  "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/trial/out/r19/trial19.mp4",
+  "audio_mode": "original_kept",
+  "hook_lines": [
+   "Want more power in this asana?",
+   "It comes from the breath."
+  ],
+  "hook_window": "0-4.2 s (full until 3.8 s, fade 3.8-4.2 s, measured frame by frame: gone at 4.20 s). Box x 82-638, y 66-169.",
+  "caption_lines": [
+   "This is Bhujapidasana, the arm-squeeze asana. You jump your legs around your arms, hook the feet, bend the elbows and bring the head down.",
+   "Then you stay for five breaths. Breathe in, breathe out, belly in. You can hear the teacher count.",
+   "The power comes from steady, even breathing. It also keeps your energy going.",
+   "So keep the breath first, all through your practice. Save this for your next practice.",
+   "This was our Monday led Primary class (the first Ashtanga series) at AYBKK with @boonchutanti.",
+   "Want to try a class with us in Bangkok? Comment TRIAL and we'll message you.",
+   "#aybkk #ashtanga #ashtangabangkok #yogabangkok #bangkokyoga #bhujapidasana #primaryseries #breathwork"
+  ],
+  "problems_found": "Nothing needed fixing. File: 720x1280, 30 fps, h264, AAC 44.1 kHz stereo, 38.1 s (same as the source), 17.2 MB. Audio: the rendered track matches the source (correlation 0.999, same loudness). Whisper small hears the teacher's count ('One', 'Two', 'Three'...) at 14-23 s over room sound, and the spectrogram has no musical structure, so keeping the audio is correct. Overlay: I diffed the render against the source frame by frame. The hook is on from 0 s and fully gone at 4.20 s, before 'Inhale' rises into the top band (about 4.3 s) and before the jumping man's body reaches it. Faces: I ran YuNet on every frame from 0 to 4.2 s, upright and upside down, and zoomed in 4x. Its low-confidence hits inside the box at 2.2-2.9 s are backs and hips in downward dog. The real heads start at about y 170-180, below the box bottom (y 169), and at most some hair touches the edge. Text: at most 2 text blocks at once (the hook, plus 'Bhuja Pidasana' at the bottom from 1 to 3.5 s). No burned comment ask; the end shows only the credit 'Monday Led primary @boonchutanti'. Caption: checked against the original caption ('Breathing rhythm generates power and sustains energy... priority throughout your practice', 'Monday led primary') and the truth notes. The five-breath count is backed by the audio. CTA is exact, 8 hashtags including the 5 required ones, no 'pose', no long dash.",
+  "fixes_made": "None.",
+  "remaining_issues": "1) Student faces are clear (the jumping man close up at 0-9 s, women close up at 29-38 s). Boonchu should OK this for a post shown to strangers. 2) A burned cue in the original at about 29-31 s reads 'Inhale - hollow cheat straight arms', a typo for 'chest'. It is part of the original video and can't be fixed without adding new on-screen text. 3) The hook can only show for 4.2 s because the burned cues fill the top band after that. 11 words is tight but readable. 4) If the audio is ever swapped, cut 'You can hear the teacher count.' from the caption.",
+  "duration_s": 38.1,
+  "size_mb": 17.2,
+  "music_mood": ""
+ },
+ "20": {
+  "n": 20,
+  "verdict": "pass",
+  "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/trial/out/r20/trial20_silent.mp4",
+  "audio_mode": "muted_needs_library_track",
+  "hook_lines": [
+   "The teacher helping her",
+   "is her husband. Watch her feet."
+  ],
+  "hook_window": "0-26.8 s (fade 26.4-26.8 s, measured gone at 26.80 s, just before the scene cut at 26.83 s). Box x 91-630, y 78-181.",
+  "caption_lines": [
+   "The teacher helping her is her husband. That's Boonchu (@boonchutanti) and his wife Jamsai (@missjamsai).",
+   "Here he gives her an adjustment, which means hands-on help, in Gomukhasana, the cow face asana.",
+   "Then she lifts up and jumps back... and her feet swing right at his legs. Accident or not?",
+   "A moment later, they are both smiling.",
+   "Serious practice, and still a laugh. That's our led Intermediate class at AYBKK.",
+   "Want to try a class with us in Bangkok? Comment TRIAL and we'll message you.",
+   "#aybkk #ashtanga #ashtangabangkok #yogabangkok #bangkokyoga #gomukhasana #yogacouple"
+  ],
+  "problems_found": "Nothing needed fixing. File: 720x1280, 30 fps, h264, AAC 44.1 kHz stereo, 34.0 s (same as the source), 14.3 MB. The audio track is pure digital silence. Source audio: whisper hears 'I wish you joy and happiness' and 'I will always love you', so it is the copyrighted song. A word-level pass on 14-27 s found only low-confidence noise words, with no room voice or count, so muting is correct (music_swap=true). Overlay: frame diff shows the hook fully gone at 26.80 s. Frames every 0.25 s from 0 to 27.25 s: the box sits only over the roof and fan. The burned 'Accident or...' types in from about 0.75 s, is gone by about 21.8 s, and sits below the box with a clear gap: they never overlap, and there are never more than 2 text blocks. Faces: a frame-by-frame zoom at 26.3-26.83 s shows Boonchu's hair touching the box bottom only from 26.5 s, while the box fades. His forehead stays at about y 195 or lower (the box ends at y 181). YuNet found no face inside the box; its one hit at 25.6 s is a torso-sized false detection. End: only the burned 'AYBKK LED INTERMEDIATE' (29-34 s), no comment ask. Caption matches the frames (the arm bind at 15-21 s, the leg swing at 24-25.5 s, the smiles at 27-28.5 s) and the original caption ('my wife', @missjamsai tagged). CTA is exact, 7 hashtags including the 5 required ones, no 'pose'. One known deviation from the house rule: the burned top-band text arrives at 0.75 s, so 'fade before it arrives' would leave the hook on screen for under 1 s. I kept the package's stacked design, which is checked and never overlaps.",
+  "fixes_made": "None.",
+  "remaining_issues": "1) Attach a library track in Postiz. The joke depends on a big hit or held note at about 23.5-25.5 s, when her feet swing at his legs. 2) Jamsai's face is clear and the joke is about her, so get her OK. 3) This reposts a Reel from Boonchu's personal account on @aybkk, with a sales CTA on a fun Reel rather than a teaching Reel: Boonchu's call. 4) The hook stays stacked above the burned 'Accident or...' (0.75-21.8 s) instead of fading out before it, as the package designed.",
+  "duration_s": 34,
+  "size_mb": 14.3,
+  "music_mood": "A slow romantic ballad (about 65-75 bpm) played mock-dramatic, with one big swell, hit or held note near 23.5 s, when her feet swing at his legs. The joke's timing depends on that hit."
+ },
+ "22": {
+  "n": 22,
+  "verdict": "fixed",
+  "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/trial/out/r22/trial22.mp4",
+  "audio_mode": "original_kept",
+  "hook_lines": [
+   "This hard asana",
+   "is not about brute force.",
+   "Less push, more breath."
+  ],
+  "hook_window": "0-7.5 s (fade 7.05-7.45 s, measured gone at 7.47 s, before 'Galavasana' arrives at about 8 s). Box x 146-575, y 60-204.",
+  "caption_lines": [
+   "This is Galavasana, from the third series (Advanced A). From headstand, a row of students lowers into it, holds, and lifts back up.",
+   "An old Chinese saying: four ounces can turn aside a thousand pounds. A small, smart force beats a big one.",
+   "Hard asanas work like that. Your joints and your breath do the work, not brute force.",
+   "Filmed in a led class at our Guangzhou workshop. In a led class the teacher counts and everyone moves on the same breath.",
+   "Nobody starts here. You start with the first series and build, one day at a time.",
+   "Want to try a class with us in Bangkok? Comment TRIAL and we'll message you.",
+   "#aybkk #ashtanga #ashtangabangkok #yogabangkok #bangkokyoga #galavasana #armbalance"
+  ],
+  "problems_found": "The hook's line break split the phrase: 'This hard asana is not / about brute force.' first reads as 'This hard asana is not...', which breaks the house rule of natural line breaks. Everything else passed. File: 720x1280, 30 fps, h264, AAC 44.1 kHz stereo, 36.4 s (same as the source). Audio matches the source (correlation 0.999). Whisper large-v3 and small both hear a spoken count '1, 2, 3, 4, 5' about 2 s apart at about 8-16 s, during the Galavasana hold. The spectrogram shows an instrumental bed underneath (short tonal notes, no sung lines). Because the voice is mixed into the music, keeping the audio is correct under the rule. Frames every 0.25 s from 0 to 8 s, plus YuNet on every frame from 0 to 7.45 s: no face inside the box. The standing man's head stays at y 207 or lower and x 560 or more. Only headstand feet pass under the box (allowed). The bottom typewriter text (y 920-1020, 1-6.5 s) never overlaps the box, and there are never more than 2 text blocks. No burned comment ask; the end shows only the @boonchutanti and @missjamsai mention stickers. Caption: Guangzhou, the proverb and 'joints and breath over brute force' all come from the original caption. Galavasana in Advanced A matches the burned 'Advance A'. 'A row of students' matches the frames. The teacher's count is backed by the audio. CTA is exact, 7 hashtags including the 5 required ones, no 'pose'.",
+  "fixes_made": "Made a new hook PNG (out/r22/hook_v2.png) with natural breaks: 'This hard asana / is not about brute force. / Less push, more breath.' The words, font size (34 px) and box (x 146-575, y 60-204) are all unchanged, so every clearance check still holds. Re-rendered trial22.mp4 with the keep-original-audio recipe (T=7.5, fade starting at 7.05 s, 0.4 s long). Re-checked: hook gone at 7.47 s, audio correlation 0.999 with the source, no face in the box, 13.4 MB. The earlier render is saved as /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/trial/qa/trial22_prev_render.mp4, outside the output folder.",
+  "remaining_issues": "1) The music bed under the teacher's count is not identified. If Boonchu recognizes it as a pop song, the only fix is to mute it and use a library track, which also loses the count. 2) It was filmed at the Guangzhou workshop, but the CTA invites people to Bangkok (the caption says Guangzhou). 3) Clear student faces (shirtless men close to the camera, upside down) in a sales post. 4) It shows a third-series asana, and the burned 'But there's something else.' is never answered on screen. 5) The slot is Tue 24 Nov, a full moon day when the shala is closed (per the package), so Alex should offer the next class day to TRIAL replies.",
+  "duration_s": 36.4,
+  "size_mb": 13.4,
+  "music_mood": ""
+ },
+ "23": {
+  "n": 23,
+  "verdict": "pass",
+  "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/trial/out/r23/trial23.mp4",
+  "audio_mode": "original_kept",
+  "hook_lines": [
+   "Can't reach your feet",
+   "in this asana?",
+   "It's not short arms."
+  ],
+  "hook_window": "0.0-14.0 s (fade 13.55-13.95 s); box x 174-546 y 66-210, 34 px",
+  "caption_lines": [
+   "This is Supta Urdhva Pada Vajrasana, near the end of the second series (intermediate).",
+   "You lie down, reach behind to hold one foot in half lotus, take the other foot with the other hand, then roll up to sit and twist.",
+   "Many students Boonchu has met can grab their feet sitting and standing. Here, they say: \"My arms are too short.\"",
+   "Short arms are not the problem. There's a technique to it.",
+   "It's the kind of detail a teacher shows you on the mat.",
+   "Want to try a class with us in Bangkok? Comment TRIAL and we'll message you.",
+   "#aybkk #ashtanga #ashtangabangkok #yogabangkok #bangkokyoga #intermediateseries #yogatips"
+  ],
+  "problems_found": "No blocking problems. Checked independently: ffprobe 720x1280, 30 fps h264, AAC 44.1 kHz stereo, 36.6 s, 13.9 MB, which matches the intended cut at 35.6 s plus a 1.0 s freeze. Audio: source and render correlate at 0.999 every second for 0-35 s with lag 0. Faster-whisper on the source puts 'Let me know in the comments' at 35.72 s. In the render, the audio fades over 35.40-35.75 s and is digital silence from 35.75 s, so no part of the comment ask leaks. Frames every 0.25 s for 0-15 s: the hook is readable and never touches the burned word captions (y 285+) or a face. The practitioner's head enters from below at 12.5 s and is only hair, below y 300, during the fade, and the hook is gone at 14.0 s before his face shows at 14.2 s. Santa and garland at top-left are not covered. End frames: the cut is on a clean frame after 'TOO?' with no burned word. 'LET ME KNOW / IN THE COMMENTS / I'M CURIOUS!' and the black end card are removed. The caption matches the package, and every line is backed by the audio or the original caption. It has the exact CTA, 7 hashtags including the 5 required ones, and no 'pose'.",
+  "fixes_made": "None needed.",
+  "remaining_issues": "(1) The audio and burned captions say 'pose' twice (about 23 s and 34.5 s). This cannot be fixed. (2) Boonchu's own spoken and burned 'let me know in the comments' ask was cut. The reel now ends on 'Do you struggle with this pose too?' and a 1 s freeze with about 0.85 s of silence. (3) The reel asks 'what's going on here?' and never shows the fix. (4) The practitioner looks young: confirm he is an adult and OK in a sales post. (5) A faint music bed under the voice has an unknown source. (6) A Christmas garland and Santa at 0-2 s date the clip. (7) From about 0.9 to 2.8 s, three text items are on screen: the hook, the burned word caption, and the original's tiny 'Saturday / Led Intermediate / @boonchutanti' label. This can't be avoided with the hook starting at 0.0, and the label is very small. (8) Tue 24 Nov is a full moon day: Alex should offer the next class day to TRIAL replies.",
+  "duration_s": 36.6,
+  "size_mb": 13.9,
+  "music_mood": "n/a (original voice audio kept)"
+ },
+ "24": {
+  "n": 24,
+  "verdict": "pass",
+  "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/trial/out/r24/trial24.mp4",
+  "audio_mode": "original_kept",
+  "hook_lines": [
+   "Up at 4 a.m., planning parties",
+   "around the moon. Sound like you?"
+  ],
+  "hook_window": "0.0-4.9 s, hard cut back to the burned title at 4.9 s (before the '1. Imagine' subtitle at 5.0 s); opaque white cover x 71-648 y 128-230 with 32 px text",
+  "caption_lines": [
+   "8 things that feel normal only to people who practice Ashtanga.",
+   "Up at 4 a.m. Checking the moon calendar before saying yes to a party. Picking a hotel room by whether a yoga mat fits.",
+   "Why the moon? In Ashtanga, new moon and full moon days are rest days.",
+   "Funny list. Real point: practice at the same time, day after day, and it starts to plan your day for you.",
+   "How many did you get?",
+   "Want to try a class with us in Bangkok? Comment TRIAL and we'll message you.",
+   "#aybkk #ashtanga #ashtangabangkok #yogabangkok #bangkokyoga #ashtangalife #yogahumor #moonday"
+  ],
+  "problems_found": "No blocking problems. Checked independently: ffprobe 720x1280, 30 fps h264 (scaled from the 1080x1920 60 fps VP9 source), AAC 44.1 kHz stereo, 83.1 s against 83.06 s for the source, 38.1 MB. Audio: correlation with the source is 0.999 for every second with lag 0, Boonchu's voice with a soft bed, kept. Frames every 0.25 s for 0-5.5 s, plus full-resolution crops at 0, 0.04, 0.1, 2.5 and 4.83-5.04 s: the opaque cover hides the burned 'Things Ashtanga people think / They are normal' box completely in every frame, with no edges showing. The swap at 4.87/4.90 s is a clean one-frame cut. The box ends at y 230, above his hair; his forehead starts at about y 260, so no face is covered. During the hook only 2 text items are on screen (the hook and the subtitles). Full-video sheet and end frames (79-83 s): no burned comment ask anywhere. The caption matches the package and the video's items (4 a.m., moon calendar before a party, mat between bed and wall, 'How many did you get?'). It has the exact CTA, 8 hashtags including the 5 required ones, and no 'pose'.",
+  "fixes_made": "None needed.",
+  "remaining_issues": "(1) Style change: the hook sits on an opaque white box exactly over the reel's own burned title box (the package's fallback), not the 50% box. That was the only option that keeps clear of Instagram's header and the face and avoids 3 text layers. The two lines are long and break after 'planning parties'. 3 shorter lines would not fit the title box at 32 px. (2) The reel comes from Boonchu's personal account @boonchutanti, not @aybkk: confirm it belongs in the AYBKK trial run. (3) The soft music bed and the cartoon stickers have unknown sources. (4) The practice inserts show students' faces. (5) Insider jokes may make Ashtanga look extreme to beginners. (6) Alex should check the current timetable before quoting days in TRIAL replies: moon days, and the Sunday conflict between the 31 Oct note and the 5 Nov ad draft.",
+  "duration_s": 83.1,
+  "size_mb": 38.1,
+  "music_mood": "n/a (original voice audio kept)"
+ },
+ "26": {
+  "n": 26,
+  "verdict": "pass",
+  "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/trial/out/r26/trial26.mp4",
+  "audio_mode": "original_kept",
+  "hook_lines": [
+   "The asana is not the goal.",
+   "Moving well at 80 is."
+  ],
+  "hook_window": "0.5-15.5 s (fade 15.05-15.45 s, together with the burned calculus question); box x 135-586 y 70-173, 34 px",
+  "caption_lines": [
+   "Why did we learn calculus at school? Will we ever use it at work?",
+   "It was never about the math. It trained the brain to think and solve problems.",
+   "Asana practice is the same. It was never about the asana.",
+   "It trains the body to move in every direction, so at 80 you can still get on and off the toilet without a handle, a helper or a prayer.",
+   "This is a led class with @boonchutanti. The teacher counts out loud and the whole room moves on the count.",
+   "Want to try a class with us in Bangkok? Comment TRIAL and we'll message you.",
+   "#aybkk #ashtanga #ashtangabangkok #yogabangkok #bangkokyoga #ledprimary #agingwell"
+  ],
+  "problems_found": "No blocking problems. Checked independently: ffprobe 720x1280 h264, AAC 44.1 kHz stereo, 30.875 s (matches the source), 14.0 MB. The frame rate is 24 fps, not 30. That is the source's native rate, and trial03_silent.mp4, already scheduled, set the same precedent; -r 30 would only add duplicate frames and judder, so I accepted it. Audio: correlation with the source is 0.999 every second with lag 0. Faster-whisper on the source hears the teacher's live count ('Now touch your head, roll back... exhale... one, two, three, four, five...') over a music bed in the same track, so it is kept under the audio rule. Frames every 0.25 s for 0-16.5 s, plus crops at 0.42-2.05 s: the bouncing AYBKK logo sits in the band at 0.1-0.42 s. From 0.5 s its top is at about y 200, below the box bottom at y 173. The calculus question (y 270-330) never touches the box. No faces are in the band at any time. The hook and the question fade out together at 15.5 s, which avoids stacking on 'Same reason we practice asanas.' (20-24 s), 'Read the caption.' (26-31 s) and the handle sticker. No burned comment ask. The caption matches the package and the original caption (calculus to asana, toilet at 80 is his own joke), and the count line is confirmed by the transcription. It has the exact CTA, 7 hashtags including the 5 required ones, and no 'pose'.",
+  "fixes_made": "None needed.",
+  "remaining_issues": "(1) The hook starts at 0.5 s, not 0.0 s, because the AYBKK logo bounces through the band at 0.1-0.4 s (the package's own instruction). (2) The file is 24 fps (native) instead of 30. (3) Music: a music bed is mixed under the count. Check the audio label on the original post (DcEBiDgJhvu). If it is a licensed song, re-render trial26_silent.mp4 with the mute recipe and attach a library track (only the count is lost). Otherwise keep this file. (4) Many student faces are clear, including a woman in close-up with eyes closed at 23-31 s: Boonchu should OK their use under a sales CTA. (5) 'Calculus' is a hard word for a young reader, but it is the reel's own burned question, so it stays.",
+  "duration_s": 30.9,
+  "size_mb": 14,
+  "music_mood": "n/a (original count audio kept; library track only if the original's music turns out to be licensed)"
+ },
+ "27": {
+  "n": 27,
+  "verdict": "pass",
+  "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/trial/out/r27/trial27.mp4",
+  "audio_mode": "original_kept",
+  "hook_lines": [
+   "Is 64 too old",
+   "to get strong",
+   "and flexible?"
+  ],
+  "hook_window": "0-10.0 s (fade 9.55-9.95 s, gone before the 'Inside Mysore / AYBKK' title card cut at about 10.07 s)",
+  "duration_s": 108.9,
+  "size_mb": 26.9,
+  "music_mood": "",
+  "caption_lines": [
+   "Is 64 too old to get strong and flexible?",
+   "This uncle lives in China and comes to Bangkok to practice for a month or two at a time.",
+   "When he first came, his body was stiff and he muscled through every movement. But he never gave up.",
+   "Then one day I saw him come up from his backbend almost all the way on his own.",
+   "This is Friday Mysore with @boonchutanti and @missjamsai. In a Mysore class everyone does their own practice at their own pace, and the teacher helps each person one by one.",
+   "Ashtanga is for people who keep showing up and improve step by step, no matter how old they are.",
+   "Want to try a class with us in Bangkok? Comment TRIAL and we'll message you.",
+   "#aybkk #ashtanga #ashtangabangkok #yogabangkok #bangkokyoga #mysorebangkok #backbend"
+  ],
+  "problems_found": "None in the render. Specs from ffprobe: 720x1280, 30 fps, h264, AAC 44.1 kHz stereo, 108.88 s (same as the source), 26.9 MB. Audio: matches the source (correlation 0.998 at 0 offset, mean -16.7 vs -16.6 dB). faster-whisper small hears the teacher's room cues ('Up, up', 'Fung song', 'Good, good') at 0-10 s, then the voice-over and counts, so keeping the audio follows the rule. I looked at frames every 0.25 s over 0-11 s, plus full-height frames. The box (x 233-488, y 70-220) shows only the ceiling, windows and wall. The teacher's head stays at y 300 or lower. The box stays left of the painted wall lettering, which is not burned text. The only other text is the small burned typewriter cues ('Up,' at about y 700, from 2 s), so there are 2 text layers. The fade is clean, and the box is gone at 10.0 s, before the title card. The end cards are 'No one is / Too old / To be strong / And flexible' and 'ASHTANGA / AYBKK', with no burned comment ask. Caption: every line checks out against the original caption and the voice-over. The CTA is exact, there are 7 hashtags including all 5 required, and there is no 'pose'.",
+  "fixes_made": "None needed.",
+  "remaining_issues": "(1) A music bed of unknown source is mixed into the voice-over track from about 10 s and cannot be removed without losing the voice. Check the audio label on the original post. If it is a licensed song, Instagram may mute or block the reel. (2) The uncle is the subject: his face is clear and the reel gives his age (64 in Oct 2025) and country. A woman student's face is clear at 15-30 s. Boonchu should OK both under a sales CTA. (3) The voice-over still says 'just finished my in-depth course earlier this month' (Oct 2025), so strangers may ask about the course. (4) The hook runs 0-10 s, not to 102 s as the package allowed. This is an acceptable choice: it keeps clutter low and ends on a clean cut."
+ },
+ "28": {
+  "n": 28,
+  "verdict": "pass",
+  "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/trial/out/r28/trial28_silent.mp4",
+  "audio_mode": "muted_needs_library_track",
+  "hook_lines": [
+   "On hands or on feet,",
+   "balance works the same way."
+  ],
+  "hook_window": "0-5.0 s (fade 4.55-4.95 s; continuous shot, no cut available)",
+  "duration_s": 19,
+  "size_mb": 8,
+  "music_mood": "calm, airy instrumental (soft piano or light acoustic), about 80-95 bpm, steady and unhurried to match the slow balance",
+  "caption_lines": [
+   "On hands or on feet, balance works the same way.",
+   "Balance in yoga is a clear sense of gravity, guided by bandha, with control over how your body shifts in every direction.",
+   "Bandha is a gentle lift low in the belly.",
+   "Here one woman balances upside down on her hands, and another stands on one foot.",
+   "This is Friday Mysore with @boonchutanti and @missjamsai. In a Mysore class everyone does their own practice at their own pace, and the teacher helps each person one by one.",
+   "Want to try a class with us in Bangkok? Comment TRIAL and we'll message you.",
+   "#aybkk #ashtanga #ashtangabangkok #yogabangkok #bangkokyoga #mysorebangkok #handstand"
+  ],
+  "problems_found": "None in the render. Specs: 720x1280, 30 fps, h264, AAC 44.1 kHz stereo, 19.0 s (same as the source), 8.0 MB. The source has no audio stream, and the rendered track is fully silent (volumedetect mean and max -91 dB), so the mute recipe is right. I looked at frames every 0.25 s over 0-5.75 s, a zoom at 2 s and 4 s, and full-height frames every 1.5 s to the end. The box (x 107-614, y 60-163) never covers a face. Only the standing woman's clasped hands, raised foot and the back of her hair (she faces away), plus the upside-down woman's feet at 0-1 s, touch it. The box bottom (163) clears the burned credit 'Friday / Mysore / @boonchutanti / @missjamsai' (top at about 176) in every frame, and the text reads clearly. The fade is clean, and the box is gone at 5.0 s. There is no burned comment ask. Caption: it uses the original's own definition, plus a plain bandha line (as in the approved #7 package) and an accurate account of what is on screen. The CTA is exact, there are 7 hashtags including all 5 required, and there is no 'pose'.",
+  "fixes_made": "None needed.",
+  "remaining_issues": "(1) The file is silent: attach an Instagram-library track in Postiz (settings.audio). (2) From about 1 s to 5 s, 3 text layers are on screen: the hook, the small burned credit and the burned definition typing in. This cannot be avoided, because the credit and the definition stay on screen for the whole reel, so the hook is held to the 5 s minimum. (3) The faces of the two women (the upside-down woman at about 4-10 s, side view at 12-19 s) and small background faces appear under a sales CTA, with nobody named. Boonchu should OK this. (4) The hook box lies over the standing woman's hands and raised foot at about 1.5-4.3 s (no face is covered). To clear them, the hook would have to start at 4.5 s."
+ },
+ "21": {
+  "n": 21,
+  "verdict": "pass",
+  "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/trial/out/r21/trial21.mp4",
+  "audio_mode": "original_kept",
+  "hook_lines": [
+   "Don't feel like it? Do it anyway.",
+   "That's the important part."
+  ],
+  "hook_window": "0-5.4 s (fade 4.95-5.35 s, gone before the cut at 5.43 s)",
+  "duration_s": 55.6,
+  "size_mb": 24.4,
+  "music_mood": "",
+  "caption_lines": [
+   "Don't feel like practicing today? That's the day that counts.",
+   "In this clip, @hubermanlab says one part of the brain grows when you do things you don't want to do.",
+   "Not just more work. Work you don't feel like doing.",
+   "On screen: one week of our classes. Mysore (you move at your own pace and the teacher helps you one by one) and led classes (everyone moves together to the teacher's count).",
+   "Same practice, same time, a teacher who notices. On the hard mornings, the room carries you.",
+   "Want to try a class with us in Bangkok? Comment TRIAL and we'll message you.",
+   "#aybkk #ashtanga #ashtangabangkok #yogabangkok #bangkokyoga #discipline #mysore #habits"
+  ],
+  "problems_found": "None in the render. Specs: 720x1280, 30 fps, h264, AAC 44.1 kHz stereo, 55.61 s (same as the source), 24.4 MB. Audio: matches the source (correlation 0.999 at 0 offset). faster-whisper hears the third-party podcast voice ('Most people don't know this... anterior mid-cingulate cortex... smaller in obese people...') with a soft music bed mixed in, so keeping it follows the rule. The third-party voice is reported below. I looked at frames every 0.25 s over 0-6.25 s and zooms at 1.0 s and 4.6 s. The box (x 110-611, y 40-139) shows only the ceiling. The burned word captions ('MOST', 'CALLED THE') start at about y 158, a clear gap of about 19 px. There is no face in the top band during the hook. The fade is clean, and the box is gone before the cut. The end is 'INHALE.' plus the small tag list, with no burned comment ask. Caption: the main claim is credited to @hubermanlab and matches the transcript, the obese, diet and athlete claims are left out, and 'one week of our classes' rests on 'Video from this week' in the original. The CTA is exact, there are 8 hashtags including all 5 required, and there is no 'pose'.",
+  "fixes_made": "None needed.",
+  "remaining_issues": "ON HOLD, Boonchu decides. (1) The voice is Andrew Huberman's copyrighted podcast, and his words are burned on screen for the whole reel. Under a TRIAL sales CTA shown to strangers, it can look like he endorses AYBKK, and Instagram may mute it or raise a rights claim. Swapping the audio cannot fix this. The options are to post with the @hubermanlab credit or to drop the reel. (2) A soft music bed of unknown source sits under the voice and cannot be removed. (3) His brain claims have not been checked against the study, and 'obese' is spoken and burned on screen at about 36-37 s. (4) Many clear student faces (close-ups at about 9-14 s and 41-47 s) appear under a sales CTA. (5) The box top is at y 40, under the 'avoid y<60' guide. It cannot go lower, because the burned captions start at y 158. Check it on a phone against Instagram's top bar. During the hook, the small bottom-left tag list is a third text layer for 5.4 s. (6) The Tue 24 Nov slot is a full moon day, when the shala is closed, so Alex should offer the next class day to TRIAL commenters."
+ },
+ "25": {
+  "n": 25,
+  "verdict": "pass",
+  "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/trial/out/r25/trial25.mp4",
+  "audio_mode": "original_kept",
+  "hook_lines": [
+   "A teacher who always lifts you",
+   "is not really helping."
+  ],
+  "hook_window": "0-41.8 s (fade 41.35-41.75 s, gone before the 41.83 s b-roll shot with faces in the band)",
+  "duration_s": 90.5,
+  "size_mb": 31.7,
+  "music_mood": "",
+  "caption_lines": [
+   "A teacher who always lifts you into the asana, without showing you how, is not really helping.",
+   "A good teacher helps at the start, so you feel what the asana should feel like. Then it is on you.",
+   "Don't just wait for the teacher. Ask: what do I need to fix to do this myself?",
+   "Then try, fall, and try again. You learn to fall before you can balance. That is how the asana becomes yours.",
+   "Teachers too: let your students fall, figure it out and get back up. Teach them to be capable, not dependent.",
+   "Want to try a class with us in Bangkok? Comment TRIAL and we'll message you.",
+   "#aybkk #ashtanga #ashtangabangkok #yogabangkok #bangkokyoga #yogateacher #selfpractice #boonchutanti"
+  ],
+  "problems_found": "None in the render. Specs: 720x1280, 30 fps, h264, AAC 44.1 kHz stereo, 90.5 s (same as the source), 31.7 MB. Audio: matches the source (correlation 0.999 at 0 offset). faster-whisper hears Boonchu's own voice to camera all through, so keeping it follows the rule. I looked at top-band frames every 0.25 s across the whole window, 0-42.25 s (4 sheets), plus full-height frames at 0-5.5 s and the end. The box (x 97-624, y 70-173) never covers a face. In the talking head his hair starts at about y 185 or lower. In the b-roll, heads stay at y 240 or lower (the woman in red at 3.5-4.5 s, a man at 10.5 s and 19.5 s, the curly-haired woman at 33-35.5 s). The band shows only sky, ceiling, windows, garlands and the room's painted wall lettering. The burned word captions stay at about y 850-910, so there are 2 text layers. The text reads clearly on the bright sky, the fade is clean, and the box is gone at 41.75 s, before the 42 s shot. There is no burned comment ask at the end. Caption: every line matches the transcript and the original caption. Line 2 keeps the 'helps at the start' balance. The CTA is exact, there are 8 hashtags including all 5 required, and there is no 'pose'.",
+  "fixes_made": "None needed.",
+  "remaining_issues": "ON HOLD, Boonchu decides. (1) Out-of-season New Year content: the first spoken line is 'New Year, same reminder', 'NEW YEAR' is burned on screen at about 1-1.5 s, and the b-roll has Christmas decor and a 'HAPPY NEW YEAR' banner. He can accept it or trim the first 3 s. (2) Mild swearing: he says 'fall on my ass a hundred times' (about 45-47 s), and 'ASS' is burned on screen at about 46.8 s, in a reel shown to strangers. (3) Clear student faces in the b-roll (3-4, 12-13, 27-36, 42-43, 58-63, 79-82 s) appear under a sales CTA, so Boonchu's OK is needed. (4) The hook stays up for 0-41.8 s, as in the package. Clean cuts at 6.0 s or 10.7 s exist if he prefers the short hooks used elsewhere in the run."
+ }
+}
