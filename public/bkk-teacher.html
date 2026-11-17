@@ -38,6 +38,27 @@
   .note{border-top:1px solid var(--line);padding:11px 0}
   .note .work{background:var(--blush);color:var(--plum);border-radius:7px;padding:9px 11px;margin-top:5px}
   .private{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#a33}
+  /* Fixing today's list (17 Nov 2026). */
+  .cls{margin-top:14px}
+  .cls h3{margin:0;font-family:'Work Sans',sans-serif;font-weight:800;font-size:17px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .cls h3 small{font-family:'Plex',sans-serif;font-weight:400;font-size:12.5px;color:var(--soft)}
+  .seat{border-top:1px solid var(--line);padding:11px 0}
+  .seat .top{display:flex;align-items:flex-start;gap:10px}
+  .seat .top .row{border:none;padding:0;flex:1;min-width:0}
+  .seat .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .seat .acts .btn{padding:8px 13px;font-size:13.5px}
+  .flag{display:inline-block;font-size:11.5px;font-weight:700;border-radius:5px;padding:1px 7px;margin-left:6px;white-space:nowrap}
+  .flag.chk{background:#fff3d6;color:#6b520e}.flag.rz{background:#e3f0ff;color:#1d4f86}.flag.add{background:var(--blush);color:var(--plum)}
+  .flag.two{background:#ffe3e0;color:#8a1f14}
+  .addbox{margin-top:10px;background:var(--wall);border:1px solid var(--line);border-radius:8px;padding:10px}
+  .hit{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--paper);border:1px solid var(--line);
+    border-radius:7px;padding:10px;margin-top:6px;font:inherit;color:var(--ink);cursor:pointer}
+  .hit b{flex:1;min-width:0;font-weight:600;overflow-wrap:anywhere}
+  .say{font-size:13.5px;margin:8px 0 0;min-height:1.2em}
+  .say.bad{color:#b3261e}.say.good{color:#187a43}
+  @media (prefers-color-scheme:dark){.flag.chk{background:#4a3a12;color:#ffd98a}.flag.rz{background:#16324f;color:#9fcbff}
+    .flag.two{background:#4f1d17;color:#ffb4a8}.in{color:#3ddc97}
+    .say.bad{color:#ff8f8f}.say.good{color:#3ddc97}}
   #gate{max-width:330px;margin:16vh auto;text-align:center;padding:0 16px}
   #gate h1{font-family:'Work Sans',sans-serif;font-weight:800;font-size:40px;margin:0 0 4px}
 </style>
@@ -65,16 +86,23 @@
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
   let KEY = localStorage.getItem('aybkk_teacher_key') || '';
   let ME = null;
+  // The server's "known browser" mark: this phone is counted on its own when
+  // someone types wrong passcodes on the shala wifi.
+  let KNOWN = localStorage.getItem('aybkk_teacher_known') || '';
+  const LOCKED = 'Too many wrong passcodes from here. Try again in 15 minutes, or switch off wifi and use mobile data.';
 
   const api = (url, opts = {}) => fetch(url, { ...opts,
-    headers: { 'Content-Type': 'application/json', 'X-Teacher-Key': KEY, ...(opts.headers || {}) } });
+    headers: { 'Content-Type': 'application/json', 'X-Teacher-Key': KEY, ...(KNOWN ? { 'X-Teacher-Known': KNOWN } : {}), ...(opts.headers || {}) } })
+    .then(r => { const k = r.headers.get('X-Teacher-Known'); if (k && k !== KNOWN) { KNOWN = k; try { localStorage.setItem('aybkk_teacher_known', k); } catch (_) {} } return r; });
   const time = iso => new Date(iso).toLocaleTimeString('en-GB',
     { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' });
   const dateOnly = s => String(s || '').slice(0, 10);
 
   window.unlock = async () => {
     KEY = $('#key').value.trim();
-    const r = await api('/api/bkk/teacher/me');
+    const r = await api('/api/bkk/teacher/me').catch(() => null);
+    if (!r) { $('#gateMsg').textContent = 'No connection. Try again.'; return; }
+    if (r.status === 429) { $('#gateMsg').textContent = LOCKED; return; }
     if (!r.ok) { $('#gateMsg').textContent = 'That passcode is not recognised.'; return; }
     ME = (await r.json()).teacher;
     localStorage.setItem('aybkk_teacher_key', KEY);
@@ -85,19 +113,55 @@
   };
   window.logout = () => { localStorage.removeItem('aybkk_teacher_key'); location.reload(); };
 
+  // Today's classes and who is on each list. A teacher can check a seat in or
+  // undo it, add someone who came and has a pass, and take off a name added here
+  // by mistake: today's classes at the shala only. checkPass: no pass of theirs
+  // is live today, so ask them; Rezerv: their package is still on Rezerv.
+  let TODAY = null;
+  const ended = c => c && c.ended;
   async function today() {
-    const d = await api('/api/bkk/teacher/today').then(r => r.json());
-    const rows = (d.students || []);
+    const r = await api('/api/bkk/teacher/today').catch(() => null);
+    if (r && r.status === 429) { $('#view').innerHTML = `<div class="box"><p class="say bad">${esc(LOCKED)}</p></div>`; return; }
+    const d = r && r.ok ? await r.json().catch(() => null) : null;
+    if (!d) { $('#view').innerHTML = '<div class="box"><p class="say bad">Could not load today. <button class="btn ghost" onclick="today()">Try again</button></p></div>'; return; }
+    TODAY = d;
+    const rows = d.students || [];
+    const classes = (d.classes || []).slice();
+    for (const s of rows) if (!classes.some(c => c.slotId === s.slotId)) classes.push({ slotId: s.slotId, title: s.title, startAt: s.start_at, isOnline: s.isOnline });
+    classes.sort((a, b) => new Date(a.startAt) - new Date(b.startAt));
+    const seat = s => {
+      const fix = !s.isOnline;
+      // alsoAt: another seat of theirs today, often a wrong class booked by mistake (a second class used).
+      const tags = (s.rezerv ? '<span class="flag rz">Rezerv</span>' : '') + (s.checkPass ? '<span class="flag chk">Check pass</span>' : '')
+        + (s.added ? '<span class="flag add">added here</span>' : '')
+        + ((s.alsoAt || []).length ? `<span class="flag two">also booked ${esc(s.alsoAt.join(', '))}</span>` : '');
+      const who = s.checkinVia ? ` · ${esc(s.checkinVia === 'tablet' ? 'tablet' : s.checkinBy || s.checkinVia)}` : '';
+      return `<div class="seat" data-b="${Number(s.bookingId)}">
+        <div class="top"><button class="row" onclick="open_('${esc(s.ref)}')"><span class="nm"><b>${esc(s.name)}</b>${tags}<br>
+          <span class="muted">${s.notes ? `${s.notes} note${s.notes > 1 ? 's' : ''}` : 'no notes yet'}</span></span></button>
+          ${s.checked_in_at ? `<span class="in">✓ in ${time(s.checked_in_at)}${who}</span>` : `<span class="muted">not yet${s.checkinVia === 'teacher' ? ' (undone)' : ''}</span>`}</div>
+        ${fix ? `<div class="acts">${s.checked_in_at
+          ? `<button class="btn ghost" onclick="fixSeat(${Number(s.bookingId)}, true)">Undo check-in</button>`
+          : `<button class="btn" onclick="fixSeat(${Number(s.bookingId)}, false)">Check in</button>`}
+          ${s.added ? `<button class="btn ghost" onclick="removeSeat(${Number(s.bookingId)})">Remove (added by mistake)</button>` : ''}</div>` : ''}
+        <p class="say" id="say${Number(s.bookingId)}" role="status"></p>
+      </div>`;
+    };
     $('#view').innerHTML = `<div class="box">
       <b>Practising today</b>
-      <p class="muted">Tap a name to see their history and leave a note.</p>
-      ${rows.length ? rows.map(s => `<button class="row" onclick="open_('${esc(s.code)}')">
-          <span class="nm"><b>${esc(s.name)}</b><br>
-            <span class="muted">${time(s.start_at)} · ${esc(s.title)}${
-              s.notes ? ` · ${s.notes} note${s.notes > 1 ? 's' : ''}` : ' · no notes yet'}</span></span>
-          ${s.checked_in_at ? '<span class="in">✓ in</span>' : '<span class="muted">not yet</span>'}
-        </button>`).join('')
-        : '<p class="muted">Nobody booked today.</p>'}
+      <p class="muted">Tap a name to see their history and leave a note. Check in, undo and add work for today's classes at the shala.</p>
+      ${classes.length ? classes.map(c => {
+        const list = rows.filter(s => s.slotId === c.slotId);
+        const canAdd = !c.isOnline && !ended(c) && (d.classes || []).some(x => x.slotId === c.slotId);
+        return `<div class="cls"><h3>${time(c.startAt)} ${esc(c.title)} <small>${list.filter(s => s.checked_in_at).length} in / ${list.length} booked${c.isOnline ? ' · online' : ''}</small></h3>
+          ${list.map(seat).join('') || '<p class="muted">Nobody booked.</p>'}
+          ${canAdd ? `<p><button class="btn pink" onclick="openAdd(${Number(c.slotId)})">+ Add someone who came</button></p>
+            <div class="addbox" id="add${Number(c.slotId)}" hidden>
+              <input placeholder="Name or email, 2 letters or more" aria-label="Find a student" oninput="findAdd(${Number(c.slotId)}, this.value)" autocomplete="off">
+              <div id="hits${Number(c.slotId)}"></div>
+              <p class="say" id="addSay${Number(c.slotId)}" role="status"></p>
+            </div>` : ''}</div>`;
+      }).join('') : '<p class="muted">No classes today.</p>'}
     </div>
     <div class="box"><b>Someone else</b>
       <p class="muted">Anyone who is not practising today.</p>
@@ -105,6 +169,51 @@
       <p style="margin-top:10px"><button class="btn ghost" onclick="open_($('#code').value.trim())">Open</button></p>
     </div>`;
   }
+  const say = (id, text, kind) => { const e = $('#' + id); if (e) { e.className = 'say ' + (kind || ''); e.textContent = text; } };
+  window.fixSeat = async (id, undo) => {
+    const r = await api(`/api/bkk/teacher/bookings/${id}/checkin`, { method: 'POST', body: JSON.stringify({ undo }) }).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (!r || !r.ok) { say('say' + id, j.error || 'No connection. Try again.', 'bad'); return; }
+    today();
+  };
+  window.removeSeat = async id => {
+    const s = ((TODAY && TODAY.students) || []).find(x => x.bookingId === id);
+    if (!confirm(`Take ${s ? s.name : 'this name'} off the list? The class goes back to their pass.`)) return;
+    const r = await api(`/api/bkk/teacher/bookings/${id}/remove`, { method: 'POST' }).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (!r || !r.ok) { say('say' + id, j.error || 'No connection. Try again.', 'bad'); return; }
+    today();
+  };
+  window.openAdd = slotId => {
+    const box = $('#add' + slotId);
+    box.hidden = !box.hidden;
+    if (!box.hidden) box.querySelector('input').focus();
+  };
+  let findSeq = 0, findT = null;
+  window.findAdd = (slotId, term) => {
+    clearTimeout(findT);
+    term = term.trim();
+    if (term.length < 2) { $('#hits' + slotId).innerHTML = ''; return; }
+    findT = setTimeout(async () => {
+      const seq = ++findSeq;
+      const d = await api('/api/bkk/teacher/members?q=' + encodeURIComponent(term)).then(r => r.json()).catch(() => null);
+      if (seq !== findSeq || !$('#hits' + slotId)) return;
+      const list = (d && d.members) || [];
+      $('#hits' + slotId).innerHTML = list.length ? list.map(m => `<button class="hit" onclick="addSeat(${Number(slotId)}, '${esc(m.ref)}')">
+          <b>${esc(m.name)}</b><span class="muted">${esc(m.hint || '')}${m.passToday ? ' · <span class="in">pass today</span>' : ' · no pass today'}</span></button>`).join('')
+        : '<p class="muted">Nobody found.</p>';
+    }, 250);
+  };
+  window.addSeat = async (slotId, ref) => {
+    const r = await api('/api/bkk/teacher/add', { method: 'POST', body: JSON.stringify({ slotId, ref }) }).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (!r || !r.ok) { say('addSay' + slotId, j.error || 'No connection. Try again.', 'bad'); return; }
+    await today();
+    const other = (j.alsoAt || []).length ? ` They are also booked at ${j.alsoAt.join(', ')} today: if that was a mistake, ask Boonchu or M to cancel it.` : '';
+    const msg = j.already ? `${j.name} was on the list: checked in.` : `${j.name} added and checked in${j.overCapacity ? ' (over the class limit)' : ''}.${other}`;
+    const first = document.querySelector('.cls');
+    if (first) { const p = document.createElement('p'); p.className = 'say good'; p.textContent = msg; $('#view .box').insertBefore(p, $('#view .box').children[2]); }
+  };
 
   window.open_ = async (code) => {
     if (!code) return;
@@ -115,24 +224,24 @@
     $('#view').innerHTML = `<p><button class="btn ghost" onclick="today()">← Today</button></p>
       <div class="box">
         <b>${esc(d.member.name)}</b>
-        <p class="muted">${esc(d.member.code)}${d.member.email ? ' · ' + esc(d.member.email) : ''}</p>
+        <p class="muted">${esc([d.member.code, d.member.email].filter(Boolean).join(' · '))}</p>
         <p class="muted">${pass
-          ? esc(pass.name_en) + ' — ' + (pass.kind === 'unlimited' ? 'unlimited'
-              : (pass.credits_total - pass.credits_used) + ' classes left')
+          ? esc(pass.name_en) + (pass.kind === 'unlimited' ? ''
+              : ': ' + (pass.credits_total - pass.credits_used) + ' classes left')
           : 'No active pass.'}</p>
       </div>
 
       <div class="box">
         <b>After this class</b>
-        <label>What you want them to work on <span class="muted">— they will see this</span></label>
+        <label>What you want them to work on <span class="muted">(they will see this)</span></label>
         <textarea id="work" placeholder="e.g. Straighten the front leg in Trikonasana. Breathe before you go deeper."></textarea>
-        <label>Notes for the team <span class="muted">— choose below whether they see it</span></label>
+        <label>Notes for the team <span class="muted">(choose below whether they see it)</span></label>
         <textarea id="body" placeholder="e.g. Shoulder still guarding on the right. Went easy on Marichyasana D."></textarea>
         <p style="margin-top:10px">
           <label style="display:inline;color:var(--ink);font-size:14px">
             <input type="checkbox" id="share" checked style="width:auto"> Let the student read the notes too</label>
         </p>
-        <p><button class="btn pink" onclick="save('${esc(d.member.code)}')">Save</button></p>
+        <p><button class="btn pink" onclick="save('${esc(d.member.ref)}')">Save</button></p>
       </div>
 
       <div class="box" id="jrnBox" hidden><b>In their own words</b>
@@ -176,17 +285,17 @@
     } catch (_) {}
   }
 
-  window.save = async (code) => {
+  window.save = async (ref) => {
     const toWorkOn = $('#work').value.trim();
     const body = $('#body').value.trim();
     if (!toWorkOn && !body) { alert('Write something in one of the two boxes.'); return; }
     const r = await api('/api/bkk/teacher/notes', { method: 'POST', body: JSON.stringify({
-      memberCode: code, toWorkOn, body,
+      ref, toWorkOn, body,
       shareWithStudent: $('#share').checked,
       classDate: new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10) }) });
     const j = await r.json().catch(() => ({}));
     if (!r.ok) { alert(j.error || 'Could not save.'); return; }
-    open_(code);
+    open_(ref);
   };
 
   if (KEY) { $('#key').value = KEY; unlock(); }
