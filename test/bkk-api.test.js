@@ -6292,6 +6292,157 @@ const ok = (name, cond, extra = '') => {
     await pool.query(`DELETE FROM bkk_class_slots WHERE id=$1`, [slot]);
   }
 
+  console.log('\n- Show QR: a one-time sign-in the student scans at the desk (17 Nov 2026) -');
+  {
+    const QRCode = require('qrcode');
+    const SHORTC = /^[23456789abcdefghjkmnpqrstuvwxyz]{10}$/;
+    const ana = 'BTESTQRANA0001', ben = 'BTESTQRBEN0001';
+    await pool.query(`INSERT INTO bkk_members (code,name) VALUES ($1,'Ana Qrexample'), ($2,'Ben Qrexample')`, [ana, ben]);
+    const qr = (code, body = {}, h = ADMIN) => post(`/api/bkk/admin/members/${code}/signin-qr`, body, h);
+    const status = (short, h = ADMIN) => J(`/api/bkk/admin/signin-qr/${short}/status`, { headers: h });
+    let ipN = 0;
+    const open = code => fetch(`${B}/in/${code}`, { redirect: 'manual', headers: { 'x-forwarded-for': `10.90.0.${++ipN}` } });
+    const row = async short => (await pool.query('SELECT * FROM bkk_login_tokens WHERE short_code=$1', [short])).rows[0];
+    const links = async () => (await J('/api/bkk/admin/progress', { headers: ADMIN })).body.links;
+    // Reads the qrcode SVG path back into modules: "M x y.5" moves, "m dx 0" skips, "h n" paints n dark ones.
+    const modules = svg => {
+      const size = Number((/viewBox="0 0 (\d+) \1"/.exec(svg) || [])[1]);
+      const dark = new Set();
+      const d = (/<path stroke="#000000" d="([^"]+)"/.exec(svg) || [])[1] || '';
+      let x = 0, y = 0;
+      for (const [, op, a, b] of d.matchAll(/([Mmh])(-?[\d.]+)(?: (-?[\d.]+))?/g)) {
+        if (op === 'M') { x = Number(a); y = Math.floor(Number(b)); }
+        else if (op === 'm') { x += Number(a); y += Math.floor(Number(b)); }
+        else { for (let i = 0; i < Number(a); i++) dark.add(`${x + i},${y}`); x += Number(a); }
+      }
+      return { size, dark };
+    };
+
+    ok('signin-qr needs the staff key', (await qr(ana, {}, {})).status === 401);
+    ok('...and an unknown member is a 404', (await qr('BNOSUCHPERSON0')).status === 404);
+
+    const a1 = await qr(ana, { origin: 'https://aybkk.net' });
+    const t0 = Date.now();
+    ok('a QR answer: name, short code, a short link on the site the desk page is on',
+       a1.status === 200 && a1.body.name === 'Ana Qrexample' && SHORTC.test(a1.body.short_code || '')
+         && a1.body.short_link === `https://aybkk.net/in/${a1.body.short_code}`, JSON.stringify(a1.body).slice(0, 200));
+    ok('...works for 10 minutes', a1.body.expiresIn === 600
+       && Math.abs(Date.parse(a1.body.expiresAt) - t0 - 600000) < 30000, `${a1.body.expiresAt} ${a1.body.expiresIn}`);
+    const r1 = await row(a1.body.short_code);
+    ok("...stored as its own kind ('qr') with no email, never the staff kind", r1 && r1.ip === 'qr' && r1.email === null && r1.used_at === null,
+       JSON.stringify(r1));
+    ok('...and the svg is an SVG: a white background, black modules, nothing else',
+       /^<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg" viewBox="0 0 \d+ \d+"/.test(a1.body.svg) && a1.body.svg.includes('<path fill="#ffffff" d="M0 0h')
+         && a1.body.svg.includes('stroke="#000000"') && !/<script|\son\w+=|href/i.test(a1.body.svg), a1.body.svg.slice(0, 160));
+    {
+      const want = QRCode.create(a1.body.short_link, { errorCorrectionLevel: 'M' });
+      const got = modules(a1.body.svg);
+      const n = want.modules.size;
+      let same = got.size === n + 8 && got.dark.size > 0;
+      for (let y = 0; same && y < got.size; y++) for (let x = 0; x < got.size; x++) {
+        const inside = x >= 4 && y >= 4 && x < n + 4 && y < n + 4;
+        if (got.dark.has(`${x},${y}`) !== (inside && !!want.modules.get(y - 4, x - 4))) { same = false; break; }
+      }
+      ok('...module for module the QR of short_link at error correction M, with a 4-module quiet zone', same,
+         `size ${got.size} vs ${n + 8}, ${got.dark.size} dark`);
+    }
+
+    for (const [origin, why] of [['https://www.aybkk.net', 'www'], ['https://cn.aybkk.net/book?x=1', 'a path is dropped']]) {
+      const r = await qr(ana, { origin });
+      ok(`an allowed origin (${why}) is used`, r.status === 200 && r.body.short_link === `${new URL(origin).origin}/in/${r.body.short_code}`, r.body.short_link);
+    }
+    for (const origin of ['https://evil.example.com', 'http://aybkk.net', 'https://aybkk.net.evil.example.com', 'https://aybkk.net@evil.example.com',
+      'javascript:alert(1)', '', 42, null]) {
+      const r = await qr(ana, { origin });
+      ok(`an origin not on the list (${JSON.stringify(origin)}) falls back to the base URL`, r.status === 200
+         && r.body.short_link === `https://cn.aybkk.net/in/${r.body.short_code}`, r.body.short_link);
+    }
+    const hosty = await qr(ana, {}, { ...ADMIN, 'x-forwarded-host': 'evil.example.com', origin: 'https://evil.example.com' });
+    ok('no origin in the body: the base URL, whatever the request headers say', hosty.status === 200
+       && hosty.body.short_link.startsWith('https://cn.aybkk.net/in/'), hosty.body.short_link);
+    process.env.BKK_SIGNIN_ORIGINS = ' https://desk.example.com , not a url';
+    const extra = await qr(ana, { origin: 'https://desk.example.com' });
+    delete process.env.BKK_SIGNIN_ORIGINS;
+    const extraOff = await qr(ana, { origin: 'https://desk.example.com' });
+    ok('BKK_SIGNIN_ORIGINS adds a site to the list, and only while it is set', extra.body.short_link.startsWith('https://desk.example.com/in/')
+       && extraOff.body.short_link.startsWith('https://cn.aybkk.net/in/'), `${extra.body.short_link} ${extraOff.body.short_link}`);
+
+    // A staff link and an email link for Ana, and a QR for Ben: a new QR for Ana leaves them all alone.
+    const staff = (await post(`/api/bkk/admin/members/${ana}/signin-link`, {}, ADMIN)).body;
+    await post(`/api/bkk/admin/members/${ana}/email`, { email: 'ana.qrexample@example.com' }, ADMIN);
+    await post('/api/bkk/login/request', { email: 'ana.qrexample@example.com' }, { 'x-forwarded-for': '10.90.1.1' });
+    const mailTok = (await pool.query(`SELECT token FROM bkk_login_tokens WHERE email='ana.qrexample@example.com'
+      ORDER BY created_at DESC LIMIT 1`)).rows[0];
+    const benQr = (await qr(ben)).body;
+    const older = (await qr(ana)).body;
+    const st0 = await status(older.short_code);
+    ok('status of a fresh QR: not used, not expired', st0.status === 200 && st0.body.used === false && st0.body.expired === false
+       && st0.body.usedAt === null, JSON.stringify(st0.body));
+    const newer = (await qr(ana)).body;
+    const stOld = await status(older.short_code);
+    ok("a new QR ends the member's older unused one", stOld.body.expired === true && stOld.body.used === false
+       && (await open(older.short_code)).status === 400, JSON.stringify(stOld.body));
+    ok('...but not their staff link', (await open(staff.short_link.split('/in/')[1])).status === 302);
+    ok('...nor their email link', !!mailTok && (await fetch(`${B}/api/bkk/login/${mailTok.token}`)).status === 200);
+    ok("...nor another member's QR", (await status(benQr.short_code)).body.expired === false);
+
+    const before = await links();
+    const hop = await open(newer.short_code);
+    const tok = (hop.headers.get('location') || '').split('/').pop();
+    ok('the first /in/<code> sends the phone on to the long link, as a staff link does',
+       hop.status === 302 && hop.headers.get('location') === `/api/bkk/login/${tok}` && (await row(newer.short_code)).token === tok,
+       `${hop.status} ${hop.headers.get('location')}`);
+    const page = await fetch(`${B}/api/bkk/login/${tok}`).then(r => r.text());
+    ok('...its page posts back to itself, and opening it uses nothing up', page.includes(`action="/api/bkk/login/${tok}"`)
+       && (await status(newer.short_code)).body.used === false);
+    const land = await fetch(`${B}/api/bkk/login/${tok}`, { method: 'POST' }).then(r => r.text());
+    ok('...and the POST signs the phone in as the member and opens My account',
+       land.includes(`localStorage.setItem('aybkk_member',${JSON.stringify(ana)})`) && land.includes('/book?me=1'));
+    const st1 = await status(newer.short_code);
+    ok('status says used, with the time', st1.body.used === true && st1.body.expired === false
+       && Math.abs(Date.parse(st1.body.usedAt) - Date.now()) < 30000, JSON.stringify(st1.body));
+    const again = await open(newer.short_code);
+    ok('a second scan of the same QR is a dead link (a photo of the screen is no use)', again.status === 400
+       && (await again.text()).includes('already been used, or it has expired'));
+    ok('...and the long link behind it is dead too', (await fetch(`${B}/api/bkk/login/${tok}`)).status === 400
+       && (await fetch(`${B}/api/bkk/login/${tok}`, { method: 'POST' })).status === 400);
+
+    const after = await links();
+    ok('progress: a scanned QR counts as signed in by QR (all time and today) and as opened, never as a staff link sent',
+       after.qr === before.qr + 1 && after.qr_today === before.qr_today + 1 && after.opened === before.opened + 1
+         && after.sent === before.sent && after.sent_today === before.sent_today, JSON.stringify([before, after]));
+    ok('a newer QR leaves a used one as used', (await qr(ana)).status === 200 && (await status(newer.short_code)).body.used === true);
+    const shown = await links();
+    await qr(ben);
+    ok('...and a QR shown but never scanned counts nowhere', JSON.stringify(await links()) === JSON.stringify(shown));
+
+    const late = (await qr(ben)).body;
+    await pool.query(`UPDATE bkk_login_tokens SET expires_at = now() - interval '1 second' WHERE short_code=$1`, [late.short_code]);
+    const lateSt = await status(late.short_code);
+    ok('an expired QR: status says expired, not used', lateSt.body.expired === true && lateSt.body.used === false, JSON.stringify(lateSt.body));
+    ok('...its short link is dead', (await open(late.short_code)).status === 400);
+    ok('...and its long link too', (await fetch(`${B}/api/bkk/login/${(await row(late.short_code)).token}`, { method: 'POST' })).status === 400);
+
+    ok('status needs the staff key', (await status(newer.short_code, {})).status === 401);
+    ok("status of a staff link's code is a 404: it only answers for a QR", (await status(staff.short_link.split('/in/')[1])).status === 404);
+    ok('...and of a code nobody was given', (await status('23456789ab')).status === 404 && (await status('nope')).status === 404);
+    const seen0 = JSON.stringify(await row(newer.short_code));
+    await status(newer.short_code);
+    ok('status only reads', JSON.stringify(await row(newer.short_code)) === seen0);
+
+    const benLive = (await qr(ben)).body;
+    ok('signing a member out everywhere ends their live QR too',
+       (await post(`/api/bkk/admin/members/${ben}/signout`, {}, ADMIN)).status === 200
+         && (await status(benLive.short_code)).body.expired === true && (await open(benLive.short_code)).status === 400);
+
+    const staffTok = staff.link.split('/').pop();
+    ok('the staff link is still a 7-day link that opens again after use', staff.days === 7 && (await row(staff.short_link.split('/in/')[1])).ip === 'staff'
+       && (await fetch(`${B}/api/bkk/login/${staffTok}`, { method: 'POST' })).status === 200
+       && (await fetch(`${B}/api/bkk/login/${staffTok}`, { method: 'POST' })).status === 200);
+    ok('...and the email link is still one-time', (await fetch(`${B}/api/bkk/login/${mailTok.token}`, { method: 'POST' })).status === 200
+       && (await fetch(`${B}/api/bkk/login/${mailTok.token}`, { method: 'POST' })).status === 400);
+  }
+
   console.log(`\n${PASS} passed, ${FAIL} failed`);
   srv.close(); await pool.end();
   process.exit(FAIL ? 1 : 0);
