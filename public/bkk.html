@@ -2151,6 +2151,8 @@
   const toHash = () => {
     let id = '';
     try { id = decodeURIComponent(location.hash.slice(1)); } catch (_) {}
+    // Landing on My account (a sign-in link, a payment coming back): it sits under the hero, a screen down.
+    if (!id && current === 'me') id = 'book';
     const el = id && !moved && (id === 'book' ? $('.bookhead') : document.getElementById(id));
     if (!el) return;
     // Instant, then again on the next two frames: the browser's own smooth scroll can still add one step.
