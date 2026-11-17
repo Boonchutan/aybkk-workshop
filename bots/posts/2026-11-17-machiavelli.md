@@ -7,3 +7,4 @@ Reminders: Mysore family trip: flights and hotel booked? Rezerv import still wai
 Reel: Plato's daily run is paused (expected). Carne posted: 0 new leads, 2 open.
 Score: wins this week (from Mon 16 Nov): none reported. Last win 6 Nov. 180K new leads: 0.
 Inbox 07:08: 1 new, 0 hot, 0 need a reply.
+13:08 check-in: course prices still waiting (choice Sun 22 Nov, 5 days). No reminders due. Inbox: 0 new, 0 hot.

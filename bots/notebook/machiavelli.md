@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-11-17T00:09:49.211Z
+Inbox last read: 2026-11-17T06:09:32.645Z
 
 ## Standing orders from Boonchu
 - 2026-11-08 BRAND COLOURS CHANGED (Boonchu picked "L1 Grande Galerie", the Louvre palette, for aybkk.net; PR on branch claude/louvre-palette, Neo): Louvre red #7E262E (hero band, headings), oxblood #5F1C23 (deep sections), honey parquet #D6A35C (buttons, offer bars; same hue as the new maple floor), limestone #F4EDE2 (page), soft brass #84621F (prices, gilt), pyramid steel blue #2F507F (links only). The old aubergine #3E1442 + mustard #F2C94C + pink is retired on the website. Posters, carousels, the timetable poster and the review QR card still use aubergine and gold: move them to the Louvre palette only after Boonchu says go for each piece. Small text rule from the same day: nothing under 15 px on the site; keep the grid.
@@ -286,3 +286,4 @@ Inbox last read: 2026-11-17T00:09:49.211Z
 - 2026-11-16 13:08: check-in. Serious lead and keyword test still waiting (due 19:00 today, 2nd nudge, last today). No reminders due since 07:08. Inbox 13:08: 4 threads with news, 4 hot (1 booking problem on the new website: 2 booked classes missing, flagged to Boonchu; 1 possible 12-month payment slip, Boonchu to check). No orientation class in the 7-day schedule.
 - 2026-11-16 19:08: Serious lead: no answer by 19:00, default applied (stays open, nothing sent, Carne checks Sat 21 Nov). Keyword test: no answer, default applied (stays on hold, nothing posted). Next choice: course prices Sun 22 Nov (6 days). No reminders due since 13:08. No win reported; next step given: check the bank for the 12-month slip sent on LINE today, report it as a win if in. Inbox 19:08: 3 threads with news, 0 need a reply (returning package student booked herself, closes the 14 Nov ask).
 - 2026-11-17 07:08: Carne posted (0 new leads, 2 open; serious lead 31 days silent, default stays open); Plato paused (expected). No @Machi requests. Money: confirm the 12-month LINE slip (16 Nov) in the bank. Course prices next choice Sun 22 Nov (5 days). Reminders: Mysore trip flights/hotel (daily), Rezerv import (daily). Inbox 07:08: 1 new, 0 hot, 0 need a reply. No wins this week. Board rebuilt.
+- 2026-11-17 13:08: check-in. Course prices still waiting (next choice Sun 22 Nov, 5 days, 1st nudge today). No reminders due since 07:08. Inbox 13:08: 0 new, 0 hot.
