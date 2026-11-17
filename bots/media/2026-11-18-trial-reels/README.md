@@ -8,7 +8,7 @@ Slots (updated 17 Nov: #4 tribute out; #2 and #8 are the SAME clip, posted once 
 | Day | 07:00 | 12:30 | 19:30 |
 | Wed 18 Nov | #1 DVlUjiuCdEq SCHEDULED cmwksqe5u047cqe07pb6fad56 (audio Colors (Instrumental)) | #2/#8 SCHEDULED cmwkuqvwq04xsqe07c5qfqs8x (original count audio) | #3 DT5MGLlCYIZ SCHEDULED cmwkuqvxq04xtqe07cztq73qx (audio Good Vibes, Giulio Cercato) |
 | Thu 19 Nov | #5 DPqoaEBjEKB SCHEDULED cmwkv4fp504qlns084e85svx9 (Qingdao, 360p upscaled, hook 'Most come back every time we teach in China.', original count audio) | #6 DcgNnNBJfE3 SCHEDULED cmwkv4fpt04qmns08qwb7e9ts (voice audio) | #7 DVSInBZAcNY SCHEDULED cmwkv4fqg04qnns08ofz3qcrz (audio Primavera, Giulio Cercato) |
-| Fri 20 Nov | #9 DE40EiMTWmH | #10 DDjxGzaTbxh | #11 DW7ciWoAefI |
+| Fri 20 Nov | #9 DE40EiMTWmH (downloaded 17 Nov, package in progress) | #10 DDjxGzaTbxh SCHEDULED cmwkypo3806mdqe07hm6j0jnd (voice audio kept, hook 0-9 s, pregnancy caution line) | #11 DW7ciWoAefI SCHEDULED cmwkypo4806mfqe07pz9pcxis (Huizhou; audio Breathe In, Go Slow, The Poison Oaks; hook 0-8.5 s) |
 | Sat 21 Nov | #12 DDMio1_zQPu | #13 DUxX9QYiQ_a | #14 DXjo6HBiUrh |
 | Sun 22 Nov | #15 DQFpR4Sk11M | #16 DZP6P7PJqTD | #17 DUwhH8UgczA |
 | Mon 23 Nov | #18 DZ6eBp-pbkH | #19 DVLnFDPCfaj | #20 DTtwa3JEoHz |
