@@ -72,7 +72,8 @@ const fakeDriver = { session: () => ({
   // As in server.js: the help desk webhook is left out of the JSON parser.
   const jsonBody = express.json();
   app.use((req, res, next) => HELPDESK_PATH_RE.test(req.path) ? next() : jsonBody(req, res, next));
-  mountBkk(app, { pgPool: pool, cloudinary: fakeCloud });
+  // Wait for its schema, not a guess: on a slow run the seeds below wrote bkk_members.source before it existed.
+  await mountBkk(app, { pgPool: pool, cloudinary: fakeCloud });
   mountInbox(app, { pgPool: pool, ai: null, notify: async () => true });
   const team = mountTeam(app, { pgPool: pool, cloudinary: fakeCloud, fetch: lineFetch, driver: fakeDriver,
     now: () => clock, notify: async t => { told.push(t); return true; } });
@@ -591,7 +592,8 @@ const fakeDriver = { session: () => ({
   const sch = (await get('/api/bkk/schedule?days=14')).body.classes || [];
   // An empty class: the brief tests above fill fixed dates (10, 11, 17 Nov) with made-up bookings and mats,
   // so 'the next class' collided with them on some real dates (9 Nov, a moon day, made it 10 Nov).
-  const room = sch.find(c => !c.isOnline && c.seatsLeft === c.capacity && c.capacity > 2), home = sch.find(c => c.isOnline && c.seatsLeft > 1);
+  const room = sch.find(c => !c.isOnline && !c.started && c.seatsLeft === c.capacity && c.capacity > 2),
+    home = sch.find(c => c.isOnline && !c.started && c.seatsLeft > 1);
   const mp1 = await post('/api/bkk/admin/passes', { name: 'Mat Tester', email: 'mat.tester@example.com', productCode: 'unlim1' });
   const code = mp1.body.member.code;
   const bk = await post('/api/bkk/bookings', { memberCode: code, slotId: room.slotId, date: room.date, needMat: true }, {});
@@ -627,7 +629,7 @@ const fakeDriver = { session: () => ({
 
   // A far class booked first starts the pass window there; a nearer seat on
   // the same pass was accepted, so it is paid for.
-  const inRoom = sch.filter(c => !c.isOnline && c.seatsLeft > 0);
+  const inRoom = sch.filter(c => !c.isOnline && !c.started && c.seatsLeft > 0);
   const near = inRoom[0], far = inRoom.find(c => c.date > near.date);
   const pita = (await post('/api/bkk/admin/passes', { name: 'Pita Probe', email: 'pita.probe@example.com', productCode: 'unlim1' })).body.member.code;
   const farBk = await post('/api/bkk/bookings', { memberCode: pita, slotId: far.slotId, date: far.date }, {});

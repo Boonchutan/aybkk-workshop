@@ -89,7 +89,10 @@ const ok = (name, cond, extra = '') => {
   const sch = await J('/api/bkk/schedule?days=7', { headers: ADMIN });
   // A moon day can close a whole Saturday (4 classes), so the floor is low.
   ok('classes generated for the week', sch.body.classes.length > 5, `got ${sch.body.classes.length}`);
-  ok('all classes are in the future', sch.body.classes.every(c => new Date(c.startAt) > new Date()));
+  // Today's classes stay listed after they start (16 Nov 2026), marked started: only today's.
+  const todayList = new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10);
+  ok("every class is still to come, or today's and marked started", sch.body.classes.every(c => new Date(c.startAt) > new Date()
+    ? !c.started && !c.closed : c.started === true && c.date === todayList), JSON.stringify(sch.body.classes.slice(0, 3)));
   ok('capacity 42 on shala classes',
     sch.body.classes.filter(c => !c.isOnline).every(c => c.capacity === 42));
   const pubSch = await J('/api/bkk/schedule?days=7');
@@ -332,7 +335,7 @@ const ok = (name, cond, extra = '') => {
     ordersAdmin.body.orders[0].status);
 
   console.log('\n— booking blocked without a pass —');
-  const slot = sch.body.classes[0];
+  const slot = sch.body.classes.find(c => !c.started);
   let bk = await post('/api/bkk/bookings', { memberCode, slotId: slot.slotId, date: slot.date });
   ok('booking refused with no pass', bk.status === 409 && /no active pass/.test(bk.body.error), bk.body.error);
 
@@ -382,7 +385,7 @@ const ok = (name, cond, extra = '') => {
   // and booking into a full one would fail for the wrong reason. Pick a day that
   // still has three seats going, so the only thing under test is the daily cap.
   // 28 days: only Saturdays have 3 classes, and a Saturday can be a moon day.
-  const fresh = (await J('/api/bkk/schedule?days=28')).body.classes.filter(c => c.seatsLeft > 0);
+  const fresh = (await J('/api/bkk/schedule?days=28')).body.classes.filter(c => c.seatsLeft > 0 && !c.started);
   const byDate = {};
   for (const c of fresh) (byDate[c.date] = byDate[c.date] || []).push(c);
   const capDay = Object.values(byDate).find(list => list.length >= 3);
@@ -504,7 +507,7 @@ const ok = (name, cond, extra = '') => {
 
   console.log('\n— an imported expiry survives the first booking —');
   const impCode = grant.body.member.code;
-  const openCls = (await J('/api/bkk/schedule?days=14')).body.classes.filter(c => c.seatsLeft > 0)[0];
+  const openCls = (await J('/api/bkk/schedule?days=14')).body.classes.filter(c => c.seatsLeft > 0 && !c.started)[0];
   await post('/api/bkk/bookings', { memberCode: impCode, slotId: openCls.slotId, date: openCls.date });
   const impPass = (await J('/api/bkk/me/' + impCode)).body.passes[0];
   ok('booking did not overwrite the imported expiry',
@@ -1164,7 +1167,7 @@ const ok = (name, cond, extra = '') => {
   const katMailTok = (signins().slice(nK)[0] || { text: '' }).text.match(/login\/([a-f0-9]{64})/);
   ok("while it sits there, Kat's email sign-in opens Kate's profile", !!katMailTok);
   // A drop-in is bought for a class.
-  const dropCls = (await J('/api/bkk/schedule?days=14')).body.classes.find(c => c.seatsLeft > 0);
+  const dropCls = (await J('/api/bkk/schedule?days=14')).body.classes.find(c => c.seatsLeft > 0 && !c.started);
   const forCls = { slotId: dropCls.slotId, date: dropCls.date };
   ok('checkout with an email that has a profile does not hand that profile to the browser',
      (await post('/api/bkk/orders', { productCode: 'dropin', name: 'Kat', email: 'kat.mixup@example.com', ...forCls })).body.member.code === undefined);
@@ -3458,7 +3461,7 @@ const ok = (name, cond, extra = '') => {
 
     // The student's own bookings carry the Bangkok day as text: a 05:30 class
     // is the previous day in UTC.
-    const early = (await J('/api/bkk/schedule?days=14')).body.classes.find(c => c.startAt.endsWith('T05:30:00+07:00') && c.seatsLeft > 0);
+    const early = (await J('/api/bkk/schedule?days=14')).body.classes.find(c => c.startAt.endsWith('T05:30:00+07:00') && c.seatsLeft > 0 && !c.started);
     const eCode = (await post('/api/bkk/admin/passes', { name: 'Cal Early', email: 'cal.early@example.com', productCode: 'pack10' }, ADMIN)).body.member.code;
     await post('/api/bkk/bookings', { memberCode: eCode, slotId: early.slotId, date: early.date });
     const eMe = (await J('/api/bkk/me/' + eCode)).body.bookings || [];
@@ -3786,7 +3789,7 @@ const ok = (name, cond, extra = '') => {
     ok('...and the profile says 1 payment, paid ฿20,865', cH.summary.payments === 1 && cH.summary.totalPaid === 20865, JSON.stringify(cH.summary));
 
     // ── the orders list: the class of a drop-in, and how many there are in all ──
-    const sch = (await J('/api/bkk/schedule?days=7', { headers: ADMIN })).body.classes.filter(c => !c.isOnline && c.seatsLeft > 2);
+    const sch = (await J('/api/bkk/schedule?days=7', { headers: ADMIN })).body.classes.filter(c => !c.isOnline && c.seatsLeft > 2 && !c.started);
     const cl = sch[0], cl2 = sch.find(c => c.slotId !== cl.slotId || c.date !== cl.date);
     const dropSale = await sell({ productCode: 'dropin', name: 'Lin Example', email: 'lin.os@example.test', slotId: cl.slotId, date: cl.date });
     const ol = (await J('/api/bkk/admin/orders?limit=5', { headers: ADMIN })).body;
@@ -5551,7 +5554,7 @@ const ok = (name, cond, extra = '') => {
        && (await st(blip)).status === 'paid', JSON.stringify(tg.slice(tW)));
 
     NOW += 49 * HOUR;
-    const sch = (await J('/api/bkk/schedule?days=14', { headers: ADMIN })).body.classes.filter(c => !c.isOnline);
+    const sch = (await J('/api/bkk/schedule?days=14', { headers: ADMIN })).body.classes.filter(c => !c.isOnline && !c.started);
     const c1 = sch[1], c2 = sch.find(c => c.slotId !== c1.slotId || c.date !== c1.date);
     const back28 = d => new Date(Date.parse(d + 'T12:00:00Z') - 28 * 86400000).toISOString().slice(0, 10);
     let direct = 990790000000;
@@ -6047,6 +6050,186 @@ const ok = (name, cond, extra = '') => {
        && !noChat.body.error, JSON.stringify(noChat.body));
     for (const [k, v] of Object.entries(keep)) { if (v == null) delete process.env[k]; else process.env[k] = v; }
     tgs.close();
+  }
+
+  console.log('\n-- booking closes 30 min after a led class starts, 60 min after Mysore (16 Nov 2026) --');
+  {
+    const MIN = 60000;
+    const bkkOf = ms => new Date(ms + 7 * 3600e3).toISOString();
+    const todayB = bkkOf(Date.now()).slice(0, 10);
+    const wd = new Date(todayB + 'T12:00:00Z').getUTCDay();
+    // A start on today's date about m minutes ago: 'up' started at most m minutes ago (and more
+    // than m - 1), 'down' at least m minutes ago, so a second or two of test time never crosses a line.
+    const ago = (m, way) => (way === 'up' ? Math.ceil : Math.floor)((Date.now() - m * MIN) / MIN) * MIN;
+    const isoOf = ms => bkkOf(ms).slice(0, 16) + ':00+07:00';
+    if (moonDaysBetween(todayB, todayB).size || bkkOf(ago(62, 'down')).slice(0, 10) !== todayB)
+      console.log('  - SKIPPED (moon day today, or less than 62 minutes into the Bangkok day): the booking window');
+    else {
+      const slots = {};
+      const mk = async (code, kind, startMs, online = false) => {
+        const id = (await pool.query(`INSERT INTO bkk_class_slots (code,title,kind,weekday,start_time,duration_min,capacity,is_online)
+          VALUES ($1,$2,$3,$4,$5,90,10,$6) RETURNING id`, [code, 'Window Test ' + code, kind, wd, bkkOf(startMs).slice(11, 16), online])).rows[0].id;
+        slots[code] = { id, startMs, closeMs: Math.min(startMs + (kind === 'mysore' ? 60 : 30) * MIN, Date.parse(`${todayB}T00:00:00+07:00`) + 1440 * MIN) };
+        return id;
+      };
+      await mk('test_win_led29', 'led_primary', ago(29, 'up'));
+      await mk('test_win_led31', 'led_primary', ago(31, 'down'));
+      await mk('test_win_my59', 'mysore', ago(59, 'up'));
+      await mk('test_win_my61', 'mysore', ago(61, 'down'));
+      await mk('test_win_on29', 'led_primary', ago(29, 'up'), true);
+      await mk('test_win_on31', 'led_primary', ago(31, 'down'), true);
+      await mk('test_win_null29', null, ago(29, 'up'));
+      await mk('test_win_null31', null, ago(31, 'down'));
+      await mk('test_win_other31', 'workshop', ago(31, 'down'));
+      await mk('test_win_led20', 'led_primary', ago(20, 'up'));
+      const addDay = (d, k) => new Date(Date.parse(d + 'T12:00:00Z') + k * 86400000).toISOString().slice(0, 10);
+      const ydaySlot = (await pool.query(`INSERT INTO bkk_class_slots (code,title,kind,weekday,start_time,duration_min,capacity)
+        VALUES ('test_win_yday','Window Test yday','led_primary',$1,'00:05',30,10) RETURNING id`, [(wd + 6) % 7])).rows[0].id;
+      let n = 0;
+      const holder = async () => (await post('/api/bkk/admin/passes',
+        { name: `Ana Window${++n}`, email: `ana.window${n}@example.com`, productCode: 'pack8' }, ADMIN)).body.member.code;
+      const book = async (code, slot, h = {}) => post('/api/bkk/bookings', { memberCode: code, slotId: slots[slot].id, date: todayB }, h);
+      const left = async code => (await J('/api/bkk/me/' + code)).body.passes[0].creditsLeft;
+      const CLOSED = 'booking for this class has closed';
+      const tries = {};
+      for (const k of ['led29', 'led31', 'my59', 'my61', 'on29', 'on31', 'null29', 'null31', 'other31']) {
+        const code = await holder();
+        tries[k] = { code, r: await book(code, 'test_win_' + k) };
+        tries[k].left = await left(code);
+      }
+      const yes = k => tries[k].r.status === 200 && tries[k].r.body.booking && tries[k].left === 7;
+      const no = k => tries[k].r.status === 409 && tries[k].r.body.error === CLOSED && tries[k].left === 8;
+      const show = (...ks) => JSON.stringify(ks.map(k => [k, tries[k].r.status, tries[k].r.body.error || 'ok', tries[k].left]));
+      ok('a led class 29 minutes after its start still books; 31 minutes after, "booking for this class has closed", no credit used',
+         yes('led29') && no('led31'), show('led29', 'led31'));
+      ok('Mysore: 59 minutes after its start still books; 61 minutes after it is closed', yes('my59') && no('my61'), show('my59', 'my61'));
+      ok('an online led class follows the led rule (30 minutes)', yes('on29') && no('on31'), show('on29', 'on31'));
+      ok('a class with no kind, or another kind, follows the 30-minute rule', yes('null29') && no('null31') && no('other31'),
+         show('null29', 'null31', 'other31'));
+
+      const drop = (slot, who) => post('/api/bkk/orders', { productCode: 'dropin', name: `Ana Drop${who}`,
+        email: `ana.drop${who}@example.com`, slotId: slots[slot].id, date: todayB });
+      const d20 = await drop('test_win_led20', 'a'), d31 = await drop('test_win_led31', 'b');
+      const ordersOf = async email => (await pool.query(`SELECT o.slot_id, to_char(o.class_date,'YYYY-MM-DD') AS d FROM bkk_orders o
+        JOIN bkk_members m ON m.id=o.member_id WHERE m.email=$1`, [email])).rows;
+      const o20 = await ordersOf('ana.dropa@example.com'), o31 = await ordersOf('ana.dropb@example.com');
+      ok('a drop-in order for a led class 20 minutes after its start is created, for that class',
+         d20.status === 200 && o20.length === 1 && o20[0].slot_id === slots.test_win_led20.id && o20[0].d === todayB, JSON.stringify([d20.body, o20]).slice(0, 300));
+      ok('...31 minutes after, it is refused ("booking for this class has closed"), and no order is made',
+         d31.status === 409 && d31.body.error === CLOSED && o31.length === 0, JSON.stringify([d31.body, o31]));
+
+      // Staff are unchanged: they may book, or add someone at the door, for the whole length of the class.
+      const staffCode = await holder();
+      const sb = await book(staffCode, 'test_win_led31', ADMIN);
+      const wk = await post('/api/bkk/admin/walkin', { slotId: slots.test_win_my61.id, date: todayB, name: 'Ana Walkin', cover: 'rezerv' }, ADMIN);
+      ok('staff still book a led class 31 minutes in, and the door still adds a walk-in to Mysore 61 minutes in',
+         sb.status === 200 && sb.body.booking && sb.body.booking.source === 'staff' && wk.status === 200 && wk.body.success,
+         JSON.stringify([sb.body, wk.body]).slice(0, 300));
+      const mat = await post(`/api/bkk/bookings/${tries.led29.r.body.booking.id}/mat`, { memberCode: tries.led29.code, needMat: true });
+      ok('a student still cannot change the mat once the class has begun', mat.status === 409 && mat.body.error === 'that class has already started',
+         JSON.stringify(mat.body));
+      const me29 = (await J('/api/bkk/me/' + tries.led29.code)).body;
+      ok("/me: a seat in today's class that has begun is in startedToday (for the timetable), not in the upcoming bookings",
+         me29.bookings.length === 0 && me29.startedToday.length === 1 && me29.startedToday[0].slot_id === slots.test_win_led29.id
+           && me29.startedToday[0].classDate === todayB && me29.startedToday[0].id === tries.led29.r.body.booking.id,
+         JSON.stringify({ bookings: me29.bookings, startedToday: me29.startedToday }));
+
+      // The timetable keeps today's classes after they start, with when booking closes.
+      const pub = (await J('/api/bkk/schedule?days=7')).body.classes, staffList = (await J('/api/bkk/schedule?days=7', { headers: ADMIN })).body.classes;
+      const at = (list, code) => list.find(c => c.slotId === slots[code].id && c.date === todayB);
+      const right = list => Object.entries(slots).every(([code, x]) => {
+        const c = at(list, code);
+        return c && c.started === true && c.bookUntil === isoOf(x.closeMs) && (c.closed === true) === (Date.now() >= x.closeMs);
+      });
+      ok("today's started classes stay on the timetable, each with its bookUntil, and closed once it has passed",
+         right(pub) && right(staffList) && at(pub, 'test_win_my59').bookUntil === isoOf(slots.test_win_my59.startMs + 60 * MIN)
+           && !('closed' in at(pub, 'test_win_my59')) && at(pub, 'test_win_my61').closed === true
+           && at(pub, 'test_win_on29').closed === undefined && at(pub, 'test_win_null31').closed === true,
+         JSON.stringify(Object.keys(slots).map(k => at(pub, k))).slice(0, 600));
+      const later = pub.filter(c => c.date > todayB || Date.parse(c.startAt) > Date.now());
+      ok('...a class still to come is neither started nor closed, and says when its booking will close',
+         later.length > 0 && later.every(c => !('started' in c) && !('closed' in c) && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:00\+07:00$/.test(c.bookUntil)
+           && Date.parse(c.bookUntil) === Math.min(Date.parse(c.startAt) + (c.kind === 'mysore' ? 60 : 30) * MIN,
+             Date.parse(`${c.date}T00:00:00+07:00`) + 1440 * MIN)), JSON.stringify(later.slice(0, 2)));
+      ok("...no class from an earlier day: yesterday's weekday shows up only 6 days on, today's only today",
+         pub.every(c => c.date >= todayB) && pub.filter(c => c.slotId === ydaySlot).map(c => c.date).join()
+             === (moonDaysBetween(addDay(todayB, 6), addDay(todayB, 6)).size ? '' : addDay(todayB, 6))
+           && pub.filter(c => c.slotId === slots.test_win_led29.id).map(c => c.date).join() === todayB,
+         JSON.stringify(pub.filter(c => c.date < todayB || c.slotId === ydaySlot).slice(0, 2)));
+      ok('...and the public answer still has no capacity or booked count, seatsLeft at most 4',
+         pub.every(c => !('capacity' in c) && !('booked' in c) && c.seatsLeft <= 4)
+           && 'capacity' in at(staffList, 'test_win_led29') && at(staffList, 'test_win_led29').booked === 1, JSON.stringify(at(pub, 'test_win_led29')));
+      await pool.query(`UPDATE bkk_class_slots SET active=false WHERE code LIKE 'test_win_%'`);
+    }
+  }
+
+  console.log('\n-- the booking window to the millisecond, on a class clock the test sets --');
+  {
+    // A second server on its own class clock (opts.clock), so this runs at any hour: the exact
+    // edges, and a late class whose window would run past Bangkok midnight. A day a few days on.
+    let cc = 0;
+    const appC = express();
+    appC.use(express.json());
+    await mountBkk(appC, { pgPool: pool, now, clock: () => cc });
+    const srvC = appC.listen(0);
+    const BC = `http://127.0.0.1:${srvC.address().port}`;
+    const JC = async (path, o) => { const r = await fetch(BC + path, o); return { status: r.status, body: await r.json().catch(() => ({})) }; };
+    const postC = (p, body, headers = {}) => JC(p, { method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(body) });
+    const plus = (d, k) => new Date(Date.parse(d + 'T12:00:00Z') + k * 86400000).toISOString().slice(0, 10);
+    let D = plus(new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10), 3);
+    while (moonDaysBetween(D, plus(D, 1)).size) D = plus(D, 1);
+    const D1 = plus(D, 1), at = (d, hms) => Date.parse(`${d}T${hms}+07:00`);
+    const ids = {};
+    for (const [k, kind, hhmm] of [['led', 'led_primary', '12:00'], ['my', 'mysore', '12:00'], ['led2330', 'led_primary', '23:30'], ['my2330', 'mysore', '23:30']])
+      ids[k] = (await pool.query(`INSERT INTO bkk_class_slots (code,title,kind,weekday,start_time,duration_min,capacity)
+        VALUES ($1,$2,$3,$4,$5,90,20) RETURNING id`, ['test_edge_' + k, 'Edge Test ' + k, kind, new Date(D + 'T12:00:00Z').getUTCDay(), hhmm])).rows[0].id;
+    let n = 0;
+    const holder = async () => (await post('/api/bkk/admin/passes',
+      { name: `Ana Edge${++n}`, email: `ana.edge${n}@example.com`, productCode: 'pack8' }, ADMIN)).body.member.code;
+    const CLOSED = 'booking for this class has closed';
+    const bookAt = async (ms, k, h = {}) => {
+      const code = await holder();
+      cc = ms;
+      const r = await postC('/api/bkk/bookings', { memberCode: code, slotId: ids[k], date: D }, h);
+      return r.status === 200 && r.body.booking ? 'ok' : r.body.error;
+    };
+    const schedAt = async ms => { cc = ms; return (await JC('/api/bkk/schedule?days=2')).body; };
+    const row = (s, k) => (s.classes || []).find(c => c.slotId === ids[k] && c.date === D) || null;
+
+    const led = [await bookAt(at(D, '12:29:59.999'), 'led'), await bookAt(at(D, '12:30:00.000'), 'led')];
+    const my = [await bookAt(at(D, '12:59:59.999'), 'my'), await bookAt(at(D, '13:00:00.000'), 'my')];
+    ok('a led class books until 29:59.999 after its start and is closed at 30:00.000; Mysore at 59:59.999 and 60:00.000',
+       led.join() === `ok,${CLOSED}` && my.join() === `ok,${CLOSED}`, JSON.stringify({ led, my }));
+    const dropAt = async (ms, who) => {
+      cc = ms;
+      const r = await postC('/api/bkk/orders', { productCode: 'dropin', name: 'Ana EdgeDrop', email: `ana.edgedrop${who}@example.com`, slotId: ids.led, date: D });
+      const rows = (await pool.query(`SELECT o.id FROM bkk_orders o JOIN bkk_members m ON m.id=o.member_id WHERE m.email=$1`, [`ana.edgedrop${who}@example.com`])).rows;
+      return [r.status, r.body.error || 'ok', rows.length];
+    };
+    const dOk = await dropAt(at(D, '12:29:59.999'), 1), dNo = await dropAt(at(D, '12:30:00.000'), 2);
+    ok('...a drop-in order the same: made at 29:59.999, refused at 30:00.000 with no order row',
+       dOk.join() === '200,ok,1' && dNo.join() === `409,${CLOSED},0`, JSON.stringify([dOk, dNo]));
+    const staffLate = await bookAt(at(D, '13:29:00'), 'led', ADMIN);
+    ok('...staff still book the led class 89 minutes in', staffLate === 'ok', staffLate);
+
+    const s1 = await schedAt(at(D, '12:29:59.999')), s2 = await schedAt(at(D, '12:30:00.000'));
+    ok('the timetable says closed from the same millisecond the server refuses, and sends its own clock as now',
+       row(s1, 'led').started === true && !('closed' in row(s1, 'led')) && row(s2, 'led').closed === true && !('closed' in row(s2, 'my'))
+         && row(s2, 'led').bookUntil === `${D}T12:30:00+07:00` && row(s2, 'my').bookUntil === `${D}T13:00:00+07:00`
+         && s1.now === at(D, '12:29:59.999') && s2.now === at(D, '12:30:00.000'), JSON.stringify([row(s1, 'led'), row(s2, 'led'), s2.now]));
+
+    // A late Mysore would close at 00:30, but the timetable stops listing it at 00:00: it closes then.
+    const late = await schedAt(at(D, '23:59:59.999'));
+    const night = [await bookAt(at(D, '23:59:59.999'), 'my2330'), await bookAt(at(D1, '00:00:00.000'), 'my2330'),
+      await bookAt(at(D1, '00:10:00'), 'my2330'), await bookAt(at(D1, '00:00:00.000'), 'led2330')];
+    const next = await schedAt(at(D1, '00:00:00.000'));
+    ok('a 23:30 Mysore books until 23:59:59.999 and closes at Bangkok midnight, when it leaves the timetable (not at 00:30)',
+       night.join() === `ok,${CLOSED},${CLOSED},${CLOSED}` && row(late, 'my2330').bookUntil === `${D1}T00:00:00+07:00`
+         && !('closed' in row(late, 'my2330')) && row(late, 'led2330').bookUntil === `${D1}T00:00:00+07:00`
+         && !row(next, 'my2330') && !row(next, 'led2330') && (next.classes || []).every(c => c.date >= D1),
+       JSON.stringify({ night, late: row(late, 'my2330'), next: row(next, 'my2330') }));
+    await pool.query(`UPDATE bkk_class_slots SET active=false WHERE code LIKE 'test_edge_%'`);
+    srvC.close();
   }
 
   // ── a Rezerv class they came to, taken from their aybkk.net pass (16 Nov 2026) ──

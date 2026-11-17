@@ -633,6 +633,7 @@
   .cal .ct .tm{display:block;width:100%;background:none;border:0;margin:2px 0;padding:6px 0;font:inherit;color:inherit;letter-spacing:inherit;
     line-height:inherit;text-align:left;cursor:pointer}
   .cal .ct .tm.mine{color:var(--promo-hi)}
+  .cal .ct .tm.shut{opacity:.6}
   .cal .ct .tm .ol{display:block;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
   .cal .bk{display:inline-block;width:6px;height:6px;margin-left:4px;border-radius:50%;background:var(--promo-hi);vertical-align:2px}
   .cal .legend .lmine{color:var(--promo-hi);font-weight:700}
@@ -669,7 +670,7 @@
   .cal .wb .st.ok{color:var(--promo-hi)}
   .cal .wb .st.full,.cal .wb .st.last{color:#FF8DC0}
   .cal .wb.mine{background:rgba(231,195,141,.16);box-shadow:inset 0 0 0 1.5px var(--promo-hi)}
-  .cal .wb.isfull{opacity:.6}
+  .cal .wb.isfull,.cal .wb.isshut{opacity:.6}
   @media (min-width:560px){ .cal .head b.wkl{font-size:30px} .cal .head b.wkl small{font-size:18px} }
   @media (min-width:600px){ .cal .wkgrid{grid-template-columns:repeat(7,minmax(74px,1fr))} }
   .calsw{display:flex;gap:0;margin:0 0 14px}
@@ -742,7 +743,8 @@
   .cls .seats{font-size:15px;font-weight:600;color:var(--pink-deep);margin-top:3px}
   /* pink is for scarcity; an empty class is just information */
   .cls .seats.quiet{color:var(--soft);font-weight:400}
-  .cls.full{opacity:.45}
+  .cls.full,.cls.shut{opacity:.45}
+  .cls .closes,.clsv .closes{font-size:14px;font-weight:600;color:var(--plum);margin-top:2px}
   .cls.came{padding:11px 0}
   .cls.came .t{font-size:17px;color:var(--soft)}
   .pkg.habit{display:flex;align-items:center;gap:16px;background:var(--blush);border-color:var(--blush-line)}
@@ -1909,6 +1911,17 @@
   Object.assign(STR.zh, { needMat: '需要租瑜伽垫（฿200，在道场付款）' });
   Object.assign(STR.ru, { needMat: 'Нужен коврик (฿200, оплата в шале)' });
 
+  // Booking closes a while after the class starts, at the class's bookUntil from the server
+  // (Boonchu, 16 Nov 2026). closesAt takes the Bangkok time.
+  Object.assign(STR.en, { bookClosed: 'Booking closed', closesAt: t => `Booking closes ${t}`,
+    bookClosedNow: 'Booking for this class has closed.' });
+  Object.assign(STR.th, { bookClosed: 'ปิดรับจองแล้ว', closesAt: t => `ปิดรับจองเวลา ${t}`,
+    bookClosedNow: 'คลาสนี้ปิดรับจองแล้ว' });
+  Object.assign(STR.zh, { bookClosed: '预约已截止', closesAt: t => `${t} 截止预约`,
+    bookClosedNow: '这节课的预约已截止。' });
+  Object.assign(STR.ru, { bookClosed: 'Запись закрыта', closesAt: t => `Запись до ${t}`,
+    bookClosedNow: 'Запись на это занятие уже закрыта.' });
+
   // The Packages tab reads like the price poster (Boonchu, 12 Nov 2026). Its other lines are the price list's
   // own keys (flexH, mo12, n12, pick, polH, pol1a ...). ppDrop and ppPack are the poster's names for the two
   // packs, where the price list words them differently. ppNoMin is the gold banner, one phrase per line.
@@ -2196,6 +2209,12 @@
     return fetch(url, { signal: c.signal }).finally(() => clearTimeout(timer));
   };
   const getJSON = url => fetchT(url).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  // Class times are read on the server's clock (the schedule's now): a phone set a few minutes
+  // fast must not gray a class the server still books, nor a slow one keep Book live.
+  let SKEW = 0;
+  const clock = () => Date.now() + SKEW;
+  const noteClock = s => { if (s && Number.isFinite(s.now)) SKEW = s.now - Date.now(); return s; };
+  const getSchedule = () => getJSON(SCHEDULE_URL).then(noteClock);
   const SKEL = $('#view').innerHTML;
   async function load() {
     // The posters are a bonus: the timetable never waits for them or fails with them.
@@ -2205,13 +2224,14 @@
     });
     try {
       const [s, p] = await Promise.all([
-        getJSON(SCHEDULE_URL),
+        getSchedule(),
         getJSON('/api/bkk/products'),
         loadMine(),
       ]);
       CLASSES = s.classes || [];
       MOON = s.moonDays || {};
       takeSchedule(s);
+      LOADED_AT = LOAD_TRY = Date.now();
       PRODUCTS = p.products || [];
       SURCHARGE = p.surchargePct || 0;
       VAT = p.vatPct || 0;
@@ -2228,11 +2248,81 @@
     }
     toHash();
   }
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) loadTheme(); });
+  // The timetable keeps itself current without a reload (16 Nov 2026: a tab opened at dawn
+  // still offered the 06:30 class at 21:00). Every 30 seconds a class that has started or
+  // closed since the last draw is drawn again, and the schedule is fetched again every 15
+  // minutes on screen, or on coming back to the tab after 5. A redraw never happens under a
+  // student's fingers (a form, a box with focus) and keeps their scroll and open class.
+  let LOADED_AT = 0, LOAD_TRY = 0, REFETCH = null, DRAWN = '', DIRTY = false;
+  const phases = () => CLASSES.map(c => isClosed(c) ? 2 : isStarted(c) ? 1 : 0).join('');
+  const focusSel = el => {
+    const d = el.dataset || {}, k = ['act', 'cls', 'day', 'id', 'slot', 'date', 'v', 'dir', 'mat', 'matbk'].filter(x => d[x] != null);
+    return k.length ? el.tagName.toLowerCase() + k.map(x => `[data-${x}="${CSS.escape(d[x])}"]`).join('') : '';
+  };
+  function quietRedraw() {
+    if (current !== 'schedule' || !LOADED || document.hidden) return;
+    const a = document.activeElement;
+    // A ticked box keeps its tick across a redraw (MAT_WANT, need_mat): only typing, or a mat
+    // change still on its way to the server, holds it back.
+    if ($('#dlg').open || (a && a.matches && a.matches('input:not([type=checkbox]), select, textarea'))
+      || $('#view input[data-matbk]:disabled')) return;
+    const y = scrollY, box = $('#view .wkbox'), x = box ? box.scrollLeft : null;
+    const sel = a && a !== document.body && $('#view').contains(a) ? focusSel(a) : '';
+    renderSchedule();
+    if (scrollY !== y) jump(y);
+    const nb = $('#view .wkbox');
+    if (nb && x !== null) nb.scrollLeft = x;
+    const el = sel && $('#view').querySelector(sel);
+    if (el) el.focus({ preventScroll: true });
+  }
+  function refetch() {
+    if (REFETCH) return REFETCH;
+    LOAD_TRY = Date.now();
+    REFETCH = Promise.all([getSchedule(), loadMine()]).then(([s]) => {
+      if (!Array.isArray(s.classes)) return;
+      CLASSES = s.classes; MOON = s.moonDays || {}; takeSchedule(s); LOADED_AT = Date.now(); DIRTY = true; rollDay();
+    }).catch(() => {}).finally(() => { REFETCH = null; tick(); });
+    return REFETCH;
+  }
+  // A tab still open after Bangkok midnight moves to the new day (the old one has left the list).
+  const rollDay = () => { if (selDate && selDate < bkkToday()) { selDate = bkkToday(); DIRTY = true; } };
+  // Besides the 30 second check, one timer for the next start or bookUntil, so a class grays on the minute.
+  let EDGE = null;
+  function armEdge() {
+    clearTimeout(EDGE);
+    const now = clock();
+    let next = Infinity;
+    for (const c of CLASSES) for (const iso of [c.startAt, c.bookUntil]) {
+      const ms = iso ? Date.parse(iso) : NaN;
+      if (ms > now && ms < next) next = ms;
+    }
+    if (next < Infinity) EDGE = setTimeout(tick, Math.min(next - now + 50, 864e5));
+  }
+  function tick() {
+    if (!LOADED || document.hidden) return;
+    // The drop-in form: a class whose booking closed can no longer be picked.
+    const bc = $('#dlg').open && $('#bc');
+    if (bc) for (const o of bc.options) {
+      const c = o.value && CLASSES.find(x => clsKey(x) === o.value);
+      if (c && isClosed(c)) o.disabled = true;
+    }
+    rollDay();
+    if (DIRTY || phases() !== DRAWN) quietRedraw();
+    armEdge();
+    if (Date.now() - LOAD_TRY >= 15 * 60e3) refetch();
+  }
+  setInterval(tick, 30e3);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) return;
+    loadTheme();
+    // What the clock already says is drawn at once; the fresh seats follow when the refetch lands.
+    tick();
+    if (LOADED && Date.now() - LOADED_AT > 5 * 60e3) refetch();
+  });
 
   // The calendar shows Bangkok's "today" regardless of the visitor's timezone —
   // a student in China is 1h ahead and must not see tomorrow highlighted.
-  const bkkToday = () => new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10);
+  const bkkToday = () => new Date(clock() + 7 * 3600e3).toISOString().slice(0, 10);
   let selDate = null, calMonth = null;         // calMonth = 'YYYY-MM'
   // calWeek = the Sunday the week view starts on. OPEN = the class the student
   // is inside ('slotId|date'); OPEN_Y = where they were on the calendar.
@@ -2267,6 +2357,13 @@
   // "Last 3 spots" and under, else "Spots available". Staff pages keep their numbers.
   const seatsText = c => c.seatsLeft < 1 ? t('full') : c.seatsLeft <= 3 ? t('lastSpots', c.seatsLeft) : t('spotsFree');
   const seatsCls = c => c.seatsLeft > 3 ? 'quiet' : c.seatsLeft > 0 ? 'last' : 'full';
+  // Booking closes at bookUntil, a while after the start (the server's rule), read on the server's
+  // clock; its own closed counts too. Instants, not the phone's zone.
+  const isClosed = c => !!c.closed || (!!c.bookUntil && clock() >= Date.parse(c.bookUntil));
+  const isStarted = c => !!c.started || clock() >= Date.parse(c.startAt);
+  const closesLine = c => !isClosed(c) && isStarted(c) && c.bookUntil
+    ? `<div class="closes">${esc(t('closesAt', fmtTime(c.bookUntil)))}</div>` : '';
+  const CLOSED_RE = /booking for this class has closed/;
 
   // What this student booked, keyed like the schedule (slotId|Bangkok date).
   // Only a hint for the timetable: a failed or 404 /me never signs anyone out
@@ -2274,7 +2371,9 @@
   let MINE = { code: '', ok: false, map: new Map() }, MINE_LOAD = null;
   function setMine(code, d) {
     const map = new Map();
-    for (const b of (d && d.bookings) || []) map.set(b.slot_id + '|' + (b.classDate || bkkDate(b.start_at)), b);
+    // startedToday: today's seats in a class that has begun, still on the timetable.
+    for (const b of [...((d && d.bookings) || []), ...((d && d.startedToday) || [])])
+      map.set(b.slot_id + '|' + (b.classDate || bkkDate(b.start_at)), b);
     MINE = { code, ok: !!(d && d.member), map };
     // A failed /me keeps the initials it had: only an answer changes who this is.
     if (d && d.member) ACCT_WHO = { code, name: d.member.name || '', gone: false,
@@ -2310,8 +2409,8 @@
   // After a booking or a cancel: new seat counts and booked marks, same screen.
   async function refreshSchedule() {
     try {
-      const [s] = await Promise.all([fetch(SCHEDULE_URL).then(r => r.json()), loadMine()]);
-      if (Array.isArray(s.classes)) { CLASSES = s.classes; MOON = s.moonDays || {}; takeSchedule(s); }
+      const [s] = await Promise.all([fetch(SCHEDULE_URL).then(r => r.json()).then(noteClock), loadMine()]);
+      if (Array.isArray(s.classes)) { CLASSES = s.classes; MOON = s.moonDays || {}; takeSchedule(s); LOADED_AT = Date.now(); }
     } catch (_) {}
     if (current === 'schedule') renderSchedule();
   }
@@ -2336,12 +2435,12 @@
       // when this student booked it: the day's dot always has a marked time.
       if (c.isOnline && !mine) continue;
       const g = byKind[c.kind] = byKind[c.kind] || { times: [], who: [] };
-      g.times.push({ x: fmtTime(c.startAt).replace(/^0/, ''), key, title: c.title, mine, online: c.isOnline });
+      g.times.push({ x: fmtTime(c.startAt).replace(/^0/, ''), key, title: c.title, mine, online: c.isOnline, shut: !!key && !mine && isClosed(c) });
       if (!c.isOnline) for (const w of teacherList(c)) if (!g.who.includes(w)) g.who.push(w);
     }
     const tm = x => x.key
-      ? `<button type="button" class="tm${x.mine ? ' mine' : ''}" data-cls="${esc(x.key)}" aria-label="${
-          esc(x.x + ' ' + clsName(x.title) + (x.online ? ', ' + t('online') : '') + (x.mine ? ', ' + t('bookedByYou') : ''))}">${
+      ? `<button type="button" class="tm${x.mine ? ' mine' : x.shut ? ' shut' : ''}" data-cls="${esc(x.key)}" aria-label="${
+          esc(x.x + ' ' + clsName(x.title) + (x.online ? ', ' + t('online') : '') + (x.mine ? ', ' + t('bookedByYou') : x.shut ? ', ' + t('bookClosed') : ''))}">${
           x.mine ? '<span aria-hidden="true">✓</span>' : ''}${esc(x.x)}${x.online ? `<span class="ol">${esc(t('online'))}</span>` : ''}</button>`
       : `<i>${esc(x.x)}</i>`;
     const sat = new Date(iso + 'T12:00:00Z').getUTCDay() === 6;
@@ -2419,13 +2518,13 @@
     }
   }
   function weekBlock(c, my) {
-    const booked = my.map.has(clsKey(c)), full = c.seatsLeft < 1;
+    const booked = my.map.has(clsKey(c)), full = c.seatsLeft < 1, shut = !booked && isClosed(c);
     const who = teacherList(c);
-    return `<button type="button" class="wb ${esc(c.kind)}${booked ? ' mine' : full ? ' isfull' : ''}" data-cls="${esc(clsKey(c))}">
+    return `<button type="button" class="wb ${esc(c.kind)}${booked ? ' mine' : shut ? ' isshut' : full ? ' isfull' : ''}" data-cls="${esc(clsKey(c))}">
         <span class="wt">${esc(fmtTime(c.startAt))}${c.isOnline ? `<span class="on">${esc(t('online'))}</span>` : ''}</span>
         <em class="cn">${esc((CAL_NAME[c.kind] || [c.title, c.title])[1])}</em>
         ${who.length ? `<span class="wtt">${who.map(teachTag).join('')}</span>` : ''}
-        <span class="st ${booked ? 'ok' : seatsCls(c)}">${esc(booked ? '✓ ' + t('booked') : seatsText(c))}</span>
+        <span class="st ${booked ? 'ok' : shut ? '' : seatsCls(c)}">${esc(booked ? '✓ ' + t('booked') : shut ? t('bookClosed') : seatsText(c))}</span>
       </button>`;
   }
   function weekCal(has, today, my) {
@@ -2462,19 +2561,22 @@
     let html = `<div class="day" id="dayList">${esc(dayLabel)}</div>`;
     if (!dayClasses.length) html += `<p class="note">${esc(t('noDay'))}</p>`;
     for (const c of dayClasses) {
-      const key = clsKey(c), b = my.map.get(key), full = c.seatsLeft < 1;
-      html += `<div class="cls ${full && !b ? 'full' : ''} ${b ? 'mine' : ''}" data-cls="${esc(key)}">
+      // A seat already booked keeps its look; Cancel and the mat go at the start (a started seat
+      // may already be a visit checked in at the door). A class nobody here booked grays out at bookUntil.
+      const key = clsKey(c), b = my.map.get(key), full = c.seatsLeft < 1, shut = isClosed(c), begun = isStarted(c);
+      html += `<div class="cls ${full && !b && !shut ? 'full' : ''} ${shut && !b ? 'shut' : ''} ${b ? 'mine' : ''}" data-cls="${esc(key)}">
         <div class="t">${fmtTime(c.startAt)}</div>
         <div class="b">
           <div class="n"><button type="button" class="open" data-cls="${esc(key)}">${esc(clsName(c.title))}</button>${
             c.isOnline ? `<span class="pill">${esc(t('online'))}</span>` : ''}${
             b ? `<span class="pill ok">✓ ${esc(t('booked'))}</span>` : ''}</div>
           <div class="m">${esc(t('mins', c.durationMin))}${c.teachers ? ' · ' + esc(c.teachers) : ''}</div>
-          ${b ? '' : `<div class="seats ${seatsCls(c)}">${esc(seatsText(c))}</div>`}
+          ${b ? '' : shut ? `<div class="seats quiet">${esc(t('bookClosed'))}</div>`
+            : `<div class="seats ${seatsCls(c)}">${esc(seatsText(c))}</div>${full ? '' : closesLine(c)}`}
         </div>
-        ${b ? `<button type="button" class="btn ghost" data-act="cancel" data-id="${Number(b.id)}">${esc(t('cancelBk'))}</button>`
-          : `<button type="button" class="btn" ${full ? 'disabled' : ''} data-act="book" data-slot="${Number(c.slotId)}" data-date="${esc(c.date)}">${esc(t('book'))}</button>`}
-        ${b || !full ? matRow(c, b) : ''}
+        ${b ? (begun || !b.id ? '' : `<button type="button" class="btn ghost" data-act="cancel" data-id="${Number(b.id)}">${esc(t('cancelBk'))}</button>`)
+          : shut ? '' : `<button type="button" class="btn" ${full ? 'disabled' : ''} data-act="book" data-slot="${Number(c.slotId)}" data-date="${esc(c.date)}">${esc(t('book'))}</button>`}
+        ${b ? (begun ? '' : matRow(c, b)) : full || shut ? '' : matRow(c, b)}
       </div>`;
     }
     return html;
@@ -2483,13 +2585,14 @@
   // Inside a class: the class itself, then this student's state, big and clear.
   function renderClass() {
     const c = CLASSES.find(x => clsKey(x) === OPEN);
-    if (!c) { OPEN = null; return renderSchedule(); }   // started or closed since
-    const b = mine().map.get(OPEN), full = c.seatsLeft < 1;
+    if (!c) { OPEN = null; return renderSchedule(); }   // cancelled since, or a new day
+    const b = mine().map.get(OPEN), full = c.seatsLeft < 1, shut = isClosed(c), begun = isStarted(c);
     const end = new Date(Date.parse(c.startAt) + (Number(c.durationMin) || 0) * 60e3).toISOString();
     const state = b ? `<div class="mystate yes"><div class="big">✓ ${esc(t('youBooked'))}</div>
-        ${matBox(c, b)}
-        <button type="button" class="btn ghost" data-act="cancel" data-id="${Number(b.id)}">${esc(t('cancelBk'))}</button>
-        <p class="note">${esc(t('cancelRule', CANCEL_HOURS))}</p></div>`
+        ${begun ? '' : matBox(c, b)}
+        ${begun || !b.id ? '' : `<button type="button" class="btn ghost" data-act="cancel" data-id="${Number(b.id)}">${esc(t('cancelBk'))}</button>
+        <p class="note">${esc(t('cancelRule', CANCEL_HOURS))}</p>`}</div>`
+      : shut ? `<div class="mystate full"><div class="big">${esc(t('bookClosed'))}</div></div>`
       : full ? `<div class="mystate full"><div class="big">${esc(t('full'))}</div></div>`
       : `<div class="mystate no"><div class="big">${esc(t('notBooked'))}</div>
         ${matBox(c, null)}
@@ -2500,12 +2603,13 @@
         <h3>${esc(clsName(c.title))}${c.isOnline ? `<span class="pill">${esc(t('online'))}</span>` : ''}</h3>
         <div class="when">${esc(t('timeRange', fmtTime(c.startAt), fmtTime(end)))}</div>
         <div class="m">${c.teachers ? esc(t('teacherL')) + ': ' + esc(c.teachers) + ' · ' : ''}${esc(t('mins', c.durationMin))}</div>
-        ${b ? '' : `<div class="seats ${seatsCls(c)}">${esc(seatsText(c))}</div>`}
+        ${b || shut ? '' : `<div class="seats ${seatsCls(c)}">${esc(seatsText(c))}</div>${full ? '' : closesLine(c)}`}
       </div>
       ${state}</div>`;
   }
 
   function renderSchedule() {
+    DRAWN = phases(); DIRTY = false; armEdge();
     if (myCode() && MINE.code !== myCode() && !MINE_LOAD)
       MINE_LOAD = loadMine().then(() => { MINE_LOAD = null; if (current === 'schedule') renderSchedule(); });
     if (OPEN) return renderClass();
@@ -3355,12 +3459,12 @@
     const key = c => c.slotId + '|' + c.date;
     const preKey = pre ? pre.slotId + '|' + pre.date : '';
     // The next two weeks, plus the class they tapped Book on, however far off.
-    const opts = single ? CLASSES.filter(c => c.seatsLeft > 0 && new Date(c.startAt) > Date.now()
+    const opts = single ? CLASSES.filter(c => c.seatsLeft > 0 && !isClosed(c)
       && (c.date <= last || key(c) === preKey)) : [];
     const picker = !single ? '' : opts.length
       ? `<label>${esc(t('dropWhich'))}</label><select id="bc"><option value="">${esc(t('dropPick'))}</option>${
           opts.map(c => `<option value="${esc(key(c))}"${c.isOnline ? ' data-online="1"' : ''} ${key(c) === preKey ? 'selected' : ''}>${
-            esc(clsWhen(c.startAt))} · ${esc(clsName(c.title))}</option>`).join('')}</select>`
+            esc(clsWhen(c.startAt))} · ${esc(clsName(c.title))}${isStarted(c) && c.bookUntil ? ' · ' + esc(t('closesAt', fmtTime(c.bookUntil))) : ''}</option>`).join('')}</select>`
       : `<div class="msg bad">${esc(t('dropNone'))}</div>`;
     $('#dlgIn').innerHTML = `<h3>${esc(pkgName(p))} · ${baht(p.total_thb)}</h3>
       ${intro ? `<p class="note" style="margin:0 0 4px">${esc(intro)}</p>` : ''}
@@ -3384,6 +3488,15 @@
       const name = $('#bn').value.trim(), email = $('#be').value.trim(), phone = $('#bp').value.trim();
       const [slotId, date] = single && $('#bc') ? $('#bc').value.split('|') : [];
       if (single && !date) { $('#bmsg').innerHTML = `<div class="msg bad">${esc(t('dropNeed'))}</div>`; return; }
+      // A class whose booking closed while the form was open is never sent.
+      const picked = single && CLASSES.find(c => key(c) === slotId + '|' + date);
+      const shut = () => {
+        if (picked) { picked.closed = true; DIRTY = true; }
+        const o = $('#bc') && $('#bc').selectedOptions[0];
+        if (o) o.disabled = true;
+        $('#bmsg').innerHTML = `<div class="msg bad">${esc(t('bookClosedNow'))}</div>`;
+      };
+      if (picked && isClosed(picked)) return shut();
       if (!name || !email) { $('#bmsg').innerHTML = '<div class="msg bad">Name and email are required.</div>'; return; }
       $('#bgo').disabled = true;
       try {
@@ -3392,6 +3505,7 @@
           body: JSON.stringify({ productCode: code, name, email, phone, memberCode: myCode(),
             ...(single ? { slotId: Number(slotId), date, needMat: !!($('#bmat') && $('#bmat').checked) && !onlinePick() } : {}) }) });
         const j = await r.json();
+        if (!r.ok && CLOSED_RE.test(j.error || '')) { $('#bgo').disabled = false; return shut(); }
         if (!r.ok) throw new Error(j.error || 'could not create order');
         // An email that already has a profile: its code is not handed to this
         // browser (anyone can type an email). The receipt email signs them in.
@@ -3447,6 +3561,11 @@
   // a double tap from sending twice.
   let BUSY = false;
   window.book = async (slotId, date) => {
+    // Past its time the tap never goes to the server; if the server says so anyway (this
+    // phone's clock is behind), the class grays out here too.
+    const c = CLASSES.find(x => x.slotId === slotId && x.date === date);
+    const shut = () => { if (c) c.closed = true; quietRedraw(); alert(t('bookClosedNow')); };
+    if (c && isClosed(c)) return shut();
     const code = myCode();
     if (!code) {
       if (!offerDropin(slotId, date)) alert(t('needPass'));
@@ -3461,6 +3580,7 @@
       const j = await r.json();
       if (!r.ok) {
         if (/no active pass/.test(j.error || '') && offerDropin(slotId, date)) return;
+        if (CLOSED_RE.test(j.error || '')) { BUSY = false; return shut(); }
         throw new Error(j.error);
       }
       MAT_WANT.delete(slotId + '|' + date);
