@@ -173,6 +173,10 @@
   .flash{border-radius:7px;padding:8px 10px;font-size:14px;margin:10px 0 0;background:#e6f6ec;color:#187a43}
   .flash.warn{background:#fff3d6;color:#6b520e}
   .flash small{display:block;font-size:12px;font-weight:400;overflow-wrap:anywhere}
+  /* Settings: the door tablet (17 Nov 2026). */
+  .doorRow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .doorRow input{flex:1 1 150px;min-width:0}
+  #doorCode{text-transform:uppercase;letter-spacing:.08em;font-weight:600}
   /* Settings: the payment watch (15 Nov 2026). */
   .pw .pwl{display:flex;align-items:center;gap:9px;margin:8px 0;cursor:pointer}
   .pw .pwl input{width:auto;margin:0;flex:none}
@@ -1024,6 +1028,27 @@
     tgtNoChat: 'ยังไม่มีแชทที่จะส่งไป (BOONCHU_CHAT_ID ใน Railway)',
     tgtSent: 'ส่งข้อความทดสอบแล้ว ดูใน Telegram ได้เลย',
     tgtFail: 'Telegram ส่งไม่ถึง ถ้าขึ้นว่า "chat not found" หรือ "blocked": เปิดบอทนี้ใน Telegram กด Start แล้วลองอีกครั้ง',
+  });
+  // Settings: the door tablet (17 Nov 2026).
+  Object.assign(STR.en, {
+    doorTitle: 'Door tablets', doorHelp: 'Open aybkk.net/tablet on the iPad, then type the code it shows.',
+    doorCodePh: 'Code on the tablet', doorNameLbl: 'Name of the tablet', doorPair: 'Pair',
+    doorPaired: n => `Paired: ${n}. The tablet shows the class list in a few seconds.`,
+    doorNone: 'No tablet paired yet.', doorActive: 'In use',
+    doorPairedAt: t => `Paired ${t}`, doorSeen: t => `last seen ${t}`, doorNever: 'not used yet',
+    doorElse: t => `Seen from another internet (${t}). If the tablet has not moved, unpair it and pair it again.`,
+    doorOff: t => `Unpaired ${t}`, doorUnpair: 'Unpair', qDoorUnpair: n => `Unpair ${n}? It goes back to the pairing screen.`,
+    doorNeedCode: 'Type the code the tablet shows.',
+  });
+  Object.assign(STR.th, {
+    doorTitle: 'แท็บเล็ตหน้าประตู', doorHelp: 'เปิด aybkk.net/tablet บน iPad แล้วพิมพ์รหัสที่ขึ้นบนจอ',
+    doorCodePh: 'รหัสบนแท็บเล็ต', doorNameLbl: 'ชื่อแท็บเล็ต', doorPair: 'จับคู่',
+    doorPaired: n => `จับคู่แล้ว: ${n} แท็บเล็ตจะแสดงรายชื่อในไม่กี่วินาที`,
+    doorNone: 'ยังไม่มีแท็บเล็ตที่จับคู่', doorActive: 'ใช้อยู่',
+    doorPairedAt: t => `จับคู่ ${t}`, doorSeen: t => `ใช้ล่าสุด ${t}`, doorNever: 'ยังไม่ได้ใช้',
+    doorElse: t => `ถูกใช้จากอินเทอร์เน็ตอื่น (${t}) ถ้าแท็บเล็ตไม่ได้ย้ายไปไหน ให้ยกเลิกการจับคู่แล้วจับคู่ใหม่`,
+    doorOff: t => `ยกเลิกแล้ว ${t}`, doorUnpair: 'ยกเลิกการจับคู่', qDoorUnpair: n => `ยกเลิกการจับคู่ ${n}? แท็บเล็ตจะกลับไปหน้าจับคู่`,
+    doorNeedCode: 'พิมพ์รหัสที่ขึ้นบนแท็บเล็ต',
   });
   const T =(k, ...a) => { const v = STR[LANG][k] ?? STR.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
   const W = w => STR[LANG].words[w] || w;
@@ -3051,6 +3076,8 @@
       .then(d => d.teachers || []).catch(() => []);
     TEES = await api('/api/bkk/admin/tees').then(r => r.json())
       .then(d => d.tees || []).catch(() => []);
+    DOORS = await api('/api/bkk/admin/door/devices').then(r => r.json())
+      .then(d => d.devices || []).catch(() => []);
     const { counts: letter = [], doors = [] } = await api('/api/bkk/admin/newsletter').then(r => r.json()).catch(() => ({}));
     const PW = await api('/api/bkk/admin/settings').then(r => r.ok ? r.json() : null).catch(() => null);
     if (current !== 'settings' || SUB) return;
@@ -3100,8 +3127,49 @@
         <td><button class="btn gray" onclick="resetTeam(${x.id},'${esc(x.name)}')">${T('resetTeam')}</button>
             <button class="btn ${x.active ? 'red' : ''}" onclick="toggleTeam(${x.id},${!x.active})">${T(x.active ? 'offTeam' : 'onTeam')}</button></td></tr>`).join('')}</table>
       <p><button class="btn pink" onclick="addTeam()">${T('addTeam')}</button></p>
+      </div>
+      <div class="box" id="doorBox"><b>${T('doorTitle')}</b>
+      <p class="muted">${T('doorHelp')}</p>
+      <p class="doorRow"><input id="doorCode" placeholder="${esc(T('doorCodePh'))}" aria-label="${esc(T('doorCodePh'))}" autocomplete="off"
+          autocapitalize="characters" spellcheck="false" maxlength="12">
+        <input id="doorName" value="Front door" aria-label="${esc(T('doorNameLbl'))}" maxlength="40">
+        <button class="btn pink" id="doorGo" onclick="pairDoor()">${T('doorPair')}</button></p>
+      <p id="doorMsg" role="status"></p>
+      <div id="doorList">${doorList(DOORS)}</div>
       </div>`;
   }
+  // The door tablet: pair one by its code, see when it was used, unpair it.
+  let DOORS = [];
+  const doorList = list => !list.length ? `<p class="muted">${T('doorNone')}</p>`
+    : `<table>${list.map(d => `<tr><td><b style="font-size:15px">${esc(d.name)}</b>${d.active ? ` <span class="pill paid">${T('doorActive')}</span>` : ''}<br>
+        <span class="muted">${T('doorPairedAt', pwWhen(d.pairedAt))} · ${d.lastSeenAt ? T('doorSeen', pwWhen(d.lastSeenAt)) : T('doorNever')}</span>
+        ${d.active && d.otherInternet ? `<p class="flash warn" style="margin:6px 0 0">${esc(T('doorElse', pwWhen(d.otherSeenAt)))}</p>` : ''}
+        ${d.active ? '' : `<br><span class="muted">${T('doorOff', pwWhen(d.revokedAt))}</span>`}</td>
+        <td>${d.active ? `<button class="btn red" onclick="unpairDoor(${Number(d.id)})">${T('doorUnpair')}</button>` : ''}</td></tr>`).join('')}</table>`;
+  const loadDoors = async () => {
+    DOORS = await api('/api/bkk/admin/door/devices').then(r => r.json()).then(d => d.devices || []).catch(() => DOORS);
+    if (current === 'settings' && !SUB && $('#doorList')) $('#doorList').innerHTML = doorList(DOORS);
+  };
+  window.pairDoor = async () => {
+    const code = $('#doorCode').value.trim();
+    if (!code) { $('#doorMsg').className = 'flash warn'; $('#doorMsg').textContent = T('doorNeedCode'); return; }
+    $('#doorGo').disabled = true;
+    const r = await api('/api/bkk/admin/door/pair', { method: 'POST',
+      body: JSON.stringify({ code, name: $('#doorName').value.trim() || 'Front door' }) }).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (current !== 'settings' || SUB || !$('#doorMsg')) return;
+    $('#doorGo').disabled = false;
+    if (!r || !r.ok) { $('#doorMsg').className = 'flash warn'; $('#doorMsg').textContent = j.error || T('failed'); return; }
+    $('#doorCode').value = '';
+    $('#doorMsg').className = 'flash';
+    $('#doorMsg').textContent = T('doorPaired', j.name);
+    for (const ms of [4000, 10000, 20000]) setTimeout(loadDoors, ms);
+  };
+  window.unpairDoor = async id => {
+    const d = DOORS.find(x => x.id === id);
+    if (!d || !confirm(T('qDoorUnpair', d.name))) return;
+    if (await shout(await api(`/api/bkk/admin/door/devices/${id}/revoke`, { method: 'POST' }))) loadDoors();
+  };
   // The payment watch: its switches, the money line's time, whether Telegram gets
   // through, and a check of stuck online payments on demand (15 Nov 2026).
   const PW_ON = { paySweep: 'pwSweep', pingEachSale: 'pwEach', dailyMoney: 'pwDaily' };

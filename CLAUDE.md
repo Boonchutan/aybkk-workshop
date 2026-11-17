@@ -101,6 +101,15 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
   Own `bkk_*` Postgres tables — Rezerv's tables are read-only here.
   Fonts are self-hosted in `public/fonts/` (Long Cang for display, IBM Plex Sans
   Thai for text) because the Google Fonts CDN is blocked in China.
+- **Door tablet:** `public/bkk-tablet.html` at `/tablet` (an iPad at the door, iPadOS 16 Safari, Guided Access).
+  Students tap their own booked tile, "Is this you?", and are checked in. It holds a door key in the header
+  `x-door-key` (localStorage `aybkk_door_key`), never the admin key. Pair it in Admin, Settings, Door tablets:
+  the tablet shows a code, staff type it there; one tablet at a time, Unpair ends it. The door key opens only
+  `/api/bkk/door/*` and those routes take nothing else: it sees "Name L." and in or not for the seats of today's
+  in-person classes whose window is open (an hour before the start until the class ends), each seat as a signed
+  handle. Never a member code, email, phone, pass, price or photo. It cannot open Admin, /door or /teach.
+  `/teach` can check in, undo, add someone with a started pass and take off its own add (today, in person,
+  each saying who in `bkk_bookings.checkin_via`/`checkin_by`); wrong teacher passcodes lock an address out.
 - **Inbox:** `inbox.js` keeps 1:1 chats from the LINE Official Account (`/line/webhook`) and
   Instagram/Facebook DMs and comments (`/meta/webhook`) in `aybkk_inbox` for 90 days.
   Machi reads `GET /api/inbox` (header `x-inbox-key`). Env: `INBOX_KEY`; `LINE_CHANNEL_SECRET`
@@ -112,6 +121,9 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
   It prints counts and reason codes only (names go to `--details`, mode 0600) and sends `x-bkk-key` only when `BKK_ADMIN_KEY` is set. Test: `test/rezerv-import-cli.test.js`.
   Rows go only to `https://aybkk.net`, `https://my.aybkk.com` or a test server on this machine. `run-all <dir>` only looks; `run-all <dir> --save` saves, and stops at the first file a person must see. Rezerv exports and details files name students and this repo is public: keep them outside the repo (or in the git-ignored `rezerv-export/`); the tool refuses a path git would take.
 - **Student lists are private:** student lists and any count of students, members, bookings or practice at the shala are private: never in public pages, posts, Reels, captions, PR text or the public repo, and every route that lists students needs the admin key (`staffOnly` in `lib/staff-key.js`, header `X-Bkk-Key`; team pages load `/staff-key.js`).
+  Two narrow exceptions: the door key (`x-door-key`) sees only "Name L." for today's open in-person classes, and a
+  teacher passcode (`x-teacher-key`) sees the teacher's list (`/api/bkk/teacher/*`, no member codes on today's list).
+  Every other route that lists students still needs the admin key.
   Files that name students (workshop rosters, QR cards, print files, journals, class photos) live in the git-ignored
   `private-data/` on a computer and in `/data/private` on the Railway volume. Rosters reach the server by
   `PUT /api/bkk/admin/rosters/<city>` (`x-bkk-key`), never by git.

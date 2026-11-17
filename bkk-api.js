@@ -583,6 +583,28 @@ function mountBkk(app, opts = {}) {
     // A ping Telegram refused keeps its text here until a retry gets it through.
     await q(`ALTER TABLE bkk_pay_alerts ADD COLUMN IF NOT EXISTS retry_text TEXT`);
     await q(`ALTER TABLE bkk_pay_alerts ADD COLUMN IF NOT EXISTS tries INTEGER NOT NULL DEFAULT 1`);
+    // Who last checked a seat in or out (17 Nov 2026): 'tablet' (the door tablet),
+    // 'teacher' (/teach), 'door' (/door on the staff key) or 'admin' (the class
+    // view). checkin_by is the tablet's or the teacher's name. Read it with
+    // checked_in_at: an undo on /teach leaves 'teacher' here and no time.
+    await q(`ALTER TABLE bkk_bookings ADD COLUMN IF NOT EXISTS checkin_via TEXT`);
+    await q(`ALTER TABLE bkk_bookings ADD COLUMN IF NOT EXISTS checkin_by TEXT`);
+    // The door tablet (17 Nov 2026). One device key at a time, stored only as a
+    // hash; the plain key goes to the tablet once. other_ip_at: when it was last
+    // used from an address other than the one it was paired from.
+    await q(`CREATE TABLE IF NOT EXISTS bkk_door_devices (
+      id SERIAL PRIMARY KEY, name TEXT NOT NULL, key_hash TEXT NOT NULL UNIQUE,
+      paired_at TIMESTAMPTZ NOT NULL DEFAULT now(), paired_ip TEXT,
+      last_seen_at TIMESTAMPTZ, last_ip TEXT, other_ip_at TIMESTAMPTZ, revoked_at TIMESTAMPTZ)`);
+    // A pairing the tablet asked for: the short code staff type in Admin and the
+    // long secret only that tablet holds, both hashed. Lives 10 minutes.
+    await q(`CREATE TABLE IF NOT EXISTS bkk_door_pairings (
+      id SERIAL PRIMARY KEY, code_hash TEXT NOT NULL, secret_hash TEXT NOT NULL UNIQUE, ip TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(), expires_at TIMESTAMPTZ NOT NULL,
+      approved_at TIMESTAMPTZ, name TEXT, used_at TIMESTAMPTZ,
+      device_id INTEGER REFERENCES bkk_door_devices(id))`);
+    await q(`CREATE INDEX IF NOT EXISTS bkk_door_pairings_code ON bkk_door_pairings (code_hash)`);
+    await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_door_devices_one_live ON bkk_door_devices ((true)) WHERE revoked_at IS NULL`);
 
     // Catalogue: a package added to SEED_PRODUCTS reaches a running shala on the
     // next boot. ON CONFLICT leaves existing rows alone, so a price changed or a
@@ -2276,6 +2298,33 @@ border:0;border-radius:10px;background:${bg};color:#fff">${label}</button></form
     t.n++;
     return t;
   };
+  // The same count for other doors (17 Nov 2026): wrong teacher passcodes and
+  // the door tablet's pairing. limit tries per address in windowMs from the
+  // first; past it, 429 until that window ends. hold() before the lookup, n--
+  // after a good one, as holdMiss.
+  const missCounter = (limit, windowMs) => {
+    const seen = new Map();
+    const live = t => !!t && Date.now() - t.start < windowMs;
+    return {
+      over: ip => { const t = seen.get(ip); return live(t) && t.n >= limit; },
+      retryS: ip => { const t = seen.get(ip); return live(t) ? Math.ceil((t.start + windowMs - Date.now()) / 1000) : 0; },
+      hold: ip => {
+        let t = seen.get(ip);
+        if (!live(t)) {
+          if (seen.size >= 5000) {
+            for (const [k, v] of seen) {
+              if (!live(v) || v.n < limit) seen.delete(k);
+              if (seen.size < 4000) break;
+            }
+          }
+          seen.delete(ip);
+          seen.set(ip, t = { start: Date.now(), n: 0 });
+        }
+        t.n++;
+        return t;
+      },
+    };
+  };
   app.get('/in/:code', async (req, res) => {
     const ip = guessIp(req);
     if (missesOf(ip) >= SHORT_MISSES_PER_IP_HOUR) {
@@ -2662,7 +2711,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
                               AND now() + ($2 || ' minutes')::interval
          ORDER BY abs(extract(epoch FROM (b.start_at - now()))) LIMIT 1`, [m.id, win])).rows[0];
       if (!b) return res.json({ ok: false, name: m.name, reason: 'no booking for this time' });
-      await q(`UPDATE bkk_bookings SET checked_in_at = COALESCE(checked_in_at, now()) WHERE id=$1`, [b.id]);
+      await q(`UPDATE bkk_bookings SET checked_in_at = COALESCE(checked_in_at, now()),
+        checkin_via = CASE WHEN checked_in_at IS NULL THEN 'door' ELSE checkin_via END,
+        checkin_by = CASE WHEN checked_in_at IS NULL THEN NULL ELSE checkin_by END WHERE id=$1`, [b.id]);
       res.json({ ok: true, name: m.name, className: b.title, startAt: b.start_at });
     } catch (e) { res.status(500).json({ ok: false, reason: e.message }); }
   });
@@ -5229,14 +5280,63 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
 
   const hashKey = k => crypto.createHash('sha256').update(String(k)).digest('hex');
 
+  // A random secret made once and kept in the database, never in the code: it
+  // signs the door tablet's seat handles and the member refs teachers get.
+  let secretP = null;
+  const serverSecret = () => secretP || (secretP = (async () => {
+    await booted.catch(() => {});
+    await q(`INSERT INTO bkk_settings (key,value) VALUES ('door_secret', to_jsonb($1::text)) ON CONFLICT (key) DO NOTHING`,
+      [crypto.randomBytes(32).toString('hex')]);
+    const v = (await q(`SELECT value FROM bkk_settings WHERE key='door_secret'`)).rows[0].value;
+    return Buffer.from(String(v), 'hex');
+  })().catch(e => { secretP = null; throw e; }));
+  const hmac = (sec, s) => crypto.createHmac('sha256', sec).update(s).digest();
+  // Teachers name a student by this ref, not the member code (the student's
+  // sign-in, 17 Nov 2026): "m.<id>.<signature>". It opens nothing outside
+  // /api/bkk/teacher.
+  const memberRef = (sec, id) => `m.${id}.${hmac(sec, 'member:' + id).toString('base64url').slice(0, 22)}`;
+  const REF_RE = /^m\.(\d{1,9})\.([A-Za-z0-9_-]{22})$/;
+  const refId = (sec, s) => {
+    const m = REF_RE.exec(String(s || ''));
+    if (!m) return null;
+    const want = Buffer.from(memberRef(sec, Number(m[1])).split('.')[2]), got = Buffer.from(m[2]);
+    return crypto.timingSafeEqual(want, got) ? Number(m[1]) : null;
+  };
+  // A teacher route's student: a ref, or a member code typed in.
+  async function memberByKey(key, db = pool) {
+    if (!REF_RE.test(String(key || ''))) return memberByCode(key, db);
+    const id = refId(await serverSecret(), key);
+    return id ? liveMember(db, (await db.query('SELECT * FROM bkk_members WHERE id=$1', [id])).rows[0]) : null;
+  }
+
+  // Wrong passcodes are counted per address (17 Nov 2026): a passcode can be as
+  // short as 8 characters, and teachers can now change who is checked in. Past
+  // the limit every passcode from that address is refused for the rest of the
+  // window, the right one too, so a hit looks like a miss.
+  const TEACHER_MISSES = 8, TEACHER_LOCK_MS = 15 * 60000;
+  const teacherMisses = missCounter(TEACHER_MISSES, TEACHER_LOCK_MS);
+  app.use('/api/bkk/teacher', async (req, res, next) => {
+    const key = req.headers['x-teacher-key'];
+    if (!key) return next();
+    const ip = guessIp(req);
+    if (teacherMisses.over(ip)) {
+      return res.status(429).set('Retry-After', String(teacherMisses.retryS(ip)))
+        .json({ error: 'too many wrong passcodes from here: try again in 15 minutes', locked: true });
+    }
+    const t = teacherMisses.hold(ip);
+    try {
+      req.teacher = (await q('SELECT * FROM bkk_teachers WHERE key_hash = $1 AND active', [hashKey(key)])).rows[0] || null;
+      if (req.teacher) t.n--;
+      next();
+    } catch (e) {
+      t.n--;
+      res.status(500).json({ error: e.message });
+    }
+  });
   // Returns the teacher, or null. Admin is NOT a teacher: someone has to own
   // each note, and "the admin" is not a person a student can ask about it.
   async function teacherFrom(req) {
-    const key = req.headers['x-teacher-key'];
-    if (!key) return null;
-    const r = await q(
-      'SELECT * FROM bkk_teachers WHERE key_hash = $1 AND active', [hashKey(key)]);
-    return r.rows[0] || null;
+    return req.teacher || null;
   }
 
   app.get('/api/bkk/teacher/me', async (req, res) => {
@@ -5250,8 +5350,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const t = await teacherFrom(req);
     if (!t) return res.status(401).json({ error: 'bad passcode' });
     try {
-      const m = await memberByCode(req.params.code);
+      const m = await memberByKey(req.params.code);
       if (!m) return res.status(404).json({ error: 'not found' });
+      const byRef = REF_RE.test(req.params.code);
       const [passes, notes, recent] = await Promise.all([
         q(`SELECT p.*, pr.name_en FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
            WHERE p.member_id=$1 ORDER BY p.id DESC`, [m.id]),
@@ -5263,8 +5364,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
            WHERE b.member_id=$1 AND b.status='booked'
            ORDER BY b.start_at DESC LIMIT 20`, [m.id]),
       ]);
+      // Opened from today's list (a ref): the member code stays off the answer.
       res.json({
-        member: { code: m.code, name: m.name, email: m.email, phone: m.phone, journalId: await journalId(m) },
+        member: { ...(byRef ? {} : { code: m.code }), ref: memberRef(await serverSecret(), m.id),
+          name: m.name, email: m.email, phone: m.phone, journalId: await journalId(m) },
         passes: passes.rows, notes: notes.rows, recent: recent.rows,
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
@@ -5274,8 +5377,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const t = await teacherFrom(req);
     if (!t) return res.status(401).json({ error: 'bad passcode' });
     try {
-      const { memberCode, body, toWorkOn, classDate, shareWithStudent } = req.body || {};
-      const m = await memberByCode(memberCode);
+      const { memberCode, ref, body, toWorkOn, classDate, shareWithStudent } = req.body || {};
+      const m = await memberByKey(ref || memberCode);
       if (!m) return res.status(404).json({ error: 'student not found' });
       if (!String(body || '').trim() && !String(toWorkOn || '').trim()) {
         return res.status(400).json({ error: 'write something in one of the two boxes' });
@@ -5291,12 +5394,23 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
+  // Today's seats, for /teach and the photos page. No member code (17 Nov 2026):
+  // it is the student's sign-in, and a teacher passcode can be guessed. ref names
+  // the student on the teacher routes, bookingId the seat. checkPass: no pass of
+  // this member is live today (PASS_LIVE_ON over all of them, so a pause that has
+  // ended or a Rezerv twin that came back is not flagged); a Rezerv seat says
+  // Rezerv instead. added: put on by /teach today, so /teach can take it off.
   app.get('/api/bkk/teacher/today', async (req, res) => {
     const t = await teacherFrom(req);
     if (!t) return res.status(401).json({ error: 'bad passcode' });
     try {
-      const r = await q(
-        `SELECT m.code, m.name, s.title, b.start_at, b.checked_in_at,
+      const today = bkkToday();
+      const [r, sec, classes] = await Promise.all([q(
+        `SELECT b.id AS booking_id, b.member_id, m.name, s.title, s.id AS slot_id, s.is_online, b.start_at, b.checked_in_at,
+           b.cover, b.checkin_via, b.checkin_by,
+           coalesce(b.source = 'teacher' AND (b.booked_at AT TIME ZONE 'Asia/Bangkok')::date = $1::date, false) AS added,
+           (b.cover IS DISTINCT FROM 'rezerv' AND NOT EXISTS (SELECT 1 FROM bkk_passes p
+              WHERE p.member_id = b.member_id AND ${PASS_LIVE_ON('$1::date')})) AS check_pass,
            (SELECT count(*)::int FROM bkk_notes n WHERE n.member_id=m.id) AS notes,
            lm.day AS last_main, lm.days AS last_main_days
          FROM bkk_bookings b
@@ -5307,11 +5421,163 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
                   (now() AT TIME ZONE 'Asia/Bangkok')::date - max(p.class_date) AS days
            FROM bkk_photo_members pm JOIN bkk_photos p ON p.id=pm.photo_id
            WHERE pm.member_id=m.id AND pm.role='main') lm ON true
-         WHERE b.status='booked'
-           AND b.class_date = (now() AT TIME ZONE 'Asia/Bangkok')::date
-         ORDER BY b.start_at, m.name`);
-      res.json({ students: r.rows });
+         WHERE b.status='booked' AND b.class_date = $1::date
+         ORDER BY b.start_at, m.name, b.id`, [today]), serverSecret(), classesToday(today)]);
+      res.json({
+        date: today, classes,
+        students: r.rows.map(({ member_id, booking_id, slot_id, is_online, checkin_via, checkin_by, check_pass, ...s }) => ({
+          ...s, ref: memberRef(sec, member_id), bookingId: booking_id, slotId: slot_id, isOnline: is_online,
+          checkinVia: checkin_via, checkinBy: checkin_by, rezerv: s.cover === 'rezerv', checkPass: check_pass })),
+      });
     } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Today's classes on the timetable (none on a moon day), cancelled ones left
+  // out: what /teach can add someone to. end: start + duration_min.
+  async function classesToday(today, db = pool) {
+    if (moonDaysBetween(today, today).size) return [];
+    const wd = new Date(`${today}T12:00:00${TZ_OFFSET}`).getUTCDay();
+    const rows = (await db.query(
+      `SELECT s.* FROM bkk_class_slots s WHERE s.active AND s.weekday=$1 AND NOT EXISTS (SELECT 1 FROM bkk_class_overrides o
+         WHERE o.slot_id=s.id AND o.class_date=$2::date AND o.cancelled) ORDER BY s.start_time, s.id`, [wd, today])).rows;
+    return rows.map(s => {
+      const start = Date.parse(startAtISO(today, s.start_time));
+      return { slotId: s.id, title: s.title, isOnline: s.is_online, startAt: startAtISO(today, s.start_time),
+        endAt: bkkISO(start + (s.duration_min || 120) * 60000), ended: bkkNow().getTime() >= start + (s.duration_min || 120) * 60000 };
+    });
+  }
+
+  // Fixes from a teacher's phone (17 Nov 2026), on today's in-person classes
+  // only, each saying who: checkin_via 'teacher', checkin_by their name.
+  const TEACH_ONLY_TODAY = 'only today\'s classes at the shala can be fixed here';
+  async function teachSeat(db, id, lock = false) {
+    if (!/^\d{1,9}$/.test(String(id))) return null;
+    return (await db.query(
+      `SELECT b.*, to_char(b.class_date,'YYYY-MM-DD') AS day, s.is_online, s.duration_min, s.start_time, m.name
+       FROM bkk_bookings b JOIN bkk_class_slots s ON s.id=b.slot_id JOIN bkk_members m ON m.id=b.member_id
+       WHERE b.id=$1${lock ? ' FOR UPDATE OF b' : ''}`, [Number(id)])).rows[0] || null;
+  }
+  const teachable = b => b.day === bkkToday() && b.is_online === false;
+
+  // Check one seat in, or undo it (checked_in_at cleared, classes never touched,
+  // as the admin undo). A class already over is checked in at its start.
+  app.post('/api/bkk/teacher/bookings/:id/checkin', async (req, res) => {
+    const t = await teacherFrom(req);
+    if (!t) return res.status(401).json({ error: 'bad passcode' });
+    const undo = (req.body || {}).undo === true;
+    try {
+      const b = await teachSeat(pool, req.params.id);
+      if (!b) return res.status(404).json({ error: 'booking not found' });
+      if (!teachable(b)) return res.status(409).json({ error: TEACH_ONLY_TODAY });
+      if (b.status !== 'booked') return res.status(409).json({ error: 'that booking was cancelled' });
+      const nowIso = bkkNow().toISOString();
+      const r = (await q(undo
+        ? `UPDATE bkk_bookings SET checked_in_at=NULL, checkin_via='teacher', checkin_by=$2
+           WHERE id=$1 AND status='booked' RETURNING id, checked_in_at, checkin_via, checkin_by, false AS already`
+        : `UPDATE bkk_bookings b SET
+             checked_in_at = COALESCE(b.checked_in_at, CASE WHEN $3::timestamptz > b.start_at + make_interval(mins => $4::int)
+               THEN b.start_at ELSE $3::timestamptz END),
+             checkin_via = CASE WHEN b.checked_in_at IS NULL THEN 'teacher' ELSE b.checkin_via END,
+             checkin_by = CASE WHEN b.checked_in_at IS NULL THEN $2 ELSE b.checkin_by END
+           FROM bkk_bookings o WHERE b.id=$1 AND o.id=b.id AND b.status='booked'
+           RETURNING b.id, b.checked_in_at, b.checkin_via, b.checkin_by, o.checked_in_at IS NOT NULL AS already`,
+        undo ? [b.id, t.name] : [b.id, t.name, nowIso, b.duration_min || 120])).rows[0];
+      if (!r) return res.status(409).json({ error: 'that booking was cancelled' });
+      res.json({ success: true, already: r.already, booking: { id: r.id, checkedInAt: r.checked_in_at, via: r.checkin_via, by: r.checkin_by } });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Add someone who came and has a pass: booked by the staff rules (over the
+  // class limit is fine, they are in the room) and checked in. Only a pass live
+  // today that has already started: a tap here never starts anyone's pass.
+  // Someone already on this class's list is only checked in.
+  const NOT_STARTED = 'Pass not started. Ask Boonchu or M.';
+  const NO_PASS_TODAY = 'No pass for today. Ask Boonchu or M.';
+  app.post('/api/bkk/teacher/add', async (req, res) => {
+    const t = await teacherFrom(req);
+    if (!t) return res.status(401).json({ error: 'bad passcode' });
+    const { ref, slotId } = req.body || {};
+    if (!REF_RE.test(String(ref || ''))) return res.status(400).json({ error: 'pick the student from the search' });
+    if (!/^\d{1,9}$/.test(String(slotId || ''))) return res.status(400).json({ error: 'slotId required' });
+    const today = bkkToday();
+    const client = await pool.connect();
+    try {
+      const member = await memberByKey(ref, client);
+      if (!member) return res.status(404).json({ error: 'student not found' });
+      await client.query('BEGIN');
+      const { slot } = await classCheck(client, Number(slotId), today, { staff: true, endedMsg: CLASS_ENDED });
+      if (slot.is_online) throw Object.assign(new Error(TEACH_ONLY_TODAY), { status: 409 });
+      await client.query('SELECT pg_advisory_xact_lock($1::int, $2::int)', [slot.id, Number(today.replace(/-/g, ''))]);
+      const on = (await client.query(`SELECT id FROM bkk_bookings WHERE slot_id=$1 AND class_date=$2 AND member_id=$3 AND status='booked'`,
+        [slot.id, today, member.id])).rows[0];
+      if (on) {
+        const r = (await client.query(`UPDATE bkk_bookings b SET checked_in_at = COALESCE(b.checked_in_at, $3::timestamptz),
+            checkin_via = CASE WHEN b.checked_in_at IS NULL THEN 'teacher' ELSE b.checkin_via END,
+            checkin_by = CASE WHEN b.checked_in_at IS NULL THEN $2 ELSE b.checkin_by END
+          WHERE b.id=$1 RETURNING b.id, b.checked_in_at`, [on.id, t.name, bkkNow().toISOString()])).rows[0];
+        await client.query('COMMIT');
+        return res.json({ success: true, already: true, name: member.name, booking: { id: r.id, checkedInAt: r.checked_in_at } });
+      }
+      const usable = `p.member_id=$1 AND p.status='active' AND (p.kind='unlimited' OR p.credits_used < p.credits_total)`;
+      const pass = (await client.query(
+        `SELECT p.* FROM bkk_passes p WHERE ${usable} AND ${PASS_LIVE_ON('$2::date')}
+           AND p.valid_from IS NOT NULL AND p.valid_from <= $2::date
+         ORDER BY p.valid_from, p.id LIMIT 1 FOR UPDATE`, [member.id, today])).rows[0];
+      if (!pass) {
+        const later = (await client.query(`SELECT 1 FROM bkk_passes p WHERE ${usable}
+            AND (p.valid_until IS NULL OR p.valid_until >= $2::date) AND (p.valid_from IS NULL OR p.valid_from > $2::date) LIMIT 1`,
+          [member.id, today])).rows.length;
+        throw Object.assign(new Error(later ? NOT_STARTED : NO_PASS_TODAY), { status: 409, notStarted: !!later });
+      }
+      const seat = await takeSeat(client, { member, slotId: slot.id, date: today, staff: true, allowOver: true,
+        cover: 'pass', passId: pass.id, checkIn: true, source: 'teacher', onList: false });
+      // The class clock (now, but for a test that moves it), so /teach can tell today's adds.
+      const at = bkkNow().toISOString();
+      seat.booking = (await client.query(`UPDATE bkk_bookings SET checkin_via='teacher', checkin_by=$2, booked_at=$3, checked_in_at=$3
+        WHERE id=$1 RETURNING *`, [seat.booking.id, t.name, at])).rows[0];
+      await client.query('COMMIT');
+      res.json({ success: true, already: false, name: member.name, overCapacity: seat.overCapacity,
+        booking: { id: seat.booking.id, checkedInAt: seat.booking.checked_in_at } });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      res.status(e.status || 409).json({ error: /duplicate key/.test(e.message) ? 'already on the list' : e.message,
+        ...(e.notStarted ? { notStarted: true } : {}) });
+    } finally { client.release(); }
+  });
+
+  // Take off a seat /teach added today by mistake: cancelled, and the class goes
+  // back on the pass, in one transaction with the pass locked, and said on the
+  // pass note. A seat made any other way is not this route's to take off.
+  app.post('/api/bkk/teacher/bookings/:id/remove', async (req, res) => {
+    const t = await teacherFrom(req);
+    if (!t) return res.status(401).json({ error: 'bad passcode' });
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const b = await teachSeat(client, req.params.id, true);
+      if (!b) throw Object.assign(new Error('booking not found'), { status: 404 });
+      if (!teachable(b)) throw Object.assign(new Error(TEACH_ONLY_TODAY), { status: 409 });
+      if (b.status !== 'booked') throw Object.assign(new Error('already ' + b.status), { status: 409 });
+      if (b.source !== 'teacher' || ymd(new Date(b.booked_at)) !== bkkToday())
+        throw Object.assign(new Error('only a name added on /teach today can be taken off here'), { status: 409 });
+      if (b.pass_id) await client.query('SELECT 1 FROM bkk_passes WHERE id=$1 FOR UPDATE', [b.pass_id]);
+      await client.query(`UPDATE bkk_bookings SET status='cancelled', cancelled_at=now(), cancel_reason=$2,
+        checkin_via='teacher', checkin_by=$3 WHERE id=$1`, [b.id, `added on /teach by mistake: taken off by ${t.name}`, t.name]);
+      let back = false;
+      if (b.pass_id) {
+        back = (await client.query(`UPDATE bkk_passes SET credits_used = GREATEST(0, credits_used - 1),
+            note = concat_ws(' | ', nullif(note, ''), $2::text)
+          WHERE id=$1 AND kind <> 'unlimited' RETURNING id`,
+          [b.pass_id, `class ${b.day} ${b.start_time} added on /teach and taken off by ${t.name}: given back`])).rowCount > 0;
+        if (!back) await client.query(`UPDATE bkk_passes SET note = concat_ws(' | ', nullif(note, ''), $2::text) WHERE id=$1`,
+          [b.pass_id, `class ${b.day} ${b.start_time} added on /teach and taken off by ${t.name}`]);
+      }
+      await client.query('COMMIT');
+      res.json({ success: true, creditReturned: back, name: b.name });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      res.status(e.status || 500).json({ error: e.message });
+    } finally { client.release(); }
   });
 
   // ── profile photos ────────────────────────────────────────────────────────
@@ -5352,13 +5618,24 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     // Cutting the list instead would save the photo without some of them, the main student maybe.
     if (list.length > 30) throw Object.assign(new Error('30 names at most on one photo. Nothing was saved.'), { status: 400 });
     if (!list.length) return { ids: [], roles: [], given };
-    const rows = (await q('SELECT id, code FROM bkk_members WHERE code = ANY($1::text[]) AND merged_into IS NULL', [list])).rows;
-    if (rows.length < list.length) {
+    // A name is a member code or, from today's list, a ref (17 Nov 2026). One
+    // student named both ways is one tag, and main wins.
+    const sec = await serverSecret();
+    const refs = new Map(list.filter(k => REF_RE.test(k)).map(k => [k, refId(sec, k)]));
+    const codes = list.filter(k => !refs.has(k));
+    const rows = codes.length ? (await q('SELECT id, code FROM bkk_members WHERE code = ANY($1::text[]) AND merged_into IS NULL', [codes])).rows : [];
+    const ids = [...new Set([...refs.values()].filter(Boolean))];
+    const live = ids.length ? new Set((await q('SELECT id FROM bkk_members WHERE id = ANY($1::int[]) AND merged_into IS NULL', [ids])).rows.map(r => r.id)) : new Set();
+    if (rows.length < codes.length || [...refs.values()].some(id => !live.has(id))) {
       const e = new Error('A student on this photo has a new code. Reload the page and pick them again. Nothing was saved.');
       e.status = 409;
       throw e;
     }
-    return { ids: rows.map(r => r.id), roles: rows.map(r => want.get(r.code)), given };
+    const byId = new Map();
+    const put = (id, role) => { if (byId.get(id) !== 'main') byId.set(id, role); };
+    for (const r of rows) put(r.id, want.get(r.code));
+    for (const [k, id] of refs) put(id, want.get(k));
+    return { ids: [...byId.keys()], roles: [...byId.values()], given };
   }
   // The photo ends with exactly these people. keep: someone already on it keeps
   // the role they have (the old memberCodes body says nothing about roles).
@@ -5383,13 +5660,14 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   async function photosWithTags(where, args) {
     const rows = (await q(
       `SELECT p.*, to_char(p.class_date, 'YYYY-MM-DD') AS day,
-              coalesce(json_agg(json_build_object('code', m.code, 'name', m.name, 'role', pm.role)
+              coalesce(json_agg(json_build_object('id', m.id, 'code', m.code, 'name', m.name, 'role', pm.role)
                 ORDER BY (pm.role <> 'main'), m.name) FILTER (WHERE m.id IS NOT NULL), '[]') AS members
        FROM bkk_photos p
        LEFT JOIN bkk_photo_members pm ON pm.photo_id = p.id
        LEFT JOIN bkk_members m ON m.id = pm.member_id
        WHERE ${where} GROUP BY p.id ORDER BY p.id`, args)).rows;
-    return rows.map(p => ({ id: p.id, date: p.day, members: p.members,
+    const sec = await serverSecret();
+    return rows.map(p => ({ id: p.id, date: p.day, members: p.members.map(({ id, ...m }) => ({ ...m, ref: memberRef(sec, id) })),
       thumb: photoUrl(p.public_id, 'thumb'), full: photoUrl(p.public_id, 'full'), save: photoUrl(p.public_id, 'save') }));
   }
 
@@ -5409,13 +5687,17 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     try {
       const term = String(req.query.q || '').trim().toLowerCase();
       if (term.length < 2) return res.json({ members: [] });
-      const r = await q(
-        `SELECT m.code, m.name, m.email FROM bkk_members m
+      // passToday: a pass live today that has started, the one /teach's Add can use.
+      const [r, sec] = await Promise.all([q(
+        `SELECT m.id, m.code, m.name, m.email, EXISTS (SELECT 1 FROM bkk_passes p WHERE p.member_id=m.id AND p.status='active'
+             AND ${PASS_LIVE_ON('$2::date')} AND p.valid_from IS NOT NULL AND p.valid_from <= $2::date
+             AND (p.kind='unlimited' OR p.credits_used < p.credits_total)) AS pass_today FROM bkk_members m
          WHERE m.merged_into IS NULL AND (lower(m.name) LIKE $1 OR lower(coalesce(m.email,'')) LIKE $1
            OR EXISTS (SELECT 1 FROM bkk_members f WHERE f.merged_into = m.id
              AND (lower(f.name) LIKE $1 OR lower(coalesce(f.email,'')) LIKE $1)))
-         ORDER BY m.name LIMIT 20`, [`%${term}%`]);
-      res.json({ members: r.rows.map(m => ({ code: m.code, name: m.name, hint: emailHint(m.email) })) });
+         ORDER BY m.name LIMIT 20`, [`%${term}%`, bkkToday()]), serverSecret()]);
+      res.json({ members: r.rows.map(m => ({ code: m.code, ref: memberRef(sec, m.id), name: m.name, hint: emailHint(m.email),
+        passToday: m.pass_today })) });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -5429,7 +5711,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         return res.status(400).json({ error: 'email required: the student signs in with it to see their photos' });
       }
       const m = await findOrCreateMember({ name, email });
-      res.json({ success: true, member: { code: m.code, name: m.name } });
+      res.json({ success: true, member: { code: m.code, ref: memberRef(await serverSecret(), m.id), name: m.name } });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -5663,8 +5945,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (!t) return res.status(401).json({ error: 'bad passcode' });
     if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
     try {
-      const m = await memberByCode(req.params.code);
+      const m = await memberByKey(req.params.code);
       if (!m) return res.status(404).json({ error: 'student not found' });
+      const byRef = REF_RE.test(req.params.code);
       const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 60, 1), 200);
       const offset = Math.max(parseInt(req.query.offset, 10) || 0, 0);
       const TAGS = 'FROM bkk_photo_members pm JOIN bkk_photos p ON p.id = pm.photo_id WHERE pm.member_id = $1';
@@ -5680,7 +5963,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         q(`SELECT p.id, p.public_id, to_char(p.class_date,'YYYY-MM-DD') AS date, pm.role ${TAGS}
            ORDER BY p.class_date DESC, (pm.role <> 'main'), p.id DESC LIMIT $2 OFFSET $3`, [m.id, limit, offset]),
       ]);
-      res.json({ member: { code: m.code, name: m.name, hint: emailHint(m.email) },
+      res.json({ member: { ...(byRef ? { ref: req.params.code } : { code: m.code }), name: m.name, hint: emailHint(m.email) },
         totals: totals.rows[0], months: months.rows, limit, offset,
         photos: photos.rows.map(p => ({ id: p.id, date: p.date, role: p.role, thumb: photoUrl(p.public_id, 'thumb') })) });
     } catch (e) { res.status(500).json({ error: e.message }); }
@@ -6195,11 +6478,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const today = bkkToday();
       if (!undo && b.date > today) return res.status(409).json({ error: 'that class is not today yet' });
       const r = (await q(undo
-        ? `UPDATE bkk_bookings SET checked_in_at=NULL
+        ? `UPDATE bkk_bookings SET checked_in_at=NULL, checkin_via='admin', checkin_by=NULL
            WHERE id=$1 AND status IN ('booked','noshow') RETURNING id, status, checked_in_at`
         : `UPDATE bkk_bookings b SET status='booked',
              checked_in_at=COALESCE(b.checked_in_at, CASE WHEN b.class_date < $2::date
-               OR now() > b.start_at + make_interval(mins => s.duration_min) THEN b.start_at ELSE now() END)
+               OR now() > b.start_at + make_interval(mins => s.duration_min) THEN b.start_at ELSE now() END),
+             checkin_via = CASE WHEN b.checked_in_at IS NULL THEN 'admin' ELSE b.checkin_via END,
+             checkin_by = CASE WHEN b.checked_in_at IS NULL THEN NULL ELSE b.checkin_by END
            FROM bkk_class_slots s
            WHERE b.id=$1 AND s.id=b.slot_id AND b.status IN ('booked','noshow')
            RETURNING b.id, b.status, b.checked_in_at`,
@@ -6211,6 +6496,285 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (/duplicate key/.test(e.message)) return res.status(409).json({ error: 'already on this class list' });
       res.status(500).json({ error: e.message });
     }
+  });
+
+  // ── the door tablet (17 Nov 2026) ────────────────────────────────────────
+  // An iPad at the door: students tap their own booked tile, "Is this you?",
+  // and are checked in. Nobody is at the desk at 05:30. It holds its own door
+  // key (x-door-key), never the admin key: the key opens only /api/bkk/door/*,
+  // and those routes take nothing else. What it sees: "Name L." for the seats of
+  // today's in-person classes whose window is open (start minus DOOR_EARLY_MIN
+  // until the class ends), each with a signed handle for that seat and device,
+  // and whether it is checked in. No code, email, phone, pass or price.
+  const DOOR_EARLY_MIN = 60;
+  const DOOR_PAIR_MIN = 10;
+  const DOOR_ALPHABET = 'ACDEFHJKMNPRTVWXY34679';   // no O/0, I/1/L, S/5, Z/2, B/8, G/6, U/V
+  const doorCode = () => Array.from({ length: 8 }, () => DOOR_ALPHABET[crypto.randomInt(DOOR_ALPHABET.length)]).join('');
+  const pairStarts = missCounter(12, HOUR_MS);        // pairing codes asked for, per address
+  const pairMisses = missCounter(10, HOUR_MS);        // wrong codes typed in Admin, per address
+  const bkkHm = ms => new Date(ms + 7 * 3600000).toISOString().slice(11, 16);
+  const addDay = (d, n) => ymd(new Date(Date.parse(`${d}T12:00:00${TZ_OFFSET}`) + n * 86400000));
+
+  // The device behind x-door-key, or null; every use says when and from where
+  // (guessIp: on cn.aybkk.net the caller writes x-forwarded-for). An address
+  // other than the one it was paired from is kept as other_ip_at for Admin.
+  async function doorFrom(req) {
+    const key = req.headers['x-door-key'];
+    if (typeof key !== 'string' || !/^dk_[A-Za-z0-9_-]{43}$/.test(key)) return null;
+    const ip = guessIp(req);
+    return (await q(`UPDATE bkk_door_devices SET last_seen_at=now(), last_ip=$2,
+        other_ip_at = CASE WHEN paired_ip IS DISTINCT FROM $2 THEN now() ELSE other_ip_at END
+      WHERE key_hash=$1 AND revoked_at IS NULL RETURNING id, name`, [hashKey(key), ip])).rows[0] || null;
+  }
+  const doorNoKey = res => res.status(401).set({ 'WWW-Authenticate': 'X-Door-Key', 'Cache-Control': 'no-store' })
+    .json({ ok: false, error: 'this tablet is not paired' });
+
+  // A seat handle: booking id, device id and the class end (minutes), one AES
+  // block under the server secret plus a MAC, so it shows no id and cannot be
+  // made up. The same seat gives the same handle until the class ends.
+  const DOOR_TAG = 0x44545631;
+  const doorKeys = async () => { const sec = await serverSecret(); return { enc: hmac(sec, 'door-enc'), mac: hmac(sec, 'door-mac') }; };
+  function sealSeat(k, bid, dev, endMs) {
+    const p = Buffer.alloc(16);
+    p.writeUInt32BE(bid, 0); p.writeUInt32BE(dev, 4); p.writeUInt32BE(Math.ceil(endMs / 60000), 8); p.writeUInt32BE(DOOR_TAG, 12);
+    const c = crypto.createCipheriv('aes-256-ecb', k.enc, null);
+    c.setAutoPadding(false);
+    const ct = Buffer.concat([c.update(p), c.final()]);
+    return Buffer.concat([ct, hmac(k.mac, ct).subarray(0, 16)]).toString('base64url');
+  }
+  function openSeat(k, t) {
+    if (typeof t !== 'string' || !/^[A-Za-z0-9_-]{43}$/.test(t)) return null;
+    const raw = Buffer.from(t, 'base64url');
+    if (raw.length !== 32) return null;
+    const ct = raw.subarray(0, 16);
+    if (!crypto.timingSafeEqual(raw.subarray(16), hmac(k.mac, ct).subarray(0, 16))) return null;
+    const d = crypto.createDecipheriv('aes-256-ecb', k.enc, null);
+    d.setAutoPadding(false);
+    const p = Buffer.concat([d.update(ct), d.final()]);
+    if (p.readUInt32BE(12) !== DOOR_TAG) return null;
+    return { bid: p.readUInt32BE(0), dev: p.readUInt32BE(4), endMs: p.readUInt32BE(8) * 60000 };
+  }
+
+  // "Ana E.": the first word and the first letter of the last word, built here
+  // so a full name never reaches the tablet. A title or a name in brackets is
+  // skipped, and a Thai leading vowel does not count as the letter. One word
+  // stays one word. Two people with the same label in one list get more letters
+  // of the last word until they differ (the whole word, then no dot).
+  const DOOR_TITLE = /^(mr|mrs|ms|miss|mx|dr|นาย|นาง|นางสาว|น\.ส\.|ด\.ช\.|ด\.ญ\.)\.?$/i;
+  const doorWords = name => {
+    const s = String(name || '').normalize('NFC');
+    let ws = (s.replace(/[(（[][^)）\]]*[)）\]]/g, ' ').trim() || s).split(/\s+/).filter(Boolean);
+    if (ws.length > 1 && DOOR_TITLE.test(ws[0])) ws = ws.slice(1);
+    return { first: ws[0] || '?', last: ws.length > 1 ? ws[ws.length - 1] : '' };
+  };
+  const lastPart = (w, k) => {
+    const cps = Array.from(w);
+    let i = 0;
+    while (i < cps.length - 1 && /[เ-ไ]/.test(cps[i])) i++;
+    return k >= cps.length - i ? w : cps.slice(i, i + k).join('') + '.';
+  };
+  function doorNames(seats) {
+    const people = new Map();
+    for (const s of seats) if (!people.has(s.member_id)) people.set(s.member_id, { ...doorWords(s.name), k: 1 });
+    const label = p => p.last ? `${p.first} ${lastPart(p.last, p.k)}` : p.first;
+    for (let round = 0; round < 64; round++) {
+      const by = new Map();
+      for (const p of people.values()) by.set(label(p), [...(by.get(label(p)) || []), p]);
+      let moved = false;
+      for (const group of by.values()) {
+        if (group.length < 2) continue;
+        for (const p of group) if (p.last && p.k < Array.from(p.last).length) { p.k++; moved = true; }
+      }
+      if (!moved) break;
+    }
+    return new Map(seats.map(s => [s.id, label(people.get(s.member_id))]));
+  }
+
+  // What the door shows now, on the class clock: today's in-person classes
+  // whose window is open (never online, cancelled or on a moon day), their live
+  // seats, and the next class whose window is still to open (up to a week on).
+  async function doorState(db = pool) {
+    const nowMs = bkkNow().getTime(), today = ymd(new Date(nowMs)), until = addDay(today, 7);
+    const moons = moonDaysBetween(today, until);
+    const [slots, ovs] = await Promise.all([
+      db.query(`SELECT * FROM bkk_class_slots WHERE active AND is_online IS NOT TRUE ORDER BY start_time, id`),
+      db.query(`SELECT slot_id, to_char(class_date,'YYYY-MM-DD') AS d FROM bkk_class_overrides
+                WHERE cancelled AND class_date BETWEEN $1::date AND $2::date`, [today, until])]);
+    const off = new Set(ovs.rows.map(o => `${o.slot_id}|${o.d}`));
+    const on = d => moons.has(d) ? [] : slots.rows
+      .filter(s => s.weekday === new Date(`${d}T12:00:00${TZ_OFFSET}`).getUTCDay() && !off.has(`${s.id}|${d}`))
+      .map(s => {
+        const start = Date.parse(startAtISO(d, s.start_time));
+        return { slot: s, date: d, start, end: start + (s.duration_min || 120) * 60000, opens: start - DOOR_EARLY_MIN * 60000 };
+      }).sort((a, b) => a.start - b.start || a.slot.id - b.slot.id);
+    const live = on(today).filter(c => nowMs >= c.opens && nowMs < c.end);
+    let next = null;
+    for (let i = 0; i <= 7 && !next; i++) next = on(addDay(today, i)).find(c => c.opens > nowMs) || null;
+    const seats = live.length ? (await db.query(
+      `SELECT b.id, b.member_id, b.slot_id, b.checked_in_at, m.name FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
+       WHERE b.class_date=$1::date AND b.status='booked' AND b.slot_id = ANY($2::int[])`, [today, live.map(c => c.slot.id)])).rows : [];
+    return { nowMs, today, moon: moons.has(today), live, seats, next };
+  }
+
+  // 1. The tablet asks (no key): a short code to show, a long secret to keep.
+  app.post('/api/bkk/door/pair/start', async (req, res) => {
+    res.set('Cache-Control', 'no-store');
+    const ip = guessIp(req);
+    if (pairStarts.over(ip)) return res.status(429).set('Retry-After', String(pairStarts.retryS(ip)))
+      .json({ error: 'too many pairing codes from here: try again later' });
+    pairStarts.hold(ip);
+    try {
+      await q(`DELETE FROM bkk_door_pairings WHERE expires_at < now() - interval '1 day'`);
+      const waiting = (await q(`SELECT count(*)::int AS n FROM bkk_door_pairings WHERE expires_at > now() AND used_at IS NULL`)).rows[0].n;
+      if (waiting >= 50) return res.status(429).json({ error: 'too many pairing codes are waiting: try again in 10 minutes' });
+      const secret = crypto.randomBytes(32).toString('base64url');
+      let code = null;
+      for (let i = 0; i < 5 && !code; i++) {
+        const c = doorCode();
+        const r = await q(`INSERT INTO bkk_door_pairings (code_hash, secret_hash, ip, expires_at)
+          SELECT $1, $2, $3, now() + make_interval(mins => $4) WHERE NOT EXISTS (SELECT 1 FROM bkk_door_pairings
+            WHERE code_hash=$1 AND expires_at > now() AND used_at IS NULL) RETURNING id`, [hashKey(c), hashKey(secret), ip, DOOR_PAIR_MIN]);
+        if (r.rows.length) code = c;
+      }
+      if (!code) throw new Error('could not make a code, please try again');
+      res.json({ code: `${code.slice(0, 4)} ${code.slice(4)}`, secret, expiresIn: DOOR_PAIR_MIN * 60 });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // 2. Staff type the code the tablet shows. A wrong one counts as a miss.
+  app.post('/api/bkk/admin/door/pair', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    res.set('Cache-Control', 'no-store');
+    const ip = guessIp(req);
+    if (pairMisses.over(ip)) return res.status(429).set('Retry-After', String(pairMisses.retryS(ip)))
+      .json({ error: 'too many wrong codes: try again in an hour' });
+    const code = String((req.body || {}).code || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const name = String((req.body || {}).name || '').trim().slice(0, 40) || 'Front door';
+    const t = pairMisses.hold(ip);
+    try {
+      const r = (await q(`UPDATE bkk_door_pairings SET approved_at=now(), name=$2
+        WHERE code_hash=$1 AND expires_at > now() AND used_at IS NULL AND approved_at IS NULL RETURNING id`,
+        [hashKey(code), name])).rows[0];
+      if (!r) return res.status(404).json({ error: 'No tablet is showing that code. Check the code on the tablet: it changes every 10 minutes.' });
+      t.n--;
+      res.json({ success: true, name });
+    } catch (e) { t.n--; res.status(500).json({ error: e.message }); }
+  });
+
+  // 3. The tablet asks with its secret: once approved, the door key, once. A
+  // new device ends every other one (one door key at a time).
+  app.post('/api/bkk/door/pair/claim', async (req, res) => {
+    res.set('Cache-Control', 'no-store');
+    const secret = String((req.body || {}).secret || '');
+    if (!/^[A-Za-z0-9_-]{43}$/.test(secret)) return res.status(404).json({ ok: false, gone: true });
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      await client.query(`SELECT pg_advisory_xact_lock(hashtext('bkk_door_devices'))`);
+      const p = (await client.query(`SELECT *, expires_at <= now() AS expired FROM bkk_door_pairings WHERE secret_hash=$1 FOR UPDATE`,
+        [hashKey(secret)])).rows[0];
+      if (!p || p.used_at || p.expired) { await client.query('ROLLBACK'); return res.status(404).json({ ok: false, gone: true }); }
+      if (!p.approved_at) { await client.query('ROLLBACK'); return res.json({ ok: false, waiting: true }); }
+      const key = 'dk_' + crypto.randomBytes(32).toString('base64url');
+      const ip = guessIp(req);
+      await client.query(`UPDATE bkk_door_devices SET revoked_at=now() WHERE revoked_at IS NULL`);
+      const d = (await client.query(`INSERT INTO bkk_door_devices (name, key_hash, paired_ip, last_seen_at, last_ip)
+        VALUES ($1,$2,$3,now(),$3) RETURNING id, name`, [p.name || 'Front door', hashKey(key), ip])).rows[0];
+      await client.query(`UPDATE bkk_door_pairings SET used_at=now(), device_id=$2 WHERE id=$1`, [p.id, d.id]);
+      await client.query('COMMIT');
+      console.log(`✓ bkk: door tablet "${d.name}" paired`);
+      res.json({ ok: true, key, name: d.name });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      res.status(500).json({ ok: false, error: e.message });
+    } finally { client.release(); }
+  });
+
+  // Admin's "Door tablets" box. Never the key or its hash.
+  app.get('/api/bkk/admin/door/devices', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const r = await q(`SELECT id, name, paired_at, last_seen_at, other_ip_at, revoked_at FROM bkk_door_devices
+        ORDER BY revoked_at IS NULL DESC, paired_at DESC, id DESC LIMIT 10`);
+      res.set('Cache-Control', 'no-store').json({ devices: r.rows.map(d => ({ id: d.id, name: d.name, pairedAt: d.paired_at,
+        lastSeenAt: d.last_seen_at, otherInternet: !!d.other_ip_at, otherSeenAt: d.other_ip_at, active: !d.revoked_at, revokedAt: d.revoked_at })) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+  app.post('/api/bkk/admin/door/devices/:id/revoke', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    if (!/^\d{1,9}$/.test(req.params.id)) return res.status(404).json({ error: 'not found' });
+    try {
+      const d = (await q(`SELECT id FROM bkk_door_devices WHERE id=$1`, [Number(req.params.id)])).rows[0];
+      if (!d) return res.status(404).json({ error: 'not found' });
+      const n = (await q(`UPDATE bkk_door_devices SET revoked_at=now() WHERE id=$1 AND revoked_at IS NULL`, [d.id])).rowCount;
+      res.json({ success: true, revoked: n > 0 });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // The class list on the tablet. Outside every window only next, moon and now.
+  app.get('/api/bkk/door/now', async (req, res) => {
+    res.set('Cache-Control', 'no-store');
+    try {
+      const dev = await doorFrom(req);
+      if (!dev) return doorNoKey(res);
+      const st = await doorState();
+      const n = st.next;
+      const out = { next: n && { title: n.slot.title, date: n.date, start: bkkHm(n.start), opens: bkkHm(n.opens) }, moon: st.moon, now: st.nowMs };
+      if (!st.live.length) return res.json(out);
+      const [k, names] = [await doorKeys(), doorNames(st.seats)];
+      const cls = new Map(st.live.map(c => [c.slot.id, c]));
+      const seats = st.seats.map(s => ({ id: s.id, n: names.get(s.id), c: cls.get(s.slot_id), at: s.checked_in_at }))
+        .sort((a, b) => a.n.localeCompare(b.n, 'en') || a.id - b.id)
+        .map(s => ({ t: sealSeat(k, s.id, dev.id, s.c.end), n: s.n, in: !!s.at, at: s.at ? bkkHm(new Date(s.at).getTime()) : null, c: bkkHm(s.c.start) }));
+      res.json({ classes: st.live.map(c => ({ title: c.slot.title, start: bkkHm(c.start), end: bkkHm(c.end) })), seats, ...out });
+    } catch (e) {
+      console.error('[bkk door] now failed:', e.message);
+      res.status(500).json({ error: 'something went wrong' });
+    }
+  });
+
+  // A tap, then "Yes". A booked seat is always taken: the class was counted when
+  // it was booked, so nothing about the pass is read or written here, and taps
+  // are never limited (a prank must not lock out a class). 400: a handle this
+  // server never made for this tablet, or its class is over. 409: the seat was
+  // cancelled or its window is closed: the page says "see the teacher".
+  app.post('/api/bkk/door/checkin', async (req, res) => {
+    res.set('Cache-Control', 'no-store');
+    let client = null;
+    try {
+      const dev = await doorFrom(req);
+      if (!dev) return doorNoKey(res);
+      const h = openSeat(await doorKeys(), (req.body || {}).t);
+      if (!h || h.dev !== dev.id || bkkNow().getTime() >= h.endMs) return res.status(400).json({ ok: false, error: 'not a seat on this tablet' });
+      const st = await doorState();
+      const seat = st.seats.find(s => s.id === h.bid);
+      if (!seat) return res.status(409).json({ ok: false, refused: true });
+      client = await pool.connect();
+      await client.query('BEGIN');
+      const b = (await client.query(`SELECT checked_in_at FROM bkk_bookings WHERE id=$1 AND status='booked' FOR UPDATE`, [seat.id])).rows[0];
+      if (!b) { await client.query('ROLLBACK'); return res.status(409).json({ ok: false, refused: true }); }
+      const at = b.checked_in_at || (await client.query(`UPDATE bkk_bookings SET checked_in_at=$2, checkin_via='tablet', checkin_by=$3
+        WHERE id=$1 RETURNING checked_in_at`, [seat.id, new Date(st.nowMs).toISOString(), dev.name])).rows[0].checked_in_at;
+      await client.query('COMMIT');
+      res.json({ ok: true, n: doorNames(st.seats).get(seat.id), already: !!b.checked_in_at, at: bkkHm(new Date(at).getTime()) });
+    } catch (e) {
+      if (client) await client.query('ROLLBACK').catch(() => {});
+      console.error('[bkk door] check-in failed:', e.message);
+      res.status(500).json({ ok: false, error: 'something went wrong' });
+    } finally { if (client) client.release(); }
+  });
+
+  // "Not on the list? Book on your phone": a QR to /book on this site, made here.
+  app.get('/api/bkk/door/qr', async (req, res) => {
+    res.set('Cache-Control', 'no-store');
+    try {
+      const dev = await doorFrom(req);
+      if (!dev) return doorNoKey(res);
+      const link = `${signinOrigin(req.query.origin)}/book`;
+      const svg = await QRCode.toString(link, { type: 'svg', errorCorrectionLevel: 'M', margin: 2,
+        color: { dark: '#000000', light: '#ffffff' } });
+      res.json({ link, svg });
+    } catch (e) { res.status(500).json({ error: 'something went wrong' }); }
   });
 
   const booted = initSchema();

@@ -238,6 +238,22 @@ fs.writeFileSync(path.join(PRIVATE, 'rosters', 'hefei.json'), JSON.stringify({ w
   const bound = await request('POST', '/api/orientations', {}, { name: 'Locktest Roster', studentCode: 'HEFEI-901', language: 'en', location: 'hefei' });
   ok('an orientation with a card code still binds to the roster journal id', bound.status === 200 && JSON.stringify(bound.json || {}).includes('lock-roster-1'), shape(bound));
 
+  // The door tablet (17 Nov 2026): its page talks to this site only, and its list
+  // opens with the door key alone, never the staff key or none.
+  console.log('\n-- the door tablet --');
+  for (const p of ['/tablet', '/bkk-tablet.html']) {
+    const r = await request('GET', p);
+    const csp = r.headers['content-security-policy'] || '';
+    ok(`${p} is served with a Content-Security-Policy for this site only, and never loads the staff key`, r.status === 200
+      && /default-src 'none'/.test(csp) && /connect-src 'self'/.test(csp) && /script-src 'self'/.test(csp) && !/https?:/.test(csp)
+      && r.headers['cache-control'] === 'no-cache' && !/staff-key\.js/.test(r.text), `${r.status} ${csp}`);
+  }
+  for (const [m, p] of [['GET', '/api/bkk/door/now'], ['POST', '/api/bkk/door/checkin'], ['GET', '/api/bkk/door/qr']]) {
+    const none = await request(m, p, {}, m === 'POST' ? {} : undefined), staff = await request(m, p, STAFF, m === 'POST' ? {} : undefined);
+    ok(`${p} answers 401 without a door key, the staff key included`, none.status === 401 && staff.status === 401
+      && none.headers['www-authenticate'] === 'X-Door-Key', `${none.status} ${staff.status}`);
+  }
+
   console.log('\n— what stays open —');
   const signup = await request('POST', '/api/orientations/private', {}, { name: 'Locktest Signup', contact: 'locktest@example.com', contactType: 'email' });
   ok('a public sign-up form still saves without a key', signup.status === 200 && signup.json.success === true && /^private-/.test(signup.json.studentId), shape(signup));

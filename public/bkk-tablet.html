@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>AYBKK Door</title>
+<style>
+  @font-face{font-family:'Work Sans';src:url('/fonts/worksans.woff2') format('woff2');font-weight:100 900;font-display:swap}
+  @font-face{font-family:'Plex';src:url('/fonts/plexthai.woff2') format('woff2');font-display:swap}
+  @font-face{font-family:'Plex';src:url('/fonts/plexthai-th.woff2') format('woff2');
+    unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC;font-display:swap}
+  /* The door tablet at 05:20 in a dark shala: dark whatever the iPad's theme is.
+     Plain CSS for iPadOS 16 Safari: no nesting, no :has(), no container queries. */
+  :root{--wall:#120d16;--paper:#1e1723;--paper2:#271e2d;--ink:#f5e9f0;--soft:#b6a3bc;--line:rgba(245,233,240,.14);
+    --plum:#c07ec8;--pink:#ff6fae;--in:#3ddc97;--warn:#ffc857;--bad:#ff8f8f}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  [hidden]{display:none!important}
+  html,body{margin:0;height:100%;background:var(--wall);color:var(--ink)}
+  body{font:18px/1.45 'Plex',-apple-system,'Helvetica Neue','PingFang SC','Hiragino Sans GB',sans-serif;
+    -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation;overflow-x:hidden}
+  button{font:inherit;color:inherit;touch-action:manipulation}
+  .num{font-family:'Work Sans',sans-serif;font-variant-numeric:tabular-nums}
+  .th{font-size:.92em;color:var(--soft)}
+
+  /* No internet: a yellow bar over everything, the list greyed and still. */
+  #offline{position:fixed;left:0;right:0;top:0;z-index:40;background:var(--warn);color:#241a02;
+    padding:14px 24px calc(14px + env(safe-area-inset-top,0px));font-weight:700;font-size:19px;text-align:center}
+  #offline span{display:block;font-weight:600;font-size:16px}
+  body.off .grid,body.off .qrbox{filter:grayscale(1);opacity:.45}
+
+  /* Pairing */
+  #pair{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px}
+  #pair h1{font-family:'Work Sans',sans-serif;font-weight:900;font-size:44px;letter-spacing:.04em;margin:0}
+  #pair .sub{color:var(--soft);margin:4px 0 36px}
+  #code{font-family:'Work Sans',sans-serif;font-weight:800;font-size:96px;letter-spacing:.12em;line-height:1.1;
+    background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:20px 36px;margin:0 0 28px;white-space:nowrap}
+  #pair .say{font-size:22px;max-width:640px;margin:0 0 6px}
+  #pair .say.th{font-size:20px}
+  #pairMsg{min-height:1.5em;margin-top:22px;color:var(--warn)}
+
+  /* The class list */
+  header{position:sticky;top:0;z-index:10;background:#17121a;border-bottom:1px solid var(--line);
+    padding:16px 24px;display:flex;align-items:center;gap:20px}
+  header .cls{flex:1;min-width:0}
+  header .cls b{display:block;font-size:24px;font-weight:600;line-height:1.25;overflow-wrap:anywhere}
+  header .cls b .num{color:var(--plum);margin-right:8px}
+  header .cls > span{display:block;color:var(--soft);font-size:16px}
+  #clock{font-size:54px;font-weight:700;line-height:1}
+  .langs{display:flex;gap:8px}
+  .langs button{min-width:62px;height:52px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:var(--paper);
+    font-size:18px;font-weight:600;cursor:pointer}
+  .langs button.on{background:var(--plum);border-color:var(--plum);color:#17121a}
+  main{padding:20px 24px 48px}
+  .lead{font-size:21px;margin:0 0 18px}
+  .lead .th{display:block}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr));gap:16px}
+  .tile{position:relative;min-height:176px;min-width:0;border-radius:18px;border:1px solid var(--line);background:var(--paper);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:18px 10px;cursor:pointer;text-align:center}
+  .tile:active{background:var(--paper2)}
+  .ini{width:84px;height:84px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-family:'Work Sans',sans-serif;font-weight:700;font-size:32px;color:#17121a;flex:none}
+  .tile .nm{font-size:23px;font-weight:600;line-height:1.2;max-width:100%;overflow-wrap:anywhere}
+  .tile .at{position:absolute;top:10px;left:12px;font-size:14px;color:var(--soft)}
+  .tile.in{border-color:rgba(61,220,151,.45);background:#18131c}
+  .tile.in .ini,.tile.in .nm,.tile.in .at{opacity:.4}
+  .tile .ok{position:absolute;top:10px;right:10px;width:38px;height:38px;border-radius:50%;background:var(--in);color:#0d1a14;
+    display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;line-height:1}
+  .empty{color:var(--soft);font-size:21px;text-align:center;padding:40px 10px}
+  .qrbox{margin-top:30px;display:flex;align-items:center;gap:26px;background:var(--paper);border:1px solid var(--line);
+    border-radius:18px;padding:20px 24px}
+  #qr{flex:none;width:168px;height:168px;background:#fff;border-radius:10px;padding:6px}
+  #qr svg{display:block;width:100%;height:100%}
+  .qrbox p{margin:0;font-size:22px;font-weight:600}
+  .qrbox p.th{font-size:20px;font-weight:400;margin-top:4px}
+
+  /* Waiting, moon day, night */
+  .still{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 32px}
+  .still .big{font-size:160px;font-weight:700;line-height:1;letter-spacing:.02em}
+  .still .next{font-size:30px;margin:34px 0 6px;max-width:900px}
+  .still .next.th{font-size:26px;margin-top:0}
+  #night{background:#000}
+  #night .num{font-size:40px;color:#4a3d50}
+
+  /* Is this you? / Welcome / See the teacher: full screen over the list */
+  .over{position:fixed;inset:0;z-index:30;background:#0d0910;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;padding:40px 32px}
+  .over .ini{width:150px;height:150px;font-size:58px;margin-bottom:26px}
+  .over .q{font-size:34px;margin:0}
+  .over .q2{font-size:24px;color:var(--soft);margin:2px 0 0}
+  .over .who{font-size:64px;font-weight:700;margin:14px 0 40px;line-height:1.15;max-width:100%;overflow-wrap:anywhere}
+  #yes{min-width:420px;max-width:100%;padding:28px 40px;border:none;border-radius:20px;background:var(--in);color:#0d1a14;
+    font-size:32px;font-weight:700;cursor:pointer}
+  #yes small{display:block;font-size:20px;font-weight:600;opacity:.8}
+  #yes:disabled{opacity:.5}
+  #no{margin-top:22px;min-width:220px;padding:16px 30px;border:1px solid var(--line);border-radius:16px;background:var(--paper);
+    font-size:22px;cursor:pointer}
+  #no small{display:block;font-size:16px;color:var(--soft)}
+  .over .langs{margin-top:44px}
+  #result.good{background:#092419}
+  #result.good .mark{width:150px;height:150px;border-radius:50%;background:var(--in);color:#0d1a14;display:flex;align-items:center;
+    justify-content:center;font-size:96px;font-weight:800;margin-bottom:30px}
+  #result.bad{background:#1a141e}
+  #result.bad .mark{width:150px;height:150px;border-radius:50%;background:var(--paper2);border:3px solid var(--warn);color:var(--warn);
+    display:flex;align-items:center;justify-content:center;font-size:84px;font-weight:800;margin-bottom:30px}
+  #result .r1{font-size:44px;font-weight:700;margin:0;max-width:960px;overflow-wrap:anywhere}
+  #result .r2{font-size:30px;margin:8px 0 0;max-width:960px}
+  #result .r3{font-size:24px;color:var(--soft);margin:22px 0 0;max-width:960px}
+  #result .r4{font-size:22px;color:var(--soft);margin:4px 0 0;max-width:960px}
+
+  @media (max-width:700px){
+    header{flex-wrap:wrap;padding:12px 16px}
+    #clock{font-size:40px}
+    main{padding:16px}
+    .grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,140px),1fr));gap:12px}
+    .qrbox{flex-direction:column;text-align:center}
+    #code{font-size:54px;padding:16px 20px}
+    .still .big{font-size:96px}
+    .over .who{font-size:44px}
+    #yes{min-width:0;width:100%}
+  }
+</style>
+</head>
+<body>
+
+<div id="offline" hidden role="alert">ไม่มีอินเทอร์เน็ต การแตะยังไม่ถูกบันทึก กรุณาบอกครู
+  <span>No internet. Your tap is not saved. Please tell the teacher.</span></div>
+
+<section id="pair" hidden>
+  <h1>AYBKK</h1>
+  <p class="sub">แท็บเล็ตหน้าประตู · Door tablet</p>
+  <div id="code" class="num" aria-live="polite">&nbsp;</div>
+  <p class="say">Ask Boonchu or M to type this code in Admin, Door tablets.</p>
+  <p class="say th">ให้ Boonchu หรือ M พิมพ์รหัสนี้ในหน้า Admin ที่ช่อง Door tablets</p>
+  <p class="th" style="margin-top:14px">รหัสเปลี่ยนทุก 10 นาที · The code changes every 10 minutes.</p>
+  <p id="pairMsg" role="status"></p>
+</section>
+
+<section id="list" hidden>
+  <header>
+    <div class="cls" id="classes"></div>
+    <div class="langs" id="langsTop"></div>
+    <div id="clock" class="num" aria-label="Bangkok time"></div>
+  </header>
+  <main>
+    <p class="lead">Tap your name to check in.<span class="th">แตะชื่อของคุณเพื่อเช็กอิน</span></p>
+    <div class="grid" id="grid"></div>
+    <div class="qrbox">
+      <div id="qr" aria-hidden="true"></div>
+      <div><p>Not on the list? Book on your phone, then tap your name.</p>
+        <p class="th">ไม่มีชื่อ? จองคลาสในโทรศัพท์ก่อน แล้วแตะชื่อของคุณ</p></div>
+    </div>
+  </main>
+</section>
+
+<section id="wait" class="still" hidden>
+  <div class="big num" id="waitClock"></div>
+  <p class="next" id="waitEn"></p>
+  <p class="next th" id="waitTh"></p>
+</section>
+
+<section id="night" class="still" hidden><div class="num" id="nightClock"></div></section>
+
+<div id="confirm" class="over" hidden role="dialog" aria-modal="true" aria-labelledby="cWho">
+  <div class="ini" id="cIni"></div>
+  <p class="q" id="cQ"></p>
+  <p class="q2" id="cQ2"></p>
+  <div class="who" id="cWho"></div>
+  <button id="yes"></button>
+  <button id="no"></button>
+  <div class="langs" id="langsOver"></div>
+</div>
+
+<div id="result" class="over" hidden role="status" aria-live="assertive">
+  <div class="mark" id="rMark"></div>
+  <p class="r1" id="r1"></p>
+  <p class="r2" id="r2"></p>
+  <p class="r3" id="r3"></p>
+  <p class="r4" id="r4"></p>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (s) { return document.querySelector(s); };
+  var store = {
+    get: function (k) { try { return localStorage.getItem(k); } catch (_) { return null; } },
+    set: function (k, v) { try { localStorage.setItem(k, v); } catch (_) {} },
+    del: function (k) { try { localStorage.removeItem(k); } catch (_) {} },
+  };
+  // This browser is the door: no staff key, no student sign-in, ever.
+  ['aybkk_bkk_key', 'aybkk_member', 'aybkk_teacher_key'].forEach(store.del);
+  try { sessionStorage.clear(); } catch (_) {}
+  var KEY_NAME = 'aybkk_door_key';
+  var KEY = store.get(KEY_NAME) || '';
+
+  // The confirm, welcome and refusal words. null = Thai and English together;
+  // a language button picks one for this student only.
+  var WORDS = {
+    th: { q: 'ใช่คุณไหม', yes: 'ใช่ เช็กอินเลย', no: 'ไม่ใช่',
+      hi: function (n) { return 'ยินดีต้อนรับ ' + n; }, done: 'เช็กอินเรียบร้อยแล้ว',
+      already: function (t) { return 'เช็กอินไว้แล้วเมื่อ ' + t + ' น.'; },
+      bad: 'เช็กอินที่นี่ไม่ได้', bad2: 'กรุณาบอกครู หรือทักมาทาง LINE @aybkk' },
+    en: { q: 'Is this you?', yes: 'Yes, check me in', no: 'No',
+      hi: function (n) { return 'Welcome, ' + n + '.'; }, done: 'You are checked in.',
+      already: function (t) { return 'Already checked in at ' + t + '.'; },
+      bad: 'We can’t check you in here.', bad2: 'Please see the teacher, or message LINE @aybkk.' },
+    zh: { q: '这是你吗？', yes: '是的，帮我签到', no: '不是',
+      hi: function (n) { return '欢迎你，' + n; }, done: '签到成功。',
+      already: function (t) { return '你已在 ' + t + ' 签到。'; },
+      bad: '这里无法为你签到。', bad2: '请找老师，或在 LINE 上联系 @aybkk。' },
+    ru: { q: 'Это вы?', yes: 'Да, отметить меня', no: 'Нет',
+      hi: function (n) { return 'Добро пожаловать, ' + n + '!'; }, done: 'Вы отмечены.',
+      already: function (t) { return 'Вы уже отмечены в ' + t + '.'; },
+      bad: 'Здесь не получается отметиться.', bad2: 'Подойдите к учителю или напишите нам в LINE @aybkk.' },
+  };
+  var LANGS = [['th', 'ไทย'], ['en', 'EN'], ['zh', '中文'], ['ru', 'RU']];
+  var LANG = null;
+  var WD = { th: ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'],
+    en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] };
+  var CLASS_TH = [[/\[Online\]/g, '[ออนไลน์]'], [/Mysore/g, 'มายซอร์'], [/\(1st batch\)/g, '(รอบแรก)'],
+    [/\(2nd batch\)/g, '(รอบสอง)'], [/Sunday/g, 'วันอาทิตย์'], [/Led Primary series/g, 'Led Primary'],
+    [/Led Intermediate series/g, 'Led Intermediate']];
+  var classTh = function (t) { return CLASS_TH.reduce(function (s, r) { return s.replace(r[0], r[1]); }, String(t || '')); };
+
+  // Bangkok time from the server's clock, never the iPad's time zone.
+  var base = { server: 0, local: 0 };
+  var nowMs = function () { return base.server ? base.server + (Date.now() - base.local) : Date.now(); };
+  var bkk = function (ms) { return new Date(ms + 7 * 3600000).toISOString(); };
+  var hm = function (ms) { return bkk(ms).slice(11, 16); };
+  var bkkMin = function (ms) { var s = bkk(ms); return Number(s.slice(11, 13)) * 60 + Number(s.slice(14, 16)); };
+  var atMs = function (d, t) { return Date.parse(d + 'T' + t + ':00+07:00'); };
+
+  var DATA = null, PENDING = null, OFF = false, SCREEN = '', OPEN = null, lastTouch = 0, STALE = false;
+  var timers = { load: null, over: null, poll: null };
+  var el = function (tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+
+  function show(id) {
+    SCREEN = id;
+    ['pair', 'list', 'wait', 'night'].forEach(function (s) { $('#' + s).hidden = s !== id; });
+  }
+  function setOffline(on) {
+    OFF = on;
+    $('#offline').hidden = !on;
+    document.body.classList.toggle('off', on);
+  }
+
+  var api = function (url, opts) {
+    opts = opts || {};
+    var ctl = typeof AbortController === 'function' ? new AbortController() : null;
+    var t = ctl ? setTimeout(function () { ctl.abort(); }, 10000) : null;
+    var h = { 'Content-Type': 'application/json' };
+    if (KEY) h['X-Door-Key'] = KEY;
+    return fetch(url, { method: opts.method || 'GET', headers: h, body: opts.body ? JSON.stringify(opts.body) : undefined,
+      cache: 'no-store', signal: ctl ? ctl.signal : undefined })
+      .then(function (r) { clearTimeout(t); return r; }, function (e) { clearTimeout(t); throw e; });
+  };
+  var json = function (r) { return r.json().catch(function () { return {}; }); };
+
+  // ── pairing: this tablet shows a code, staff type it in Admin ─────────────
+  function unpaired() {
+    KEY = ''; store.del(KEY_NAME);
+    DATA = null; PENDING = null; closeOverlays();
+    clearTimeout(timers.load);
+    setOffline(false);
+    pair();
+  }
+  // GEN: only the newest pairing request is followed; an older loop stops.
+  var GEN = 0;
+  function pair() {
+    var g = ++GEN;
+    show('pair');
+    clearTimeout(timers.poll);
+    $('#code').textContent = ' ';
+    api('/api/bkk/door/pair/start', { method: 'POST' }).then(function (r) {
+      return json(r).then(function (d) {
+        if (g !== GEN) return;
+        if (!r.ok || !d.secret) {
+          $('#pairMsg').textContent = r.status === 429 ? 'รอสักครู่ · Please wait a few minutes.' : 'ลองใหม่ · Trying again';
+          timers.poll = setTimeout(pair, r.status === 429 ? 60000 : 10000);
+          return;
+        }
+        $('#pairMsg').textContent = '';
+        $('#code').textContent = d.code;
+        claim(d.secret, g);
+      });
+    }, function () {
+      if (g !== GEN) return;
+      $('#pairMsg').textContent = 'ไม่มีอินเทอร์เน็ต · No internet';
+      timers.poll = setTimeout(pair, 10000);
+    });
+  }
+  function claim(secret, g) {
+    timers.poll = setTimeout(function () {
+      if (g !== GEN) return;
+      api('/api/bkk/door/pair/claim', { method: 'POST', body: { secret: secret } }).then(function (r) {
+        return json(r).then(function (d) {
+          if (g !== GEN) return;
+          if (d.ok && d.key) { GEN++; KEY = d.key; store.set(KEY_NAME, KEY); start(); return; }
+          if (r.status === 404 || d.gone) { pair(); return; }
+          claim(secret, g);
+        });
+      }, function () { if (g === GEN) claim(secret, g); });
+    }, 3000);
+  }
+
+  // ── the list ───────────────────────────────────────────────────────────────
+  function start() {
+    $('#pairMsg').textContent = '';
+    loadQr();
+    load();
+  }
+  function loadQr() {
+    api('/api/bkk/door/qr?origin=' + encodeURIComponent(location.origin)).then(function (r) {
+      if (r.status === 401) return;
+      return json(r).then(function (d) { if (d.svg) $('#qr').innerHTML = d.svg; });
+    }, function () {});
+  }
+  function schedule(ms) { clearTimeout(timers.load); timers.load = setTimeout(load, ms); }
+  var loading = false;
+  function load() {
+    if (!KEY || loading) return;
+    loading = true;
+    api('/api/bkk/door/now').then(function (r) {
+      if (r.status === 401) { loading = false; unpaired(); return; }
+      return json(r).then(function (d) {
+        loading = false;
+        setOffline(false);
+        if (!r.ok) { schedule(20000); return; }
+        base = { server: d.now, local: Date.now() };
+        if (!$('#qr').firstChild) loadQr();
+        if (busy()) PENDING = d; else take(d);
+        schedule(d.classes ? 20000 : 60000);
+      });
+    }, function () {
+      loading = false;
+      setOffline(true);
+      if (SCREEN === 'list') paintList();
+      schedule(10000);
+    });
+  }
+  // The list stays still while someone is reading it: the confirm is open, or a
+  // finger touched the screen in the last 5 seconds.
+  var busy = function () { return !!OPEN || Date.now() - lastTouch < 5000; };
+  function take(d) { DATA = d; PENDING = null; render(); }
+
+  function render() {
+    if (!DATA) return;
+    var now = nowMs(), m = bkkMin(now);
+    if (DATA.classes) { show('list'); paintList(); return; }
+    if (m >= 21 * 60 || m < 4 * 60 + 30) { show('night'); $('#nightClock').textContent = hm(now); return; }
+    show('wait');
+    $('#waitClock').textContent = hm(now);
+    var n = DATA.next;
+    if (DATA.moon) {
+      $('#waitEn').textContent = 'Moon day. The shala is closed today.';
+      $('#waitTh').textContent = 'วันพระจันทร์ AYBKK ปิดวันนี้';
+    } else if (n) {
+      var today = bkk(now).slice(0, 10), tomorrow = bkk(now + 86400000).slice(0, 10);
+      var wd = new Date(n.date + 'T12:00:00Z').getUTCDay();
+      var dayEn = n.date === today ? '' : n.date === tomorrow ? 'Tomorrow, ' : WD.en[wd] + ', ';
+      var dayTh = n.date === today ? '' : n.date === tomorrow ? 'พรุ่งนี้ ' : 'วัน' + WD.th[wd] + ' ';
+      $('#waitEn').textContent = 'Next class: ' + dayEn + n.title + ' ' + n.start + '. Names show from ' + n.opens + '.';
+      $('#waitTh').textContent = 'คลาสถัดไป: ' + dayTh + classTh(n.title) + ' ' + n.start + ' น. รายชื่อขึ้นตั้งแต่ ' + n.opens + ' น.';
+    } else {
+      $('#waitEn').textContent = ''; $('#waitTh').textContent = '';
+    }
+  }
+
+  var TONES = ['#c07ec8', '#ff8fbf', '#8fc7ff', '#ffc857', '#7fdcb4', '#f0a882', '#b7a6ff', '#e6d27a'];
+  var tone = function (s) { var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return TONES[h % TONES.length]; };
+  // "Ana E." gives AE; a Thai leading vowel is not the letter.
+  function initials(n) {
+    var ws = String(n || '').split(/\s+/).filter(Boolean);
+    var first = function (w) { var c = Array.from(w.replace(/^[เ-ไ]+/, '')); return c.length ? c[0] : ''; };
+    return ((ws[0] ? first(ws[0]) : '') + (ws.length > 1 ? first(ws[1]) : '')).toUpperCase();
+  }
+  function paintList() {
+    if (!DATA || !DATA.classes) return;
+    var head = $('#classes');
+    head.textContent = '';
+    DATA.classes.forEach(function (c) {
+      var b = el('b');
+      b.appendChild(el('span', 'num', c.start));
+      b.appendChild(document.createTextNode(c.title));
+      head.appendChild(b);
+      head.appendChild(el('span', '', classTh(c.title) + ' ' + c.start + ' น.'));
+    });
+    $('#clock').textContent = hm(nowMs());
+    var many = DATA.classes.length > 1;
+    var grid = $('#grid');
+    grid.textContent = '';
+    if (!DATA.seats.length) {
+      var p = el('p', 'empty', 'Nobody is on the list yet.');
+      p.appendChild(el('span', 'th', ' ยังไม่มีชื่อในรายการ'));
+      grid.appendChild(p);
+      return;
+    }
+    DATA.seats.forEach(function (s) {
+      var b = el('button', 'tile' + (s.in ? ' in' : ''));
+      b.type = 'button';
+      b.setAttribute('data-t', s.t);
+      var ini = el('span', 'ini', initials(s.n));
+      ini.style.background = tone(s.n);
+      ini.setAttribute('aria-hidden', 'true');
+      b.appendChild(ini);
+      b.appendChild(el('span', 'nm', s.n));
+      if (many) b.appendChild(el('span', 'at num', s.c));
+      if (s.in) { var ok = el('span', 'ok', '✓'); ok.setAttribute('aria-hidden', 'true'); b.appendChild(ok); }
+      b.setAttribute('aria-label', s.n + (s.in ? ', checked in' : '') + (many ? ', ' + s.c : ''));
+      grid.appendChild(b);
+    });
+  }
+  $('#grid').addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.tile') : null;
+    if (!b || OFF || OPEN || !DATA || !DATA.seats) return;
+    var t = b.getAttribute('data-t');
+    var s = DATA.seats.filter(function (x) { return x.t === t; })[0];
+    if (!s) return;
+    if (s.in) { result('good', { n: s.n, already: true, at: s.at }); return; }
+    ask(s);
+  });
+
+  // ── Is this you? ───────────────────────────────────────────────────────────
+  function langButtons(box) {
+    box.textContent = '';
+    LANGS.forEach(function (l) {
+      var b = el('button', LANG === l[0] ? 'on' : '', l[1]);
+      b.type = 'button';
+      b.setAttribute('lang', l[0]);
+      b.setAttribute('aria-pressed', LANG === l[0] ? 'true' : 'false');
+      b.addEventListener('click', function () {
+        LANG = LANG === l[0] ? null : l[0];
+        langButtons($('#langsTop'));
+        if (OPEN && OPEN.kind === 'confirm') { paintConfirm(); armOver(8000); }
+      });
+      box.appendChild(b);
+    });
+  }
+  var w = function (k) { return LANG ? [WORDS[LANG][k]] : [WORDS.th[k], WORDS.en[k]]; };
+  function twoLines(btn, k) {
+    var v = w(k);
+    btn.textContent = v[0];
+    if (v[1]) btn.appendChild(el('small', '', v[1]));
+  }
+  function paintConfirm() {
+    var s = OPEN.seat, q = w('q');
+    $('#cIni').textContent = initials(s.n);
+    $('#cIni').style.background = tone(s.n);
+    $('#cQ').textContent = q[0];
+    $('#cQ2').textContent = q[1] || '';
+    $('#cWho').textContent = s.n;
+    twoLines($('#yes'), 'yes');
+    twoLines($('#no'), 'no');
+    langButtons($('#langsOver'));
+  }
+  function armOver(ms) { clearTimeout(timers.over); timers.over = setTimeout(back, ms); }
+  function ask(s) {
+    OPEN = { kind: 'confirm', seat: s, sent: false };
+    $('#yes').disabled = false;
+    paintConfirm();
+    $('#confirm').hidden = false;
+    armOver(8000);
+  }
+  function closeOverlays() {
+    clearTimeout(timers.over);
+    $('#confirm').hidden = true;
+    $('#result').hidden = true;
+    OPEN = null;
+  }
+  // Back to the list, in the default languages, with any refresh that waited.
+  function back() {
+    closeOverlays();
+    LANG = null;
+    langButtons($('#langsTop'));
+    if (PENDING) take(PENDING); else render();
+  }
+  $('#no').addEventListener('click', back);
+  $('#yes').addEventListener('click', function () {
+    if (!OPEN || OPEN.kind !== 'confirm' || OPEN.sent) return;
+    var s = OPEN.seat;
+    OPEN.sent = true;
+    $('#yes').disabled = true;
+    clearTimeout(timers.over);
+    api('/api/bkk/door/checkin', { method: 'POST', body: { t: s.t } }).then(function (r) {
+      if (r.status === 401) { unpaired(); return; }
+      return json(r).then(function (d) {
+        setOffline(false);
+        if (r.ok && d.ok) {
+          s.in = true; s.at = d.at;
+          result('good', { n: d.n || s.n, already: !!d.already, at: d.at });
+        } else {
+          result('bad');
+          load();
+        }
+      });
+    }, function () {
+      setOffline(true);
+      back();
+    });
+  });
+
+  function result(kind, d) {
+    $('#confirm').hidden = true;
+    OPEN = { kind: 'result' };
+    var box = $('#result');
+    box.className = 'over ' + kind;
+    var langs = LANG ? [LANG] : ['th', 'en'];
+    var lines;
+    if (kind === 'good') {
+      $('#rMark').textContent = '✓';
+      lines = d.already ? langs.map(function (l) { return WORDS[l].already(d.at); })
+        : [].concat.apply([], langs.map(function (l) { return [WORDS[l].hi(d.n), WORDS[l].done]; }));
+      if (d.already) lines.unshift(d.n);
+    } else {
+      $('#rMark').textContent = '!';
+      lines = [].concat.apply([], langs.map(function (l) { return [WORDS[l].bad, WORDS[l].bad2]; }));
+    }
+    ['#r1', '#r2', '#r3', '#r4'].forEach(function (id, i) { $(id).textContent = lines[i] || ''; $(id).hidden = !lines[i]; });
+    box.hidden = false;
+    armOver(kind === 'good' ? 4000 : 8000);
+  }
+  $('#result').addEventListener('click', back);
+
+  // ── around the clock ───────────────────────────────────────────────────────
+  document.addEventListener('pointerdown', function () { lastTouch = Date.now(); wake(); }, true);
+  var PAGE_TAG = null;
+  // A newer copy of this page on the server (staff phones ran old pages for days
+  // on 12 Nov): reload by itself, but only when nobody is using the screen.
+  function checkPage() {
+    fetch(location.pathname, { method: 'HEAD', cache: 'no-store' }).then(function (r) {
+      var tag = r.ok ? [r.headers.get('ETag'), r.headers.get('Last-Modified')].filter(Boolean).join(' ') : '';
+      if (!tag) return;
+      if (PAGE_TAG == null) PAGE_TAG = tag; else if (tag !== PAGE_TAG) STALE = true;
+    }, function () {});
+  }
+  var lastMin = -1, opened = false;
+  setInterval(function () {
+    var now = nowMs();
+    if (SCREEN === 'list') $('#clock').textContent = hm(now);
+    if (SCREEN === 'wait') $('#waitClock').textContent = hm(now);
+    if (SCREEN === 'night') $('#nightClock').textContent = hm(now);
+    if (PENDING && !busy()) take(PENDING);
+    if (STALE && !OPEN && Date.now() - lastTouch > 60000) { STALE = false; location.reload(); return; }
+    var m = bkkMin(now);
+    if (m !== lastMin) { lastMin = m; if (SCREEN === 'wait' || SCREEN === 'night') render(); }
+    // The next window opens: ask now, not at the next minute's refresh.
+    var n = DATA && !DATA.classes && DATA.next;
+    if (n && !opened && now >= atMs(n.date, n.opens)) { opened = true; load(); }
+    if (!n) opened = false;
+  }, 1000);
+  setInterval(checkPage, 5 * 60000);
+  checkPage();
+
+  // Stay awake where Safari has it (16.4 and later); Guided Access keeps Auto-Lock off anyway.
+  var lock = null;
+  function wake() {
+    if (lock || !navigator.wakeLock || document.visibilityState !== 'visible') return;
+    try {
+      navigator.wakeLock.request('screen').then(function (l) {
+        lock = l;
+        l.addEventListener('release', function () { lock = null; });
+      }, function () {});
+    } catch (_) {}
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') { wake(); if (KEY) load(); }
+  });
+
+  langButtons($('#langsTop'));
+  wake();
+  if (KEY) start(); else pair();
+})();
+</script>
+</body>
+</html>

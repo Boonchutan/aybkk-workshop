@@ -175,6 +175,7 @@ const WORDS = {
     classesH: '🧘 คลาสวันนี้',
     came: (time, title, came, booked, missed) => `${time} ${title}: เช็กอิน ${came}/${booked}${missed ? ` · ยังไม่เช็กอิน: ${missed}` : ''}`,
     bookings: (made, off, byShala) => `จองใหม่ ${made} · ยกเลิก ${off}${byShala ? ` (ชาลาปิดคลาส ${byShala})` : ''}`,
+    doorElse: names => `⚠ แท็บเล็ตหน้าประตู (${names}) ถูกใช้จากอินเทอร์เน็ตอื่น ไม่ใช่ที่ชาลา เช็กใน Admin หัวข้อ Door tablets`,
     tomorrowH: d => `📅 พรุ่งนี้ ${d}`,
     tLine: (time, title, n, mats) => `${time} ${title}: จอง ${n}${mats ? ` · เสื่อ ${mats}` : ''}`,
     tClosed: c => c.why === 'none' ? 'พรุ่งนี้ไม่มีคลาสในตาราง'
@@ -238,6 +239,7 @@ const WORDS = {
     classesH: '🧘 Classes today',
     came: (time, title, came, booked, missed) => `${time} ${title}: ${came}/${booked} checked in${missed ? ` · not checked in: ${missed}` : ''}`,
     bookings: (made, off, byShala) => `Bookings made: ${made} · cancelled: ${off}${byShala ? ` (${byShala} by a closed class)` : ''}`,
+    doorElse: names => `⚠ The door tablet (${names}) was used from another internet, not the shala's. Check Admin, Door tablets.`,
     tomorrowH: d => `📅 Tomorrow ${d}`,
     tLine: (time, title, n, mats) => `${time} ${title}: ${n} booked${mats ? ` · ${pl(mats, 'mat', 'mats')}` : ''}`,
     tClosed: c => c.why === 'none' ? 'No classes on the timetable tomorrow.'
@@ -573,6 +575,12 @@ function mountTeam(app, opts = {}) {
            FROM bkk_start_events WHERE created_at >= $1 AND created_at < $2 AND src IS DISTINCT FROM 'letter'`),
       journalEntries(from, to),
     ]);
+    // A door tablet key used from an address other than the one it was paired
+    // from (bkk-api.js, 17 Nov 2026). A server without the table still briefs.
+    let doorElse = [];
+    try {
+      doorElse = await all(`SELECT name FROM bkk_door_devices WHERE other_ip_at >= $1 AND other_ip_at < $2 ORDER BY id`);
+    } catch (_) {}
     // The inbox has its own table (inbox.js); a server without it still briefs.
     let inbox = [];
     try {
@@ -626,6 +634,7 @@ function mountTeam(app, opts = {}) {
       }
     }
     lines.push(L.bookings(made.made, made.off, made.by_shala));
+    if (doorElse.length) lines.push(L.doorElse(doorElse.map(d => d.name).join(', ')));
 
     let booked = 0;
     lines.push('', L.tomorrowH(L.day(tomorrow)));

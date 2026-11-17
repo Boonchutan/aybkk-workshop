@@ -133,6 +133,17 @@ const jsonBody = express.json({ limit: '10mb', verify: (req, res, buf) => {
 app.use((req, res, next) => APPLY_PATH_RE.test(req.path) || LEAD_PATH_RE.test(req.path) || HELPDESK_PATH_RE.test(req.path)
   ? next() : jsonBody(req, res, next));
 app.use(staffFiles);
+// The door tablet (/tablet, 17 Nov 2026) talks to this site only: names on it come
+// from public order forms, so nothing it shows may load or send anything elsewhere.
+// no-cache: the page asks for its own headers to see a newer copy.
+const TABLET_CSP = "default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+  + "img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'";
+app.use((req, res, next) => {
+  if (req.path === '/tablet' || req.path === '/bkk-tablet.html') {
+    res.set({ 'Content-Security-Policy': TABLET_CSP, 'Cache-Control': 'no-cache', 'X-Robots-Tag': 'noindex, nofollow' });
+  }
+  next();
+});
 // index: false so '/' falls through to the host-aware front-door route below
 app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 app.use('/uploads', express.static(UPLOAD_DIR));
@@ -239,7 +250,8 @@ const ORIENTATION_SHORTCUTS = {
 };
 // Bangkok shala: timetable, packages, booking. ('/bkk' is the orientation form.)
 const PAGE_SHORTCUTS = { book: 'bkk.html', shala: 'bkk.html', booking: 'bkk.html',
-  door: 'bkk-door.html', teach: 'bkk-teacher.html', photos: 'bkk-photos.html', start: 'start.html', partner: 'partner.html' };
+  door: 'bkk-door.html', teach: 'bkk-teacher.html', photos: 'bkk-photos.html', start: 'start.html', partner: 'partner.html',
+  tablet: 'bkk-tablet.html' };
 // In-Depth Mysore. On every host but cn.*, /in-depth is the public English page: the priority list
 // for the next English intake. cn.aybkk.net/in-depth is Generation #3, a Chinese cohort, sent only by
 // link on WeChat. That page sits in pages/, so no static path serves it; ?lang= changes nothing; it is

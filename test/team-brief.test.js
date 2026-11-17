@@ -469,6 +469,17 @@ const fakeDriver = { session: () => ({
      && ent.includes('12-week checks (1): Anna B.') && ent.includes('Practice journal entries: 2 (Anna B.)')
      && ent.includes('Start page: 3 views · 1 tapped Book · 1 finished') && ent.includes('LINE chats: 2 people (1 new) · hot: 1')
      && ent.trim().endsWith('Today: ฿20,317 in · 3 checked in · 2 booked for tomorrow'), ent);
+  // The door tablet's key used from another internet today (17 Nov 2026): one line under the classes.
+  ok('no door tablet line on a day nobody used its key from elsewhere', !/แท็บเล็ตหน้าประตู|door tablet/i.test(et + ent));
+  const dev = (await pool.query(`INSERT INTO bkk_door_devices (name, key_hash, paired_ip, last_ip, last_seen_at, other_ip_at)
+    VALUES ('Front door', 'test-hash-team', '203.0.113.1', '198.51.100.7', '2026-11-10T06:00:00+07:00', '2026-11-10T06:00:00+07:00') RETURNING id`)).rows[0].id;
+  const eDoor = (await get(`/api/bkk/admin/team/preview?kind=evening&date=${D}`)).body.text || '';
+  const eDoorEn = (await get(`/api/bkk/admin/team/preview?kind=evening&date=${D}&lang=en`)).body.text || '';
+  ok('...and one line when it was, after the bookings line, naming the tablet, never an address',
+     eDoor.includes('จองใหม่ 3 · ยกเลิก 1\n⚠ แท็บเล็ตหน้าประตู (Front door) ถูกใช้จากอินเทอร์เน็ตอื่น ไม่ใช่ที่ชาลา เช็กใน Admin หัวข้อ Door tablets')
+       && eDoorEn.includes("⚠ The door tablet (Front door) was used from another internet, not the shala's. Check Admin, Door tablets.")
+       && !/198\.51|203\.0/.test(eDoor + eDoorEn), (eDoor.match(/⚠.*/) || [])[0]);
+  await pool.query('DELETE FROM bkk_door_devices WHERE id=$1', [dev]);
   const next = (await get('/api/bkk/admin/team/preview?kind=evening&date=2026-11-11')).body.text || '';
   ok('a payment at 21:00 is in the next evening\'s summary', next.startsWith('🌙 สรุปวันนี้ พ. 11 พ.ย. (ตั้งแต่ 20:00 เมื่อวาน ถึง 20:00)')
      && next.includes('💰 เงิน\nจ่ายแล้ว 1 รายการ ฿10,580 ') && next.includes('• 1 month unlimited ×1 ฿10,580'), next.split('\n').slice(0, 5).join(' | '));

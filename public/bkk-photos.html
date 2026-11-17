@@ -271,8 +271,8 @@
 
   // People Chay can tap without searching: today's bookings, everyone already
   // tagged on this date, and anyone found or added in this session.
-  const PEOPLE = new Map();          // code -> name
-  // PICKED: code -> 'main' (the photo is about them) or 'other' (in the frame).
+  const PEOPLE = new Map();          // ref -> name (a ref names a student on teacher routes, never their sign-in code)
+  // PICKED: ref -> 'main' (the photo is about them) or 'other' (in the frame).
   let QUEUE = [], EDIT = null, PICKED = new Map(), PHOTOS = [], DRIVE = [], OTHERS_SEE = false;
   const roleWord = r => r === 'other' ? 'In the frame' : 'Main';
   const mains = p => p.members.filter(m => m.role !== 'other');
@@ -310,7 +310,7 @@
     $('#seeNote').textContent = OTHERS_SEE ? 'Each student sees only the photos you tag them in.'
       : 'Each student sees only the photos where they are Main.';
     $('#redNote').textContent = OTHERS_SEE ? 'Red = nobody tagged yet.' : 'Red = nobody tagged, or nobody is Main yet.';
-    for (const p of PHOTOS) for (const m of p.members) PEOPLE.set(m.code, m.name);
+    for (const p of PHOTOS) for (const m of p.members) PEOPLE.set(m.ref, m.name);
     renderGrid();
     if (DRIVE.length) renderDrive();
   }
@@ -324,15 +324,15 @@
     const d = $('#date').value !== bkkToday() ? {} : await api('/api/bkk/teacher/today').then(r => r.json());
     if (seq !== todaySeq) return;      // a newer read is on its way
     const seen = new Set();
-    const list = (d.students || []).filter(s => !seen.has(s.code) && seen.add(s.code));
-    for (const s of list) PEOPLE.set(s.code, s.name);
+    const list = (d.students || []).filter(s => !seen.has(s.ref) && seen.add(s.ref));
+    for (const s of list) PEOPLE.set(s.ref, s.name);
     const hint = n => n == null ? 'No main photo yet' : n >= 14 ? 'No main photo in 14+ days' : 'Main photo: ' + ago(n);
     const need = s => s.last_main_days == null || s.last_main_days >= 14;
     const n = list.filter(need).length;
     $('#shot').hidden = !list.length;
     $('#shotN').textContent = `(${list.length})` + (n ? ` · ${n} need${n === 1 ? 's' : ''} a main photo` : '');
     $('#shotList').innerHTML = list.map(s => `
-      <button class="shot" data-prof="${esc(s.code)}" data-name="${esc(s.name)}"><b>${esc(s.name)}</b>
+      <button class="shot" data-prof="${esc(s.ref)}" data-name="${esc(s.name)}"><b>${esc(s.name)}</b>
         <span${need(s) ? ' class="need"' : ''}>${hint(s.last_main_days)}</span></button>`).join('');
   }
   const refreshToday = () => loadToday().catch(() => {});
@@ -428,7 +428,7 @@
   // on, the names are plain text: every tap on a tile picks the photo.
   function capHtml(p) {
     const who = m => PICK === 'saved' ? esc(m.name)
-      : `<a class="nm" href="#" data-prof="${esc(m.code)}" data-name="${esc(m.name)}" aria-label="${esc(m.name)}, ${roleWord(m.role)}. See their photos.">${esc(m.name)}</a>`;
+      : `<a class="nm" href="#" data-prof="${esc(m.ref)}" data-name="${esc(m.name)}" aria-label="${esc(m.name)}, ${roleWord(m.role)}. See their photos.">${esc(m.name)}</a>`;
     return (noMain(p) ? '<b>No Main yet</b>' : mains(p).map(who).join(', '))
       + (others(p).length ? `<i>${mains(p).length ? ' · ' : ''}In the frame: ${others(p).map(who).join(', ')}</i>` : '');
   }
@@ -480,7 +480,7 @@
   function editSaved(p, title, back) {
     QUEUE = []; TOTAL = 0;
     EDIT = { kind: 'edit', id: p.id, back };
-    PICKED = new Map(p.members.map(m => [m.code, m.role === 'other' ? 'other' : 'main']));
+    PICKED = new Map(p.members.map(m => [m.ref, m.role === 'other' ? 'other' : 'main']));
     openEditor(p.full, title || 'Who is in this photo?');
   }
   const saveWord = () => EDIT.kind !== 'edit' ? 'Save & next' : EDIT.back ? 'Save & go back' : 'Save';
@@ -531,7 +531,7 @@
       EDIT = { kind: 'drive', f: file.drive };
       // Saved already (names on it, nobody Main yet): start from those names, or Save would drop them.
       const had = file.drive.photoId && PHOTOS.find(p => p.id === file.drive.photoId);
-      PICKED = new Map(had ? had.members.map(m => [m.code, m.role]) : []);
+      PICKED = new Map(had ? had.members.map(m => [m.ref, m.role]) : []);
       openEditor(dthumb(file.drive.id, 1600), `Photo ${DONE + 1} of ${TOTAL}: who is in it?`);
       return;
     }
@@ -590,12 +590,12 @@
   }
   const hintOf = m => m.hint ? ` <small style="opacity:.7">${esc(m.hint)}</small>` : '';
   // While tagging, a result adds the name; "Photos" beside it shows who that is.
-  const addRow = m => `<span class="chip duo"><button data-code="${esc(m.code)}" data-name="${esc(m.name)}">+ ${esc(m.name)}${hintOf(m)}</button>` +
-    `<button data-prof="${esc(m.code)}" data-name="${esc(m.name)}" aria-label="See photos of ${esc(m.name)}">Photos</button></span>`;
+  const addRow = m => `<span class="chip duo"><button data-code="${esc(m.ref)}" data-name="${esc(m.name)}">+ ${esc(m.name)}${hintOf(m)}</button>` +
+    `<button data-prof="${esc(m.ref)}" data-name="${esc(m.name)}" aria-label="See photos of ${esc(m.name)}">Photos</button></span>`;
   wireFind($('#find'), $('#found'), addRow, 'Nobody found. Add them below.');
   wireFind($('#bFind'), $('#bFound'), addRow, 'Nobody found. Add new students one photo at a time.');
   wireFind($('#sFind'), $('#sFound'), m =>
-    `<button class="chip" data-prof="${esc(m.code)}" data-name="${esc(m.name)}">${esc(m.name)}${hintOf(m)}</button>`, 'Nobody found.');
+    `<button class="chip" data-prof="${esc(m.ref)}" data-name="${esc(m.name)}">${esc(m.name)}${hintOf(m)}</button>`, 'Nobody found.');
   $('#found').addEventListener('click', e => {
     const b = e.target.closest('[data-code]'); if (!b) return;
     PEOPLE.set(b.dataset.code, b.dataset.name);
@@ -609,8 +609,8 @@
     const r = await api('/api/bkk/teacher/members', { method: 'POST', body: JSON.stringify({ name, email }) });
     const j = await r.json().catch(() => ({}));
     if (!r.ok) { $('#nMsg').textContent = j.error || 'Could not add.'; return; }
-    PEOPLE.set(j.member.code, j.member.name);
-    pick(j.member.code);
+    PEOPLE.set(j.member.ref, j.member.name);
+    pick(j.member.ref);
     $('#nName').value = ''; $('#nMail').value = ''; $('#nMsg').textContent = 'Added.';
     renderChips();
   };
@@ -830,7 +830,7 @@
     updateBar();
     // Said from what was saved: added as In the frame, someone already Main on a photo stays Main.
     const kept = role !== 'other' ? 0
-      : got.reduce((n, ph) => n + ph.members.filter(m => codes.includes(m.code) && m.role === 'main').length, 0);
+      : got.reduce((n, ph) => n + ph.members.filter(m => codes.includes(m.ref) && m.role === 'main').length, 0);
     const photos = n => `${n} photo${n === 1 ? '' : 's'}`;
     flash(!kept ? `✓ ${who} added to ${photos(done)} as ${roleWord(role)}`
       : codes.length > 1 ? `✓ ${who} added to ${photos(done)} as In the frame. Anyone already Main stayed Main (${kept}).`
@@ -932,7 +932,7 @@
     if (EDIT && EDIT.kind === 'edit' && EDIT.id === id) return;        // that photo is open already
     const back = EDIT ? EDIT.back || { edit: EDIT, picked: PICKED, queue: QUEUE, total: TOTAL, done: DONE,
       src: $('#edImg').src, title: $('#edTitle').textContent } : $('#batch').hidden ? null : { batch: true };
-    for (const m of p.members) PEOPLE.set(m.code, m.name);
+    for (const m of p.members) PEOPLE.set(m.ref, m.name);
     editSaved(p, date === $('#date').value ? '' : `Photo from ${dayText(date)}: who is in it?`, back);
   });
 
