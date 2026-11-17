@@ -11,11 +11,14 @@
 // untrusted nudge (their own plugins accept it blindly; we do not).
 
 const crypto = require('crypto');
+const net = require('net');
+const QRCode = require('qrcode');
 const { sendMail, render } = require('./mailer');
 
 const TZ_OFFSET = '+07:00';                    // Asia/Bangkok, no DST
 const SIGNIN_TTL_MIN = 30;                     // a sign-in link is short-lived
 const STAFF_LINK_DAYS = 7;                     // one M sends by LINE/WhatsApp/WeChat
+const SIGNIN_QR_MIN = 10;                      // a QR staff show at the desk: one scan, then dead
 const SHORT_ALPHABET = '23456789abcdefghjkmnpqrstuvwxyz'; // its short /in/ code: no 0/o, 1/l/i to misread
 const SHORT_LEN = 10;                          // 31^10 ≈ 8e14 codes
 const SHORT_MISSES_PER_IP_HOUR = 20;           // codes nobody was given, before an address is stopped
@@ -471,6 +474,9 @@ function mountBkk(app, opts = {}) {
     // The door's add sheet sends one id per person added, so a second tap after
     // a lost reply finds the first one's seat instead of adding them again.
     await q(`ALTER TABLE bkk_bookings ADD COLUMN IF NOT EXISTS request_id TEXT`);
+    // Staff moved this Rezerv-covered class onto an aybkk.net pass (16 Nov 2026):
+    // when, so the move, and only the move, can be undone.
+    await q(`ALTER TABLE bkk_bookings ADD COLUMN IF NOT EXISTS moved_at TIMESTAMPTZ`);
 
     // findOrCreateMember and login/request both take the first row for an email
     // with no ORDER BY. Two rows for one address means one of them — and any
@@ -1505,9 +1511,13 @@ function mountBkk(app, opts = {}) {
   // guessable and an email address is not a secret.
 
   const baseUrl = () => (process.env.PUBLIC_BASE_URL || 'https://cn.aybkk.net').replace(/\/$/, '');
-  const clientIp = req =>
-    String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() ||
-    req.socket?.remoteAddress || 'unknown';
+  // Only an address: the column also holds the 'staff', 'qr' and 'receipt' markers,
+  // and on cn.aybkk.net x-forwarded-for starts with whatever the client sent, so
+  // "x-forwarded-for: staff" made an emailed link reusable (17 Nov 2026).
+  const clientIp = req => {
+    const first = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+    return net.isIP(first) ? first : (req.socket?.remoteAddress || 'unknown');
+  };
 
   app.post('/api/bkk/login/request', async (req, res) => {
     // The answer never varies. Telling a stranger whether an address is
@@ -1574,6 +1584,72 @@ function mountBkk(app, opts = {}) {
       res.json({ success: true, name: m.name, days: STAFF_LINK_DAYS,
         link: `${baseUrl()}/api/bkk/login/${made.token}`,
         short_link: `${baseUrl()}/in/${made.short_code}` });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // "Show QR" (17 Nov 2026, the week the shala left Rezerv): the student scans
+  // staff's screen at the desk and is signed in on that phone, no email, no
+  // chat. One-time like an emailed link (ip 'qr', never the 'staff' reuse rule),
+  // so a photo of the screen is dead once the student used it. It opens on the
+  // site the desk page is on, as the member code lives in that site's storage,
+  // but only a site on this list: anything else gets baseUrl().
+  const signinOrigin = given => {
+    const norm = s => { try { const u = new URL(String(s).trim()); return /^https?:$/.test(u.protocol) ? u.origin : null; } catch (_) { return null; } };
+    const ok = ['https://aybkk.net', 'https://www.aybkk.net', 'https://cn.aybkk.net', 'https://my.aybkk.com', baseUrl(),
+      ...String(process.env.BKK_SIGNIN_ORIGINS || '').split(',')].map(norm).filter(Boolean);
+    const o = given ? norm(given) : null;
+    return o && ok.includes(o) ? o : baseUrl();
+  };
+  app.post('/api/bkk/admin/members/:code/signin-qr', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      // The row lock puts two taps of Show QR in a line, so only the last QR stays live.
+      const m = (await client.query('SELECT id,name FROM bkk_members WHERE code=$1 FOR UPDATE', [req.params.code])).rows[0];
+      if (!m) { await client.query('ROLLBACK'); return res.status(404).json({ error: 'member not found' }); }
+      await client.query(`UPDATE bkk_login_tokens SET expires_at=now()
+        WHERE member_id=$1 AND ip='qr' AND used_at IS NULL AND expires_at > now()`, [m.id]);
+      let made;
+      for (let tries = 0; !made && tries < 5; tries++) {
+        made = (await client.query(`INSERT INTO bkk_login_tokens (token,member_id,email,ip,expires_at,short_code)
+                 VALUES ($1,$2,NULL,'qr', now() + ($3 || ' minutes')::interval, $4)
+                 ON CONFLICT (short_code) DO NOTHING RETURNING short_code, expires_at`,
+          [crypto.randomBytes(32).toString('hex'), m.id, String(SIGNIN_QR_MIN), shortCode()])).rows[0];
+      }
+      if (!made) throw new Error('could not make a QR, please try again');
+      await client.query('COMMIT');
+      const shortLink = `${signinOrigin((req.body || {}).origin)}/in/${made.short_code}`;
+      const svg = await QRCode.toString(shortLink, { type: 'svg', errorCorrectionLevel: 'M', margin: 4,
+        color: { dark: '#000000', light: '#ffffff' } });
+      res.set('Cache-Control', 'no-store').json({ success: true, name: m.name, short_link: shortLink,
+        short_code: made.short_code, expiresAt: made.expires_at, expiresIn: SIGNIN_QR_MIN * 60, svg });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      res.status(500).json({ error: e.message });
+    } finally { client.release(); }
+  });
+  // Only reads. expired: never used, and past its time (or ended by a newer QR, Close or a sign-out).
+  app.get('/api/bkk/admin/signin-qr/:short/status', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const t = (await q(`SELECT used_at, expires_at <= now() AS gone FROM bkk_login_tokens
+                          WHERE short_code=$1 AND ip='qr'`, [req.params.short])).rows[0];
+      if (!t) return res.status(404).json({ error: 'not found' });
+      res.set('Cache-Control', 'no-store').json({ used: !!t.used_at, expired: !t.used_at && t.gone, usedAt: t.used_at });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+  // The desk closed the panel before a scan: a photo of the screen must not work
+  // for the minutes left. A used QR keeps its used_at.
+  app.post('/api/bkk/admin/signin-qr/:short/end', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const ended = (await q(`UPDATE bkk_login_tokens SET expires_at=now()
+        WHERE short_code=$1 AND ip='qr' AND used_at IS NULL AND expires_at > now()`, [req.params.short])).rowCount > 0;
+      if (!ended && !(await q(`SELECT 1 FROM bkk_login_tokens WHERE short_code=$1 AND ip='qr'`, [req.params.short])).rowCount) {
+        return res.status(404).json({ error: 'not found' });
+      }
+      res.set('Cache-Control', 'no-store').json({ success: true, ended });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -1718,17 +1794,20 @@ function mountBkk(app, opts = {}) {
       const ids = r => r.rows.map(x => x.id);
       const log = { keep: K, rows: {}, seats: [], fields: {}, refolded: [], mails: fold.email ? [fold.email] : [] };
 
-      // One class booked on both: keep the seat that was checked in, else the
-      // one made here (not the Rezerv copy), else the kept profile's. The other
-      // is cancelled, and a class it took off a pass goes back.
+      // One class booked on both: keep the seat that was checked in, else the one
+      // staff took from a pass, else the one made here (not the Rezerv copy), else
+      // the kept profile's. The other is cancelled, and a class it took off a
+      // pass goes back.
       const both = (await client.query(
         `SELECT f.id AS f, k.id AS k, f.checked_in_at IS NOT NULL AS f_in, k.checked_in_at IS NOT NULL AS k_in,
-           f.source = 'rezerv' AS f_rz, k.source = 'rezerv' AS k_rz, f.pass_id AS f_pass, k.pass_id AS k_pass
+           f.source = 'rezerv' AS f_rz, k.source = 'rezerv' AS k_rz, f.pass_id AS f_pass, k.pass_id AS k_pass,
+           f.moved_at IS NOT NULL AS f_mv, k.moved_at IS NOT NULL AS k_mv
          FROM bkk_bookings f JOIN bkk_bookings k ON k.member_id=$1 AND k.slot_id=f.slot_id
            AND k.class_date=f.class_date AND k.status='booked'
          WHERE f.member_id=$2 AND f.status='booked'`, [K, F])).rows;
       for (const s of both) {
-        const dropK = (s.f_in && !s.k_in) || (s.f_in === s.k_in && s.k_rz && !s.f_rz);
+        // A Rezerv class staff took from a pass counts as made here: it is the paid one.
+        const dropK = (s.f_in && !s.k_in) || (s.f_in === s.k_in && (s.f_mv !== s.k_mv ? s.f_mv : s.k_rz && !s.f_rz));
         const drop = dropK ? s.k : s.f, kept = dropK ? s.f : s.k, pass = dropK ? s.k_pass : s.f_pass;
         await client.query(`UPDATE bkk_bookings SET status='cancelled', cancelled_at=now(), cancel_reason=$2 WHERE id=$1`,
           [drop, `merged: same class as booking ${kept}`]);
@@ -1801,8 +1880,11 @@ function mountBkk(app, opts = {}) {
       if ((await client.query('SELECT 1 FROM bkk_members WHERE merged_into=$1 AND id<>$2 AND merged_at > $3',
         [K, F, f.merged_at])).rows.length) return await stop(409, { error: 'another profile was merged into this one since: undo that one first' });
       const ids = r => r.rows.map(x => x.id);
+      // A Rezerv class staff took from a pass since stays with that pass: the
+      // bookings query below brings it back if its pass goes back.
       for (const t of ['bkk_orders', 'bkk_passes', 'bkk_bookings', 'bkk_notes', 'bkk_checks']) {
-        await client.query(`UPDATE ${t} SET member_id=$1 WHERE member_id=$2 AND id = ANY($3::int[])`, [F, K, L.rows[t] || []]);
+        await client.query(`UPDATE ${t} SET member_id=$1 WHERE member_id=$2 AND id = ANY($3::int[])${t !== 'bkk_bookings' ? ''
+          : ' AND (moved_at IS NULL OR pass_id = ANY($4::int[]))'}`, [F, K, L.rows[t] || [], ...t === 'bkk_bookings' ? [L.rows.bkk_passes || []] : []]);
       }
       await client.query(`UPDATE bkk_photo_members SET member_id=$1 WHERE member_id=$2 AND photo_id = ANY($3::int[])`,
         [F, K, L.rows.bkk_photo_members || []]);
@@ -1818,8 +1900,9 @@ function mountBkk(app, opts = {}) {
       since.passes = await client.query(`UPDATE bkk_passes SET member_id=$1 WHERE member_id=$2
         AND (order_id = ANY($3::int[]) OR (source='rezerv' AND via_member = ANY($4::int[]))) RETURNING id`,
         [F, K, [...(L.rows.bkk_orders || []), ...since.orders], fam]).then(ids);
+      // A Rezerv visit staff moved onto a pass goes with that pass (the next query).
       since.visits = await client.query(`UPDATE bkk_bookings b SET member_id=$1 WHERE b.member_id=$2 AND b.source='rezerv'
-        AND b.via_member = ANY($3::int[]) AND NOT (b.status='booked' AND EXISTS (SELECT 1 FROM bkk_bookings o WHERE o.member_id=$1
+        AND b.via_member = ANY($3::int[]) AND b.pass_id IS NULL AND NOT (b.status='booked' AND EXISTS (SELECT 1 FROM bkk_bookings o WHERE o.member_id=$1
           AND o.slot_id=b.slot_id AND o.class_date=b.class_date AND o.status='booked')) RETURNING b.id`, [F, K, fam]).then(ids);
       // A class goes with the pass that paid for it, unless that student already holds a seat in it.
       since.bookings = await client.query(`UPDATE bkk_bookings b SET member_id=$1 WHERE b.member_id=$2 AND b.pass_id = ANY($3::int[])
@@ -2491,7 +2574,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       // Staff taking off someone they put on a class after it was over (the
       // wrong person picked): nobody kept a seat from anyone, so the class
       // goes back on the pass. A student cancelling it never gets it back.
-      const refund = hoursLeft >= CANCEL_CUTOFF_HOURS || (isAdmin(req) && b.added_late === true);
+      // The same for a Rezerv class staff took from the pass after it was over.
+      const refund = hoursLeft >= CANCEL_CUTOFF_HOURS || (isAdmin(req) && (b.added_late === true || !!b.moved_at));
       await client.query(
         `UPDATE bkk_bookings SET status='cancelled', cancelled_at=now() WHERE id=$1`, [b.id]);
       if (refund && b.pass_id) {
@@ -3364,9 +3448,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
                count(*) FILTER (WHERE EXISTS (SELECT 1 FROM bkk_passes p WHERE p.member_id = m.id AND p.status = 'active'
                  AND (p.valid_until IS NULL OR p.valid_until >= ${today})))::int AS active
              FROM bkk_members m WHERE m.merged_into IS NULL`),
+        // sent: links staff made for a chat. A desk QR reaches nobody until it is
+        // scanned, so it counts apart, as students signed in by QR (and in opened).
         one(`SELECT count(DISTINCT member_id) FILTER (WHERE ip = 'staff')::int AS sent,
                count(DISTINCT member_id) FILTER (WHERE used_at IS NOT NULL)::int AS opened,
-               count(*) FILTER (WHERE ip = 'staff' AND (created_at AT TIME ZONE 'Asia/Bangkok')::date = ${today})::int AS sent_today
+               count(*) FILTER (WHERE ip = 'staff' AND (created_at AT TIME ZONE 'Asia/Bangkok')::date = ${today})::int AS sent_today,
+               count(DISTINCT member_id) FILTER (WHERE ip = 'qr' AND used_at IS NOT NULL)::int AS qr,
+               count(DISTINCT member_id) FILTER (WHERE ip = 'qr' AND (used_at AT TIME ZONE 'Asia/Bangkok')::date = ${today})::int AS qr_today
              FROM bkk_login_tokens`),
         one(`SELECT count(*) FILTER (WHERE p.class_date = ${today})::int AS today,
                count(*) FILTER (WHERE p.class_date = ${today}
@@ -4363,7 +4451,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       : new Date(Date.parse(until.date + 'T00:00:00Z') - (pr.valid_days - 1) * 86400e3).toISOString().slice(0, 10);
     const used = left != null ? Math.max(0, total - left) : 0;
     const pause = [later ? null : fFrom, later ? null : fUntil];
-    const copy = { used, total, from, until: until.date, started: from <= ctx.today, status, paused: frozen ? fFrom || '-' : '' };
+    const copy = { used, total, from, until: until.date, started: from <= ctx.today, status, paused: frozen ? fFrom || '-' : '', today: ctx.today };
     if (had) {
       const tag = had.source === 'rezerv' ? had.source_ref || ref : null;
       if (tag !== had.source_ref) await db.query('UPDATE bkk_passes SET source_ref=$2 WHERE id=$1', [had.id, tag]);
@@ -4447,7 +4535,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // another length (8 classes in 1 or 2 months, a 12- or 13-month year) runs its
   // own days from that start, as its first class would make it. Warns, and
   // gives what an undo that takes the pair apart puts back (twin_undo).
-  async function carryOnto(db, twin, { used, total, from, until, started, status, paused }, warn) {
+  async function carryOnto(db, twin, { used, total, from, until, started, status, paused, today }, warn) {
     const k = (await db.query(`SELECT credits_used, to_char(valid_from,'YYYY-MM-DD') AS f, to_char(valid_until,'YYYY-MM-DD') AS u
       FROM bkk_passes WHERE id=$1 FOR UPDATE`, [twin.id])).rows[0];
     const dated = !k.f && started;
@@ -4456,7 +4544,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         valid_until = CASE WHEN NOT $3::boolean THEN valid_until WHEN $6::boolean THEN $5::date ELSE $4::date + valid_days END
       WHERE id=$1 RETURNING credits_used, to_char(valid_until,'YYYY-MM-DD') AS u`, [twin.id, used, dated, from, until, twin.same])).rows[0];
     warn(why('twinPass', String(twin.refno), used, total || '', dated ? from : '', dated ? now.u : '', paused));
-    return { used: now.credits_used - k.credits_used, status, ...(dated ? { from, until: now.u, untilWas: k.u } : {}) };
+    // on: the day Rezerv's count came over, for the class moves (onto-pass).
+    return { used: now.credits_used - k.credits_used, status, on: today, ...(dated ? { from, until: now.u, untilWas: k.u } : {}) };
   }
 
   const IMPORTERS = { members: importMemberRow, visits: importVisit, payments: importPayment, passes: importPass };
@@ -4606,7 +4695,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const [visits, pays, passes, notes, photos, checks, active] = await Promise.all([
         q(`SELECT b.id, to_char(b.class_date,'YYYY-MM-DD') AS date, ${VISIT_TIME} AS time,
              coalesce(s.title, b.class_title) AS class, b.status, b.checked_in_at, b.cancelled_at, b.cancel_reason,
-             b.cover, b.source, b.slot_id, b.start_at, b.pass_id, s.is_online, s.duration_min
+             b.cover, b.source, b.slot_id, b.start_at, b.pass_id, b.moved_at, s.is_online, s.duration_min
            FROM bkk_bookings b LEFT JOIN bkk_class_slots s ON s.id=b.slot_id
            WHERE b.member_id=$1 ORDER BY b.class_date DESC, b.start_at DESC, b.id DESC`, [m.id]),
         q(`SELECT o.id, to_char(${PAY_AT} AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS date,
@@ -4661,7 +4750,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         passes: passes.rows.map(passOut),
         visits: visits.rows.map(v => ({ id: v.id, date: v.date, time: v.time, class: v.class, status: visitStatusOut(v),
           checkedInAt: v.checked_in_at, cancelledAt: v.cancelled_at, cancelReason: v.cancel_reason,
-          cover: v.cover, source: v.source, upcoming: upcoming(v) })),
+          cover: v.cover, source: v.source, upcoming: upcoming(v), passId: v.pass_id,
+          moved: !!v.moved_at && v.status === 'booked' })),
         payments: pays.rows.map(o => ({ id: o.id, date: o.date, time: o.time, item: o.item, amount: o.amount_thb,
           base: o.base_thb, fee: o.fee_thb, vat: o.vat_thb, method: o.method, status: o.status,
           source: o.source || 'aybkk', refno: String(o.refno), note: o.gateway_note })),
@@ -4940,6 +5030,104 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (!r.rows.length) return res.status(404).json({ error: 'pass not found' });
       res.json({ success: true, pass: r.rows[0] });
     } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // A class they came to on a Rezerv booking while they held an aybkk.net pass
+  // (16 Nov 2026): nothing here paid for it, so staff move it onto the pass and
+  // it takes a class, as a booking here would have.
+  // - Only a pass whose days had begun and ran that day, not paused. A pass's
+  //   days are never changed here: one not begun by then is refused, and says so.
+  // - Never a pass moved from Rezerv: Rezerv counted its own classes.
+  // - Rezerv may have paid already: a Rezerv package of theirs ran that day, or a
+  //   Rezerv copy of one of their passes here, running that day, brought its
+  //   used classes over (carryOnto) on or after the class day. That takes
+  //   sure:true, once a person has checked.
+  // dryRun shows the pass, what is left and any check, and keeps nothing. undo
+  // puts a moved class back on Rezerv and gives the class back.
+  app.post('/api/bkk/admin/bookings/:id/onto-pass', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    if (!/^\d{1,9}$/.test(req.params.id)) return res.status(404).json({ error: 'booking not found' });
+    const { passId = null, dryRun = false, undo = false, sure = false } = req.body || {};
+    if (passId != null && !/^\d{1,9}$/.test(String(passId))) return res.status(400).json({ error: 'passId must be a pass id' });
+    const why = String((req.body || {}).reason || '').replace(/[\u0000-\u001f\u007f|]/g, ' ').trim().slice(0, 120);
+    const fail = (status, error, extra) => { throw Object.assign(new Error(error), { status, extra }); };
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const b = (await client.query(`SELECT b.*, to_char(b.class_date,'YYYY-MM-DD') AS d, ${VISIT_TIME} AS t
+        FROM bkk_bookings b WHERE b.id=$1 FOR UPDATE`, [Number(req.params.id)])).rows[0];
+      if (!b) fail(404, 'booking not found');
+      const what = `class ${[b.d, b.t].filter(Boolean).join(' ')}`;
+      let pass;
+      const out = {};
+      const note = text => client.query(`UPDATE bkk_passes SET note = coalesce(note || ' | ', '') || $2 WHERE id=$1`,
+        [pass.id, why ? `${text}: ${why}` : text]);
+      if (undo) {
+        if (!b.moved_at || !b.pass_id) fail(409, 'this class was not moved onto a pass here');
+        if (b.status !== 'booked') fail(409, 'already ' + b.status);
+        pass = (await client.query('SELECT * FROM bkk_passes WHERE id=$1 FOR UPDATE', [b.pass_id])).rows[0];
+        await client.query(`UPDATE bkk_passes SET credits_used = GREATEST(0, credits_used - 1)
+          WHERE id=$1 AND kind <> 'unlimited'`, [pass.id]);
+        await client.query(`UPDATE bkk_bookings SET pass_id=NULL, cover='rezerv', moved_at=NULL WHERE id=$1`, [b.id]);
+        await note(`${what} put back on Rezerv`);
+      } else {
+        if (b.pass_id) fail(409, 'this class is already on a pass');
+        if (b.cover !== 'rezerv') fail(409, 'only a class on Rezerv can be moved onto a pass');
+        if (b.status !== 'booked' || !b.checked_in_at) fail(409, 'only a class they came to can be moved onto a pass');
+        const args = passId ? [b.member_id, b.d, Number(passId)] : [b.member_id, b.d];
+        const OURS = `p.member_id=$1 AND p.source IS DISTINCT FROM 'rezerv'
+          AND (p.kind='unlimited' OR p.credits_used < p.credits_total)${passId ? ' AND p.id=$3' : ''}`;
+        pass = (await client.query(`SELECT p.* FROM bkk_passes p
+          WHERE ${OURS} AND ${PASS_LIVE_ON('$2::date')} AND p.valid_from IS NOT NULL
+          ORDER BY p.valid_from, p.id LIMIT 1 FOR UPDATE`, args)).rows[0];
+        if (!pass) {
+          const later = (await client.query(`SELECT to_char(p.valid_from,'YYYY-MM-DD') AS f FROM bkk_passes p
+            WHERE ${OURS} AND p.status IN ('active','frozen') AND (p.valid_from IS NULL OR p.valid_from > $2::date)
+              AND (p.valid_until IS NULL OR p.valid_until >= $2::date)
+            ORDER BY p.valid_from NULLS FIRST, p.id LIMIT 1`, args)).rows[0];
+          if (later) fail(409, `their pass had not begun on ${b.d} (${later.f ? `it begins ${later.f}` : 'it begins on its first class'}): `
+            + 'a pass\'s days are never changed here', { notBegun: later.f || true });
+          fail(409, passId ? `that pass cannot take this class: not theirs, from Rezerv, not running on ${b.d}, or no class left`
+            : `no aybkk.net pass of theirs with a class left ran on ${b.d}`);
+        }
+        // The day a Rezerv copy's classes came over: twin_undo.on, or its first import.
+        const CARRIED = `coalesce((x.twin_undo->>'on')::date, (x.created_at AT TIME ZONE 'Asia/Bangkok')::date)`;
+        const paid = (await client.query(
+          `(SELECT 'rezerv' AS why, coalesce(pr.name_en, 'Rezerv package') AS name, to_char(r.valid_from,'YYYY-MM-DD') AS f,
+             to_char(r.valid_until,'YYYY-MM-DD') AS u, NULL::int AS n, NULL::int AS of
+            FROM bkk_passes r LEFT JOIN bkk_products pr ON pr.id=r.product_id
+            WHERE r.member_id=$1 AND r.source='rezerv' AND r.twin_of IS NULL AND r.valid_from <= $2::date AND r.valid_until >= $2::date
+            ORDER BY r.valid_from LIMIT 1)
+           UNION ALL
+           (SELECT 'copy', coalesce(pa.name_en, 'pass'), to_char(${CARRIED},'YYYY-MM-DD'), NULL, (x.twin_undo->>'used')::int, x.twin_of
+            FROM bkk_passes x JOIN bkk_passes a ON a.id=x.twin_of LEFT JOIN bkk_products pa ON pa.id=a.product_id
+            WHERE a.member_id=$1 AND x.source='rezerv' AND coalesce((x.twin_undo->>'used')::int, 0) > 0
+              AND x.valid_from <= $2::date AND x.valid_until >= $2::date AND $2::date <= ${CARRIED}
+            ORDER BY x.twin_of=$3 DESC, x.id LIMIT 1)`, [b.member_id, b.d, pass.id])).rows[0];
+        if (paid) {
+          const self = paid.of === pass.id;
+          out.needSure = true;
+          out.check = paid.why === 'rezerv' ? { why: 'rezerv', name: paid.name, from: paid.f, until: paid.u }
+            : { why: 'copy', classes: paid.n, on: paid.f, passId: paid.of, pass: paid.name, same: self };
+          out.warning = paid.why === 'rezerv'
+            ? `a Rezerv package of theirs (${paid.name}, ${paid.f} to ${paid.u}) ran on ${b.d}: Rezerv may have paid for this class`
+            : `${self ? 'this pass' : `their other pass (${paid.name})`} already took ${paid.n} class${paid.n === 1 ? '' : 'es'} used on its Rezerv copy, brought over on ${paid.f}: this class may be one of them`;
+          if (sure !== true && !dryRun) fail(409, `${out.warning}. Check Rezerv, then send sure:true to take it from the pass anyway.`,
+            { needSure: true, check: out.check });
+        }
+        if (pass.kind !== 'unlimited') await client.query('UPDATE bkk_passes SET credits_used = credits_used + 1 WHERE id=$1', [pass.id]);
+        await client.query(`UPDATE bkk_bookings SET pass_id=$2, cover='pass', moved_at=now() WHERE id=$1`, [b.id, pass.id]);
+        await note(`${what} moved from Rezerv onto this pass${out.needSure ? `, after a check: ${out.warning}` : ''}`);
+      }
+      const after = (await client.query(`SELECT p.*, pr.name_en, pr.name_th, ${PASS_DATES}
+        FROM bkk_passes p LEFT JOIN bkk_products pr ON pr.id=p.product_id WHERE p.id=$1`, [pass.id])).rows[0];
+      await client.query(dryRun ? 'ROLLBACK' : 'COMMIT');
+      res.json({ success: true, dryRun: !!dryRun, undo: !!undo,
+        booking: { id: b.id, date: b.d, time: b.t, cover: undo ? 'rezerv' : 'pass' }, pass: passOut(after), ...out });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      res.status(e.status || 500).json({ error: e.message, ...(e.extra || {}) });
+    } finally { client.release(); }
   });
 
   // ── the teaching team ─────────────────────────────────────────────────────

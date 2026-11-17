@@ -4145,6 +4145,9 @@ const ok = (name, cond, extra = '') => {
     ok('the Rezerv copy of a pack: void, and the 3 classes used in Rezerv and its start day go onto the pass kept, said in the warning',
        hRz.status === 'void' && hOrd.status === 'active' && hOrd.credits_used === 3 && hOrd.f === today
        && hImp.body.warnings.some(w => w.code === 'twinPass' && w.vals[1] === 3 && w.vals[3] === today), JSON.stringify([h1, hImp.body.warnings]));
+    const hUndo = (await pool.query('SELECT twin_undo FROM bkk_passes WHERE id=$1', [hRz.id])).rows[0].twin_undo;
+    ok('...and the copy keeps the day its classes came over (for taking a Rezerv class from the pass later)',
+       hUndo.on === today && hUndo.used === 3, JSON.stringify(hUndo));
     const hId = (await ord(hSale.body.order.refno)).id;
     const hV = await post(`/api/bkk/admin/orders/${hId}/void`, { reason: 'the money was taken in Rezerv' }, ADMIN);
     const h2 = await hPass(), hH = await hist(ph.code);
@@ -6227,6 +6230,595 @@ const ok = (name, cond, extra = '') => {
        JSON.stringify({ night, late: row(late, 'my2330'), next: row(next, 'my2330') }));
     await pool.query(`UPDATE bkk_class_slots SET active=false WHERE code LIKE 'test_edge_%'`);
     srvC.close();
+  }
+
+  // ── a Rezerv class they came to, taken from their aybkk.net pass (16 Nov 2026) ──
+  console.log('\n— a Rezerv class taken from the pass —');
+  {
+    const one = async (sql, args = []) => (await pool.query(sql, args)).rows[0] || {};
+    const todayB = new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10);
+    const d = k => new Date(Date.parse(todayB + 'T12:00:00Z') + k * 86400000).toISOString().slice(0, 10);
+    const at = (day, t = '06:30') => `${day}T${t}:00+07:00`;
+    const slot = (await one(`INSERT INTO bkk_class_slots (code,title,kind,weekday,start_time,duration_min,capacity,is_online,active)
+      VALUES ('test_onto','Onto Led Primary','test',1,'06:30',90,30,false,false) RETURNING id`)).id;
+    const mk = async (key, name = 'Onto ' + key) => (await one(`INSERT INTO bkk_members (code,name,email) VALUES ($1,$2,$3) RETURNING id`,
+      ['BTESTOP' + key, name, `onto.${key.toLowerCase()}@example.com`])).id;
+    const pass = async (member, code, o = {}) => (await one(`INSERT INTO bkk_passes
+        (member_id,product_id,kind,credits_total,credits_used,daily_cap,valid_days,valid_from,valid_until,status,frozen_from,frozen_until,source)
+      SELECT $1::int, id, kind, credits, $3::int, daily_cap, valid_days, $4::date, $5::date, $6::text, $7::date, $8::date, $9::text
+      FROM bkk_products WHERE code=$2 RETURNING id`,
+      [member, code, o.used || 0, o.from || null, o.until || null, o.status || 'active', o.ffrom || null, o.funtil || null,
+       o.source === undefined ? 'order' : o.source])).id;
+    // A Rezerv visit: on the list from Rezerv (no booked_at, as the import makes it),
+    // checked in at our door unless in: false.
+    const rz = async (member, day, o = {}) => (await one(`INSERT INTO bkk_bookings
+        (slot_id,class_date,start_at,member_id,pass_id,status,checked_in_at,cover,source,via_member,booked_at)
+      VALUES ($1,$2,$3,$4,$5,'booked',$6,$7,$8,$9,NULL) RETURNING id`,
+      [o.slot === null ? null : slot, day, at(day, o.t), member, o.pass || null, o.in === false ? null : at(day, o.t),
+       o.cover || (o.pass ? 'pass' : 'rezerv'), o.source || 'rezerv', o.via || null])).id;
+    const onto = (id, body = {}, h = ADMIN) => post(`/api/bkk/admin/bookings/${id}/onto-pass`, body, h);
+    const pOf = async id => one(`SELECT credits_used, to_char(valid_from,'YYYY-MM-DD') AS f, to_char(valid_until,'YYYY-MM-DD') AS u, note
+      FROM bkk_passes WHERE id=$1`, [id]);
+    const bOf = async id => one('SELECT pass_id, cover, moved_at, status FROM bkk_bookings WHERE id=$1', [id]);
+    const hist = async key => (await J(`/api/bkk/admin/members/BTESTOP${key}/history`, { headers: ADMIN })).body;
+
+    // 8 classes from four days ago; one taken at the door; today's class came in from Rezerv.
+    const dan = await mk('EIGHT');
+    const p8 = await pass(dan, 'pack8', { used: 1, from: d(-4), until: d(55) });
+    await rz(dan, d(-2), { pass: p8, source: 'door', t: '07:00' });
+    const today = await rz(dan, d(0));
+    const h0 = await hist('EIGHT');
+    const v0 = h0.visits.find(v => v.id === today);
+    ok('setup: the Rezerv class shows on the profile as came, on Rezerv, on no pass, not moved',
+       v0 && v0.status === 'attended' && v0.cover === 'rezerv' && v0.passId === null && v0.moved === false, JSON.stringify(v0));
+
+    ok('taking a class from a pass needs the staff key', (await onto(today, {}, {})).status === 401);
+    ok('an unknown booking is a 404', (await onto(999999999)).status === 404 && (await onto('12x')).status === 404);
+    ok('a pass id that is not a number is refused', (await onto(today, { passId: 'abc' })).status === 400);
+    const before = JSON.stringify([await pOf(p8), await bOf(today)]);
+    const dry = await onto(today, { dryRun: true });
+    ok('a dry run names the pass and what would be left: 6 of 8', dry.status === 200 && dry.body.dryRun === true
+       && dry.body.pass.id === p8 && dry.body.pass.creditsLeft === 6 && dry.body.pass.creditsTotal === 8, JSON.stringify(dry.body));
+    ok('...and changes nothing', JSON.stringify([await pOf(p8), await bOf(today)]) === before, before);
+
+    const done = await onto(today, { reason: 'booked in Rezerv after buying here' });
+    const p8a = await pOf(p8), ba = await bOf(today);
+    ok('moved: the pass has 6 classes left, the class is on it, and its note says so', done.status === 200 && done.body.dryRun === false
+       && done.body.pass.creditsLeft === 6 && p8a.credits_used === 2 && ba.pass_id === p8 && ba.cover === 'pass' && !!ba.moved_at
+       && p8a.note.includes(`class ${d(0)} 06:30 moved from Rezerv onto this pass: booked in Rezerv after buying here`)
+       && p8a.f === d(-4) && p8a.u === d(55), JSON.stringify([done.body, p8a, ba]));
+    const h1 = await hist('EIGHT');
+    const v1 = h1.visits.find(v => v.id === today), m1 = (h1.membership || []).find(p => p.passId === p8) || {};
+    ok('...the profile shows it taken from the pass, and the pass at 6 left', v1.moved === true && v1.passId === p8
+       && v1.cover === 'pass' && m1.creditsLeft === 6, JSON.stringify([v1, m1]));
+    ok('...the same class cannot be taken twice', (await onto(today)).status === 409 && (await pOf(p8)).credits_used === 2);
+
+    const undoDry = await onto(today, { undo: true, dryRun: true });
+    ok('undo, dry run: 7 left after, nothing changed', undoDry.status === 200 && undoDry.body.pass.creditsLeft === 7
+       && (await pOf(p8)).credits_used === 2 && (await bOf(today)).pass_id === p8, JSON.stringify(undoDry.body));
+    const undo = await onto(today, { undo: true });
+    const bu = await bOf(today);
+    ok('undo puts it back on Rezerv and gives the class back', undo.status === 200 && undo.body.pass.creditsLeft === 7
+       && (await pOf(p8)).credits_used === 1 && bu.pass_id === null && bu.cover === 'rezerv' && !bu.moved_at
+       && (await pOf(p8)).note.endsWith(`class ${d(0)} 06:30 put back on Rezerv`), JSON.stringify([undo.body, bu]));
+    ok('...and a class not moved here cannot be undone', (await onto(today, { undo: true })).status === 409
+       && (await onto(await rz(dan, d(-1), { pass: p8, source: 'door' }), { undo: true })).status === 409);
+    ok('moved again: 6 left (as the desk will do)', (await onto(today)).body.pass.creditsLeft === 6 && (await pOf(p8)).credits_used === 2);
+
+    // What cannot be moved.
+    const future = await rz(dan, d(2), { in: false });
+    const fr = await onto(future);
+    ok('a class they have not come to stays as it is', fr.status === 409 && /came to/.test(fr.body.error) && (await bOf(future)).pass_id === null,
+       JSON.stringify(fr.body));
+    const early = await rz(dan, d(-6));
+    const er = await onto(early);
+    ok('a class before the pass began is refused', er.status === 409 && /had not begun/.test(er.body.error) && er.body.notBegun === d(-4),
+       JSON.stringify(er.body));
+    const doorPass = await rz(dan, d(-3), { cover: 'pass', source: 'door' });
+    ok('only a class on Rezerv can be moved', (await onto(doorPass)).status === 409);
+
+    const rzOnly = await mk('RZONLY');
+    await pass(rzOnly, 'pack8', { from: d(-10), until: d(20), source: 'rezerv' });
+    const ro = await rz(rzOnly, d(0));
+    ok('a pass moved from Rezerv is never used: Rezerv counted its classes', (await onto(ro)).status === 409 && (await bOf(ro)).pass_id === null);
+
+    const full = await mk('FULL');
+    const pf = await pass(full, 'pack8', { used: 8, from: d(-10), until: d(20) });
+    ok('a pass with no class left is refused', (await onto(await rz(full, d(0)))).status === 409 && (await pOf(pf)).credits_used === 8);
+
+    const paused = await mk('PAUSED');
+    await pass(paused, 'pack8', { status: 'frozen', from: d(-10), until: d(40), ffrom: d(-3), funtil: d(5) });
+    ok('a pass paused on the class day is refused', (await onto(await rz(paused, d(0)))).status === 409);
+    ok('another student\'s pass is refused', (await onto(await rz(paused, d(-1)), { passId: p8 })).status === 409
+       && (await pOf(p8)).credits_used === 2);
+
+    // A pass whose days have not begun is never used, and its days never change here.
+    const fresh = await mk('FRESH');
+    const pn = await pass(fresh, 'pack8');
+    await pool.query(`UPDATE bkk_passes SET created_at = now() - interval '5 days' WHERE id=$1`, [pn]);
+    const fv = await rz(fresh, d(-1));
+    const fm = await onto(fv, { dryRun: true });
+    ok('a pass not begun yet is refused, and says it begins on its first class', fm.status === 409 && fm.body.notBegun === true
+       && /had not begun on .*it begins on its first class/.test(fm.body.error), JSON.stringify(fm.body));
+    const later8 = await mk('LATER');
+    const pl8 = await pass(later8, 'pack8', { from: d(-2), until: d(58) });
+    const lm = await onto(await rz(later8, d(-4)));
+    ok('a class before the pass began is refused, naming the day it begins; its days stay', lm.status === 409 && lm.body.notBegun === d(-2)
+       && (await pOf(pl8)).f === d(-2) && (await pOf(pl8)).credits_used === 0, JSON.stringify(lm.body));
+
+    // Unlimited: nothing to take, the class is just on it.
+    const un = await mk('UNLIM');
+    const pu = await pass(un, 'unlim1', { from: d(-5), until: d(25) });
+    const um = await onto(await rz(un, d(0)));
+    ok('an unlimited pass takes the class and uses no class', um.status === 200 && um.body.pass.creditsLeft === null
+       && (await pOf(pu)).credits_used === 0, JSON.stringify(um.body));
+
+    // Undoing a merge: a Rezerv visit taken from the keeper's pass stays with that pass.
+    const K = 'BTESTOPKEEP01', F = 'BTESTOPFOLD01';
+    const kid = (await one(`INSERT INTO bkk_members (code,name,email) VALUES ($1,'Onto Merge','onto.keep@example.com') RETURNING id`, [K])).id;
+    const fid = (await one(`INSERT INTO bkk_members (code,name) VALUES ($1,'Onto Merge') RETURNING id`, [F])).id;
+    const pk = await pass(kid, 'pack8', { from: d(-5), until: d(25) });
+    const pf2 = await pass(fid, 'pack8', { from: d(-5), until: d(25) });
+    const rv1 = await rz(fid, d(-1), { via: fid }), rv2 = await rz(fid, d(-2), { via: fid }), rv3 = await rz(fid, d(-3), { via: fid });
+    const mg = await post(`/api/bkk/admin/members/${K}/merge`, { from: F }, ADMIN);
+    ok('setup: merged, both Rezerv visits on the keeper', mg.status === 200
+       && (await one('SELECT count(*)::int AS n FROM bkk_bookings WHERE member_id=$1', [kid])).n === 3, JSON.stringify(mg.body));
+    ok('setup: one taken from the keeper\'s pass, one from the double\'s', (await onto(rv1, { passId: pk })).status === 200
+       && (await onto(rv3, { passId: pf2 })).status === 200);
+    // Imported after the merge, through the double's Rezerv profile.
+    const rv4 = await rz(kid, d(-4), { via: fid }), rv5 = await rz(kid, d(-5), { via: fid });
+    ok('setup: one Rezerv visit imported since is taken from the keeper\'s pass', (await onto(rv4, { passId: pk })).status === 200);
+    const um2 = await post(`/api/bkk/admin/members/${F}/unmerge`, {}, ADMIN);
+    const owner = async id => (await one('SELECT member_id FROM bkk_bookings WHERE id=$1', [id])).member_id;
+    ok('undoing the merge: a visit taken from the keeper\'s pass stays with it; one on the double\'s pass and one on no pass go back',
+       um2.status === 200 && await owner(rv1) === kid && await owner(rv2) === fid && await owner(rv3) === fid
+       && await owner(rv4) === kid && await owner(rv5) === fid
+       && (await one('SELECT member_id FROM bkk_passes WHERE id=$1', [pf2])).member_id === fid
+       && (await pOf(pk)).credits_used === 2 && (await pOf(pf2)).credits_used === 1, JSON.stringify(um2.body));
+
+    // Rezerv may have paid already: a person checks first.
+    const tw = await mk('TWIN');
+    const pt = await pass(tw, 'pack8', { used: 3, from: d(-5), until: d(55) });
+    await pool.query(`INSERT INTO bkk_passes (member_id,product_id,kind,credits_total,credits_used,valid_days,valid_from,valid_until,status,source,twin_of,twin_undo)
+      SELECT $1, id, kind, credits, 3, valid_days, $2::date, $3::date, 'void', 'rezerv', $4, '{"used":3,"status":"active"}'::jsonb
+      FROM bkk_products WHERE code='pack8'`, [tw, d(-5), d(55), pt]);
+    const tv = await rz(tw, d(-1));
+    const tdry = await onto(tv, { dryRun: true });
+    ok('a pass whose Rezerv copy brought 3 used classes over: the dry run asks for a check', tdry.status === 200
+       && tdry.body.needSure === true && tdry.body.check.why === 'copy' && tdry.body.check.classes === 3
+       && /already took 3 classes used on its Rezerv copy/.test(tdry.body.warning), JSON.stringify(tdry.body));
+    const tno = await onto(tv);
+    ok('...without sure:true nothing is taken', tno.status === 409 && tno.body.needSure === true && /sure:true/.test(tno.body.error)
+       && (await pOf(pt)).credits_used === 3 && (await bOf(tv)).pass_id === null, JSON.stringify(tno.body));
+    const tyes = await onto(tv, { sure: true, passId: pt });
+    ok('...with sure:true it is taken, and the note says it was checked', tyes.status === 200 && (await pOf(pt)).credits_used === 4
+       && (await pOf(pt)).note.includes('after a check: this pass already took 3 classes'), JSON.stringify(tyes.body));
+    await pool.query(`UPDATE bkk_passes SET created_at = now() - interval '3 days' WHERE twin_of=$1`, [pt]);
+    const tlater = await onto(await rz(tw, d(0)), { dryRun: true });
+    ok('a Rezerv class after the copy came over is not one it counted: no check', tlater.status === 200 && !tlater.body.needSure,
+       JSON.stringify(tlater.body));
+    const tw0 = await mk('TWINZERO');
+    const pt0 = await pass(tw0, 'pack8', { used: 1, from: d(-5), until: d(55) });
+    await pool.query(`INSERT INTO bkk_passes (member_id,product_id,kind,credits_total,credits_used,valid_days,valid_from,valid_until,status,source,twin_of,twin_undo)
+      SELECT $1, id, kind, credits, 1, valid_days, $2::date, $3::date, 'void', 'rezerv', $4, '{"used":0,"status":"active"}'::jsonb
+      FROM bkk_products WHERE code='pack8'`, [tw0, d(-5), d(55), pt0]);
+    const t0 = await onto(await rz(tw0, d(-1)));
+    ok('a copy that brought nothing over (its classes were counted here already): taken with no check', t0.status === 200
+       && !t0.body.needSure && (await pOf(pt0)).credits_used === 2, JSON.stringify(t0.body));
+
+    // A Rezerv copy of their OTHER pass counted the class: still a check, naming that pass.
+    const two = await mk('TWOPASS');
+    const pfull = await pass(two, 'pack8', { used: 8, from: d(-30), until: d(30) });
+    await pool.query(`INSERT INTO bkk_passes (member_id,product_id,kind,credits_total,credits_used,valid_days,valid_from,valid_until,status,source,twin_of,twin_undo)
+      SELECT $1, id, kind, credits, 5, valid_days, $2::date, $3::date, 'void', 'rezerv', $4, '{"used":5,"status":"active"}'::jsonb
+      FROM bkk_products WHERE code='pack8'`, [two, d(-30), d(30), pfull]);
+    const pnew = await pass(two, 'pack8', { from: d(-10), until: d(50) });
+    const odry = await onto(await rz(two, d(-5)), { dryRun: true });
+    ok('a Rezerv copy of their other pass brought classes over: the dry run asks for a check and names that pass', odry.status === 200
+       && odry.body.pass.id === pnew && odry.body.needSure === true && odry.body.check.why === 'copy' && odry.body.check.passId === pfull
+       && odry.body.check.same === false && /their other pass \(8 classes/.test(odry.body.warning), JSON.stringify(odry.body));
+    // The day the classes came over is the pairing day (twin_undo.on), not the day the copy was first imported.
+    const late2 = await mk('LATEPAIR');
+    const plp = await pass(late2, 'pack8', { used: 3, from: d(-20), until: d(40) });
+    await pool.query(`INSERT INTO bkk_passes (member_id,product_id,kind,credits_total,credits_used,valid_days,valid_from,valid_until,status,source,twin_of,twin_undo,created_at)
+      SELECT $1, id, kind, credits, 3, valid_days, $2::date, $3::date, 'void', 'rezerv', $4, jsonb_build_object('used', 3, 'status', 'active', 'on', $5::text),
+        now() - interval '15 days' FROM bkk_products WHERE code='pack8'`, [late2, d(-20), d(40), plp, d(-1)]);
+    const lpd = await onto(await rz(late2, d(-6)), { dryRun: true });
+    ok('a copy first imported 15 days ago but paired yesterday: a class 6 days ago still gets the check, dated the pairing day',
+       lpd.status === 200 && lpd.body.needSure === true && lpd.body.check.on === d(-1), JSON.stringify(lpd.body));
+
+    const both = await mk('BOTHPKG');
+    const pb = await pass(both, 'pack8', { from: d(-5), until: d(55) });
+    await pass(both, 'pack8', { from: d(-30), until: d(1), source: 'rezerv', status: 'void' });
+    const bdry = await onto(await rz(both, d(-1)), { dryRun: true });
+    ok('a Rezerv package of theirs ran that day (even one used up in Rezerv): the dry run asks for a check',
+       bdry.status === 200 && bdry.body.needSure === true && bdry.body.check.why === 'rezerv' && bdry.body.check.until === d(1)
+       && (await pOf(pb)).credits_used === 0, JSON.stringify(bdry.body));
+
+    // Staff cancel a moved class: the class goes back, and it no longer reads as taken from the pass.
+    const cx = await mk('CANCEL');
+    const pc = await pass(cx, 'pack8', { from: d(-5), until: d(55) });
+    const cv = await rz(cx, d(-1));
+    await onto(cv);
+    const cc = await post(`/api/bkk/bookings/${cv}/cancel`, {}, ADMIN);
+    const ch = (await hist('CANCEL')).visits.find(v => v.id === cv);
+    ok('staff cancelling a class they took from the pass gives the class back', cc.status === 200 && cc.body.creditReturned === true
+       && (await pOf(pc)).credits_used === 0 && ch.moved === false && ch.status === 'cancelled', JSON.stringify([cc.body, ch]));
+    ok('...and a cancelled one cannot be undone', (await onto(cv, { undo: true })).status === 409 && (await pOf(pc)).credits_used === 0);
+
+    // The check-in taken off after the move: Undo is still offered, and works.
+    const ux = await mk('UNCHECK');
+    const pux = await pass(ux, 'pack8', { from: d(-5), until: d(55) });
+    const uv = await rz(ux, d(-1));
+    await onto(uv);
+    await pool.query('UPDATE bkk_bookings SET checked_in_at=NULL WHERE id=$1', [uv]);
+    const uh = (await hist('UNCHECK')).visits.find(v => v.id === uv);
+    ok('a moved class with its check-in taken off still shows as moved (the page offers Undo)', uh.moved === true, JSON.stringify(uh));
+    ok('...and undo gives the class back', (await onto(uv, { undo: true })).status === 200 && (await pOf(pux)).credits_used === 0);
+
+    // Merging two profiles with the same class: the one taken from a pass stays.
+    const MK = 'BTESTOPKEEP02', MF = 'BTESTOPFOLD02';
+    const mkid = (await one(`INSERT INTO bkk_members (code,name,email) VALUES ($1,'Onto Seat','onto.seat@example.com') RETURNING id`, [MK])).id;
+    const mfid = (await one(`INSERT INTO bkk_members (code,name) VALUES ($1,'Onto Seat') RETURNING id`, [MF])).id;
+    const pmf = await pass(mfid, 'pack8', { from: d(-5), until: d(55) });
+    const kseat = await rz(mkid, d(-1), { source: 'door' });
+    const fseat = await rz(mfid, d(-1));
+    ok('setup: the double\'s Rezerv class is taken from its pass', (await onto(fseat)).status === 200 && (await pOf(pmf)).credits_used === 1);
+    const mg2 = await post(`/api/bkk/admin/members/${MK}/merge`, { from: MF }, ADMIN);
+    const st = async id => (await one('SELECT status, pass_id FROM bkk_bookings WHERE id=$1', [id]));
+    ok('merging keeps the seat taken from the pass and cancels the unpaid one; the class stays used', mg2.status === 200
+       && (await st(fseat)).status === 'booked' && (await st(kseat)).status === 'cancelled' && (await pOf(pmf)).credits_used === 1,
+       JSON.stringify([mg2.body, await st(fseat), await st(kseat)]));
+
+    await pool.query(`DELETE FROM bkk_bookings WHERE member_id IN (SELECT id FROM bkk_members WHERE code LIKE 'BTESTOP%')`);
+    await pool.query(`DELETE FROM bkk_passes WHERE member_id IN (SELECT id FROM bkk_members WHERE code LIKE 'BTESTOP%')`);
+    await pool.query(`DELETE FROM bkk_class_slots WHERE id=$1`, [slot]);
+  }
+
+  console.log('\n- Show QR: a one-time sign-in the student scans at the desk (17 Nov 2026) -');
+  {
+    const QRCode = require('qrcode');
+    const SHORTC = /^[23456789abcdefghjkmnpqrstuvwxyz]{10}$/;
+    const ana = 'BTESTQRANA0001', ben = 'BTESTQRBEN0001';
+    await pool.query(`INSERT INTO bkk_members (code,name) VALUES ($1,'Ana Qrexample'), ($2,'Ben Qrexample')`, [ana, ben]);
+    const qr = (code, body = {}, h = ADMIN) => post(`/api/bkk/admin/members/${code}/signin-qr`, body, h);
+    const status = (short, h = ADMIN) => J(`/api/bkk/admin/signin-qr/${short}/status`, { headers: h });
+    let ipN = 0;
+    const open = code => fetch(`${B}/in/${code}`, { redirect: 'manual', headers: { 'x-forwarded-for': `10.90.0.${++ipN}` } });
+    const row = async short => (await pool.query('SELECT * FROM bkk_login_tokens WHERE short_code=$1', [short])).rows[0];
+    const links = async () => (await J('/api/bkk/admin/progress', { headers: ADMIN })).body.links;
+    // Reads the qrcode SVG path back into modules: "M x y.5" moves, "m dx 0" skips, "h n" paints n dark ones.
+    const modules = svg => {
+      const size = Number((/viewBox="0 0 (\d+) \1"/.exec(svg) || [])[1]);
+      const dark = new Set();
+      const d = (/<path stroke="#000000" d="([^"]+)"/.exec(svg) || [])[1] || '';
+      let x = 0, y = 0;
+      for (const [, op, a, b] of d.matchAll(/([Mmh])(-?[\d.]+)(?: (-?[\d.]+))?/g)) {
+        if (op === 'M') { x = Number(a); y = Math.floor(Number(b)); }
+        else if (op === 'm') { x += Number(a); y += Math.floor(Number(b)); }
+        else { for (let i = 0; i < Number(a); i++) dark.add(`${x + i},${y}`); x += Number(a); }
+      }
+      return { size, dark };
+    };
+
+    ok('signin-qr needs the staff key', (await qr(ana, {}, {})).status === 401);
+    ok('...and an unknown member is a 404', (await qr('BNOSUCHPERSON0')).status === 404);
+
+    const a1 = await qr(ana, { origin: 'https://aybkk.net' });
+    const t0 = Date.now();
+    ok('a QR answer: name, short code, a short link on the site the desk page is on',
+       a1.status === 200 && a1.body.name === 'Ana Qrexample' && SHORTC.test(a1.body.short_code || '')
+         && a1.body.short_link === `https://aybkk.net/in/${a1.body.short_code}`, JSON.stringify(a1.body).slice(0, 200));
+    ok('...works for 10 minutes', a1.body.expiresIn === 600
+       && Math.abs(Date.parse(a1.body.expiresAt) - t0 - 600000) < 30000, `${a1.body.expiresAt} ${a1.body.expiresIn}`);
+    const r1 = await row(a1.body.short_code);
+    ok("...stored as its own kind ('qr') with no email, never the staff kind", r1 && r1.ip === 'qr' && r1.email === null && r1.used_at === null,
+       JSON.stringify(r1));
+    ok('...and the svg is an SVG: a white background, black modules, nothing else',
+       /^<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg" viewBox="0 0 \d+ \d+"/.test(a1.body.svg) && a1.body.svg.includes('<path fill="#ffffff" d="M0 0h')
+         && a1.body.svg.includes('stroke="#000000"') && !/<script|\son\w+=|href/i.test(a1.body.svg), a1.body.svg.slice(0, 160));
+    {
+      const want = QRCode.create(a1.body.short_link, { errorCorrectionLevel: 'M' });
+      const got = modules(a1.body.svg);
+      const n = want.modules.size;
+      let same = got.size === n + 8 && got.dark.size > 0;
+      for (let y = 0; same && y < got.size; y++) for (let x = 0; x < got.size; x++) {
+        const inside = x >= 4 && y >= 4 && x < n + 4 && y < n + 4;
+        if (got.dark.has(`${x},${y}`) !== (inside && !!want.modules.get(y - 4, x - 4))) { same = false; break; }
+      }
+      ok('...module for module the QR of short_link at error correction M, with a 4-module quiet zone', same,
+         `size ${got.size} vs ${n + 8}, ${got.dark.size} dark`);
+    }
+
+    for (const [origin, why] of [['https://www.aybkk.net', 'www'], ['https://cn.aybkk.net/book?x=1', 'a path is dropped']]) {
+      const r = await qr(ana, { origin });
+      ok(`an allowed origin (${why}) is used`, r.status === 200 && r.body.short_link === `${new URL(origin).origin}/in/${r.body.short_code}`, r.body.short_link);
+    }
+    for (const origin of ['https://evil.example.com', 'http://aybkk.net', 'https://aybkk.net.evil.example.com', 'https://aybkk.net@evil.example.com',
+      'javascript:alert(1)', '', 42, null]) {
+      const r = await qr(ana, { origin });
+      ok(`an origin not on the list (${JSON.stringify(origin)}) falls back to the base URL`, r.status === 200
+         && r.body.short_link === `https://cn.aybkk.net/in/${r.body.short_code}`, r.body.short_link);
+    }
+    const hosty = await qr(ana, {}, { ...ADMIN, 'x-forwarded-host': 'evil.example.com', origin: 'https://evil.example.com' });
+    ok('no origin in the body: the base URL, whatever the request headers say', hosty.status === 200
+       && hosty.body.short_link.startsWith('https://cn.aybkk.net/in/'), hosty.body.short_link);
+    process.env.BKK_SIGNIN_ORIGINS = ' https://desk.example.com , not a url';
+    const extra = await qr(ana, { origin: 'https://desk.example.com' });
+    delete process.env.BKK_SIGNIN_ORIGINS;
+    const extraOff = await qr(ana, { origin: 'https://desk.example.com' });
+    ok('BKK_SIGNIN_ORIGINS adds a site to the list, and only while it is set', extra.body.short_link.startsWith('https://desk.example.com/in/')
+       && extraOff.body.short_link.startsWith('https://cn.aybkk.net/in/'), `${extra.body.short_link} ${extraOff.body.short_link}`);
+
+    // A staff link and an email link for Ana, and a QR for Ben: a new QR for Ana leaves them all alone.
+    const staff = (await post(`/api/bkk/admin/members/${ana}/signin-link`, {}, ADMIN)).body;
+    await post(`/api/bkk/admin/members/${ana}/email`, { email: 'ana.qrexample@example.com' }, ADMIN);
+    await post('/api/bkk/login/request', { email: 'ana.qrexample@example.com' }, { 'x-forwarded-for': '10.90.1.1' });
+    const mailTok = (await pool.query(`SELECT token FROM bkk_login_tokens WHERE email='ana.qrexample@example.com'
+      ORDER BY created_at DESC LIMIT 1`)).rows[0];
+    const benQr = (await qr(ben)).body;
+    const older = (await qr(ana)).body;
+    const st0 = await status(older.short_code);
+    ok('status of a fresh QR: not used, not expired', st0.status === 200 && st0.body.used === false && st0.body.expired === false
+       && st0.body.usedAt === null, JSON.stringify(st0.body));
+    const newer = (await qr(ana)).body;
+    const stOld = await status(older.short_code);
+    ok("a new QR ends the member's older unused one", stOld.body.expired === true && stOld.body.used === false
+       && (await open(older.short_code)).status === 400, JSON.stringify(stOld.body));
+    ok('...but not their staff link', (await open(staff.short_link.split('/in/')[1])).status === 302);
+    ok('...nor their email link', !!mailTok && (await fetch(`${B}/api/bkk/login/${mailTok.token}`)).status === 200);
+    ok("...nor another member's QR", (await status(benQr.short_code)).body.expired === false);
+
+    const before = await links();
+    const hop = await open(newer.short_code);
+    const tok = (hop.headers.get('location') || '').split('/').pop();
+    ok('the first /in/<code> sends the phone on to the long link, as a staff link does',
+       hop.status === 302 && hop.headers.get('location') === `/api/bkk/login/${tok}` && (await row(newer.short_code)).token === tok,
+       `${hop.status} ${hop.headers.get('location')}`);
+    const page = await fetch(`${B}/api/bkk/login/${tok}`).then(r => r.text());
+    ok('...its page posts back to itself, and opening it uses nothing up', page.includes(`action="/api/bkk/login/${tok}"`)
+       && (await status(newer.short_code)).body.used === false);
+    const land = await fetch(`${B}/api/bkk/login/${tok}`, { method: 'POST' }).then(r => r.text());
+    ok('...and the POST signs the phone in as the member and opens My account',
+       land.includes(`localStorage.setItem('aybkk_member',${JSON.stringify(ana)})`) && land.includes('/book?me=1'));
+    const st1 = await status(newer.short_code);
+    ok('status says used, with the time', st1.body.used === true && st1.body.expired === false
+       && Math.abs(Date.parse(st1.body.usedAt) - Date.now()) < 30000, JSON.stringify(st1.body));
+    const again = await open(newer.short_code);
+    ok('a second scan of the same QR is a dead link (a photo of the screen is no use)', again.status === 400
+       && (await again.text()).includes('already been used, or it has expired'));
+    ok('...and the long link behind it is dead too', (await fetch(`${B}/api/bkk/login/${tok}`)).status === 400
+       && (await fetch(`${B}/api/bkk/login/${tok}`, { method: 'POST' })).status === 400);
+
+    const after = await links();
+    ok('progress: a scanned QR counts as signed in by QR (all time and today) and as opened, never as a staff link sent',
+       after.qr === before.qr + 1 && after.qr_today === before.qr_today + 1 && after.opened === before.opened + 1
+         && after.sent === before.sent && after.sent_today === before.sent_today, JSON.stringify([before, after]));
+    ok('a newer QR leaves a used one as used', (await qr(ana)).status === 200 && (await status(newer.short_code)).body.used === true);
+    const shown = await links();
+    await qr(ben);
+    ok('...and a QR shown but never scanned counts nowhere', JSON.stringify(await links()) === JSON.stringify(shown));
+
+    const late = (await qr(ben)).body;
+    await pool.query(`UPDATE bkk_login_tokens SET expires_at = now() - interval '1 second' WHERE short_code=$1`, [late.short_code]);
+    const lateSt = await status(late.short_code);
+    ok('an expired QR: status says expired, not used', lateSt.body.expired === true && lateSt.body.used === false, JSON.stringify(lateSt.body));
+    ok('...its short link is dead', (await open(late.short_code)).status === 400);
+    ok('...and its long link too', (await fetch(`${B}/api/bkk/login/${(await row(late.short_code)).token}`, { method: 'POST' })).status === 400);
+
+    ok('status needs the staff key', (await status(newer.short_code, {})).status === 401);
+    ok("status of a staff link's code is a 404: it only answers for a QR", (await status(staff.short_link.split('/in/')[1])).status === 404);
+    ok('...and of a code nobody was given', (await status('23456789ab')).status === 404 && (await status('nope')).status === 404);
+    const seen0 = JSON.stringify(await row(newer.short_code));
+    await status(newer.short_code);
+    ok('status only reads', JSON.stringify(await row(newer.short_code)) === seen0);
+
+    const benLive = (await qr(ben)).body;
+    ok('signing a member out everywhere ends their live QR too',
+       (await post(`/api/bkk/admin/members/${ben}/signout`, {}, ADMIN)).status === 200
+         && (await status(benLive.short_code)).body.expired === true && (await open(benLive.short_code)).status === 400);
+
+    const staffTok = staff.link.split('/').pop();
+    ok('the staff link is still a 7-day link that opens again after use', staff.days === 7 && (await row(staff.short_link.split('/in/')[1])).ip === 'staff'
+       && (await fetch(`${B}/api/bkk/login/${staffTok}`, { method: 'POST' })).status === 200
+       && (await fetch(`${B}/api/bkk/login/${staffTok}`, { method: 'POST' })).status === 200);
+    ok('...and the email link is still one-time', (await fetch(`${B}/api/bkk/login/${mailTok.token}`, { method: 'POST' })).status === 200
+       && (await fetch(`${B}/api/bkk/login/${mailTok.token}`, { method: 'POST' })).status === 400);
+  }
+
+  console.log('\n- Show QR, review fixes: forged markers, Close ends it, my.aybkk.com (17 Nov 2026) -');
+  {
+    const net = require('net');
+    const cara = 'BTESTQRCARA001', dee = 'BTESTQRDEE0001';
+    await pool.query(`INSERT INTO bkk_members (code,name,email) VALUES ($1,'Cara Qrexample','cara.qrexample@example.com'), ($2,'Dee Qrexample',NULL)`, [cara, dee]);
+    const qr = (code, body = {}) => post(`/api/bkk/admin/members/${code}/signin-qr`, body, ADMIN);
+    const status = short => J(`/api/bkk/admin/signin-qr/${short}/status`, { headers: ADMIN });
+    const end = (short, h = ADMIN) => post(`/api/bkk/admin/signin-qr/${short}/end`, {}, h);
+    let ipN = 0;
+    const open = code => fetch(`${B}/in/${code}`, { redirect: 'manual', headers: { 'x-forwarded-for': `10.91.0.${++ipN}` } });
+    const row = async short => (await pool.query('SELECT * FROM bkk_login_tokens WHERE short_code=$1', [short])).rows[0];
+    const links = async () => (await J('/api/bkk/admin/progress', { headers: ADMIN })).body.links;
+    const mailOf = async () => (await pool.query(`SELECT token, ip FROM bkk_login_tokens WHERE email='cara.qrexample@example.com'
+      ORDER BY created_at DESC LIMIT 1`)).rows[0];
+    const signIn = tok => fetch(`${B}/api/bkk/login/${tok}`, { method: 'POST' }).then(r => r.status);
+    // A forged marker falls back to this machine's address, which earlier tests' requests share: age
+    // those, so the per-address hourly limit has room.
+    await pool.query(`UPDATE bkk_login_tokens SET created_at = created_at - interval '2 hours'
+      WHERE ip IN ('127.0.0.1', '::ffff:127.0.0.1', '::1') AND created_at > now() - interval '1 hour'`);
+
+    await post('/api/bkk/login/request', { email: 'cara.qrexample@example.com' }, { 'x-forwarded-for': 'qr' });
+    const fq = await mailOf();
+    ok("an email link asked for with x-forwarded-for 'qr' is stored with an address, not as a desk QR",
+       !!fq && fq.ip !== 'qr' && net.isIP(fq.ip) > 0, JSON.stringify(fq));
+    const l0 = await links();
+    const caraQr = (await qr(cara)).body;
+    ok('...so Show QR for that member leaves the emailed link alone', (await fetch(`${B}/api/bkk/login/${fq.token}`)).status === 200);
+    ok('...and signing in from it is not counted as signed in by QR', (await signIn(fq.token)) === 200
+       && (await links()).qr === l0.qr && (await status(caraQr.short_code)).body.used === false);
+    await post('/api/bkk/login/request', { email: 'cara.qrexample@example.com' }, { 'x-forwarded-for': 'staff, 10.91.1.1' });
+    const fst = await mailOf();
+    ok("an email link asked for with x-forwarded-for 'staff' is not a staff link, and stays one-time",
+       !!fst && fst.token !== fq.token && fst.ip !== 'staff' && (await signIn(fst.token)) === 200 && (await signIn(fst.token)) === 400,
+       JSON.stringify(fst));
+    await post('/api/bkk/login/request', { email: 'cara.qrexample@example.com' }, { 'x-forwarded-for': '10.91.1.2, 10.91.1.3' });
+    ok('a real address in x-forwarded-for is still the one stored', (await mailOf()).ip === '10.91.1.2');
+
+    const my = await qr(cara, { origin: 'https://my.aybkk.com' });
+    ok('my.aybkk.com, which also serves the booking page, is on the list', my.status === 200
+       && my.body.short_link === `https://my.aybkk.com/in/${my.body.short_code}`, my.body.short_link);
+
+    const caraStaff = (await post(`/api/bkk/admin/members/${cara}/signin-link`, {}, ADMIN)).body;
+    const deeQr = (await qr(dee)).body;
+    const shown = (await qr(cara)).body;
+    ok('ending a QR needs the staff key', (await end(shown.short_code, {})).status === 401
+       && (await status(shown.short_code)).body.expired === false);
+    ok("...a code nobody was given, or a staff link's code, is a 404", (await end('23456789ab')).status === 404
+       && (await end(caraStaff.short_link.split('/in/')[1])).status === 404);
+    const e1 = await end(shown.short_code);
+    ok('Close ends a QR nobody scanned: status says expired and a photo of it is a dead link',
+       e1.status === 200 && e1.body.ended === true && (await status(shown.short_code)).body.expired === true
+         && (await open(shown.short_code)).status === 400, JSON.stringify(e1.body));
+    ok('...ending it again changes nothing', (await end(shown.short_code)).body.ended === false);
+    ok("...and the member's staff link and another member's QR stay live", (await open(caraStaff.short_link.split('/in/')[1])).status === 302
+       && (await status(deeQr.short_code)).body.expired === false);
+    const scanned = (await qr(dee)).body;
+    const hop = await open(scanned.short_code);
+    await signIn((hop.headers.get('location') || '').split('/').pop());
+    const usedAt = String((await row(scanned.short_code)).used_at);
+    const e2 = await end(scanned.short_code);
+    ok('ending a QR that was already scanned keeps it as used', e2.status === 200 && e2.body.ended === false
+       && (await status(scanned.short_code)).body.used === true && String((await row(scanned.short_code)).used_at) === usedAt,
+       JSON.stringify(e2.body));
+  }
+
+  console.log('\n- Show QR: the desk panel, run from the page itself (17 Nov 2026) -');
+  {
+    const fs = require('fs'), vm = require('vm'), path = require('path');
+    const page = fs.readFileSync(path.join(__dirname, '../public/bkk-admin.html'), 'utf8');
+    const seg = page.slice(page.indexOf('  // Show QR: the student scans this screen'), page.indexOf('  window.passAct = '));
+    ok('tab() closes the panel even while a QR is still on its way', /window\.tab = t => \{\s*current = t; SUB = null;\s*closeQr\(false\);/.test(page));
+    ok("progress: 'Opened their profile' is its own count, not over the staff links sent",
+       page.includes("${row(T('progOpened'), `${p.links.opened}`)}") && !page.includes('${p.links.opened} / ${p.links.sent}'));
+    // A small stand-in for the browser: elements by id, timers run by hand, a clock set by hand.
+    const panel = () => {
+      let now = Date.parse('2026-11-17T03:00:00Z');
+      const focused = [], calls = [], listeners = {}, alerts = [];
+      let timers = [], tid = 0, pending = null, statusAnswer = null;
+      const el = sel => ({ sel, hidden: true, innerHTML: '', textContent: '', inert: false, focus(o) { focused.push([sel, o]); } });
+      const els = { '#qrPanel': el('#qrPanel'), '#app': el('#app'), '#qrLive': el('#qrLive') };
+      const $ = sel => els[sel] || (els['#qrPanel'].innerHTML.includes(`id="${sel.slice(1)}"`) ? (els[sel + '@'] = els[sel + '@'] || el(sel)) : null);
+      const res = (st, body) => ({ ok: st === 200, status: st, json: async () => body });
+      const api = (url, opts = {}) => {
+        calls.push([url, opts]);
+        if (/\/signin-qr$/.test(url)) return new Promise(r => { pending = r; });
+        if (/\/status$/.test(url)) return statusAnswer ? Promise.resolve(statusAnswer()) : new Promise(() => {});
+        return Promise.resolve(res(200, { success: true, ended: true }));
+      };
+      class FakeDate extends Date { static now() { return now; } }
+      const ctx = {
+        $, api, T: (k, ...a) => `${k}${a.length ? `(${a.join(',')})` : ''}`, alert: m => alerts.push(m), Date: FakeDate,
+        esc: s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])),
+        location: { origin: 'https://aybkk.net' },
+        document: { hidden: false, contains: () => true, addEventListener: (k, f) => { listeners[k] = f; } },
+        setTimeout: f => { timers.push({ id: ++tid, f, every: false }); return tid; },
+        setInterval: f => { timers.push({ id: ++tid, f, every: true }); return tid; },
+        clearTimeout: id => { timers = timers.filter(t => t.id !== id); },
+      };
+      ctx.clearInterval = ctx.clearTimeout;
+      ctx.window = ctx;
+      ctx.addEventListener = (k, f) => { listeners[k] = f; };
+      vm.createContext(ctx);
+      vm.runInContext(seg, ctx);
+      const flush = async () => { for (let i = 0; i < 10; i++) await new Promise(r => setImmediate(r)); };
+      return {
+        ctx, els, focused, calls, listeners, alerts, flush,
+        answer: async (short = 'qrshort001') => { pending(res(200, { name: 'Ana Example', short_code: short, expiresIn: 600,
+          svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37 37"></svg>' })); await flush(); },
+        status: f => { statusAnswer = f; },
+        later: ms => { now += ms; },
+        runPolls: async () => { const due = timers.filter(t => !t.every); timers = timers.filter(t => t.every); due.forEach(t => t.f()); await flush(); },
+        runTicks: async () => { timers.filter(t => t.every).forEach(t => t.f()); await flush(); },
+        timers: () => timers.length,
+        posts: () => calls.filter(([u]) => /\/signin-qr$/.test(u)).length,
+        ends: () => calls.filter(([u]) => /\/end$/.test(u)).map(([u, o]) => [u.split('/').slice(-2)[0], o.keepalive === true]),
+        res,
+      };
+    };
+
+    {
+      const P = panel();
+      const btn = { focus() {} };
+      P.ctx.showQr('BANAEXAMPLE01', btn);
+      P.ctx.showQr('BANAEXAMPLE01', btn);
+      ok('a double tap on Show QR sends one request, not two', P.posts() === 1);
+      P.ctx.closeQr(false);
+      await P.answer('lateshort01');
+      ok('staff left the screen while the QR was on its way: no panel, no polling, and that QR is ended on the server',
+         P.els['#qrPanel'].hidden === true && P.timers() === 0 && JSON.stringify(P.ends()) === JSON.stringify([['lateshort01', true]]),
+         JSON.stringify([P.els['#qrPanel'].hidden, P.timers(), P.ends()]));
+      P.ctx.showQr('BANAEXAMPLE01', btn);
+      ok('...and Show QR works again after that', P.posts() === 2);
+    }
+    {
+      const P = panel();
+      P.ctx.showQr('BANAEXAMPLE01');
+      await P.answer();
+      const html = P.els['#qrPanel'].innerHTML;
+      ok('an open panel makes the page behind it inert, so Tab cannot reach Lock', P.els['#app'].inert === true && P.els['#qrPanel'].hidden === false);
+      ok('...focus goes to Close without scrolling the QR away', JSON.stringify(P.focused.at(-1)) === JSON.stringify(['#qrClose', { preventScroll: true }]));
+      ok('...the QR has a name for a screen reader, and the dialog is described by the countdown',
+         html.includes('class="qrbox" role="img" aria-label="qrImg"') && html.includes('<svg aria-hidden="true" focusable="false" ')
+           && html.includes('aria-describedby="qrLeft"'));
+      P.ctx.closeQr();
+      ok('Close ends the live QR on the server (keepalive, so it also goes out as the page closes)',
+         JSON.stringify(P.ends()) === JSON.stringify([['qrshort001', true]]) && P.els['#app'].inert === false && P.timers() === 0);
+    }
+    {
+      const P = panel();
+      P.ctx.showQr('BANAEXAMPLE01');
+      await P.answer();
+      P.status(() => P.res(401, { error: 'bad key' }));
+      await P.runPolls();
+      ok('a failed status check before 0:00 keeps the QR up and asks again', P.els['#qrPanel'].innerHTML.includes('class="qrbox"') && P.timers() === 2);
+      P.later(600 * 1000);
+      await P.runPolls();
+      const html = P.els['#qrPanel'].innerHTML;
+      ok('...past 0:00 it takes the QR away, says expired and stops asking', !html.includes('class="qrbox"') && html.includes('qrGone')
+         && P.timers() === 0, html.slice(0, 120));
+      ok('...with focus on its own Show QR button, and the message in the page\'s live region',
+         JSON.stringify(P.focused.at(-1)) === JSON.stringify(['#qrAgain', { preventScroll: true }]) && P.els['#qrLive'].textContent === 'qrGone');
+      ok('...an expired QR is not ended again on Close', (P.ctx.closeQr(), P.ends().length === 0));
+    }
+    {
+      const P = panel();
+      P.ctx.showQr('BANAEXAMPLE01');
+      await P.answer();
+      P.later(605 * 1000);
+      await P.runTicks();
+      ok('with no answer at all (no network), the QR goes a few seconds after 0:00 and polling stops',
+         P.els['#qrPanel'].innerHTML.includes('qrGone') && !P.els['#qrPanel'].innerHTML.includes('class="qrbox"') && P.timers() === 0);
+    }
+    {
+      const P = panel();
+      P.ctx.showQr('BANAEXAMPLE01');
+      await P.answer();
+      P.status(() => P.res(200, { used: true, expired: false, usedAt: '2026-11-17T03:01:00Z' }));
+      await P.runPolls();
+      const html = P.els['#qrPanel'].innerHTML;
+      ok('used: the panel says so and asks staff to check the phone shows the name', html.includes('qrUsed') && html.includes('qrCheck(Ana Example)')
+         && !html.includes('class="qrbox"') && P.timers() === 0, html.slice(0, 200));
+      ok('...the live region outside the card says it too, so a screen reader hears it',
+         P.els['#qrLive'].textContent === 'qrUsed qrCheck(Ana Example)' && !html.includes('role="status"'));
+      P.ctx.closeQr();
+      ok('...and closing a used panel ends nothing and empties the live region', P.ends().length === 0 && P.els['#qrLive'].textContent === '');
+    }
+    {
+      const P = panel();
+      P.ctx.showQr('BANAEXAMPLE01');
+      await P.answer('leaving0001');
+      P.listeners.pagehide();
+      ok('leaving the page with a live QR ends it', JSON.stringify(P.ends()) === JSON.stringify([['leaving0001', true]]) && P.timers() === 0);
+    }
   }
 
   console.log(`\n${PASS} passed, ${FAIL} failed`);
