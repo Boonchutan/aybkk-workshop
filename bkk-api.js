@@ -11,11 +11,14 @@
 // untrusted nudge (their own plugins accept it blindly; we do not).
 
 const crypto = require('crypto');
+const net = require('net');
+const QRCode = require('qrcode');
 const { sendMail, render } = require('./mailer');
 
 const TZ_OFFSET = '+07:00';                    // Asia/Bangkok, no DST
 const SIGNIN_TTL_MIN = 30;                     // a sign-in link is short-lived
 const STAFF_LINK_DAYS = 7;                     // one M sends by LINE/WhatsApp/WeChat
+const SIGNIN_QR_MIN = 10;                      // a QR staff show at the desk: one scan, then dead
 const SHORT_ALPHABET = '23456789abcdefghjkmnpqrstuvwxyz'; // its short /in/ code: no 0/o, 1/l/i to misread
 const SHORT_LEN = 10;                          // 31^10 ≈ 8e14 codes
 const SHORT_MISSES_PER_IP_HOUR = 20;           // codes nobody was given, before an address is stopped
@@ -1487,9 +1490,13 @@ function mountBkk(app, opts = {}) {
   // guessable and an email address is not a secret.
 
   const baseUrl = () => (process.env.PUBLIC_BASE_URL || 'https://cn.aybkk.net').replace(/\/$/, '');
-  const clientIp = req =>
-    String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() ||
-    req.socket?.remoteAddress || 'unknown';
+  // Only an address: the column also holds the 'staff', 'qr' and 'receipt' markers,
+  // and on cn.aybkk.net x-forwarded-for starts with whatever the client sent, so
+  // "x-forwarded-for: staff" made an emailed link reusable (17 Nov 2026).
+  const clientIp = req => {
+    const first = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+    return net.isIP(first) ? first : (req.socket?.remoteAddress || 'unknown');
+  };
 
   app.post('/api/bkk/login/request', async (req, res) => {
     // The answer never varies. Telling a stranger whether an address is
@@ -1556,6 +1563,72 @@ function mountBkk(app, opts = {}) {
       res.json({ success: true, name: m.name, days: STAFF_LINK_DAYS,
         link: `${baseUrl()}/api/bkk/login/${made.token}`,
         short_link: `${baseUrl()}/in/${made.short_code}` });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // "Show QR" (17 Nov 2026, the week the shala left Rezerv): the student scans
+  // staff's screen at the desk and is signed in on that phone, no email, no
+  // chat. One-time like an emailed link (ip 'qr', never the 'staff' reuse rule),
+  // so a photo of the screen is dead once the student used it. It opens on the
+  // site the desk page is on, as the member code lives in that site's storage,
+  // but only a site on this list: anything else gets baseUrl().
+  const signinOrigin = given => {
+    const norm = s => { try { const u = new URL(String(s).trim()); return /^https?:$/.test(u.protocol) ? u.origin : null; } catch (_) { return null; } };
+    const ok = ['https://aybkk.net', 'https://www.aybkk.net', 'https://cn.aybkk.net', 'https://my.aybkk.com', baseUrl(),
+      ...String(process.env.BKK_SIGNIN_ORIGINS || '').split(',')].map(norm).filter(Boolean);
+    const o = given ? norm(given) : null;
+    return o && ok.includes(o) ? o : baseUrl();
+  };
+  app.post('/api/bkk/admin/members/:code/signin-qr', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      // The row lock puts two taps of Show QR in a line, so only the last QR stays live.
+      const m = (await client.query('SELECT id,name FROM bkk_members WHERE code=$1 FOR UPDATE', [req.params.code])).rows[0];
+      if (!m) { await client.query('ROLLBACK'); return res.status(404).json({ error: 'member not found' }); }
+      await client.query(`UPDATE bkk_login_tokens SET expires_at=now()
+        WHERE member_id=$1 AND ip='qr' AND used_at IS NULL AND expires_at > now()`, [m.id]);
+      let made;
+      for (let tries = 0; !made && tries < 5; tries++) {
+        made = (await client.query(`INSERT INTO bkk_login_tokens (token,member_id,email,ip,expires_at,short_code)
+                 VALUES ($1,$2,NULL,'qr', now() + ($3 || ' minutes')::interval, $4)
+                 ON CONFLICT (short_code) DO NOTHING RETURNING short_code, expires_at`,
+          [crypto.randomBytes(32).toString('hex'), m.id, String(SIGNIN_QR_MIN), shortCode()])).rows[0];
+      }
+      if (!made) throw new Error('could not make a QR, please try again');
+      await client.query('COMMIT');
+      const shortLink = `${signinOrigin((req.body || {}).origin)}/in/${made.short_code}`;
+      const svg = await QRCode.toString(shortLink, { type: 'svg', errorCorrectionLevel: 'M', margin: 4,
+        color: { dark: '#000000', light: '#ffffff' } });
+      res.set('Cache-Control', 'no-store').json({ success: true, name: m.name, short_link: shortLink,
+        short_code: made.short_code, expiresAt: made.expires_at, expiresIn: SIGNIN_QR_MIN * 60, svg });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      res.status(500).json({ error: e.message });
+    } finally { client.release(); }
+  });
+  // Only reads. expired: never used, and past its time (or ended by a newer QR, Close or a sign-out).
+  app.get('/api/bkk/admin/signin-qr/:short/status', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const t = (await q(`SELECT used_at, expires_at <= now() AS gone FROM bkk_login_tokens
+                          WHERE short_code=$1 AND ip='qr'`, [req.params.short])).rows[0];
+      if (!t) return res.status(404).json({ error: 'not found' });
+      res.set('Cache-Control', 'no-store').json({ used: !!t.used_at, expired: !t.used_at && t.gone, usedAt: t.used_at });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+  // The desk closed the panel before a scan: a photo of the screen must not work
+  // for the minutes left. A used QR keeps its used_at.
+  app.post('/api/bkk/admin/signin-qr/:short/end', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const ended = (await q(`UPDATE bkk_login_tokens SET expires_at=now()
+        WHERE short_code=$1 AND ip='qr' AND used_at IS NULL AND expires_at > now()`, [req.params.short])).rowCount > 0;
+      if (!ended && !(await q(`SELECT 1 FROM bkk_login_tokens WHERE short_code=$1 AND ip='qr'`, [req.params.short])).rowCount) {
+        return res.status(404).json({ error: 'not found' });
+      }
+      res.set('Cache-Control', 'no-store').json({ success: true, ended });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -3347,9 +3420,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
                count(*) FILTER (WHERE EXISTS (SELECT 1 FROM bkk_passes p WHERE p.member_id = m.id AND p.status = 'active'
                  AND (p.valid_until IS NULL OR p.valid_until >= ${today})))::int AS active
              FROM bkk_members m WHERE m.merged_into IS NULL`),
+        // sent: links staff made for a chat. A desk QR reaches nobody until it is
+        // scanned, so it counts apart, as students signed in by QR (and in opened).
         one(`SELECT count(DISTINCT member_id) FILTER (WHERE ip = 'staff')::int AS sent,
                count(DISTINCT member_id) FILTER (WHERE used_at IS NOT NULL)::int AS opened,
-               count(*) FILTER (WHERE ip = 'staff' AND (created_at AT TIME ZONE 'Asia/Bangkok')::date = ${today})::int AS sent_today
+               count(*) FILTER (WHERE ip = 'staff' AND (created_at AT TIME ZONE 'Asia/Bangkok')::date = ${today})::int AS sent_today,
+               count(DISTINCT member_id) FILTER (WHERE ip = 'qr' AND used_at IS NOT NULL)::int AS qr,
+               count(DISTINCT member_id) FILTER (WHERE ip = 'qr' AND (used_at AT TIME ZONE 'Asia/Bangkok')::date = ${today})::int AS qr_today
              FROM bkk_login_tokens`),
         one(`SELECT count(*) FILTER (WHERE p.class_date = ${today})::int AS today,
                count(*) FILTER (WHERE p.class_date = ${today}
