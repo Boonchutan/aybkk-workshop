@@ -291,7 +291,7 @@
   .qrsay{margin:12px 0 0;padding:10px 0 0;border-top:1px solid var(--line);font-size:15px;line-height:1.5}
   .qrsay p{margin:0}
   .qrdone{margin:6px 0 4px;padding:18px 10px;border-radius:10px;background:#e6f6ec;color:#187a43;font-size:18px;font-weight:800}
-  .qrdone.gone{background:#fff3d6;color:#6b520e;font-size:16px}
+  .qrdone.qrexp{background:#fff3d6;color:#6b520e;font-size:16px}
   .qrcheck{margin:10px 0 0;font-size:15px;line-height:1.45}
   .qrlive{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
   .qrbtns{display:flex;gap:8px;margin-top:14px}
@@ -1326,7 +1326,7 @@
       ${live ? `<div class="qrbox" role="img" aria-label="${esc(T('qrImg'))}">${QR.svg.replace('<svg ', '<svg aria-hidden="true" focusable="false" ')}</div>
         <p class="qrleft" id="qrLeft">${esc(qrLeft())}</p>
         <div class="qrsay">${QR_SAY.map(([l, t]) => `<p lang="${l}">${t}</p>`).join('')}</div>`
-      : `<div id="qrMsg"><p class="qrdone${QR.state === 'gone' ? ' gone' : ''}">${esc(T(QR.state === 'used' ? 'qrUsed' : 'qrGone'))}</p>
+      : `<div id="qrMsg"><p class="qrdone${QR.state === 'gone' ? ' qrexp' : ''}">${esc(T(QR.state === 'used' ? 'qrUsed' : 'qrGone'))}</p>
         ${QR.state === 'used' ? `<p class="qrcheck">${esc(T('qrCheck', QR.name))}</p>` : ''}</div>`}
       <div class="qrbtns">${QR.state === 'gone' ? `<button class="btn pink" id="qrAgain" onclick="showQr('${esc(QR.code)}')">${T('qrBtn')}</button>` : ''}
         <button class="btn gray" id="qrClose" onclick="closeQr()">${T('qrClose')}</button></div></div>`;
