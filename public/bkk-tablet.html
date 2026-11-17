@@ -29,7 +29,9 @@
   #offline{position:fixed;left:0;right:0;top:0;z-index:40;background:var(--warn);color:#241a02;
     padding:14px 24px calc(14px + env(safe-area-inset-top,0px));font-weight:700;font-size:19px;text-align:center}
   #offline span{display:block;font-weight:600;font-size:16px}
-  body.off .grid,body.off .qrbox{filter:grayscale(1);opacity:.45}
+  body.off .grid,body.off .qrbox > *{filter:grayscale(1);opacity:.45}
+  body.off{padding-top:var(--offH,0px)}
+  body.off header{top:var(--offH,0px)}
 
   /* Pairing */
   #pair{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px}
@@ -40,6 +42,9 @@
   #pair .say{font-size:22px;max-width:640px;margin:0 0 6px}
   #pair .say.th{font-size:20px}
   #pairMsg{min-height:1.5em;margin-top:22px;color:var(--warn)}
+  #pair .stu{background:var(--paper);border:1px solid var(--warn);border-radius:16px;padding:16px 24px;margin:0 0 30px;max-width:720px}
+  #pair .stu b{display:block;font-size:24px}
+  #pair .stu span{display:block;font-size:20px;color:var(--soft)}
 
   /* The class list */
   header{position:sticky;top:0;z-index:10;background:#17121a;border-bottom:1px solid var(--line);
@@ -53,7 +58,7 @@
   .langs button{min-width:62px;height:52px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:var(--paper);
     font-size:18px;font-weight:600;cursor:pointer}
   .langs button.on{background:var(--plum);border-color:var(--plum);color:#17121a}
-  main{padding:20px 24px 48px}
+  main{padding:20px 24px 24px}
   .lead{font-size:21px;margin:0 0 18px}
   .lead .th{display:block}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr));gap:16px}
@@ -69,12 +74,13 @@
   .tile .ok{position:absolute;top:10px;right:10px;width:38px;height:38px;border-radius:50%;background:var(--in);color:#0d1a14;
     display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;line-height:1}
   .empty{color:var(--soft);font-size:21px;text-align:center;padding:40px 10px}
-  .qrbox{margin-top:30px;display:flex;align-items:center;gap:26px;background:var(--paper);border:1px solid var(--line);
-    border-radius:18px;padding:20px 24px}
-  #qr{flex:none;width:168px;height:168px;background:#fff;border-radius:10px;padding:6px}
+  /* Pinned to the bottom of the screen: a walk-in sees it however long the list is. */
+  .qrbox{position:-webkit-sticky;position:sticky;bottom:12px;z-index:5;margin-top:24px;display:flex;align-items:center;gap:22px;
+    background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:12px 20px;box-shadow:0 0 0 12px var(--wall)}
+  #qr{flex:none;width:124px;height:124px;background:#fff;border-radius:10px;padding:5px}
   #qr svg{display:block;width:100%;height:100%}
-  .qrbox p{margin:0;font-size:22px;font-weight:600}
-  .qrbox p.th{font-size:20px;font-weight:400;margin-top:4px}
+  .qrbox p{margin:0;font-size:21px;font-weight:600}
+  .qrbox p.th{font-size:19px;font-weight:400;margin-top:4px}
 
   /* Waiting, moon day, night */
   .still{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 32px}
@@ -91,6 +97,8 @@
   .over .q{font-size:34px;margin:0}
   .over .q2{font-size:24px;color:var(--soft);margin:2px 0 0}
   .over .who{font-size:64px;font-weight:700;margin:14px 0 40px;line-height:1.15;max-width:100%;overflow-wrap:anywhere}
+  .over .when{font-size:26px;color:var(--plum);margin:-28px 0 34px}
+  #result .r0{font-size:26px;color:var(--plum);margin:0 0 10px}
   #yes{min-width:420px;max-width:100%;padding:28px 40px;border:none;border-radius:20px;background:var(--in);color:#0d1a14;
     font-size:32px;font-weight:700;cursor:pointer}
   #yes small{display:block;font-size:20px;font-weight:600;opacity:.8}
@@ -115,7 +123,7 @@
     #clock{font-size:40px}
     main{padding:16px}
     .grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,140px),1fr));gap:12px}
-    .qrbox{flex-direction:column;text-align:center}
+    .qrbox{flex-direction:column;text-align:center;position:static}
     #code{font-size:54px;padding:16px 20px}
     .still .big{font-size:96px}
     .over .who{font-size:44px}
@@ -125,15 +133,17 @@
 </head>
 <body>
 
-<div id="offline" hidden role="alert">ไม่มีอินเทอร์เน็ต การแตะยังไม่ถูกบันทึก กรุณาบอกครู
+<div id="offline" hidden role="alert">ไม่มีอินเทอร์เน็ต ระบบยังไม่ได้บันทึกการเช็กอิน กรุณาบอกครู
   <span>No internet. Your tap is not saved. Please tell the teacher.</span></div>
 
 <section id="pair" hidden>
   <h1>AYBKK</h1>
   <p class="sub">แท็บเล็ตหน้าประตู · Door tablet</p>
+  <p class="stu"><b>Check-in is not working right now. Please tell the teacher.</b>
+    <span>ตอนนี้ยังเช็กอินที่นี่ไม่ได้ กรุณาบอกครู</span></p>
   <div id="code" class="num" aria-live="polite">&nbsp;</div>
-  <p class="say">Ask Boonchu or M to type this code in Admin, Door tablets.</p>
-  <p class="say th">ให้ Boonchu หรือ M พิมพ์รหัสนี้ในหน้า Admin ที่ช่อง Door tablets</p>
+  <p class="say">Ask Boonchu or M to type this code in Admin, Settings, Door tablets.</p>
+  <p class="say th">ให้ Boonchu หรือ M พิมพ์รหัสนี้ใน Admin หน้า ตั้งค่า ช่อง แท็บเล็ตหน้าประตู</p>
   <p class="th" style="margin-top:14px">รหัสเปลี่ยนทุก 10 นาที · The code changes every 10 minutes.</p>
   <p id="pairMsg" role="status"></p>
 </section>
@@ -150,7 +160,7 @@
     <div class="qrbox">
       <div id="qr" aria-hidden="true"></div>
       <div><p>Not on the list? Book on your phone, then tap your name.</p>
-        <p class="th">ไม่มีชื่อ? จองคลาสในโทรศัพท์ก่อน แล้วแตะชื่อของคุณ</p></div>
+        <p class="th">ไม่เจอชื่อของคุณ? จองคลาสในโทรศัพท์ก่อน แล้วแตะชื่อของคุณ</p></div>
     </div>
   </main>
 </section>
@@ -168,6 +178,7 @@
   <p class="q" id="cQ"></p>
   <p class="q2" id="cQ2"></p>
   <div class="who" id="cWho"></div>
+  <p class="when num" id="cAt" hidden></p>
   <button id="yes"></button>
   <button id="no"></button>
   <div class="langs" id="langsOver"></div>
@@ -175,6 +186,7 @@
 
 <div id="result" class="over" hidden role="status" aria-live="assertive">
   <div class="mark" id="rMark"></div>
+  <p class="r0 num" id="rAt" hidden></p>
   <p class="r1" id="r1"></p>
   <p class="r2" id="r2"></p>
   <p class="r3" id="r3"></p>
@@ -191,7 +203,7 @@
     del: function (k) { try { localStorage.removeItem(k); } catch (_) {} },
   };
   // This browser is the door: no staff key, no student sign-in, ever.
-  ['aybkk_bkk_key', 'aybkk_member', 'aybkk_teacher_key'].forEach(store.del);
+  ['aybkk_bkk_key', 'aybkk_member', 'aybkk_teacher_key', 'aybkk_teacher_known', 'aybkk_shop_key', 'aybkk_loc_key'].forEach(store.del);
   try { sessionStorage.clear(); } catch (_) {}
   var KEY_NAME = 'aybkk_door_key';
   var KEY = store.get(KEY_NAME) || '';
@@ -204,14 +216,14 @@
       already: function (t) { return 'เช็กอินไว้แล้วเมื่อ ' + t + ' น.'; },
       bad: 'เช็กอินที่นี่ไม่ได้', bad2: 'กรุณาบอกครู หรือทักมาทาง LINE @aybkk' },
     en: { q: 'Is this you?', yes: 'Yes, check me in', no: 'No',
-      hi: function (n) { return 'Welcome, ' + n + '.'; }, done: 'You are checked in.',
+      hi: function (n) { return 'Welcome, ' + n.replace(/\.$/, '') + '.'; }, done: 'You are checked in.',
       already: function (t) { return 'Already checked in at ' + t + '.'; },
       bad: 'We can’t check you in here.', bad2: 'Please see the teacher, or message LINE @aybkk.' },
     zh: { q: '这是你吗？', yes: '是的，帮我签到', no: '不是',
       hi: function (n) { return '欢迎你，' + n; }, done: '签到成功。',
       already: function (t) { return '你已在 ' + t + ' 签到。'; },
       bad: '这里无法为你签到。', bad2: '请找老师，或在 LINE 上联系 @aybkk。' },
-    ru: { q: 'Это вы?', yes: 'Да, отметить меня', no: 'Нет',
+    ru: { q: 'Это вы?', yes: 'Да, отметьте меня', no: 'Нет',
       hi: function (n) { return 'Добро пожаловать, ' + n + '!'; }, done: 'Вы отмечены.',
       already: function (t) { return 'Вы уже отмечены в ' + t + '.'; },
       bad: 'Здесь не получается отметиться.', bad2: 'Подойдите к учителю или напишите нам в LINE @aybkk.' },
@@ -234,6 +246,9 @@
   var atMs = function (d, t) { return Date.parse(d + 'T' + t + ':00+07:00'); };
 
   var DATA = null, PENDING = null, OFF = false, SCREEN = '', OPEN = null, lastTouch = 0, STALE = false;
+  // Seats checked in from this screen (handle: time), kept on any list that was
+  // fetched before the tap, so a tile never looks not checked in again.
+  var DONE = {};
   var timers = { load: null, over: null, poll: null };
   var el = function (tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 
@@ -245,6 +260,7 @@
     OFF = on;
     $('#offline').hidden = !on;
     document.body.classList.toggle('off', on);
+    if (on) document.documentElement.style.setProperty('--offH', $('#offline').offsetHeight + 'px');
   }
 
   var api = function (url, opts) {
@@ -262,7 +278,7 @@
   // ── pairing: this tablet shows a code, staff type it in Admin ─────────────
   function unpaired() {
     KEY = ''; store.del(KEY_NAME);
-    DATA = null; PENDING = null; closeOverlays();
+    DATA = null; PENDING = null; DONE = {}; closeOverlays();
     clearTimeout(timers.load);
     setOffline(false);
     pair();
@@ -278,7 +294,7 @@
       return json(r).then(function (d) {
         if (g !== GEN) return;
         if (!r.ok || !d.secret) {
-          $('#pairMsg').textContent = r.status === 429 ? 'รอสักครู่ · Please wait a few minutes.' : 'ลองใหม่ · Trying again';
+          $('#pairMsg').textContent = r.status === 429 ? 'รอสักครู่ · Please wait a few minutes.' : 'กำลังลองใหม่ · Trying again';
           timers.poll = setTimeout(pair, r.status === 429 ? 60000 : 10000);
           return;
         }
@@ -344,7 +360,11 @@
   // The list stays still while someone is reading it: the confirm is open, or a
   // finger touched the screen in the last 5 seconds.
   var busy = function () { return !!OPEN || Date.now() - lastTouch < 5000; };
-  function take(d) { DATA = d; PENDING = null; render(); }
+  function take(d) {
+    if (!d.classes) DONE = {};
+    (d.seats || []).forEach(function (s) { if (!s.in && DONE[s.t]) { s.in = true; s.at = DONE[s.t]; } });
+    DATA = d; PENDING = null; render();
+  }
 
   function render() {
     if (!DATA) return;
@@ -419,7 +439,9 @@
     var t = b.getAttribute('data-t');
     var s = DATA.seats.filter(function (x) { return x.t === t; })[0];
     if (!s) return;
-    if (s.in) { result('good', { n: s.n, already: true, at: s.at }); return; }
+    // Two people with the same name: the teacher checks them in.
+    if (s.same) { result('bad'); return; }
+    if (s.in) { result('good', { n: s.n, already: true, at: s.at, c: s.c }); return; }
     ask(s);
   });
 
@@ -452,13 +474,25 @@
     $('#cQ').textContent = q[0];
     $('#cQ2').textContent = q[1] || '';
     $('#cWho').textContent = s.n;
+    $('#cAt').textContent = classAt(s.c);
+    $('#cAt').hidden = !classAt(s.c);
     twoLines($('#yes'), 'yes');
     twoLines($('#no'), 'no');
     langButtons($('#langsOver'));
   }
   function armOver(ms) { clearTimeout(timers.over); timers.over = setTimeout(back, ms); }
+  // With two classes on the list, the confirm and welcome say which one.
+  var classAt = function (c) {
+    if (!c || !DATA || !DATA.classes || DATA.classes.length < 2) return '';
+    var k = DATA.classes.filter(function (x) { return x.start === c; })[0];
+    return c + (k ? ' ' + k.title : '');
+  };
+  // A tap that lands in the first moment of a screen is the second half of a
+  // double tap on what was under it: ignored, so Yes is always read first.
+  var SETTLE_MS = 500;
+  var settled = function () { return OPEN && Date.now() - OPEN.at >= SETTLE_MS; };
   function ask(s) {
-    OPEN = { kind: 'confirm', seat: s, sent: false };
+    OPEN = { kind: 'confirm', seat: s, sent: false, at: Date.now() };
     $('#yes').disabled = false;
     paintConfirm();
     $('#confirm').hidden = false;
@@ -470,16 +504,21 @@
     $('#result').hidden = true;
     OPEN = null;
   }
-  // Back to the list, in the default languages, with any refresh that waited.
+  // Back to the list, in the default languages. A refresh that waited is drawn
+  // only once nobody has touched the screen for 5 s (here, or by the 1 s tick),
+  // so the tiles never move under a finger. After a result the next student
+  // starts at the top of the list.
   function back() {
+    var done = OPEN && OPEN.kind === 'result';
     closeOverlays();
     LANG = null;
     langButtons($('#langsTop'));
-    if (PENDING) take(PENDING); else render();
+    if (done) window.scrollTo(0, 0);
+    if (PENDING && !busy()) take(PENDING); else render();
   }
-  $('#no').addEventListener('click', back);
+  $('#no').addEventListener('click', function () { if (settled()) back(); });
   $('#yes').addEventListener('click', function () {
-    if (!OPEN || OPEN.kind !== 'confirm' || OPEN.sent) return;
+    if (!OPEN || OPEN.kind !== 'confirm' || OPEN.sent || !settled()) return;
     var s = OPEN.seat;
     OPEN.sent = true;
     $('#yes').disabled = true;
@@ -489,8 +528,8 @@
       return json(r).then(function (d) {
         setOffline(false);
         if (r.ok && d.ok) {
-          s.in = true; s.at = d.at;
-          result('good', { n: d.n || s.n, already: !!d.already, at: d.at });
+          s.in = true; s.at = d.at; DONE[s.t] = d.at;
+          result('good', { n: d.n || s.n, already: !!d.already, at: d.at, c: s.c });
         } else {
           result('bad');
           load();
@@ -504,7 +543,9 @@
 
   function result(kind, d) {
     $('#confirm').hidden = true;
-    OPEN = { kind: 'result' };
+    OPEN = { kind: 'result', at: Date.now() };
+    $('#rAt').textContent = d ? classAt(d.c) : '';
+    $('#rAt').hidden = !$('#rAt').textContent;
     var box = $('#result');
     box.className = 'over ' + kind;
     var langs = LANG ? [LANG] : ['th', 'en'];
@@ -522,11 +563,21 @@
     box.hidden = false;
     armOver(kind === 'good' ? 4000 : 8000);
   }
-  $('#result').addEventListener('click', back);
+  $('#result').addEventListener('click', function () { if (settled()) back(); });
 
   // ── around the clock ───────────────────────────────────────────────────────
   document.addEventListener('pointerdown', function () { lastTouch = Date.now(); wake(); }, true);
-  var PAGE_TAG = null;
+  var PAGE_TAG = null, reloading = false;
+  // Reload only once the server answers: a reload with no internet lands on the
+  // browser's error page, which never comes back by itself.
+  function reloadWhenUp() {
+    if (reloading) return;
+    reloading = true;
+    fetch(location.pathname, { cache: 'no-store' }).then(function (r) {
+      reloading = false;
+      if (r.ok && STALE && !OPEN && !OFF) { STALE = false; location.reload(); }
+    }, function () { reloading = false; });
+  }
   // A newer copy of this page on the server (staff phones ran old pages for days
   // on 12 Nov): reload by itself, but only when nobody is using the screen.
   function checkPage() {
@@ -543,7 +594,11 @@
     if (SCREEN === 'wait') $('#waitClock').textContent = hm(now);
     if (SCREEN === 'night') $('#nightClock').textContent = hm(now);
     if (PENDING && !busy()) take(PENDING);
-    if (STALE && !OPEN && Date.now() - lastTouch > 60000) { STALE = false; location.reload(); return; }
+    var idle = Date.now() - lastTouch;
+    // A language someone picked on the list and walked away from.
+    if (LANG && !OPEN && idle > 15000) { LANG = null; langButtons($('#langsTop')); }
+    if (!OPEN && idle > 30000 && window.scrollY > 0) window.scrollTo(0, 0);
+    if (STALE && !OPEN && !OFF && idle > 60000) reloadWhenUp();
     var m = bkkMin(now);
     if (m !== lastMin) { lastMin = m; if (SCREEN === 'wait' || SCREEN === 'night') render(); }
     // The next window opens: ask now, not at the next minute's refresh.

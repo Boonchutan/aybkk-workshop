@@ -136,16 +136,15 @@ app.use(staffFiles);
 // The door tablet (/tablet, 17 Nov 2026) talks to this site only: names on it come
 // from public order forms, so nothing it shows may load or send anything elsewhere.
 // no-cache: the page asks for its own headers to see a newer copy.
+// Set by the file that is sent, not by the address asked for: /Tablet, /tablet/
+// and /bkk%2Dtablet.html serve the same page.
 const TABLET_CSP = "default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
   + "img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'";
-app.use((req, res, next) => {
-  if (req.path === '/tablet' || req.path === '/bkk-tablet.html') {
-    res.set({ 'Content-Security-Policy': TABLET_CSP, 'Cache-Control': 'no-cache', 'X-Robots-Tag': 'noindex, nofollow' });
-  }
-  next();
-});
+const TABLET_FILE = 'bkk-tablet.html';
+const tabletHeaders = res => res.set({ 'Content-Security-Policy': TABLET_CSP, 'Cache-Control': 'no-cache', 'X-Robots-Tag': 'noindex, nofollow' });
 // index: false so '/' falls through to the host-aware front-door route below
-app.use(express.static(path.join(__dirname, 'public'), { index: false }));
+app.use(express.static(path.join(__dirname, 'public'), { index: false,
+  setHeaders: (res, file) => { if (path.basename(file) === TABLET_FILE) tabletHeaders(res); } }));
 app.use('/uploads', express.static(UPLOAD_DIR));
 // The check-in station, attendance and orientation pages still fetch /rosters/<name>.json.
 app.get('/rosters/:file', staffOnly, (req, res) => {
@@ -251,7 +250,7 @@ const ORIENTATION_SHORTCUTS = {
 // Bangkok shala: timetable, packages, booking. ('/bkk' is the orientation form.)
 const PAGE_SHORTCUTS = { book: 'bkk.html', shala: 'bkk.html', booking: 'bkk.html',
   door: 'bkk-door.html', teach: 'bkk-teacher.html', photos: 'bkk-photos.html', start: 'start.html', partner: 'partner.html',
-  tablet: 'bkk-tablet.html' };
+  tablet: TABLET_FILE };
 // In-Depth Mysore. On every host but cn.*, /in-depth is the public English page: the priority list
 // for the next English intake. cn.aybkk.net/in-depth is Generation #3, a Chinese cohort, sent only by
 // link on WeChat. That page sits in pages/, so no static path serves it; ?lang= changes nothing; it is
@@ -269,6 +268,7 @@ app.get('/start/:tag', (req, res) => res.sendFile(path.join(__dirname, 'public',
 for (const [slug, file] of Object.entries({ ...ORIENTATION_SHORTCUTS, ...PAGE_SHORTCUTS })) {
   app.get('/' + slug, (req, res) => {
     if (fs.existsSync(path.join(__dirname, 'public', file))) {
+      if (file === TABLET_FILE) tabletHeaders(res);
       res.sendFile(path.join(__dirname, 'public', file));
     } else {
       res.redirect(302, '/' + file);

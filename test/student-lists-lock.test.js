@@ -248,6 +248,14 @@ fs.writeFileSync(path.join(PRIVATE, 'rosters', 'hefei.json'), JSON.stringify({ w
       && /default-src 'none'/.test(csp) && /connect-src 'self'/.test(csp) && /script-src 'self'/.test(csp) && !/https?:/.test(csp)
       && r.headers['cache-control'] === 'no-cache' && !/staff-key\.js/.test(r.text), `${r.status} ${csp}`);
   }
+  // Express routes ignore case and a trailing slash, and the static files decode
+  // and tidy the path: every way of reaching the page gets the same header.
+  const odd = [];
+  for (const p of ['/Tablet', '/TABLET', '/tablet/', '/bkk%2Dtablet.html', '//bkk-tablet.html', '/./bkk-tablet.html', '/BKK-TABLET.HTML']) {
+    const r = await request('GET', p);
+    if (r.status === 200 && /AYBKK Door/.test(r.text)) odd.push([p, /default-src 'none'/.test(r.headers['content-security-policy'] || '') && r.headers['cache-control'] === 'no-cache']);
+  }
+  ok('...however the address is spelled, the tablet page never comes without that header', odd.length >= 4 && odd.every(x => x[1]), JSON.stringify(odd));
   for (const [m, p] of [['GET', '/api/bkk/door/now'], ['POST', '/api/bkk/door/checkin'], ['GET', '/api/bkk/door/qr']]) {
     const none = await request(m, p, {}, m === 'POST' ? {} : undefined), staff = await request(m, p, STAFF, m === 'POST' ? {} : undefined);
     ok(`${p} answers 401 without a door key, the staff key included`, none.status === 401 && staff.status === 401

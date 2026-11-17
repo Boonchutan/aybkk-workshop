@@ -1031,24 +1031,32 @@
   });
   // Settings: the door tablet (17 Nov 2026).
   Object.assign(STR.en, {
-    doorTitle: 'Door tablets', doorHelp: 'Open aybkk.net/tablet on the iPad, then type the code it shows.',
-    doorCodePh: 'Code on the tablet', doorNameLbl: 'Name of the tablet', doorPair: 'Pair',
-    doorPaired: n => `Paired: ${n}. The tablet shows the class list in a few seconds.`,
+    doorTitle: 'Door tablets', doorHelp: 'Open aybkk.net/tablet on the iPad, then type the code it shows. Pairing a new tablet ends the one in use.',
+    doorCodePh: 'Code on the tablet', doorNameLbl: 'Name of the tablet', doorDefName: 'Front door', doorPair: 'Pair',
+    doorPaired: n => `Paired: ${n}. The tablet leaves the pairing screen in a few seconds.`,
     doorNone: 'No tablet paired yet.', doorActive: 'In use',
     doorPairedAt: t => `Paired ${t}`, doorSeen: t => `last seen ${t}`, doorNever: 'not used yet',
-    doorElse: t => `Seen from another internet (${t}). If the tablet has not moved, unpair it and pair it again.`,
-    doorOff: t => `Unpaired ${t}`, doorUnpair: 'Unpair', qDoorUnpair: n => `Unpair ${n}? It goes back to the pairing screen.`,
+    doorElse: t => `Seen from another internet (${t}). Still at the door? The shala's internet has changed: tap "This is the shala's internet". Taken away? Unpair it; a new tablet is paired at the door.`,
+    doorHome: "This is the shala's internet",
+    doorOff: t => `Unpaired ${t}`, doorUnpair: 'Unpair', qDoorUnpair: n => `Unpair ${n}? Check-in on it stops at once, until someone pairs it again at the door.`,
     doorNeedCode: 'Type the code the tablet shows.',
+    doorBadCode: 'No tablet is showing that code. Check the code on the tablet: it changes every 10 minutes.',
+    doorTooMany: 'Too many wrong codes from here. Try again in an hour.',
   });
+  Object.assign(STR.en.words, { teacher: 'added by a teacher' });
+  Object.assign(STR.th.words, { teacher: 'ครูเพิ่มให้' });
   Object.assign(STR.th, {
-    doorTitle: 'แท็บเล็ตหน้าประตู', doorHelp: 'เปิด aybkk.net/tablet บน iPad แล้วพิมพ์รหัสที่ขึ้นบนจอ',
-    doorCodePh: 'รหัสบนแท็บเล็ต', doorNameLbl: 'ชื่อแท็บเล็ต', doorPair: 'จับคู่',
-    doorPaired: n => `จับคู่แล้ว: ${n} แท็บเล็ตจะแสดงรายชื่อในไม่กี่วินาที`,
+    doorTitle: 'แท็บเล็ตหน้าประตู', doorHelp: 'เปิด aybkk.net/tablet บน iPad แล้วพิมพ์รหัสที่ขึ้นบนจอ ถ้าจับคู่แท็บเล็ตเครื่องใหม่ เครื่องที่ใช้อยู่จะหยุดทำงาน',
+    doorCodePh: 'รหัสบนแท็บเล็ต', doorNameLbl: 'ชื่อแท็บเล็ต', doorDefName: 'ประตูหน้า', doorPair: 'จับคู่',
+    doorPaired: n => `จับคู่แล้ว: ${n} แท็บเล็ตจะออกจากหน้าจับคู่ในไม่กี่วินาที`,
     doorNone: 'ยังไม่มีแท็บเล็ตที่จับคู่', doorActive: 'ใช้อยู่',
     doorPairedAt: t => `จับคู่ ${t}`, doorSeen: t => `ใช้ล่าสุด ${t}`, doorNever: 'ยังไม่ได้ใช้',
-    doorElse: t => `ถูกใช้จากอินเทอร์เน็ตอื่น (${t}) ถ้าแท็บเล็ตไม่ได้ย้ายไปไหน ให้ยกเลิกการจับคู่แล้วจับคู่ใหม่`,
-    doorOff: t => `ยกเลิกแล้ว ${t}`, doorUnpair: 'ยกเลิกการจับคู่', qDoorUnpair: n => `ยกเลิกการจับคู่ ${n}? แท็บเล็ตจะกลับไปหน้าจับคู่`,
+    doorElse: t => `มีการใช้จากเครือข่ายอื่น (${t}) ถ้าแท็บเล็ตยังอยู่ที่หน้าประตู แปลว่าอินเทอร์เน็ตของชาลาเปลี่ยน ให้กด "นี่คืออินเทอร์เน็ตของชาลา" ถ้าแท็บเล็ตหายไป ให้ยกเลิกการจับคู่ แล้วจับคู่เครื่องใหม่ที่หน้าประตู`,
+    doorHome: 'นี่คืออินเทอร์เน็ตของชาลา',
+    doorOff: t => `ยกเลิกแล้ว ${t}`, doorUnpair: 'ยกเลิกการจับคู่', qDoorUnpair: n => `ยกเลิกการจับคู่ ${n}? เครื่องนี้จะเช็กอินไม่ได้ทันที จนกว่าจะมีคนจับคู่ใหม่ที่หน้าประตู`,
     doorNeedCode: 'พิมพ์รหัสที่ขึ้นบนแท็บเล็ต',
+    doorBadCode: 'ไม่มีแท็บเล็ตที่แสดงรหัสนี้ ดูรหัสบนแท็บเล็ตอีกครั้ง รหัสเปลี่ยนทุก 10 นาที',
+    doorTooMany: 'พิมพ์รหัสผิดหลายครั้งเกินไป ลองใหม่อีกครั้งในหนึ่งชั่วโมง',
   });
   const T =(k, ...a) => { const v = STR[LANG][k] ?? STR.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
   const W = w => STR[LANG].words[w] || w;
@@ -3132,7 +3140,7 @@
       <p class="muted">${T('doorHelp')}</p>
       <p class="doorRow"><input id="doorCode" placeholder="${esc(T('doorCodePh'))}" aria-label="${esc(T('doorCodePh'))}" autocomplete="off"
           autocapitalize="characters" spellcheck="false" maxlength="12">
-        <input id="doorName" value="Front door" aria-label="${esc(T('doorNameLbl'))}" maxlength="40">
+        <input id="doorName" value="${esc(T('doorDefName'))}" placeholder="${esc(T('doorNameLbl'))}" aria-label="${esc(T('doorNameLbl'))}" maxlength="40">
         <button class="btn pink" id="doorGo" onclick="pairDoor()">${T('doorPair')}</button></p>
       <p id="doorMsg" role="status"></p>
       <div id="doorList">${doorList(DOORS)}</div>
@@ -3143,7 +3151,8 @@
   const doorList = list => !list.length ? `<p class="muted">${T('doorNone')}</p>`
     : `<table>${list.map(d => `<tr><td><b style="font-size:15px">${esc(d.name)}</b>${d.active ? ` <span class="pill paid">${T('doorActive')}</span>` : ''}<br>
         <span class="muted">${T('doorPairedAt', pwWhen(d.pairedAt))} · ${d.lastSeenAt ? T('doorSeen', pwWhen(d.lastSeenAt)) : T('doorNever')}</span>
-        ${d.active && d.otherInternet ? `<p class="flash warn" style="margin:6px 0 0">${esc(T('doorElse', pwWhen(d.otherSeenAt)))}</p>` : ''}
+        ${d.active && d.otherInternet ? `<p class="flash warn" style="margin:6px 0 0">${esc(T('doorElse', pwWhen(d.otherSeenAt)))}</p>
+          <p style="margin:6px 0 0"><button class="btn" onclick="homeDoor(${Number(d.id)})">${esc(T('doorHome'))}</button></p>` : ''}
         ${d.active ? '' : `<br><span class="muted">${T('doorOff', pwWhen(d.revokedAt))}</span>`}</td>
         <td>${d.active ? `<button class="btn red" onclick="unpairDoor(${Number(d.id)})">${T('doorUnpair')}</button>` : ''}</td></tr>`).join('')}</table>`;
   const loadDoors = async () => {
@@ -3155,15 +3164,22 @@
     if (!code) { $('#doorMsg').className = 'flash warn'; $('#doorMsg').textContent = T('doorNeedCode'); return; }
     $('#doorGo').disabled = true;
     const r = await api('/api/bkk/admin/door/pair', { method: 'POST',
-      body: JSON.stringify({ code, name: $('#doorName').value.trim() || 'Front door' }) }).catch(() => null);
+      body: JSON.stringify({ code, name: $('#doorName').value.trim() || T('doorDefName') }) }).catch(() => null);
     const j = r ? await r.json().catch(() => ({})) : {};
     if (current !== 'settings' || SUB || !$('#doorMsg')) return;
     $('#doorGo').disabled = false;
-    if (!r || !r.ok) { $('#doorMsg').className = 'flash warn'; $('#doorMsg').textContent = j.error || T('failed'); return; }
+    if (!r || !r.ok) {
+      $('#doorMsg').className = 'flash warn';
+      $('#doorMsg').textContent = r && r.status === 404 ? T('doorBadCode') : r && r.status === 429 ? T('doorTooMany') : j.error || T('failed');
+      return;
+    }
     $('#doorCode').value = '';
     $('#doorMsg').className = 'flash';
     $('#doorMsg').textContent = T('doorPaired', j.name);
     for (const ms of [4000, 10000, 20000]) setTimeout(loadDoors, ms);
+  };
+  window.homeDoor = async id => {
+    if (await shout(await api(`/api/bkk/admin/door/devices/${id}/home`, { method: 'POST' }))) loadDoors();
   };
   window.unpairDoor = async id => {
     const d = DOORS.find(x => x.id === id);

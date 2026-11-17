@@ -67,6 +67,12 @@ const ok = (name, cond, extra = '') => {
     method: 'POST', headers: { 'Content-Type': 'application/json', ...headers },
     body: JSON.stringify(body) });
   const ADMIN = { 'x-bkk-key': 'testkey' };
+  // The teacher quick-add answers no member code (17 Nov 2026): tests that go on
+  // to act as the student read it from the database.
+  const quickAdd = async (body, headers) => {
+    const m = (await post('/api/bkk/teacher/members', body, headers)).body.member;
+    return m && { ...m, code: (await pool.query('SELECT code FROM bkk_members WHERE lower(email)=lower($1) AND merged_into IS NULL', [body.email])).rows[0].code };
+  };
 
   console.log('\n— catalogue —');
   const prods = await J('/api/bkk/products');
@@ -668,16 +674,22 @@ const ok = (name, cond, extra = '') => {
   ok('two people cannot share a passcode',
      (await post('/api/bkk/admin/teachers', { name: 'Copy', passcode: 'mysore-2026-ok' }, ADMIN)).status === 400);
   const PKEY = { 'x-teacher-key': chay.body.passcode };
-  const ann = (await post('/api/bkk/teacher/members', { name: 'Ann Photo', email: 'ann.photo@example.com' }, PKEY)).body.member;
-  const bob = (await post('/api/bkk/teacher/members', { name: 'Bob Photo', email: 'bob.photo@example.com' }, PKEY)).body.member;
-  const cat = (await post('/api/bkk/teacher/members', { name: 'Cat Photo', email: 'cat.photo@example.com' }, PKEY)).body.member;
-  ok('a teacher can add a student for tagging', ann && ann.code && bob && cat);
+  const annAdd = await post('/api/bkk/teacher/members', { name: 'Ann Photo', email: 'ann.photo@example.com' }, PKEY);
+  const ann = await quickAdd({ name: 'Ann Photo', email: 'ann.photo@example.com' }, PKEY);
+  const bob = await quickAdd({ name: 'Bob Photo', email: 'bob.photo@example.com' }, PKEY);
+  const cat = await quickAdd({ name: 'Cat Photo', email: 'cat.photo@example.com' }, PKEY);
+  ok('a teacher can add a student for tagging: a ref and the name, never the member code (their sign-in)', ann && ann.code && bob && cat
+     && annAdd.body.member.ref === ann.ref && Object.keys(annAdd.body.member).sort().join() === 'name,ref'
+     && !JSON.stringify(annAdd.body).includes(ann.code), JSON.stringify(annAdd.body));
   ok('adding a student needs an email (they sign in with it)',
      (await post('/api/bkk/teacher/members', { name: 'No Mail' }, PKEY)).status === 400);
   ok('tagging needs a teacher passcode',
      (await post('/api/bkk/teacher/photos', { date: '2026-10-03', image: IMG, memberCodes: [ann.code] }, ADMIN)).status === 401);
   const up = await post('/api/bkk/teacher/photos', { date: '2026-10-03', image: IMG, memberCodes: [ann.code, bob.code] }, PKEY);
   ok('photo uploaded with two students', up.status === 200 && up.body.photo.members.length === 2, JSON.stringify(up.body).slice(0, 160));
+  ok('...the people on it come back by ref and name, with no member code',
+     up.body.photo.members.every(m => Object.keys(m).sort().join() === 'name,ref,role') && !JSON.stringify(up.body).includes(ann.code)
+       && !JSON.stringify(up.body).includes(bob.code), JSON.stringify(up.body.photo.members));
   ok('stored as a private (authenticated) asset', global.__uploads[0] && global.__uploads[0].type === 'authenticated');
   ok('a non-image is refused',
      (await post('/api/bkk/teacher/photos', { date: '2026-10-03', image: 'data:text/html;base64,PGgxPg==', memberCodes: [] }, PKEY)).status === 400);
@@ -740,9 +752,9 @@ const ok = (name, cond, extra = '') => {
   // Many photos of one person, then the name once (8 Oct): the name is added.
   const manyId = fd.body.photo.id;
   const addCat = await post('/api/bkk/teacher/photos/tags/add', { photoIds: [manyId], memberCodes: [cat.code] }, PKEY);
-  const namesOn = ph => ph.members.map(m => m.code).sort().join();
+  const namesOn = ph => ph.members.map(m => m.ref).sort().join();
   ok('adding a name to picked photos keeps everyone already on them',
-     addCat.status === 200 && namesOn(addCat.body.photos[0]) === [ann.code, bob.code, cat.code].sort().join(), JSON.stringify(addCat.body).slice(0, 200));
+     addCat.status === 200 && namesOn(addCat.body.photos[0]) === [ann.ref, bob.ref, cat.ref].sort().join(), JSON.stringify(addCat.body).slice(0, 200));
   ok('adding the same name again changes nothing',
      namesOn((await post('/api/bkk/teacher/photos/tags/add', { photoIds: [manyId, manyId], memberCodes: [cat.code, cat.code] }, PKEY)).body.photos[0]).split(',').length === 3);
   ok('adding names needs a passcode', (await post('/api/bkk/teacher/photos/tags/add', { photoIds: [manyId], memberCodes: [cat.code] }, {})).status === 401);
@@ -771,8 +783,7 @@ const ok = (name, cond, extra = '') => {
   {
     const tp = (path, body) => post(path, body, PKEY);
     const tg = (path) => J(path, { headers: PKEY });
-    const mem = async name => (await tp('/api/bkk/teacher/members',
-      { name, email: name.toLowerCase().replace(/\W+/g, '.') + '@example.com' })).body.member;
+    const mem = async name => quickAdd({ name, email: name.toLowerCase().replace(/\W+/g, '.') + '@example.com' }, PKEY);
     const mia = await mem('Mia Maintag'), oto = await mem('Oto Frametag'), pip = await mem('Pip Thirdtag'), nia = await mem('Nia Nophoto');
     const roles = ph => ph.members.map(m => `${m.name.split(' ')[0]}:${m.role}`).join();
     const inDb = async id => (await pool.query(`SELECT m.name, pm.role FROM bkk_photo_members pm JOIN bkk_members m ON m.id=pm.member_id
@@ -953,7 +964,7 @@ const ok = (name, cond, extra = '') => {
     await pool.query('DELETE FROM bkk_bookings WHERE id = ANY($1::int[])', [booked]);
 
     // The hint never shows a whole email, however short the name part is.
-    const short = async (name, email) => (await tp('/api/bkk/teacher/members', { name, email })).body.member;
+    const short = async (name, email) => quickAdd({ name, email }, PKEY);
     const h1 = await short('Uno Hintone', 'q@hint.example.com'), h2 = await short('Duo Hinttwo', 'qz@hint.example.com');
     const h3 = await short('Tri Hintthree', 'qzx@hint.example.com'), h0 = await short('Nul Hintnone', 'nul.hintnone@hint.example.com');
     await pool.query(`UPDATE bkk_members SET email='no-at-sign' WHERE code=$1`, [h0.code]);
@@ -964,8 +975,11 @@ const ok = (name, cond, extra = '') => {
          && (await hintOf(h3)) === 'qz…@hint.example.com' && (await hintOf(h0)) === '…' && (await hintOf(pip)) === 'pi…@example.com',
        JSON.stringify([await hintOf(h1), await hintOf(h2), await hintOf(h3), await hintOf(h0)]));
     ok('...in the name search too',
-       found.length === 4 && found.find(m => m.code === h1.code).hint === '…@hint.example.com'
-         && found.find(m => m.code === h2.code).hint === 'q…@hint.example.com' && found.find(m => m.code === h0.code).hint === '…', JSON.stringify(found));
+       found.length === 4 && found.find(m => m.ref === h1.ref).hint === '…@hint.example.com'
+         && found.find(m => m.ref === h2.ref).hint === 'q…@hint.example.com' && found.find(m => m.ref === h0.ref).hint === '…', JSON.stringify(found));
+    ok('...and the search answers no member code: a ref, the name, the hint and passToday',
+       found.every(m => Object.keys(m).sort().join() === 'hint,name,passToday,ref') && ![h0, h1, h2, h3].some(m => JSON.stringify(found).includes(m.code)),
+       JSON.stringify(found[0]));
 
     // More than 30 names on one photo: refused whole, never cut short (the cut could drop the main student).
     const crowd = [];
@@ -1271,7 +1285,7 @@ const ok = (name, cond, extra = '') => {
   ok('ladder steps do not change the views and taps report', st2 && st2.views === 4 && st2.taps === 1, JSON.stringify(st2));
 
   console.log('\n— 12-week proof check —');
-  const ck = (await post('/api/bkk/teacher/members', { name: 'Check Person', email: 'check.person@example.com' }, PKEY)).body.member.code;
+  const ck = (await quickAdd({ name: 'Check Person', email: 'check.person@example.com' }, PKEY)).code;
   ok('a check needs at least one number', (await post(`/api/bkk/me/${ck}/checks`, { note: 'hi' })).status === 400);
   ok('a silly heart rate is refused', (await post(`/api/bkk/me/${ck}/checks`, { restingHr: 400 })).status === 400);
   ok('a check is saved', (await post(`/api/bkk/me/${ck}/checks`, { restingHr: 68, sleepHours: 6.5, feel: 3, note: 'tired' })).status === 200);
@@ -3480,7 +3494,7 @@ const ok = (name, cond, extra = '') => {
     const rowOf = async code => (await pool.query('SELECT id, photo_id, photo_at, photo_tries FROM bkk_members WHERE code=$1', [code])).rows[0];
     const get = async path => { const r = await fetch(B + path); return { status: r.status, type: r.headers.get('content-type'),
       cache: r.headers.get('cache-control'), bytes: Buffer.from(await r.arrayBuffer()) }; };
-    const newMember = async (name, email) => (await post('/api/bkk/teacher/members', { name, email }, PKEY)).body.member;
+    const newMember = async (name, email) => quickAdd({ name, email }, PKEY);
     const sam = await newMember('Sam Faceless', 'sam.face@example.com');
     const tia = await newMember('Tia Facetwo', 'tia.face@example.com');
     const uma = await newMember('Uma Noface', 'uma.face@example.com');
@@ -7314,9 +7328,54 @@ const ok = (name, cond, extra = '') => {
     await getD('/api/bkk/door/now', { 'x-door-key': KEY2, 'cf-connecting-ip': '203.0.113.77' });
     const moved = (await getD('/api/bkk/admin/door/devices', ADMIN)).body.devices.find(d => d.active);
     ok('the key used from another address: marked "seen from another internet" for Admin', moved.otherInternet === true && !!moved.otherSeenAt);
+    // The shala's own address changed (a router restart): every later poll from there must not make it new again.
+    await pool.query(`UPDATE bkk_door_devices SET other_ip_at = now() - interval '1 day' WHERE id=$1`, [moved.id]);
+    await getD('/api/bkk/door/now', { 'x-door-key': KEY2, 'cf-connecting-ip': '203.0.113.77' });
+    const otherAt = async () => (await one('SELECT other_ip_at, paired_ip FROM bkk_door_devices WHERE id=$1', [moved.id]));
+    const stay = await otherAt();
+    ok('...more polls from that same address keep the first time, so the 20:00 summary warns once, not every day',
+       Date.now() - new Date(stay.other_ip_at).getTime() > 23 * 3600e3, JSON.stringify(stay));
+    await getD('/api/bkk/door/now', { 'x-door-key': KEY2, 'cf-connecting-ip': '203.0.113.78' });
+    ok('...a move to yet another address is new again', Date.now() - new Date((await otherAt()).other_ip_at).getTime() < 60e3);
+    ok('"This is the shala\'s internet" needs the admin key', (await postD(`/api/bkk/admin/door/devices/${moved.id}/home`, {}, { 'x-door-key': KEY2 })).status === 401);
+    const home = await postD(`/api/bkk/admin/door/devices/${moved.id}/home`, {}, ADMIN);
+    await getD('/api/bkk/door/now', { 'x-door-key': KEY2, 'cf-connecting-ip': '203.0.113.78' });
+    const afterHome = (await getD('/api/bkk/admin/door/devices', ADMIN)).body.devices.find(d => d.active);
+    ok('..."This is the shala\'s internet" makes the last address the shala\'s and clears the warning', home.status === 200
+       && afterHome.otherInternet === false && (await otherAt()).paired_ip === '203.0.113.78', JSON.stringify(afterHome));
     const rv = await postD(`/api/bkk/admin/door/devices/${active[0].id}/revoke`, {}, ADMIN);
     ok('Unpair in Admin: the tablet is 401 at once', rv.status === 200 && rv.body.revoked === true && (await getD('/api/bkk/door/now', H2)).status === 401
        && (await postD('/api/bkk/admin/door/devices/999999/revoke', {}, ADMIN)).status === 404);
+    // 50 waiting codes from 5 addresses: the real tablet still gets one, the oldest unapproved goes, an approved one stays.
+    const stKeep = await postD('/api/bkk/door/pair/start', {}, ipH());
+    await postD('/api/bkk/admin/door/pair', { code: stKeep.body.code, name: 'Kept' }, { ...ADMIN, ...ipH() });
+    const floodIps = [];
+    for (let a = 0; a < 5; a++) { const h = ipH(); floodIps.push(h['cf-connecting-ip']); for (let i = 0; i < 10; i++) await postD('/api/bkk/door/pair/start', {}, h); }
+    const real = await postD('/api/bkk/door/pair/start', {}, ipH());
+    const waitingNow = (await one(`SELECT count(*)::int AS n FROM bkk_door_pairings WHERE expires_at > now() AND used_at IS NULL AND approved_at IS NULL`)).n;
+    ok('a flood of pairing codes from many addresses never refuses the real tablet: the oldest waiting code goes, an approved one stays',
+       real.status === 200 && real.body.code && waitingNow <= 50
+         && (await postD('/api/bkk/door/pair/claim', { secret: stKeep.body.secret }, ipH())).body.ok === true, JSON.stringify([real.status, real.body.error, waitingNow]));
+    await pool.query(`UPDATE bkk_door_devices SET revoked_at=now() WHERE name='Kept' AND revoked_at IS NULL`);
+    await pool.query(`DELETE FROM bkk_door_pairings WHERE ip = ANY($1::text[]) OR secret_hash=$2`,
+      [floodIps, crypto.createHash('sha256').update(String(real.body.secret || '')).digest('hex')]);
+    // Typed in the last second of its 10 minutes: the tablet can still claim it.
+    const stLast = await postD('/api/bkk/door/pair/start', {}, ipH());
+    await pool.query(`UPDATE bkk_door_pairings SET expires_at = now() + interval '1 second' WHERE secret_hash=$1`,
+      [crypto.createHash('sha256').update(stLast.body.secret).digest('hex')]);
+    await postD('/api/bkk/admin/door/pair', { code: stLast.body.code, name: 'Last second' }, { ...ADMIN, ...ipH() });
+    await new Promise(r => setTimeout(r, 1300));
+    const lastCl = await postD('/api/bkk/door/pair/claim', { secret: stLast.body.secret }, ipH());
+    ok('a code approved in its last second can still be claimed (2 more minutes)', lastCl.status === 200 && lastCl.body.ok === true, lastCl.raw);
+    await pool.query(`UPDATE bkk_door_devices SET revoked_at=now() WHERE name='Last second' AND revoked_at IS NULL`);
+    // A made-up secret never waits on the pairing lock.
+    const holder = await pool.connect();
+    await holder.query(`SELECT pg_advisory_lock(hashtext('bkk_door_devices'))`);
+    const quick = await Promise.race([postD('/api/bkk/door/pair/claim', { secret: crypto.randomBytes(32).toString('base64url') }, ipH()),
+      new Promise(r => setTimeout(() => r({ status: 'waited' }), 1500))]);
+    await holder.query(`SELECT pg_advisory_unlock(hashtext('bkk_door_devices'))`);
+    holder.release();
+    ok('a claim with a made-up secret answers 404 without taking the pairing lock', quick.status === 404, String(quick.status));
     const qr = await (async () => { const st3 = await postD('/api/bkk/door/pair/start', {}, ipA);
       await postD('/api/bkk/admin/door/pair', { code: st3.body.code }, { ...ADMIN, ...ipH() });
       const k = (await postD('/api/bkk/door/pair/claim', { secret: st3.body.secret }, ipA)).body.key;
@@ -7324,8 +7383,49 @@ const ok = (name, cond, extra = '') => {
     ok('the "book on your phone" QR is made on the server, to /book on an allowed site only', qr.status === 200 && qr.body.link === 'https://aybkk.net/book'
        && /^<svg/.test(qr.body.svg.trim()), JSON.stringify(qr.body).slice(0, 120));
 
+    // ── the name rule on hard names, another Tuesday ──
+    {
+      let D2 = plus(D, 7);
+      while (moonDaysBetween(D2, D2).size) D2 = plus(D2, 7);
+      const stN = await postD('/api/bkk/door/pair/start', {}, ipA);
+      await postD('/api/bkk/admin/door/pair', { code: stN.body.code, name: 'Names' }, { ...ADMIN, ...ipH() });
+      const HN = { 'x-door-key': (await postD('/api/bkk/door/pair/claim', { secret: stN.body.secret }, ipA)).body.key, ...ipA };
+      const hard = { TW1: 'Tara Twinname', TW2: 'Tara Twinname', NE1: 'Kim Nearlya', NE2: 'Kim Nearlyb', HAN: '王小明', HA2: '李伟',
+        MAIL: 'nam.mailname@example.com', TH1: 'สมชาย ใจดี', TH2: 'สมชาย ใจงาม', RU1: 'Александра Константинова', RU2: 'Александра Константиновская' };
+      const hs = {};
+      for (const [k, n] of Object.entries(hard)) { await mk(k, n); hs[k] = await seat(people[k], my530, D2); }
+      cc = AT(D2, '05:20:00');
+      const nn = await getD('/api/bkk/door/now', HN);
+      const byN = n => nn.body.seats.filter(x => x.n === n);
+      ok('hard names: a Chinese name is masked (王*明, 李*), an email shows one letter, Thai near-twins keep their vowel (ใจด., ใจง.), never a whole last word',
+         byN('王*明').length === 1 && byN('李*').length === 1 && byN('n.').length === 1 && byN('สมชาย ใจด.').length === 1 && byN('สมชาย ใจง.').length === 1
+           && byN('Александра Константинов.').length === 1 && byN('Александра Константиновс.').length === 1,
+         JSON.stringify(nn.body.seats.map(x => x.n)));
+      const rawN = nn.raw.replace(/"t":"[A-Za-z0-9_-]+"/g, '"t":""');
+      ok('...so no full name reaches the tablet', !/王小明|李伟|@|mailname|ใจดี|ใจงาม|Twinname|Nearlya|Nearlyb|Константинова"|Константиновская/.test(rawN), rawN.slice(0, 400));
+      const twins = byN('Tara T.'), near = byN('Kim Nearly.');
+      ok('two people whose labels cannot differ (the same name, or names that differ only in the last letter) are marked same, the others are not',
+         twins.length === 2 && twins.every(x => x.same === true) && near.length === 2 && near.every(x => x.same === true)
+           && nn.body.seats.filter(x => x.same).length === 4, JSON.stringify([twins, near].map(g => g.map(x => [x.n, x.same]))));
+      const twinTap = await postD('/api/bkk/door/checkin', { t: (twins[0] || {}).t }, HN);
+      ok('...a tap on one of them is the neutral refusal (see the teacher) and checks nobody in', twinTap.status === 409 && twinTap.body.refused === true
+         && !(await one('SELECT checked_in_at FROM bkk_bookings WHERE id=$1', [hs.TW1])).checked_in_at
+         && !(await one('SELECT checked_in_at FROM bkk_bookings WHERE id=$1', [hs.TW2])).checked_in_at, twinTap.raw);
+      const hanTap = await postD('/api/bkk/door/checkin', { t: (byN('王*明')[0] || {}).t }, HN);
+      ok('...a masked name checks in as usual', hanTap.status === 200 && hanTap.body.n === '王*明', hanTap.raw);
+      const liT = (byN('李*')[0] || nn.body.seats.find(x => /李/.test(x.n)) || { t: 'x' }).t;
+      ok('a handle in another spelling of the same bytes is not taken', (await postD('/api/bkk/door/checkin',
+        { t: liT.slice(0, -1) + String.fromCharCode(liT.slice(-1).charCodeAt(0) + 1) }, HN)).status === 400
+        && !(await one('SELECT checked_in_at FROM bkk_bookings WHERE id=$1', [hs.HA2])).checked_in_at);
+      await pool.query('DELETE FROM bkk_bookings WHERE id = ANY($1::int[])', [Object.values(hs)]);
+      await pool.query(`UPDATE bkk_door_devices SET revoked_at=now() WHERE name='Names' AND revoked_at IS NULL`);
+    }
+
     // ── /teach: the lock-out first ──
     const ipT = { 'cf-connecting-ip': '192.0.2.44' };
+    const markRes = await getD('/api/bkk/teacher/me', { ...TEACH, ...ipT });
+    const MARK = markRes.headers.get('x-teacher-known');
+    ok('a right passcode gives this browser a signed "known browser" mark', markRes.status === 200 && /^\d+\.\d+\.[A-Za-z0-9_-]{22}$/.test(MARK || ''), MARK);
     const misses = [];
     for (let i = 0; i < 8; i++) misses.push((await getD('/api/bkk/teacher/me', { 'x-teacher-key': 'wrong-' + i, ...ipT })).status);
     const lockedOut = await getD('/api/bkk/teacher/me', { ...TEACH, ...ipT });
@@ -7333,6 +7433,16 @@ const ok = (name, cond, extra = '') => {
        misses.every(x => x === 401) && lockedOut.status === 429 && lockedOut.body.locked === true
          && (await getD('/api/bkk/teacher/today', { ...TEACH, ...ipT })).status === 429, JSON.stringify([misses, lockedOut.status]));
     ok('...another address is not locked out', (await getD('/api/bkk/teacher/me', { ...TEACH, 'cf-connecting-ip': '192.0.2.45' })).status === 200);
+    ok('...the 429 says how to get in now: mobile data', /mobile data/.test(lockedOut.body.error || ''), lockedOut.body.error);
+    const forgedMark = MARK && MARK.replace(/.$/, c => c === 'A' ? 'B' : 'A');
+    ok('a browser that signed in before is counted on its own: the right passcode still works on the locked shala wifi, a made-up mark does not',
+       (await getD('/api/bkk/teacher/today', { ...TEACH, ...ipT, 'x-teacher-known': MARK })).status === 200
+         && (await getD('/api/bkk/teacher/me', { ...TEACH, ...ipT, 'x-teacher-known': forgedMark })).status === 429
+         && (await getD('/api/bkk/teacher/me', { ...TEACH, ...ipT, 'x-teacher-known': '1.1.' + 'A'.repeat(22) })).status === 429);
+    const markMiss = [];
+    for (let i = 0; i < 9; i++) markMiss.push((await getD('/api/bkk/teacher/me', { 'x-teacher-key': 'wrong-mark-' + i, 'x-teacher-known': MARK, 'cf-connecting-ip': '192.0.2.47' })).status);
+    ok('...and wrong passcodes with that mark lock that mark out after 8, wherever they come from', markMiss.slice(0, 8).every(x => x === 401) && markMiss[8] === 429,
+       markMiss.join());
 
     // ── /teach: today's list and its fixes ──
     cc = AT(D, '06:45:00');
@@ -7353,8 +7463,14 @@ const ok = (name, cond, extra = '') => {
     const td = await getD('/api/bkk/teacher/today', TH);
     const st_ = n => td.body.students.find(x => x.name === n) || {};
     ok("/teach today: no member code anywhere in the answer, a ref and the booking id instead", td.status === 200
-       && !Object.values(people).some(p => td.raw.includes(p.code)) && td.body.students.every(x => !('code' in x) && /^m\.\d+\./.test(x.ref) && Number.isInteger(x.bookingId)),
+       && !Object.values(people).some(p => td.raw.includes(p.code)) && td.body.students.every(x => !('code' in x) && /^m\.[A-Za-z0-9_-]{43}$/.test(x.ref) && Number.isInteger(x.bookingId)),
        td.raw.slice(0, 200));
+    const benRows = td.body.students.filter(x => x.name === 'Ben Sample');
+    ok('a student with two seats today has the other time on each row (a wrong class booked by mistake shows)', benRows.length === 2
+       && String(benRows.find(x => x.bookingId === s.BEN730).alsoAt) === '05:30' && String(benRows.find(x => x.bookingId === s.BEN).alsoAt) === '07:30'
+       && String(st_('Paula Pausedbefore').alsoAt) === '', JSON.stringify(benRows.map(x => x.alsoAt)));
+    ok('the ref shows no member id and stays the same', td.body.students.every(x => !x.ref.split('.').includes(String(people.BEN.id)))
+       && benRows[0].ref === benRows[1].ref && benRows[0].ref === (await getD('/api/bkk/teacher/today', TH)).body.students.find(x => x.name === 'Ben Sample').ref);
     ok('...the check-pass flag: none for a pause that has ended or a pass whose twin came back, yes with no live pass, Rezerv for a Rezerv seat',
        st_('Paula Pausedbefore').checkPass === false && st_('Tia Twinback').checkPass === false && st_('Nils Nopass').checkPass === true
          && st_('Rita Rezervseat').rezerv === true && st_('Rita Rezervseat').checkPass === false && st_('Ben Sample').checkPass === false,
@@ -7402,6 +7518,9 @@ const ok = (name, cond, extra = '') => {
        nsAdd.status === 409 && nsAdd.body.error === 'Pass not started. Ask Boonchu or M.' && ltAdd.status === 409 && ltAdd.body.error === 'Pass not started. Ask Boonchu or M.'
          && (await nsSnap()) === nsBefore && !(await one(`SELECT id FROM bkk_bookings WHERE member_id = ANY($1::int[]) AND class_date=$2`, [[ns.id, lt.id], D])).id,
        JSON.stringify([nsAdd.body, ltAdd.body]));
+    const carAdd = await postD('/api/bkk/teacher/add', { slotId: my730, ref: (await refOf('Cara (Nok) Ocean')).ref }, TH);
+    ok('Add says when the student is also booked at another time today', carAdd.status === 200 && carAdd.body.already === false
+       && JSON.stringify(carAdd.body.alsoAt) === '["05:30"]', JSON.stringify(carAdd.body));
     const npAdd = await postD('/api/bkk/teacher/add', { slotId: my530, ref: (await refOf('Nils Nopass')).ref }, TH);
     ok('...and someone with no pass for today', npAdd.status === 409 && npAdd.body.error === 'No pass for today. Ask Boonchu or M.', JSON.stringify(npAdd.body));
     ok('...and an online class, a member code instead of a ref', (await postD('/api/bkk/teacher/add', { slotId: onl, ref: wRef.ref }, TH)).status === 409
@@ -7436,7 +7555,7 @@ const ok = (name, cond, extra = '') => {
   // Photos tagged from today's list carry a ref, not the code: one student named both ways is one tag.
   {
     const PK = { 'x-teacher-key': (await post('/api/bkk/admin/teachers', { name: 'Ref Tagger' }, ADMIN)).body.passcode };
-    const m = (await post('/api/bkk/teacher/members', { name: 'Rhea Reftag', email: 'rhea.reftag@example.com' }, PK)).body.member;
+    const m = await quickAdd({ name: 'Rhea Reftag', email: 'rhea.reftag@example.com' }, PK);
     const up = await post('/api/bkk/teacher/photos', { date: '2026-10-05', image: 'data:image/jpeg;base64,/9j/4AAQSkZJRg==',
       tags: [{ code: m.ref, role: 'other' }, { code: m.code, role: 'main' }] }, PK);
     ok('a photo tagged by ref and by code for the same student has one tag, main', up.status === 200 && up.body.photo.members.length === 1

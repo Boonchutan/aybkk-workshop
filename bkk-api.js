@@ -5291,16 +5291,42 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     return Buffer.from(String(v), 'hex');
   })().catch(e => { secretP = null; throw e; }));
   const hmac = (sec, s) => crypto.createHmac('sha256', sec).update(s).digest();
+  // Four numbers in one AES block under a key from the server secret, plus a
+  // MAC: 43 characters that show no id and cannot be made up. The same numbers
+  // give the same string. Only the exact string sealBlock made opens (no other
+  // spelling of the same bytes). The last number is a tag that says what it is.
+  const blockKeys = (sec, use) => ({ enc: hmac(sec, use + '-enc'), mac: hmac(sec, use + '-mac') });
+  function sealBlock(k, nums) {
+    const p = Buffer.alloc(16);
+    nums.forEach((n, i) => p.writeUInt32BE(n >>> 0, i * 4));
+    const c = crypto.createCipheriv('aes-256-ecb', k.enc, null);
+    c.setAutoPadding(false);
+    const ct = Buffer.concat([c.update(p), c.final()]);
+    return Buffer.concat([ct, hmac(k.mac, ct).subarray(0, 16)]).toString('base64url');
+  }
+  function openBlock(k, t, tag) {
+    if (typeof t !== 'string' || !/^[A-Za-z0-9_-]{43}$/.test(t)) return null;
+    const raw = Buffer.from(t, 'base64url');
+    if (raw.length !== 32 || raw.toString('base64url') !== t) return null;
+    const ct = raw.subarray(0, 16);
+    if (!crypto.timingSafeEqual(raw.subarray(16), hmac(k.mac, ct).subarray(0, 16))) return null;
+    const d = crypto.createDecipheriv('aes-256-ecb', k.enc, null);
+    d.setAutoPadding(false);
+    const p = Buffer.concat([d.update(ct), d.final()]);
+    if (p.readUInt32BE(12) !== tag) return null;
+    return [0, 1, 2].map(i => p.readUInt32BE(i * 4));
+  }
   // Teachers name a student by this ref, not the member code (the student's
-  // sign-in, 17 Nov 2026): "m.<id>.<signature>". It opens nothing outside
-  // /api/bkk/teacher.
-  const memberRef = (sec, id) => `m.${id}.${hmac(sec, 'member:' + id).toString('base64url').slice(0, 22)}`;
-  const REF_RE = /^m\.(\d{1,9})\.([A-Za-z0-9_-]{22})$/;
+  // sign-in, 17 Nov 2026): "m." and a sealed block, so it shows no member id
+  // (ids run in order and would tell how many profiles there are). It opens
+  // nothing outside /api/bkk/teacher.
+  const REF_TAG = 0x4d524631;
+  const memberRef = (sec, id) => 'm.' + sealBlock(blockKeys(sec, 'ref'), [id, 0, 0, REF_TAG]);
+  const REF_RE = /^m\.[A-Za-z0-9_-]{43}$/;
   const refId = (sec, s) => {
-    const m = REF_RE.exec(String(s || ''));
-    if (!m) return null;
-    const want = Buffer.from(memberRef(sec, Number(m[1])).split('.')[2]), got = Buffer.from(m[2]);
-    return crypto.timingSafeEqual(want, got) ? Number(m[1]) : null;
+    if (!REF_RE.test(String(s || ''))) return null;
+    const v = openBlock(blockKeys(sec, 'ref'), String(s).slice(2), REF_TAG);
+    return v && v[0] ? v[0] : null;
   };
   // A teacher route's student: a ref, or a member code typed in.
   async function memberByKey(key, db = pool) {
@@ -5313,23 +5339,37 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // short as 8 characters, and teachers can now change who is checked in. Past
   // the limit every passcode from that address is refused for the rest of the
   // window, the right one too, so a hit looks like a miss.
-  const TEACHER_MISSES = 8, TEACHER_LOCK_MS = 15 * 60000;
+  // At the shala everyone shares one address, so a browser that has signed in
+  // once carries a signed "known browser" mark (X-Teacher-Known, 60 days, renewed
+  // on use) and is counted on its own: someone guessing on the shala wifi cannot
+  // lock the teachers out. The mark opens nothing; the passcode is still checked.
+  const TEACHER_MISSES = 8, TEACHER_LOCK_MS = 15 * 60000, KNOWN_DAYS = 60;
   const teacherMisses = missCounter(TEACHER_MISSES, TEACHER_LOCK_MS);
+  const knownSig = (sec, id, until) => hmac(sec, `teacher-known:${id}:${until}`).toString('base64url').slice(0, 22);
+  const knownMark = (sec, id) => { const until = Math.floor(Date.now() / 86400000) + KNOWN_DAYS; return `${id}.${until}.${knownSig(sec, id, until)}`; };
+  const knownId = (sec, s) => {
+    const m = /^(\d{1,9})\.(\d{1,7})\.([A-Za-z0-9_-]{22})$/.exec(String(s || ''));
+    if (!m || Number(m[2]) < Math.floor(Date.now() / 86400000)) return null;
+    return crypto.timingSafeEqual(Buffer.from(knownSig(sec, m[1], m[2])), Buffer.from(m[3])) ? Number(m[1]) : null;
+  };
   app.use('/api/bkk/teacher', async (req, res, next) => {
     const key = req.headers['x-teacher-key'];
     if (!key) return next();
-    const ip = guessIp(req);
-    if (teacherMisses.over(ip)) {
-      return res.status(429).set('Retry-After', String(teacherMisses.retryS(ip)))
-        .json({ error: 'too many wrong passcodes from here: try again in 15 minutes', locked: true });
-    }
-    const t = teacherMisses.hold(ip);
+    let t = null;
     try {
+      const sec = await serverSecret();
+      const known = knownId(sec, req.headers['x-teacher-known']);
+      const who = known ? `known:${known}` : guessIp(req);
+      if (teacherMisses.over(who)) {
+        return res.status(429).set('Retry-After', String(teacherMisses.retryS(who))).json({ locked: true,
+          error: 'Too many wrong passcodes from here. Try again in 15 minutes, or switch off wifi and use mobile data.' });
+      }
+      t = teacherMisses.hold(who);
       req.teacher = (await q('SELECT * FROM bkk_teachers WHERE key_hash = $1 AND active', [hashKey(key)])).rows[0] || null;
-      if (req.teacher) t.n--;
+      if (req.teacher) { t.n--; res.set('X-Teacher-Known', knownMark(sec, req.teacher.id)); }
       next();
     } catch (e) {
-      t.n--;
+      if (t) t.n--;
       res.status(500).json({ error: e.message });
     }
   });
@@ -5423,11 +5463,16 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
            WHERE pm.member_id=m.id AND pm.role='main') lm ON true
          WHERE b.status='booked' AND b.class_date = $1::date
          ORDER BY b.start_at, m.name, b.id`, [today]), serverSecret(), classesToday(today)]);
+      // alsoAt: the member's other seats today, so a wrong class booked by
+      // mistake (a second class used) shows on both rows.
+      const times = new Map();
+      for (const b of r.rows) times.set(b.member_id, [...(times.get(b.member_id) || []), [b.booking_id, bkkHm(new Date(b.start_at).getTime())]]);
       res.json({
         date: today, classes,
         students: r.rows.map(({ member_id, booking_id, slot_id, is_online, checkin_via, checkin_by, check_pass, ...s }) => ({
           ...s, ref: memberRef(sec, member_id), bookingId: booking_id, slotId: slot_id, isOnline: is_online,
-          checkinVia: checkin_via, checkinBy: checkin_by, rezerv: s.cover === 'rezerv', checkPass: check_pass })),
+          checkinVia: checkin_via, checkinBy: checkin_by, rezerv: s.cover === 'rezerv', checkPass: check_pass,
+          alsoAt: times.get(member_id).filter(x => x[0] !== booking_id).map(x => x[1]) })),
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
@@ -5518,6 +5563,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         await client.query('COMMIT');
         return res.json({ success: true, already: true, name: member.name, booking: { id: r.id, checkedInAt: r.checked_in_at } });
       }
+      const also = (await client.query(`SELECT to_char(b.start_at AT TIME ZONE 'Asia/Bangkok','HH24:MI') AS t FROM bkk_bookings b
+        WHERE b.member_id=$1 AND b.class_date=$2::date AND b.status='booked' ORDER BY b.start_at`, [member.id, today])).rows.map(x => x.t);
       const usable = `p.member_id=$1 AND p.status='active' AND (p.kind='unlimited' OR p.credits_used < p.credits_total)`;
       const pass = (await client.query(
         `SELECT p.* FROM bkk_passes p WHERE ${usable} AND ${PASS_LIVE_ON('$2::date')}
@@ -5536,7 +5583,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       seat.booking = (await client.query(`UPDATE bkk_bookings SET checkin_via='teacher', checkin_by=$2, booked_at=$3, checked_in_at=$3
         WHERE id=$1 RETURNING *`, [seat.booking.id, t.name, at])).rows[0];
       await client.query('COMMIT');
-      res.json({ success: true, already: false, name: member.name, overCapacity: seat.overCapacity,
+      res.json({ success: true, already: false, name: member.name, overCapacity: seat.overCapacity, alsoAt: also,
         booking: { id: seat.booking.id, checkedInAt: seat.booking.checked_in_at } });
     } catch (e) {
       await client.query('ROLLBACK').catch(() => {});
@@ -5660,7 +5707,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   async function photosWithTags(where, args) {
     const rows = (await q(
       `SELECT p.*, to_char(p.class_date, 'YYYY-MM-DD') AS day,
-              coalesce(json_agg(json_build_object('id', m.id, 'code', m.code, 'name', m.name, 'role', pm.role)
+              coalesce(json_agg(json_build_object('id', m.id, 'name', m.name, 'role', pm.role)
                 ORDER BY (pm.role <> 'main'), m.name) FILTER (WHERE m.id IS NOT NULL), '[]') AS members
        FROM bkk_photos p
        LEFT JOIN bkk_photo_members pm ON pm.photo_id = p.id
@@ -5696,7 +5743,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
            OR EXISTS (SELECT 1 FROM bkk_members f WHERE f.merged_into = m.id
              AND (lower(f.name) LIKE $1 OR lower(coalesce(f.email,'')) LIKE $1)))
          ORDER BY m.name LIMIT 20`, [`%${term}%`, bkkToday()]), serverSecret()]);
-      res.json({ members: r.rows.map(m => ({ code: m.code, ref: memberRef(sec, m.id), name: m.name, hint: emailHint(m.email),
+      res.json({ members: r.rows.map(m => ({ ref: memberRef(sec, m.id), name: m.name, hint: emailHint(m.email),
         passToday: m.pass_today })) });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
@@ -5711,7 +5758,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         return res.status(400).json({ error: 'email required: the student signs in with it to see their photos' });
       }
       const m = await findOrCreateMember({ name, email });
-      res.json({ success: true, member: { code: m.code, ref: memberRef(await serverSecret(), m.id), name: m.name } });
+      res.json({ success: true, member: { ref: memberRef(await serverSecret(), m.id), name: m.name } });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -5982,9 +6029,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         `p.id IN (SELECT photo_id FROM bkk_photo_members WHERE member_id = $1 AND (role = 'main' OR $2::boolean))`,
         [m.id, await othersVisible()]);
       const byDay = new Map();           // date -> [photos they are main in, the others]
+      const mine = memberRef(await serverSecret(), m.id);
       for (const ph of photos.reverse()) {
         if (!byDay.has(ph.date)) byDay.set(ph.date, [[], []]);
-        const main = ph.members.some(x => x.code === m.code && x.role === 'main');
+        const main = ph.members.some(x => x.ref === mine && x.role === 'main');
         byDay.get(ph.date)[main ? 0 : 1].push({ id: ph.id, thumb: ph.thumb, full: ph.full, save: ph.save });
       }
       res.json({ days: [...byDay.entries()].sort((a, b) => b[0].localeCompare(a[0]))
@@ -6516,14 +6564,18 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   const addDay = (d, n) => ymd(new Date(Date.parse(`${d}T12:00:00${TZ_OFFSET}`) + n * 86400000));
 
   // The device behind x-door-key, or null; every use says when and from where
-  // (guessIp: on cn.aybkk.net the caller writes x-forwarded-for). An address
-  // other than the one it was paired from is kept as other_ip_at for Admin.
+  // (guessIp: on cn.aybkk.net the caller writes x-forwarded-for). other_ip_at,
+  // for Admin and the 20:00 summary: when it moved to an address other than the
+  // one it was paired from. Only a move sets it, not every poll from there, so a
+  // new shala address (a router restart) warns once, not every day; Admin's
+  // "This is the shala's internet" makes the new address the shala's.
   async function doorFrom(req) {
     const key = req.headers['x-door-key'];
     if (typeof key !== 'string' || !/^dk_[A-Za-z0-9_-]{43}$/.test(key)) return null;
     const ip = guessIp(req);
     return (await q(`UPDATE bkk_door_devices SET last_seen_at=now(), last_ip=$2,
-        other_ip_at = CASE WHEN paired_ip IS DISTINCT FROM $2 THEN now() ELSE other_ip_at END
+        other_ip_at = CASE WHEN paired_ip IS DISTINCT FROM $2 AND (other_ip_at IS NULL OR last_ip IS DISTINCT FROM $2)
+          THEN now() ELSE other_ip_at END
       WHERE key_hash=$1 AND revoked_at IS NULL RETURNING id, name`, [hashKey(key), ip])).rows[0] || null;
   }
   const doorNoKey = res => res.status(401).set({ 'WWW-Authenticate': 'X-Door-Key', 'Cache-Control': 'no-store' })
@@ -6533,61 +6585,58 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // block under the server secret plus a MAC, so it shows no id and cannot be
   // made up. The same seat gives the same handle until the class ends.
   const DOOR_TAG = 0x44545631;
-  const doorKeys = async () => { const sec = await serverSecret(); return { enc: hmac(sec, 'door-enc'), mac: hmac(sec, 'door-mac') }; };
-  function sealSeat(k, bid, dev, endMs) {
-    const p = Buffer.alloc(16);
-    p.writeUInt32BE(bid, 0); p.writeUInt32BE(dev, 4); p.writeUInt32BE(Math.ceil(endMs / 60000), 8); p.writeUInt32BE(DOOR_TAG, 12);
-    const c = crypto.createCipheriv('aes-256-ecb', k.enc, null);
-    c.setAutoPadding(false);
-    const ct = Buffer.concat([c.update(p), c.final()]);
-    return Buffer.concat([ct, hmac(k.mac, ct).subarray(0, 16)]).toString('base64url');
-  }
-  function openSeat(k, t) {
-    if (typeof t !== 'string' || !/^[A-Za-z0-9_-]{43}$/.test(t)) return null;
-    const raw = Buffer.from(t, 'base64url');
-    if (raw.length !== 32) return null;
-    const ct = raw.subarray(0, 16);
-    if (!crypto.timingSafeEqual(raw.subarray(16), hmac(k.mac, ct).subarray(0, 16))) return null;
-    const d = crypto.createDecipheriv('aes-256-ecb', k.enc, null);
-    d.setAutoPadding(false);
-    const p = Buffer.concat([d.update(ct), d.final()]);
-    if (p.readUInt32BE(12) !== DOOR_TAG) return null;
-    return { bid: p.readUInt32BE(0), dev: p.readUInt32BE(4), endMs: p.readUInt32BE(8) * 60000 };
-  }
+  const doorKeys = async () => blockKeys(await serverSecret(), 'door');
+  const sealSeat = (k, bid, dev, endMs) => sealBlock(k, [bid, dev, Math.ceil(endMs / 60000), DOOR_TAG]);
+  const openSeat = (k, t) => {
+    const v = openBlock(k, t, DOOR_TAG);
+    return v && { bid: v[0], dev: v[1], endMs: v[2] * 60000 };
+  };
 
   // "Ana E.": the first word and the first letter of the last word, built here
   // so a full name never reaches the tablet. A title or a name in brackets is
   // skipped, and a Thai leading vowel does not count as the letter. One word
-  // stays one word. Two people with the same label in one list get more letters
-  // of the last word until they differ (the whole word, then no dot).
+  // stays one word, but a Chinese name in characters is masked the way Chinese
+  // apps do (王*明, 李*), and a word with an @ or a run of digits (an email or a
+  // phone typed as a name) shows only its first letter. Two people with the same
+  // label in one list get more letters of the last word until they differ (a
+  // Thai word then keeps its leading vowel: ใจด.), never the whole word. Labels
+  // that still match (the same name twice) are marked same: the tablet sends
+  // those people to the teacher, so nobody checks in someone else's seat.
   const DOOR_TITLE = /^(mr|mrs|ms|miss|mx|dr|นาย|นาง|นางสาว|น\.ส\.|ด\.ช\.|ด\.ญ\.)\.?$/i;
+  const DOOR_HIDE = /@|\d{3,}/;
+  const HAN = /\p{Script=Han}/u;
+  const doorFirst = w => {
+    const c = Array.from(w);
+    if (DOOR_HIDE.test(w)) return c[0] + '.';
+    if (HAN.test(w) && c.length > 1) return c[0] + '*'.repeat(Math.max(1, c.length - 2)) + (c.length > 2 ? c[c.length - 1] : '');
+    return w;
+  };
   const doorWords = name => {
     const s = String(name || '').normalize('NFC');
     let ws = (s.replace(/[(（[][^)）\]]*[)）\]]/g, ' ').trim() || s).split(/\s+/).filter(Boolean);
     if (ws.length > 1 && DOOR_TITLE.test(ws[0])) ws = ws.slice(1);
-    return { first: ws[0] || '?', last: ws.length > 1 ? ws[ws.length - 1] : '' };
+    const last = ws.length > 1 ? ws[ws.length - 1] : '';
+    const cps = Array.from(last);
+    let lead = 0;
+    while (lead < cps.length - 1 && /[เ-ไ]/.test(cps[lead])) lead++;
+    return { first: doorFirst(ws[0] || '?'), last, cps, lead, cmp: cps.slice(lead),
+      maxK: DOOR_HIDE.test(last) ? 1 : Math.max(1, cps.length - lead - 1) };
   };
-  const lastPart = (w, k) => {
-    const cps = Array.from(w);
-    let i = 0;
-    while (i < cps.length - 1 && /[เ-ไ]/.test(cps[i])) i++;
-    return k >= cps.length - i ? w : cps.slice(i, i + k).join('') + '.';
-  };
+  const lastPart = (p, k) => (k > 1 ? p.cps.slice(0, p.lead + k) : p.cps.slice(p.lead, p.lead + 1)).join('') + '.';
   function doorNames(seats) {
     const people = new Map();
-    for (const s of seats) if (!people.has(s.member_id)) people.set(s.member_id, { ...doorWords(s.name), k: 1 });
-    const label = p => p.last ? `${p.first} ${lastPart(p.last, p.k)}` : p.first;
-    for (let round = 0; round < 64; round++) {
-      const by = new Map();
-      for (const p of people.values()) by.set(label(p), [...(by.get(label(p)) || []), p]);
-      let moved = false;
-      for (const group of by.values()) {
-        if (group.length < 2) continue;
-        for (const p of group) if (p.last && p.k < Array.from(p.last).length) { p.k++; moved = true; }
-      }
-      if (!moved) break;
+    for (const s of seats) if (!people.has(s.member_id)) people.set(s.member_id, doorWords(s.name));
+    const all = [...people.values()];
+    const common = (a, b) => { let i = 0; while (i < a.length && i < b.length && a[i] === b[i]) i++; return i; };
+    for (const p of all) {
+      let k = 1;
+      for (const o of all) if (o !== p && p.last && o.last && o.first === p.first && o.last !== p.last) k = Math.max(k, common(p.cmp, o.cmp) + 1);
+      p.k = Math.min(k, p.maxK);
+      p.n = p.last ? `${p.first} ${lastPart(p, p.k)}` : p.first;
     }
-    return new Map(seats.map(s => [s.id, label(people.get(s.member_id))]));
+    const count = new Map();
+    for (const p of all) count.set(p.n, (count.get(p.n) || 0) + 1);
+    return new Map(seats.map(s => { const p = people.get(s.member_id); return [s.id, { n: p.n, same: count.get(p.n) > 1 }]; }));
   }
 
   // What the door shows now, on the class clock: today's in-person classes
@@ -6625,8 +6674,11 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     pairStarts.hold(ip);
     try {
       await q(`DELETE FROM bkk_door_pairings WHERE expires_at < now() - interval '1 day'`);
-      const waiting = (await q(`SELECT count(*)::int AS n FROM bkk_door_pairings WHERE expires_at > now() AND used_at IS NULL`)).rows[0].n;
-      if (waiting >= 50) return res.status(429).json({ error: 'too many pairing codes are waiting: try again in 10 minutes' });
+      // At most 50 codes wait. A flood from many addresses pushes the oldest
+      // unapproved ones out instead of refusing the real tablet, so a code staff
+      // type within a few minutes still works.
+      await q(`DELETE FROM bkk_door_pairings WHERE id IN (SELECT id FROM bkk_door_pairings
+        WHERE expires_at > now() AND used_at IS NULL AND approved_at IS NULL ORDER BY id DESC OFFSET 49)`);
       const secret = crypto.randomBytes(32).toString('base64url');
       let code = null;
       for (let i = 0; i < 5 && !code; i++) {
@@ -6652,7 +6704,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const name = String((req.body || {}).name || '').trim().slice(0, 40) || 'Front door';
     const t = pairMisses.hold(ip);
     try {
-      const r = (await q(`UPDATE bkk_door_pairings SET approved_at=now(), name=$2
+      // Typed in the last seconds of its 10 minutes: the tablet still has 2 minutes to claim it.
+      const r = (await q(`UPDATE bkk_door_pairings SET approved_at=now(), name=$2, expires_at=greatest(expires_at, now() + interval '2 minutes')
         WHERE code_hash=$1 AND expires_at > now() AND used_at IS NULL AND approved_at IS NULL RETURNING id`,
         [hashKey(code), name])).rows[0];
       if (!r) return res.status(404).json({ error: 'No tablet is showing that code. Check the code on the tablet: it changes every 10 minutes.' });
@@ -6667,6 +6720,14 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     res.set('Cache-Control', 'no-store');
     const secret = String((req.body || {}).secret || '');
     if (!/^[A-Za-z0-9_-]{43}$/.test(secret)) return res.status(404).json({ ok: false, gone: true });
+    // Looked up first with no lock: polls and made-up secrets never wait on it.
+    let look;
+    try {
+      look = (await q(`SELECT approved_at, used_at, expires_at <= now() AS expired FROM bkk_door_pairings WHERE secret_hash=$1`,
+        [hashKey(secret)])).rows[0];
+    } catch (e) { return res.status(500).json({ ok: false, error: e.message }); }
+    if (!look || look.used_at || look.expired) return res.status(404).json({ ok: false, gone: true });
+    if (!look.approved_at) return res.json({ ok: false, waiting: true });
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
@@ -6694,10 +6755,24 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   app.get('/api/bkk/admin/door/devices', async (req, res) => {
     if (adminOnly(req, res)) return;
     try {
+      // The one in use and the ones unpaired in the last 3 days: old rows do not pile up.
       const r = await q(`SELECT id, name, paired_at, last_seen_at, other_ip_at, revoked_at FROM bkk_door_devices
-        ORDER BY revoked_at IS NULL DESC, paired_at DESC, id DESC LIMIT 10`);
+        WHERE revoked_at IS NULL OR revoked_at > now() - interval '3 days'
+        ORDER BY revoked_at IS NULL DESC, paired_at DESC, id DESC LIMIT 5`);
       res.set('Cache-Control', 'no-store').json({ devices: r.rows.map(d => ({ id: d.id, name: d.name, pairedAt: d.paired_at,
         lastSeenAt: d.last_seen_at, otherInternet: !!d.other_ip_at, otherSeenAt: d.other_ip_at, active: !d.revoked_at, revokedAt: d.revoked_at })) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+  // "This is the shala's internet": the address it was last seen from becomes
+  // the shala's (a new address after a router restart), and the warning goes.
+  app.post('/api/bkk/admin/door/devices/:id/home', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    if (!/^\d{1,9}$/.test(req.params.id)) return res.status(404).json({ error: 'not found' });
+    try {
+      const n = (await q(`UPDATE bkk_door_devices SET paired_ip=last_ip, other_ip_at=NULL WHERE id=$1 AND revoked_at IS NULL`,
+        [Number(req.params.id)])).rowCount;
+      if (!n) return res.status(404).json({ error: 'not found' });
+      res.json({ success: true });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
   app.post('/api/bkk/admin/door/devices/:id/revoke', async (req, res) => {
@@ -6723,9 +6798,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (!st.live.length) return res.json(out);
       const [k, names] = [await doorKeys(), doorNames(st.seats)];
       const cls = new Map(st.live.map(c => [c.slot.id, c]));
-      const seats = st.seats.map(s => ({ id: s.id, n: names.get(s.id), c: cls.get(s.slot_id), at: s.checked_in_at }))
+      const seats = st.seats.map(s => ({ id: s.id, ...names.get(s.id), c: cls.get(s.slot_id), at: s.checked_in_at }))
         .sort((a, b) => a.n.localeCompare(b.n, 'en') || a.id - b.id)
-        .map(s => ({ t: sealSeat(k, s.id, dev.id, s.c.end), n: s.n, in: !!s.at, at: s.at ? bkkHm(new Date(s.at).getTime()) : null, c: bkkHm(s.c.start) }));
+        .map(s => ({ t: sealSeat(k, s.id, dev.id, s.c.end), n: s.n, in: !!s.at, at: s.at ? bkkHm(new Date(s.at).getTime()) : null, c: bkkHm(s.c.start),
+          ...(s.same ? { same: true } : {}) }));
       res.json({ classes: st.live.map(c => ({ title: c.slot.title, start: bkkHm(c.start), end: bkkHm(c.end) })), seats, ...out });
     } catch (e) {
       console.error('[bkk door] now failed:', e.message);
@@ -6748,7 +6824,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (!h || h.dev !== dev.id || bkkNow().getTime() >= h.endMs) return res.status(400).json({ ok: false, error: 'not a seat on this tablet' });
       const st = await doorState();
       const seat = st.seats.find(s => s.id === h.bid);
-      if (!seat) return res.status(409).json({ ok: false, refused: true });
+      const name = seat && doorNames(st.seats).get(seat.id);
+      if (!seat || name.same) return res.status(409).json({ ok: false, refused: true });
       client = await pool.connect();
       await client.query('BEGIN');
       const b = (await client.query(`SELECT checked_in_at FROM bkk_bookings WHERE id=$1 AND status='booked' FOR UPDATE`, [seat.id])).rows[0];
@@ -6756,7 +6833,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const at = b.checked_in_at || (await client.query(`UPDATE bkk_bookings SET checked_in_at=$2, checkin_via='tablet', checkin_by=$3
         WHERE id=$1 RETURNING checked_in_at`, [seat.id, new Date(st.nowMs).toISOString(), dev.name])).rows[0].checked_in_at;
       await client.query('COMMIT');
-      res.json({ ok: true, n: doorNames(st.seats).get(seat.id), already: !!b.checked_in_at, at: bkkHm(new Date(at).getTime()) });
+      res.json({ ok: true, n: name.n, already: !!b.checked_in_at, at: bkkHm(new Date(at).getTime()) });
     } catch (e) {
       if (client) await client.query('ROLLBACK').catch(() => {});
       console.error('[bkk door] check-in failed:', e.message);

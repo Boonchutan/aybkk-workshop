@@ -476,8 +476,8 @@ const fakeDriver = { session: () => ({
   const eDoor = (await get(`/api/bkk/admin/team/preview?kind=evening&date=${D}`)).body.text || '';
   const eDoorEn = (await get(`/api/bkk/admin/team/preview?kind=evening&date=${D}&lang=en`)).body.text || '';
   ok('...and one line when it was, after the bookings line, naming the tablet, never an address',
-     eDoor.includes('จองใหม่ 3 · ยกเลิก 1\n⚠ แท็บเล็ตหน้าประตู (Front door) ถูกใช้จากอินเทอร์เน็ตอื่น ไม่ใช่ที่ชาลา เช็กใน Admin หัวข้อ Door tablets')
-       && eDoorEn.includes("⚠ The door tablet (Front door) was used from another internet, not the shala's. Check Admin, Door tablets.")
+     eDoor.includes('จองใหม่ 3 · ยกเลิก 1\n⚠ แท็บเล็ตหน้าประตู (Front door) มีการใช้จากเครือข่ายอื่น ไม่ใช่ของชาลา เช็กใน Admin หน้า ตั้งค่า ช่อง แท็บเล็ตหน้าประตู')
+       && eDoorEn.includes("⚠ The door tablet (Front door) was used from another internet, not the shala's. Check Admin, Settings, Door tablets.")
        && !/198\.51|203\.0/.test(eDoor + eDoorEn), (eDoor.match(/⚠.*/) || [])[0]);
   await pool.query('DELETE FROM bkk_door_devices WHERE id=$1', [dev]);
   const next = (await get('/api/bkk/admin/team/preview?kind=evening&date=2026-11-11')).body.text || '';

@@ -265,8 +265,11 @@
   const $ = s => document.querySelector(s);
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
   let KEY = localStorage.getItem('aybkk_teacher_key') || '';
+  // The server's "known browser" mark, as on /teach: counted on its own, not with the shala wifi.
+  let KNOWN = localStorage.getItem('aybkk_teacher_known') || '';
   const api = (url, opts = {}) => fetch(url, { ...opts,
-    headers: { 'Content-Type': 'application/json', 'X-Teacher-Key': KEY, ...(opts.headers || {}) } });
+    headers: { 'Content-Type': 'application/json', 'X-Teacher-Key': KEY, ...(KNOWN ? { 'X-Teacher-Known': KNOWN } : {}), ...(opts.headers || {}) } })
+    .then(r => { const k = r.headers.get('X-Teacher-Known'); if (k && k !== KNOWN) { KNOWN = k; try { localStorage.setItem('aybkk_teacher_known', k); } catch (_) {} } return r; });
   const bkkToday = () => new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10);
 
   // People Chay can tap without searching: today's bookings, everyone already

@@ -49,6 +49,7 @@
   .seat .acts .btn{padding:8px 13px;font-size:13.5px}
   .flag{display:inline-block;font-size:11.5px;font-weight:700;border-radius:5px;padding:1px 7px;margin-left:6px;white-space:nowrap}
   .flag.chk{background:#fff3d6;color:#6b520e}.flag.rz{background:#e3f0ff;color:#1d4f86}.flag.add{background:var(--blush);color:var(--plum)}
+  .flag.two{background:#ffe3e0;color:#8a1f14}
   .addbox{margin-top:10px;background:var(--wall);border:1px solid var(--line);border-radius:8px;padding:10px}
   .hit{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--paper);border:1px solid var(--line);
     border-radius:7px;padding:10px;margin-top:6px;font:inherit;color:var(--ink);cursor:pointer}
@@ -56,6 +57,7 @@
   .say{font-size:13.5px;margin:8px 0 0;min-height:1.2em}
   .say.bad{color:#b3261e}.say.good{color:#187a43}
   @media (prefers-color-scheme:dark){.flag.chk{background:#4a3a12;color:#ffd98a}.flag.rz{background:#16324f;color:#9fcbff}
+    .flag.two{background:#4f1d17;color:#ffb4a8}.in{color:#3ddc97}
     .say.bad{color:#ff8f8f}.say.good{color:#3ddc97}}
   #gate{max-width:330px;margin:16vh auto;text-align:center;padding:0 16px}
   #gate h1{font-family:'Work Sans',sans-serif;font-weight:800;font-size:40px;margin:0 0 4px}
@@ -84,9 +86,14 @@
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
   let KEY = localStorage.getItem('aybkk_teacher_key') || '';
   let ME = null;
+  // The server's "known browser" mark: this phone is counted on its own when
+  // someone types wrong passcodes on the shala wifi.
+  let KNOWN = localStorage.getItem('aybkk_teacher_known') || '';
+  const LOCKED = 'Too many wrong passcodes from here. Try again in 15 minutes, or switch off wifi and use mobile data.';
 
   const api = (url, opts = {}) => fetch(url, { ...opts,
-    headers: { 'Content-Type': 'application/json', 'X-Teacher-Key': KEY, ...(opts.headers || {}) } });
+    headers: { 'Content-Type': 'application/json', 'X-Teacher-Key': KEY, ...(KNOWN ? { 'X-Teacher-Known': KNOWN } : {}), ...(opts.headers || {}) } })
+    .then(r => { const k = r.headers.get('X-Teacher-Known'); if (k && k !== KNOWN) { KNOWN = k; try { localStorage.setItem('aybkk_teacher_known', k); } catch (_) {} } return r; });
   const time = iso => new Date(iso).toLocaleTimeString('en-GB',
     { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' });
   const dateOnly = s => String(s || '').slice(0, 10);
@@ -95,7 +102,7 @@
     KEY = $('#key').value.trim();
     const r = await api('/api/bkk/teacher/me').catch(() => null);
     if (!r) { $('#gateMsg').textContent = 'No connection. Try again.'; return; }
-    if (r.status === 429) { $('#gateMsg').textContent = 'Too many wrong passcodes from here. Try again in 15 minutes.'; return; }
+    if (r.status === 429) { $('#gateMsg').textContent = LOCKED; return; }
     if (!r.ok) { $('#gateMsg').textContent = 'That passcode is not recognised.'; return; }
     ME = (await r.json()).teacher;
     localStorage.setItem('aybkk_teacher_key', KEY);
@@ -114,7 +121,7 @@
   const ended = c => c && c.ended;
   async function today() {
     const r = await api('/api/bkk/teacher/today').catch(() => null);
-    if (r && r.status === 429) { $('#view').innerHTML = '<div class="box"><p class="say bad">Too many wrong passcodes from here. Try again in 15 minutes.</p></div>'; return; }
+    if (r && r.status === 429) { $('#view').innerHTML = `<div class="box"><p class="say bad">${esc(LOCKED)}</p></div>`; return; }
     const d = r && r.ok ? await r.json().catch(() => null) : null;
     if (!d) { $('#view').innerHTML = '<div class="box"><p class="say bad">Could not load today. <button class="btn ghost" onclick="today()">Try again</button></p></div>'; return; }
     TODAY = d;
@@ -124,8 +131,10 @@
     classes.sort((a, b) => new Date(a.startAt) - new Date(b.startAt));
     const seat = s => {
       const fix = !s.isOnline;
+      // alsoAt: another seat of theirs today, often a wrong class booked by mistake (a second class used).
       const tags = (s.rezerv ? '<span class="flag rz">Rezerv</span>' : '') + (s.checkPass ? '<span class="flag chk">Check pass</span>' : '')
-        + (s.added ? '<span class="flag add">added here</span>' : '');
+        + (s.added ? '<span class="flag add">added here</span>' : '')
+        + ((s.alsoAt || []).length ? `<span class="flag two">also booked ${esc(s.alsoAt.join(', '))}</span>` : '');
       const who = s.checkinVia ? ` · ${esc(s.checkinVia === 'tablet' ? 'tablet' : s.checkinBy || s.checkinVia)}` : '';
       return `<div class="seat" data-b="${Number(s.bookingId)}">
         <div class="top"><button class="row" onclick="open_('${esc(s.ref)}')"><span class="nm"><b>${esc(s.name)}</b>${tags}<br>
@@ -200,7 +209,8 @@
     const j = r ? await r.json().catch(() => ({})) : {};
     if (!r || !r.ok) { say('addSay' + slotId, j.error || 'No connection. Try again.', 'bad'); return; }
     await today();
-    const msg = j.already ? `${j.name} was on the list: checked in.` : `${j.name} added and checked in${j.overCapacity ? ' (over the class limit)' : ''}.`;
+    const other = (j.alsoAt || []).length ? ` They are also booked at ${j.alsoAt.join(', ')} today: if that was a mistake, ask Boonchu or M to cancel it.` : '';
+    const msg = j.already ? `${j.name} was on the list: checked in.` : `${j.name} added and checked in${j.overCapacity ? ' (over the class limit)' : ''}.${other}`;
     const first = document.querySelector('.cls');
     if (first) { const p = document.createElement('p'); p.className = 'say good'; p.textContent = msg; $('#view .box').insertBefore(p, $('#view .box').children[2]); }
   };
@@ -216,16 +226,16 @@
         <b>${esc(d.member.name)}</b>
         <p class="muted">${esc([d.member.code, d.member.email].filter(Boolean).join(' · '))}</p>
         <p class="muted">${pass
-          ? esc(pass.name_en) + ' — ' + (pass.kind === 'unlimited' ? 'unlimited'
-              : (pass.credits_total - pass.credits_used) + ' classes left')
+          ? esc(pass.name_en) + (pass.kind === 'unlimited' ? ''
+              : ': ' + (pass.credits_total - pass.credits_used) + ' classes left')
           : 'No active pass.'}</p>
       </div>
 
       <div class="box">
         <b>After this class</b>
-        <label>What you want them to work on <span class="muted">— they will see this</span></label>
+        <label>What you want them to work on <span class="muted">(they will see this)</span></label>
         <textarea id="work" placeholder="e.g. Straighten the front leg in Trikonasana. Breathe before you go deeper."></textarea>
-        <label>Notes for the team <span class="muted">— choose below whether they see it</span></label>
+        <label>Notes for the team <span class="muted">(choose below whether they see it)</span></label>
         <textarea id="body" placeholder="e.g. Shoulder still guarding on the right. Went easy on Marichyasana D."></textarea>
         <p style="margin-top:10px">
           <label style="display:inline;color:var(--ink);font-size:14px">

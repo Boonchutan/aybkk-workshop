@@ -175,7 +175,7 @@ const WORDS = {
     classesH: '🧘 คลาสวันนี้',
     came: (time, title, came, booked, missed) => `${time} ${title}: เช็กอิน ${came}/${booked}${missed ? ` · ยังไม่เช็กอิน: ${missed}` : ''}`,
     bookings: (made, off, byShala) => `จองใหม่ ${made} · ยกเลิก ${off}${byShala ? ` (ชาลาปิดคลาส ${byShala})` : ''}`,
-    doorElse: names => `⚠ แท็บเล็ตหน้าประตู (${names}) ถูกใช้จากอินเทอร์เน็ตอื่น ไม่ใช่ที่ชาลา เช็กใน Admin หัวข้อ Door tablets`,
+    doorElse: names => `⚠ แท็บเล็ตหน้าประตู (${names}) มีการใช้จากเครือข่ายอื่น ไม่ใช่ของชาลา เช็กใน Admin หน้า ตั้งค่า ช่อง แท็บเล็ตหน้าประตู`,
     tomorrowH: d => `📅 พรุ่งนี้ ${d}`,
     tLine: (time, title, n, mats) => `${time} ${title}: จอง ${n}${mats ? ` · เสื่อ ${mats}` : ''}`,
     tClosed: c => c.why === 'none' ? 'พรุ่งนี้ไม่มีคลาสในตาราง'
@@ -239,7 +239,7 @@ const WORDS = {
     classesH: '🧘 Classes today',
     came: (time, title, came, booked, missed) => `${time} ${title}: ${came}/${booked} checked in${missed ? ` · not checked in: ${missed}` : ''}`,
     bookings: (made, off, byShala) => `Bookings made: ${made} · cancelled: ${off}${byShala ? ` (${byShala} by a closed class)` : ''}`,
-    doorElse: names => `⚠ The door tablet (${names}) was used from another internet, not the shala's. Check Admin, Door tablets.`,
+    doorElse: names => `⚠ The door tablet (${names}) was used from another internet, not the shala's. Check Admin, Settings, Door tablets.`,
     tomorrowH: d => `📅 Tomorrow ${d}`,
     tLine: (time, title, n, mats) => `${time} ${title}: ${n} booked${mats ? ` · ${pl(mats, 'mat', 'mats')}` : ''}`,
     tClosed: c => c.why === 'none' ? 'No classes on the timetable tomorrow.'
