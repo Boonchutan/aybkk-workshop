@@ -834,6 +834,73 @@ const fakeDriver = { session: () => ({
   ok('...and the first-class guide (f3) says the mat is ฿200 if you tick it, in all 4', f3.length === 4
      && f3.every(x => x.includes('฿200') && !/VAT|НДС|增值税|ภาษี/.test(x)), JSON.stringify(f3));
 
+  console.log('\n# a group the help desk is in, but never heard joining');
+  clock = bkkAt('2026-11-25T10:00:00');
+  const groupsText = async () => JSON.stringify((await setting('team_line_groups')) || []);
+  const toldBefore = told.length;
+  const groupEv = (type, groupId, extra = {}) => ({ type, timestamp: clock, source: { type: 'group', groupId, userId: 'Ustaff' }, ...extra });
+  const textEv = (groupId, text) => groupEv('message', groupId, { replyToken: 'r9', message: { id: 'm9', type: 'text', text } });
+  const unsigned = await fetch(B + '/line/helpdesk-webhook', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ destination: 'Udesk', events: [textEv('Cmanage', 'hello')] }) });
+  const badSig = await hook([textEv('Cmanage', 'hello')], 'not-the-secret');
+  ok('an unsigned or badly signed message from an unknown group is refused and changes nothing', unsigned.status === 401 && badSig.status === 401
+     && !(await groupsText()).includes('Cmanage') && told.length === toldBefore);
+  const stBad = (await get('/api/bkk/admin/team/status')).body;
+  ok('...and status counts bad signatures since the restart, with the last one\'s time', stBad.badSignatures >= 3
+     && stBad.badSignatureLastAt === new Date(clock).toISOString(), JSON.stringify([stBad.badSignatures, stBad.badSignatureLastAt]));
+  // The real case: the help desk was put in the staff group before LINE could reach the webhook, so no group is saved.
+  await post('/api/bkk/admin/team/group', { clear: true });
+  const toldClear = told.length;
+  const capLogs = [];
+  console.log = console.warn = console.error = (...a) => capLogs.push(a.join(' '));
+  const first = await hook([textEv('Cmanage', 'SECRET CAPTURE WORDS 7731')]);
+  console.log = logIt; console.warn = warnIt; console.error = errIt;
+  const capSeen = await setting('team_line_groups');
+  const cm = (capSeen || []).find(g => g.id === 'Cmanage');
+  ok('a signed message from a group not known yet adds it as waiting, never saved by itself', first.status === 200
+     && cm && cm.pending === true && cm.name === 'Other manage' && !cm.leftAt && (await setting('team_line_group')) == null, JSON.stringify(capSeen));
+  ok('...and Boonchu gets the waiting note, naming the group', told.length === toldClear + 1 && /"Other manage", waiting/.test(told.at(-1))
+     && /No LINE group gets the team briefs yet/.test(told.at(-1)) && /accept/.test(told.at(-1)), JSON.stringify(told.slice(toldClear)));
+  const capStored = (await pool.query(`SELECT count(*)::int AS n FROM bkk_settings WHERE value::text ~ 'SECRET CAPTURE'`)).rows[0].n;
+  ok('...the message text is never stored or logged', capStored === 0 && !capLogs.some(l => /SECRET CAPTURE/.test(l)), JSON.stringify(capLogs));
+  const stCap = (await get('/api/bkk/admin/team/status')).body;
+  ok('status: the waiting group by its ref, and when LINE last reached the webhook with a good signature',
+     stCap.group.saved === false && stCap.groupsSeen.some(g => g.name === 'Other manage' && g.pending)
+     && stCap.webhookLastAt === new Date(clock).toISOString() && !JSON.stringify(stCap).includes('Cmanage'), JSON.stringify(stCap));
+  await hook([groupEv('memberJoined', 'Cmembers', { joined: { members: [{ type: 'user', userId: 'Unew' }] } })]);
+  ok('any group event counts: a member joining another unknown group makes it wait too',
+     (await setting('team_line_groups')).find(g => g.id === 'Cmembers').pending === true && told.length === toldClear + 2
+     && (await setting('team_line_group')) == null);
+  // A known group (waiting or saved) talks all day: no write, no lock, not even a read.
+  const sqls = [];
+  let connects = 0;
+  const realQuery = pool.query, realConnect = pool.connect;
+  pool.query = function (sql, ...rest) { sqls.push(typeof sql === 'string' ? sql : (sql && sql.text) || ''); return realQuery.call(this, sql, ...rest); };
+  pool.connect = function (...a) { connects++; return realConnect.apply(this, a); };
+  clock += 20 * 1000;
+  const again = await hook([textEv('Cmanage', 'more words'), groupEv('memberLeft', 'Cmanage', { left: { members: [{ type: 'user', userId: 'Uold' }] } }),
+    textEv('Cmembers', 'hi')]);
+  pool.query = realQuery; pool.connect = realConnect;
+  ok('a known group\'s messages write nothing (and the webhook time is kept at most once a minute)', again.status === 200
+     && !sqls.some(s => /bkk_settings/.test(s)) && connects === 0 && told.length === toldClear + 2
+     && (await setting('team_line_webhook_last')) === new Date(clock - 20 * 1000).toISOString(), JSON.stringify({ sqls, connects }));
+  clock += 60 * 1000;
+  await hook([]);
+  ok('...a minute later LINE\'s Verify (no events) moves the webhook time on', (await setting('team_line_webhook_last')) === new Date(clock).toISOString());
+  const capRef = stCap.groupsSeen.find(g => g.name === 'Other manage').ref;
+  const capAcc = await post('/api/bkk/admin/team/group', { accept: capRef });
+  ok('accepting the waiting group saves it: the briefs go there now', capAcc.status === 200 && (await setting('team_line_group')) === 'Cmanage'
+     && /"Other manage" now/.test(told.at(-1)), JSON.stringify(capAcc.body));
+  await hook([join('Cmanage', clock - 3600 * 1000)]);
+  ok('the join LINE sends late, from before the message, changes nothing', (await setting('team_line_group')) === 'Cmanage'
+     && (await setting('team_line_groups')).find(g => g.id === 'Cmanage').pending === false);
+  await hook([leave('Cmembers', clock + 1000)]);
+  clock += 5000;
+  await hook([textEv('Cmembers', 'back again')]);
+  const back = (await setting('team_line_groups')).find(g => g.id === 'Cmembers');
+  ok('a group the help desk left, heard from again later, waits again', back.pending === true && !back.leftAt
+     && (await setting('team_line_group')) === 'Cmanage', JSON.stringify(back));
+
   console.log(`\n${PASS} passed, ${FAIL} failed`);
   srv.close(); await pool.end();
   process.exit(FAIL ? 1 : 0);
