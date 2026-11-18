@@ -1570,6 +1570,68 @@ const ok = (name, cond, extra = '') => {
     ok('the real fit rule comes with the numbers', wb.fitRule && wb.fitRule.mornings === 4 && wb.fitRule.years === 2 && wb.fitRule.dates === 'yes');
     const wtext = JSON.stringify(wb);
     ok('the weekly answer holds counts only: no name, email, member code or address', !/@|example|member|"ip"|code/i.test(wtext), wtext.slice(0, 200));
+
+    // Review fixes (18 Nov 2026): no-kind bodies, tags, contact-looking sources, crawlers, a cap per address.
+    const { REAL_FIT_ID } = require('../inbox.js');
+    const evN = async () => (await pool.query(`SELECT count(*)::int AS n FROM bkk_start_events`)).rows[0].n;
+    let n0 = await evN();
+    for (const [what, r] of [['an empty body', await post('/api/bkk/start-event', {})],
+      ['page null and no kind', await post('/api/bkk/start-event', { page: null, src: 'nokind' })],
+      ['a /start body with no kind', await post('/api/bkk/start-event', { src: 'nokind', lang: 'en' })],
+      ['a body that is not JSON', await J('/api/bkk/start-event', { method: 'POST', headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ page: 'in-depth-zh', kind: 'step3' }) })]]) {
+      ok(`${what} is not a visit → 400`, r.status === 400 && r.body.error === 'kind', JSON.stringify(r));
+    }
+    ok('...and none of those is stored as a /start view', await evN() === n0);
+    await post('/api/bkk/start-event', { page: 'in-depth-zh', kind: 'view', src: 'tag-test', tag: 'Anything' });
+    await post('/api/bkk/start-event', { page: 'in-depth-zh', kind: 'view', src: 'tag-test', tag: 'Room' });
+    await post('/api/bkk/start-event', { kind: 'view', src: 'tag-test', tag: 'teacher' });
+    ok('a tag is one of the three headlines or none, and /start has none', (await evRows('tag-test')).map(e => `${e.page}:${e.tag}`).join()
+      === 'in-depth-zh:null,in-depth-zh:room,start:null', JSON.stringify(await evRows('tag-test')));
+    for (const src of ['ana@example.com', 'wa +66 81 234 5678', 'line-081-234-5678']) {
+      await post('/api/bkk/start-event', { page: 'in-depth-en', kind: 'view', src, tag: 'practice' });
+    }
+    await post('/api/bkk/start-event', { page: 'in-depth-en', kind: 'view', src: 'Reel-2026-11-18', tag: 'practice' });
+    ok('a source that looks like an email or a phone number is dropped; a dated post code is kept',
+      JSON.stringify((await pool.query(`SELECT src FROM bkk_start_events WHERE tag='practice' AND page='in-depth-en' AND id > (SELECT max(id) - 4 FROM bkk_start_events) ORDER BY id`)).rows.map(r => r.src))
+      === '[null,null,null,"reel-2026-11-18"]');
+    n0 = await evN();
+    for (const ua of ['Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)', 'Mozilla/5.0 (Linux; Android 10) HeadlessChrome/120.0',
+      'Mozilla/5.0 (compatible; Baiduspider/2.0)', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 Mobile Safari/537.36 (compatible; Bytespider)']) {
+      const r = await post('/api/bkk/start-event', { page: 'in-depth-zh', kind: 'view', src: 'bot-test' }, { 'User-Agent': ua });
+      ok(`a crawler is not counted (${ua.slice(25, 45)}) → 204`, r.status === 204, JSON.stringify(r));
+    }
+    ok('...and nothing is stored for them', await evN() === n0);
+    for (const ua of ['Mozilla/5.0 (Linux; Android 10; CUBOT X30) AppleWebKit/537.36 Chrome/120.0 Mobile Safari/537.36',
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 MicroMessenger/8.0.40 NetType/WIFI Language/zh_CN']) {
+      ok(`a phone is counted (${ua.includes('CUBOT') ? 'Cubot' : 'WeChat'})`, (await post('/api/bkk/start-event', { page: 'in-depth-zh', kind: 'view', src: 'phone-test' },
+        { 'User-Agent': ua })).status === 200);
+    }
+    const codes = {};
+    for (let b = 0; b < 7; b++) await Promise.all(Array.from({ length: 50 }, () => post('/api/bkk/start-event',
+      { page: 'in-depth-en', kind: 'view', src: 'cap-test' }, { 'X-Forwarded-For': '10.20.30.40' }).then(r => { codes[r.status] = (codes[r.status] || 0) + 1; })));
+    ok('one address counts 300 an hour, then 429', codes[200] === 300 && codes[429] === 50 && (await evRows('cap-test')).length === 300, JSON.stringify(codes));
+    ok('...another address still counts', (await post('/api/bkk/start-event', { page: 'in-depth-en', kind: 'view', src: 'cap-test2' },
+      { 'X-Forwarded-For': '10.20.30.41' })).status === 200);
+    await pool.query(`DELETE FROM bkk_start_events WHERE src IN ('cap-test', 'cap-test2', 'phone-test', 'tag-test')
+      OR (tag = 'practice' AND page = 'in-depth-en' AND src IS DISTINCT FROM 'wk-en')`);
+
+    // A week with more sources than the split shows: the rest is one "other" row, so the split adds up.
+    for (let i = 0; i < 33; i++) await put('in-depth-en', 'view', `many-${String(i).padStart(2, '0')}`, null, at(0, '11:00:00'));
+    await put('in-depth-en', 'sent', 'many-32', null, at(0, '11:00:00'), REAL_FIT_ID);
+    // A sent row counted under an earlier rule marks its week; the rule in force does not.
+    await put('in-depth-zh', 'sent', 'wk-article', null, at(-14, '09:00:00'), 'r00000000');
+    await put('in-depth-zh', 'fit', 'wk-article', null, at(0, '09:00:00'), REAL_FIT_ID);
+    const w2 = (await J('/api/bkk/admin/landing-weeks', { headers: ADMIN })).body;
+    const en0 = w2.pages.find(p => p.page === 'in-depth-en').weeks[0], zhW = w2.pages.find(p => p.page === 'in-depth-zh').weeks;
+    const sumBy = (list, c) => list.reduce((s, x) => s + x.n[c], 0);
+    ok('a split keeps the 30 biggest and puts the rest in one "other" row', en0.bySrc.length === 31 && en0.bySrc[30].other === true
+      && !('src' in en0.bySrc[30]) && en0.bySrc.slice(0, 30).every(x => !x.other), JSON.stringify(en0.bySrc.slice(-2)));
+    ok('...so the split adds up to the week, for every number', en0.n.view === pg('in-depth-en').weeks[0].n.view + 33 && ['view', 'step2', 'sent']
+      .every(c => sumBy(en0.bySrc, c) === en0.n[c] && sumBy(en0.byTag, c) === en0.n[c]), JSON.stringify(en0.n));
+    ok('a week counted under an earlier real-fit rule is marked; this week is not', zhW[2].olderRule === true && zhW[0].olderRule === false
+      && zhW[1].olderRule === false && w2.fitRuleId === REAL_FIT_ID, JSON.stringify(zhW.map(w => w.olderRule)));
+    await pool.query(`DELETE FROM bkk_start_events WHERE src LIKE 'many-%' OR ch IN ('r00000000', $1)`, [REAL_FIT_ID]);
     // The letter box's own tests below count its taps.
     await pool.query(`DELETE FROM bkk_start_events WHERE src='letter'`);
   }

@@ -10,7 +10,7 @@ process.env.BKK_ADMIN_KEY = 'desk-key';
 const crypto = require('crypto');
 const express = require('express');
 const { Pool } = require('pg');
-const { mountInbox, telegram, realFit, REAL_FIT, APPLY_PATH_RE, LEAD_PATH_RE } = require('../inbox.js');
+const { mountInbox, telegram, realFit, REAL_FIT, REAL_FIT_ID, APPLY_PATH_RE, LEAD_PATH_RE } = require('../inbox.js');
 
 // Own schema, so the fake timetable never touches the bkk tests' tables
 const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL ||
@@ -771,9 +771,13 @@ const alerts = [];
   await pool.query(`UPDATE aybkk_inbox SET created_at = created_at - interval '25 hours',
     alerted_at = alerted_at - interval '25 hours' WHERE channel='apply'`);
   ok('the real fit rule is one named constant', JSON.stringify(REAL_FIT) === JSON.stringify({ primary: 'yes', rooms: 'yes', dates: 'yes', mornings: 4, years: 2 }));
+  const fm = f => JSON.stringify({ fit: f.fit, miss: f.miss });
   ok('..."not sure" on the dates is not real fit; a list that does not ask the dates skips it',
-    JSON.stringify(realFit({ primary: 'yes', rooms: 'yes', dates: 'not_sure', mornings: 7, years: 9 })) === '{"fit":false,"miss":["dates"]}'
-    && JSON.stringify(realFit({ primary: 'yes', rooms: 'yes', mornings: 4, years: 2 })) === '{"fit":true,"miss":[]}');
+    fm(realFit({ primary: 'yes', rooms: 'yes', dates: 'not_sure', mornings: 7, years: 9 })) === '{"fit":false,"miss":["dates"]}'
+    && fm(realFit({ primary: 'yes', rooms: 'yes', mornings: 4, years: 2 })) === '{"fit":true,"miss":[]}');
+  const rf = realFit({ primary: 'yes', rooms: 'yes', mornings: 4, years: 2, why: 'not read', email: 'x@example.com' });
+  ok('...it keeps the answers it read and names the rule, nothing else', JSON.stringify(rf.parts) === '{"primary":"yes","rooms":"yes","mornings":4,"years":2}'
+    && rf.rule === REAL_FIT_ID && /^r[0-9a-f]{8}$/.test(REAL_FIT_ID), JSON.stringify(rf));
   let evAt = (await pool.query('SELECT coalesce(max(id), 0)::int AS m FROM bkk_start_events')).rows[0].m;
   const newEvents = async () => {
     const r = (await pool.query('SELECT id, page, kind, src, tag, lang FROM bkk_start_events WHERE id > $1 ORDER BY id', [evAt])).rows;
@@ -798,7 +802,8 @@ const alerts = [];
   ar = await apply(good({ email: 'ana.unsure@example.com', name: 'Ana Example', dates: 'not_sure', mornings: 3, years: '1', src: 'reel-x', for: 'room' }));
   fr = await lastApp();
   ok('not sure of the dates, 3 mornings, 1 year: saved, not real fit, each part named', ar.status === 200 && fr.triage.fit === false
-    && JSON.stringify(fr.triage.fit_miss) === '["dates","mornings","years"]' && /\nReal fit: no \(dates, mornings, years\)\n/.test(fr.text),
+    && JSON.stringify(fr.triage.fit_miss) === '["dates","mornings","years"]'
+    && /\nReal fit: no \(all 30 days: not sure; mornings a week 3, needs 4 or more; years of Ashtanga 1, needs 2 or more\)\n/.test(fr.text),
     JSON.stringify(fr.triage));
   ev = await newEvents();
   ok('...it counts as sent, not as fit', evStr(ev) === 'in-depth-zh/sent/reel-x/room/zh', evStr(ev));
@@ -848,10 +853,37 @@ const alerts = [];
   ok('...a row saved before real fit existed reads as unknown, with no src or for', pOld.place === 1 && pOld.fit === null
     && JSON.stringify(pOld.fit_miss) === '[]' && pOld.src === null && pOld.for === null, JSON.stringify(pOld).slice(0, 300));
   ar = await apply(good({ email: 'ana.unsure@example.com', name: 'Ana Example', src: 'wx-other', for: 'practice' }));
-  await newEvents();
+  ev = await newEvents();
   const zNo2 = ((await readList('?list=gen3-zh')).body.applications.find(x => x.email === 'ana.unsure@example.com')) || {};
   ok('a second try shows its own real fit; where the person first came from stays', ar.status === 200 && zNo2.tries === 2
     && zNo2.fit === true && zNo2.src === 'reel-x' && zNo2.for === 'room', JSON.stringify(zNo2).slice(0, 300));
+  // The weekly counts are people: a second try is not sent again, and its first real fit counts once.
+  ok('...it counts fit only, not a second sent', evStr(ev) === 'in-depth-zh/fit/wx-other/practice/zh', evStr(ev));
+  ar = await apply(good({ email: 'ana.unsure@example.com', name: 'Ana Example', src: 'wx-other', for: 'practice' }));
+  ok('...a third try (its answer lost on the phone, sent again) counts nothing new', ar.status === 200 && (await newEvents()).length === 0);
+  // A day later (3 tries a day per email), the same person on the other list.
+  await pool.query(`UPDATE aybkk_inbox SET created_at = created_at - interval '25 hours' WHERE sender_id = 'ana.unsure@example.com'`);
+  ar = await apply(good({ email: 'ana.unsure@example.com', list: 'priority-en', call_lang: 'en', dates: undefined, src: 'reel-en' }));
+  ev = await newEvents();
+  ok('...the same person on the other list is a new sent there', ar.status === 200
+    && evStr(ev) === 'in-depth-en/sent/reel-en/null/en in-depth-en/fit/reel-en/null/en', evStr(ev));
+  const evRow = (await pool.query(`SELECT ch, created_at = date_trunc('day', now() AT TIME ZONE 'Asia/Bangkok') AT TIME ZONE 'Asia/Bangkok' AS day
+    FROM bkk_start_events WHERE kind IN ('sent', 'fit') ORDER BY id DESC LIMIT 2`)).rows;
+  ok('sent and fit rows name the rule and keep only the Bangkok day', evRow.length === 2 && evRow.every(r => r.ch === REAL_FIT_ID && r.day === true),
+    JSON.stringify(evRow));
+  fr = (await applied()).filter(x => x.sender_id === 'ana.unsure@example.com').pop();
+  ok('...and the application keeps the answers fit was worked out from, and the rule', JSON.stringify(fr.triage.fit_parts)
+    === '{"rooms":"yes","years":6,"primary":"yes","mornings":6}' && fr.triage.fit_rule === REAL_FIT_ID, JSON.stringify(fr.triage));
+
+  ar = await apply(good({ email: 'contact.src@example.com', src: 'dm-ana@example.com', for: 'nobody' }));
+  fr = await lastApp();
+  ev = await newEvents();
+  ok('a src that looks like an email is dropped, and a for that is not a headline', ar.status === 200 && fr.triage.src === null
+    && fr.triage.for === null && evStr(ev) === 'in-depth-zh/sent/null/null/zh in-depth-zh/fit/null/null/zh', evStr(ev));
+  ar = await apply(good({ email: 'phone.src@example.com', src: 'wa-66 81 234 5678' }));
+  fr = await lastApp();
+  await newEvents();
+  ok('...a src with a phone number in it too', ar.status === 200 && fr.triage.src === null, JSON.stringify(fr.triage));
 
   const evCount = async () => (await pool.query('SELECT count(*)::int AS n FROM bkk_start_events')).rows[0].n;
   const evN = await evCount();

@@ -39,6 +39,7 @@
   // with the application. Never ?from=: WeChat adds from=singlemessage or from=timeline itself.
   // A count is sent and forgotten: it never waits, and a failed one changes nothing on the page.
   const PAGE = form.getAttribute('data-page');
+  // The server keeps only these tags too (LANDING_TAGS in inbox.js): add a headline in both.
   const FOR_TAGS = ['teacher', 'practice', 'room'];
   const code = v => String(v || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40);
   function param(k) {

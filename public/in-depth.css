@@ -149,6 +149,8 @@ section.notfor{background:var(--field);color:var(--on-dark)}
 /* A section of one line, with no heading: the line sits in the content column */
 @media (min-width:900px){.s .wrap > .body:only-child{grid-column:2}}
 .body:only-child > .big:last-child{margin:0}
+/* Words kept on one line (a Chinese line would otherwise break inside 每一位) */
+.nb{white-space:nowrap}
 
 .facts{margin:0;background:var(--tile);border-radius:16px;padding:4px 20px}
 .facts div{display:grid;gap:2px;padding:14px 0}

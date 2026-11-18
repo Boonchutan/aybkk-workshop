@@ -162,8 +162,24 @@ const KEPT_LIST = 'priority-en';
 // "not sure" on the dates is not real fit. Teaching is not part of it, and the video is shown
 // on its own (link or chat). To change the rule, change this line.
 const REAL_FIT = { primary: 'yes', rooms: 'yes', dates: 'yes', mornings: 4, years: 2 };
+// A short name for the rule in force, worked out from it: kept on each application and on its
+// sent and fit counts, so the weekly box can tell a week counted under an earlier rule.
+const REAL_FIT_ID = 'r' + crypto.createHash('sha256').update(JSON.stringify(Object.entries(REAL_FIT).sort())).digest('hex').slice(0, 8);
+// How the row text names each part of the rule.
+const FIT_SAY = { primary: 'Primary by heart', rooms: 'Mysore and led classes', dates: 'all 30 days',
+  mornings: 'mornings a week', years: 'years of Ashtanga' };
 // The landing page each list's form sits on, as bkk_start_events names it (bkk-api.js).
 const LIST_PAGE = { 'gen3-zh': { page: 'in-depth-zh', lang: 'zh' }, 'priority-en': { page: 'in-depth-en', lang: 'en' } };
+// The headlines an In-Depth page may be opened with (?for=); public/in-depth.js keeps the same list.
+const LANDING_TAGS = ['teacher', 'practice', 'room'];
+// A landing count's source (?src=) or tag: lower case a-z, 0-9, _ and -, at most 40. A code names a
+// channel or a headline, never a person, so one that looks like a contact (an @, or 9 or more digits
+// in a row, as in a phone number) is dropped. bkk-api.js cleans the counts with this too.
+function landingCode(v) {
+  if (typeof v !== 'string' || v.includes('@')) return null;
+  const c = v.toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40);
+  return c && !/\d{9}/.test(c.replace(/[-_]/g, '')) ? c : null;
+}
 const APPLY_FIELDS = {
   name: { max: 100, need: true, line: true },
   email: { max: 200, need: true, line: true },
@@ -188,8 +204,8 @@ const APPLY_FIELDS = {
   heard: { max: 200, line: true },
   question: { max: 1000 },
   // Where the click came from (?src=) and the headline it was opened with (?for=): codes, not words.
-  src: { code: 40 },
-  for: { code: 40 },
+  src: { code: true },
+  for: { code: LANDING_TAGS },
 };
 // Baidu's share text is "链接: https://pan.baidu.com/s/… 提取码: abcd", so the
 // link is found inside the answer and the whole answer is kept.
@@ -230,8 +246,8 @@ function checkApplication(body) {
     const raw = b[k];
     if (f.code) {
       // Cleaned as bkk_start_events cleans them; a wrong one is dropped, never a reason to refuse.
-      const v = typeof raw === 'string' ? raw.toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, f.code) : '';
-      if (v) app[k] = v;
+      const v = landingCode(raw);
+      if (v && (f.code === true || f.code.includes(v))) app[k] = v;
     } else if (f.one) {
       const v = String(raw ?? '');
       if (f.one.includes(v)) app[k] = v; else if (f.need || v) bad.push(k);
@@ -264,15 +280,23 @@ function checkApplication(body) {
   return { app };
 }
 
-// → { fit, miss: [the parts of REAL_FIT the answers do not meet] }
+// → { fit, miss: [the parts of REAL_FIT the answers do not meet], parts: { the answers it read }, rule }
+// parts are kept with the application, so a changed rule can be tried on the last 90 days' rows.
 function realFit(a) {
-  const miss = Object.entries(REAL_FIT).filter(([k, want]) => {
-    if (a[k] == null) return k !== 'dates';
-    return typeof want === 'number' ? !(a[k] >= want) : a[k] !== want;
-  }).map(([k]) => k);
-  return { fit: !miss.length, miss };
+  const miss = [], parts = {};
+  for (const [k, want] of Object.entries(REAL_FIT)) {
+    if (a[k] == null) { if (k !== 'dates') miss.push(k); continue; }
+    parts[k] = a[k];
+    if (typeof want === 'number' ? !(a[k] >= want) : a[k] !== want) miss.push(k);
+  }
+  return { fit: !miss.length, miss, parts, rule: REAL_FIT_ID };
 }
-const fitLine = f => f.fit ? 'yes' : `no (${f.miss.join(', ')})`;
+// "no (all 30 days: not sure; mornings a week 3, needs 4 or more)"
+const fitLine = (f, a) => f.fit ? 'yes' : `no (${f.miss.map(k => {
+  const want = REAL_FIT[k], say = FIT_SAY[k] || k;
+  if (a[k] == null) return `${say}: not answered`;
+  return typeof want === 'number' ? `${say} ${a[k]}, needs ${want} or more` : `${say}: ${(SAY[k] || {})[a[k]] || a[k]}`;
+}).join('; ')})`;
 
 // ── First-step leads from the /start ad pages ──────────────────────────────
 // The 4-tap ladder ends on LINE, WhatsApp or WeChat; people without those leave
@@ -359,7 +383,7 @@ function applicationText(a) {
     a.video_by === 'chat' ? `Practice video: will send on ${VIDEO_CHAT[a.list].say}` : block('Practice video', a.video),
     a.heard ? `Heard about it from: ${a.heard}` : null,
     block('Question for the call', a.question),
-    `Real fit: ${fitLine(realFit(a))}`,
+    `Real fit: ${fitLine(realFit(a), a)}`,
     `Came from: ${a.src || '(no src)'}, headline: ${a.for || '(no for)'}`,
   ].filter(Boolean).join('\n');
 }
@@ -699,25 +723,31 @@ function mountInbox(app, opts = {}) {
           FROM aybkk_inbox WHERE channel='apply' AND created_at > now() - interval '1 day'`, [a.email])).rows[0];
         if (sent.email >= APPLY_PER_EMAIL_DAY || sent.hour >= APPLY_PER_HOUR) return null;
         const ping = sent.pinged < APPLY_PINGS_HOUR ? 'new' : sent.pinged === APPLY_PINGS_HOUR ? 'pause' : null;
+        // The weekly counts are people, not tries: this email's earlier rows on this list (kept 90 days).
+        const had = (await q(`SELECT count(*)::int AS n, coalesce(bool_or((triage->>'fit')::boolean), false) AS fit
+          FROM aybkk_inbox WHERE channel='apply' AND sender_id=$1 AND triage->>'list'=$2`, [a.email, a.list])).rows[0];
         const row = (await q(
           `INSERT INTO aybkk_inbox (channel, kind, direction, ext_id, sender_id, sender_name, text, ref, sent_at, triage, alerted_at)
            VALUES ('apply','application','in',$1,$2,$3,$4,$5,now(),$6,CASE WHEN $7 THEN now() END) RETURNING id`,
           [`apply:${crypto.randomUUID()}`, a.email, a.name, applicationText(a), a.link,
-            { lane: 'hot', list: a.list, video_by: a.video_by, fit: fit.fit, fit_miss: fit.miss,
-              src: a.src || null, for: a.for || null, summary, reply: '' }, !!ping])).rows[0];
-        return { id: row.id, ping };
+            { lane: 'hot', list: a.list, video_by: a.video_by, fit: fit.fit, fit_miss: fit.miss, fit_parts: fit.parts,
+              fit_rule: fit.rule, src: a.src || null, for: a.for || null, summary, reply: '' }, !!ping])).rows[0];
+        return { id: row.id, ping, counts: [!had.n && 'sent', fit.fit && !had.fit && 'fit'].filter(Boolean) };
       });
       if (!saved) {
         console.warn('[apply] throttled');
         return res.status(429).json({ error: 'busy' });
       }
       // The weekly counts (bkk-api.js, /api/bkk/admin/landing-weeks) read these anonymous rows, so
-      // they outlive the 90-day purge of the application itself. A failed count never fails the send.
+      // they outlive the 90-day purge of the application itself. 'sent' is a person's first application
+      // on the list, 'fit' their first that is real fit; ch names the rule. A row keeps only the Bangkok
+      // day, so it cannot be matched to the application by its time. A failed count never fails the send.
       const lp = LIST_PAGE[a.list];
-      if (lp) {
-        await q(`INSERT INTO bkk_start_events (page, kind, src, tag, lang)
-          SELECT $1, k, $2, $3, $4 FROM unnest($5::text[]) k`,
-          [lp.page, a.src || null, a.for || null, lp.lang, fit.fit ? ['sent', 'fit'] : ['sent']])
+      if (lp && saved.counts.length) {
+        await q(`INSERT INTO bkk_start_events (page, kind, src, tag, lang, ch, created_at)
+          SELECT $1, k, $2, $3, $4, $5, date_trunc('day', now() AT TIME ZONE 'Asia/Bangkok') AT TIME ZONE 'Asia/Bangkok'
+          FROM unnest($6::text[]) k`,
+          [lp.page, a.src || null, a.for || null, lp.lang, fit.rule, saved.counts])
           .catch(e => console.error('[apply] count failed:', e.message));
       }
       res.json({ ok: true });
@@ -790,4 +820,5 @@ function mountInbox(app, opts = {}) {
   return { takeLine, purge };
 }
 
-module.exports = { mountInbox, parseMeta, checkApplication, checkLead, realFit, telegram, REAL_FIT, APPLY_PATH_RE, LEAD_PATH_RE };
+module.exports = { mountInbox, parseMeta, checkApplication, checkLead, realFit, landingCode, telegram, REAL_FIT, REAL_FIT_ID,
+  LANDING_TAGS, APPLY_PATH_RE, LEAD_PATH_RE };

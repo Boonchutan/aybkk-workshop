@@ -14,7 +14,7 @@ const crypto = require('crypto');
 const net = require('net');
 const QRCode = require('qrcode');
 const { sendMail, render } = require('./mailer');
-const { REAL_FIT } = require('./inbox');
+const { REAL_FIT, REAL_FIT_ID, LANDING_TAGS, landingCode } = require('./inbox');
 
 const TZ_OFFSET = '+07:00';                    // Asia/Bangkok, no DST
 const SIGNIN_TTL_MIN = 30;                     // a sign-in link is short-lived
@@ -43,6 +43,13 @@ const LANDING_KINDS = { start: ['view', 'tap', 'step'], 'in-depth-zh': ['view', 
 const LANDING_COLS = { 'in-depth-zh': ['view', 'step2', 'step3', 'sent', 'fit'], 'in-depth-en': ['view', 'step2', 'step3', 'sent', 'fit'],
   start: ['view', 'tap', 'q1', 'q2', 'q3', 'done'] };
 const LANDING_WEEKS = 8;
+const LANDING_SPLIT_TOP = 30;                  // a week's split by source or tag: the biggest 30, then one "other" row
+// Counts from one address an hour, kept in memory only. Generous: a phone network in China puts
+// many people behind one address, and a page load sends at most 3 (In-Depth) or 6 (/start).
+const LANDING_PER_HOUR = 300;
+// Crawlers that run a page's script are not visitors. The user agent is read, never stored.
+// (A Cubot phone has "CUBOT" in its user agent, so that one bot is a visitor.)
+const LANDING_BOT_UA = /(?<!cu)bot\b|crawl|spider|slurp|headless|lighthouse/i;
 const VAT_PCT = 7;                             // Thai VAT, charged on price + online fee
 // The payment watch (Boonchu, 15 Nov 2026): stuck online payments are asked
 // about again by the server itself, and Telegram hears only about problems.
@@ -3554,21 +3561,35 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     } finally { client.release(); }
   });
 
+  const landingTries = new Map();                // address → { start, n }, this hour's counts
+  const landingTry = ip => {
+    const now = Date.now();
+    if (landingTries.size > 5000) landingTries.clear();
+    let t = landingTries.get(ip);
+    if (!t || now - t.start >= HOUR_MS) landingTries.set(ip, t = { start: now, n: 0 });
+    return ++t.n <= LANDING_PER_HOUR;
+  };
   app.post('/api/bkk/start-event', async (req, res) => {
     const b = req.body || {};
     // No page is /start, as every caller before the In-Depth pages.
     const page = b.page == null ? 'start' : typeof b.page === 'string' ? b.page : '';
     if (!Object.hasOwn(LANDING_KINDS, page)) return res.status(400).json({ error: 'page' });
+    // Every page names its kind; a body with none (or one that is not JSON) is not a visit.
+    if (b.kind == null || b.kind === '') return res.status(400).json({ error: 'kind' });
     // 'step': the first-step ladder (q1..q3 answered, done-<channel> at the end).
     // The staff reports count kind 'view' and 'tap' only, so steps never inflate them.
     // /start counts an unknown kind as a view, as it always has; an In-Depth page sends its own kinds only.
     let kind = LANDING_KINDS[page].includes(b.kind) ? b.kind : null;
     if (!kind && page !== 'start') return res.status(400).json({ error: 'kind' });
     kind = kind || 'view';
+    if (LANDING_BOT_UA.test(String(req.headers['user-agent'] || ''))) return res.status(204).end();
+    if (!landingTry(guessIp(req))) return res.status(429).json({ error: 'busy' });
     const clean = (v, n) => String(v || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, n) || null;
+    // A tag is one of the In-Depth headlines (?for=); /start has none.
+    const tag = page === 'start' ? null : LANDING_TAGS.find(t => t === landingCode(b.tag)) || null;
     try {
       await q(`INSERT INTO bkk_start_events (page,kind,src,tag,lang,ch) VALUES ($1,$2,$3,$4,$5,$6)`,
-        [page, kind, clean(b.src, 40), clean(b.tag, 40), clean(b.lang, 5), page === 'start' ? clean(b.ch, 10) : null]);
+        [page, kind, landingCode(b.src), tag, clean(b.lang, 5), page === 'start' ? clean(b.ch, 10) : null]);
       res.json({ success: true });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
@@ -3623,32 +3644,53 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const since = `date_trunc('week', now() AT TIME ZONE 'Asia/Bangkok') - interval '${LANDING_WEEKS - 1} weeks'`;
       const weeks = (await q(`SELECT to_char(${since} + i * interval '1 week', 'YYYY-MM-DD') AS w
         FROM generate_series(${LANDING_WEEKS - 1}, 0, -1) i`)).rows.map(r => r.w);
-      const { rows } = await q(
-        `SELECT page, to_char(date_trunc('week', created_at AT TIME ZONE 'Asia/Bangkok'), 'YYYY-MM-DD') AS week,
-           src, tag, CASE WHEN kind <> 'step' THEN kind WHEN ch LIKE 'done%' THEN 'done' ELSE ch END AS k, count(*)::int AS n
-         FROM bkk_start_events
-         WHERE created_at >= (${since}) AT TIME ZONE 'Asia/Bangkok' AND (page <> 'start' OR src IS DISTINCT FROM 'letter')
-         GROUP BY 1, 2, 3, 4, 5`);
+      // Only the (page, number) pairs the box shows are read; the database does the adding up, so
+      // the answer stays small however many rows or sources there are.
+      const pairs = Object.entries(LANDING_COLS).flatMap(([p, cols]) => cols.map(c => [p, c]));
+      const ends = i => `CASE page ${Object.entries(LANDING_COLS).map(([p, c]) => `WHEN '${p}' THEN '${c[i < 0 ? c.length - 1 : i]}'`).join(' ')} END`;
+      const kept = `SELECT * FROM (SELECT page, src, tag, ch,
+          to_char(date_trunc('week', created_at AT TIME ZONE 'Asia/Bangkok'), 'YYYY-MM-DD') AS week,
+          CASE WHEN kind <> 'step' THEN kind WHEN ch LIKE 'done%' THEN 'done' ELSE ch END AS k
+        FROM bkk_start_events
+        WHERE created_at >= (${since}) AT TIME ZONE 'Asia/Bangkok' AND (page <> 'start' OR src IS DISTINCT FROM 'letter')) e
+        WHERE (page, k) IN (SELECT * FROM unnest($1::text[], $2::text[]))`;
+      const args = [pairs.map(x => x[0]), pairs.map(x => x[1])];
+      // A split keeps its LANDING_SPLIT_TOP biggest (by the ladder's first number, then its last);
+      // the rest is one "other" row, so a week's split always adds up to the week.
+      const split = dim => q(`WITH e AS (${kept}),
+          g AS (SELECT page, week, ${dim} AS key, k, count(*)::int AS n FROM e GROUP BY 1, 2, 3, 4),
+          r AS (SELECT page, week, key, row_number() OVER (PARTITION BY page, week ORDER BY
+              coalesce(sum(n) FILTER (WHERE k = ${ends(0)}), 0) DESC, coalesce(sum(n) FILTER (WHERE k = ${ends(-1)}), 0) DESC,
+              key NULLS LAST) AS rn
+            FROM g GROUP BY 1, 2, 3)
+        SELECT g.page, g.week, CASE WHEN r.rn <= $3 THEN g.key END AS key, least(r.rn, $3 + 1)::int AS rn, g.k, sum(g.n)::int AS n
+        FROM g JOIN r ON r.page = g.page AND r.week = g.week AND r.key IS NOT DISTINCT FROM g.key
+        GROUP BY 1, 2, 3, 4, 5`, [...args, LANDING_SPLIT_TOP]);
+      const [totals, bySrc, byTag, rules] = await Promise.all([
+        q(`SELECT page, week, k, count(*)::int AS n FROM (${kept}) e GROUP BY 1, 2, 3`, args),
+        split('src'), split('tag'),
+        // The real-fit rule each week's sent and fit rows were counted with (inbox.js REAL_FIT_ID).
+        q(`SELECT DISTINCT page, week, ch FROM (${kept}) e WHERE k IN ('sent', 'fit') AND ch IS NOT NULL`, args),
+      ]);
       const zero = cols => Object.fromEntries(cols.map(c => [c, 0]));
       const pages = Object.entries(LANDING_COLS).map(([page, cols]) => ({ page, cols,
-        weeks: weeks.map(week => ({ week, n: zero(cols), bySrc: new Map(), byTag: new Map() })) }));
-      for (const r of rows) {
-        const p = pages.find(x => x.page === r.page), w = p && p.weeks.find(x => x.week === r.week);
-        if (!w || !p.cols.includes(r.k)) continue;
-        w.n[r.k] += r.n;
-        for (const [split, key] of [[w.bySrc, r.src], [w.byTag, r.tag]]) {
-          if (!split.has(key)) split.set(key, zero(p.cols));
-          split.get(key)[r.k] += r.n;
+        weeks: weeks.map(week => ({ week, n: zero(cols), bySrc: new Map(), byTag: new Map(), olderRule: false })) }));
+      const at = r => { const p = pages.find(x => x.page === r.page); return p && p.weeks.find(x => x.week === r.week); };
+      for (const r of totals.rows) { const w = at(r); if (w) w.n[r.k] += r.n; }
+      for (const r of rules.rows) { const w = at(r); if (w && r.ch !== REAL_FIT_ID) w.olderRule = true; }
+      for (const [rows, name, field] of [[bySrc.rows, 'src', 'bySrc'], [byTag.rows, 'tag', 'byTag']]) {
+        for (const r of rows) {
+          const w = at(r);
+          if (!w) continue;
+          const cols = pages.find(x => x.page === r.page).cols;
+          if (!w[field].has(r.rn)) w[field].set(r.rn, r.rn > LANDING_SPLIT_TOP ? { other: true, n: zero(cols) } : { [name]: r.key, n: zero(cols) });
+          w[field].get(r.rn).n[r.k] += r.n;
         }
       }
-      // A split lists its 30 biggest, by the ladder's first number, then the last.
-      const list = (split, name, cols) => [...split].map(([k, n]) => ({ [name]: k, n }))
-        .sort((a, b) => b.n[cols[0]] - a.n[cols[0]] || b.n[cols[cols.length - 1]] - a.n[cols[cols.length - 1]]).slice(0, 30);
-      for (const p of pages) for (const w of p.weeks) {
-        w.bySrc = list(w.bySrc, 'src', p.cols);
-        w.byTag = list(w.byTag, 'tag', p.cols);
+      for (const p of pages) for (const w of p.weeks) for (const f of ['bySrc', 'byTag']) {
+        w[f] = [...w[f]].sort((x, y) => x[0] - y[0]).map(x => x[1]);
       }
-      res.json({ success: true, weeks, pages, fitRule: REAL_FIT });
+      res.json({ success: true, weeks, pages, fitRule: REAL_FIT, fitRuleId: REAL_FIT_ID });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
