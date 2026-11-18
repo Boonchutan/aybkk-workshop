@@ -673,6 +673,15 @@ const fakeDriver = { session: () => ({
   ok('...and the first-class guide (f3) says the mat is ฿200 if you tick it, in all 4', f3.length === 4
      && f3.every(x => x.includes('฿200') && !/VAT|НДС|增值税|ภาษี/.test(x)), JSON.stringify(f3));
 
+  // The first-week upgrade (18 Nov 2026) is its own order: its own line in the money section.
+  const upper = await member('Uma Upgrade');
+  await order(upper, 'up1to3', { refno: 990000000031, base: 9900, vat: 693, amount: 10593, method: 'cash',
+    created: '2026-11-13T10:00:00+07:00', verified: '2026-11-13T10:00:00+07:00' });
+  clock = bkkAt('2026-11-13T20:00:00');
+  const upEve = (await get('/api/bkk/admin/team/preview?kind=evening&date=2026-11-13&lang=en')).body.text || '';
+  ok('an upgrade at the desk is in the evening money as its own item, with the desk line', upEve.includes('Paid: 1 order, ฿10,593')
+     && upEve.includes('• Upgrade 1 to 3 months ×1 ฿10,593') && /cash 1 ฿10,593/.test(upEve), upEve.split('\n').slice(0, 7).join(' | '));
+
   console.log(`\n${PASS} passed, ${FAIL} failed`);
   srv.close(); await pool.end();
   process.exit(FAIL ? 1 : 0);

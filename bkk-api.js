@@ -819,16 +819,17 @@ function mountBkk(app, opts = {}) {
   async function upgradeFor(db, memberId, { passId = null, lock = false } = {}) {
     const P = await upgradeProducts(db);
     if (!P) return null;
-    const p = (await db.query(`SELECT p.*, to_char(p.valid_from + $4::int - 1, 'YYYY-MM-DD') AS last_day
+    const p = (await db.query(`SELECT p.*, to_char(p.valid_from + $4::int - 1, 'YYYY-MM-DD') AS last_day,
+        to_char(p.valid_until + ($6::int - p.valid_days), 'YYYY-MM-DD') AS new_until
       FROM bkk_passes p JOIN bkk_orders o ON o.id = p.order_id
       WHERE p.member_id=$1 AND p.product_id=$2 AND p.status='active' AND p.upgrade_order IS NULL
         AND p.source IS DISTINCT FROM 'rezerv' AND p.twin_of IS NULL
         AND o.source IS NULL AND o.status='paid' AND o.upgrade_of IS NULL AND o.base_thb=$3
         AND (p.valid_from IS NULL OR p.valid_from + $4::int - 1 >= $5::date)
-        ${passId ? 'AND p.id=$6' : ''}
+        ${passId ? 'AND p.id=$7' : ''}
       ORDER BY p.valid_from NULLS LAST, p.id LIMIT 1 ${lock ? 'FOR UPDATE OF p' : ''}`,
-      [memberId, P.from.id, P.from.price_thb, UPGRADE.days, bkkToday(), ...(passId ? [passId] : [])])).rows[0];
-    return p ? { ...P, pass: p, lastDay: p.last_day } : null;
+      [memberId, P.from.id, P.from.price_thb, UPGRADE.days, bkkToday(), P.to.valid_days, ...(passId ? [passId] : [])])).rows[0];
+    return p ? { ...P, pass: p, lastDay: p.last_day, newUntil: p.new_until } : null;
   }
   // Why an upgrade is refused: the pass is 3 months already (a second upgrade), or none can be.
   async function upgradeRefused(memberId) {
@@ -836,8 +837,8 @@ function mountBkk(app, opts = {}) {
       [memberId])).rows[0];
     return p ? { error: 'This pass is 3 months already.', upgraded: true } : { error: UPGRADE_NO, notEligible: true };
   }
-  // What a page shows for it: the price before VAT, and the last day.
-  const upgradeOut = u => u && { passId: u.pass.id, priceThb: u.price, lastDay: u.lastDay };
+  // What a page shows for it: the price before VAT, the last day, and the end it gives (null: not started).
+  const upgradeOut = u => u && { passId: u.pass.id, priceThb: u.price, lastDay: u.lastDay, newUntil: u.newUntil };
   const UPGRADE_NO = 'This pass cannot be upgraded: the upgrade to 3 months is for a 1-month pass bought on aybkk.net, in its first week.';
   // A new upgrade order, checked and made in one transaction with the pass locked,
   // so one being turned on at the same moment is seen. null: not (or no longer) eligible.
@@ -5221,7 +5222,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
            FROM bkk_bookings b LEFT JOIN bkk_class_slots s ON s.id=b.slot_id
            WHERE b.member_id=$1 ORDER BY b.class_date DESC, b.start_at DESC, b.id DESC`, [m.id]),
         q(`SELECT o.id, to_char(${PAY_AT} AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS date,
-             to_char(${PAY_AT} AT TIME ZONE 'Asia/Bangkok','HH24:MI') AS time, coalesce(pr.name_en, o.item_name) AS item,
+             to_char(${PAY_AT} AT TIME ZONE 'Asia/Bangkok','HH24:MI') AS time, coalesce(pr.name_en, o.item_name) AS item, pr.name_th AS item_th,
              o.amount_thb, o.base_thb, o.fee_thb, o.vat_thb, o.method, o.status, o.source, o.refno, o.gateway_note
            FROM bkk_orders o LEFT JOIN bkk_products pr ON pr.id=o.product_id
            WHERE o.member_id=$1 ORDER BY ${PAY_AT} DESC, o.id DESC`, [m.id]),
@@ -5279,7 +5280,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
           cover: v.cover, source: v.source, upcoming: upcoming(v), passId: v.pass_id,
           moved: !!v.moved_at && !!v.pass_id && (v.status === 'booked'
             || (v.status === 'cancelled' && !/^merged:/.test(v.cancel_reason || ''))) })),
-        payments: pays.rows.map(o => ({ id: o.id, date: o.date, time: o.time, item: o.item, amount: o.amount_thb,
+        payments: pays.rows.map(o => ({ id: o.id, date: o.date, time: o.time, item: o.item, itemTh: o.item_th, amount: o.amount_thb,
           base: o.base_thb, fee: o.fee_thb, vat: o.vat_thb, method: o.method, status: o.status,
           source: o.source || 'aybkk', refno: String(o.refno), note: o.gateway_note })),
         notes: notes.rows.map(n => ({ id: n.id, date: n.date, createdAt: n.created_at, teacher: n.teacher,

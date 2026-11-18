@@ -8135,7 +8135,8 @@ const ok = (name, cond, extra = '') => {
     const histNoKey = await J(`/api/bkk/admin/members/${dk.code}/history`);
     ok('the profile offers it at the desk: 9,900 + VAT 693 = 10,593, no online fee, with the last day', histNoKey.status === 401
        && hist.body.upgrade && hist.body.upgrade.passId === dk.pass && hist.body.upgrade.priceThb === 9900 && hist.body.upgrade.fee === 0
-       && hist.body.upgrade.vat === 693 && hist.body.upgrade.total === 10593 && hist.body.upgrade.lastDay === plus(today, 5), JSON.stringify(hist.body.upgrade));
+       && hist.body.upgrade.vat === 693 && hist.body.upgrade.total === 10593 && hist.body.upgrade.lastDay === plus(today, 5)
+       && hist.body.upgrade.newUntil === plus(today, 89), JSON.stringify(hist.body.upgrade));
     const sale = { productCode: 'up1to3', memberCode: dk.code, method: 'cash', requestId: 'upg-desk-1' };
     const noKey = await post('/api/bkk/admin/sales', sale);
     const [s1, s2] = await Promise.all([post('/api/bkk/admin/sales', sale, ADMIN), post('/api/bkk/admin/sales', sale, ADMIN)]);
@@ -8188,8 +8189,10 @@ const ok = (name, cond, extra = '') => {
     console.log('  money records');
     const ords = (await J('/api/bkk/admin/orders?limit=2000', { headers: ADMIN })).body.orders;
     const row = ords.find(o => String(o.refno) === vs.body.order.refno || String(o.refno) === dkOrders[0].refno.toString());
-    ok('Payments lists the upgrade as its own order, by its own name in English and Thai', row && row.name_en === 'Upgrade 1 to 3 months'
-       && row.name_th === 'อัปเกรดจาก 1 เป็น 3 เดือน', JSON.stringify(row));
+    const histPay = (await J(`/api/bkk/admin/members/${dk.code}/history`, { headers: ADMIN })).body.payments.find(o => o.refno === String(dkOrders[0].refno));
+    ok('Payments lists the upgrade as its own order, by its own name in English and Thai, and so does the profile', row && row.name_en === 'Upgrade 1 to 3 months'
+       && row.name_th === 'อัปเกรดจาก 1 เป็น 3 เดือน' && histPay && histPay.item === 'Upgrade 1 to 3 months' && histPay.itemTh === 'อัปเกรดจาก 1 เป็น 3 เดือน',
+       JSON.stringify([row, histPay]));
     const dbl = (await J('/api/bkk/admin/doubles', { headers: ADMIN })).body.items || [];
     const refsOf = x => (x.orders || []).map(o => String(o.refno));
     const deskRefs = [String((await one('SELECT refno FROM bkk_orders WHERE id=$1', [dk.order])).refno), String(dkOrders[0].refno)];
