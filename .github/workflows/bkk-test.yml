@@ -16,6 +16,7 @@ on:
       - 'lib/staff-key.js'
       - 'api/**'
       - 'test/student-lists-lock.test.js'
+      - 'test/line-webhook.test.js'
       - '.github/workflows/bkk-test.yml'
 
 jobs:
@@ -62,3 +63,5 @@ jobs:
         env:
           TEST_DATABASE_URL: postgres://test:test@127.0.0.1:5432/bkktest
         run: node test/student-lists-lock.test.js
+      - name: Run LINE webhook tests (signature required, no chat text in logs; server.js, no DB)
+        run: node test/line-webhook.test.js

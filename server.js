@@ -15,7 +15,7 @@ const { mountBkk } = require('./bkk-api');
 const { mountPartner } = require('./partner-api');
 const { mountIdcn } = require('./idcn-api');
 const { mountShop } = require('./shop-api');
-const { mountInbox, APPLY_PATH_RE, LEAD_PATH_RE } = require('./inbox');
+const { mountInbox, lineSigned, APPLY_PATH_RE, LEAD_PATH_RE } = require('./inbox');
 const { mountTeam, HELPDESK_PATH_RE } = require('./team-brief');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
@@ -123,7 +123,7 @@ const upload = multer({
 // (/api/bkk/login/<token>, /p/<slug>).
 app.use((req, res, next) => { res.set('Referrer-Policy', 'strict-origin'); next(); });
 app.use(cors());
-// LINE and Meta sign the exact bytes they send; the inbox checks those signatures.
+// LINE and Meta sign the exact bytes they send; /line/webhook and the inbox check those signatures.
 // The public In-Depth application form and the /start first-step form read their own
 // bodies with small limits (inbox.js), and the help desk webhook reads its raw bytes
 // itself (team-brief.js).
@@ -464,9 +464,6 @@ app.post('/api/upload/student-photo', async (req, res) => {
   }
 });
 
-// Store LINE group ID for notifications
-global.LINE_GROUP_ID = null;
-
 // LINE Messaging API webhook
 const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN || '';
 
@@ -493,39 +490,27 @@ async function linePushPlain(uid, messages) {
   }
 }
 
-app.post('/line/webhook', express.json({ type: '*/*' }), async (req, res) => {
+// LINE signs the exact bytes it sends (req.rawBody, kept by jsonBody above) with the
+// channel secret. Anything else is refused before it can write a LineAccount or push
+// a message on the OA's quota.
+app.post('/line/webhook', async (req, res) => {
+  if (!lineSigned(req.rawBody, req.headers['x-line-signature'])) {
+    inbox.lineRefused();
+    console.warn('[LINE Webhook] refused:', process.env.LINE_CHANNEL_SECRET ? 'bad or missing signature' : 'LINE_CHANNEL_SECRET is not set');
+    return res.sendStatus(401);
+  }
   try {
-    const events = req.body.events || [];
-    console.log('[LINE Webhook] Received events:', JSON.stringify(events).slice(0, 200));
+    const events = Array.isArray(req.body && req.body.events) ? req.body.events : [];
+    // Types only, never text or ids: group and room chats are staff talking about students.
+    console.log('[LINE Webhook]', events.map(e => `${e.type}/${(e.source && e.source.type) || '-'}`).join(' ') || 'no events');
     inbox.takeLine(req);
 
     for (const event of events) {
-      // Capture group ID when bot receives a message in a group
-      if (event.source && event.source.type === 'group') {
-        const gid = event.source.groupId;
-        if (gid && !global.LINE_GROUP_ID) {
-          global.LINE_GROUP_ID = gid;
-          console.log('[LINE] Group ID captured:', gid);
-          // Save to file for persistence
-          const fs2 = require('fs');
-          fs2.writeFileSync('/tmp/line_group_id.txt', gid);
-        }
-      }
-      // Respond to join events
-      if (event.type === 'join') {
-        console.log('[LINE] Bot joined:', event.source && event.source.type);
-        if (event.source && event.source.type === 'group') {
-          global.LINE_GROUP_ID = event.source.groupId;
-          console.log('[LINE] Group ID from join:', event.source.groupId);
-        }
-      }
-
       // Capture follow events: a user added the bot as a friend.
       // We need their userId to push messages to them later, and we send
       // back a claim code so they can link to their student profile.
       if (event.type === 'follow' && event.source && event.source.userId) {
         const uid = event.source.userId;
-        console.log('[LINE] New follower UID:', uid);
         try {
           const session = driver.session();
           // If already linked to a Student, send a "welcome back" message and skip code.
@@ -576,18 +561,9 @@ app.post('/line/webhook', express.json({ type: '*/*' }), async (req, res) => {
         }
       }
 
-      // Log incoming user messages with UID — useful for capturing UIDs
-      // before/without a follow event during testing.
-      if (event.type === 'message' && event.source && event.source.userId) {
-        const uid = event.source.userId;
-        const text = event.message && event.message.text ? event.message.text : `(${event.message?.type || 'non-text'})`;
-        console.log(`[LINE] Message from ${uid}: ${text.slice(0, 80)}`);
-      }
-
       // Unfollow: mark inactive so broadcaster skips them.
       if (event.type === 'unfollow' && event.source && event.source.userId) {
         const uid = event.source.userId;
-        console.log('[LINE] Unfollowed:', uid);
         try {
           const session = driver.session();
           await session.run(
