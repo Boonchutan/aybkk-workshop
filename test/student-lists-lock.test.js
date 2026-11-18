@@ -238,6 +238,19 @@ fs.writeFileSync(path.join(PRIVATE, 'rosters', 'hefei.json'), JSON.stringify({ w
   const bound = await request('POST', '/api/orientations', {}, { name: 'Locktest Roster', studentCode: 'HEFEI-901', language: 'en', location: 'hefei' });
   ok('an orientation with a card code still binds to the roster journal id', bound.status === 200 && JSON.stringify(bound.json || {}).includes('lock-roster-1'), shape(bound));
 
+  // Landing pages by week (18 Nov 2026): counts with no names, and still for staff only.
+  console.log('\n-- landing pages by week --');
+  for (const p of ['/api/bkk/admin/landing-weeks', '/api/bkk/admin/start-stats']) {
+    const none = await request('GET', p), wrong = await request('GET', p, { 'x-bkk-key': 'wrong' });
+    ok(`GET ${p} → 401 without the staff key, or with a wrong one, and no numbers`, none.status === 401 && wrong.status === 401
+      && Object.keys(none.json || {}).join() === 'error' && Object.keys(wrong.json || {}).join() === 'error', `${shape(none)} ${shape(wrong)}`);
+  }
+  const lockEv = await request('POST', '/api/bkk/start-event', {}, { page: 'in-depth-zh', kind: 'view', src: 'lock-test', tag: 'teacher' });
+  const lw = await request('GET', '/api/bkk/admin/landing-weeks', STAFF);
+  const lwZh = lw.json && (lw.json.pages || []).find(x => x.page === 'in-depth-zh');
+  ok('...staff get the weeks, with a page count sent through the real server', lockEv.status === 200 && lw.status === 200
+    && lwZh && lwZh.weeks[0].bySrc.some(x => x.src === 'lock-test' && x.n.view === 1), `${shape(lockEv)} ${shape(lw)}`);
+
   // The door tablet (17 Nov 2026): its page talks to this site only, and its list
   // opens with the door key alone, never the staff key or none.
   console.log('\n-- the door tablet --');

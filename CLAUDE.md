@@ -117,6 +117,11 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
   (LINE signature); `META_APP_SECRET`, `META_VERIFY_TOKEN`, optional `META_PAGE_TOKEN` (names).
   Optional `ANTHROPIC_API_KEY` sorts each message on arrival and sends hot ones to Boonchu's
   Telegram (`INBOX_AI_MODEL`, default Opus 5.5; `INBOX_AI_DAILY_CAP`, default 150 calls).
+  **Real fit** on an In-Depth application is worked out at save time by the one `REAL_FIT` rule in `inbox.js`
+  (now: Primary yes, Mysore and led classes yes, all 30 days on the Chinese list, 4+ mornings, 2+ years; not
+  teaching, not the video). The weekly counts (Admin "Landing pages, by week", `/api/bkk/admin/landing-weeks`,
+  rows in `bkk_start_events`) hold no personal data, outlive the 90-day purge and stay staff only. A `?src=` or
+  `?for=` code names a channel, post or headline, never a person (no names, phones or IDs in a link).
 - **Team help desk:** `team-brief.js`; LINE OA "AYBKK help desk" (internal, not @aybkk), webhook `/line/helpdesk-webhook`, env `HELPDESK_LINE_CHANNEL_SECRET` and `HELPDESK_LINE_ACCESS_TOKEN`. Sends the 05:00 teaching brief and the 20:00 day summary to the saved team group, off until switched on. The first group joined is saved; later groups wait for approval. Admin routes `/api/bkk/admin/team/*` (status, preview, send, brief, group) and `/api/bkk/admin/inbox`, all with `x-bkk-key`.
 - **Rezerv import from the command line:** `scripts/rezerv-import.js` (`check`, `write --expect`, `plan`, `run-all`) is the admin page's "Move everything from Rezerv" box without the uploads. It runs the page's own parsing code, taken out of `public/bkk-admin.html` by name, so renaming one of those functions stops the tool until it is brought in line.
   It prints counts and reason codes only (names go to `--details`, mode 0600) and sends `x-bkk-key` only when `BKK_ADMIN_KEY` is set. Test: `test/rezerv-import-cli.test.js`.

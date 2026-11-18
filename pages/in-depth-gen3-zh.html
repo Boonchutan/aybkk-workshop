@@ -15,7 +15,7 @@
 <meta property="og:image" content="https://cn.aybkk.net/img/aybkk-logo-240.jpg">
 <link rel="preload" href="/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/worksans.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/in-depth.css">
+<link rel="stylesheet" href="/in-depth.css?v=4">
 </head>
 <body>
 <header class="top">
@@ -154,7 +154,7 @@
     <div class="body qa">
       <div><h3>“上完这个课，只拿到一张纸吗？”</h3>
         <p>那张纸是 AYBKK 的结业证书，仅此而已。本课程不是来自迈索尔的授权，AYBKK 也给不了这种授权。它不提供 Yoga Alliance（瑜伽联盟）学时。你付费买的，是这30天，和在场的老师。</p></div>
-      <div><h3>“为什么是 180,000 泰铢？”</h3>
+      <div><h3>“为什么是 180,000 泰铢 + 7% 增值税？”</h3>
         <p>你付的是和老师在一起的时间。30天。一个班不超过12人。两位老师，都获 R. Sharath Jois 授权 Level 2。Khaoyaithieng 的交通和住宿已包含。付款方案在通话时商定。</p></div>
       <div><h3>“我会被调整吗？”</h3>
         <p>会，前提是你同意。你会签署一份接受手法调整的同意书，并且可以随时拒绝任何调整。你也会学习怎样在征得同意、与对方沟通的前提下做调整，以及什么时候不该调整。</p></div>
@@ -180,16 +180,10 @@
   </div>
 </section>
 
-<section class="s" id="record">
+<section class="s" id="small">
   <div class="wrap">
-    <h2>往期记录</h2>
     <div class="body">
-      <p>这里只写人数，学员姓名不公开。</p>
-      <dl class="record">
-        <div><dt>自2016年起</dt><dd>在 AYBKK 开设，起初用泰语授课。</dd></div>
-        <div><dt>2025</dt><dd>中国班开班。分四个部分，在曼谷和惠州进行，从2025年初到10月。12人完成全部四个部分，另有6人完成了三个部分。</dd></div>
-        <div><dt>2026</dt><dd>三个部分，每部分10节课：曼谷（1月）、惠州（4月）、珠海（7月至8月）。13人开始学习，11人完成。</dd></div>
-      </dl>
+      <p class="big">我们坚持小班教学，老师才能看清<span class="nb">每一位练习者。</span></p>
     </div>
   </div>
 </section>
@@ -224,7 +218,7 @@
     <h2>怎样申请</h2>
     <div class="body">
       <ol class="steps">
-        <li><span><b>填写申请表。</b> 写下你为什么想上这个课程，并附上一段简短练习视频的链接。</span></li>
+        <li><span><b>填写申请表。</b> 写下你为什么想上这个课程，并附上一段简短的练习视频（贴链接，或在微信上发）。</span></li>
         <li><span><b>AYBKK 在2天内回复。</b></span></li>
         <li><span><b>和 Boonchu 通话。</b> 如果你的申请合适，你会和 Boonchu 通话。付款方案在这次通话中商定。</span></li>
         <li><span><b>付款。</b> 按通话中商定的方式付款。</span></li>
@@ -232,31 +226,15 @@
       <p class="by">申请截止：2026年12月10日。每期不超过12人。</p>
 
       <div id="apply" tabindex="-1">
-        <form class="form" id="form" data-list="gen3-zh" novalidate>
+        <form class="form" id="form" data-list="gen3-zh" data-page="in-depth-zh" novalidate>
           <h3>申请深度迈索尔课程第三期</h3>
           <p class="intro">2027年1月11日至2月9日。180,000 泰铢，另加 7% 增值税。申请截止：2026年12月10日。回答简短没关系，真实比文笔重要。可以用中文或英文回答。</p>
+          <p class="stepsay">一共 3 步，第 3 步是联系方式和练习视频（视频也可以之后在微信上发）。</p>
+          <p class="help keep" id="keep" hidden></p>
           <noscript><p>这个表单需要 JavaScript。也可以加微信 aybkkwechat。</p></noscript>
 
-          <div class="f" data-f="name"><label for="f-name">你的名字</label>
-            <p class="help" id="h-name">你希望 AYBKK 怎么称呼你。</p>
-            <input type="text" id="f-name" name="name" maxlength="100" autocomplete="name" required aria-describedby="h-name e-name">
-            <p class="err" id="e-name"></p></div>
-          <div class="f" data-f="email"><label for="f-email">邮箱</label>
-            <p class="help" id="h-email">AYBKK 会回复到这个邮箱。</p>
-            <input type="email" id="f-email" name="email" maxlength="200" autocomplete="email" inputmode="email" required aria-describedby="h-email e-email">
-            <p class="err" id="e-email"></p></div>
-          <div class="f" data-f="contact"><label for="f-contact">微信、LINE、WhatsApp 或电话</label>
-            <p class="help" id="h-contact">先写应用名称，再写账号或号码。例如：微信 abc123。</p>
-            <input type="text" id="f-contact" name="contact" maxlength="120" required aria-describedby="h-contact e-contact">
-            <p class="err" id="e-contact"></p></div>
-          <div class="f" data-f="country"><label for="f-country">你住在哪个国家</label>
-            <input type="text" id="f-country" name="country" maxlength="80" autocomplete="country-name" required aria-describedby="e-country">
-            <p class="err" id="e-country"></p></div>
-          <fieldset class="f" data-f="call_lang"><legend>通话语言</legend>
-            <div class="opts"><label><input type="radio" name="call_lang" value="en"> <span>English（英语）</span></label>
-              <label><input type="radio" name="call_lang" value="zh"> <span>中文</span></label></div>
-            <p class="err" id="e-call_lang"></p></fieldset>
-
+          <div class="step" data-step="1">
+          <h4 class="steph" tabindex="-1"><span class="stepn">第 1 步，共 3 步</span>这个课程适合你吗？</h4>
           <fieldset class="f" data-f="primary"><legend>你熟记完整的初级序列吗？</legend>
             <p class="help">熟记，指你能独立地、按顺序练完整个初级序列。</p>
             <div class="opts"><label><input type="radio" name="primary" value="yes"> <span>是</span></label>
@@ -269,7 +247,7 @@
             <p class="barnote" hidden>这个课程需要你在这一题的答案是“是”或“能”。继续练习，等答案变了，再来申请。<a href="https://cn.aybkk.net/shala">曼谷 AYBKK 的早晨迈索尔课</a>欢迎你来。</p>
             <p class="err" id="e-rooms"></p></fieldset>
           <fieldset class="f" data-f="dates"><legend>2027年1月11日至2月9日，全部30天你都能本人到场吗？</legend>
-            <p class="help">如果不确定，请在本表末尾一栏写明原因。</p>
+            <p class="help">如果不确定，请在第 2 步“想在通话时问的一个问题”一栏写明原因。</p>
             <div class="opts"><label><input type="radio" name="dates" value="yes"> <span>能</span></label>
               <label><input type="radio" name="dates" value="not_sure"> <span>不确定</span></label>
               <label><input type="radio" name="dates" value="no"> <span>不能</span></label></div>
@@ -303,6 +281,10 @@
             <p class="help" id="h-teach">在哪里教，教了多久，教什么样的课。如果不教课，可以不填。</p>
             <textarea id="f-teach" name="teach" maxlength="1500" aria-describedby="h-teach e-teach"></textarea>
             <p class="err" id="e-teach"></p></div>
+          </div>
+
+          <div class="step" data-step="2">
+          <h4 class="steph" tabindex="-1"><span class="stepn">第 2 步，共 3 步</span>说说你的练习</h4>
           <div class="f" data-f="why"><label for="f-why">你为什么想上这个课程？为什么是现在？</label>
             <p class="help" id="h-why">用两三句平常的话写。你想弄明白什么？是什么让你现在申请？</p>
             <textarea id="f-why" name="why" maxlength="2000" required aria-describedby="h-why e-why"></textarea>
@@ -315,16 +297,6 @@
             <p class="help" id="h-injury">你现在有疼痛或伤吗？或者有旧伤，到现在还影响你的练习？用平常的话写就可以，不需要医生证明。</p>
             <textarea id="f-injury" name="injury" maxlength="2000" aria-describedby="h-injury e-injury"></textarea>
             <p class="err" id="e-injury"></p></div>
-          <div class="f" data-f="video"><label for="f-video">练习视频链接</label>
-            <div class="vhelp" id="h-video">
-              <p>拍一段简短的练习视频：</p>
-              <ul><li>拜日式A和拜日式B，各一次。</li><li>你卡住的那个体式。</li>
-                <li>3次跳回（jump back）和3次跳穿（jump through）。如果还不会跳，就按你现在的方式做。</li></ul>
-              <p>手机放在地上或椅子上，从侧面拍，全身都要在画面里。一镜到底。不剪辑，不加音乐，不加滤镜。像平常一样练，不要为了镜头硬压。</p>
-              <p>上传时设为只有拿到链接的人才能看：百度网盘分享链接，YouTube 设为“不公开列出”，或 Google Drive 设为“知道链接的任何人”。把链接贴在这里。如果有提取码，请一起贴上。不要公开发布。</p>
-            </div>
-            <input type="text" id="f-video" name="video" maxlength="500" inputmode="url" autocomplete="off" placeholder="https://" required aria-describedby="h-video e-video">
-            <p class="err" id="e-video"></p></div>
           <div class="f" data-f="heard"><label for="f-heard"><span>你从哪里知道这个课程的？</span> <span class="opt">（选填）</span></label>
             <input type="text" id="f-heard" name="heard" maxlength="200" aria-describedby="e-heard">
             <p class="err" id="e-heard"></p></div>
@@ -332,19 +304,66 @@
             <p class="help" id="h-question">你想问 Boonchu 什么？</p>
             <textarea id="f-question" name="question" maxlength="1000" aria-describedby="h-question e-question"></textarea>
             <p class="err" id="e-question"></p></div>
+          </div>
+
+          <div class="step" data-step="3">
+          <h4 class="steph" tabindex="-1"><span class="stepn">第 3 步，共 3 步</span>联系方式和练习视频</h4>
+          <div class="f" data-f="name"><label for="f-name">你的名字</label>
+            <p class="help" id="h-name">你希望 AYBKK 怎么称呼你。</p>
+            <input type="text" id="f-name" name="name" maxlength="100" autocomplete="name" required aria-describedby="h-name e-name">
+            <p class="err" id="e-name"></p></div>
+          <div class="f" data-f="email"><label for="f-email">邮箱</label>
+            <p class="help" id="h-email">AYBKK 会回复到这个邮箱。</p>
+            <input type="email" id="f-email" name="email" maxlength="200" autocomplete="email" inputmode="email" required aria-describedby="h-email e-email">
+            <p class="err" id="e-email"></p></div>
+          <div class="f" data-f="contact"><label for="f-contact">微信、LINE、WhatsApp 或电话</label>
+            <p class="help" id="h-contact">先写应用名称，再写账号或号码。例如：微信 abc123。</p>
+            <input type="text" id="f-contact" name="contact" maxlength="120" required aria-describedby="h-contact e-contact">
+            <p class="err" id="e-contact"></p></div>
+          <div class="f" data-f="country"><label for="f-country">你住在哪个国家</label>
+            <input type="text" id="f-country" name="country" maxlength="80" autocomplete="country-name" required aria-describedby="e-country">
+            <p class="err" id="e-country"></p></div>
+          <fieldset class="f" data-f="call_lang"><legend>通话语言</legend>
+            <div class="opts"><label><input type="radio" name="call_lang" value="en"> <span>English（英语）</span></label>
+              <label><input type="radio" name="call_lang" value="zh"> <span>中文</span></label></div>
+            <p class="err" id="e-call_lang"></p></fieldset>
+          <fieldset class="f" data-f="video_by" aria-describedby="h-video"><legend>练习视频</legend>
+            <div class="vhelp" id="h-video">
+              <p>拍一段简短的练习视频：</p>
+              <ul><li>拜日式A和拜日式B，各一次。</li><li>你卡住的那个体式。</li>
+                <li>3次跳回（jump back）和3次跳穿（jump through）。如果还不会跳，就按你现在的方式做。</li></ul>
+              <p>手机放在地上或椅子上，从侧面拍，全身都要在画面里。一镜到底。不剪辑，不加音乐，不加滤镜。像平常一样练，不要为了镜头硬压。</p>
+            </div>
+            <p class="ask">视频怎么发给我们？选一种：</p>
+            <div class="opts"><label><input type="radio" name="video_by" value="link" checked> <span>贴上视频链接</span></label>
+              <label><input type="radio" name="video_by" value="chat" aria-describedby="vchat"> <span>在微信上发给 aybkkwechat</span></label></div>
+            <p class="vnote" id="vchat" hidden>拍好后，在微信上加 aybkkwechat，把视频发过去，并写上你在本表填写的名字。</p>
+            <p class="err" id="e-video_by"></p></fieldset>
+          <div class="f" data-f="video"><label for="f-video">练习视频链接</label>
+            <p class="help" id="h-vlink">上传时设为只有拿到链接的人才能看：百度网盘分享链接，YouTube 设为“不公开列出”，或 Google Drive 设为“知道链接的任何人”。把链接贴在这里。如果有提取码，请一起贴上。不要公开发布。</p>
+            <input type="text" id="f-video" name="video" maxlength="500" inputmode="url" autocomplete="off" placeholder="https://" required aria-describedby="h-vlink e-video">
+            <p class="err" id="e-video"></p></div>
           <div class="hp" aria-hidden="true"><label for="f-website">Website</label><input type="text" id="f-website" name="website" tabindex="-1" autocomplete="off"></div>
 
           <div class="f" data-f="consent">
             <label class="check"><input type="checkbox" id="f-consent" name="consent" aria-describedby="e-consent"> <span>我同意 AYBKK 阅读我的回答、观看我的视频，并就我的申请联系我。</span></label>
             <p class="err" id="e-consent"></p></div>
-          <button class="btn send" type="submit" id="send">发送申请</button>
+          </div>
+
+          <div class="nav">
+            <button class="back" type="button" id="back" hidden><span aria-hidden="true">←</span> 上一步</button>
+            <button class="btn" type="button" id="next" hidden>下一步</button>
+            <button class="btn send" type="submit" id="send">发送申请</button>
+          </div>
           <p class="formmsg" id="formmsg" role="alert"></p>
         </form>
         <div class="thanks" id="thanks" hidden tabindex="-1">
           <h3>谢谢你。你的申请已经收到。</h3>
+          <div id="thanks-chat" hidden><p>别忘了：在微信上把练习视频发给 aybkkwechat，并写上你的名字。</p></div>
           <p>AYBKK 会在2天内，通过你留下的邮箱或账号回复你。</p>
           <p>如果合适，下一步是和 Boonchu 通话。</p>
           <p>在那之前，继续练习。</p>
+          <button class="back again" type="button" id="again" hidden>再填一份申请</button>
         </div>
       </div>
     </div>
@@ -391,6 +410,6 @@
     <p>微信 aybkkwechat · <a href="https://line.me/R/ti/p/@aybkk">LINE @aybkk</a> · <a href="https://aybkk.net/">aybkk.net</a></p>
   </div>
 </footer>
-<script src="/in-depth.js" defer></script>
+<script src="/in-depth.js?v=4" defer></script>
 </body>
 </html>

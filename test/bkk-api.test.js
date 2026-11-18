@@ -1489,6 +1489,153 @@ const ok = (name, cond, extra = '') => {
   const st2 = (await J('/api/bkk/admin/start-stats', { headers: ADMIN })).body.sources.find(x => x.src === 'reel-sleep1');
   ok('ladder steps do not change the views and taps report', st2 && st2.views === 4 && st2.taps === 1, JSON.stringify(st2));
 
+  console.log('\n-- In-Depth page counts, and landing pages by week --');
+  {
+    const evRows = async src => (await pool.query(`SELECT page, kind, src, tag, lang, ch FROM bkk_start_events WHERE src=$1 ORDER BY id`, [src])).rows;
+    for (const kind of ['view', 'step2', 'step3']) {
+      const r = await post('/api/bkk/start-event', { page: 'in-depth-zh', kind, src: 'WX-Test!', tag: 'Teacher', lang: 'zh', ch: 'line' });
+      ok(`an In-Depth page counts ${kind}`, r.status === 200 && r.body.success === true, JSON.stringify(r));
+    }
+    let ev = await evRows('wx-test');
+    ok('...stored with its page, src and tag cleaned, and no channel', ev.length === 3 && ev.every(e => e.page === 'in-depth-zh'
+      && e.tag === 'teacher' && e.lang === 'zh' && e.ch === null) && ev.map(e => e.kind).join() === 'view,step2,step3', JSON.stringify(ev));
+    ok('the table has no column for an address, name, email or member', (await pool.query(`SELECT column_name FROM information_schema.columns
+      WHERE table_name='bkk_start_events'`)).rows.map(r => r.column_name).sort().join() === 'ch,created_at,id,kind,lang,page,src,tag');
+    for (const kind of ['sent', 'fit', 'tap', 'step', 'Step2', 'hack', undefined]) {
+      const r = await post('/api/bkk/start-event', { page: 'in-depth-en', kind, src: 'wx-test' });
+      ok(`a page cannot send kind ${kind} for an In-Depth page → 400`, r.status === 400 && r.body.error === 'kind', JSON.stringify(r));
+    }
+    for (const page of ['in-depth', 'Start', ['start'], 'toString']) {
+      const r = await post('/api/bkk/start-event', { page, kind: 'view', src: 'wx-test' });
+      ok(`an unknown page ${JSON.stringify(page)} → 400`, r.status === 400 && r.body.error === 'page', JSON.stringify(r));
+    }
+    ok('...and none of those is stored', (await evRows('wx-test')).length === 3);
+    // /start, its ladder, the letter doors and the evening summary read page 'start' only.
+    for (const kind of ['view', 'step2']) await post('/api/bkk/start-event', { page: 'in-depth-en', kind, src: 'reel-sleep1' });
+    await post('/api/bkk/start-event', { page: 'in-depth-en', kind: 'view', src: 'letter' });
+    const st3 = (await J('/api/bkk/admin/start-stats', { headers: ADMIN })).body.sources.find(x => x.src === 'reel-sleep1');
+    ok('In-Depth counts do not move the /start views and taps report', st3 && st3.views === 4 && st3.taps === 1, JSON.stringify(st3));
+    ok('an old caller with no page is still /start', (await pool.query(`SELECT count(*)::int AS n FROM bkk_start_events
+      WHERE src='reel-sleep1' AND page='start'`)).rows[0].n === 10);
+
+    const wr = await J('/api/bkk/admin/landing-weeks');
+    ok('landing pages by week need the staff key', wr.status === 401 && !wr.body.pages, JSON.stringify(wr));
+    ok('...a wrong key too', (await J('/api/bkk/admin/landing-weeks', { headers: { 'x-bkk-key': 'nope' } })).status === 401);
+    // Week edges in Bangkok: this Monday 00:00 is this week, last Sunday 23:59:59 is last week,
+    // the Monday 7 weeks back is the oldest week shown, and the Sunday before it is not shown.
+    const mon = (await pool.query(`SELECT to_char(date_trunc('week', now() AT TIME ZONE 'Asia/Bangkok'), 'YYYY-MM-DD') AS d`)).rows[0].d;
+    const at = (days, hms) => new Date(Date.parse(`${mon}T${hms}+07:00`) + days * 864e5).toISOString();
+    const put = (page, kind, src, tag, when, ch = null) => pool.query(`INSERT INTO bkk_start_events (page,kind,src,tag,lang,ch,created_at)
+      VALUES ($1,$2,$3,$4,'zh',$5,$6)`, [page, kind, src, tag, ch, when]);
+    for (const [kind, n] of [['view', 4], ['step2', 3], ['step3', 2], ['sent', 2], ['fit', 1]]) {
+      for (let i = 0; i < n; i++) await put('in-depth-zh', kind, i ? 'wk-reel' : 'wk-article', i < 2 ? 'teacher' : null, at(0, '00:00:00'));
+    }
+    await put('in-depth-zh', 'view', 'wk-article', 'room', at(-1, '23:59:59'));
+    await put('in-depth-zh', 'sent', 'wk-article', 'room', at(-1, '23:59:59'));
+    await put('in-depth-zh', 'view', 'wk-old', null, at(-49, '00:00:00'));
+    await put('in-depth-zh', 'view', 'wk-older', null, at(-50, '23:59:59'));
+    await put('in-depth-en', 'view', 'wk-en', 'practice', at(0, '09:00:00'));
+    for (const [kind, ch] of [['view', null], ['view', null], ['tap', 'line'], ['step', 'q1'], ['step', 'q2'], ['step', 'q3'],
+      ['step', 'done-line'], ['step', 'done-wa']]) await put('start', kind, 'wk-start', null, at(0, '10:00:00'), ch);
+    await put('start', 'tap', 'letter', null, at(0, '10:00:00'), 'line');
+    const w = await J('/api/bkk/admin/landing-weeks', { headers: ADMIN });
+    const wb = w.body, pg = id => (wb.pages || []).find(p => p.page === id);
+    ok('8 weeks, newest first, each a Monday', w.status === 200 && wb.weeks.length === 8 && wb.weeks[0] === mon
+      && wb.weeks.every(d => new Date(d + 'T12:00:00Z').getUTCDay() === 1)
+      && wb.weeks.every((d, i) => !i || Date.parse(wb.weeks[i - 1]) - Date.parse(d) === 7 * 864e5), JSON.stringify(wb.weeks));
+    ok('one block per page, its ladder in order', pg('in-depth-zh').cols.join() === 'view,step2,step3,sent,fit'
+      && pg('in-depth-en').cols.join() === 'view,step2,step3,sent,fit' && pg('start').cols.join() === 'view,tap,q1,q2,q3,done'
+      && (wb.pages || []).every(p => p.weeks.length === 8));
+    const zh0 = pg('in-depth-zh').weeks[0], zh1 = pg('in-depth-zh').weeks[1], zh7 = pg('in-depth-zh').weeks[7];
+    // This week also holds the three counts the page sent above (wx-test).
+    ok('this week: opens, step 2, step 3, sent, real fit', JSON.stringify(zh0.n) === JSON.stringify({ view: 5, step2: 4, step3: 3, sent: 2, fit: 1 }),
+      JSON.stringify(zh0.n));
+    ok('Sunday 23:59:59 Bangkok counts in the week before', JSON.stringify(zh1.n) === JSON.stringify({ view: 1, step2: 0, step3: 0, sent: 1, fit: 0 }),
+      JSON.stringify(zh1.n));
+    ok('the oldest week starts on its Monday 00:00; the Sunday before is not shown', zh7.n.view === 1
+      && zh7.bySrc.length === 1 && zh7.bySrc[0].src === 'wk-old' && !pg('in-depth-zh').weeks.some(x => x.bySrc.some(s => s.src === 'wk-older')),
+      JSON.stringify(zh7));
+    const art = zh0.bySrc.find(x => x.src === 'wk-article'), reel = zh0.bySrc.find(x => x.src === 'wk-reel');
+    ok('a week splits by source, biggest first', zh0.bySrc[0].src === 'wk-reel' && reel && JSON.stringify(reel.n) === JSON.stringify({ view: 3, step2: 2, step3: 1, sent: 1, fit: 0 })
+      && art && JSON.stringify(art.n) === JSON.stringify({ view: 1, step2: 1, step3: 1, sent: 1, fit: 1 }), JSON.stringify(zh0.bySrc));
+    const tTeacher = zh0.byTag.find(x => x.tag === 'teacher'), tNone = zh0.byTag.find(x => x.tag === null);
+    ok('...and by headline tag, with no tag as null', tTeacher && JSON.stringify(tTeacher.n) === JSON.stringify({ view: 3, step2: 3, step3: 3, sent: 2, fit: 1 })
+      && tNone && JSON.stringify(tNone.n) === JSON.stringify({ view: 2, step2: 1, step3: 0, sent: 0, fit: 0 }), JSON.stringify(zh0.byTag));
+    ok('the English page has its own block', pg('in-depth-en').weeks[0].bySrc.some(x => x.src === 'wk-en' && x.n.view === 1)
+      && pg('in-depth-en').weeks[0].byTag.some(x => x.tag === 'practice' && x.n.view === 1) && !pg('in-depth-zh').weeks[0].bySrc.some(x => x.src === 'wk-en'));
+    const ws = pg('start').weeks[0].bySrc.find(x => x.src === 'wk-start');
+    ok('/start by week: views, taps and its ladder, every done door as one', ws
+      && JSON.stringify(ws.n) === JSON.stringify({ view: 2, tap: 1, q1: 1, q2: 1, q3: 1, done: 2 }), JSON.stringify(ws));
+    ok('...not the letter box taps', !pg('start').weeks.some(x => x.bySrc.some(s => s.src === 'letter')));
+    ok('the real fit rule comes with the numbers', wb.fitRule && wb.fitRule.mornings === 4 && wb.fitRule.years === 2 && wb.fitRule.dates === 'yes');
+    const wtext = JSON.stringify(wb);
+    ok('the weekly answer holds counts only: no name, email, member code or address', !/@|example|member|"ip"|code/i.test(wtext), wtext.slice(0, 200));
+
+    // Review fixes (18 Nov 2026): no-kind bodies, tags, contact-looking sources, crawlers, a cap per address.
+    const { REAL_FIT_ID } = require('../inbox.js');
+    const evN = async () => (await pool.query(`SELECT count(*)::int AS n FROM bkk_start_events`)).rows[0].n;
+    let n0 = await evN();
+    for (const [what, r] of [['an empty body', await post('/api/bkk/start-event', {})],
+      ['page null and no kind', await post('/api/bkk/start-event', { page: null, src: 'nokind' })],
+      ['a /start body with no kind', await post('/api/bkk/start-event', { src: 'nokind', lang: 'en' })],
+      ['a body that is not JSON', await J('/api/bkk/start-event', { method: 'POST', headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ page: 'in-depth-zh', kind: 'step3' }) })]]) {
+      ok(`${what} is not a visit → 400`, r.status === 400 && r.body.error === 'kind', JSON.stringify(r));
+    }
+    ok('...and none of those is stored as a /start view', await evN() === n0);
+    await post('/api/bkk/start-event', { page: 'in-depth-zh', kind: 'view', src: 'tag-test', tag: 'Anything' });
+    await post('/api/bkk/start-event', { page: 'in-depth-zh', kind: 'view', src: 'tag-test', tag: 'Room' });
+    await post('/api/bkk/start-event', { kind: 'view', src: 'tag-test', tag: 'teacher' });
+    ok('a tag is one of the three headlines or none, and /start has none', (await evRows('tag-test')).map(e => `${e.page}:${e.tag}`).join()
+      === 'in-depth-zh:null,in-depth-zh:room,start:null', JSON.stringify(await evRows('tag-test')));
+    for (const src of ['ana@example.com', 'wa +66 81 234 5678', 'line-081-234-5678']) {
+      await post('/api/bkk/start-event', { page: 'in-depth-en', kind: 'view', src, tag: 'practice' });
+    }
+    await post('/api/bkk/start-event', { page: 'in-depth-en', kind: 'view', src: 'Reel-2026-11-18', tag: 'practice' });
+    ok('a source that looks like an email or a phone number is dropped; a dated post code is kept',
+      JSON.stringify((await pool.query(`SELECT src FROM bkk_start_events WHERE tag='practice' AND page='in-depth-en' AND id > (SELECT max(id) - 4 FROM bkk_start_events) ORDER BY id`)).rows.map(r => r.src))
+      === '[null,null,null,"reel-2026-11-18"]');
+    n0 = await evN();
+    for (const ua of ['Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)', 'Mozilla/5.0 (Linux; Android 10) HeadlessChrome/120.0',
+      'Mozilla/5.0 (compatible; Baiduspider/2.0)', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 Mobile Safari/537.36 (compatible; Bytespider)']) {
+      const r = await post('/api/bkk/start-event', { page: 'in-depth-zh', kind: 'view', src: 'bot-test' }, { 'User-Agent': ua });
+      ok(`a crawler is not counted (${ua.slice(25, 45)}) → 204`, r.status === 204, JSON.stringify(r));
+    }
+    ok('...and nothing is stored for them', await evN() === n0);
+    for (const ua of ['Mozilla/5.0 (Linux; Android 10; CUBOT X30) AppleWebKit/537.36 Chrome/120.0 Mobile Safari/537.36',
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 MicroMessenger/8.0.40 NetType/WIFI Language/zh_CN']) {
+      ok(`a phone is counted (${ua.includes('CUBOT') ? 'Cubot' : 'WeChat'})`, (await post('/api/bkk/start-event', { page: 'in-depth-zh', kind: 'view', src: 'phone-test' },
+        { 'User-Agent': ua })).status === 200);
+    }
+    const codes = {};
+    for (let b = 0; b < 7; b++) await Promise.all(Array.from({ length: 50 }, () => post('/api/bkk/start-event',
+      { page: 'in-depth-en', kind: 'view', src: 'cap-test' }, { 'X-Forwarded-For': '10.20.30.40' }).then(r => { codes[r.status] = (codes[r.status] || 0) + 1; })));
+    ok('one address counts 300 an hour, then 429', codes[200] === 300 && codes[429] === 50 && (await evRows('cap-test')).length === 300, JSON.stringify(codes));
+    ok('...another address still counts', (await post('/api/bkk/start-event', { page: 'in-depth-en', kind: 'view', src: 'cap-test2' },
+      { 'X-Forwarded-For': '10.20.30.41' })).status === 200);
+    await pool.query(`DELETE FROM bkk_start_events WHERE src IN ('cap-test', 'cap-test2', 'phone-test', 'tag-test')
+      OR (tag = 'practice' AND page = 'in-depth-en' AND src IS DISTINCT FROM 'wk-en')`);
+
+    // A week with more sources than the split shows: the rest is one "other" row, so the split adds up.
+    for (let i = 0; i < 33; i++) await put('in-depth-en', 'view', `many-${String(i).padStart(2, '0')}`, null, at(0, '11:00:00'));
+    await put('in-depth-en', 'sent', 'many-32', null, at(0, '11:00:00'), REAL_FIT_ID);
+    // A sent row counted under an earlier rule marks its week; the rule in force does not.
+    await put('in-depth-zh', 'sent', 'wk-article', null, at(-14, '09:00:00'), 'r00000000');
+    await put('in-depth-zh', 'fit', 'wk-article', null, at(0, '09:00:00'), REAL_FIT_ID);
+    const w2 = (await J('/api/bkk/admin/landing-weeks', { headers: ADMIN })).body;
+    const en0 = w2.pages.find(p => p.page === 'in-depth-en').weeks[0], zhW = w2.pages.find(p => p.page === 'in-depth-zh').weeks;
+    const sumBy = (list, c) => list.reduce((s, x) => s + x.n[c], 0);
+    ok('a split keeps the 30 biggest and puts the rest in one "other" row', en0.bySrc.length === 31 && en0.bySrc[30].other === true
+      && !('src' in en0.bySrc[30]) && en0.bySrc.slice(0, 30).every(x => !x.other), JSON.stringify(en0.bySrc.slice(-2)));
+    ok('...so the split adds up to the week, for every number', en0.n.view === pg('in-depth-en').weeks[0].n.view + 33 && ['view', 'step2', 'sent']
+      .every(c => sumBy(en0.bySrc, c) === en0.n[c] && sumBy(en0.byTag, c) === en0.n[c]), JSON.stringify(en0.n));
+    ok('a week counted under an earlier real-fit rule is marked; this week is not', zhW[2].olderRule === true && zhW[0].olderRule === false
+      && zhW[1].olderRule === false && w2.fitRuleId === REAL_FIT_ID, JSON.stringify(zhW.map(w => w.olderRule)));
+    await pool.query(`DELETE FROM bkk_start_events WHERE src LIKE 'many-%' OR ch IN ('r00000000', $1)`, [REAL_FIT_ID]);
+    // The letter box's own tests below count its taps.
+    await pool.query(`DELETE FROM bkk_start_events WHERE src='letter'`);
+  }
+
   console.log('\n— 12-week proof check —');
   const ck = (await quickAdd({ name: 'Check Person', email: 'check.person@example.com' }, PKEY)).code;
   ok('a check needs at least one number', (await post(`/api/bkk/me/${ck}/checks`, { note: 'hi' })).status === 400);
