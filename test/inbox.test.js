@@ -296,7 +296,7 @@ const alerts = [];
   await fails(good({ years: '61' }), 400, 'years', '61 years → 400');
   for (const k of ['contact', 'why', 'stuck']) await fails(good({ [k]: '  ' }), 400, k, `an empty ${k} → 400`);
   await fails(good({ primary: 'not_yet' }), 422, 'primary', 'no experience with the full Primary Series yet → 422, below the bar');
-  await fails(good({ rooms: 'not_yet' }), 422, 'rooms', 'never in a Mysore class yet → 422');
+  await fails(good({ rooms: 'not_yet' }), 422, 'rooms', 'not yet in a Mysore class → 422');
   await fails(good({ dates: 'no' }), 422, 'dates', 'cannot come all 30 days → 422');
   const noDates = good(); delete noDates.dates;
   await fails(noDates, 400, 'dates', 'Generation #3 without the dates answer → 400');
