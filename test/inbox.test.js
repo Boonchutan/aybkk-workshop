@@ -767,7 +767,7 @@ const alerts = [];
   ok('and a newer link still replaces it', ar.status === 200 && zLi2.tries === 3 && zLi2.video === 'https://youtu.be/li-new' &&
     zLi2.video_by === 'link', JSON.stringify(zLi2).slice(0, 200));
 
-  console.log('\n— where an application came from, and real fit —');
+  console.log('\n-- where an application came from, and real fit --');
   await pool.query(`UPDATE aybkk_inbox SET created_at = created_at - interval '25 hours',
     alerted_at = alerted_at - interval '25 hours' WHERE channel='apply'`);
   ok('the real fit rule is one named constant', JSON.stringify(REAL_FIT) === JSON.stringify({ primary: 'yes', rooms: 'yes', dates: 'yes', mornings: 4, years: 2 }));

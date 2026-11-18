@@ -1489,7 +1489,7 @@ const ok = (name, cond, extra = '') => {
   const st2 = (await J('/api/bkk/admin/start-stats', { headers: ADMIN })).body.sources.find(x => x.src === 'reel-sleep1');
   ok('ladder steps do not change the views and taps report', st2 && st2.views === 4 && st2.taps === 1, JSON.stringify(st2));
 
-  console.log('\n— In-Depth page counts, and landing pages by week —');
+  console.log('\n-- In-Depth page counts, and landing pages by week --');
   {
     const evRows = async src => (await pool.query(`SELECT page, kind, src, tag, lang, ch FROM bkk_start_events WHERE src=$1 ORDER BY id`, [src])).rows;
     for (const kind of ['view', 'step2', 'step3']) {
