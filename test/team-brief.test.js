@@ -324,38 +324,43 @@ const fakeDriver = { session: () => ({
   ok('preview builds the brief and does not send it', m.status === 200 && pushes().length === sentBefore
      && m.body.kind === 'morning' && m.body.date === D && m.body.lang === 'th');
   ok('Thai by default, with the day', mt.startsWith('☀️ บรีฟเช้า อ. 10 พ.ย.'), mt.split('\n')[0]);
-  ok('each class in time order: time, class, teacher, how many booked, and the names',
-     mt.includes('05:30 Mysore (1st batch) · ครู Boonchu · จอง 3\nAnna B., Rex R., Tom H.')
-     && mt.includes('07:30 Mysore (2nd batch) · ครู Boonchu · จอง 1\nChai D.')
-     && mt.indexOf('05:30 Mysore') < mt.indexOf('07:30 Mysore'));
-  ok('NEW: first class ever today, and a first pass bought this week by someone who has not come yet',
-     mt.includes('🌱 นักเรียนใหม่ ช่วยกันต้อนรับ\n• Chai D. มาครั้งแรก 07:30\n• Mali S. ซื้อ 1 month unlimited เมื่อ ศ. 6 พ.ย. ยังไม่เช็กอินใน aybkk.net ยังไม่มีการจองใน aybkk.net'));
-  ok('...but not a student who came before, or one moved over from Rezerv', !/Anna B\. มาครั้งแรก|Tom H\. มาครั้งแรก|Rex R\. มาครั้งแรก/.test(mt));
+  ok('each shala class in time order: its own short section with the teacher, how many booked, who is new, mats',
+     mt.includes('\n\n🧘 05:30 Mysore (1st batch) · ครู Boonchu\nจอง 3 คน\nสัปดาห์แรก 1: Anna B.\nเช่าเสื่อ 1 (฿200 รวม VAT จ่ายที่ชาลา): Anna B.\n\n')
+     && mt.includes('\n\n🧘 07:30 Mysore (2nd batch) · ครู Boonchu\nจอง 1 คน\nมาครั้งแรกวันนี้ 1: Chai D.\n\n')
+     && mt.indexOf('05:30 Mysore') < mt.indexOf('07:30 Mysore'), mt);
+  ok('...the count only: the full list of names booked is gone', !mt.includes('Rex R.') && !/Tom H\.(?! จอง 05:30)/.test(mt));
+  ok('BOUGHT, NOT HERE YET: a first pass bought this week by someone who has not come, under its own header',
+     mt.includes('🛒 ซื้อแล้ว ยังไม่เคยมา\n• Mali S. ซื้อ 1 month unlimited เมื่อ ศ. 6 พ.ย. ยังไม่เช็กอินใน aybkk.net ยังไม่มีการจองใน aybkk.net') && !mt.includes('🌱'));
+  ok('...first time and first week never a student who came before the week, or one moved over from Rezerv',
+     !/(มาครั้งแรกวันนี้|สัปดาห์แรก) \d+: .*(Tom H\.|Rex R\.)/.test(mt));
   ok('ENDING SOON: a pass ending within 7 days and a credit pass with 2 or fewer classes, with the end date',
      mt.includes('⏳ ใกล้หมด ชวนคุยเรื่องต่อแพ็กเกจ\n• Anna B. 3 months unlimited หมด ส. 14 พ.ย.\n• Ploy W. 8 classes / 2 months เหลือ 1 ครั้ง ใช้ได้ถึง อ. 1 ธ.ค.'));
   ok('...not someone who already renewed, or who has not come for over 30 days', !mt.includes('Zoe R.') && !mt.includes('Gus G.'));
   ok('NOT PAID: an online order pending from the last 3 days, and a booking today with no valid pass',
      mt.includes(`💳 ยังไม่จ่าย ช่วยตามเก็บเงิน\n• Kim L. สั่ง 3 months unlimited ฿26,412 ยังไม่ได้จ่าย (สั่ง จ. 9 พ.ย., ref ${kimRef})\n• Tom H. จอง 05:30 แต่แพ็กเกจถูกยกเลิกแล้ว`));
   ok('...not an older order, one the student paid since, or a Rezerv seat', !mt.includes('Sam O.') && !mt.includes('Nina P.') && !/Rex R\. จอง/.test(mt));
-  ok('NEEDS A MAT: who ticked it, by class, and staff collect ฿200 (VAT included, nothing added)',
-     mt.includes('🧘 เตรียมเสื่อให้ (เก็บ ฿200)\n• 05:30 Anna B.') && !/VAT|฿214/.test(mt));
+  ok('MATS: in the class, ฿200 with VAT included, paid at the shala; the old day-level mat section is gone',
+     mt.includes('เช่าเสื่อ 1 (฿200 รวม VAT จ่ายที่ชาลา): Anna B.') && !mt.includes('เตรียมเสื่อ') && !/฿214/.test(mt));
   ok('class and package names stay in the original English in the Thai brief', !/มายซอร์|รอบแรก|ไม่จำกัด|ครั้ง \/ 1 เดือน/.test(mt), mt);
-  ok('one closing line with the totals', mt.trim().split('\n').at(-1) === 'รวม 2 คลาส · จอง 4 · ใหม่ 2 · ใกล้หมด 2 · ยังไม่จ่าย 2 · เสื่อ 1', mt.trim().split('\n').at(-1));
+  ok('one closing line with the shala totals', mt.trim().split('\n').at(-1)
+     === 'รวม 2 คลาส · จอง 4 · ดรอปอิน 0 · ครั้งแรก 1 · สัปดาห์แรก 1 · เสื่อ 1 · ใกล้หมด 2 · ยังไม่จ่าย 2', mt.trim().split('\n').at(-1));
+  ok('no online section on a day with no online class', !mt.includes('💻'));
   ok('never an email, a phone number or a member code', !/@|0899000|BTEAM/.test(mt));
   ok('no em dash anywhere', !/—/.test(mt));
 
   const me = await get(`/api/bkk/admin/team/preview?kind=morning&date=${D}&lang=en`);
   const met = me.body.text || '';
-  ok('English when asked', met.startsWith('☀️ Teaching brief Tue 10 Nov') && met.includes('05:30 Mysore (1st batch) · Boonchu · 3 booked')
-     && met.includes('• Chai D., first class today at 07:30') && met.includes('• Anna B.: 3 months unlimited, ends Sat 14 Nov')
+  ok('English when asked', met.startsWith('☀️ Teaching brief Tue 10 Nov')
+     && met.includes('🧘 05:30 Mysore (1st batch) · Boonchu\n3 booked\nFirst week 1: Anna B.\nMat rental 1 (฿200 incl. VAT, paid at the shala): Anna B.')
+     && met.includes('🧘 07:30 Mysore (2nd batch) · Boonchu\n1 booked\nFirst class today 1: Chai D.')
+     && met.includes('🛒 Bought, not here yet\n• Mali S. bought 1 month unlimited') && met.includes('• Anna B.: 3 months unlimited, ends Sat 14 Nov')
      && met.includes('💳 Not paid, please collect\n') && met.includes('• Tom H.: booked 05:30 but the pass was voided')
-     && met.includes('🧘 Have a mat ready (collect ฿200 each)\n• 05:30 Anna B.')
-     && met.trim().endsWith('Total: 2 classes · 4 booked · 2 new · 2 ending · 2 not paid · 1 mat'), met);
+     && met.trim().endsWith('Total: 2 classes · 4 booked · 0 drop-in · 1 first time · 1 first week · 1 mat · 2 ending · 2 not paid'), met);
 
   const sat = (await get('/api/bkk/admin/team/preview?kind=morning&date=2026-11-14')).body.text || '';
-  ok('Saturday in Thai: Led and [Online] class titles exactly as on the timetable, the rotating teacher as stored',
-     sat.includes('\n07:00 Led Primary series · ครู Jamsai · จอง 0\n') && sat.includes('\n07:00 [Online] Led Primary series · ครู Jamsai · จอง 0\n')
-     && sat.includes('\n08:45 Led Intermediate series · ครู Boonchu · จอง 0\n') && sat.includes('\n09:00 [Online] Led Intermediate series · ครู Boonchu · จอง 0'), sat);
+  ok('Saturday in Thai: Led and [Online] class titles exactly as on the timetable, the rotating teacher as stored, online apart',
+     sat.includes('\n🧘 07:00 Led Primary series · ครู Jamsai\nจอง 0 คน\n') && sat.includes('\n🧘 08:45 Led Intermediate series · ครู Boonchu\nจอง 0 คน\n')
+     && sat.includes('\n💻 ออนไลน์ (Zoom)\n07:00 [Online] Led Primary series · จอง 0\n09:00 [Online] Led Intermediate series · จอง 0\n'), sat);
 
   const moon = await get('/api/bkk/admin/team/preview?kind=morning&date=2026-11-09');
   ok('moon day: one line saying the shala is closed and why, then stop',
@@ -548,10 +553,10 @@ const fakeDriver = { session: () => ({
   await team.tick(bkkAt('2026-11-13T05:02:00'));
   ok('...and then not again', pushes().length === countNow);
   lineMode = '400';
-  await team.tick(bkkAt('2026-11-14T05:00:00'));
+  await team.tick(bkkAt('2026-11-14T06:00:00'));   // a Saturday: 06:00
   lineMode = 'ok';
   const after400 = pushes().length;
-  await team.tick(bkkAt('2026-11-14T05:01:00'));
+  await team.tick(bkkAt('2026-11-14T06:01:00'));
   ok('a LINE refusal (400) is not tried again that day', pushes().length === after400
      && (await setting('team_brief_sent_morning_2026-11-14')).state === 'failed');
 
@@ -570,9 +575,9 @@ const fakeDriver = { session: () => ({
   const forDay = (list, d) => list.filter(p => p.body.messages[0].text.split('\n')[0].includes(d));
   clock = bkkAt('2026-11-16T04:58:00');
   const early16 = await post('/api/bkk/admin/team/brief', { kind: 'morning' });
-  clock = bkkAt('2026-11-16T05:00:00');
+  clock = bkkAt('2026-11-16T05:30:00');   // a Monday: 05:30
   const tick16 = await team.tick(clock);
-  ok('a morning brief sent by hand at 04:58 is the day\'s brief: 05:00 does not send another', early16.status === 200
+  ok('a morning brief sent by hand at 04:58 is the day\'s brief: 05:30 does not send another', early16.status === 200
      && tick16[0].skipped === 'already' && forDay(morningPushes(), ' 16 พ.ย.').length === 1, JSON.stringify([early16.body, tick16]));
   clock = bkkAt('2026-11-16T15:12:00');
   const sofar = await post('/api/bkk/admin/team/brief', { kind: 'evening' });
@@ -598,6 +603,153 @@ const fakeDriver = { session: () => ({
      && (await setting('team_brief_sent_morning_2026-11-17')).state === 'sent'
      && forDay(morningPushes(), ' 17 พ.ย.').length === 2,   // the one tried while LINE was down, and the one by hand
      JSON.stringify([down17, hand17.body, tick17]));
+
+  console.log('\n# the morning brief by class: Thu 19, Fri 20, Sat 21, Mon 23 Nov (made-up people)');
+  const ana = await member('Ana Example', { email: 'ana.example@example.com' });
+  const anaDrop = await pass(ana, 'dropin', { from: '2026-11-19', until: '2026-11-20', used: 1, created: '2026-11-18T20:00:00+07:00' });
+  await seat(ana, 'my530_4', '2026-11-19', { pass: anaDrop, mat: true, in: '2026-11-19T05:29:00+07:00' });
+  const anaPack = await pass(ana, 'pack8', { from: '2026-11-21', until: '2027-01-20', used: 3, created: '2026-11-19T08:00:00+07:00' });
+  await seat(ana, 'lp_sat_6', '2026-11-21', { pass: anaPack, mat: true, in: '2026-11-21T06:55:00+07:00' });
+  await seat(ana, 'li_sat_6', '2026-11-21', { pass: anaPack, in: '2026-11-21T08:40:00+07:00' });
+  await seat(ana, 'lp_mon_1', '2026-11-23', { pass: anaPack });
+  const wang = await member('王小明', { email: 'wang.xm@example.com' });
+  const wangPass = await pass(wang, 'unlim1', { from: '2026-11-16', until: '2026-12-16', created: '2026-11-15T09:00:00+07:00' });
+  await seat(wang, 'lp_mon_1', '2026-11-16', { pass: wangPass, in: '2026-11-16T06:31:00+07:00' });
+  await seat(wang, 'my530_4', '2026-11-19', { pass: wangPass });
+  await seat(wang, 'my730_4', '2026-11-19', { pass: wangPass });
+  await seat(wang, 'li_sat_6', '2026-11-21', { pass: wangPass, in: '2026-11-21T08:41:00+07:00' });
+  await seat(wang, 'olp_mon_1', '2026-11-23', { pass: wangPass });
+  // Moved over from Rezerv, first visit on aybkk.net two days ago, on a class Rezerv gave back (a Drop-in pass): never new, never a drop-in.
+  const rosa = await member('Rosa Example');
+  const rosaPass = await pass(rosa, 'unlim1', { from: '2026-11-01', until: '2026-12-01', source: 'rezerv', created: '2026-11-16T09:00:00+07:00' });
+  await seat(rosa, 'my530_3', '2026-11-17', { pass: rosaPass, in: '2026-11-17T05:30:00+07:00' });
+  const rosaBack = await pass(rosa, 'dropin', { source: 'rezerv', created: '2026-11-16T09:00:00+07:00' });
+  await pool.query(`UPDATE bkk_passes SET note='moved from Rezerv; a class Rezerv gave back' WHERE id=$1`, [rosaBack]);
+  await seat(rosa, 'my530_4', '2026-11-19', { pass: rosaBack });
+  // Joined 10 days ago, first came 8 days ago: past the first week.
+  const tess = await member('Tess Example', { joined: '2026-11-09' });
+  const tessPass = await pass(tess, 'unlim1', { from: '2026-11-11', until: '2026-12-11', created: '2026-11-09T09:00:00+07:00' });
+  await seat(tess, 'my530_3', '2026-11-11', { pass: tessPass, in: '2026-11-11T05:30:00+07:00' });
+  await seat(tess, 'my730_4', '2026-11-19', { pass: tessPass });
+  const ben = await member('Ben Example');
+  const benPass = await pass(ben, 'unlim3', { from: '2026-10-06', until: '2027-01-04', created: '2026-10-05T09:00:00+07:00' });
+  await seat(ben, 'my730_2', '2026-10-06', { pass: benPass, in: '2026-10-06T07:30:00+07:00' });
+  await seat(ben, 'my730_4', '2026-11-19', { pass: benPass, mat: true });
+  await seat(ben, 'li_sat_6', '2026-11-21', { pass: benPass });
+  await seat(ben, 'my530_5', '2026-11-20', { pass: benPass });
+  await seat(ben, 'my730_5', '2026-11-20', { pass: benPass });
+  // The walk-in a teacher sold at the desk: a Drop-in pass, first class ever.
+  const leo = await member('Leo Example');
+  const leoDrop = await pass(leo, 'dropin', { from: '2026-11-19', until: '2026-11-20', used: 1, created: '2026-11-19T07:20:00+07:00' });
+  await seat(leo, 'my730_4', '2026-11-19', { pass: leoDrop, source: 'door', in: '2026-11-19T07:21:00+07:00' });
+  const nora = await member('Nora Example');
+  await seat(nora, 'my730_4', '2026-11-19', {});
+  const mia = await member('Mia Example');
+  const miaDrop = await pass(mia, 'dropin', { from: '2026-11-21', until: '2026-11-22', used: 1, created: '2026-11-20T18:00:00+07:00' });
+  await seat(mia, 'lp_sat_6', '2026-11-21', { pass: miaDrop, mat: true, in: '2026-11-21T06:58:00+07:00' });
+  // Online only: Zoom students are counted, never named.
+  const olga = await member('Olga Example');
+  const olgaPass = await pass(olga, 'unlim1', { from: '2026-11-21', until: '2026-12-21', created: '2026-11-20T09:00:00+07:00' });
+  await seat(olga, 'olp_sat_6', '2026-11-21', { pass: olgaPass });
+  await seat(olga, 'olp_mon_1', '2026-11-23', { pass: olgaPass });
+  await pool.query(`INSERT INTO bkk_class_overrides (slot_id,class_date,cancelled,note) VALUES ($1,'2026-11-20',true,'teacher away')`, [(await slot('my730_5')).id]);
+  await pool.query(`INSERT INTO bkk_class_overrides (slot_id,class_date,cancelled,note) VALUES ($1,'2026-11-23',true,'Zoom training')`, [(await slot('olp_mon_1')).id]);
+  const brief = async (d, lang = 'th') => (await get(`/api/bkk/admin/team/preview?kind=morning&date=${d}&lang=${lang}`)).body.text || '';
+  const section = (t, head) => t.split('\n\n').find(x => x.startsWith(head)) || '';
+  const tu19 = await brief('2026-11-19');
+  console.log(tu19.split('\n').map(l => '      | ' + l).join('\n'));
+  const c530 = section(tu19, '🧘 05:30 '), c730 = section(tu19, '🧘 07:30 ');
+  ok('Thursday: each Mysore batch has its own block, the booked count, then only the lines that have someone',
+     c530.split('\n')[1] === 'จอง 3 คน' && c730.split('\n')[1] === 'จอง 5 คน' && tu19.indexOf(c530) < tu19.indexOf(c730), JSON.stringify([c530, c730]));
+  ok('DROP-IN: a seat on a pass of the Drop-in product (bought online, or sold at the desk), per class',
+     c530.includes('\nดรอปอิน 1: Ana E.') && c730.includes('\nดรอปอิน 1: Leo E.'), JSON.stringify([c530, c730]));
+  ok('...never a class Rezerv gave back, though it is imported as a Drop-in pass', !/ดรอปอิน[^\n]*Rosa/.test(tu19));
+  ok('FIRST TIME: first class ever today', c530.includes('\nมาครั้งแรกวันนี้ 1: Ana E.') && c730.includes('\nมาครั้งแรกวันนี้ 2: Leo E., Nora E.'), JSON.stringify([c530, c730]));
+  ok('FIRST WEEK: came before, first visit in the last 7 days; booked twice today, listed under the first class only',
+     c530.includes('\nสัปดาห์แรก 1: 王小明') && !c730.includes('สัปดาห์แรก'), JSON.stringify([c530, c730]));
+  ok('...never a student from Rezerv, or one who joined 10 days ago', !/Rosa E\.|Tess E\./.test(tu19), tu19);
+  ok('MATS: per seat, ฿200 including VAT, paid at the shala', c530.endsWith('\nเช่าเสื่อ 1 (฿200 รวม VAT จ่ายที่ชาลา): Ana E.')
+     && c730.endsWith('\nเช่าเสื่อ 1 (฿200 รวม VAT จ่ายที่ชาลา): Ben E.'), JSON.stringify([c530, c730]));
+  ok('...a class block in this order: header, booked, drop-in, first time, first week, mats',
+     c530 === '🧘 05:30 Mysore (1st batch) · ครู M\nจอง 3 คน\nดรอปอิน 1: Ana E.\nมาครั้งแรกวันนี้ 1: Ana E.\nสัปดาห์แรก 1: 王小明\nเช่าเสื่อ 1 (฿200 รวม VAT จ่ายที่ชาลา): Ana E.', c530);
+  ok('...the seat with no pass is still in not paid', tu19.includes('💳 ยังไม่จ่าย ช่วยตามเก็บเงิน\n• Nora E. จอง 07:30 แต่ยังไม่มีแพ็กเกจ'), tu19);
+  ok('...and the total counts shala classes, first time and first week once per person',
+     tu19.trim().split('\n').at(-1) === 'รวม 2 คลาส · จอง 8 · ดรอปอิน 2 · ครั้งแรก 3 · สัปดาห์แรก 1 · เสื่อ 2 · ใกล้หมด 1 · ยังไม่จ่าย 1', tu19.trim().split('\n').at(-1));
+  const fr20 = await brief('2026-11-20');
+  ok('a cancelled class keeps its cancelled line, the other class its block', fr20.includes('\n\n07:30 Mysore (2nd batch) · ยกเลิก (teacher away)')
+     && section(fr20, '🧘 05:30 ').split('\n')[1] === 'จอง 1 คน' && fr20.trim().endsWith('รวม 1 คลาส · จอง 1 · ดรอปอิน 0 · ครั้งแรก 0 · สัปดาห์แรก 0 · เสื่อ 0 · ใกล้หมด 1 · ยังไม่จ่าย 0'), fr20);
+  const sa21 = await brief('2026-11-21');
+  console.log(sa21.split('\n').map(l => '      | ' + l).join('\n'));
+  const lp = section(sa21, '🧘 07:00 Led Primary'), li = section(sa21, '🧘 08:45 Led Intermediate');
+  ok('Saturday: one brief, Led Primary and Led Intermediate each with their own details',
+     lp.startsWith('🧘 07:00 Led Primary series · ครู ') && lp.includes('\nจอง 2 คน\nดรอปอิน 1: Mia E.\nมาครั้งแรกวันนี้ 1: Mia E.\nสัปดาห์แรก 1: Ana E.\nเช่าเสื่อ 2 (฿200 รวม VAT จ่ายที่ชาลา): Ana E., Mia E.')
+     && li === '🧘 08:45 Led Intermediate series · ครู Boonchu\nจอง 3 คน\nสัปดาห์แรก 1: 王小明', JSON.stringify([lp, li]));
+  ok('...online classes kept apart after them: a count each, no names, no mats',
+     section(sa21, '💻') === '💻 ออนไลน์ (Zoom)\n07:00 [Online] Led Primary series · จอง 1\n09:00 [Online] Led Intermediate series · จอง 0'
+     && sa21.indexOf('💻') > sa21.indexOf('🧘 08:45') && !sa21.includes('Olga'), sa21);
+  ok('...and the total is the shala only', sa21.trim().endsWith('รวม 2 คลาส · จอง 5 · ดรอปอิน 1 · ครั้งแรก 1 · สัปดาห์แรก 2 · เสื่อ 2 · ใกล้หมด 1 · ยังไม่จ่าย 0'), sa21.trim().split('\n').at(-1));
+  const sa21en = await brief('2026-11-21', 'en');
+  ok('...in English in step', section(sa21en, '🧘 08:45 ') === '🧘 08:45 Led Intermediate series · Boonchu\n3 booked\nFirst week 1: 王小明'
+     && section(sa21en, '🧘 07:00 ').includes('\n2 booked\nDrop-in 1: Mia E.\nFirst class today 1: Mia E.\nFirst week 1: Ana E.\nMat rental 2 (฿200 incl. VAT, paid at the shala): Ana E., Mia E.')
+     && section(sa21en, '💻') === '💻 Online (Zoom)\n07:00 [Online] Led Primary series · 1 booked\n09:00 [Online] Led Intermediate series · 0 booked'
+     && sa21en.trim().endsWith('Total: 2 classes · 5 booked · 1 drop-in · 1 first time · 2 first week · 2 mats · 1 ending · 0 not paid'), sa21en);
+  const mo23 = await brief('2026-11-23');
+  console.log(mo23.split('\n').map(l => '      | ' + l).join('\n'));
+  ok('Monday: Led Primary in the shala, and a cancelled online class says so', section(mo23, '🧘 06:30 ') === '🧘 06:30 Led Primary series · ครู Boonchu\nจอง 1 คน\nสัปดาห์แรก 1: Ana E.'
+     && section(mo23, '💻') === '💻 ออนไลน์ (Zoom)\n06:30 [Online] Led Primary series · ยกเลิก (Zoom training)', mo23);
+  const every = [tu19, fr20, sa21, sa21en, mo23].join('\n');
+  ok('never an email, a phone number or a member code in any of them, and no em dash', !/@|example\.com|0899000|BTEAM|\u2014/.test(every));
+
+  console.log('\n# the morning send time by weekday');
+  const nextAt = async at => { clock = bkkAt(at); return (await get('/api/bkk/admin/team/status')).body.briefs; };
+  const nexts = [];
+  for (const [at, want, hhmm] of [['2026-11-19T04:00:00', '2026-11-19T05:00:00', '05:00'], ['2026-11-19T05:00:00', '2026-11-20T05:00:00', '05:00'],
+    ['2026-11-20T05:01:00', '2026-11-21T06:00:00', '06:00'], ['2026-11-21T05:30:00', '2026-11-21T06:00:00', '06:00'],
+    ['2026-11-21T06:00:00', '2026-11-22T06:00:00', '06:00'], ['2026-11-22T06:30:00', '2026-11-23T05:30:00', '05:30'],
+    ['2026-11-23T05:00:00', '2026-11-23T05:30:00', '05:30'], ['2026-11-23T05:31:00', '2026-11-24T05:00:00', '05:00']]) {
+    const b = await nextAt(at);
+    nexts.push([at, b.next.morning, b.at.morning]);
+    if (b.next.morning !== new Date(bkkAt(want)).toISOString() || b.at.morning !== hhmm) nexts.push('WRONG');
+  }
+  ok('status says when the next morning brief really goes, on each weekday (and the evening stays 20:00)', !nexts.includes('WRONG')
+     && (await nextAt('2026-11-22T06:30:00')).at.evening === '20:00', JSON.stringify(nexts));
+  const forDate = d => morningPushes().filter(p => p.body.messages[0].text.split('\n')[0].endsWith(d));
+  const moonMon = [await team.tick(bkkAt('2026-11-09T05:00:00')), await team.tick(bkkAt('2026-11-09T05:29:00'))];
+  clock = bkkAt('2026-11-09T05:30:00');
+  const moonMon2 = await team.tick(clock);
+  ok('Monday: 05:00 sends nothing; 05:30 sends, a moon day with the shala closed text', moonMon.every(r => r.length === 0) && moonMon2.length === 1 && moonMon2[0].sent
+     && forDate('จ. 9 พ.ย.').length === 1 && forDate('จ. 9 พ.ย.')[0].body.messages[0].text === '☀️ บรีฟเช้า จ. 9 พ.ย.\nวันนี้ชาลาปิด วันพระจันทร์ดับ (moon day)',
+     JSON.stringify([moonMon, moonMon2]));
+  clock = bkkAt('2026-11-24T05:00:00');
+  const fullMoon = await team.tick(clock);
+  ok('a full moon Tuesday: the closed text at the Tuesday time, 05:00', fullMoon.length === 1 && fullMoon[0].sent
+     && forDate('อ. 24 พ.ย.')[0].body.messages[0].text === '☀️ บรีฟเช้า อ. 24 พ.ย.\nวันนี้ชาลาปิด วันพระจันทร์เต็มดวง (moon day)', JSON.stringify(fullMoon));
+  clock = bkkAt('2026-11-19T05:00:00');
+  const thu = await team.tick(clock);
+  ok('Thursday 05:00 sends the brief as built', thu.length === 1 && thu[0].sent && forDate('พฤ. 19 พ.ย.').length === 1
+     && forDate('พฤ. 19 พ.ย.')[0].body.messages[0].text === tu19, JSON.stringify(thu));
+  const satEarly = [await team.tick(bkkAt('2026-11-21T05:00:00')), await team.tick(bkkAt('2026-11-21T05:59:00'))];
+  clock = bkkAt('2026-11-21T06:00:00');
+  const satRun = await team.tick(clock);
+  const satPush = forDate('ส. 21 พ.ย.');
+  ok('Saturday: nothing before 06:00, then one push with both Led classes and the online section',
+     satEarly.every(r => r.length === 0) && satRun.length === 1 && satRun[0].sent && satPush.length === 1
+     && satPush[0].body.messages.length === 1 && satPush[0].body.messages[0].text === sa21, JSON.stringify([satEarly, satRun]));
+  const sunEarly = await team.tick(bkkAt('2026-11-22T05:00:00'));
+  clock = bkkAt('2026-11-22T06:00:00');
+  const sunRun = await team.tick(clock);
+  ok('Sunday: nothing at 05:00, the brief at 06:00', sunEarly.length === 0 && sunRun.length === 1 && sunRun[0].sent
+     && forDate('อา. 22 พ.ย.').length === 1 && forDate('อา. 22 พ.ย.')[0].body.messages[0].text.includes('🧘 07:00 Mysore Sunday'), JSON.stringify(sunRun));
+  const monEarly = await team.tick(bkkAt('2026-11-23T05:00:00'));
+  clock = bkkAt('2026-11-23T06:15:00');
+  const monLate = await team.tick(clock);
+  clock = bkkAt('2026-11-23T06:20:00');
+  const monAgain = await team.tick(clock);
+  ok('Monday 23: nothing at 05:00; a server back at 06:15 (late by under an hour) sends it once',
+     monEarly.length === 0 && monLate.length === 1 && monLate[0].sent && monAgain[0].skipped === 'already'
+     && forDate('จ. 23 พ.ย.').length === 1 && forDate('จ. 23 พ.ย.')[0].body.messages[0].text === mo23, JSON.stringify([monEarly, monLate, monAgain]));
+  ok('...and after it went, status says the next one is Tuesday 05:00', (await nextAt('2026-11-23T06:16:00')).next.morning
+     === new Date(bkkAt('2026-11-24T05:00:00')).toISOString());
 
   console.log('\n# the mat tick on bookings');
   const sch = (await get('/api/bkk/schedule?days=14')).body.classes || [];
@@ -637,6 +789,18 @@ const fakeDriver = { session: () => ({
   await post(`/api/bkk/admin/orders/${drop.body.order.id}/force-activate`, {});
   const inClass3 = await get(`/api/bkk/admin/class?slotId=${room.slotId}&date=${room.date}`);
   ok('a drop-in bought for the class carries the tick to its seat', inClass3.body.roster.some(r => r.name === 'Drop Mat' && r.needMat === true));
+  // The other way a drop-in is sold: at the desk or from the calendar (walk-in, cover dropin). Both book on a Drop-in pass.
+  const walk = await post('/api/bkk/admin/walkin', { cover: 'dropin', method: 'cash', slotId: room.slotId, date: room.date, checkIn: false,
+    name: 'Leo Walkin', email: 'leo.walkin@example.com' });
+  const walkSeat = (await pool.query(`SELECT b.cover, pr.code FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
+    JOIN bkk_passes p ON p.id=b.pass_id JOIN bkk_products pr ON pr.id=p.product_id WHERE m.name='Leo Walkin'`)).rows[0];
+  const roomAt = new Date(Date.parse(room.startAt) + 7 * 3600000).toISOString().slice(11, 16);
+  const roomText = (await get(`/api/bkk/admin/team/preview?kind=morning&date=${room.date}`)).body.text || '';
+  const roomBlock = roomText.split('\n\n').find(x => x.startsWith(`🧘 ${roomAt} ${room.title}`)) || '';
+  ok('the morning brief counts both as drop-ins in their class: the seat says cover pass, its pass is the Drop-in product',
+     walk.status === 200 && walk.body.cover === 'dropin' && walkSeat && walkSeat.cover === 'pass' && walkSeat.code === 'dropin'
+     && roomBlock.includes('\nดรอปอิน 2: Drop M., Leo W.') && roomBlock.includes('\nเช่าเสื่อ 1 (฿200 รวม VAT จ่ายที่ชาลา): Drop M.'),
+     JSON.stringify([walk.body, walkSeat, roomBlock]));
 
   // A far class booked first starts the pass window there; a nearer seat on
   // the same pass moves the start to it (same length), so both are paid for.

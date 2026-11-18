@@ -1,8 +1,11 @@
 // team-brief.js: the AYBKK help desk, a second LINE Official Account (internal,
 // free plan; not the student account LINE @aybkk) that posts to the teacher
 // team's LINE group:
-//   05:00 Bangkok  the teaching brief for today (who is booked, who is new,
-//                  whose pass is ending, who has not paid, who needs a mat)
+//   morning        the teaching brief for today, per shala class (booked,
+//                  drop-ins, first class, first week, mats), online classes
+//                  apart, then who bought and never came, whose pass is ending
+//                  and who has not paid. Bangkok time by weekday (BRIEF_AT):
+//                  Tue to Fri 05:00, Mon 05:30, Sat and Sun 06:00.
 //   20:00 Bangkok  the summary of the day on aybkk.net
 //   any time       a message Boonchu approved through the Desk assistant
 //
@@ -17,7 +20,9 @@
 // group or a 1:1 chat is never stored, logged or forwarded. The first group it
 // joins gets the briefs; any later group waits until the Desk or staff accept
 // it (POST /api/bkk/admin/team/group), because the briefs carry student names
-// and private class photos.
+// and private class photos. A group first seen from any other event (a message,
+// a member joining) also waits: the help desk was added before LINE could
+// reach the webhook, so its join was never heard.
 // Briefs name students by first name and family initial only: no email, phone
 // or member code ever goes to LINE.
 // The Thai brief keeps class and package names in the original English
@@ -37,7 +42,15 @@ const PUSH_MAX = 5;                  // message objects per push
 const TEXT_MAX = 5000;               // characters per text message
 const URL_MAX = 2000;                // LINE's limit for an image URL
 const SEND_MAX = PUSH_MAX * TEXT_MAX;
-const BRIEF_AT = { morning: '05:00', evening: '20:00' };
+// Bangkok send time. Morning by weekday, 0 Sunday (Boonchu, 18 Nov 2026): 05:00
+// on the Mysore days (first class 05:30), 05:30 on Monday (Led Primary 06:30),
+// 06:00 on Sunday (Mysore 07:00) and on Saturday, one brief for both Led
+// classes (07:00 and 08:45). A moon day or a closed day keeps its weekday's time.
+const BRIEF_AT = { morning: ['06:00', '05:30', '05:00', '05:00', '05:00', '05:00', '06:00'], evening: '20:00' };
+const briefAt = (kind, ymd) => {
+  const t = BRIEF_AT[kind];
+  return Array.isArray(t) ? t[new Date(`${ymd}T12:00:00Z`).getUTCDay()] : t;
+};
 const LATE_MIN = 60;                 // a server that was down sends late, up to this
 const TRIES = 3;                     // per brief per day, only when LINE did not answer
 const GROUPS_KEPT = 10;
@@ -140,11 +153,16 @@ const WORDS = {
     closed: c => c.why === 'none' ? 'วันนี้ไม่มีคลาสในตาราง'
       : c.why === 'cancelled' ? `วันนี้ชาลาปิด ยกเลิกทุกคลาส${c.note ? ` (${c.note})` : ''}`
       : `วันนี้ชาลาปิด ${c.why === 'full' ? 'วันพระจันทร์เต็มดวง' : 'วันพระจันทร์ดับ'} (moon day)`,
-    cLine: (time, title, teacher, n) => `${time} ${title}${teacher ? ` · ครู ${teacher}` : ''} · จอง ${n}`,
+    cHead: (time, title, teacher) => `🧘 ${time} ${title}${teacher ? ` · ครู ${teacher}` : ''}`,
+    cBooked: n => `จอง ${n} คน`,
+    cDrop: (n, names) => `ดรอปอิน ${n}: ${names}`,
+    cFirst: (n, names) => `มาครั้งแรกวันนี้ ${n}: ${names}`,
+    cWeek: (n, names) => `สัปดาห์แรก ${n}: ${names}`,
+    cMats: (n, names) => `เช่าเสื่อ ${n} (${baht(MAT_THB)} รวม VAT จ่ายที่ชาลา): ${names}`,
     cOff: (time, title, note) => `${time} ${title} · ยกเลิก${note ? ` (${note})` : ''}`,
-    nobody: 'ยังไม่มีคนจอง',
-    newH: '🌱 นักเรียนใหม่ ช่วยกันต้อนรับ',
-    newFirst: (n, time) => `• ${n} มาครั้งแรก ${time}`,
+    onlineH: '💻 ออนไลน์ (Zoom)',
+    oLine: (time, title, n) => `${time} ${title} · จอง ${n}`,
+    boughtH: '🛒 ซื้อแล้ว ยังไม่เคยมา',
     newBought: (n, item, day, next) => `• ${n} ซื้อ ${item} เมื่อ ${day} ยังไม่เช็กอินใน aybkk.net${next ? ` (จองไว้ ${next})` : ' ยังไม่มีการจองใน aybkk.net'}`,
     endH: '⏳ ใกล้หมด ชวนคุยเรื่องต่อแพ็กเกจ',
     endDate: (n, item, until) => `• ${n} ${item} หมด ${until}`,
@@ -154,8 +172,7 @@ const WORDS = {
     paySeat: (n, time, why) => `• ${n} จอง ${time} ${why}`,
     why: { none: 'แต่ยังไม่มีแพ็กเกจ', ended: d => `แต่แพ็กเกจหมดไปแล้ว ${d}`, frozen: 'แต่แพ็กเกจพักไว้อยู่',
       void: 'แต่แพ็กเกจถูกยกเลิกแล้ว' },
-    matH: `🧘 เตรียมเสื่อให้ (เก็บ ${baht(MAT_THB)})`,
-    mTotal: o => `รวม ${o.classes} คลาส · จอง ${o.booked} · ใหม่ ${o.fresh} · ใกล้หมด ${o.ending} · ยังไม่จ่าย ${o.unpaid} · เสื่อ ${o.mats}`,
+    mTotal: o => `รวม ${o.classes} คลาส · จอง ${o.booked} · ดรอปอิน ${o.dropin} · ครั้งแรก ${o.first} · สัปดาห์แรก ${o.week} · เสื่อ ${o.mats} · ใกล้หมด ${o.ending} · ยังไม่จ่าย ${o.unpaid}`,
 
     eHead: (d, upTo) => `🌙 สรุปวันนี้ ${d} (ตั้งแต่ 20:00 เมื่อวาน ถึง ${upTo})`,
     moneyH: '💰 เงิน',
@@ -204,11 +221,16 @@ const WORDS = {
     closed: c => c.why === 'none' ? 'No classes on the timetable today.'
       : c.why === 'cancelled' ? `The shala is closed today: every class is cancelled${c.note ? ` (${c.note})` : ''}.`
       : `The shala is closed today: ${c.why === 'full' ? 'full moon' : 'new moon'} day.`,
-    cLine: (time, title, teacher, n) => `${time} ${title}${teacher ? ` · ${teacher}` : ''} · ${n} booked`,
+    cHead: (time, title, teacher) => `🧘 ${time} ${title}${teacher ? ` · ${teacher}` : ''}`,
+    cBooked: n => `${n} booked`,
+    cDrop: (n, names) => `Drop-in ${n}: ${names}`,
+    cFirst: (n, names) => `First class today ${n}: ${names}`,
+    cWeek: (n, names) => `First week ${n}: ${names}`,
+    cMats: (n, names) => `Mat rental ${n} (${baht(MAT_THB)} incl. VAT, paid at the shala): ${names}`,
     cOff: (time, title, note) => `${time} ${title} · cancelled${note ? ` (${note})` : ''}`,
-    nobody: 'Nobody booked yet',
-    newH: '🌱 New students, please welcome',
-    newFirst: (n, time) => `• ${n}, first class today at ${time}`,
+    onlineH: '💻 Online (Zoom)',
+    oLine: (time, title, n) => `${time} ${title} · ${n} booked`,
+    boughtH: '🛒 Bought, not here yet',
     newBought: (n, item, day, next) => `• ${n} bought ${item} on ${day}, no aybkk.net check-in yet${next ? ` (booked ${next})` : ', no aybkk.net booking yet'}`,
     endH: '⏳ Ending soon, talk about renewing',
     endDate: (n, item, until) => `• ${n}: ${item}, ends ${until}`,
@@ -218,8 +240,7 @@ const WORDS = {
     paySeat: (n, time, why) => `• ${n}: booked ${time} but ${why}`,
     why: { none: 'has no pass', ended: d => `the pass ended ${d}`, frozen: 'the pass is paused',
       void: 'the pass was voided' },
-    matH: `🧘 Have a mat ready (collect ${baht(MAT_THB)} each)`,
-    mTotal: o => `Total: ${pl(o.classes, 'class', 'classes')} · ${o.booked} booked · ${o.fresh} new · ${o.ending} ending · ${o.unpaid} not paid · ${pl(o.mats, 'mat', 'mats')}`,
+    mTotal: o => `Total: ${pl(o.classes, 'class', 'classes')} · ${o.booked} booked · ${o.dropin} drop-in · ${o.first} first time · ${o.week} first week · ${pl(o.mats, 'mat', 'mats')} · ${o.ending} ending · ${o.unpaid} not paid`,
 
     eHead: (d, upTo) => `🌙 Today on aybkk.net, ${d} (20:00 yesterday to ${upTo})`,
     moneyH: '💰 Money',
@@ -282,7 +303,7 @@ function mountTeam(app, opts = {}) {
     return { tick: async () => [], start() {}, stop() {} };
   }
   const q = (sql, params = []) => pool.query(sql, params);
-  const stats = { badSignatures: 0 };
+  const stats = { badSignatures: 0, badAt: null };
 
   const getSetting = async key => (await q('SELECT value FROM bkk_settings WHERE key=$1', [key])).rows[0]?.value ?? null;
   const putSetting = (key, value) => q(`INSERT INTO bkk_settings (key,value) VALUES ($1,$2)
@@ -380,22 +401,36 @@ function mountTeam(app, opts = {}) {
   const FROM_REZERV = `(m.source IS NOT DISTINCT FROM 'rezerv' OR EXISTS (SELECT 1 FROM bkk_passes x WHERE x.member_id=m.id AND x.source='rezerv')
     OR EXISTS (SELECT 1 FROM bkk_bookings x WHERE x.member_id=m.id AND x.source='rezerv'))`;
 
+  // A class Rezerv gave back for a cancelled class is imported as a Drop-in
+  // pass (bkk-api.js, CREDIT_NOTE): a regular's credit, never a drop-in.
+  const CREDIT_BACK = '%a class Rezerv gave back%';
+
   async function morning(date, L) {
     const lines = [L.mHead(L.day(date))];
     const { closed, classes } = await classesOn(date);
     if (closed) return { text: [...lines, L.closed(closed)].join('\n') };
 
-    const [seats, fresh, bought, ending, orders] = await Promise.all([
+    const [seats, news, bought, ending, orders] = await Promise.all([
+      // A drop-in seat is one on a pass of the Drop-in product: the door's
+      // walk-in and an online drop-in both sell that pass and book with it
+      // (cover 'pass'); 'dropin' as a cover is only ever a word in a reply.
       q(`SELECT b.slot_id, b.member_id, b.need_mat, b.cover, b.pass_id, m.name,
-           p.status AS pass_status, to_char(p.valid_until,'YYYY-MM-DD') AS until
+           p.status AS pass_status, to_char(p.valid_until,'YYYY-MM-DD') AS until,
+           (b.cover IS NOT DISTINCT FROM 'dropin' OR (pr.code IS NOT DISTINCT FROM 'dropin'
+             AND coalesce(p.note,'') NOT LIKE $2)) AS dropin
          FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id LEFT JOIN bkk_passes p ON p.id=b.pass_id
-         WHERE b.class_date=$1::date AND b.status='booked' AND b.slot_id IS NOT NULL ORDER BY lower(m.name), b.id`, [date]),
-      // First class ever is today.
-      q(`SELECT DISTINCT b.member_id FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
-         WHERE b.class_date=$1::date AND b.status='booked' AND NOT ${FROM_REZERV}
-           AND (m.joined_on IS NULL OR m.joined_on >= $1::date - 7)
-           AND NOT EXISTS (SELECT 1 FROM bkk_bookings x WHERE x.member_id=b.member_id AND x.status='booked'
-             AND x.checked_in_at IS NOT NULL AND x.class_date < $1::date)`, [date]),
+         LEFT JOIN bkk_products pr ON pr.id=p.product_id
+         WHERE b.class_date=$1::date AND b.status='booked' AND b.slot_id IS NOT NULL ORDER BY lower(m.name), b.id`, [date, CREDIT_BACK]),
+      // New to the shala, booked today. fresh: the first class ever is today
+      // (joined in the last 7 days, or no join date). Otherwise the first week:
+      // came before, and joined or first came in the last 7 days.
+      q(`SELECT m.id AS member_id, fv.first IS NULL AS fresh FROM bkk_members m
+         JOIN LATERAL (SELECT min(x.class_date) AS first FROM bkk_bookings x WHERE x.member_id=m.id AND x.status='booked'
+           AND x.checked_in_at IS NOT NULL AND x.class_date < $1::date) fv ON true
+         WHERE EXISTS (SELECT 1 FROM bkk_bookings b WHERE b.member_id=m.id AND b.class_date=$1::date AND b.status='booked')
+           AND NOT ${FROM_REZERV}
+           AND CASE WHEN fv.first IS NULL THEN m.joined_on IS NULL OR m.joined_on >= $1::date - 7
+             ELSE m.joined_on >= $1::date - 7 OR fv.first >= $1::date - 7 END`, [date]),
       // First pass bought in the last 7 days, never came, not booked today.
       q(`SELECT m.name, fp.item_en, to_char(fp.at AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS day,
            (SELECT to_char(min(x.class_date),'YYYY-MM-DD') FROM bkk_bookings x WHERE x.member_id=m.id
@@ -432,24 +467,37 @@ function mountTeam(app, opts = {}) {
     ]);
     const time = new Map(classes.map(c => [c.id, c.time]));
     const name = r => shortName(r.name);
-    let shown = 0;
-    for (const c of classes) {
+    const names = rows => list(rows.map(name));
+    const isNew = new Map(news.rows.map(r => [r.member_id, r.fresh ? 'first' : 'week']));
+
+    // The shala's classes in timetable order. Someone booked twice today is new
+    // under their first class only; drop-ins and mats are per seat.
+    const shala = classes.filter(c => !c.online), held = shala.filter(c => !c.off);
+    const seen = new Set();
+    const total = { classes: held.length, booked: 0, dropin: 0, first: 0, week: 0, mats: 0 };
+    for (const c of shala) {
       if (c.off) { lines.push('', L.cOff(c.time, c.title, c.note)); continue; }
-      shown++;
       const here = seats.rows.filter(s => s.slot_id === c.id);
-      lines.push('', L.cLine(c.time, c.title, c.teacher, here.length), here.length ? here.map(name).join(', ') : L.nobody);
+      const fresh = here.filter(s => isNew.has(s.member_id) && !seen.has(s.member_id));
+      for (const s of fresh) seen.add(s.member_id);
+      const part = {
+        dropin: here.filter(s => s.dropin), mats: here.filter(s => s.need_mat),
+        first: fresh.filter(s => isNew.get(s.member_id) === 'first'), week: fresh.filter(s => isNew.get(s.member_id) === 'week'),
+      };
+      total.booked += here.length;
+      for (const k of Object.keys(part)) total[k] += part[k].length;
+      lines.push('', L.cHead(c.time, c.title, c.teacher), L.cBooked(here.length),
+        ...[[L.cDrop, part.dropin], [L.cFirst, part.first], [L.cWeek, part.week], [L.cMats, part.mats]]
+          .filter(([, rows]) => rows.length).map(([fn, rows]) => fn(rows.length, names(rows))));
     }
 
-    const freshIds = new Set(fresh.rows.map(r => r.member_id));
-    const firstSeat = new Map();
-    for (const s of seats.rows) {
-      if (!freshIds.has(s.member_id)) continue;
-      const t = time.get(s.slot_id) || '';
-      if (!firstSeat.has(s.member_id) || t < firstSeat.get(s.member_id).t) firstSeat.set(s.member_id, { t, n: name(s) });
-    }
-    const newLines = [...[...firstSeat.values()].sort((a, b) => a.t.localeCompare(b.t)).map(x => L.newFirst(x.n, x.t)),
-      ...bought.rows.map(r => L.newBought(name(r), L.item(r.item_en), L.day(r.day), r.next && L.day(r.next)))];
-    if (newLines.length) lines.push('', L.newH, ...newLines);
+    // Online classes (Zoom) apart, a count each: nobody to welcome or hand a mat.
+    const online = classes.filter(c => c.online);
+    if (online.length) lines.push('', L.onlineH, ...online.map(c => c.off ? L.cOff(c.time, c.title, c.note)
+      : L.oLine(c.time, c.title, seats.rows.filter(s => s.slot_id === c.id).length)));
+
+    const boughtLines = bought.rows.map(r => L.newBought(name(r), L.item(r.item_en), L.day(r.day), r.next && L.day(r.next)));
+    if (boughtLines.length) lines.push('', L.boughtH, ...boughtLines);
 
     const endLines = ending.rows.map(r => r.kind === 'credits' && r.left <= 2
       ? L.endLeft(name(r), L.item(r.item_en), Math.max(0, r.left), r.until && L.day(r.until))
@@ -465,13 +513,7 @@ function mountTeam(app, opts = {}) {
       ...unpaidSeats.map(s => L.paySeat(name(s), time.get(s.slot_id), why(s)))];
     if (payLines.length) lines.push('', L.payH, ...payLines);
 
-    const mats = classes.map(c => [c, seats.rows.filter(s => s.slot_id === c.id && s.need_mat && !c.off)]).filter(([, m]) => m.length);
-    if (mats.length) lines.push('', L.matH, ...mats.map(([c, m]) => `• ${c.time} ${m.map(name).join(', ')}`));
-
-    const live = new Set(classes.filter(c => !c.off).map(c => c.id));
-    lines.push('', L.mTotal({ classes: shown, booked: seats.rows.filter(s => live.has(s.slot_id)).length,
-      fresh: newLines.length, ending: endLines.length, unpaid: payLines.length,
-      mats: mats.reduce((n, [, m]) => n + m.length, 0) }));
+    lines.push('', L.mTotal({ ...total, ending: endLines.length, unpaid: payLines.length }));
     return { text: lines.join('\n') };
   }
 
@@ -516,7 +558,7 @@ function mountTeam(app, opts = {}) {
   // From 20:00 yesterday to 20:00 today, so a payment, a sign-up or a chat late
   // at night is in the next summary. Check-ins and no-shows are today's classes.
   async function evening(date, L) {
-    const from = bkkAt(addDays(date, -1), BRIEF_AT.evening), to = bkkAt(date, BRIEF_AT.evening);
+    const from = bkkAt(addDays(date, -1), briefAt('evening', addDays(date, -1))), to = bkkAt(date, briefAt('evening', date));
     const cut = Math.min(Date.parse(to), nowMs());
     const W = [from, to];
     const tomorrow = addDays(date, 1);
@@ -593,7 +635,7 @@ function mountTeam(app, opts = {}) {
 
     const name = r => shortName(r.name);
     // Sent by hand before 20:00, it says how far the day has got.
-    const upTo = cut > Date.parse(from) ? new Date(cut + 7 * 3600000).toISOString().slice(11, 16) : BRIEF_AT.evening;
+    const upTo = cut > Date.parse(from) ? new Date(cut + 7 * 3600000).toISOString().slice(11, 16) : briefAt('evening', date);
     const lines = [L.eHead(L.day(date), upTo)];
 
     const sum = (rows, k) => rows.reduce((n, r) => n + (Number(r[k]) || 0), 0);
@@ -729,7 +771,7 @@ function mountTeam(app, opts = {}) {
   async function tick(at = nowMs()) {
     const date = bkkYmd(at);
     const due = Object.keys(BRIEF_AT).filter(kind => {
-      const t = Date.parse(bkkAt(date, BRIEF_AT[kind]));
+      const t = Date.parse(bkkAt(date, briefAt(kind, date)));
       return at >= t && at < t + LATE_MIN * 60000;
     });
     if (!due.length) return [];
@@ -761,6 +803,22 @@ function mountTeam(app, opts = {}) {
     } catch (_) { return null; }
   }
 
+  // The ids of the groups the help desk is in, as last read or written here:
+  // an event from a group it knows writes nothing.
+  let known = null;
+  const learn = (groups, saved) => {
+    known = new Set(groups.filter(g => g && !g.leftAt).map(g => g.id));
+    if (saved) known.add(saved);
+    return known;
+  };
+  async function knownGroups() {
+    if (known) return known;
+    const r = (await q(`SELECT key, value FROM bkk_settings WHERE key IN ('team_line_groups','team_line_group')`)).rows;
+    const v = k => (r.find(x => x.key === k) || {}).value;
+    return learn(Array.isArray(v('team_line_groups')) ? v('team_line_groups') : [],
+      typeof v('team_line_group') === 'string' ? v('team_line_group') : null);
+  }
+
   // Which group gets the briefs ('team_line_group') and every group seen
   // ('team_line_groups'), changed together under one lock. fn edits st.
   async function withGroups(fn) {
@@ -785,6 +843,7 @@ function mountTeam(app, opts = {}) {
         else await client.query(`DELETE FROM bkk_settings WHERE key='team_line_group'`);
       }
       await client.query('COMMIT');
+      learn(st.groups, st.saved);
       return out;
     } catch (e) {
       await client.query('ROLLBACK').catch(() => {});
@@ -793,6 +852,10 @@ function mountTeam(app, opts = {}) {
   }
   const tell = text => Promise.resolve(notify(text)).catch(() => {});
   const quoted = name => `"${name || 'no name'}"`;
+  // Boonchu's note for a group that waits: a second join, or a group first seen from another event.
+  const waitNote = (name, current) => `AYBKK help desk is in ${current ? 'another' : 'the'} LINE group ${quoted(name)}, waiting. ` +
+    (current ? `The team briefs still go to ${quoted(current)}. ` : 'No LINE group gets the team briefs yet. ') +
+    'Nothing moves unless the Desk or staff accept it (Admin, Settings, LINE team brief). If you did not add it, ask the Desk to leave that group.';
 
   // The first group the help desk joins gets the briefs. A join to another
   // group while one is saved only waits in the list: anyone who can add the
@@ -820,9 +883,28 @@ function mountTeam(app, opts = {}) {
         `If that was not you, remove the help desk from that group.`);
     } else if (r.waits) {
       console.log('[team] help desk was added to another LINE group: it waits, the briefs stay where they are');
-      tell(`AYBKK help desk was added to another LINE group, ${quoted(name)}. The team briefs still go to ${quoted(r.current)}. ` +
-        `Nothing moves unless the Desk or staff accept the new group. If you did not add it, ask the Desk to leave that group.`);
+      tell(waitNote(name, r.current));
     }
+  }
+
+  // Any other event from a group the help desk does not know (a message, a
+  // member joining): it was added before LINE could reach the webhook, so its
+  // join was never heard. That group waits, like a second join, and is never
+  // saved by itself, until the Desk or staff accept it.
+  async function seenIn(id, ts) {
+    const at = new Date(Number.isFinite(ts) ? ts : nowMs()).toISOString();
+    const name = await groupName(id);
+    const r = await withGroups(st => {
+      const had = st.groups.find(g => g.id === id);
+      if (had && (!had.leftAt || had.leftAt >= at)) return null;   // known, or an event from before it left
+      const mine = st.saved === id;
+      st.groups = [{ id, name: name || (had && had.name) || null, joinedAt: at, leftAt: null, pending: !mine },
+        ...st.groups.filter(g => g.id !== id)];
+      return mine ? null : { current: (st.groups.find(g => g.id === st.saved) || {}).name || null };
+    });
+    if (!r) return;
+    console.log('[team] help desk is in a LINE group it never heard joining: it waits to be accepted');
+    tell(waitNote(name, r.current));
   }
 
   async function left(id, ts) {
@@ -838,16 +920,30 @@ function mountTeam(app, opts = {}) {
     if (cleared) console.log('[team] help desk left the team group: briefs wait for a new group');
   }
 
-  // Only group joins and leaves are read. Every other event, a message in the
-  // group or a 1:1 chat included, is answered 200 and dropped unread.
+  // When LINE last reached the webhook with a good signature (its Verify button
+  // too), kept at most once a minute, so staff can see LINE gets through.
+  let heardAt = 0;
+  async function heard() {
+    const now = nowMs();
+    if (now >= heardAt && now - heardAt < 60000) return;
+    heardAt = now;
+    try { await putSetting('team_line_webhook_last', new Date(now).toISOString()); }
+    catch (e) { heardAt = 0; console.error('[team] could not keep the webhook time:', e.message); }
+  }
+
+  // Only which group an event came from is read: joins and leaves as they
+  // are, any other group event only for a group not known yet (seenIn). Text,
+  // a message in the group or a 1:1 chat, is never read: answered 200, dropped.
   app.post('/line/helpdesk-webhook', raw, async (req, res) => {
     const secret = process.env.HELPDESK_LINE_CHANNEL_SECRET;
     if (!secret) return res.sendStatus(503);
     const body = Buffer.isBuffer(req.body) ? req.body : req.rawBody;
     if (!signed(body, req.headers['x-line-signature'], secret)) {
       stats.badSignatures++;
+      stats.badAt = new Date(nowMs()).toISOString();
       return res.sendStatus(401);
     }
+    await heard();
     let events = [];
     try { events = JSON.parse(body.toString('utf8')).events; } catch (_) {}
     for (const ev of Array.isArray(events) ? events : []) {
@@ -856,6 +952,7 @@ function mountTeam(app, opts = {}) {
       try {
         if (ev.type === 'join') await joined(src.groupId, ev.timestamp);
         else if (ev.type === 'leave') await left(src.groupId, ev.timestamp);
+        else if (!(await knownGroups()).has(src.groupId)) await seenIn(src.groupId, ev.timestamp);
       } catch (e) { await failed('webhook', e.message); }
     }
     res.sendStatus(200);
@@ -879,34 +976,47 @@ function mountTeam(app, opts = {}) {
 
   app.get('/api/bkk/admin/team/status', adminOnly, async (req, res) => {
     try {
-      const [s, group, seen, last, error, usage] = await Promise.all([settings(), savedGroup(),
-        getSetting('team_line_groups'), getSetting('team_brief_last'), getSetting('team_brief_error'), quota()]);
+      const [s, group, seen, last, error, usage, hook] = await Promise.all([settings(), savedGroup(),
+        getSetting('team_line_groups'), getSetting('team_brief_last'), getSetting('team_brief_error'), quota(),
+        getSetting('team_line_webhook_last')]);
       const groups = Array.isArray(seen) ? seen : [];
       const g = group && groups.find(x => x.id === group);
+      // The next time the timer sends each brief: today's at its weekday time,
+      // unless that is past or today's went already (by hand too), else tomorrow's.
+      const now = nowMs(), today = bkkYmd(now);
+      const marks = (await q(`SELECT key, value->>'state' AS state FROM bkk_settings WHERE key = ANY($1::text[])`,
+        [Object.keys(BRIEF_AT).map(k => `${MARKER}${k}_${today}`)])).rows;
+      const done = kind => marks.some(m => m.key === `${MARKER}${kind}_${today}` && m.state !== 'retry');
       const next = kind => {
-        const now = nowMs(), today = bkkYmd(now);
-        const t = Date.parse(bkkAt(today, BRIEF_AT[kind]));
-        return new Date(t > now ? t : Date.parse(bkkAt(addDays(today, 1), BRIEF_AT[kind]))).toISOString();
+        const t = Date.parse(bkkAt(today, briefAt(kind, today)));
+        return t > now && !done(kind) ? t : Date.parse(bkkAt(addDays(today, 1), briefAt(kind, addDays(today, 1))));
       };
+      const iso = t => new Date(t).toISOString();
+      const hhmm = t => new Date(t + 7 * 3600000).toISOString().slice(11, 16);
       res.json({
         channel: { secretSet: !!process.env.HELPDESK_LINE_CHANNEL_SECRET, tokenSet: !!process.env.HELPDESK_LINE_ACCESS_TOKEN },
         group: { saved: !!group, ref: group ? groupRef(group) : null, name: g ? g.name : null, joinedAt: g ? g.joinedAt : null },
         // pending: the help desk is in it, it gets nothing until accepted (team/group).
         groupsSeen: groups.map(x => ({ ref: groupRef(x.id), name: x.name, joinedAt: x.joinedAt, leftAt: x.leftAt,
           saved: x.id === group, pending: !!x.pending && !x.leftAt && x.id !== group })),
-        briefs: { morning: s.morning, evening: s.evening, lang: s.lang, at: BRIEF_AT,
-          next: { morning: s.morning === 'on' ? next('morning') : null, evening: s.evening === 'on' ? next('evening') : null } },
+        // at: the Bangkok time of each brief's next send; next: when it goes, null while off.
+        briefs: { morning: s.morning, evening: s.evening, lang: s.lang,
+          at: { morning: hhmm(next('morning')), evening: hhmm(next('evening')) }, morningByWeekday: BRIEF_AT.morning,
+          next: { morning: s.morning === 'on' ? iso(next('morning')) : null, evening: s.evening === 'on' ? iso(next('evening')) : null } },
         lastSent: last || {},
         lastError: error,
         quota: usage,
+        // LINE reaches the webhook: the last signed event, and bad signatures since this server started.
+        webhookLastAt: typeof hook === 'string' ? hook : null,
         badSignatures: stats.badSignatures,
+        badSignatureLastAt: stats.badAt,
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
   const briefArgs = (src, res) => {
     const kind = String(src.kind || '');
-    if (!BRIEF_AT[kind]) { res.status(400).json({ error: 'kind must be morning or evening' }); return null; }
+    if (!Object.hasOwn(BRIEF_AT, kind)) { res.status(400).json({ error: 'kind must be morning or evening' }); return null; }
     return kind;
   };
 
@@ -933,7 +1043,7 @@ function mountTeam(app, opts = {}) {
     const force = (req.body || {}).force === true;
     try {
       const now = nowMs(), date = bkkYmd(now);
-      const sofar = kind === 'evening' && now < Date.parse(bkkAt(date, BRIEF_AT.evening));
+      const sofar = kind === 'evening' && now < Date.parse(bkkAt(date, briefAt('evening', date)));
       const key = `${MARKER}${kind}_${date}`;
       let mark = null;
       if (!sofar) {

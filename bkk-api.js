@@ -3696,8 +3696,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
-  // The team LINE group briefs (team-brief.js): 05:00 teaching brief, 20:00
-  // summary, and their language. Off until switched on here.
+  // The team LINE group briefs (team-brief.js): the morning teaching brief (05:00
+  // to 06:00 by weekday), the 20:00 summary, and their language. Off until switched on here.
   const TEAM_SETTINGS = { teamBriefMorning: ['team_brief_morning', ['on', 'off']],
     teamBriefEvening: ['team_brief_evening', ['on', 'off']], teamBriefLang: ['team_brief_lang', ['th', 'en']] };
   const teamSettings = async () => {
