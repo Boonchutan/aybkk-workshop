@@ -893,13 +893,13 @@ function mountBkk(app, opts = {}) {
     const p = (await db.query(`SELECT p.*, pr.code, pr.name_en, x.refno AS by_ref FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
       LEFT JOIN bkk_orders x ON x.id=p.upgrade_order WHERE p.id=$1 FOR UPDATE OF p`, [order.upgrade_of])).rows[0];
     const to = (await db.query('SELECT * FROM bkk_products WHERE code=$1', [UPGRADE.to])).rows[0];
-    const why = !p ? 'no pass on this order' : p.upgrade_order ? `the pass was upgraded already by ref ${p.by_ref}`
+    const stop = !p ? 'no pass on this order' : p.upgrade_order ? `the pass was upgraded already by ref ${p.by_ref}`
       : p.code !== UPGRADE.from ? 'the pass is not the 1-month pass any more'
       : !['active', 'frozen'].includes(p.status) ? `the pass is ${p.status}` : !to ? 'there is no 3-month package' : null;
-    if (why) {
+    if (stop) {
       await db.query(`UPDATE bkk_orders SET gateway_note = coalesce(gateway_note || ' | ', '') || $2 WHERE id=$1`,
-        [order.id, `upgrade not applied: ${why}`]);
-      return { applied: false, why };
+        [order.id, `upgrade not applied: ${stop}`]);
+      return { applied: false, why: stop };
     }
     const r = (await db.query(`UPDATE bkk_passes SET product_id=$2, kind=$3, daily_cap=$4, valid_days=$5,
         valid_until = valid_until + ($5::int - valid_days), upgrade_order=$6, upgraded_from=product_id,
