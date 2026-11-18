@@ -1050,6 +1050,16 @@ const fakeDriver = { session: () => ({
   const back = (await setting('team_line_groups')).find(g => g.id === MEMBERS);
   ok('a group the account left, heard from again later, waits again', back.pending === true && !back.leftAt
      && (await setting('team_line_group')) === MANAGE, JSON.stringify(back));
+  clock += 5000;
+  await hook([leave(MEMBERS, clock)]);
+  await hook([{ ...textEv(MEMBERS, 'sent before the leave'), timestamp: clock - 2000 }]);
+  const lateSaw = (await setting('team_line_groups')).find(g => g.id === MEMBERS);
+  clock += 5000;
+  await hook([textEv(MEMBERS, 'back once more')]);
+  const rejoin = (await setting('team_line_groups')).find(g => g.id === MEMBERS);
+  ok('a message LINE sends late, from before a leave, changes nothing, and the rejoin after it still waits',
+     !!lateSaw.leftAt && rejoin.pending === true && !rejoin.leftAt && (await setting('team_line_group')) === MANAGE,
+     JSON.stringify([lateSaw, rejoin]));
 
   console.log('\n# capture: one ping per group, names filled in later, whose token, what a brief costs');
   const summaries = id => lineCalls.filter(c => c.path === `/v2/bot/group/${id}/summary`).length;

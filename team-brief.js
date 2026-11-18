@@ -932,13 +932,15 @@ function mountTeam(app, opts = {}) {
     const name = await groupName(id);
     const r = await withGroups(st => {
       const had = st.groups.find(g => g.id === id);
-      if (had && (!had.leftAt || had.leftAt >= at)) return null;   // known, or an event from before it left
+      if (had && !had.leftAt) return null;   // known
+      if (had && had.leftAt >= at) return 'late';   // from before it left
       const mine = st.saved === id;
       st.groups = [{ id, name: name || (had && had.name) || null, joinedAt: at, leftAt: null, pending: !mine },
         ...st.groups.filter(g => g.id !== id)];
       return mine ? null : { current: (st.groups.find(g => g.id === st.saved) || {}).name || null };
     });
-    if (!r) return;
+    if (r === 'late') asked.delete(id);   // so a later rejoin is still heard
+    if (!r || r === 'late') return;
     console.log('[team] the AYBKK LINE account is in a LINE group staff have not accepted: it waits');
     tell(waitNote(name, r.current));
   }
