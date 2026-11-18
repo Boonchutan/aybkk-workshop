@@ -754,6 +754,15 @@ const alerts = [];
   const wth = (res.body.threads || []).find(x => x.channel === 'apply' && x.sender === 'wang@example.com');
   ok('the WeChat application shows in GET /api/inbox, hot, with no link', wth && wth.sorted && wth.sorted.lane === 'hot' &&
     wth.sorted.video_by === 'chat' && wth.messages[0].ref === null);
+  ar = await apply(good({ email: 'li.link@example.com', video_by: 'chat', video: '' }));
+  const zLi = ((await readList('?list=gen3-zh')).body.applications.find(x => x.email === 'li.link@example.com')) || {};
+  ok('a later try with the video by chat keeps the earlier link in the list', ar.status === 200 && zLi.tries === 2 &&
+    zLi.video === 'https://youtu.be/li-link' && zLi.video_by === 'chat' && /will send on WeChat/.test(zLi.text),
+    JSON.stringify(zLi).slice(0, 300));
+  ar = await apply(good({ email: 'li.link@example.com', video_by: 'link', video: 'https://youtu.be/li-new' }));
+  const zLi2 = ((await readList('?list=gen3-zh')).body.applications.find(x => x.email === 'li.link@example.com')) || {};
+  ok('and a newer link still replaces it', ar.status === 200 && zLi2.tries === 3 && zLi2.video === 'https://youtu.be/li-new' &&
+    zLi2.video_by === 'link', JSON.stringify(zLi2).slice(0, 200));
 
   const bare = express();
   mountInbox(bare, {});

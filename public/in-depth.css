@@ -186,8 +186,14 @@ section.notfor{background:var(--field);color:var(--on-dark)}
 .back{flex:none;min-height:48px;padding:0 4px;border:0;background:none;color:var(--plum);font:500 16px/1.2 var(--sans);
   text-decoration:underline;text-decoration-color:var(--pink);text-underline-offset:3px;cursor:pointer}
 .back:hover{color:var(--pink-deep)}
+.back[disabled]{opacity:.45;cursor:not-allowed}
 @media (min-width:700px){.nav .btn{flex:0 1 auto;padding-left:34px;padding-right:34px}}
 .vnote{margin:10px 0 0;padding:12px 14px;border-radius:10px;background:var(--blush);font-size:15px}
+.f .ask{margin:16px 0 0;font-weight:600;font-size:17px;line-height:1.35;color:var(--ink)}
+/* Just after a step change a second tap lands nowhere, not on the next step's fields */
+.form.moving .step,.form.moving .nav{pointer-events:none}
+.thanks .again{margin-top:6px;padding:0;font-size:17px}
+.thanks .vhelp{margin:4px 0 14px}
 .f{margin:0;padding:18px 0 0;border:0;min-width:0}
 .f > label,.f legend{display:block;padding:0;font-weight:600;font-size:17px;line-height:1.35}
 /* A floated legend sits inside the fieldset like a label does */

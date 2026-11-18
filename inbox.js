@@ -239,6 +239,8 @@ function checkApplication(body) {
     if (!url || url.protocol !== 'https:' || !url.hostname.includes('.')) bad.push('video');
     else app.link = url.href;
   }
+  // A list with no VIDEO_CHAT entry has no chat to send a video to.
+  if (app.video_by === 'chat' && list && !Object.hasOwn(VIDEO_CHAT, list)) bad.push('video_by');
   if (b.consent !== true) bad.push('consent');
   if (bad.length) return { error: 'fields', fields: [...new Set(bad)] };
   if (bar.length) return { error: 'bar', fields: bar };
@@ -605,7 +607,8 @@ function mountInbox(app, opts = {}) {
             email: r.sender_id, name: r.sender_name, video: r.ref, video_by: r.triage.video_by || 'link',
             summary: r.triage.summary, text: r.text });
         } else {
-          Object.assign(p, { last: r.created_at, tries: p.tries + 1, name: r.sender_name, video: r.ref,
+          // A later try with the video to come by chat keeps an earlier link in view.
+          Object.assign(p, { last: r.created_at, tries: p.tries + 1, name: r.sender_name, video: r.ref || p.video,
             video_by: r.triage.video_by || 'link', summary: r.triage.summary, text: r.text });
         }
       }
