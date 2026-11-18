@@ -183,6 +183,19 @@
   .pw .pwrow{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px}
   .pw .pwrow .pwl{margin-right:0}
   .pw input[type=time]{padding:6px 8px;font-size:15px}
+  /* Settings: the LINE team brief from the AYBKK help desk (18 Nov 2026). */
+  .tb .tbr{display:flex;flex-wrap:wrap;gap:0 8px;margin:6px 0;font-size:14px}
+  .tb .tbr>span:last-child{min-width:0;overflow-wrap:anywhere}
+  .tb .tbr .tbw{color:#8a6a12;font-weight:700}
+  .tb .tbg{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0;padding:8px 0;border-top:1px solid var(--line)}
+  .tb .tbg>span{min-width:0;overflow-wrap:anywhere}
+  .tb .tbg .btn{flex:none}
+  .tb .tbn{margin:-8px 0 10px 31px}
+  .tb .tbpre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;padding:10px;border:1px solid var(--line);border-radius:7px;
+    background:var(--wall);font:14px/1.55 'Plex',-apple-system,'Helvetica Neue','PingFang SC',sans-serif}
+  .tb .tbpre:empty{display:none}
+  @media (max-width:640px),(pointer:coarse){.tb .btn,.tb .pwl{min-height:44px}}
+  @media (prefers-color-scheme:dark){.tb .tbr .tbw{color:#f0c75e}}
   .rr{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:10px 0;border-top:1px solid var(--line)}
   /* The student's face, or their initials, so staff can put a name to a face (9 Nov 2026). */
   .rr .av{flex:none;display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;
@@ -1048,6 +1061,37 @@
     tgtNoChat: 'ยังไม่มีแชทที่จะส่งไป (BOONCHU_CHAT_ID ใน Railway)',
     tgtSent: 'ส่งข้อความทดสอบแล้ว ดูใน Telegram ได้เลย',
     tgtFail: 'Telegram ส่งไม่ถึง ถ้าขึ้นว่า "chat not found" หรือ "blocked": เปิดบอทนี้ใน Telegram กด Start แล้วลองอีกครั้ง',
+  });
+  // Settings: the LINE team brief from the AYBKK help desk (18 Nov 2026).
+  Object.assign(STR.en, {
+    tbTitle: 'LINE team brief (AYBKK help desk)',
+    tbHelp: 'The AYBKK help desk LINE account (not @aybkk) posts the morning teaching brief and the 20:00 day summary to the staff LINE group. Morning: Tue to Fri 05:00, Mon 05:30, Sat and Sun 06:00 (Bangkok).',
+    tbLoading: 'Asking the server…', tbSecret: 'Channel secret', tbToken: 'Access token', tbSet: 'set', tbNotSet: 'not set',
+    tbHook: 'LINE last reached the webhook', tbHookNever: 'never: LINE is not sending to https://aybkk.net/line/helpdesk-webhook',
+    tbBad: 'Bad signatures since restart', tbGroup: 'Group',
+    tbNoGroup: 'no group yet: remove the help desk from the group and add it again, or post one message there, then Accept it here',
+    tbWaiting: 'Waiting for you to accept:', tbWaitSince: t => `waiting since ${t}`, tbAccept: 'Accept',
+    tbQAccept: n => `Send the team briefs to the LINE group "${n}"? They carry student first names.`,
+    tbMorning: 'Morning brief', tbEvening: 'Evening summary (20:00)',
+    tbQOn: (kind, g) => `Switch on the ${kind === 'morning' ? 'morning brief' : 'evening summary'}? It posts student first names (with the family initial) to ${g ? `the LINE group "${g}"` : 'the team LINE group, once one is saved here (none yet)'}.`,
+    tbNext: t => `next ${t}`, tbOff: 'off', tbLast: t => `last sent ${t}`, tbNever: 'not sent yet',
+    tbErr: (t, e) => `Last error (${t}): ${e}`, tbQuota: 'LINE messages this month', tbNoLimit: 'no limit',
+    tbPreview: "Preview tomorrow's morning brief", tbPreviewWait: 'Building…',
+  });
+  Object.assign(STR.th, {
+    tbTitle: 'บรีฟทีมทาง LINE (AYBKK help desk)',
+    tbHelp: 'บัญชี LINE AYBKK help desk (ไม่ใช่ @aybkk) ส่งบรีฟเช้าก่อนสอน และสรุปของวันตอน 20:00 เข้ากลุ่ม LINE ของทีม บรีฟเช้า: อ. ถึง ศ. 05:00, จ. 05:30, ส. และ อา. 06:00 (เวลากรุงเทพฯ)',
+    tbLoading: 'กำลังถามเซิร์ฟเวอร์…', tbSecret: 'Channel secret', tbToken: 'Access token', tbSet: 'ตั้งแล้ว', tbNotSet: 'ยังไม่ได้ตั้ง',
+    tbHook: 'LINE ส่งถึงเว็บฮุกล่าสุด', tbHookNever: 'ยังไม่เคย: LINE ยังไม่ได้ส่งมาที่ https://aybkk.net/line/helpdesk-webhook',
+    tbBad: 'ลายเซ็นไม่ถูกต้อง ตั้งแต่เซิร์ฟเวอร์เริ่มใหม่', tbGroup: 'กลุ่ม',
+    tbNoGroup: 'ยังไม่มีกลุ่ม: ลบ help desk ออกจากกลุ่มแล้วเพิ่มกลับเข้าไปใหม่ หรือพิมพ์ข้อความหนึ่งข้อความในกลุ่มนั้น แล้วกดรับกลุ่มที่นี่',
+    tbWaiting: 'รอให้กดรับ:', tbWaitSince: t => `รอตั้งแต่ ${t}`, tbAccept: 'รับกลุ่มนี้',
+    tbQAccept: n => `ส่งบรีฟทีมเข้ากลุ่ม LINE "${n}" ใช่ไหม? ในบรีฟมีชื่อนักเรียน`,
+    tbMorning: 'บรีฟเช้า', tbEvening: 'สรุปตอนเย็น (20:00)',
+    tbQOn: (kind, g) => `เปิด${kind === 'morning' ? 'บรีฟเช้า' : 'สรุปตอนเย็น'}ใช่ไหม? จะส่งชื่อนักเรียน (ชื่อและอักษรแรกของนามสกุล) เข้า${g ? `กลุ่ม LINE "${g}"` : 'กลุ่ม LINE ของทีม เมื่อมีกลุ่มที่บันทึกไว้ที่นี่ (ตอนนี้ยังไม่มี)'}`,
+    tbNext: t => `ครั้งต่อไป ${t}`, tbOff: 'ปิดอยู่', tbLast: t => `ส่งล่าสุด ${t}`, tbNever: 'ยังไม่เคยส่ง',
+    tbErr: (t, e) => `ผิดพลาดล่าสุด (${t}): ${e}`, tbQuota: 'ข้อความ LINE เดือนนี้', tbNoLimit: 'ไม่จำกัด',
+    tbPreview: 'ดูตัวอย่างบรีฟเช้าพรุ่งนี้', tbPreviewWait: 'กำลังสร้าง…',
   });
   // Settings: the door tablet (17 Nov 2026).
   Object.assign(STR.en, {
@@ -3111,7 +3155,7 @@
     if (current !== 'settings' || SUB) return;
     const byStatus = {};
     for (const c of letter) byStatus[c.status] = (byStatus[c.status] || 0) + c.n;
-    $('#view').innerHTML = `${PW ? pwBox(PW) : ''}${PW && PW.booking ? bookingBox(PW.booking) : ''}<div class="box">
+    $('#view').innerHTML = `${PW ? pwBox(PW) : ''}${PW && PW.booking ? bookingBox(PW.booking) : ''}${tbBox(null)}<div class="box">
       <b>${T('feeTitle')}</b>
       <p class="muted">${T('feeHelp')}</p>
       <p><input id="sur" type="number" min="0" max="20" step="0.5" value="${p.surchargePct}" style="width:90px"> %
@@ -3165,7 +3209,83 @@
       <p id="doorMsg" role="status"></p>
       <div id="doorList">${doorList(DOORS)}</div>
       </div>`;
+    loadTb();
   }
+  // The LINE team brief (team-brief.js): whether LINE reaches the help desk,
+  // which group gets the briefs, the two switches and tomorrow's morning text.
+  // Filled after the page shows: the status asks LINE for the month's quota.
+  let TB = null;
+  const tbWhen = iso => `${day(iso)} ${time(iso)}`;
+  const tbBox = (st, failed) => {
+    const head = `<b>${T('tbTitle')}</b><p class="muted">${T('tbHelp')}</p>`;
+    if (!st) return `<div class="box pw tb" id="tbBox">${head}<p class="${failed ? 'flash warn' : 'muted'}" role="status">${esc(T(failed ? 'failed' : 'tbLoading'))}</p></div>`;
+    const row = (k, v, warn) => `<p class="tbr"><span class="muted">${esc(T(k))}</span><span${warn ? ' class="tbw"' : ''}>${v}</span></p>`;
+    const yes = v => esc(T(v ? 'tbSet' : 'tbNotSet'));
+    const waiting = (st.groupsSeen || []).filter(g => g.pending);
+    const b = st.briefs || {}, last = st.lastSent || {};
+    const sw = (kind, label) => {
+      const on = b[kind] === 'on', sent = last[kind] && last[kind].at;
+      return `<label class="pwl"><input type="checkbox" id="tb_${kind}"${on ? ' checked' : ''} onchange="tbSwitch('${kind}',this)"><span>${esc(T(label))}</span></label>
+        <p class="muted tbn">${esc(on && b.next && b.next[kind] ? T('tbNext', tbWhen(b.next[kind])) : T('tbOff'))} · ${esc(sent ? T('tbLast', tbWhen(sent)) : T('tbNever'))}</p>`;
+    };
+    const q = st.quota;
+    return `<div class="box pw tb" id="tbBox">${head}
+      ${row('tbSecret', yes(st.channel && st.channel.secretSet), !(st.channel && st.channel.secretSet))}
+      ${row('tbToken', yes(st.channel && st.channel.tokenSet), !(st.channel && st.channel.tokenSet))}
+      ${row('tbHook', esc(st.webhookLastAt ? tbWhen(st.webhookLastAt) : T('tbHookNever')), !st.webhookLastAt)}
+      ${row('tbBad', `${Number(st.badSignatures) || 0}${st.badSignatureLastAt ? ` <span class="muted">(${esc(tbWhen(st.badSignatureLastAt))})</span>` : ''}`, st.badSignatures > 0)}
+      ${row('tbGroup', st.group && st.group.saved ? `<b>${esc(st.group.name || '?')}</b>` : esc(T('tbNoGroup')), !(st.group && st.group.saved))}
+      ${waiting.length ? `<p class="muted" style="margin:10px 0 0">${esc(T('tbWaiting'))}</p>${waiting.map(g => `<p class="tbg"><span><b>${esc(g.name || '?')}</b><br>
+        <span class="muted">${esc(T('tbWaitSince', g.joinedAt ? tbWhen(g.joinedAt) : '?'))}</span></span>
+        <button class="btn pink" onclick="tbAccept('${esc(g.ref)}')">${esc(T('tbAccept'))}</button></p>`).join('')}` : ''}
+      <div style="margin-top:10px">${sw('morning', 'tbMorning')}${sw('evening', 'tbEvening')}</div>
+      ${q && Number.isFinite(Number(q.used)) ? row('tbQuota', `${Number(q.used)} / ${q.limit == null ? esc(T('tbNoLimit')) : Number(q.limit)}`) : ''}
+      ${st.lastError && st.lastError.error ? `<p class="flash warn">${esc(T('tbErr', st.lastError.at ? tbWhen(st.lastError.at) : '?', `${st.lastError.what || ''}: ${st.lastError.error}`))}</p>` : ''}
+      <p style="margin-top:12px"><button class="btn gray" id="tbPrevBtn" onclick="tbPreview()">${esc(T('tbPreview'))}</button></p>
+      <pre class="tbpre" id="tbPre"></pre></div>`;
+  };
+  const loadTb = async () => {
+    const st = await api('/api/bkk/admin/team/status').then(r => r.ok ? r.json() : null).catch(() => null);
+    if (current !== 'settings' || SUB || !$('#tbBox')) return;
+    if (st) TB = st;
+    $('#tbBox').outerHTML = tbBox(st, !st);
+  };
+  window.tbSwitch = async (kind, el) => {
+    const on = el.checked;
+    const group = TB && TB.group && TB.group.saved ? TB.group.name || '?' : null;
+    if (on && !confirm(T('tbQOn', kind, group))) { el.checked = false; return; }
+    el.disabled = true;
+    const r = await api('/api/bkk/admin/settings', { method: 'POST',
+      body: JSON.stringify({ [kind === 'morning' ? 'teamBriefMorning' : 'teamBriefEvening']: on ? 'on' : 'off' }) }).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (current !== 'settings' || SUB || !$('#tbBox')) return;
+    if (!r || !r.ok) { el.checked = !on; el.disabled = false; alert(j.error || T('failed')); return; }
+    loadTb();
+  };
+  window.tbAccept = async ref => {
+    const g = TB && (TB.groupsSeen || []).find(x => x.ref === ref && x.pending);
+    if (!g || !confirm(T('tbQAccept', g.name || '?'))) return;
+    const r = await api('/api/bkk/admin/team/group', { method: 'POST', body: JSON.stringify({ accept: ref }) }).catch(() => null);
+    if (!r) { alert(T('failed')); return; }
+    if (await shout(r)) loadTb();
+  };
+  let TB_PREV = false;
+  window.tbPreview = async () => {
+    if (TB_PREV) return;
+    TB_PREV = true;
+    const btn = on => { const x = $('#tbPrevBtn'); if (x) { x.disabled = !on; x.textContent = T(on ? 'tbPreview' : 'tbPreviewWait'); } };
+    btn(false);
+    const lang = TB && TB.briefs && TB.briefs.lang === 'en' ? 'en' : 'th';
+    let r = null, j = {};
+    try {
+      r = await api(`/api/bkk/admin/team/preview?kind=morning&date=${addDays(bkkYmd(), 1)}&lang=${lang}`).catch(() => null);
+      j = r ? await r.json().catch(() => ({})) : {};
+    } finally { TB_PREV = false; }
+    const out = $('#tbPre');
+    if (current !== 'settings' || SUB || !out) return;
+    btn(true);
+    out.textContent = r && r.ok ? j.text || '' : (j.error || T('failed'));
+  };
   // The door tablet: pair one by its code, see when it was used, unpair it.
   let DOORS = [];
   const doorList = list => !list.length ? `<p class="muted">${T('doorNone')}</p>`
