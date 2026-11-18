@@ -25,7 +25,10 @@
 // while the briefs carry student names: so no group is ever saved by itself,
 // not even the first. Every group it hears of (a join, a message, a member
 // joining), or that staff add by its ID, waits until staff accept it
-// (POST /api/bkk/admin/team/group).
+// (POST /api/bkk/admin/team/group). Until 19 Nov 2026 a second LINE account
+// sent the briefs and kept its group and switches under the same keys: once per
+// database (the marker 'team_line_sender') all of that is cleared, so the main
+// account starts with no group, nothing waiting and both briefs off.
 // Briefs name students by first name and family initial only: no email, phone
 // or member code ever goes to LINE.
 // The Thai brief keeps class and package names in the original English
@@ -52,7 +55,7 @@ const briefAt = (kind, ymd) => {
 };
 const LATE_MIN = 60;                 // a server that was down sends late, up to this
 const TRIES = 3;                     // per brief per day, only when LINE did not answer
-const GROUPS_KEPT = 10;
+const GROUPS_KEPT = 100;             // groups seen, newest first: the saved one is always kept
 // A LINE group ID: C and 32 hex characters, as LINE writes it (lower case).
 const GROUP_ID_RE = /^C[0-9a-f]{32}$/;
 const MARKER = 'team_brief_sent_';
@@ -308,7 +311,8 @@ function mountTeam(app, opts = {}) {
   // Preview and status carry student names: never kept by a browser or a proxy.
   const adminOnly = (req, res, next) => {
     res.set('Cache-Control', 'private, no-store');
-    return ADMIN_KEY && safeEqual(req.headers['x-bkk-key'], ADMIN_KEY) ? next() : res.status(401).json({ error: 'bad key' });
+    if (!(ADMIN_KEY && safeEqual(req.headers['x-bkk-key'], ADMIN_KEY))) return res.status(401).json({ error: 'bad key' });
+    ready().then(() => next(), e => res.status(503).json({ error: `team brief settings not ready: ${e.message}` }));
   };
 
   if (!pool) {
@@ -317,6 +321,40 @@ function mountTeam(app, opts = {}) {
   }
   const q = (sql, params = []) => pool.query(sql, params);
   const stats = { badSignatures: 0, badAt: null };
+  const tell = text => Promise.resolve(notify(text)).catch(() => {});
+
+  // Once per database, before anything here reads a group or a switch: what the
+  // LINE account used before left under these keys is cleared (see the top).
+  // A failure is tried again on the next use, and nothing is sent until then.
+  let readyP = null;
+  const ready = () => readyP || (readyP = startClean().catch(e => { readyP = null; throw e; }));
+  async function startClean() {
+    const client = await pool.connect();
+    let was = [];
+    try {
+      await client.query('BEGIN');
+      const first = (await client.query(`INSERT INTO bkk_settings (key,value) VALUES ('team_line_sender','"main"')
+        ON CONFLICT (key) DO NOTHING RETURNING key`)).rowCount === 1;
+      if (first) {
+        was = (await client.query(`SELECT key, value FROM bkk_settings
+          WHERE key IN ('team_line_group','team_brief_morning','team_brief_evening')`)).rows;
+        await client.query(`DELETE FROM bkk_settings
+          WHERE key IN ('team_line_group','team_line_groups','team_line_webhook_last','team_brief_error')`);
+        await client.query(`UPDATE bkk_settings SET value='"off"', updated_at=now()
+          WHERE key IN ('team_brief_morning','team_brief_evening') AND value IS DISTINCT FROM '"off"'`);
+      }
+      await client.query('COMMIT');
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      throw e;
+    } finally { client.release(); }
+    const had = was.some(r => r.key === 'team_line_group'), on = was.some(r => r.key !== 'team_line_group' && r.value === 'on');
+    if (!had && !on) return;
+    console.log('[team] briefs now from the main AYBKK LINE account: the old group and switches were cleared');
+    tell('The team briefs now come from the main AYBKK LINE account. The group and switches kept for the LINE account '
+      + 'used before were cleared: no LINE group gets the briefs, and the morning brief and the evening summary are off. '
+      + 'Accept the staff group in Admin, Settings, LINE team brief, then switch on what you want.');
+  }
 
   const getSetting = async key => (await q('SELECT value FROM bkk_settings WHERE key=$1', [key])).rows[0]?.value ?? null;
   const putSetting = (key, value) => q(`INSERT INTO bkk_settings (key,value) VALUES ($1,$2)
@@ -354,6 +392,7 @@ function mountTeam(app, opts = {}) {
       const built = lineMessages(messages);
       if (built.error) return fail(400, built.error);
       if (!built.messages.length) return fail(400, 'nothing to send');
+      await ready();
       const to = await savedGroup();
       if (!to) return fail(409, 'No team group yet: accept the staff group in Admin, Settings, LINE team brief (team/group)');
       const requestIds = [];
@@ -797,6 +836,7 @@ function mountTeam(app, opts = {}) {
     if (!due.length) return [];
     const out = [];
     try {
+      await ready();
       const s = await settings();
       for (const kind of due) if (s[kind] === 'on') out.push(await sendBrief(kind, date, s.lang));
     } catch (e) { await failed('timer', e.message); }
@@ -805,6 +845,7 @@ function mountTeam(app, opts = {}) {
   let timer = null;
   function start() {
     if (timer) return;
+    ready().catch(e => console.error('[team] could not clear the old team group yet:', e.message));
     const run = () => tick().catch(e => console.error('[team] tick failed:', e.message));
     timer = setInterval(run, 60 * 1000);
     timer.unref();
@@ -870,7 +911,6 @@ function mountTeam(app, opts = {}) {
       throw e;
     } finally { client.release(); }
   }
-  const tell = text => Promise.resolve(notify(text)).catch(() => {});
   const quoted = name => `"${name || 'no name'}"`;
   // Boonchu's note for a group that waits.
   const waitNote = (name, current) => `The AYBKK LINE account is in ${current ? 'another' : 'the'} LINE group ${quoted(name)}: it waits. ` +
@@ -908,13 +948,16 @@ function mountTeam(app, opts = {}) {
     const at = new Date(Number.isFinite(ts) ? ts : nowMs()).toISOString();
     const cleared = await withGroups(st => {
       const had = st.groups.find(g => g.id === id);
-      if (had && had.joinedAt > at) return false;   // left before a later join
+      if (had && had.joinedAt > at) return null;   // left before a later join
       if (had) Object.assign(had, { leftAt: at, pending: false });
-      if (st.saved !== id) return false;
+      if (st.saved !== id) return null;
       st.saved = null;
-      return true;
+      return { name: had ? had.name : null };
     });
-    if (cleared) console.log('[team] the AYBKK LINE account left the team group: briefs wait for a new group');
+    if (!cleared) return;
+    console.log('[team] the AYBKK LINE account left the team group: briefs wait for a new group');
+    tell(`The AYBKK LINE account is not in the LINE group ${quoted(cleared.name)} any more (it left, or someone removed it): `
+      + 'the team briefs stop until staff accept another group (Admin, Settings, LINE team brief).');
   }
 
   // When LINE last reached the webhook with a good signature (its Verify button
@@ -944,6 +987,7 @@ function mountTeam(app, opts = {}) {
         stats.badAt = new Date(nowMs()).toISOString();
         return;
       }
+      await ready();
       await heard();
       let events = [];
       try { events = JSON.parse(body.toString('utf8')).events; } catch (_) {}
@@ -979,7 +1023,8 @@ function mountTeam(app, opts = {}) {
     if (infoCache.value && infoCache.token === token && fresh(infoCache.at)) return infoCache.value;
     const [bot, limit, used] = await Promise.all(['info', 'message/quota', 'message/quota/consumption'].map(p => lineGet(p, token)));
     const cut = (v, n) => typeof v === 'string' && v ? v.slice(0, n) : null;
-    const refused = [bot, limit, used].find(r => r.status === 401 || r.status === 403);
+    // 401 is a token LINE refuses. A 403 is about the plan or a permission, not the token.
+    const refused = [bot, limit, used].find(r => r.status === 401);
     const value = {
       bot: bot.body ? { name: cut(bot.body.displayName, 80), basicId: cut(bot.body.basicId, 40), premiumId: cut(bot.body.premiumId, 40) } : null,
       tokenError: refused ? `LINE refused the access token (${refused.status})` : null,
@@ -1152,9 +1197,11 @@ function mountTeam(app, opts = {}) {
     const token = env(TOKEN);
     if (!token) return res.status(503).json({ error: `${TOKEN} is not set on the server` });
     const [sum, count] = await Promise.all([`group/${id}/summary`, `group/${id}/members/count`].map(p => lineGet(p, token)));
-    if (sum.status === 0) return res.status(502).json({ error: 'LINE could not be reached' });
+    // line: what LINE answered (0: not reached), so the page can say it in Thai too.
+    if (sum.status === 0) return res.status(502).json({ error: 'LINE could not be reached', line: 0 });
     if (sum.status === 403 || sum.status === 404) return res.status(409).json({ error: 'the AYBKK LINE account is not in that group' });
-    if (sum.status !== 200) return res.status(502).json({ error: sum.status === 401 ? 'LINE refused the access token (401)' : `LINE answered ${sum.status}` });
+    if (sum.status !== 200) return res.status(502).json({ error: sum.status === 401 ? 'LINE refused the access token (401)' : `LINE answered ${sum.status}`,
+      line: sum.status });
     const name = sum.body && typeof sum.body.groupName === 'string' && sum.body.groupName ? sum.body.groupName.slice(0, 80) : null;
     const n = count.body ? Number(count.body.count) : NaN;
     const members = Number.isFinite(n) ? n : null;
@@ -1162,7 +1209,8 @@ function mountTeam(app, opts = {}) {
     const at = new Date(nowMs()).toISOString();
     const saved = await withGroups(st => {
       const had = st.groups.find(g => g.id === id);
-      const kept = had && !had.leftAt ? Object.assign(had, { name: name || had.name })
+      // A group accepted before and replaced since waits again, so it can be accepted again.
+      const kept = had && !had.leftAt ? Object.assign(had, { name: name || had.name, pending: st.saved !== id })
         : { id, name, joinedAt: at, leftAt: null, pending: st.saved !== id };
       st.groups = [kept, ...st.groups.filter(g => g.id !== id)];
       return st.saved === id;
@@ -1181,8 +1229,14 @@ function mountTeam(app, opts = {}) {
       const ref = typeof b.accept === 'string' ? b.accept : '';
       if (!ref && b.clear !== true) return res.status(400).json({ error: 'send { add: groupId }, { accept: ref } or { clear: true }' });
       if (b.clear === true) {
-        const was = await withGroups(st => { const w = st.saved; st.saved = null; return w; });
-        if (was) tell('The team briefs are stopped: no LINE group gets them until one is accepted on the Desk.');
+        const was = await withGroups(st => {
+          const w = st.groups.find(g => g.id === st.saved);
+          if (w && !w.leftAt) w.pending = true;   // it waits again, so it can be accepted again
+          const had = st.saved;
+          st.saved = null;
+          return had;
+        });
+        if (was) tell('The team briefs are stopped: no LINE group gets them until staff or the Desk accept one (Admin, Settings, LINE team brief).');
         return res.json({ ok: true, saved: false });
       }
       const seen = await getSetting('team_line_groups');
@@ -1192,12 +1246,14 @@ function mountTeam(app, opts = {}) {
         const x = st.groups.find(y => y.id === g.id);
         if (!x || x.leftAt) return { gone: true };
         const moved = st.saved !== x.id;
+        const prev = moved && st.groups.find(y => y.id === st.saved);
+        if (prev && !prev.leftAt) prev.pending = true;   // the group it replaces waits again
         st.saved = x.id;
         x.pending = false;
         return { moved, name: x.name };
       });
       if (r.gone) return res.status(409).json({ error: 'the AYBKK LINE account is not in that group any more' });
-      if (r.moved) tell(`The team briefs go to the LINE group ${quoted(r.name)} now (accepted on the Desk).`);
+      if (r.moved) tell(`The team briefs go to the LINE group ${quoted(r.name)} now (accepted by staff or the Desk).`);
       res.json({ ok: true, saved: true, ref, name: r.name });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });

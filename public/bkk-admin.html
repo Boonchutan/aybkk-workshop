@@ -202,7 +202,7 @@
   .tb .tbrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
   .tb .tbrow input{flex:1 1 220px;min-width:0;font-size:16px;font-family:ui-monospace,Menlo,Consolas,monospace}
   .tb .tbrow .btn{flex:none}
-  @media (max-width:640px),(pointer:coarse){.tb .btn,.tb .pwl{min-height:44px}}
+  @media (max-width:640px),(pointer:coarse){.tb .btn,.tb .pwl,.tb .tbrow input{min-height:44px}}
   @media (prefers-color-scheme:dark){.tb .tbr .tbw{color:#f0c75e}}
   .rr{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:10px 0;border-top:1px solid var(--line)}
   /* The student's face, or their initials, so staff can put a name to a face (9 Nov 2026). */
@@ -1112,27 +1112,32 @@
     tbSameName: 'Two groups have this name: check the members and the time before you accept.',
     tbWaiting: 'Waiting for you to accept:', tbWaitSince: t => `waiting since ${t}`, tbAccept: 'Accept',
     tbQAccept: (n, m, cur) => `Send the team briefs to the LINE group "${n}"${m != null ? ` (${m} members)` : ''}${cur ? ` instead of "${cur}"` : ''}? They carry student first names.`,
+    tbQAcceptOn: list => ` Already switched on, so it goes to this group: ${list}.`,
+    tbOnItem: (kind, when, now) => `${kind === 'morning' ? 'the morning brief' : 'the evening summary'} (${now ? 'within a minute' : `next ${when}`})`,
+    tbAnd: ' and ',
     tbMorning: 'Morning brief', tbEvening: 'Evening summary (20:00)', tbOnTap: 'The switches save as soon as you tap them.',
     tbNeedGroup: 'Accept the team group first (Group, above), then switch it on.',
     tbQOn: (kind, g, now) => `Switch on the ${kind === 'morning' ? 'morning brief' : 'evening summary'}? It posts student first names (with the family initial) to the LINE group "${g}".${now ? " Today's goes within a minute." : ''}`,
-    tbQCost: (need, limit) => ` It needs about ${need} LINE messages a month and the main account's plan allows ${limit}, shared with messages to students: when they run out, LINE stops the briefs and the messages to students until next month.`,
+    tbQCost: (need, limit, used) => ` It needs about ${need} LINE messages a month. The main account's plan allows ${limit} a month, and ${used} are used already this month, by messages to students too: when they run out, LINE stops the briefs and the messages to students until next month.`,
     tbNext: t => `next ${t}`, tbNow: 'now (within a minute)', tbOff: 'off', tbLast: t => `last sent ${t}`, tbNever: 'not sent yet',
     tbWontGroup: 'will not send: no group yet', tbWontToken: 'will not send: Channel access token not set',
     tbWontBad: 'will not send: LINE refuses the Channel access token',
     tbErr: t => `Last error (${t}):`, tbErrOld: t => `An older error, from before the last good send (${t}):`,
     tbE401: "LINE refuses the Channel access token: put the main AYBKK account's token (LINE_CHANNEL_ACCESS_TOKEN) on Railway again.",
     tbE429: "This month's LINE messages ran out (LINE answered 429): the briefs and the messages to students go again next month, or move the AYBKK account to a bigger plan.",
+    tbE403: 'LINE answered 403: the account or its plan is not allowed to do this. The token is not the problem, so keep it as it is on Railway, and check the plan in LINE Official Account Manager.',
     tbE409: 'No group yet.', tbENoToken: 'LINE_CHANNEL_ACCESS_TOKEN is not set on Railway.',
     tbQuota: "Main account's LINE messages this month (shared with messages to students)", tbNoLimit: 'no limit',
     tbCost: 'LINE messages one brief needs', tbCostV: (n, m) => `about ${n} a month (${m} members × about 30 days)`,
-    tbOver: (need, limit) => `With what is switched on, about ${need} a month: more than the ${limit} the main account's plan allows, and that quota also carries every message to students. When it runs out, LINE stops both until next month. Keep one brief on, or move the AYBKK account to a bigger plan.`,
+    tbOver: (need, limit, used) => `With what is switched on, the briefs need about ${need} LINE messages a month. The main account's plan allows ${limit} a month, and ${used} are used already this month: that quota also carries every message to students. When it runs out, LINE stops both until next month. Keep one brief on, or move the AYBKK account to a bigger plan.`,
     tbPreview: "Preview tomorrow's morning brief", tbPreviewWait: 'Building…',
-    tbAddTitle: 'Add the group by its ID', tbAddHelp: 'The ID starts with C (the server log of /line/webhook shows it). Nothing is sent to the group.',
+    tbAddTitle: 'Add the group by its ID', tbAddHelp: 'The ID starts with C. The Desk can find it in the server log; pasting the whole log line works too. Nothing is sent to the group.',
     tbAddPh: 'C then 32 characters', tbLookUp: 'Look up', tbLookWait: 'Looking up…', tbFound: 'Found:',
     tbFoundSaved: 'This group already gets the team briefs.',
     tbAddBad: 'That is not a LINE group ID: it is C and 32 characters, 0-9 and a-f.',
     tbAddNotIn: 'The AYBKK LINE account is not in that group. Check the ID, or add the account to the group first.',
     tbAddNoReach: 'LINE could not be reached. Try again in a minute.',
+    tbAddLine: n => `LINE answered ${n}. Try again in a minute.`,
   });
   Object.assign(STR.th, {
     tbTitle: 'บรีฟทีมทาง LINE (บัญชี LINE หลักของ AYBKK)',
@@ -1153,27 +1158,32 @@
     tbSameName: 'มีสองกลุ่มที่ใช้ชื่อนี้: เช็กจำนวนคนและเวลาก่อนกดรับ',
     tbWaiting: 'รอให้กดรับ:', tbWaitSince: t => `รอตั้งแต่ ${t}`, tbAccept: 'รับกลุ่มนี้',
     tbQAccept: (n, m, cur) => `ส่งบรีฟทีมเข้ากลุ่ม LINE "${n}"${m != null ? ` (${m} คน)` : ''}${cur ? ` แทนกลุ่ม "${cur}"` : ''} ใช่ไหม? ในบรีฟมีชื่อนักเรียน`,
+    tbQAcceptOn: list => ` ตอนนี้เปิดอยู่แล้ว จึงจะส่งเข้ากลุ่มนี้: ${list}`,
+    tbOnItem: (kind, when, now) => `${kind === 'morning' ? 'บรีฟเช้า' : 'สรุปตอนเย็น'} (${now ? 'ภายใน 1 นาที' : `ครั้งต่อไป ${when}`})`,
+    tbAnd: ' และ ',
     tbMorning: 'บรีฟเช้า', tbEvening: 'สรุปตอนเย็น (20:00)', tbOnTap: 'สวิตช์บันทึกทันทีที่แตะ',
     tbNeedGroup: 'กดรับกลุ่มทีมก่อน (ดูช่องกลุ่มด้านบน) แล้วค่อยเปิด',
     tbQOn: (kind, g, now) => `เปิด${kind === 'morning' ? 'บรีฟเช้า' : 'สรุปตอนเย็น'}ใช่ไหม? จะส่งชื่อนักเรียน (ชื่อและอักษรแรกของนามสกุล) เข้ากลุ่ม LINE "${g}"${now ? ' บรีฟของวันนี้จะส่งภายใน 1 นาที' : ''}`,
-    tbQCost: (need, limit) => ` ต้องใช้ประมาณ ${need} ข้อความ LINE ต่อเดือน แต่แพ็กเกจของบัญชีหลักให้ ${limit} ซึ่งใช้ร่วมกับข้อความที่ส่งถึงนักเรียน: ถ้าหมด LINE จะหยุดส่งทั้งบรีฟและข้อความถึงนักเรียนจนถึงเดือนหน้า`,
+    tbQCost: (need, limit, used) => ` ต้องใช้ประมาณ ${need} ข้อความ LINE ต่อเดือน แพ็กเกจของบัญชีหลักให้ ${limit} ต่อเดือน และเดือนนี้ใช้ไปแล้ว ${used} ซึ่งรวมข้อความที่ส่งถึงนักเรียนด้วย: ถ้าหมด LINE จะหยุดส่งทั้งบรีฟและข้อความถึงนักเรียนจนถึงเดือนหน้า`,
     tbNext: t => `ครั้งต่อไป ${t}`, tbNow: 'ตอนนี้ (ภายใน 1 นาที)', tbOff: 'ปิดอยู่', tbLast: t => `ส่งล่าสุด ${t}`, tbNever: 'ยังไม่เคยส่ง',
     tbWontGroup: 'จะไม่ส่ง: ยังไม่มีกลุ่ม', tbWontToken: 'จะไม่ส่ง: ยังไม่ได้ตั้ง Channel access token',
     tbWontBad: 'จะไม่ส่ง: LINE ไม่รับ Channel access token',
     tbErr: t => `ผิดพลาดล่าสุด (${t}):`, tbErrOld: t => `ข้อผิดพลาดเก่า ก่อนการส่งที่สำเร็จล่าสุด (${t}):`,
     tbE401: 'LINE ไม่รับ Channel access token: ใส่ token ของบัญชี LINE หลักของ AYBKK (LINE_CHANNEL_ACCESS_TOKEN) ใหม่ใน Railway',
     tbE429: 'ข้อความ LINE ของเดือนนี้หมดแล้ว (LINE ตอบ 429): บรีฟและข้อความถึงนักเรียนจะส่งได้อีกเดือนหน้า หรือเปลี่ยนบัญชี AYBKK เป็นแพ็กเกจที่ใหญ่ขึ้น',
+    tbE403: 'LINE ตอบ 403: บัญชีหรือแพ็กเกจนี้ไม่ได้รับอนุญาตให้ทำสิ่งนี้ ปัญหาไม่ได้อยู่ที่ token จึงให้คง token ใน Railway ไว้เหมือนเดิม และเช็กแพ็กเกจใน LINE Official Account Manager',
     tbE409: 'ยังไม่มีกลุ่ม', tbENoToken: 'ยังไม่ได้ตั้ง LINE_CHANNEL_ACCESS_TOKEN ใน Railway',
     tbQuota: 'ข้อความ LINE เดือนนี้ของบัญชีหลัก (ใช้ร่วมกับข้อความที่ส่งถึงนักเรียน)', tbNoLimit: 'ไม่จำกัด',
     tbCost: 'ข้อความ LINE ที่บรีฟหนึ่งอย่างใช้', tbCostV: (n, m) => `ประมาณ ${n} ต่อเดือน (${m} คน × ประมาณ 30 วัน)`,
-    tbOver: (need, limit) => `เท่าที่เปิดอยู่ ใช้ประมาณ ${need} ต่อเดือน เกิน ${limit} ที่แพ็กเกจของบัญชีหลักให้ และโควตานี้ใช้ส่งข้อความถึงนักเรียนด้วย ถ้าหมด LINE จะหยุดส่งทั้งสองอย่างจนถึงเดือนหน้า เปิดไว้บรีฟเดียว หรือเปลี่ยนบัญชี AYBKK เป็นแพ็กเกจที่ใหญ่ขึ้น`,
+    tbOver: (need, limit, used) => `เท่าที่เปิดอยู่ บรีฟใช้ประมาณ ${need} ข้อความ LINE ต่อเดือน แพ็กเกจของบัญชีหลักให้ ${limit} ต่อเดือน และเดือนนี้ใช้ไปแล้ว ${used} โควตานี้ใช้ส่งข้อความถึงนักเรียนด้วย ถ้าหมด LINE จะหยุดส่งทั้งสองอย่างจนถึงเดือนหน้า เปิดไว้แค่บรีฟเดียว หรือเปลี่ยนบัญชี AYBKK เป็นแพ็กเกจที่ใหญ่ขึ้น`,
     tbPreview: 'ดูตัวอย่างบรีฟเช้าพรุ่งนี้', tbPreviewWait: 'กำลังสร้าง…',
-    tbAddTitle: 'เพิ่มกลุ่มด้วย ID', tbAddHelp: 'ID ของกลุ่มขึ้นต้นด้วย C (ดูได้จากล็อกของเซิร์ฟเวอร์ที่ /line/webhook) ระบบจะไม่ส่งอะไรเข้ากลุ่ม',
+    tbAddTitle: 'เพิ่มกลุ่มด้วย ID', tbAddHelp: 'ID ของกลุ่มขึ้นต้นด้วย C ขอได้จาก Desk (อยู่ในล็อกของเซิร์ฟเวอร์) จะวางทั้งบรรทัดของล็อกก็ได้ ระบบจะไม่ส่งอะไรเข้ากลุ่ม',
     tbAddPh: 'C ตามด้วยอีก 32 ตัว', tbLookUp: 'ค้นหา', tbLookWait: 'กำลังค้นหา…', tbFound: 'เจอกลุ่ม:',
     tbFoundSaved: 'กลุ่มนี้รับบรีฟทีมอยู่แล้ว',
     tbAddBad: 'นี่ไม่ใช่ ID กลุ่ม LINE: ID กลุ่มคือ C ตามด้วยอีก 32 ตัว ที่เป็น 0-9 หรือ a-f',
     tbAddNotIn: 'บัญชี LINE ของ AYBKK ไม่ได้อยู่ในกลุ่มนี้ เช็ก ID อีกครั้ง หรือเพิ่มบัญชีเข้ากลุ่มก่อน',
     tbAddNoReach: 'ติดต่อ LINE ไม่ได้ ลองใหม่อีกครั้งในอีกสักครู่',
+    tbAddLine: n => `LINE ตอบ ${n} ลองใหม่อีกครั้งในอีกสักครู่`,
   });
   // Settings: the door tablet (17 Nov 2026).
   Object.assign(STR.en, {
@@ -3381,7 +3391,7 @@
     return [...by].sort((x, y) => String(x[0]).localeCompare(String(y[0]))).map(([t, ds]) => `${ds.join(', ')} ${t}`).join(' · ');
   };
   const tbOnCount = (st, also) => ['morning', 'evening'].filter(k => k === also || (st.briefs || {})[k] === 'on').length;
-  const tbLead = e => /LINE answered 40[13]/.test(e) ? 'tbE401' : /LINE answered 429/.test(e) ? 'tbE429'
+  const tbLead = e => /LINE answered 401/.test(e) ? 'tbE401' : /LINE answered 403/.test(e) ? 'tbE403' : /LINE answered 429/.test(e) ? 'tbE429'
     : /No team group yet/.test(e) ? 'tbE409' : /ACCESS_TOKEN is not set/.test(e) ? 'tbENoToken' : null;
   // A waiting group: its name, members and since when, with Accept.
   const tbWait = (g, mem, twice, lead) => `<p class="tbg"><span>${lead ? `${esc(lead)} ` : ''}${g.name
@@ -3413,7 +3423,9 @@
     const q = st.quota, m = Number(grp.members);
     const per = grp.saved && Number.isFinite(m) && m > 0 ? m * TB_DAYS : null;
     const need = per != null ? per * tbOnCount(st) : 0;
-    const over = per != null && q && q.limit != null && need > Number(q.limit);
+    // Messages to students use the same quota: what this month used already counts.
+    const used = q && Number.isFinite(Number(q.used)) ? Number(q.used) : 0;
+    const over = per != null && need > 0 && q && q.limit != null && need + used > Number(q.limit);
     // An error from before the last good send no longer says something is broken.
     const good = Math.max(0, ...Object.values(last).map(x => Date.parse(x && x.at) || 0));
     const err = st.lastError && st.lastError.error ? st.lastError : null;
@@ -3432,7 +3444,7 @@
         .filter(g => !found || g.ref !== found.ref).map(g => tbWait(g, mem, twice)).join('')}` : ''}
       <div class="tbadd"><p><b>${esc(T('tbAddTitle'))}</b></p><p class="muted">${esc(T('tbAddHelp'))}</p>
         <p class="tbrow"><input id="tbAddId" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
-          maxlength="40" placeholder="${esc(T('tbAddPh'))}" aria-label="${esc(T('tbAddTitle'))}" value="${esc(TB_ADD && TB_ADD.error ? TB_ADD.value : '')}"
+          maxlength="300" enterkeyhint="search" placeholder="${esc(T('tbAddPh'))}" aria-label="${esc(T('tbAddTitle'))}" value="${esc(TB_ADD && TB_ADD.error ? TB_ADD.value : '')}"
           onkeydown="if(event.key==='Enter')tbLookUp()">
         <button class="btn gray" id="tbAddBtn" onclick="tbLookUp()">${esc(T('tbLookUp'))}</button></p>
         <div id="tbAddOut" role="status">${TB_ADD && TB_ADD.error ? `<p class="flash warn">${esc(TB_ADD.error)}</p>`
@@ -3443,7 +3455,7 @@
       <div style="margin-top:10px">${sw('morning', 'tbMorning')}${sw('evening', 'tbEvening')}<p class="muted tbtap">${esc(T('tbOnTap'))}</p></div>
       ${q && Number.isFinite(Number(q.used)) ? row('tbQuota', `${Number(q.used)} / ${q.limit == null ? esc(T('tbNoLimit')) : Number(q.limit)}`) : ''}
       ${per != null ? row('tbCost', esc(T('tbCostV', per, m))) : ''}
-      ${over ? `<p class="flash warn">${esc(T('tbOver', need, Number(q.limit)))}</p>` : ''}
+      ${over ? `<p class="flash warn">${esc(T('tbOver', need, Number(q.limit), used))}</p>` : ''}
       ${err ? `<p class="${old ? 'muted' : 'flash warn'}">${esc(old ? T('tbErrOld', tbWhen(new Date(good).toISOString())) : T('tbErr', err.at ? tbWhen(err.at) : '?'))}
         ${lead ? `<b>${esc(T(lead))}</b>` : ''} <span class="tbe">${esc(`${err.what || ''}: ${err.error}`)}</span></p>` : ''}
       <p style="margin-top:12px"><button class="btn gray" id="tbPrevBtn" onclick="tbPreview()">${esc(T('tbPreview'))}</button></p>
@@ -3469,7 +3481,8 @@
       if (!TB || !(TB.group && TB.group.saved)) { back(); alert(T('tbNeedGroup')); return; }
       const q = TB.quota, m = Number(TB.group.members);
       const need = Number.isFinite(m) && m > 0 ? m * TB_DAYS * tbOnCount(TB, kind) : 0;
-      const cost = q && q.limit != null && need > Number(q.limit) ? T('tbQCost', need, Number(q.limit)) : '';
+      const used = q && Number.isFinite(Number(q.used)) ? Number(q.used) : 0;
+      const cost = q && q.limit != null && need > 0 && need + used > Number(q.limit) ? T('tbQCost', need, Number(q.limit), used) : '';
       if (!confirm(T('tbQOn', kind, TB.group.name || '?', !!(TB.briefs && TB.briefs.dueNow && TB.briefs.dueNow[kind])) + cost)) { back(); return; }
     }
     const r = await api('/api/bkk/admin/settings', { method: 'POST',
@@ -3480,10 +3493,18 @@
     loadTb();
   };
   window.tbAccept = async ref => {
+    // As things are now: which briefs are on, and what this group replaces.
+    const st = await tbStatus();
+    if (current !== 'settings' || SUB || !$('#tbBox')) return;
+    if (st) TB = st;
     const g = TB && (TB.groupsSeen || []).find(x => x.ref === ref && x.pending);
     if (!g || !g.name) return;
     const cur = TB.group && TB.group.saved ? TB.group.name || '?' : null;
-    if (!confirm(T('tbQAccept', g.name, g.members, cur))) return;
+    const b = TB.briefs || {};
+    const on = ['morning', 'evening'].filter(k => b[k] === 'on' && b.next && b.next[k])
+      .map(k => T('tbOnItem', k, tbWhen(b.next[k]), !!(b.dueNow && b.dueNow[k])));
+    const mem = g.members != null ? g.members : TB_ADD && TB_ADD.ref === ref ? TB_ADD.members : null;
+    if (!confirm(T('tbQAccept', g.name, mem, cur) + (on.length ? T('tbQAcceptOn', on.join(T('tbAnd'))) : ''))) return;
     const r = await api('/api/bkk/admin/team/group', { method: 'POST', body: JSON.stringify({ accept: ref }) }).catch(() => null);
     if (!r) { alert(T('failed')); return; }
     if (await shout(r)) { TB_ADD = null; loadTb(); }
@@ -3493,7 +3514,12 @@
   window.tbLookUp = async () => {
     const el = $('#tbAddId');
     if (!el || TB_LOOK) return;
-    const id = el.value.trim();
+    // A pasted log line, quotes, capitals or an invisible character still give
+    // the one group ID in it; anything else goes as typed and is refused.
+    const raw = el.value;
+    const ids = [...new Set([...raw.replace(/[\u200b-\u200d\u2060\ufeff]/g, '').matchAll(/\bC([0-9a-f]{32})\b/gi)]
+      .map(m => 'C' + m[1].toLowerCase()))];
+    const id = ids.length === 1 ? ids[0] : raw.trim();
     TB_LOOK = true;
     const btn = on => { const x = $('#tbAddBtn'); if (x) { x.disabled = !on; x.textContent = T(on ? 'tbLookUp' : 'tbLookWait'); } };
     btn(false);
@@ -3507,9 +3533,11 @@
       TB_ADD = { ref: j.ref, name: j.name || null, members: j.members ?? null, saved: !!j.saved };
       return loadTb();
     }
-    const msg = !r || /could not be reached/.test(String(j.error || '')) ? T('tbAddNoReach')
-      : r.status === 400 ? T('tbAddBad') : r.status === 409 ? T('tbAddNotIn') : j.error || T('failed');
-    TB_ADD = { error: msg, value: id };
+    const line = r && r.status === 502 ? Number(j.line) : NaN;
+    const msg = !r || line === 0 ? T('tbAddNoReach') : r.status === 400 ? T('tbAddBad') : r.status === 409 ? T('tbAddNotIn')
+      : r.status === 503 ? T('tbENoToken') : line === 401 ? T('tbE401') : line === 429 ? T('tbE429')
+      : Number.isFinite(line) && line > 0 ? T('tbAddLine', line) : r.status === 502 ? T('tbAddNoReach') : j.error || T('failed');
+    TB_ADD = { error: msg, value: raw.trim() };
     if (TB) $('#tbBox').outerHTML = tbBox(TB);
     else { btn(true); $('#tbAddOut').innerHTML = `<p class="flash warn">${esc(msg)}</p>`; }
   };
