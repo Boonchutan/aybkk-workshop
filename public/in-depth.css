@@ -146,11 +146,9 @@ section.notfor{background:var(--field);color:var(--on-dark)}
 .notfor .release{margin:24px 0 0;font-family:var(--serif);font-size:clamp(24px,5.4vw,30px);line-height:1.25;color:#fff}
 .notfor .btn{margin-top:22px}
 
-.record{margin:0;display:grid;gap:12px}
-.record div{display:grid;gap:6px;padding:16px 0;border-top:1px solid var(--line)}
-.record dt{font-family:var(--serif);font-weight:600;font-size:28px;line-height:1.1;font-variant-numeric:lining-nums;color:var(--plum)}
-@media (min-width:600px){.record div{grid-template-columns:9.5rem minmax(0,1fr);gap:18px;align-items:baseline}}
-.record dd{margin:0}
+/* A section of one line, with no heading: the line sits in the content column */
+@media (min-width:900px){.s .wrap > .body:only-child{grid-column:2}}
+.body:only-child > .big:last-child{margin:0}
 
 .facts{margin:0;background:var(--tile);border-radius:16px;padding:4px 20px}
 .facts div{display:grid;gap:2px;padding:14px 0}
