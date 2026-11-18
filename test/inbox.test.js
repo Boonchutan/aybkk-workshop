@@ -676,6 +676,85 @@ const alerts = [];
   ok('leads follow the 90-day purge', !(await pool.query(`SELECT 1 FROM aybkk_inbox WHERE ext_id='old:old-lead'`)).rows.length &&
     (await leads()).length > 0);
 
+  console.log('\n-- a practice video sent by chat instead of a link --');
+  // Age every application by a day, so the hour, day and ping limits above start over.
+  await pool.query(`UPDATE aybkk_inbox SET created_at = created_at - interval '25 hours',
+    alerted_at = alerted_at - interval '25 hours' WHERE channel='apply'`);
+  ok('a link application says so in its summary and its ping', /, video by link\.$/.test(ap[0].triage.summary) &&
+    ap[0].triage.video_by === 'link' && /Call in Chinese\. Video: link\.\n/.test(ping), ap[0].triage.summary);
+  const vn = (await applied()).length;
+  const refused = async (body, status, field, name) => {
+    const r = await apply(body), j = await r.json();
+    ok(name, r.status === status && (j.fields || []).includes(field) && (await applied()).length === vn,
+      `${r.status} ${JSON.stringify(j)}`);
+  };
+  await refused(good({ video_by: 'link', video: 'http://youtu.be/abc' }), 400, 'video', 'a link chosen: still https only → 400');
+  await refused(good({ video_by: 'link', video: '' }), 400, 'video', 'a link chosen and none given → 400');
+  await refused(good({ video_by: 'link', video: 'my video is on my phone' }), 400, 'video', 'a link chosen and only words given → 400');
+  await refused(good({ video_by: 'email', video: '' }), 400, 'video_by', 'an unknown video option → 400');
+  await refused(good({ video_by: 'Chat', video: '' }), 400, 'video_by', 'a video option in another case → 400');
+  await refused(good({ video_by: 'chat', video: '', primary: 'not_yet' }), 422, 'primary', 'a video by chat still needs a yes on the bar → 422');
+  await refused(good({ video_by: 'chat', video: '', why: 'x'.repeat(2001) }), 400, 'why', 'a video by chat keeps the length limits → 400');
+  await refused(good({ video_by: 'chat', video: '', consent: false }), 400, 'consent', 'a video by chat still needs the consent tick → 400');
+  const vb = alerts.length;
+  ar = await apply(good({ email: 'bot@example.com', video_by: 'chat', video: '', website: 'x' }));
+  await wait(50);
+  ok('a filled honeypot with a video by chat looks accepted and stores nothing', ar.status === 200 &&
+    (await applied()).length === vn && alerts.length === vb);
+
+  ar = await apply(good({ email: 'Wang@Example.com', name: '王小明', video_by: 'chat', video: 'on my phone, sending soon' }));
+  aj = await ar.json();
+  await wait(100);
+  ap = await applied();
+  const wang = ap[ap.length - 1];
+  ok('a video by WeChat needs no link: stored with no ref and the option kept', ar.status === 200 && aj.ok === true &&
+    ap.length === vn + 1 && wang.sender_id === 'wang@example.com' && wang.ref === null && wang.triage.video_by === 'chat',
+    `${ar.status} ${JSON.stringify(aj)} ${wang.ref} ${JSON.stringify(wang.triage)}`);
+  ok('its text says the video comes on WeChat, and a typed video answer is left out',
+    /\nPractice video: will send on WeChat \(aybkkwechat\)\n/.test(wang.text) && !/on my phone/.test(wang.text) &&
+    !/Practice video:\n/.test(wang.text), wang.text);
+  ok('its summary says the video comes on WeChat', /, video to come on WeChat\.$/.test(wang.triage.summary), wang.triage.summary);
+  const wangPing = alerts[alerts.length - 1] || '';
+  ok('its ping says video on WeChat, with no name or contact', alerts.length === vb + 1 &&
+    /All 30 days: yes\. Call in Chinese\. Video: will come on WeChat\.\n/.test(wangPing) &&
+    !/王小明|example\.com|mei123/.test(wangPing), wangPing);
+
+  const anaChat = good({ list: 'priority-en', email: 'ana@example.com', name: 'Ana Example', country: 'Portugal',
+    call_lang: 'en', video_by: 'chat', video: '' });
+  delete anaChat.dates;
+  ar = await apply(anaChat);
+  await wait(100);
+  ap = await applied();
+  const ana = ap[ap.length - 1];
+  const anaPing = alerts[alerts.length - 1] || '';
+  ok('on the English list a video by chat comes on LINE or WeChat', ar.status === 200 && ana.sender_id === 'ana@example.com' &&
+    ana.ref === null && ana.triage.video_by === 'chat' &&
+    /\nPractice video: will send on LINE \(@aybkk\) or WeChat \(aybkkwechat\)\n/.test(ana.text) &&
+    /, video to come on LINE or WeChat\.$/.test(ana.triage.summary) &&
+    /Call in English\. Video: will come on LINE or WeChat\.\n/.test(anaPing) && !/Ana/.test(anaPing), `${ana.text}\n${anaPing}`);
+  ar = await apply(good({ email: 'li.link@example.com', video_by: 'link', video: 'https://youtu.be/li-link' }));
+  ap = await applied();
+  ok('a link chosen in so many words is stored as before', ar.status === 200 &&
+    ap[ap.length - 1].ref === 'https://youtu.be/li-link' && ap[ap.length - 1].triage.video_by === 'link' &&
+    /Practice video:\nhttps:\/\/youtu.be\/li-link/.test(ap[ap.length - 1].text));
+
+  const zl2 = (await readList('?list=gen3-zh')).body;
+  const zWang = zl2.applications.find(x => x.email === 'wang@example.com') || {};
+  const zMei = zl2.applications.find(x => x.email === 'mei@example.com') || {};
+  ok('the Gen #3 list shows the chosen option: no link for WeChat, the link for a link',
+    zWang.video === null && zWang.video_by === 'chat' && /will send on WeChat/.test(zWang.text) &&
+    zMei.video === 'https://youtu.be/abc123' && zMei.video_by === 'link', JSON.stringify([zWang.video, zWang.video_by, zMei.video_by]));
+  const pl2 = (await readList('?list=priority-en')).body;
+  const pAna = pl2.applications.find(x => x.email === 'ana@example.com') || {};
+  const pAnna = pl2.applications.find(x => x.email === 'anna@example.de') || {};
+  ok('the English list shows it too, and a row saved before the option reads as a link',
+    pAna.video === null && pAna.video_by === 'chat' && pAna.place === pl2.count &&
+    pAnna.video === 'https://youtu.be/anna2' && pAnna.video_by === 'link', JSON.stringify([pAna, pAnna.video_by]));
+  res = await readInbox();
+  const wth = (res.body.threads || []).find(x => x.channel === 'apply' && x.sender === 'wang@example.com');
+  ok('the WeChat application shows in GET /api/inbox, hot, with no link', wth && wth.sorted && wth.sorted.lane === 'hot' &&
+    wth.sorted.video_by === 'chat' && wth.messages[0].ref === null);
+
   const bare = express();
   mountInbox(bare, {});
   const srv2 = bare.listen(0);

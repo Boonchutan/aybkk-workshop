@@ -139,6 +139,8 @@ async function telegram(text) {
 // then delete them (channel 'apply', triage->>'list' = 'priority-en').
 // The form says which list it came from; the list is stored in triage.list and
 // named in the text and the ping, so Machi and Boonchu can tell them apart.
+// The practice video is a link (ref) or, with video_by 'chat', sent later on
+// WeChat or LINE: then ref is empty and the text says where it will come.
 const APPLY_LISTS = {
   'gen3-zh': 'Generation #3, the private Chinese page',
   'priority-en': 'priority list for the next English intake, the public English page',
@@ -171,6 +173,9 @@ const APPLY_FIELDS = {
   why: { max: 2000, need: true },
   stuck: { max: 2000, need: true },
   injury: { max: 2000 },
+  // How the video comes: a pasted link, or later by chat (no link then). An
+  // older page sends no video_by, which means a link.
+  video_by: { one: ['link', 'chat'] },
   video: { max: 500, need: true },
   heard: { max: 200, line: true },
   question: { max: 1000 },
@@ -186,6 +191,12 @@ const SAY = {
   primary: { yes: 'yes', not_yet: 'not yet' },
 };
 SAY.rooms = SAY.primary;
+// Where a video sent by chat arrives, as each page tells the applicant.
+const VIDEO_CHAT = {
+  'gen3-zh': { say: 'WeChat (aybkkwechat)', short: 'WeChat' },
+  'priority-en': { say: 'LINE (@aybkk) or WeChat (aybkkwechat)', short: 'LINE or WeChat' },
+};
+const videoLine = a => a.video_by === 'chat' ? `video to come on ${VIDEO_CHAT[a.list].short}` : 'video by link';
 // Country is typed free text: anything that looks like a link or a handle stays out of the ping.
 const pingSafe = s => /[:/@]|www\.|\.[a-z]{2,}/i.test(s) ? '(see the inbox)' : s;
 
@@ -204,6 +215,7 @@ function checkApplication(body) {
   if (!list) bad.push('list');
   for (const [k, f] of Object.entries(APPLY_FIELDS)) {
     if (f.list && f.list !== list) continue;
+    if (k === 'video' && app.video_by === 'chat') continue;
     const raw = b[k];
     if (f.one) {
       const v = String(raw ?? '');
@@ -231,6 +243,7 @@ function checkApplication(body) {
   if (bad.length) return { error: 'fields', fields: [...new Set(bad)] };
   if (bar.length) return { error: 'bar', fields: bar };
   app.list = list;
+  app.video_by = app.video_by || 'link';
   return { app };
 }
 
@@ -316,7 +329,7 @@ function applicationText(a) {
     block('Why this course, and why now', a.why),
     block('Where the practice is stuck', a.stuck),
     block('Pain or injury', a.injury),
-    block('Practice video', a.video),
+    a.video_by === 'chat' ? `Practice video: will send on ${VIDEO_CHAT[a.list].say}` : block('Practice video', a.video),
     a.heard ? `Heard about it from: ${a.heard}` : null,
     block('Question for the call', a.question),
   ].filter(Boolean).join('\n');
@@ -589,10 +602,11 @@ function mountInbox(app, opts = {}) {
         const p = people.get(r.sender_id);
         if (!p) {
           people.set(r.sender_id, { place: people.size + 1, joined: r.created_at, last: r.created_at, tries: 1,
-            email: r.sender_id, name: r.sender_name, video: r.ref, summary: r.triage.summary, text: r.text });
+            email: r.sender_id, name: r.sender_name, video: r.ref, video_by: r.triage.video_by || 'link',
+            summary: r.triage.summary, text: r.text });
         } else {
           Object.assign(p, { last: r.created_at, tries: p.tries + 1, name: r.sender_name, video: r.ref,
-            summary: r.triage.summary, text: r.text });
+            video_by: r.triage.video_by || 'link', summary: r.triage.summary, text: r.text });
         }
       }
       res.json({ list, about: APPLY_LISTS[list], count: people.size, applications: [...people.values()] });
@@ -643,7 +657,7 @@ function mountInbox(app, opts = {}) {
       await ready;
       const summary = `In-Depth Mysore application, list ${a.list}, from ${a.country}: ${a.years} years, ` +
         `${a.mornings} mornings a week, ${SAY.series[a.series]}, ` +
-        `${a.dates ? `all 30 days ${SAY.dates[a.dates]}, ` : ''}call in ${SAY.call_lang[a.call_lang]}.`;
+        `${a.dates ? `all 30 days ${SAY.dates[a.dates]}, ` : ''}call in ${SAY.call_lang[a.call_lang]}, ${videoLine(a)}.`;
       const saved = await inTurn('apply', async () => {
         const sent = (await q(`SELECT count(*) FILTER (WHERE sender_id=$1)::int AS email,
             count(*) FILTER (WHERE created_at > now() - interval '1 hour')::int AS hour,
@@ -655,7 +669,7 @@ function mountInbox(app, opts = {}) {
           `INSERT INTO aybkk_inbox (channel, kind, direction, ext_id, sender_id, sender_name, text, ref, sent_at, triage, alerted_at)
            VALUES ('apply','application','in',$1,$2,$3,$4,$5,now(),$6,CASE WHEN $7 THEN now() END) RETURNING id`,
           [`apply:${crypto.randomUUID()}`, a.email, a.name, applicationText(a), a.link,
-            { lane: 'hot', list: a.list, summary, reply: '' }, !!ping])).rows[0];
+            { lane: 'hot', list: a.list, video_by: a.video_by, summary, reply: '' }, !!ping])).rows[0];
         return { id: row.id, ping };
       });
       if (!saved) {
@@ -669,7 +683,8 @@ function mountInbox(app, opts = {}) {
         ? `More In-Depth Mysore applications this hour. Pings pause until the hour is over; every application is in the inbox, channel "apply".`
         : `New In-Depth Mysore application, list ${a.list} (${APPLY_LISTS[a.list]}), from ${pingSafe(a.country)}\n` +
           `${a.years} years of Ashtanga, ${a.mornings} mornings a week, ${SAY.series[a.series]}. Teaches now: ${a.teaching}.\n` +
-          `${a.dates ? `All 30 days: ${SAY.dates[a.dates]}. ` : ''}Call in ${SAY.call_lang[a.call_lang]}.\n` +
+          `${a.dates ? `All 30 days: ${SAY.dates[a.dates]}. ` : ''}Call in ${SAY.call_lang[a.call_lang]}. ` +
+          `${a.video_by === 'chat' ? `Video: will come on ${VIDEO_CHAT[a.list].short}` : 'Video: link'}.\n` +
           `The page promises a reply within 2 days. Full answers: the inbox, channel "apply".`)
         .catch(e => { console.error('[apply] ping failed:', e.message); return false; })
         .then(unclaim(saved.id))
