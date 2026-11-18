@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-11-18T06:10:17.838Z
+Inbox last read: 2026-11-18T12:10:35.595Z
 
 ## Standing orders from Boonchu
 - 2026-11-08 BRAND COLOURS CHANGED (Boonchu picked "L1 Grande Galerie", the Louvre palette, for aybkk.net; PR on branch claude/louvre-palette, Neo): Louvre red #7E262E (hero band, headings), oxblood #5F1C23 (deep sections), honey parquet #D6A35C (buttons, offer bars; same hue as the new maple floor), limestone #F4EDE2 (page), soft brass #84621F (prices, gilt), pyramid steel blue #2F507F (links only). The old aubergine #3E1442 + mustard #F2C94C + pink is retired on the website. Posters, carousels, the timetable poster and the review QR card still use aubergine and gold: move them to the Louvre palette only after Boonchu says go for each piece. Small text rule from the same day: nothing under 15 px on the site; keep the grid.
@@ -290,3 +290,4 @@ Inbox last read: 2026-11-18T06:10:17.838Z
 - 2026-11-17 19:08: check-in. Course prices still waiting (next choice Sun 22 Nov, 5 days, 2nd nudge today, last today). No reminders due since 13:08. No win reported; next step given: confirm the 12-month LINE slip (16 Nov) in the bank and report it. Inbox 19:08: 0 new, 0 hot.
 - 2026-11-18 07:08: Carne posted (0 new leads, 2 open; serious lead 32 days silent); Plato paused (expected). No @Machi requests. Money: 12-month LINE slip (16 Nov) still unconfirmed. Course prices next choice Sun 22 Nov (4 days). Reminders: Mysore trip flights/hotel (daily), Rezerv import (daily). Inbox 07:08: 1 new, 1 hot, 1 needs a reply (newcomer asking how to start, sent a map link). No wins this week. Board rebuilt.
 - 2026-11-18 13:08: check-in. Course prices still waiting (next choice Sun 22 Nov, 4 days, 1st nudge today). No reminders due since 07:08. Inbox 13:08: 1 new, 0 hot, 1 needs a reply.
+- 2026-11-18 19:08: check-in. Course prices still waiting (next choice Sun 22 Nov, 4 days, 2nd nudge today, last today). No reminders due since 13:08. No win reported; next step given: confirm the 12-month LINE slip (16 Nov) in the bank and report it. Inbox 19:08: 2 new (stickers only), 0 hot, 1 older question still open.
