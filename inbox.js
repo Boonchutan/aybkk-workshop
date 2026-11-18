@@ -3,7 +3,8 @@
 // DMs and comments.
 //
 // Mount:  const inbox = mountInbox(app, { pgPool })
-//         The LINE webhook in server.js hands each request to inbox.takeLine(req).
+//         The LINE webhook in server.js checks the signature with lineSigned, then hands
+//         each signed request to inbox.takeLine(req) and counts a refused one with inbox.lineRefused().
 //
 // Messages live in aybkk_inbox (the private Postgres, never the public repo)
 // for 90 days, except the English priority list (see below). Machi, the chief-of-staff routine, reads GET /api/inbox three
@@ -394,7 +395,7 @@ function mountInbox(app, opts = {}) {
     console.warn('⚠ inbox: no pgPool — inbox disabled');
     app.post('/api/in-depth/apply', (req, res) => res.status(503).json({ error: 'server' }));
     app.post('/api/start/lead', (req, res) => res.status(503).json({ error: 'server' }));
-    return { takeLine() {} };
+    return { takeLine() {}, lineRefused() {} };
   }
   const q = (sql, params = []) => pool.query(sql, params);
   const notify = opts.notify || telegram;
@@ -817,8 +818,11 @@ function mountInbox(app, opts = {}) {
     }
   }, (err, req, res, next) => res.status(err.status === 413 ? 413 : 400).json({ error: 'fields', fields: [] }));
 
-  return { takeLine, purge };
+  // server.js refuses an unsigned /line/webhook before takeLine; the count still shows up in GET /api/inbox.
+  const lineRefused = () => { stats.lineBadSignatures++; };
+
+  return { takeLine, lineRefused, purge };
 }
 
-module.exports = { mountInbox, parseMeta, checkApplication, checkLead, realFit, landingCode, telegram, REAL_FIT, REAL_FIT_ID,
+module.exports = { mountInbox, lineSigned, parseMeta, checkApplication, checkLead, realFit, landingCode, telegram, REAL_FIT, REAL_FIT_ID,
   LANDING_TAGS, APPLY_PATH_RE, LEAD_PATH_RE };

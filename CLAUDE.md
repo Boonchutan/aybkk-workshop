@@ -114,7 +114,8 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
 - **Inbox:** `inbox.js` keeps 1:1 chats from the LINE Official Account (`/line/webhook`) and
   Instagram/Facebook DMs and comments (`/meta/webhook`) in `aybkk_inbox` for 90 days.
   Machi reads `GET /api/inbox` (header `x-inbox-key`). Env: `INBOX_KEY`; `LINE_CHANNEL_SECRET`
-  (LINE signature); `META_APP_SECRET`, `META_VERIFY_TOKEN`, optional `META_PAGE_TOKEN` (names).
+  (LINE signature: `POST /line/webhook` answers 401 and does nothing, follow and claim codes included, unless
+  LINE signed it; it logs event and source types only, never chat text or ids; test `test/line-webhook.test.js`); `META_APP_SECRET`, `META_VERIFY_TOKEN`, optional `META_PAGE_TOKEN` (names).
   Optional `ANTHROPIC_API_KEY` sorts each message on arrival and sends hot ones to Boonchu's
   Telegram (`INBOX_AI_MODEL`, default Opus 5.5; `INBOX_AI_DAILY_CAP`, default 150 calls).
   **Real fit** on an In-Depth application is worked out at save time by the one `REAL_FIT` rule in `inbox.js`
