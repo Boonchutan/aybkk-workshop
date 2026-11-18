@@ -654,7 +654,7 @@ mountIdcn(app, { pgPool });
 // hot ones pinged to Boonchu at once when ANTHROPIC_API_KEY is set
 const inbox = mountInbox(app, { pgPool });
 
-// The AYBKK help desk (a second LINE OA, internal): the 05:00 teaching brief and the
+// The AYBKK help desk (a second LINE OA, internal): the morning teaching brief and the
 // 20:00 day summary to the teacher team's LINE group, and messages the Desk sends.
 mountTeam(app, { pgPool, cloudinary, driver }).start();
 
