@@ -14,6 +14,7 @@ const crypto = require('crypto');
 const net = require('net');
 const QRCode = require('qrcode');
 const { sendMail, render } = require('./mailer');
+const { REAL_FIT, REAL_FIT_ID, LANDING_TAGS, landingCode } = require('./inbox');
 
 const TZ_OFFSET = '+07:00';                    // Asia/Bangkok, no DST
 const SIGNIN_TTL_MIN = 30;                     // a sign-in link is short-lived
@@ -35,6 +36,20 @@ const LATE_ADD_DAYS = 7;                       // staff put someone who came on 
 // after it starts (Boonchu, 16 Nov 2026): Mysore 60, every other class 30.
 // bookCloseAt is the one place that reads it.
 const BOOK_LATE_MIN = { mysore: 60, default: 30 };
+// Landing pages counted in bkk_start_events, and the kinds each page may send. The In-Depth
+// pages' 'sent' and 'fit' are written by inbox.js when an application is saved, never by a page.
+const LANDING_KINDS = { start: ['view', 'tap', 'step'], 'in-depth-zh': ['view', 'step2', 'step3'], 'in-depth-en': ['view', 'step2', 'step3'] };
+// What the weekly box shows for each page, in ladder order. /start's q1..q3 and done are its 'step' rows.
+const LANDING_COLS = { 'in-depth-zh': ['view', 'step2', 'step3', 'sent', 'fit'], 'in-depth-en': ['view', 'step2', 'step3', 'sent', 'fit'],
+  start: ['view', 'tap', 'q1', 'q2', 'q3', 'done'] };
+const LANDING_WEEKS = 8;
+const LANDING_SPLIT_TOP = 30;                  // a week's split by source or tag: the biggest 30, then one "other" row
+// Counts from one address an hour, kept in memory only. Generous: a phone network in China puts
+// many people behind one address, and a page load sends at most 3 (In-Depth) or 6 (/start).
+const LANDING_PER_HOUR = 300;
+// Crawlers that run a page's script are not visitors. The user agent is read, never stored.
+// (A Cubot phone has "CUBOT" in its user agent, so that one bot is a visitor.)
+const LANDING_BOT_UA = /(?<!cu)bot\b|crawl|spider|slurp|headless|lighthouse/i;
 const VAT_PCT = 7;                             // Thai VAT, charged on price + online fee
 // The payment watch (Boonchu, 15 Nov 2026): stuck online payments are asked
 // about again by the server itself, and Telegram hears only about problems.
@@ -439,6 +454,12 @@ function mountBkk(app, opts = {}) {
     await q(`CREATE TABLE IF NOT EXISTS bkk_start_events (
       id SERIAL PRIMARY KEY, kind TEXT NOT NULL, src TEXT, lang TEXT, ch TEXT,
       created_at TIMESTAMPTZ DEFAULT now())`);
+    // The In-Depth pages count here too (18 Nov 2026): page names the landing page, tag the
+    // headline it was opened with (?for=). Still no IP, name, email or member id. Every
+    // /start and letter count reads page 'start' only, so In-Depth rows never move them.
+    await q(`ALTER TABLE bkk_start_events ADD COLUMN IF NOT EXISTS page TEXT NOT NULL DEFAULT 'start'`);
+    await q(`ALTER TABLE bkk_start_events ADD COLUMN IF NOT EXISTS tag TEXT`);
+    await q(`CREATE INDEX IF NOT EXISTS bkk_start_events_page_at ON bkk_start_events (page, created_at)`);
 
     // The Monday letter, email door. LINE, WeChat and Telegram readers join in
     // those apps, so only email lives here. An address counts once it is
@@ -3540,15 +3561,35 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     } finally { client.release(); }
   });
 
+  const landingTries = new Map();                // address → { start, n }, this hour's counts
+  const landingTry = ip => {
+    const now = Date.now();
+    if (landingTries.size > 5000) landingTries.clear();
+    let t = landingTries.get(ip);
+    if (!t || now - t.start >= HOUR_MS) landingTries.set(ip, t = { start: now, n: 0 });
+    return ++t.n <= LANDING_PER_HOUR;
+  };
   app.post('/api/bkk/start-event', async (req, res) => {
     const b = req.body || {};
+    // No page is /start, as every caller before the In-Depth pages.
+    const page = b.page == null ? 'start' : typeof b.page === 'string' ? b.page : '';
+    if (!Object.hasOwn(LANDING_KINDS, page)) return res.status(400).json({ error: 'page' });
+    // Every page names its kind; a body with none (or one that is not JSON) is not a visit.
+    if (b.kind == null || b.kind === '') return res.status(400).json({ error: 'kind' });
     // 'step': the first-step ladder (q1..q3 answered, done-<channel> at the end).
     // The staff reports count kind 'view' and 'tap' only, so steps never inflate them.
-    const kind = ['tap', 'step'].includes(b.kind) ? b.kind : 'view';
+    // /start counts an unknown kind as a view, as it always has; an In-Depth page sends its own kinds only.
+    let kind = LANDING_KINDS[page].includes(b.kind) ? b.kind : null;
+    if (!kind && page !== 'start') return res.status(400).json({ error: 'kind' });
+    kind = kind || 'view';
+    if (LANDING_BOT_UA.test(String(req.headers['user-agent'] || ''))) return res.status(204).end();
+    if (!landingTry(guessIp(req))) return res.status(429).json({ error: 'busy' });
     const clean = (v, n) => String(v || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, n) || null;
+    // A tag is one of the In-Depth headlines (?for=); /start has none.
+    const tag = page === 'start' ? null : LANDING_TAGS.find(t => t === landingCode(b.tag)) || null;
     try {
-      await q(`INSERT INTO bkk_start_events (kind,src,lang,ch) VALUES ($1,$2,$3,$4)`,
-        [kind, clean(b.src, 40), clean(b.lang, 5), clean(b.ch, 10)]);
+      await q(`INSERT INTO bkk_start_events (page,kind,src,tag,lang,ch) VALUES ($1,$2,$3,$4,$5,$6)`,
+        [page, kind, landingCode(b.src), tag, clean(b.lang, 5), page === 'start' ? clean(b.ch, 10) : null]);
       res.json({ success: true });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
@@ -3576,7 +3617,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       }
       // Which door the letter box's visitors take (LINE, WeChat, Telegram, email).
       const doors = (await q(`SELECT coalesce(ch,'-') AS ch, count(*)::int AS n FROM bkk_start_events
-        WHERE src='letter' AND kind='tap' AND created_at > now() - interval '30 days' GROUP BY 1 ORDER BY n DESC`)).rows;
+        WHERE page='start' AND src='letter' AND kind='tap' AND created_at > now() - interval '30 days' GROUP BY 1 ORDER BY n DESC`)).rows;
       res.json({ success: true, counts, doors });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
@@ -3587,9 +3628,69 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const { rows } = await q(
         `SELECT coalesce(src, '-') AS src, count(*) FILTER (WHERE kind = 'view')::int AS views,
            count(*) FILTER (WHERE kind = 'tap')::int AS taps
-         FROM bkk_start_events WHERE created_at > now() - interval '30 days' AND src IS DISTINCT FROM 'letter'
+         FROM bkk_start_events WHERE page='start' AND created_at > now() - interval '30 days' AND src IS DISTINCT FROM 'letter'
          GROUP BY 1 ORDER BY taps DESC, views DESC LIMIT 30`);
       res.json({ success: true, sources: rows });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Landing pages by week (18 Nov 2026): Monday to Sunday in Bangkok, the last LANDING_WEEKS
+  // weeks, newest first. Each page's ladder, and the same numbers split by source (?src=) and by
+  // headline tag (?for=), so the owner sees which source and which step loses people. Counts only:
+  // the rows hold no name, address or member id. The letter box's taps are not /start's.
+  app.get('/api/bkk/admin/landing-weeks', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const since = `date_trunc('week', now() AT TIME ZONE 'Asia/Bangkok') - interval '${LANDING_WEEKS - 1} weeks'`;
+      const weeks = (await q(`SELECT to_char(${since} + i * interval '1 week', 'YYYY-MM-DD') AS w
+        FROM generate_series(${LANDING_WEEKS - 1}, 0, -1) i`)).rows.map(r => r.w);
+      // Only the (page, number) pairs the box shows are read; the database does the adding up, so
+      // the answer stays small however many rows or sources there are.
+      const pairs = Object.entries(LANDING_COLS).flatMap(([p, cols]) => cols.map(c => [p, c]));
+      const ends = i => `CASE page ${Object.entries(LANDING_COLS).map(([p, c]) => `WHEN '${p}' THEN '${c[i < 0 ? c.length - 1 : i]}'`).join(' ')} END`;
+      const kept = `SELECT * FROM (SELECT page, src, tag, ch,
+          to_char(date_trunc('week', created_at AT TIME ZONE 'Asia/Bangkok'), 'YYYY-MM-DD') AS week,
+          CASE WHEN kind <> 'step' THEN kind WHEN ch LIKE 'done%' THEN 'done' ELSE ch END AS k
+        FROM bkk_start_events
+        WHERE created_at >= (${since}) AT TIME ZONE 'Asia/Bangkok' AND (page <> 'start' OR src IS DISTINCT FROM 'letter')) e
+        WHERE (page, k) IN (SELECT * FROM unnest($1::text[], $2::text[]))`;
+      const args = [pairs.map(x => x[0]), pairs.map(x => x[1])];
+      // A split keeps its LANDING_SPLIT_TOP biggest (by the ladder's first number, then its last);
+      // the rest is one "other" row, so a week's split always adds up to the week.
+      const split = dim => q(`WITH e AS (${kept}),
+          g AS (SELECT page, week, ${dim} AS key, k, count(*)::int AS n FROM e GROUP BY 1, 2, 3, 4),
+          r AS (SELECT page, week, key, row_number() OVER (PARTITION BY page, week ORDER BY
+              coalesce(sum(n) FILTER (WHERE k = ${ends(0)}), 0) DESC, coalesce(sum(n) FILTER (WHERE k = ${ends(-1)}), 0) DESC,
+              key NULLS LAST) AS rn
+            FROM g GROUP BY 1, 2, 3)
+        SELECT g.page, g.week, CASE WHEN r.rn <= $3 THEN g.key END AS key, least(r.rn, $3 + 1)::int AS rn, g.k, sum(g.n)::int AS n
+        FROM g JOIN r ON r.page = g.page AND r.week = g.week AND r.key IS NOT DISTINCT FROM g.key
+        GROUP BY 1, 2, 3, 4, 5`, [...args, LANDING_SPLIT_TOP]);
+      const [totals, bySrc, byTag, rules] = await Promise.all([
+        q(`SELECT page, week, k, count(*)::int AS n FROM (${kept}) e GROUP BY 1, 2, 3`, args),
+        split('src'), split('tag'),
+        // The real-fit rule each week's sent and fit rows were counted with (inbox.js REAL_FIT_ID).
+        q(`SELECT DISTINCT page, week, ch FROM (${kept}) e WHERE k IN ('sent', 'fit') AND ch IS NOT NULL`, args),
+      ]);
+      const zero = cols => Object.fromEntries(cols.map(c => [c, 0]));
+      const pages = Object.entries(LANDING_COLS).map(([page, cols]) => ({ page, cols,
+        weeks: weeks.map(week => ({ week, n: zero(cols), bySrc: new Map(), byTag: new Map(), olderRule: false })) }));
+      const at = r => { const p = pages.find(x => x.page === r.page); return p && p.weeks.find(x => x.week === r.week); };
+      for (const r of totals.rows) { const w = at(r); if (w) w.n[r.k] += r.n; }
+      for (const r of rules.rows) { const w = at(r); if (w && r.ch !== REAL_FIT_ID) w.olderRule = true; }
+      for (const [rows, name, field] of [[bySrc.rows, 'src', 'bySrc'], [byTag.rows, 'tag', 'byTag']]) {
+        for (const r of rows) {
+          const w = at(r);
+          if (!w) continue;
+          const cols = pages.find(x => x.page === r.page).cols;
+          if (!w[field].has(r.rn)) w[field].set(r.rn, r.rn > LANDING_SPLIT_TOP ? { other: true, n: zero(cols) } : { [name]: r.key, n: zero(cols) });
+          w[field].get(r.rn).n[r.k] += r.n;
+        }
+      }
+      for (const p of pages) for (const w of p.weeks) for (const f of ['bySrc', 'byTag']) {
+        w[f] = [...w[f]].sort((x, y) => x[0] - y[0]).map(x => x[1]);
+      }
+      res.json({ success: true, weeks, pages, fitRule: REAL_FIT, fitRuleId: REAL_FIT_ID });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 

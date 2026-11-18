@@ -632,7 +632,7 @@ function mountTeam(app, opts = {}) {
            FROM bkk_newsletter`),
       one(`SELECT count(*) FILTER (WHERE kind='view')::int AS views, count(*) FILTER (WHERE kind='tap')::int AS taps,
              count(*) FILTER (WHERE kind='step' AND ch LIKE 'done%')::int AS done
-           FROM bkk_start_events WHERE created_at >= $1 AND created_at < $2 AND src IS DISTINCT FROM 'letter'`),
+           FROM bkk_start_events WHERE page='start' AND created_at >= $1 AND created_at < $2 AND src IS DISTINCT FROM 'letter'`),
       journalEntries(from, to),
     ]);
     // A door tablet key used from an address other than the one it was paired

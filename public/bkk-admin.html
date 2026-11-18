@@ -223,6 +223,26 @@
   .chk.ok,.chk.warn{padding:5px 8px;border-radius:6px}
   .chk.ok{background:#e6f6ec;color:#187a43}.chk.warn{background:#fff3d6;color:#6b520e}
   details.tries{margin-top:14px;border-top:1px solid var(--line)}
+  /* Landing pages, by week (18 Nov 2026): a grid row per week; a week with counts opens to its split. */
+  .lw .lw-p{margin:18px 0 2px;font:800 14px/1.35 'Work Sans','Plex',sans-serif}
+  .lw-r{display:grid;grid-template-columns:minmax(4.4em,1.4fr) repeat(var(--c),minmax(0,1fr));gap:4px;padding:8px 0;
+    border-bottom:1px solid var(--line);font-size:14px;font-variant-numeric:tabular-nums}
+  .lw-r .n{text-align:right}
+  .lw-h{font-size:12px;line-height:1.3;align-items:end;padding-top:4px}
+  details.lw-w>summary{cursor:pointer;list-style:none;display:block}
+  details.lw-w>summary::-webkit-details-marker{display:none}
+  details.lw-w>summary .lw-d::before{content:'▸ ';color:var(--plum)}
+  details.lw-w[open]>summary .lw-d::before{content:'▾ '}
+  details.lw-w[open]>summary{font-weight:700}
+  details.lw-w>summary:focus-visible{outline:2px solid var(--plum);outline-offset:2px;border-radius:4px}
+  .lw-s{padding:2px 0 12px}
+  .lw-sh{margin:10px 0 2px;font-size:12.5px;font-weight:700}
+  .lw-t td{padding:5px 3px;font-size:13px}
+  .lw-t td.n{white-space:nowrap}
+  .lw-k{overflow-wrap:anywhere}
+  .lw-u{white-space:nowrap}
+  /* A 360 px phone: five-digit numbers keep clear of the next column. */
+  @media (max-width:380px){.lw-r{grid-template-columns:minmax(3.6em,1.2fr) repeat(var(--c),minmax(0,1fr));gap:2px;font-size:12.5px}}
   details.tries>summary{cursor:pointer;padding:12px 0 10px;font-weight:700}
   details.tries>summary .muted{display:block;font-weight:400}
   /* One sale, one row (15 Nov 2026): a ฿0 line, where a row came from, and what was done by hand. */
@@ -1168,6 +1188,35 @@
     doorNeedCode: 'พิมพ์รหัสที่ขึ้นบนแท็บเล็ต',
     doorBadCode: 'ไม่มีแท็บเล็ตที่แสดงรหัสนี้ ดูรหัสบนแท็บเล็ตอีกครั้ง รหัสเปลี่ยนทุก 10 นาที',
     doorTooMany: 'พิมพ์รหัสผิดหลายครั้งเกินไป ลองใหม่อีกครั้งในหนึ่งชั่วโมง',
+  });
+  // Landing pages, by week (18 Nov 2026).
+  Object.assign(STR.en, {
+    lwTitle: 'Landing pages, by week',
+    lwHelp: 'Monday to Sunday, Bangkok time, the last 8 weeks. Counts only, no names. Tap a week to split it by source (?\u2060src=) and by headline (?\u2060for=).',
+    lwHow: 'Opens and steps count page openings, not people: a reload or a return counts again, so Step 3 can be higher than Sent. Sent counts each person\u2019s first application, Real fit their first one that fits; either can come from a visit in an earlier week. A return without ?\u2060src= keeps the first visit\u2019s source.',
+    lwPage: { 'in-depth-zh': ['In-Depth, Chinese page', 'cn.aybkk.net/in-depth'], 'in-depth-en': ['In-Depth, English page', 'aybkk.net/in-depth'],
+      start: ['Start page', 'aybkk.net/start'] },
+    lwCol: { view: 'Opens', views: 'Views', step2: 'Step 2', step3: 'Step 3', sent: 'Sent', fit: 'Real fit',
+      tap: 'Tapped book', q1: 'Q1', q2: 'Q2', q3: 'Q3', done: 'Done' },
+    lwWeek: 'Week of', lwBySrc: 'By source (?\u2060src=)', lwByTag: 'By headline (?\u2060for=)', lwNone: '(none)', lwOther: 'All the others',
+    lwRule: 'Real fit', lwRuleK: { primary: 'Primary by heart', rooms: 'Mysore and led classes', dates: 'All 30 days (Chinese page)',
+      mornings: 'Mornings a week', years: 'Years of Ashtanga' },
+    lwRuleV: { yes: 'yes' }, lwOrMore: n => `${n} or more`, lwRuleEnd: '. Teaching and the video are not part of it.',
+    lwOlder: 'A week marked * was counted with an earlier real-fit rule.',
+  });
+  Object.assign(STR.th, {
+    lwTitle: 'หน้าแลนดิ้ง รายสัปดาห์',
+    lwHelp: 'จันทร์ถึงอาทิตย์ เวลากรุงเทพฯ 8 สัปดาห์ล่าสุด นับจำนวนอย่างเดียว ไม่มีชื่อ แตะที่สัปดาห์เพื่อดูแยกตามที่มา (?\u2060src=) และตามพาดหัว (?\u2060for=)',
+    lwHow: 'เปิดดูและขั้นต่าง ๆ นับตามครั้งที่เปิดหน้า ไม่ได้นับคน รีโหลดหรือกลับมาเปิดอีกก็นับเพิ่ม ขั้น 3 จึงอาจสูงกว่าส่งแล้ว ส่งแล้วนับใบสมัครใบแรกของแต่ละคน ตรงเกณฑ์นับใบแรกที่ตรงเกณฑ์ ทั้งสองอย่างอาจมาจากการเข้าชมในสัปดาห์ก่อน ถ้ากลับมาโดยไม่มี ?\u2060src= จะนับตามที่มาของครั้งแรก',
+    lwPage: { 'in-depth-zh': ['In-Depth หน้าภาษาจีน', 'cn.aybkk.net/in-depth'], 'in-depth-en': ['In-Depth หน้าภาษาอังกฤษ', 'aybkk.net/in-depth'],
+      start: ['หน้า Start', 'aybkk.net/start'] },
+    lwCol: { view: 'เปิดดู', views: 'เข้าชม', step2: 'ถึงขั้น 2', step3: 'ถึงขั้น 3', sent: 'ส่งแล้ว', fit: 'ตรงเกณฑ์',
+      tap: 'กดจอง', q1: 'ข้อ 1', q2: 'ข้อ 2', q3: 'ข้อ 3', done: 'จบ' },
+    lwWeek: 'สัปดาห์เริ่ม', lwBySrc: 'แยกตามที่มา (?\u2060src=)', lwByTag: 'แยกตามพาดหัว (?\u2060for=)', lwNone: '(ไม่มี)', lwOther: 'ที่มาอื่น ๆ รวมกัน',
+    lwRule: 'ตรงเกณฑ์', lwRuleK: { primary: 'จำ Primary ได้ทั้งชุด', rooms: 'เคยฝึกคลาสมายซอร์และคลาส Led', dates: 'มาได้ครบ 30 วัน (หน้าภาษาจีน)',
+      mornings: 'เช้าต่อสัปดาห์', years: 'ปีที่ฝึกอัษฎางค์' },
+    lwRuleV: { yes: 'ใช่' }, lwOrMore: n => `${n} ขึ้นไป`, lwRuleEnd: ' การสอนและวิดีโอไม่นับในเกณฑ์นี้',
+    lwOlder: 'สัปดาห์ที่มี * นับตรงเกณฑ์ด้วยเกณฑ์ก่อนหน้า',
   });
   const T =(k, ...a) => { const v = STR[LANG][k] ?? STR.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
   const W = w => STR[LANG].words[w] || w;
@@ -2218,12 +2267,45 @@
       : `<p class="muted">${T('startNone')}</p>`}</div>`;
   }
 
+  // Each landing page's ladder by week; a week opens to the same numbers by source and by headline.
+  async function landingBox() {
+    const s = await api('/api/bkk/admin/landing-weeks').then(r => r.json()).catch(() => null);
+    if (!s || !Array.isArray(s.pages)) return '';
+    const col = (page, c) => esc(T('lwCol')[page === 'start' && c === 'view' ? 'views' : c] || c);
+    const nums = (cols, n) => cols.map(c => `<span class="n">${n[c] || 0}</span>`).join('');
+    const label = (x, key) => x.other ? T('lwOther') : x[key] == null ? T('lwNone') : esc(x[key]);
+    const split = (title, list, key, p) => list.length ? `<p class="lw-sh">${title}</p><table class="lw-t">
+        <tr class="muted"><td></td>${p.cols.map(c => `<td class="n">${col(p.page, c)}</td>`).join('')}</tr>
+        ${list.map(x => `<tr><td class="lw-k">${label(x, key)}</td>
+          ${p.cols.map(c => `<td class="n">${x.n[c] || 0}</td>`).join('')}</tr>`).join('')}</table>` : '';
+    const older = s.pages.some(p => p.weeks.some(w => w.olderRule));
+    const rule = s.fitRule && typeof s.fitRule === 'object' ? `<p class="muted">${T('lwRule')}: ${Object.entries(s.fitRule)
+      .map(([k, v]) => `${esc(T('lwRuleK')[k] || k)} ${typeof v === 'number' ? T('lwOrMore', v) : esc(T('lwRuleV')[v] || v)}`)
+      .join(' · ')}${T('lwRuleEnd')}${older ? ` ${T('lwOlder')}` : ''}</p>` : '';
+    // The grid sits on a span inside the summary: older Safari would not lay out a summary as a grid.
+    const grid = (cls, p, inner) => `<span class="lw-r${cls}" style="--c:${p.cols.length}">${inner}</span>`;
+    const page = p => {
+      const head = `<div>${grid(' lw-h muted', p, `<span>${T('lwWeek')}</span>${p.cols.map(c => `<span class="n">${col(p.page, c)}</span>`).join('')}`)}</div>`;
+      const weeks = p.weeks.map(w => {
+        const row = `<span class="lw-d">${esc(ymdFmt(w.week, { day: 'numeric', month: 'short' }))}${w.olderRule ? ' *' : ''}</span>${nums(p.cols, w.n)}`;
+        if (!p.cols.some(c => w.n[c])) return `<div>${grid('', p, row)}</div>`;
+        return `<details class="lw-w"><summary>${grid('', p, row)}</summary>
+          <div class="lw-s">${split(T('lwBySrc'), w.bySrc, 'src', p)}${split(T('lwByTag'), w.byTag, 'tag', p)}</div></details>`;
+      }).join('');
+      const [name, url] = (T('lwPage') || {})[p.page] || [p.page, ''];
+      return `<h4 class="lw-p">${esc(name)}${url ? ` <span class="lw-u">(${esc(url)})</span>` : ''}</h4>${head}${weeks}`;
+    };
+    return `<div class="box lw"><b>${T('lwTitle')}</b><p class="muted">${T('lwHelp')}</p><p class="muted">${T('lwHow')}</p>${rule}${s.pages.map(page).join('')}</div>`;
+  }
+
   // back: a class or a profile opened from here, to land on the same button again.
   async function renderToday({ back } = {}) {
+    // The weekly landing box is filled in after Today is up, so a slow count never holds Today back.
+    const landing = landingBox().catch(() => '');
     const [d, prog0, start] = await Promise.all([api('/api/bkk/admin/today').then(r => r.json()), progressBox(), startBox()]);
     // Another tab was opened while this loaded (Calendar tapped right after unlock).
     if (current !== 'today' || SUB) return;
-    const prog = prog0 + start;
+    const prog = prog0 + start + '<div id="lwSlot"></div>';
     const rows = (d.bookings || []);
     const money = (d.money || []);
     const moneyBox = `<div class="box"><b>${T('moneyToday')}</b>
@@ -2254,6 +2336,13 @@
     $('#view').innerHTML = prog + moneyBox
       + (blocks || `<div class="box"><b>${T('today')}</b><p class="muted">${T('noBookings')}</p></div>`);
     if (back) backTo(back);
+    const html = await landing;
+    const slot = $('#lwSlot');
+    if (!slot || !html || current !== 'today' || SUB) return;
+    // Scrolled past the slot (back to a class): the page keeps its place as the box comes in above.
+    const above = slot.getBoundingClientRect().top < 0, y = window.scrollY;
+    slot.innerHTML = html;
+    if (above) window.scrollTo(0, y + slot.offsetHeight);
   }
 
   // Every Buy on aybkk.net makes an order before the student pays, so leaving the

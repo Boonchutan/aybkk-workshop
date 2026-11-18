@@ -16,7 +16,7 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Course","name":"In-Depth Mysore: the development of the practice","description":"The development of the practice, for practitioners who know the Primary Series by heart. A priority list for the next English intake. Taught by Boonchu Tanti, Authorized Level 2 by R. Sharath Jois.","url":"https://aybkk.net/in-depth","inLanguage":"en","educationalCredentialAwarded":"AYBKK certificate of completion","provider":{"@type":"Organization","name":"Ashtanga Yoga Bangkok","alternateName":"Ashtanga Yoga Center of Bangkok","url":"https://aybkk.net/"},"offers":{"@type":"Offer","category":"Paid","url":"https://aybkk.net/in-depth#apply","priceSpecification":{"@type":"PriceSpecification","minPrice":5500,"priceCurrency":"USD","valueAddedTaxIncluded":false}}}</script>
 <link rel="preload" href="/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/worksans.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/in-depth.css">
+<link rel="stylesheet" href="/in-depth.css?v=4">
 </head>
 <body>
 <header class="top">
@@ -149,7 +149,7 @@
     <div class="body qa">
       <div><h3>“Do I just get a paper at the end?”</h3>
         <p>The paper is an AYBKK certificate of completion. That is all it is. This course is not an authorization from Mysore, and AYBKK cannot give one. It gives no Yoga Alliance hours. What you pay for is the teaching.</p></div>
-      <div><h3>“Why from US$5,500?”</h3>
+      <div><h3>“Why from US$5,500 + 7% VAT?”</h3>
         <p>You pay for time with Boonchu, in a group of 12 at most. The price says “from” because the format of the next English intake is not set yet. The full price comes with the dates. Payment plans are agreed on the call.</p></div>
       <div><h3>“Will I be adjusted?”</h3>
         <p>Yes, if you agree. You sign a consent to receive hands-on adjustments, and you may decline any adjustment at any time. You also learn to adjust with consent and communication, and when not to adjust.</p></div>
@@ -175,16 +175,10 @@
   </div>
 </section>
 
-<section class="s" id="record">
+<section class="s" id="small">
   <div class="wrap">
-    <h2>The record</h2>
     <div class="body">
-      <p>Counts only. Students' names stay private.</p>
-      <dl class="record">
-        <div><dt>Since 2016</dt><dd>Taught at AYBKK, first in Thai.</dd></div>
-        <div><dt>2025</dt><dd>The first China cohort. Four parts, in Bangkok and Huizhou, from early 2025 to October. 12 completed all four parts. 6 more completed three.</dd></div>
-        <div><dt>2026</dt><dd>Three parts of 10 sessions: Bangkok (January), Huizhou (April), Zhuhai (July to August). 13 started. 11 completed.</dd></div>
-      </dl>
+      <p class="big">We teach in small groups, so the teacher can see each practitioner clearly.</p>
     </div>
   </div>
 </section>
@@ -213,7 +207,7 @@
     <div class="body">
       <p class="big">Dates, place and format go to the priority list first. The list hears 7 days before anyone else, and seats (12 at most) are offered in the order applications came in.</p>
       <ol class="steps">
-        <li><span><b>Fill in the form.</b> Say why you want this course, and send a link to a short practice video. Then you are on the list.</span></li>
+        <li><span><b>Fill in the form.</b> Say why you want this course, and send a short practice video (a link, or on LINE or WeChat). Then you are on the list.</span></li>
         <li><span><b>AYBKK replies within 2 days.</b></span></li>
         <li><span><b>A call with Boonchu.</b> When the dates are out and a seat is offered to you, you talk with Boonchu. Payment plans are agreed on this call.</span></li>
         <li><span><b>Payment.</b> You pay as agreed on the call.</span></li>
@@ -221,31 +215,15 @@
       <p class="by">Joining the list costs nothing and does not commit you.</p>
 
       <div id="apply" tabindex="-1">
-        <form class="form" id="form" data-list="priority-en" novalidate>
+        <form class="form" id="form" data-list="priority-en" data-page="in-depth-en" novalidate>
           <h3>Join the priority list</h3>
-          <p class="intro">For the next English intake of In-Depth Mysore. From US$5,500. Short answers are fine. True answers matter more than good English.</p>
+          <p class="intro">For the next English intake of In-Depth Mysore. From US$5,500 + 7% VAT. Short answers are fine. True answers matter more than good English.</p>
+          <p class="stepsay">3 steps. The last one is your contact details and your practice video (you can also send the video later on LINE or WeChat).</p>
+          <p class="help keep" id="keep" hidden></p>
           <noscript><p>This form needs JavaScript. You can also message LINE @aybkk.</p></noscript>
 
-          <div class="f" data-f="name"><label for="f-name">Your name</label>
-            <p class="help" id="h-name">The name you want to be called.</p>
-            <input type="text" id="f-name" name="name" maxlength="100" autocomplete="name" required aria-describedby="h-name e-name">
-            <p class="err" id="e-name"></p></div>
-          <div class="f" data-f="email"><label for="f-email">Email</label>
-            <p class="help" id="h-email">AYBKK replies here.</p>
-            <input type="email" id="f-email" name="email" maxlength="200" autocomplete="email" inputmode="email" required aria-describedby="h-email e-email">
-            <p class="err" id="e-email"></p></div>
-          <div class="f" data-f="contact"><label for="f-contact">LINE, WeChat, WhatsApp or phone</label>
-            <p class="help" id="h-contact">Write the app, then your ID or number. For example: WeChat abc123.</p>
-            <input type="text" id="f-contact" name="contact" maxlength="120" required aria-describedby="h-contact e-contact">
-            <p class="err" id="e-contact"></p></div>
-          <div class="f" data-f="country"><label for="f-country">Country you live in</label>
-            <input type="text" id="f-country" name="country" maxlength="80" autocomplete="country-name" required aria-describedby="e-country">
-            <p class="err" id="e-country"></p></div>
-          <fieldset class="f" data-f="call_lang"><legend>Language for the call</legend>
-            <div class="opts"><label><input type="radio" name="call_lang" value="en"> <span>English</span></label>
-              <label><input type="radio" name="call_lang" value="zh"> <span>Chinese</span></label></div>
-            <p class="err" id="e-call_lang"></p></fieldset>
-
+          <div class="step" data-step="1">
+          <h4 class="steph" tabindex="-1"><span class="stepn">Step 1 of 3</span>Is this course for you?</h4>
           <fieldset class="f" data-f="primary"><legend>Do you know the full Primary Series by heart?</legend>
             <p class="help">By heart means you can practise the whole series on your own, in order.</p>
             <div class="opts"><label><input type="radio" name="primary" value="yes"> <span>Yes</span></label>
@@ -285,6 +263,10 @@
             <p class="help" id="h-teach">Where, for how long, and what kind of classes. Leave it empty if you do not teach.</p>
             <textarea id="f-teach" name="teach" maxlength="1500" aria-describedby="h-teach e-teach"></textarea>
             <p class="err" id="e-teach"></p></div>
+          </div>
+
+          <div class="step" data-step="2">
+          <h4 class="steph" tabindex="-1"><span class="stepn">Step 2 of 3</span>Your practice, in your words</h4>
           <div class="f" data-f="why"><label for="f-why">Why do you want this course, and why now?</label>
             <p class="help" id="h-why">Two or three plain sentences. What do you want to understand? What made you apply now?</p>
             <textarea id="f-why" name="why" maxlength="2000" required aria-describedby="h-why e-why"></textarea>
@@ -297,16 +279,6 @@
             <p class="help" id="h-injury">Do you have pain or an injury now, or an old one that still changes your practice? Plain words are fine. You do not need a doctor's report.</p>
             <textarea id="f-injury" name="injury" maxlength="2000" aria-describedby="h-injury e-injury"></textarea>
             <p class="err" id="e-injury"></p></div>
-          <div class="f" data-f="video"><label for="f-video">Link to your practice video</label>
-            <div class="vhelp" id="h-video">
-              <p>Film one short video of your practice:</p>
-              <ul><li>Surya Namaskara A and B, one of each.</li><li>The asana where you are stuck.</li>
-                <li>3 jump backs and 3 jump throughs. If you do not jump yet, move the way you do now.</li></ul>
-              <p>Put your phone on the floor or a chair. Film from the side, with your whole body in the frame. One take. No editing, no music, no filter. Practise like a normal day. Do not push for the camera.</p>
-              <p>Upload it so that only people with the link can watch it: YouTube set to “unlisted”, Google Drive set to “anyone with the link”, or a Baidu Netdisk share link. Paste the link here. Do not post it in public.</p>
-            </div>
-            <input type="text" id="f-video" name="video" maxlength="500" inputmode="url" autocomplete="off" placeholder="https://" required aria-describedby="h-video e-video">
-            <p class="err" id="e-video"></p></div>
           <div class="f" data-f="heard"><label for="f-heard"><span>How did you hear about this course?</span> <span class="opt">(optional)</span></label>
             <input type="text" id="f-heard" name="heard" maxlength="200" aria-describedby="e-heard">
             <p class="err" id="e-heard"></p></div>
@@ -314,20 +286,66 @@
             <p class="help" id="h-question">What do you most want to ask Boonchu?</p>
             <textarea id="f-question" name="question" maxlength="1000" aria-describedby="h-question e-question"></textarea>
             <p class="err" id="e-question"></p></div>
+          </div>
+
+          <div class="step" data-step="3">
+          <h4 class="steph" tabindex="-1"><span class="stepn">Step 3 of 3</span>Contact and practice video</h4>
+          <div class="f" data-f="name"><label for="f-name">Your name</label>
+            <p class="help" id="h-name">The name you want to be called.</p>
+            <input type="text" id="f-name" name="name" maxlength="100" autocomplete="name" required aria-describedby="h-name e-name">
+            <p class="err" id="e-name"></p></div>
+          <div class="f" data-f="email"><label for="f-email">Email</label>
+            <p class="help" id="h-email">AYBKK replies here.</p>
+            <input type="email" id="f-email" name="email" maxlength="200" autocomplete="email" inputmode="email" required aria-describedby="h-email e-email">
+            <p class="err" id="e-email"></p></div>
+          <div class="f" data-f="contact"><label for="f-contact">LINE, WeChat, WhatsApp or phone</label>
+            <p class="help" id="h-contact">Write the app, then your ID or number. For example: WeChat abc123.</p>
+            <input type="text" id="f-contact" name="contact" maxlength="120" required aria-describedby="h-contact e-contact">
+            <p class="err" id="e-contact"></p></div>
+          <div class="f" data-f="country"><label for="f-country">Country you live in</label>
+            <input type="text" id="f-country" name="country" maxlength="80" autocomplete="country-name" required aria-describedby="e-country">
+            <p class="err" id="e-country"></p></div>
+          <fieldset class="f" data-f="call_lang"><legend>Language for the call</legend>
+            <div class="opts"><label><input type="radio" name="call_lang" value="en"> <span>English</span></label>
+              <label><input type="radio" name="call_lang" value="zh"> <span>Chinese</span></label></div>
+            <p class="err" id="e-call_lang"></p></fieldset>
+          <fieldset class="f" data-f="video_by" aria-describedby="h-video"><legend>Your practice video</legend>
+            <div class="vhelp" id="h-video">
+              <p>Film one short video of your practice:</p>
+              <ul><li>Surya Namaskara A and B, one of each.</li><li>The asana where you are stuck.</li>
+                <li>3 jump backs and 3 jump throughs. If you do not jump yet, move the way you do now.</li></ul>
+              <p>Put your phone on the floor or a chair. Film from the side, with your whole body in the frame. One take. No editing, no music, no filter. Practise like a normal day. Do not push for the camera.</p>
+            </div>
+            <p class="ask">Choose how to send it:</p>
+            <div class="opts"><label><input type="radio" name="video_by" value="link" checked> <span>Paste a link</span></label>
+              <label><input type="radio" name="video_by" value="chat" aria-describedby="vchat"> <span>Send it on LINE or WeChat</span></label></div>
+            <p class="vnote" id="vchat" hidden>Once you have filmed it, send it to <a href="https://line.me/R/ti/p/@aybkk">LINE @aybkk</a> or WeChat aybkkwechat, with the name you used in this form.</p>
+            <p class="err" id="e-video_by"></p></fieldset>
+          <div class="f" data-f="video"><label for="f-video">Link to your practice video</label>
+            <p class="help" id="h-vlink">Upload it so that only people with the link can watch it: YouTube set to “unlisted”, Google Drive set to “anyone with the link”, or a Baidu Netdisk share link. Paste the link here. Do not post it in public.</p>
+            <input type="text" id="f-video" name="video" maxlength="500" inputmode="url" autocomplete="off" placeholder="https://" required aria-describedby="h-vlink e-video">
+            <p class="err" id="e-video"></p></div>
           <div class="hp" aria-hidden="true"><label for="f-website">Website</label><input type="text" id="f-website" name="website" tabindex="-1" autocomplete="off"></div>
 
           <div class="f" data-f="consent">
             <label class="check"><input type="checkbox" id="f-consent" name="consent" aria-describedby="e-consent"> <span>I agree that AYBKK may read my answers, watch my video, and contact me about my application and the next English intake.</span></label>
             <p class="err" id="e-consent"></p></div>
+          </div>
 
-          <button class="btn send" type="submit" id="send">Join the priority list</button>
+          <div class="nav">
+            <button class="back" type="button" id="back" hidden><span aria-hidden="true">←</span> Back</button>
+            <button class="btn" type="button" id="next" hidden>Next</button>
+            <button class="btn send" type="submit" id="send">Join the priority list</button>
+          </div>
           <p class="formmsg" id="formmsg" role="alert"></p>
         </form>
         <div class="thanks" id="thanks" hidden tabindex="-1">
           <h3>You are on the priority list.</h3>
+          <div id="thanks-chat" hidden><p>One more thing: send your practice video to <a href="https://line.me/R/ti/p/@aybkk">LINE @aybkk</a> or WeChat aybkkwechat, with your name.</p></div>
           <p>When the next English intake has dates, you hear first, 7 days before anyone else.</p>
           <p>AYBKK replies within 2 days, to the email or ID you gave.</p>
           <p>Until then, keep practising.</p>
+          <button class="back again" type="button" id="again" hidden>Start a new application</button>
         </div>
       </div>
     </div>
@@ -373,6 +391,6 @@
     <p><a href="https://line.me/R/ti/p/@aybkk">LINE @aybkk</a> · <a href="https://aybkk.net/">aybkk.net</a></p>
   </div>
 </footer>
-<script src="/in-depth.js" defer></script>
+<script src="/in-depth.js?v=4" defer></script>
 </body>
 </html>

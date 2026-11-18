@@ -10,7 +10,7 @@ process.env.BKK_ADMIN_KEY = 'desk-key';
 const crypto = require('crypto');
 const express = require('express');
 const { Pool } = require('pg');
-const { mountInbox, telegram, APPLY_PATH_RE, LEAD_PATH_RE } = require('../inbox.js');
+const { mountInbox, telegram, realFit, REAL_FIT, REAL_FIT_ID, APPLY_PATH_RE, LEAD_PATH_RE } = require('../inbox.js');
 
 // Own schema, so the fake timetable never touches the bkk tests' tables
 const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL ||
@@ -22,6 +22,11 @@ const ok = (name, cond, extra = '') => {
   else { FAIL++; console.log(`  ✗ ${name} ${extra}`); }
 };
 const wait = ms => new Promise(r => setTimeout(r, ms));
+// Webhooks answer first and save after, so a slow machine (CI) needs more than a fixed pause.
+const until = async (cond, ms = 5000) => {
+  for (const end = Date.now() + ms; Date.now() < end; await wait(25)) if (await cond()) return true;
+  return false;
+};
 
 const aiCalls = [];
 let aiAnswer = { lane: 'hot', summary: 'First-timer wants Mysore tomorrow.', reply: 'Hi Anna, welcome! Come at [time].' };
@@ -39,6 +44,9 @@ const alerts = [];
   await pool.query(`INSERT INTO bkk_class_slots (code, title, weekday, start_time, is_online) VALUES
     ('a','Mysore (1st batch)',1,'05:30',false), ('b','Mysore (1st batch)',2,'05:30',false),
     ('c','[Online] Led Primary series',1,'06:30',true)`);
+  // inbox.js counts each saved application in bkk-api.js's anonymous landing table; the same columns.
+  await pool.query(`CREATE TABLE bkk_start_events (id SERIAL PRIMARY KEY, kind TEXT NOT NULL, src TEXT, lang TEXT, ch TEXT,
+    created_at TIMESTAMPTZ DEFAULT now(), page TEXT NOT NULL DEFAULT 'start', tag TEXT)`);
 
   const app = express();
   // As in server.js: the application and first-step routes read their own bodies
@@ -89,6 +97,7 @@ const alerts = [];
   await lineSend([lineText('g1', 'Ustaff', 'staff group chat', 'group')]);
   await lineSend([{ type: 'message', timestamp: Date.now(), source: { type: 'user', userId: 'Ubob' },
     message: { id: 'm3', type: 'sticker', packageId: '1', stickerId: '2' } }]);
+  await until(async () => (await rows()).length >= 3);
   await wait(100);
   let r = await rows();
   ok('1:1 chats stored, redelivery deduped, group chat skipped', r.length === 3, `got ${r.length}`);
@@ -141,7 +150,8 @@ const alerts = [];
     { field: 'feed', value: { item: 'comment', verb: 'add', comment_id: 'fc3', post_id: 'P1', parent_id: 'PAGE1_P1', from: { id: 'PAGE1', name: 'AYBKK' }, message: 'Class photos!', created_time: Math.floor(t / 1000) } },
     { field: 'feed', value: { item: 'reaction', verb: 'add', post_id: 'P1', from: { id: 'U78' } } },
   ] }] });
-  await wait(200);
+  await until(async () => (await rows()).length >= 11);
+  await wait(100);
   r = await rows();
   const by = id => r.find(x => x.ext_id === id) || {};
   ok('IG DM stored as incoming', by('instagram:ig-m1').direction === 'in' && by('instagram:ig-m1').sender_id === 'IGSID9');
@@ -177,7 +187,7 @@ const alerts = [];
   await wait(50);
   aiAnswer = { lane: 'hot', summary: 'x', reply: 'y' };
   await lineSend([lineText('m5', 'Uanna', 'Also, do you have mats?')]);
-  await wait(50);
+  await until(async () => (await rows()).some(x => x.ext_id === 'line:m5'));
   res = await readInbox(`?since=${encodeURIComponent(mark)}`);
   const anna2 = (res.body.threads || []).find(x => x.sender === 'Uanna');
   ok('since returns only threads with news, with earlier context', res.body.threads.length === 1 &&
@@ -675,6 +685,224 @@ const alerts = [];
   await inbox.purge();
   ok('leads follow the 90-day purge', !(await pool.query(`SELECT 1 FROM aybkk_inbox WHERE ext_id='old:old-lead'`)).rows.length &&
     (await leads()).length > 0);
+
+  console.log('\n-- a practice video sent by chat instead of a link --');
+  // Age every application by a day, so the hour, day and ping limits above start over.
+  await pool.query(`UPDATE aybkk_inbox SET created_at = created_at - interval '25 hours',
+    alerted_at = alerted_at - interval '25 hours' WHERE channel='apply'`);
+  ok('a link application says so in its summary and its ping', /, video by link\.$/.test(ap[0].triage.summary) &&
+    ap[0].triage.video_by === 'link' && /Call in Chinese\. Video: link\.\n/.test(ping), ap[0].triage.summary);
+  const vn = (await applied()).length;
+  const refused = async (body, status, field, name) => {
+    const r = await apply(body), j = await r.json();
+    ok(name, r.status === status && (j.fields || []).includes(field) && (await applied()).length === vn,
+      `${r.status} ${JSON.stringify(j)}`);
+  };
+  await refused(good({ video_by: 'link', video: 'http://youtu.be/abc' }), 400, 'video', 'a link chosen: still https only → 400');
+  await refused(good({ video_by: 'link', video: '' }), 400, 'video', 'a link chosen and none given → 400');
+  await refused(good({ video_by: 'link', video: 'my video is on my phone' }), 400, 'video', 'a link chosen and only words given → 400');
+  await refused(good({ video_by: 'email', video: '' }), 400, 'video_by', 'an unknown video option → 400');
+  await refused(good({ video_by: 'Chat', video: '' }), 400, 'video_by', 'a video option in another case → 400');
+  await refused(good({ video_by: 'chat', video: '', primary: 'not_yet' }), 422, 'primary', 'a video by chat still needs a yes on the bar → 422');
+  await refused(good({ video_by: 'chat', video: '', why: 'x'.repeat(2001) }), 400, 'why', 'a video by chat keeps the length limits → 400');
+  await refused(good({ video_by: 'chat', video: '', consent: false }), 400, 'consent', 'a video by chat still needs the consent tick → 400');
+  const vb = alerts.length;
+  ar = await apply(good({ email: 'bot@example.com', video_by: 'chat', video: '', website: 'x' }));
+  await wait(50);
+  ok('a filled honeypot with a video by chat looks accepted and stores nothing', ar.status === 200 &&
+    (await applied()).length === vn && alerts.length === vb);
+
+  ar = await apply(good({ email: 'Wang@Example.com', name: '王小明', video_by: 'chat', video: 'on my phone, sending soon' }));
+  aj = await ar.json();
+  await wait(100);
+  ap = await applied();
+  const wang = ap[ap.length - 1];
+  ok('a video by WeChat needs no link: stored with no ref and the option kept', ar.status === 200 && aj.ok === true &&
+    ap.length === vn + 1 && wang.sender_id === 'wang@example.com' && wang.ref === null && wang.triage.video_by === 'chat',
+    `${ar.status} ${JSON.stringify(aj)} ${wang.ref} ${JSON.stringify(wang.triage)}`);
+  ok('its text says the video comes on WeChat, and a typed video answer is left out',
+    /\nPractice video: will send on WeChat \(aybkkwechat\)\n/.test(wang.text) && !/on my phone/.test(wang.text) &&
+    !/Practice video:\n/.test(wang.text), wang.text);
+  ok('its summary says the video comes on WeChat', /, video to come on WeChat\.$/.test(wang.triage.summary), wang.triage.summary);
+  const wangPing = alerts[alerts.length - 1] || '';
+  ok('its ping says video on WeChat, with no name or contact', alerts.length === vb + 1 &&
+    /All 30 days: yes\. Call in Chinese\. Video: will come on WeChat\.\n/.test(wangPing) &&
+    !/王小明|example\.com|mei123/.test(wangPing), wangPing);
+
+  const anaChat = good({ list: 'priority-en', email: 'ana@example.com', name: 'Ana Example', country: 'Portugal',
+    call_lang: 'en', video_by: 'chat', video: '' });
+  delete anaChat.dates;
+  ar = await apply(anaChat);
+  await wait(100);
+  ap = await applied();
+  const ana = ap[ap.length - 1];
+  const anaPing = alerts[alerts.length - 1] || '';
+  ok('on the English list a video by chat comes on LINE or WeChat', ar.status === 200 && ana.sender_id === 'ana@example.com' &&
+    ana.ref === null && ana.triage.video_by === 'chat' &&
+    /\nPractice video: will send on LINE \(@aybkk\) or WeChat \(aybkkwechat\)\n/.test(ana.text) &&
+    /, video to come on LINE or WeChat\.$/.test(ana.triage.summary) &&
+    /Call in English\. Video: will come on LINE or WeChat\.\n/.test(anaPing) && !/Ana/.test(anaPing), `${ana.text}\n${anaPing}`);
+  ar = await apply(good({ email: 'li.link@example.com', video_by: 'link', video: 'https://youtu.be/li-link' }));
+  ap = await applied();
+  ok('a link chosen in so many words is stored as before', ar.status === 200 &&
+    ap[ap.length - 1].ref === 'https://youtu.be/li-link' && ap[ap.length - 1].triage.video_by === 'link' &&
+    /Practice video:\nhttps:\/\/youtu.be\/li-link/.test(ap[ap.length - 1].text));
+
+  const zl2 = (await readList('?list=gen3-zh')).body;
+  const zWang = zl2.applications.find(x => x.email === 'wang@example.com') || {};
+  const zMei = zl2.applications.find(x => x.email === 'mei@example.com') || {};
+  ok('the Gen #3 list shows the chosen option: no link for WeChat, the link for a link',
+    zWang.video === null && zWang.video_by === 'chat' && /will send on WeChat/.test(zWang.text) &&
+    zMei.video === 'https://youtu.be/abc123' && zMei.video_by === 'link', JSON.stringify([zWang.video, zWang.video_by, zMei.video_by]));
+  const pl2 = (await readList('?list=priority-en')).body;
+  const pAna = pl2.applications.find(x => x.email === 'ana@example.com') || {};
+  const pAnna = pl2.applications.find(x => x.email === 'anna@example.de') || {};
+  ok('the English list shows it too, and a row saved before the option reads as a link',
+    pAna.video === null && pAna.video_by === 'chat' && pAna.place === pl2.count &&
+    pAnna.video === 'https://youtu.be/anna2' && pAnna.video_by === 'link', JSON.stringify([pAna, pAnna.video_by]));
+  res = await readInbox();
+  const wth = (res.body.threads || []).find(x => x.channel === 'apply' && x.sender === 'wang@example.com');
+  ok('the WeChat application shows in GET /api/inbox, hot, with no link', wth && wth.sorted && wth.sorted.lane === 'hot' &&
+    wth.sorted.video_by === 'chat' && wth.messages[0].ref === null);
+  ar = await apply(good({ email: 'li.link@example.com', video_by: 'chat', video: '' }));
+  const zLi = ((await readList('?list=gen3-zh')).body.applications.find(x => x.email === 'li.link@example.com')) || {};
+  ok('a later try with the video by chat keeps the earlier link in the list', ar.status === 200 && zLi.tries === 2 &&
+    zLi.video === 'https://youtu.be/li-link' && zLi.video_by === 'chat' && /will send on WeChat/.test(zLi.text),
+    JSON.stringify(zLi).slice(0, 300));
+  ar = await apply(good({ email: 'li.link@example.com', video_by: 'link', video: 'https://youtu.be/li-new' }));
+  const zLi2 = ((await readList('?list=gen3-zh')).body.applications.find(x => x.email === 'li.link@example.com')) || {};
+  ok('and a newer link still replaces it', ar.status === 200 && zLi2.tries === 3 && zLi2.video === 'https://youtu.be/li-new' &&
+    zLi2.video_by === 'link', JSON.stringify(zLi2).slice(0, 200));
+
+  console.log('\n-- where an application came from, and real fit --');
+  await pool.query(`UPDATE aybkk_inbox SET created_at = created_at - interval '25 hours',
+    alerted_at = alerted_at - interval '25 hours' WHERE channel='apply'`);
+  ok('the real fit rule is one named constant', JSON.stringify(REAL_FIT) === JSON.stringify({ primary: 'yes', rooms: 'yes', dates: 'yes', mornings: 4, years: 2 }));
+  const fm = f => JSON.stringify({ fit: f.fit, miss: f.miss });
+  ok('..."not sure" on the dates is not real fit; a list that does not ask the dates skips it',
+    fm(realFit({ primary: 'yes', rooms: 'yes', dates: 'not_sure', mornings: 7, years: 9 })) === '{"fit":false,"miss":["dates"]}'
+    && fm(realFit({ primary: 'yes', rooms: 'yes', mornings: 4, years: 2 })) === '{"fit":true,"miss":[]}');
+  const rf = realFit({ primary: 'yes', rooms: 'yes', mornings: 4, years: 2, why: 'not read', email: 'x@example.com' });
+  ok('...it keeps the answers it read and names the rule, nothing else', JSON.stringify(rf.parts) === '{"primary":"yes","rooms":"yes","mornings":4,"years":2}'
+    && rf.rule === REAL_FIT_ID && /^r[0-9a-f]{8}$/.test(REAL_FIT_ID), JSON.stringify(rf));
+  let evAt = (await pool.query('SELECT coalesce(max(id), 0)::int AS m FROM bkk_start_events')).rows[0].m;
+  const newEvents = async () => {
+    const r = (await pool.query('SELECT id, page, kind, src, tag, lang FROM bkk_start_events WHERE id > $1 ORDER BY id', [evAt])).rows;
+    if (r.length) evAt = r[r.length - 1].id;
+    return r.map(({ id, ...e }) => e);
+  };
+  const lastApp = async () => { const a = await applied(); return a[a.length - 1]; };
+  const evStr = e => e.map(x => `${x.page}/${x.kind}/${x.src}/${x.tag}/${x.lang}`).join(' ');
+
+  ar = await apply(good({ email: 'wang.fit@example.com', name: '王小明', src: 'WX-Test', for: 'teacher', teaching: 'no', teach: '',
+    video_by: 'chat', video: '' }));
+  let fr = await lastApp();
+  ok('a fit application keeps where it came from and its headline, cleaned', ar.status === 200 && fr.sender_id === 'wang.fit@example.com'
+    && fr.triage.src === 'wx-test' && fr.triage.for === 'teacher', JSON.stringify(fr.triage));
+  ok('...real fit is worked out at save time: teaching no and a video by chat are still fit',
+    fr.triage.fit === true && JSON.stringify(fr.triage.fit_miss) === '[]', JSON.stringify(fr.triage));
+  ok('...the row text says it', /\nReal fit: yes\nCame from: wx-test, headline: teacher$/.test(fr.text), fr.text.slice(-80));
+  let ev = await newEvents();
+  ok('...and two anonymous counts are written: sent and fit, with page, src and tag', evStr(ev) ===
+    'in-depth-zh/sent/wx-test/teacher/zh in-depth-zh/fit/wx-test/teacher/zh', evStr(ev));
+
+  ar = await apply(good({ email: 'ana.unsure@example.com', name: 'Ana Example', dates: 'not_sure', mornings: 3, years: '1', src: 'reel-x', for: 'room' }));
+  fr = await lastApp();
+  ok('not sure of the dates, 3 mornings, 1 year: saved, not real fit, each part named', ar.status === 200 && fr.triage.fit === false
+    && JSON.stringify(fr.triage.fit_miss) === '["dates","mornings","years"]'
+    && /\nReal fit: no \(all 30 days: not sure; mornings a week 3, needs 4 or more; years of Ashtanga 1, needs 2 or more\)\n/.test(fr.text),
+    JSON.stringify(fr.triage));
+  ev = await newEvents();
+  ok('...it counts as sent, not as fit', evStr(ev) === 'in-depth-zh/sent/reel-x/room/zh', evStr(ev));
+
+  const enFit = good({ list: 'priority-en', email: 'ana.en@example.com', name: 'Ana Example', country: 'Portugal', call_lang: 'en',
+    mornings: '4', years: '2', src: 'reel-en', for: 'practice' });
+  delete enFit.dates;
+  ar = await apply(enFit);
+  fr = await lastApp();
+  ev = await newEvents();
+  ok('the English list: 4 mornings and 2 years are just enough, and there is no dates question to fail', ar.status === 200
+    && fr.triage.fit === true && evStr(ev) === 'in-depth-en/sent/reel-en/practice/en in-depth-en/fit/reel-en/practice/en', evStr(ev));
+  ar = await apply({ ...enFit, email: 'ana.en2@example.com', years: '1', src: undefined, for: undefined });
+  fr = await lastApp();
+  ev = await newEvents();
+  ok('...1 year is not; no src and no for are kept as none', ar.status === 200 && fr.triage.fit === false
+    && JSON.stringify(fr.triage.fit_miss) === '["years"]' && fr.triage.src === null && fr.triage.for === null
+    && /\nCame from: \(no src\), headline: \(no for\)$/.test(fr.text) && evStr(ev) === 'in-depth-en/sent/null/null/en', `${evStr(ev)} ${fr.text.slice(-60)}`);
+
+  ar = await apply(good({ email: 'odd.src@example.com', src: ['wx-test'], for: 42 }));
+  fr = await lastApp();
+  ev = await newEvents();
+  ok('a src or for that is not text is dropped, never a reason to refuse', ar.status === 200 && fr.sender_id === 'odd.src@example.com'
+    && fr.triage.src === null && fr.triage.for === null && evStr(ev) === 'in-depth-zh/sent/null/null/zh in-depth-zh/fit/null/null/zh', evStr(ev));
+  ar = await apply(good({ email: 'long.src@example.com', src: 'Reel X!! ' + 'a'.repeat(60), for: 'Teacher' }));
+  fr = await lastApp();
+  await newEvents();
+  ok('...a long or odd one is cleaned to [a-z0-9_-], 40 at most', ar.status === 200 && fr.triage.src === 'reelx' + 'a'.repeat(35)
+    && fr.triage.for === 'teacher', JSON.stringify(fr.triage));
+
+  const n2 = (await applied()).length;
+  for (const [body, want] of [[good({ email: 'no1@example.com', primary: 'not_yet', src: 'wx-test' }), 422],
+    [good({ email: 'no2@example.com', dates: 'no', src: 'wx-test' }), 422], [good({ email: 'bad', src: 'wx-test' }), 400]]) {
+    ar = await apply(body);
+    ok(`a refused application (${ar.status}) counts nothing`, ar.status === want && (await newEvents()).length === 0 && (await applied()).length === n2);
+  }
+  ar = await apply(good({ email: 'bot2@example.com', website: 'x', src: 'wx-test' }));
+  ok('a filled honeypot counts nothing', ar.status === 200 && (await newEvents()).length === 0 && (await applied()).length === n2);
+
+  const zl3 = (await readList('?list=gen3-zh')).body;
+  const zFit = zl3.applications.find(x => x.email === 'wang.fit@example.com') || {};
+  const zNo = zl3.applications.find(x => x.email === 'ana.unsure@example.com') || {};
+  ok('the list shows src, for and real fit with what failed', zFit.src === 'wx-test' && zFit.for === 'teacher' && zFit.fit === true
+    && JSON.stringify(zFit.fit_miss) === '[]' && zNo.src === 'reel-x' && zNo.for === 'room' && zNo.fit === false
+    && JSON.stringify(zNo.fit_miss) === '["dates","mornings","years"]', JSON.stringify([zFit, zNo]).slice(0, 400));
+  const pOld = ((await readList('?list=priority-en')).body.applications.find(x => x.email === 'old-en@example.com')) || {};
+  ok('...a row saved before real fit existed reads as unknown, with no src or for', pOld.place === 1 && pOld.fit === null
+    && JSON.stringify(pOld.fit_miss) === '[]' && pOld.src === null && pOld.for === null, JSON.stringify(pOld).slice(0, 300));
+  ar = await apply(good({ email: 'ana.unsure@example.com', name: 'Ana Example', src: 'wx-other', for: 'practice' }));
+  ev = await newEvents();
+  const zNo2 = ((await readList('?list=gen3-zh')).body.applications.find(x => x.email === 'ana.unsure@example.com')) || {};
+  ok('a second try shows its own real fit; where the person first came from stays', ar.status === 200 && zNo2.tries === 2
+    && zNo2.fit === true && zNo2.src === 'reel-x' && zNo2.for === 'room', JSON.stringify(zNo2).slice(0, 300));
+  // The weekly counts are people: a second try is not sent again, and its first real fit counts once.
+  ok('...it counts fit only, not a second sent', evStr(ev) === 'in-depth-zh/fit/wx-other/practice/zh', evStr(ev));
+  ar = await apply(good({ email: 'ana.unsure@example.com', name: 'Ana Example', src: 'wx-other', for: 'practice' }));
+  ok('...a third try (its answer lost on the phone, sent again) counts nothing new', ar.status === 200 && (await newEvents()).length === 0);
+  // A day later (3 tries a day per email), the same person on the other list.
+  await pool.query(`UPDATE aybkk_inbox SET created_at = created_at - interval '25 hours' WHERE sender_id = 'ana.unsure@example.com'`);
+  ar = await apply(good({ email: 'ana.unsure@example.com', list: 'priority-en', call_lang: 'en', dates: undefined, src: 'reel-en' }));
+  ev = await newEvents();
+  ok('...the same person on the other list is a new sent there', ar.status === 200
+    && evStr(ev) === 'in-depth-en/sent/reel-en/null/en in-depth-en/fit/reel-en/null/en', evStr(ev));
+  const evRow = (await pool.query(`SELECT ch, created_at = date_trunc('day', now() AT TIME ZONE 'Asia/Bangkok') AT TIME ZONE 'Asia/Bangkok' AS day
+    FROM bkk_start_events WHERE kind IN ('sent', 'fit') ORDER BY id DESC LIMIT 2`)).rows;
+  ok('sent and fit rows name the rule and keep only the Bangkok day', evRow.length === 2 && evRow.every(r => r.ch === REAL_FIT_ID && r.day === true),
+    JSON.stringify(evRow));
+  fr = (await applied()).filter(x => x.sender_id === 'ana.unsure@example.com').pop();
+  ok('...and the application keeps the answers fit was worked out from, and the rule', JSON.stringify(fr.triage.fit_parts)
+    === '{"rooms":"yes","years":6,"primary":"yes","mornings":6}' && fr.triage.fit_rule === REAL_FIT_ID, JSON.stringify(fr.triage));
+
+  ar = await apply(good({ email: 'contact.src@example.com', src: 'dm-ana@example.com', for: 'nobody' }));
+  fr = await lastApp();
+  ev = await newEvents();
+  ok('a src that looks like an email is dropped, and a for that is not a headline', ar.status === 200 && fr.triage.src === null
+    && fr.triage.for === null && evStr(ev) === 'in-depth-zh/sent/null/null/zh in-depth-zh/fit/null/null/zh', evStr(ev));
+  ar = await apply(good({ email: 'phone.src@example.com', src: 'wa-66 81 234 5678' }));
+  fr = await lastApp();
+  await newEvents();
+  ok('...a src with a phone number in it too', ar.status === 200 && fr.triage.src === null, JSON.stringify(fr.triage));
+
+  const evCount = async () => (await pool.query('SELECT count(*)::int AS n FROM bkk_start_events')).rows[0].n;
+  const evN = await evCount();
+  await pool.query(`UPDATE aybkk_inbox SET created_at = now() - interval '91 days' WHERE sender_id = 'wang.fit@example.com'`);
+  await inbox.purge();
+  ok('the 90-day purge deletes the application and leaves its anonymous counts', (await applied()).every(x => x.sender_id !== 'wang.fit@example.com')
+    && await evCount() === evN);
+
+  await pool.query('ALTER TABLE bkk_start_events RENAME TO bkk_start_events_away');
+  ar = await apply(good({ email: 'no.table@example.com', src: 'wx-test' }));
+  ok('with no count table the application is still saved', ar.status === 200 && (await lastApp()).sender_id === 'no.table@example.com');
+  await pool.query('ALTER TABLE bkk_start_events_away RENAME TO bkk_start_events');
 
   const bare = express();
   mountInbox(bare, {});

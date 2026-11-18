@@ -425,6 +425,9 @@ const fakeDriver = { session: () => ({
     ('view','reel1',NULL,'2026-11-10T08:00:00+07:00'), ('view','reel1',NULL,'2026-11-10T08:01:00+07:00'), ('view','reel2',NULL,'2026-11-10T09:00:00+07:00'),
     ('tap','reel1','line','2026-11-10T08:02:00+07:00'), ('step','reel1','done-line','2026-11-10T08:03:00+07:00'),
     ('view','letter',NULL,'2026-11-10T08:00:00+07:00')`);
+  // The In-Depth pages count in the same table (18 Nov 2026), never as /start.
+  await pool.query(`INSERT INTO bkk_start_events (page,kind,src,created_at) VALUES
+    ('in-depth-zh','view','reel1','2026-11-10T08:00:00+07:00'), ('in-depth-zh','sent','reel1','2026-11-10T08:05:00+07:00')`);
   const inbox = (ch, sender, at, lane, text = 'SECRET INBOX WORDS') => pool.query(
     `INSERT INTO aybkk_inbox (channel,kind,direction,ext_id,sender_id,text,sent_at,created_at,triage)
      VALUES ($1,'dm','in',$2,$3,$4,$5,$5,$6)`, [ch, `${ch}:${crypto.randomUUID()}`, sender, text, at, lane ? { lane } : null]);
