@@ -7973,13 +7973,14 @@ const ok = (name, cond, extra = '') => {
        && shelf(list0) === 'dropin:1500:10 pack8:7600:20 unlim1:9600:30 unlim3:19500:50 unlim6m:34200:60 unlim12m:63600:70', shelf(list0));
 
     // PaySolutions and Telegram on 127.0.0.1.
-    const pay = { answers: {} };
+    const pay = { answers: {}, delay: {}, hits: {} };
     const stub = http.createServer((req, res) => {
       let body = ''; req.on('data', c => { body += c; });
       req.on('end', () => {
         let ref = null; try { ref = JSON.parse(body).refno; } catch (_) {}
+        pay.hits[ref] = (pay.hits[ref] || 0) + 1;
         const a = pay.answers[ref];
-        res.setHeader('Content-Type', 'application/json'); res.end(a == null ? '' : JSON.stringify(a));
+        setTimeout(() => { res.setHeader('Content-Type', 'application/json'); res.end(a == null ? '' : JSON.stringify(a)); }, pay.delay[ref] || 0);
       });
     });
     const tg = [];
@@ -8110,7 +8111,10 @@ const ok = (name, cond, extra = '') => {
        again.status === 409 && again.body.upgraded === true && lostPass.pcode === 'unlim3' && lostPass.upgrade_order === (await orderRow(a.refno)).id
        && (await one(`SELECT count(*)::int AS n FROM bkk_orders WHERE upgrade_of=$1`, [lost.pass])).n === 1, JSON.stringify([again.body, lostPass]));
     const retry = await monthPass(today, 'Retry');
-    const t1 = (await buyUp(retry.code)).body.order, t2r = await buyUp(retry.code), t2 = t2r.body.order;
+    const t1 = (await buyUp(retry.code)).body.order;
+    // The student left the pay page and came back a few minutes later.
+    await pool.query(`UPDATE bkk_orders SET created_at = created_at - interval '3 minutes' WHERE refno=$1`, [t1.refno]);
+    const t2r = await buyUp(retry.code), t2 = t2r.body.order;
     ok('a try the student left unpaid does not stop a new one', t2r.status === 200 && t2.refno !== t1.refno, JSON.stringify(t2r.body));
     paidAt(t1); paidAt(t2);
     const c1 = await J('/api/bkk/pay/check/' + t1.refno), c2 = await J('/api/bkk/pay/check/' + t2.refno);
@@ -8217,6 +8221,216 @@ const ok = (name, cond, extra = '') => {
        && noneBuys.every(r => r.status === 409), JSON.stringify([anon.body, deskAnon.body, on1.body, give.body]));
     const list1 = (await J('/api/bkk/products')).body;
     ok('no price changed and the price list order is the same', shelf(list1) === shelf(list0), shelf(list1));
+
+    console.log('  after review: late payments, locks, races, voids, retries');
+    {
+      const ckOn = (await J('/api/bkk/pay/check/' + coOrder.refno)).body;
+      ok('the pay check the student\'s page makes after paying says the pass is 3 months now, and until when (no reason text in public)',
+         ckOn.status === 'paid' && ckOn.upgrade && ckOn.upgrade.applied === true && ckOn.upgrade.until === (await passRow(on.pass)).u
+         && !('why' in ckOn.upgrade), JSON.stringify(ckOn));
+      ok('...and the student who taps again after a lost postback is told the payment came through (paidNow)',
+         again.body.paidNow === true && again.body.until === lostPass.u, JSON.stringify(again.body));
+    }
+    {
+      const lt = await monthPass(today, 'Latepay');
+      const o = (await buyUp(lt.code)).body.order;
+      const keepClock = clock;
+      clock = Date.now() + 49 * HOUR;
+      paidAt(o);
+      const ck = await J('/api/bkk/pay/check/' + o.refno);
+      clock = keepClock;
+      const row = await orderRow(o.refno), p = await passRow(lt.pass);
+      const ping = await until(() => tg.some(t => t.includes(`ref ${o.refno}`) && t.includes('paid more than 48 hours after the upgrade was started')));
+      const ln = await watch.moneyLine({ from: Date.now() - HOUR, until: Date.now() + MIN });
+      ok('an online upgrade paid more than 48 hours after it was started is paid (the money came in) but changes no pass: its note, one ping and the money line say so, and the page is told',
+         ck.body.status === 'paid' && ck.body.upgrade && ck.body.upgrade.applied === false && row.status === 'paid' && p.pcode === 'unlim1'
+         && /upgrade not applied: paid more than 48 hours after the upgrade was started/.test(row.gateway_note) && ping
+         && /upgrades paid that changed no pass [1-9]/.test(ln), JSON.stringify([ck.body, row.gateway_note, p.pcode, ln]));
+      const lh = await monthPass(today, 'Latehand');
+      const oh = (await buyUp(lh.code)).body.order;
+      clock = Date.now() + 49 * HOUR;
+      const fa = await post(`/api/bkk/admin/orders/${(await orderRow(oh.refno)).id}/force-activate`, {}, ADMIN);
+      clock = keepClock;
+      ok('...staff turning a late one on by hand decide for themselves: it applies', fa.status === 200 && !fa.body.upgradeError
+         && (await passRow(lh.pass)).pcode === 'unlim3', JSON.stringify(fa.body));
+    }
+    {
+      const rc = await monthPass(today, 'Lockrace');
+      const a1 = (await buyUp(rc.code)).body.order;
+      await pool.query(`UPDATE bkk_orders SET created_at = created_at - interval '2 minutes' WHERE refno=$1`, [a1.refno]);
+      const a2 = (await buyUp(rc.code)).body.order;
+      paidAt(a1); paidAt(a2);
+      await Promise.all([J('/api/bkk/pay/check/' + a1.refno), J('/api/bkk/pay/check/' + a2.refno)]);
+      const p = await passRow(rc.pass), r1 = await orderRow(a1.refno), r2x = await orderRow(a2.refno);
+      const [won, lost2] = p.upgrade_order === r1.id ? [r1, r2x] : [r2x, r1];
+      ok('two paid tries checked at the same moment: one makes the pass 3 months, the other is paid and its note names the one that did (not "no pass")',
+         p.pcode === 'unlim3' && p.u === plus(today, 90) && [r1.id, r2x.id].includes(p.upgrade_order) && won.status === 'paid' && lost2.status === 'paid'
+         && (lost2.gateway_note || '').includes(`the pass was upgraded already by ref ${won.refno}`), JSON.stringify([p.upgrade_order, r1.gateway_note, r2x.gateway_note]));
+      const vr = await monthPass(today, 'Voidrace');
+      const t = (await buyUp(vr.code)).body.order;
+      const d1 = await post('/api/bkk/admin/sales', { productCode: 'up1to3', memberCode: vr.code, method: 'cash', requestId: 'upx-vr-1', confirmRepeat: true }, ADMIN);
+      const u1 = await orderRow(d1.body.order.refno);
+      paidAt(t);
+      const [vv] = await Promise.all([post(`/api/bkk/admin/orders/${u1.id}/void`, { reason: 'card reversed' }, ADMIN), J('/api/bkk/pay/check/' + t.refno)]);
+      const vp = await passRow(vr.pass), tr = await orderRow(t.refno);
+      ok('a void of the applied upgrade at the same moment as another try is paid: the pass ends 3 months on the paid try, the voided one is void',
+         d1.body.upgrade.applied === true && vv.status === 200 && vp.pcode === 'unlim3' && vp.u === plus(today, 90) && vp.upgrade_order === tr.id
+         && tr.status === 'paid' && (await orderRow(u1.refno)).status === 'void', JSON.stringify([vv.body, vp, tr.gateway_note]));
+    }
+    {
+      const mv = await monthPass(today, 'Movevoid');
+      const t = (await buyUp(mv.code)).body.order;
+      const d1 = await post('/api/bkk/admin/sales', { productCode: 'up1to3', memberCode: mv.code, method: 'card', requestId: 'upx-mv-1', confirmRepeat: true }, ADMIN);
+      paidAt(t);
+      await J('/api/bkk/pay/check/' + t.refno);
+      const tr = await orderRow(t.refno), u1 = await orderRow(d1.body.order.refno);
+      const vv = await post(`/api/bkk/admin/orders/${u1.id}/void`, { reason: 'card payment reversed' }, ADMIN);
+      const p = await passRow(mv.pass), tr2 = await orderRow(t.refno);
+      ok('voiding the applied upgrade while a second paid one changed nothing: that one holds the upgrade now, the pass stays 3 months, no third is offered',
+         /upgrade not applied: the pass was upgraded already/.test(tr.gateway_note) && vv.status === 200 && vv.body.stillUpgradedBy === t.refno
+         && vv.body.oneMonthAgain === null && p.pcode === 'unlim3' && p.upgrade_order === tr.id && /holds the upgrade since ref /.test(tr2.gateway_note)
+         && !(await offer(mv.code)), JSON.stringify([vv.body, p, tr2.gateway_note]));
+      const vv2 = await post(`/api/bkk/admin/orders/${tr.id}/void`, { reason: 'refunded' }, ADMIN);
+      const p2 = await passRow(mv.pass);
+      ok('...voiding that one too takes the pass back to 1 month', vv2.status === 200 && vv2.body.oneMonthAgain && p2.pcode === 'unlim1'
+         && p2.u === plus(today, 30) && p2.upgrade_order === null, JSON.stringify([vv2.body, p2]));
+    }
+    {
+      const dd = await monthPass(today, 'Twodesks');
+      const [x1, x2] = await Promise.all([1, 2].map(i => post('/api/bkk/admin/sales',
+        { productCode: 'up1to3', memberCode: dd.code, method: 'cash', requestId: `upx-dd-${i}` }, ADMIN)));
+      const rows = (await pool.query(`SELECT id FROM bkk_orders WHERE upgrade_of=$1`, [dd.pass])).rows;
+      const yes = [x1, x2].filter(r => r.status === 200), no = [x1, x2].filter(r => r.status === 409);
+      ok('two desk upgrades with two ids at the same moment make one sale: the other is refused when it is made',
+         yes.length === 1 && no.length === 1 && (no[0].body.busy === true || no[0].body.upgraded === true) && rows.length === 1
+         && yes[0].body.upgrade.applied === true, JSON.stringify([x1.body, x2.body]));
+      const tt = await monthPass(today, 'Twotabs');
+      const [y1, y2] = await Promise.all([buyUp(tt.code), buyUp(tt.code)]);
+      const tabs = (await pool.query(`SELECT id FROM bkk_orders WHERE upgrade_of=$1`, [tt.pass])).rows;
+      const busy = [y1, y2].find(r => r.status === 409);
+      ok('two tabs online at the same moment make one order: the other is told a payment was just started',
+         [y1, y2].filter(r => r.status === 200).length === 1 && busy && busy.body.busy === true && tabs.length === 1, JSON.stringify([y1.body, y2.body]));
+    }
+    {
+      const sd = await monthPass(today, 'Saledone');
+      const sale1 = { productCode: 'up1to3', memberCode: sd.code, method: 'cash', requestId: 'upx-sd-1' };
+      const s1 = await post('/api/bkk/admin/sales', sale1, ADMIN), s1b = await post('/api/bkk/admin/sales', sale1, ADMIN);
+      ok('a desk Retry of an upgrade that applied answers with it: applied, until when', s1.body.upgrade.applied === true && s1b.body.repeat === true
+         && s1b.body.upgrade && s1b.body.upgrade.applied === true && s1b.body.upgrade.until === s1.body.upgrade.until, JSON.stringify(s1b.body));
+      const sx = await monthPass(today, 'Saledtwo');
+      await pool.query(`INSERT INTO bkk_orders (refno, product_id, member_id, base_thb, fee_thb, vat_thb, amount_thb, method, request_id, upgrade_of)
+        SELECT 990000000777, $1, member_id, 9900, 0, 693, 10593, 'cash', 'upx-sd-2', id FROM bkk_passes WHERE id=$2`, [P.up1to3.id, sx.pass]);
+      const held = await buyUp(sx.code);
+      ok('a desk upgrade being made (recorded, not turned on yet) holds off an online one', held.status === 409 && held.body.busy === true, JSON.stringify(held.body));
+      await pool.query(`UPDATE bkk_orders SET created_at = now() - interval '11 minutes' WHERE request_id='upx-sd-2'`);
+      const o = (await buyUp(sx.code)).body.order;
+      paidAt(o);
+      await J('/api/bkk/pay/check/' + o.refno);
+      const s2 = await post('/api/bkk/admin/sales', { productCode: 'up1to3', memberCode: sx.code, method: 'cash', requestId: 'upx-sd-2' }, ADMIN);
+      ok('...one left half way and retried after the pass was upgraded online: the Retry says paid, not applied, and why (not "done")',
+         s2.status === 200 && s2.body.repeat === true && s2.body.upgrade && s2.body.upgrade.applied === false
+         && /upgraded already by ref/.test(s2.body.upgrade.why), JSON.stringify(s2.body));
+    }
+    {
+      const rc = await monthPass(plus(today, -1), 'Rzafter');
+      await post('/api/bkk/admin/sales', { productCode: 'up1to3', memberCode: rc.code, method: 'cash', requestId: 'upx-rz-1' }, ADMIN);
+      const before = await passRow(rc.pass);
+      const imp = await post('/api/bkk/admin/import/passes', { dryRun: false, rows: [
+        { rezervId: 'RZ-UPX-1', name: rc.name, email: rc.email, plan: '1 Month unlimited', start: plus(today, -1), until: plus(today, 28), status: 'Active' }] }, ADMIN);
+      const rz = await one(`SELECT status, twin_of FROM bkk_passes WHERE source='rezerv' AND member_id=(SELECT member_id FROM bkk_passes WHERE id=$1)`, [rc.pass]);
+      const after = await passRow(rc.pass);
+      ok('a Rezerv copy of the 1-month imported after the upgrade is taken as the copy of the upgraded pass (kept void), and the 3 months stay as they were',
+         imp.status === 200 && before.pcode === 'unlim3' && rz.status === 'void' && rz.twin_of === rc.pass && after.pcode === 'unlim3'
+         && after.u === before.u && after.f === before.f, JSON.stringify([imp.body, rz, before, after]));
+      const dc = await monthPass(plus(today, -1), 'Rzdoubles');
+      await post('/api/bkk/admin/sales', { productCode: 'up1to3', memberCode: dc.code, method: 'cash', requestId: 'upx-rz-2' }, ADMIN);
+      await pool.query(`INSERT INTO bkk_passes (member_id, product_id, kind, valid_days, daily_cap, valid_from, valid_until, status, source)
+        SELECT member_id, $2, 'unlimited', 30, 2, $3::date, $3::date + 30, 'active', 'rezerv' FROM bkk_passes WHERE id=$1`, [dc.pass, P.unlim1.id, plus(today, -1)]);
+      const dbl2 = (await J('/api/bkk/admin/doubles', { headers: ADMIN })).body.items || [];
+      ok('...and a live Rezerv 1-month next to an upgraded pass is listed for a person (two live passes for one sale)',
+         dbl2.some(x => x.kind === 'c' && (x.passes || []).some(p => p.id === dc.pass)), JSON.stringify(dbl2.filter(x => x.kind === 'c')));
+    }
+    {
+      const rt = await monthPass(today, 'Returning');
+      await post('/api/bkk/admin/sales', { productCode: 'up1to3', memberCode: rt.code, method: 'cash', requestId: 'upx-rt-1' }, ADMIN);
+      await pool.query(`UPDATE bkk_passes SET valid_from=$2::date, valid_until=$2::date + 90 WHERE id=$1`, [rt.pass, plus(today, -120)]);
+      await post('/api/bkk/admin/sales', { productCode: 'unlim1', name: rt.name, email: rt.email, method: 'cash', confirmRepeat: true }, ADMIN);
+      const np = await one(`SELECT id FROM bkk_passes WHERE member_id=(SELECT member_id FROM bkk_passes WHERE id=$1) AND id<>$1 ORDER BY id DESC LIMIT 1`, [rt.pass]);
+      await pool.query(`UPDATE bkk_passes SET valid_from=$2::date, valid_until=$2::date + 30 WHERE id=$1`, [np.id, plus(today, -10)]);
+      const r = await buyUp(rt.code);
+      ok('a returning student whose old upgraded pass ended is told the new 1 month cannot be upgraded, not that it is 3 months already',
+         np.id && r.status === 409 && r.body.notEligible === true && !r.body.upgraded, JSON.stringify(r.body));
+    }
+    {
+      const sl = await monthPass(today, 'Slowcheck');
+      const tries = [];
+      for (let i = 0; i < 3; i++) {
+        tries.push((await buyUp(sl.code)).body.order);
+        await pool.query(`UPDATE bkk_orders SET created_at = created_at - interval '2 minutes' WHERE refno=$1`, [tries[i].refno]);
+      }
+      await pool.query(`UPDATE bkk_orders SET checked_at=NULL WHERE upgrade_of=$1`, [sl.pass]);
+      for (const o of tries) pay.delay[r12(o.refno)] = 1200;
+      pay.hits = {};
+      const t0 = Date.now();
+      const r = await buyUp(sl.code);
+      const ms = Date.now() - t0;
+      const hit = tries.map(o => pay.hits[r12(o.refno)] || 0);
+      ok('three open tries are asked about all at once: the wait is one inquiry, not three', r.status === 200 && ms < 3000
+         && hit.join() === '1,1,1', JSON.stringify({ ms, hit, body: r.body.error }));
+      const t1 = Date.now();
+      const dsk = await post('/api/bkk/admin/sales', { productCode: 'up1to3', memberCode: sl.code, method: 'cash', requestId: 'upx-sl-1' }, ADMIN);
+      const ms1 = Date.now() - t1;
+      ok('...a desk sale right after does not ask about them again (asked in the last 2 minutes): it answers at once with the open try',
+         dsk.status === 409 && dsk.body.repeatOf && dsk.body.repeatOf.open === true && ms1 < 1000
+         && tries.map(o => pay.hits[r12(o.refno)] || 0).join() === '1,1,1', JSON.stringify({ ms1, body: dsk.body }));
+      await pool.query(`UPDATE bkk_orders SET checked_at=NULL WHERE upgrade_of=$1`, [sl.pass]);
+      await pool.query(`INSERT INTO bkk_settings (key, value) VALUES ('pay_check_failing', jsonb_build_object('since', now()::text, 'fails', 3, 'why', 'timeout'))
+        ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`);
+      pay.hits = {};
+      const t2 = Date.now();
+      const dsk2 = await post('/api/bkk/admin/sales', { productCode: 'up1to3', memberCode: sl.code, method: 'cash', requestId: 'upx-sl-2' }, ADMIN);
+      const ms2 = Date.now() - t2;
+      await pool.query(`DELETE FROM bkk_settings WHERE key='pay_check_failing'`);
+      for (const o of tries) delete pay.delay[r12(o.refno)];
+      ok('...and while the PaySolutions check is failing, none is asked about', dsk2.status === 409 && dsk2.body.repeatOf && ms2 < 1000
+         && Object.keys(pay.hits).length === 0, JSON.stringify({ ms2, hits: pay.hits }));
+    }
+    {
+      const fold = await monthPass(today, 'Foldup'), keep = await monthPass(null, 'Keepup');
+      await pool.query(`UPDATE bkk_passes SET status='void' WHERE id=$1`, [keep.pass]);
+      const mg = await post(`/api/bkk/admin/members/${keep.code}/merge`, { from: fold.code, sure: true }, ADMIN);
+      const upm = await post('/api/bkk/admin/sales', { productCode: 'up1to3', memberCode: keep.code, method: 'cash', requestId: 'upx-merge-1' }, ADMIN);
+      const um = await post(`/api/bkk/admin/members/${fold.code}/unmerge`, {}, ADMIN);
+      const where = await one(`SELECT (SELECT code FROM bkk_members WHERE id=o.member_id) AS order_on,
+          (SELECT code FROM bkk_members WHERE id=p.member_id) AS pass_on, pr.code AS pass_is
+        FROM bkk_orders o JOIN bkk_passes p ON p.id=o.upgrade_of JOIN bkk_products pr ON pr.id=p.product_id WHERE o.request_id='upx-merge-1'`);
+      ok('undoing a merge takes the upgrade sale back with the pass it upgraded', mg.status === 200 && upm.body.upgrade && upm.body.upgrade.applied
+         && um.status === 200 && where.order_on === fold.code && where.pass_on === fold.code && where.pass_is === 'unlim3', JSON.stringify([mg.body.error, um.body.error, where]));
+    }
+    {
+      const nm = await monthPass(today, 'Nomail');
+      await pool.query(`UPDATE bkk_orders SET mail_to='nomail.receipt@example.com' WHERE id=$1`, [nm.order]);
+      await pool.query(`UPDATE bkk_members SET email=NULL WHERE code=$1`, [nm.code]);
+      const r = await buyUp(nm.code);
+      ok('a 1-month whose profile has no email: the upgrade takes the address its receipt went to, and PaySolutions gets it',
+         r.status === 200 && r.body.pay.fields.customeremail === 'nomail.receipt@example.com'
+         && (await orderRow(r.body.order.refno)).mail_to === 'nomail.receipt@example.com', JSON.stringify(r.body.pay && r.body.pay.fields));
+    }
+    {
+      const mf = await monthPass(plus(today, -1), 'Mefields');
+      const o = await offer(mf.code);
+      ok('My account has what paying online takes, for the step before the pay page: the difference, the online fee, VAT, and the end it gives',
+         o && o.upgrade.priceThb === price && o.upgrade.fee === fee && o.upgrade.vat === vat && o.upgrade.total === price + fee + vat
+         && o.upgrade.surchargePct === pct && o.upgrade.vatPct === 7 && o.upgrade.newUntil === plus(today, 89), JSON.stringify(o && o.upgrade));
+      const t = (await buyUp(mf.code)).body.order;
+      const h = (await J(`/api/bkk/admin/members/${mf.code}/history`, { headers: ADMIN })).body;
+      ok('...and the profile names an online try not paid yet, so staff are asked before they take any money',
+         h.upgrade && h.upgrade.openTry && h.upgrade.openTry.refno === t.refno && h.upgrade.openTry.amount === t.amount, JSON.stringify(h.upgrade));
+      const pl = (await J('/api/bkk/products')).body;
+      ok('the product list names the upgrade for Thai pages (names only, no price or code) and still does not list it',
+         pl.itemNames.length === 1 && pl.itemNames[0].en === 'Upgrade 1 to 3 months' && pl.itemNames[0].th === 'อัปเกรดจาก 1 เป็น 3 เดือน'
+         && Object.keys(pl.itemNames[0]).join() === 'en,th' && !pl.products.some(p => p.kind === 'upgrade'), JSON.stringify(pl.itemNames));
+    }
 
     for (const [k, v] of Object.entries(envWas)) { if (v === undefined) delete process.env[k]; else process.env[k] = v; }
     stub.close(); tgStub.close();

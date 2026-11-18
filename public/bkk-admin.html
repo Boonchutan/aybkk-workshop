@@ -271,6 +271,7 @@
   /* The first-week upgrade at the desk, under the 1-month pass it is for. */
   .now .upg{flex-basis:100%;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:6px 0 2px}
   .now .upg .sellout{flex-basis:100%}
+  .now .upg .btn{min-height:44px}
   /* Two columns: when, then the class, so the class names line up and a long one wraps under itself. Under 340 px the class goes under its day. */
   .now .nbs{display:grid;grid-template-columns:auto minmax(0,1fr);gap:3px 12px;padding:2px 0;font-size:14px}
   .now .nbs>span{overflow-wrap:anywhere}
@@ -997,7 +998,7 @@
   Object.assign(STR.en, {
     upBtn: p => `Upgrade to 3 months (${p}\u00a0+VAT)`,
     upUntil: d => `First-week upgrade open until ${d}`,
-    upFirstWeek: 'First-week upgrade open until day 7 after the first class',
+    upFirstWeek: 'First-week upgrade open until day 7 of this pass',
     upName: 'Upgrade 1 to 3 months',
     upConfirm: (name, base, vat, total, method, until) => `${name}\nUpgrade 1 month to 3 months: ${base} + VAT ${vat}\nTake ${total} (${method}), VAT included.\n`
       + `${until ? `The pass then runs until ${until}.` : 'The pass then runs 3 months from the first class.'}\n\nOnly press OK once you have the money.`,
@@ -1006,11 +1007,14 @@
     qUpOpen: (d, r, amt) => `This student started an online upgrade on ${d} (ref ${r}, ${amt}) that is not paid yet.\nIf both get paid, one is refunded. Sell the upgrade at the desk anyway?`,
     upHaveA: 'This pass is 3 months already.',
     upNoA: 'This pass cannot be upgraded any more: its first week is over, or it changed.',
+    upPaidNowA: 'An online upgrade this student paid has just come through: the pass is 3 months now. Take no money at the desk.',
+    upBusyA: 'This upgrade is being sold on another device right now. Open Payments in a minute before you sell it again.',
+    upCheckA: ref => `Sold (ref ${ref}), but this page could not see whether the pass changed. Open the profile and Payments to check.`,
   });
   Object.assign(STR.th, {
     upBtn: p => `อัปเกรดเป็น 3 เดือน (${p}\u00a0+VAT)`,
     upUntil: d => `อัปเกรดสัปดาห์แรกได้ถึง ${d}`,
-    upFirstWeek: 'อัปเกรดสัปดาห์แรกได้ถึงวันที่ 7 นับจากคลาสแรก',
+    upFirstWeek: 'อัปเกรดสัปดาห์แรกได้ถึงวันที่ 7 ของแพ็กเกจนี้',
     upName: 'อัปเกรดจาก 1 เป็น 3 เดือน',
     upConfirm: (name, base, vat, total, method, until) => `${name}\nอัปเกรด 1 เดือนเป็น 3 เดือน: ${base} + VAT ${vat}\nรับเงิน ${total} (${method}) รวม VAT แล้ว\n`
       + `${until ? `แพ็กเกจจะใช้ได้ถึง ${until}` : 'แพ็กเกจจะใช้ได้ 3 เดือนนับจากคลาสแรก'}\n\nกด OK หลังจากได้รับเงินแล้วเท่านั้น`,
@@ -1019,6 +1023,9 @@
     qUpOpen: (d, r, amt) => `นักเรียนคนนี้เริ่มอัปเกรดออนไลน์ไว้เมื่อ ${d} (เลขอ้างอิง ${r}, ${amt}) แต่ยังไม่ได้จ่าย\nถ้าจ่ายทั้งสองทาง ต้องคืนเงินหนึ่งรายการ จะขายอัปเกรดที่เคาน์เตอร์เลยไหม?`,
     upHaveA: 'แพ็กเกจนี้เป็น 3 เดือนแล้ว',
     upNoA: 'แพ็กเกจนี้อัปเกรดไม่ได้แล้ว: เลยสัปดาห์แรก หรือแพ็กเกจเปลี่ยนไป',
+    upPaidNowA: 'นักเรียนจ่ายอัปเกรดออนไลน์แล้ว เพิ่งเข้ามาเมื่อครู่ ตอนนี้แพ็กเกจเป็น 3 เดือนแล้ว ไม่ต้องรับเงินที่เคาน์เตอร์',
+    upBusyA: 'กำลังขายอัปเกรดนี้จากอีกเครื่องอยู่ รอสักครู่แล้วเปิดดูหน้าการชำระเงินก่อนขายอีกครั้ง',
+    upCheckA: ref => `ขายแล้ว (เลขอ้างอิง ${ref}) แต่หน้านี้ไม่เห็นว่าแพ็กเกจเปลี่ยนหรือยัง เปิดโปรไฟล์และหน้าการชำระเงินเพื่อตรวจดู`,
   });
   // A name opens the profile, which starts with what they can use today; a
   // class opens from Today; someone who came to a class that is over is added (Nov 2026).
@@ -1170,6 +1177,7 @@
     TH_NAMES = {};
     PAY_MODE = (d.payment || {}).mode || null;
     for (const x of d.products || []) if (x.name_th) { TH_NAMES[x.id] = x.name_th; TH_BY_EN[x.name_en] = x.name_th; }
+    for (const x of d.itemNames || []) if (x.th) TH_BY_EN[x.en] = x.th;
     const p = (d.products || []).find(x => x.code === 'dropin');
     if (p) DROP_PRICE = p.price_thb + Math.round(p.price_thb * (d.vatPct || 0) / 100);
   };
@@ -1638,11 +1646,16 @@
       SELL = null; keepSell(); paintSell(); return;
     }
     SELL = null; keepSell(); paintSell();
-    if (!r.ok) { alert(j.upgraded ? T('upHaveA') : j.notEligible ? T('upNoA') : j.error || T('failed')); return; }
+    if (!r.ok) {
+      alert(j.paidNow ? T('upPaidNowA') : j.upgraded ? T('upHaveA') : j.busy ? T('upBusyA') : j.notEligible ? T('upNoA') : j.error || T('failed'));
+      if (j.paidNow && SUB === 'history' && HIST && HIST.member.code === sale.memberCode) showHistory(sale.memberCode);
+      return;
+    }
     if (sale.productCode === UPGRADE_CODE) {
+      // A sale without the upgrade's outcome is not called done: staff check before they keep the money.
       const u = j.upgrade;
-      alert(u && !u.applied ? T('upNotApplied', u.why) : T('upDone', '฿' + j.order.amount.toLocaleString(), W(j.order.method),
-        j.order.refno, u && u.until ? ymdLong(u.until) : null));
+      alert(!u ? T('upCheckA', j.order.refno) : !u.applied ? T('upNotApplied', u.why) : T('upDone', '฿' + j.order.amount.toLocaleString(), W(j.order.method),
+        j.order.refno, u.until ? ymdLong(u.until) : null));
       if (SUB === 'history' && HIST && HIST.member.code === sale.memberCode) showHistory(sale.memberCode);
       return;
     }
@@ -1656,13 +1669,16 @@
     const h = HIST, u = h && h.upgrade;
     if (!u) return;
     if (SELL) { if (!SELL.busy) alert(T('sellPending')); return; }
+    // An online try still open is asked about before staff are told to take any money.
+    const o = u.openTry;
+    if (o && !confirm(T('qUpOpen', whenPaid(o.at), o.refno, '฿' + Number(o.amount).toLocaleString()))) return;
     const m = ask(T('qPaidHow'), '1'); if (!m) return;
     const method = { 1: 'cash', 2: 'transfer', 3: 'card' }[m];
     if (!method) return alert(T('pick123'));
     if (!confirm(T('upConfirm', h.member.name, baht(u.priceThb), baht(u.vat), baht(u.total), W(method),
       u.newUntil ? ymdLong(u.newUntil) : null))) return;
     SELL = { productCode: UPGRADE_CODE, memberCode: h.member.code, method, requestId: newId(), name: h.member.name,
-      what: [h.member.name, T('upName'), baht(u.total), W(method)].join(' · ') };
+      ...(o ? { confirmRepeat: true } : {}), what: [h.member.name, T('upName'), baht(u.total), W(method)].join(' · ') };
     await sendSale();
   };
   window.sellRetry = () => { if (SELL && !SELL.busy) sendSale(); };

@@ -683,6 +683,7 @@
   .calsw button + button{margin-left:2px}
   .calsw button[aria-pressed="true"]{background:var(--promo);color:var(--promo-ink)}
   #dayList{scroll-margin-top:64px}
+  #myPass{scroll-margin-top:72px}
   /* The month's printed timetable (the same poster as Instagram), above its calendar. */
   .ttp{margin:0 0 16px}
   .ttp img{display:block;width:100%;height:auto;border-radius:var(--radius)}
@@ -790,7 +791,8 @@
   .pkg{background:var(--paper);padding:22px;margin-bottom:14px}
   .pkg h3{margin:0 0 4px;font:700 var(--fs-l)/1.3 var(--f-text);color:var(--ink)}
   .pkg .upg{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
-  .pkg .upg .note{margin:0 0 10px;color:var(--ink);font-weight:600}
+  .pkg .upg .note{margin:0 0 10px;color:var(--ink)}
+  .pkg .upg .upgo{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
   .note{font-size:var(--fs-s);color:var(--soft);line-height:20px}
   /* ── The Packages tab is the price poster (Boonchu, 12 Nov 2026): 01 membership, 02 packs behind it, 03 the
      member notes, on a fixed Louvre red field like the hero. It bleeds out of main's padding to the screen
@@ -1978,38 +1980,55 @@
     ppVat: (fee, vat) => `+VAT = плюс НДС ${vat}%.${fee ? ' При онлайн-оплате добавляется комиссия.' : ''}`,
   });
   // The first-week upgrade (Boonchu, 18 Nov 2026): 1 month becomes 3 months for the difference.
-  // upLine: on the 1-month pass in My account, with its last day; upLineNew: not started yet.
+  // upLine: on the 1-month pass in My account, with the end it gives and the last day to
+  // upgrade; upLineNew: not started yet. upPaid*: back from paying for it.
   Object.assign(STR.en, {
     upHint: 'Upgrade to 3 months in your first week: pay only the difference.',
-    upLine: (d, day) => `Upgrade to 3 months: ${d}\u00a0+VAT more, until ${day}`,
-    upLineNew: d => `Upgrade to 3 months: ${d}\u00a0+VAT more, within 7 days of your first class`,
+    upLine: (d, day, until) => `Upgrade to 3 months: ${d} +VAT more. Your pass then runs until ${until}. You can upgrade until ${day}.`,
+    upLineNew: d => `Upgrade to 3 months: ${d} +VAT more. Your pass then runs 3 months from its first class. You can upgrade in the first 7 days of this pass.`,
     upBtn: 'Upgrade to 3 months',
     upNo: 'This pass can no longer be upgraded. If that looks wrong, message us on LINE @aybkk.',
     upHave: 'Your pass is 3 months already.',
+    upPaidNow: day => `Your payment came through: your pass is 3 months now${day ? `, until ${day}` : ''}.`,
+    upBusy: 'A payment for this upgrade was started a moment ago. If the pay page did not open, try again in a minute.',
+    upPaid: day => day ? `Paid. Your pass is now 3 months, until ${day}.` : 'Paid. Your pass is now 3 months, counted from its first class.',
+    upPaidNot: 'We received your payment, but your pass could not be changed to 3 months. We will contact you and give the money back. Questions: LINE @aybkk.',
   });
   Object.assign(STR.th, {
-    upHint: 'อัปเกรดเป็น 3 เดือนได้ในสัปดาห์แรก จ่ายเพิ่มแค่ส่วนต่าง',
-    upLine: (d, day) => `อัปเกรดเป็น 3 เดือน จ่ายเพิ่ม ${d}\u00a0+VAT ได้\u2060ถึง${day}`,
-    upLineNew: d => `อัปเกรดเป็น 3 เดือน จ่ายเพิ่ม ${d}\u00a0+VAT ได้ภายใน 7 วันนับจากวันแรกที่มาฝึก`,
+    upHint: 'อัปเกรดเป็น 3 เดือนได้ในสัปดาห์แรก จ่าย⁠เพิ่มแค่ส่วนต่าง',
+    upLine: (d, day, until) => `อัปเกรดเป็น 3 เดือน จ่ายเพิ่ม ${d} +VAT แล้วแพ็กเกจจะใช้ได้⁠ถึง${until} อัปเกรดได้⁠ถึง${day}`,
+    upLineNew: d => `อัปเกรดเป็น 3 เดือน จ่ายเพิ่ม ${d} +VAT แล้วแพ็กเกจจะใช้ได้ 3 เดือนนับจากคลาสแรก อัปเกรดได้ภายใน 7 วันแรกของแพ็กเกจนี้`,
     upBtn: 'อัปเกรดเป็น 3 เดือน',
     upNo: 'แพ็กเกจนี้อัปเกรดไม่ได้แล้ว ถ้าคิดว่าไม่ถูกต้อง ทักเราทาง LINE @aybkk',
     upHave: 'แพ็กเกจของคุณเป็น 3 เดือนแล้ว',
+    upPaidNow: day => `เราได้รับเงินของคุณแล้ว ตอนนี้แพ็กเกจเป็น 3 เดือน${day ? ` ใช้ได้⁠ถึง${day}` : ''}`,
+    upBusy: 'เพิ่งเริ่มชำระเงินสำหรับการอัปเกรดนี้ไปเมื่อครู่ ถ้าหน้าชำระเงินไม่เปิดขึ้นมา ลองใหม่อีกครั้งในอีกหนึ่งนาที',
+    upPaid: day => day ? `ชำระเงินแล้ว ตอนนี้เป็นแพ็กเกจ 3 เดือน ใช้ได้⁠ถึง${day}` : 'ชำระเงินแล้ว ตอนนี้เป็นแพ็กเกจ 3 เดือน นับจากคลาสแรก',
+    upPaidNot: 'เราได้รับเงินแล้ว แต่เปลี่ยนแพ็กเกจเป็น 3 เดือนไม่ได้ ทางชาลาจะติดต่อกลับเพื่อคืนเงิน สอบถามได้ทาง LINE @aybkk',
   });
   Object.assign(STR.zh, {
     upHint: '首周内可升级为3个月，只需补差价。',
-    upLine: (d, day) => `升级为3个月：再付 ${d}\u00a0+VAT，截至${day}`,
-    upLineNew: d => `升级为3个月：再付 ${d}\u00a0+VAT，首次上课起7天内可升级`,
+    upLine: (d, day, until) => `升级为3个月：再付 ${d} +VAT，会员卡有效期延至 ${until}。升级截止：${day}`,
+    upLineNew: d => `升级为3个月：再付 ${d} +VAT，会员卡从首节课起算3个月。本卡开始使用后7天内可升级`,
     upBtn: '升级为3个月',
-    upNo: '这张课程卡已不能升级。如有疑问，请在 LINE @aybkk 联系我们。',
-    upHave: '你的课程卡已经是3个月。',
+    upNo: '这张会员卡已不能升级。如有疑问，请在 LINE @aybkk 联系我们。',
+    upHave: '你的会员卡已经是3个月。',
+    upPaidNow: day => `你的付款已到账：会员卡现在是3个月${day ? `，有效期至 ${day}` : ''}。`,
+    upBusy: '这次升级的付款刚刚已经开始。如果付款页面没有打开，请一分钟后再试。',
+    upPaid: day => day ? `付款成功。你的会员卡现在是3个月，有效期至 ${day}。` : '付款成功。你的会员卡现在是3个月，从首节课起算。',
+    upPaidNot: '我们已收到你的付款，但会员卡未能改为3个月。我们会联系你并退款。如有疑问，请在 LINE @aybkk 联系我们。',
   });
   Object.assign(STR.ru, {
-    upHint: 'В\u00a0первую неделю можно перейти на 3\u00a0месяца, доплатив только разницу.',
-    upLine: (d, day) => `Перейти на 3\u00a0месяца: доплата ${d}\u00a0+VAT, последний день: ${day}`,
-    upLineNew: d => `Перейти на 3\u00a0месяца: доплата ${d}\u00a0+VAT, в\u00a0течение 7\u00a0дней с\u00a0первого занятия`,
+    upHint: 'В первую неделю можно перейти на 3 месяца, доплатив только разницу.',
+    upLine: (d, day, until) => `Перейти на 3 месяца: доплата ${d} +VAT. Абонемент будет действовать до: ${until}. Последний день для перехода: ${day}.`,
+    upLineNew: d => `Перейти на 3 месяца: доплата ${d} +VAT, 3 месяца с первого занятия. Перейти можно в первые 7 дней этого абонемента.`,
     upBtn: 'Перейти на 3 месяца',
-    upNo: 'Этот абонемент уже нельзя перевести на 3\u00a0месяца. Если это ошибка, напишите нам в\u00a0LINE @aybkk.',
-    upHave: 'Ваш абонемент уже на 3\u00a0месяца.',
+    upNo: 'Этот абонемент уже нельзя перевести на 3 месяца. Если это ошибка, напишите нам в LINE @aybkk.',
+    upHave: 'Ваш абонемент уже на 3 месяца.',
+    upPaidNow: day => `Ваша оплата прошла: абонемент теперь на 3 месяца${day ? `, действует до: ${day}` : ''}.`,
+    upBusy: 'Оплата за переход только что начата. Если страница оплаты не открылась, попробуйте снова через минуту.',
+    upPaid: day => day ? `Оплачено. Абонемент теперь на 3 месяца, действует до: ${day}.` : 'Оплачено. Абонемент теперь на 3 месяца с первого занятия.',
+    upPaidNot: 'Оплата получена, но абонемент не удалось перевести на 3 месяца. Мы свяжемся с вами и вернём деньги. Вопросы: LINE @aybkk.',
   });
 
   // Class names in the page language, for the drop-in class list and the
@@ -2197,11 +2216,13 @@
   // load and push it down by a few screens. Each time some are in, go there again, unless the visitor has moved.
   let moved = false;
   ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(ev => addEventListener(ev, () => { moved = true; }, { passive: true, capture: true }));
+  let ME_AT = '';
   const toHash = () => {
     let id = '';
     try { id = decodeURIComponent(location.hash.slice(1)); } catch (_) {}
     // Landing on My account (a sign-in link, a payment coming back): it sits under the hero, a screen down.
-    if (!id && current === 'me') id = 'book';
+    // Back from paying for the upgrade: the pass card itself (ME_AT).
+    if (!id && current === 'me') id = ME_AT || 'book';
     const el = id && !moved && (id === 'book' ? $('.bookhead') : document.getElementById(id));
     if (!el) return;
     // Instant, then again on the next two frames: the browser's own smooth scroll can still add one step.
@@ -3059,6 +3080,7 @@
       setMine(code, d);
       if (REV.code !== code) REV = { code, renewals: 0, w12: null, thanks: false };
       REV.renewals = Math.max(0, Math.floor(Number(d.renewals)) || 0);
+      ME_UP = (d.passes || []).map(p => p.upgrade).find(Boolean) || null;
       const passes = (d.passes || []).map(p => `<div class="pkg">
         <h3>${esc((LANG === 'th' && p.nameTh) || p.name)}</h3>
         <div class="note">${esc(p.kind === 'unlimited'
@@ -3067,9 +3089,9 @@
         <div class="note">${esc(p.validUntil ? t('validUntil', fmtDay(String(p.validUntil).slice(0, 10) + 'T12:00:00+07:00'))
           : t('startsFirst'))}</div>
         ${p.upgrade ? `<div class="upg"><p class="note">${esc(p.upgrade.lastDay
-          ? t('upLine', baht(p.upgrade.priceThb), fmtDay(p.upgrade.lastDay + 'T12:00:00+07:00'))
+          ? t('upLine', baht(p.upgrade.priceThb), fmtDay(p.upgrade.lastDay + 'T12:00:00+07:00'), fmtDay(p.upgrade.newUntil + 'T12:00:00+07:00'))
           : t('upLineNew', baht(p.upgrade.priceThb)))}</p>
-          <button type="button" class="btn pink" id="upGo" onclick="upgradePass()">${esc(t('upBtn'))}</button>
+          <button type="button" class="btn ghost" id="upGo" onclick="upgradePass()">${esc(t('upBtn'))}</button>
           <div id="upMsg" role="status" aria-live="polite"></div></div>` : ''}
       </div>`).join('') || `<p class="note">${esc(t('noPassYet'))}</p>`;
       const bookings = (d.bookings || []).map(b => `<div class="cls">
@@ -3108,7 +3130,7 @@
           ${n.body ? `<p style="margin:6px 0 0">${esc(n.body)}</p>` : ''}</div>`).join('')}` : ''}
         <div class="day">${esc(t('checkH'))}</div><div id="myChecks"><p class="note">${esc(t('loading'))}</p></div>
         <div class="day">${esc(t('myPhotos'))}</div><div id="myPhotos"><p class="note">${esc(t('loading'))}</p></div>
-        <div class="day">${esc(t('yourPass'))}</div>${passes}
+        <div class="day" id="myPass">${esc(t('yourPass'))}</div>${passes}
         <div class="day">${esc(t('upcoming'))}</div>${bookings}
         <div class="day">${esc(t('cameH'))}</div>${came}
         ${CN_HOST ? '' : `<p class="revlink"><a href="/review" target="_blank" rel="noopener" id="revLink">${esc(t('revBtn'))}</a></p>`}`;
@@ -3116,8 +3138,9 @@
       drawReview(code);
       // Google, like Facebook, does not open in China: cn.aybkk.net has no review card or link.
       if (!CN_HOST) $('#revLink').addEventListener('click', () => revWrote(code));
-      renderMyPhotos(code, d.member);
-      renderChecks(code);
+      const below = [renderMyPhotos(code, d.member), renderChecks(code)];
+      // Back from paying for the upgrade: the pass card, again once the photos and checks above it are in.
+      if (ME_AT) { toHash(); Promise.all(below).catch(() => {}).then(() => { if (seq === ME_SEQ) toHash(); }); }
     } catch (e) {
       if (seq === ME_SEQ) $('#view').innerHTML = `<p class="msg bad">${esc(e.message)}</p>`;
     }
@@ -3601,7 +3624,8 @@
 
   // To the gateway's hosted page. PaySolutions appends nothing to the return URL,
   // so the only way to know which order came back is to remember it before leaving.
-  const payHandoff = (j, existing) => {
+  // noAd: an existing student's upgrade is no new student, so no ad conversion is sent.
+  const payHandoff = (j, existing, noAd) => {
     localStorage.setItem('aybkk_pending',
       JSON.stringify({ refno: j.pay.refno || j.order.refno, at: Date.now(), existing }));
     const f = document.createElement('form');
@@ -3611,34 +3635,55 @@
       i.type = 'hidden'; i.name = k; i.value = v; f.appendChild(i);
     }
     document.body.appendChild(f);
-    (window.aybkkBook || (g => g()))(() => f.submit());
+    if (noAd) f.submit();
+    else (window.aybkkBook || (g => g()))(() => f.submit());
   };
   // The first-week upgrade from My account: the same checkout and pay page as a
   // package, for the pass the server offered it on (signed in by the member code).
+  // The first tap shows what paying online takes (the difference, the online fee and
+  // VAT), as a package's buy form does; only "Continue to payment" makes the order.
   const UPGRADE_CODE = 'up1to3', UPGRADE_FROM = 'unlim1';
-  window.upgradePass = async () => {
-    const btn = $('#upGo'), out = $('#upMsg');
-    if (!btn || btn.disabled) return;
-    btn.disabled = true;
+  let ME_UP = null;
+  window.upgradePass = () => {
+    const btn = $('#upGo'), out = $('#upMsg'), u = ME_UP;
+    if (!btn || !out || !u) return;
+    btn.hidden = true;
+    out.innerHTML = `<p class="note" style="margin:10px 0 0">${esc(t('ppPay'))} <b>${baht(u.total)}</b> ${esc(t('ppIncl', u.surchargePct, u.vatPct))}</p>
+      <div class="upgo"><button type="button" class="btn pink" id="upPay" onclick="upgradeGo()">${esc(t('pay'))}</button>
+        <button type="button" class="btn ghost" id="upBack" onclick="upgradeBack()">${esc(t('cancel'))}</button></div>
+      <div id="upErr"></div>`;
+    $('#upPay').focus();
+  };
+  window.upgradeBack = () => {
+    const btn = $('#upGo');
+    $('#upMsg').innerHTML = '';
+    if (btn) { btn.hidden = false; btn.focus(); }
+  };
+  window.upgradeGo = async () => {
+    const go = $('#upPay'), err = $('#upErr');
+    if (!go || go.disabled) return;
+    go.disabled = true;
     try {
       const r = await fetch('/api/bkk/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ productCode: UPGRADE_CODE, memberCode: myCode() }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok) {
-        out.innerHTML = `<div class="msg bad">${esc(j.upgraded ? t('upHave') : j.notEligible ? t('upNo') : j.error || t('upNo'))}</div>`;
-        if (j.upgraded || j.notEligible) setTimeout(() => { if (current === 'me') renderMe(); }, 2500);
-        else btn.disabled = false;
+        const msg = j.paidNow ? t('upPaidNow', j.until ? fmtDay(j.until + 'T12:00:00+07:00') : '')
+          : j.upgraded ? t('upHave') : j.busy ? t('upBusy') : j.notEligible ? t('upNo') : j.error || t('upNo');
+        err.innerHTML = `<div class="msg ${j.paidNow ? 'ok' : 'bad'}">${esc(msg)}</div>`;
+        if (j.upgraded || j.notEligible) setTimeout(() => { if (current === 'me') renderMe(); }, j.paidNow ? 5000 : 2500);
+        else go.disabled = false;
         return;
       }
-      if (j.pay) return payHandoff(j, false);
-      out.innerHTML = j.payLink
+      if (j.pay) return payHandoff(j, false, true);
+      $('#upMsg').innerHTML = j.payLink
         ? `<p style="margin-top:12px"><a class="btn pink" style="display:inline-block;text-decoration:none"
             href="${esc(j.payLink.url)}" target="_blank" rel="noopener">${esc(t('pay'))} ${baht(j.payLink.amount)}</a></p>
            <p class="note">#${esc(j.payLink.refno)} · ${esc(j.payLink.note)}</p>`
         : `<div class="msg ok">${esc(j.payUnavailable || '')}</div>`;
     } catch (e) {
-      out.innerHTML = `<div class="msg bad">${esc(e.message)}</div>`;
-      btn.disabled = false;
+      err.innerHTML = `<div class="msg bad">${esc(e.message)}</div>`;
+      go.disabled = false;
     }
   };
 
@@ -3822,7 +3867,11 @@
           const viaMail = pendingForExisting();
           localStorage.removeItem('aybkk_pending');
           current = 'me';
-          if (j.booking) alert(t('paidBooked', clsName(j.booking.title), clsWhen(j.booking.startAt))
+          if (j.upgrade) {
+            alert(j.upgrade.applied ? t('upPaid', j.upgrade.until ? fmtDay(j.upgrade.until + 'T12:00:00+07:00') : '') : t('upPaidNot'));
+            ME_AT = 'myPass';
+          }
+          else if (j.booking) alert(t('paidBooked', clsName(j.booking.title), clsWhen(j.booking.startAt))
             + (viaMail ? '\n\n' + t('paidBookedMail') : ''));
           // The class they picked was cancelled or over by the time the payment
           // came through: they must not travel to it.
