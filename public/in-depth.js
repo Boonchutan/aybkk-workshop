@@ -41,7 +41,13 @@
   const PAGE = form.getAttribute('data-page');
   // The server keeps only these tags too (LANDING_TAGS in inbox.js): add a headline in both.
   const FOR_TAGS = ['teacher', 'practice', 'room'];
-  const code = v => String(v || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40);
+  // Same rule as landingCode in inbox.js: a code that looks like an email or a phone is dropped.
+  const code = v => {
+    v = String(v || '');
+    if (v.indexOf('@') >= 0) return '';
+    const c = v.toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40);
+    return /\d{9}/.test(c.replace(/[-_]/g, '')) ? '' : c;
+  };
   function param(k) {
     const hit = location.search.slice(1).split('&').map(p => p.split('=')).filter(p => p[0] === k)[0];
     if (!hit) return '';
