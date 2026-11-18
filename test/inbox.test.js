@@ -22,6 +22,11 @@ const ok = (name, cond, extra = '') => {
   else { FAIL++; console.log(`  ✗ ${name} ${extra}`); }
 };
 const wait = ms => new Promise(r => setTimeout(r, ms));
+// Webhooks answer first and save after, so a slow machine (CI) needs more than a fixed pause.
+const until = async (cond, ms = 5000) => {
+  for (const end = Date.now() + ms; Date.now() < end; await wait(25)) if (await cond()) return true;
+  return false;
+};
 
 const aiCalls = [];
 let aiAnswer = { lane: 'hot', summary: 'First-timer wants Mysore tomorrow.', reply: 'Hi Anna, welcome! Come at [time].' };
@@ -92,6 +97,7 @@ const alerts = [];
   await lineSend([lineText('g1', 'Ustaff', 'staff group chat', 'group')]);
   await lineSend([{ type: 'message', timestamp: Date.now(), source: { type: 'user', userId: 'Ubob' },
     message: { id: 'm3', type: 'sticker', packageId: '1', stickerId: '2' } }]);
+  await until(async () => (await rows()).length >= 3);
   await wait(100);
   let r = await rows();
   ok('1:1 chats stored, redelivery deduped, group chat skipped', r.length === 3, `got ${r.length}`);
@@ -144,7 +150,8 @@ const alerts = [];
     { field: 'feed', value: { item: 'comment', verb: 'add', comment_id: 'fc3', post_id: 'P1', parent_id: 'PAGE1_P1', from: { id: 'PAGE1', name: 'AYBKK' }, message: 'Class photos!', created_time: Math.floor(t / 1000) } },
     { field: 'feed', value: { item: 'reaction', verb: 'add', post_id: 'P1', from: { id: 'U78' } } },
   ] }] });
-  await wait(200);
+  await until(async () => (await rows()).length >= 11);
+  await wait(100);
   r = await rows();
   const by = id => r.find(x => x.ext_id === id) || {};
   ok('IG DM stored as incoming', by('instagram:ig-m1').direction === 'in' && by('instagram:ig-m1').sender_id === 'IGSID9');
@@ -180,7 +187,7 @@ const alerts = [];
   await wait(50);
   aiAnswer = { lane: 'hot', summary: 'x', reply: 'y' };
   await lineSend([lineText('m5', 'Uanna', 'Also, do you have mats?')]);
-  await wait(50);
+  await until(async () => (await rows()).some(x => x.ext_id === 'line:m5'));
   res = await readInbox(`?since=${encodeURIComponent(mark)}`);
   const anna2 = (res.body.threads || []).find(x => x.sender === 'Uanna');
   ok('since returns only threads with news, with earlier context', res.body.threads.length === 1 &&
