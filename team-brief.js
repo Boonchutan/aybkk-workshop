@@ -58,6 +58,9 @@ const MARKER = 'team_brief_sent_';
 const ATTENDED = `b.status='booked' AND b.checked_in_at IS NOT NULL`;
 const MAT_THB = 200;                 // mat rental, flat, VAT included, paid at the shala
 
+// A value pasted into Railway with a space or a line end still works.
+const env = k => String(process.env[k] || '').trim();
+
 const safeEqual = (a, b) => {
   const x = Buffer.from(String(a || '')), y = Buffer.from(String(b || ''));
   return x.length > 0 && x.length === y.length && crypto.timingSafeEqual(x, y);
@@ -143,12 +146,16 @@ const MON = {
 };
 const baht = n => '฿' + Math.round(Number(n) || 0).toLocaleString('en-US');
 const pl = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+// A name stored as only a phone number or an email has nothing to show: say so,
+// never a bare '?' a teacher cannot read at 5 am.
+const named = (L, raw) => { const s = shortName(raw); return s === '?' ? L.noName : s; };
 const list = (names, max = 15) => names.length > max ? `${names.slice(0, max).join(', ')} +${names.length - max}` : names.join(', ');
 
 const WORDS = {
   th: {
     day: d => { const t = new Date(`${d}T12:00:00Z`); return `${WD.th[t.getUTCDay()]} ${t.getUTCDate()} ${MON.th[t.getUTCMonth()]}`; },
     item: en => en || 'แพ็กเกจ',
+    noName: 'ไม่มีชื่อในระบบ',
     mHead: d => `☀️ บรีฟเช้า ${d}`,
     closed: c => c.why === 'none' ? 'วันนี้ไม่มีคลาสในตาราง'
       : c.why === 'cancelled' ? `วันนี้ชาลาปิด ยกเลิกทุกคลาส${c.note ? ` (${c.note})` : ''}`
@@ -217,6 +224,7 @@ const WORDS = {
   en: {
     day: d => { const t = new Date(`${d}T12:00:00Z`); return `${WD.en[t.getUTCDay()]} ${t.getUTCDate()} ${MON.en[t.getUTCMonth()]}`; },
     item: en => en || 'pass',
+    noName: 'no name on file',
     mHead: d => `☀️ Teaching brief ${d}`,
     closed: c => c.why === 'none' ? 'No classes on the timetable today.'
       : c.why === 'cancelled' ? `The shala is closed today: every class is cancelled${c.note ? ` (${c.note})` : ''}.`
@@ -293,8 +301,11 @@ function mountTeam(app, opts = {}) {
   const nowMs = typeof opts.now === 'function' ? opts.now : Date.now;
   const notify = opts.notify || telegram;
   const ADMIN_KEY = process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY || '';
-  const adminOnly = (req, res, next) => ADMIN_KEY && safeEqual(req.headers['x-bkk-key'], ADMIN_KEY)
-    ? next() : res.status(401).json({ error: 'bad key' });
+  // Preview and status carry student names: never kept by a browser or a proxy.
+  const adminOnly = (req, res, next) => {
+    res.set('Cache-Control', 'private, no-store');
+    return ADMIN_KEY && safeEqual(req.headers['x-bkk-key'], ADMIN_KEY) ? next() : res.status(401).json({ error: 'bad key' });
+  };
   const raw = express.raw({ type: () => true, limit: '256kb' });
 
   if (!pool) {
@@ -336,7 +347,7 @@ function mountTeam(app, opts = {}) {
   async function teamSend(messages, { seed } = {}) {
     const fail = (status, error, extra = {}) => ({ ok: false, status, error, ...extra });
     try {
-      const token = process.env.HELPDESK_LINE_ACCESS_TOKEN;
+      const token = env('HELPDESK_LINE_ACCESS_TOKEN');
       if (!token) return fail(503, 'HELPDESK_LINE_ACCESS_TOKEN is not set on the server');
       const built = lineMessages(messages);
       if (built.error) return fail(400, built.error);
@@ -397,9 +408,14 @@ function mountTeam(app, opts = {}) {
   const CARRIES_ON = `EXISTS (SELECT 1 FROM bkk_passes x WHERE x.member_id=p.member_id AND x.id<>p.id
     AND x.status IN ('active','frozen') AND (x.valid_until IS NULL OR x.valid_until > coalesce(p.valid_until, $1::date))
     AND (x.kind='unlimited' OR x.credits_used < x.credits_total))`;
-  // Students who were already with the shala before aybkk.net (moved over from Rezerv).
-  const FROM_REZERV = `(m.source IS NOT DISTINCT FROM 'rezerv' OR EXISTS (SELECT 1 FROM bkk_passes x WHERE x.member_id=m.id AND x.source='rezerv')
-    OR EXISTS (SELECT 1 FROM bkk_bookings x WHERE x.member_id=m.id AND x.source='rezerv'))`;
+  // Students who were already with the shala before aybkk.net (moved over from
+  // Rezerv): imported, matched by the member import (rezerv_id), or with any
+  // seat on a Rezerv package (the door's add for a Rezerv holder it could not
+  // find, cover 'rezerv'; moved_at: a Rezerv seat moved onto a pass here).
+  const FROM_REZERV = `(m.source IS NOT DISTINCT FROM 'rezerv' OR m.rezerv_id IS NOT NULL
+    OR EXISTS (SELECT 1 FROM bkk_passes x WHERE x.member_id=m.id AND x.source='rezerv')
+    OR EXISTS (SELECT 1 FROM bkk_bookings x WHERE x.member_id=m.id
+      AND (x.source='rezerv' OR x.cover='rezerv' OR x.moved_at IS NOT NULL)))`;
 
   // A class Rezerv gave back for a cancelled class is imported as a Drop-in
   // pass (bkk-api.js, CREDIT_NOTE): a regular's credit, never a drop-in.
@@ -465,8 +481,8 @@ function mountTeam(app, opts = {}) {
            AND NOT EXISTS (SELECT 1 FROM bkk_orders x WHERE x.member_id=o.member_id AND x.status='paid' AND x.created_at > o.created_at)
          ORDER BY o.created_at, o.id`, [date]),
     ]);
-    const time = new Map(classes.map(c => [c.id, c.time]));
-    const name = r => shortName(r.name);
+    const where = new Map(classes.map(c => [c.id, c.online ? `${c.time} (Zoom)` : c.time]));
+    const name = r => named(L, r.name);
     const names = rows => list(rows.map(name));
     const isNew = new Map(news.rows.map(r => [r.member_id, r.fresh ? 'first' : 'week']));
 
@@ -492,9 +508,11 @@ function mountTeam(app, opts = {}) {
     }
 
     // Online classes (Zoom) apart, a count each: nobody to welcome or hand a mat.
+    // Under the Zoom header the title's own "[Online]" says nothing more.
     const online = classes.filter(c => c.online);
-    if (online.length) lines.push('', L.onlineH, ...online.map(c => c.off ? L.cOff(c.time, c.title, c.note)
-      : L.oLine(c.time, c.title, seats.rows.filter(s => s.slot_id === c.id).length)));
+    const bare = t => String(t || '').replace(/^\s*\[online\]\s*/i, '');
+    if (online.length) lines.push('', L.onlineH, ...online.map(c => c.off ? L.cOff(c.time, bare(c.title), c.note)
+      : L.oLine(c.time, bare(c.title), seats.rows.filter(s => s.slot_id === c.id).length)));
 
     const boughtLines = bought.rows.map(r => L.newBought(name(r), L.item(r.item_en), L.day(r.day), r.next && L.day(r.next)));
     if (boughtLines.length) lines.push('', L.boughtH, ...boughtLines);
@@ -510,7 +528,7 @@ function mountTeam(app, opts = {}) {
       : s.pass_status !== 'active' ? L.why.void : s.until && s.until < date ? L.why.ended(L.day(s.until)) : null;
     const unpaidSeats = seats.rows.filter(s => s.cover !== 'rezerv' && why(s));
     const payLines = [...orders.rows.map(r => L.payOrder(name(r), L.item(r.item_en), baht(r.amount_thb), L.day(r.day), r.refno)),
-      ...unpaidSeats.map(s => L.paySeat(name(s), time.get(s.slot_id), why(s)))];
+      ...unpaidSeats.map(s => L.paySeat(name(s), where.get(s.slot_id), why(s)))];
     if (payLines.length) lines.push('', L.payH, ...payLines);
 
     lines.push('', L.mTotal({ ...total, ending: endLines.length, unpaid: payLines.length }));
@@ -633,7 +651,7 @@ function mountTeam(app, opts = {}) {
         FROM aybkk_inbox x WHERE direction='in' AND created_at >= $1 AND created_at < $2 GROUP BY channel`);
     } catch (_) {}
 
-    const name = r => shortName(r.name);
+    const name = r => named(L, r.name);
     // Sent by hand before 20:00, it says how far the day has got.
     const upTo = cut > Date.parse(from) ? new Date(cut + 7 * 3600000).toISOString().slice(11, 16) : briefAt('evening', date);
     const lines = [L.eHead(L.day(date), upTo)];
@@ -794,7 +812,7 @@ function mountTeam(app, opts = {}) {
 
   // ── webhook ───────────────────────────────────────────────────────────────
   async function groupName(id) {
-    const token = process.env.HELPDESK_LINE_ACCESS_TOKEN;
+    const token = env('HELPDESK_LINE_ACCESS_TOKEN');
     if (!token) return null;
     try {
       const r = await httpFetch(`${LINE_API}/group/${encodeURIComponent(id)}/summary`,
@@ -891,6 +909,10 @@ function mountTeam(app, opts = {}) {
   // member joining): it was added before LINE could reach the webhook, so its
   // join was never heard. That group waits, like a second join, and is never
   // saved by itself, until the Desk or staff accept it.
+  // asked: the groups taken up here since this server started, so one group is
+  // one ping and one write, even in a burst or once it has dropped off the list
+  // of groups kept (GROUPS_KEPT). A leave forgets it.
+  const asked = new Set();
   async function seenIn(id, ts) {
     const at = new Date(Number.isFinite(ts) ? ts : nowMs()).toISOString();
     const name = await groupName(id);
@@ -908,6 +930,7 @@ function mountTeam(app, opts = {}) {
   }
 
   async function left(id, ts) {
+    asked.delete(id);
     const at = new Date(Number.isFinite(ts) ? ts : nowMs()).toISOString();
     const cleared = await withGroups(st => {
       const had = st.groups.find(g => g.id === id);
@@ -935,7 +958,7 @@ function mountTeam(app, opts = {}) {
   // are, any other group event only for a group not known yet (seenIn). Text,
   // a message in the group or a 1:1 chat, is never read: answered 200, dropped.
   app.post('/line/helpdesk-webhook', raw, async (req, res) => {
-    const secret = process.env.HELPDESK_LINE_CHANNEL_SECRET;
+    const secret = env('HELPDESK_LINE_CHANNEL_SECRET');
     if (!secret) return res.sendStatus(503);
     const body = Buffer.isBuffer(req.body) ? req.body : req.rawBody;
     if (!signed(body, req.headers['x-line-signature'], secret)) {
@@ -952,60 +975,111 @@ function mountTeam(app, opts = {}) {
       try {
         if (ev.type === 'join') await joined(src.groupId, ev.timestamp);
         else if (ev.type === 'leave') await left(src.groupId, ev.timestamp);
-        else if (!(await knownGroups()).has(src.groupId)) await seenIn(src.groupId, ev.timestamp);
+        else if (!(await knownGroups()).has(src.groupId) && !asked.has(src.groupId)) {
+          asked.add(src.groupId);
+          if (asked.size > 500) asked.delete(asked.values().next().value);
+          await seenIn(src.groupId, ev.timestamp).catch(e => { asked.delete(src.groupId); throw e; });
+        }
       } catch (e) { await failed('webhook', e.message); }
     }
     res.sendStatus(200);
   }, (err, req, res, next) => res.sendStatus(err.status === 413 ? 413 : 400));
 
   // ── admin (x-bkk-key: the Desk assistant, and staff) ──────────────────────
-  let quotaCache = { at: 0, value: null };
-  async function quota() {
-    const token = process.env.HELPDESK_LINE_ACCESS_TOKEN;
+  // What LINE says about the token: whose account it is (the help desk, not
+  // @aybkk), the month's messages, or that it refuses the token. Kept 10 minutes.
+  const FRESH = 10 * 60000;
+  const fresh = at => Math.abs(nowMs() - at) < FRESH;
+  const lineGet = (path, token) => httpFetch(`${LINE_API}/${path}`, { headers: { Authorization: `Bearer ${token}` },
+    signal: AbortSignal.timeout(5000) }).then(async r => ({ status: r.status, body: r.ok ? await r.json().catch(() => null) : null }))
+    .catch(() => ({ status: 0, body: null }));
+  let infoCache = { at: 0, token: null, value: null };
+  async function lineInfo() {
+    const token = env('HELPDESK_LINE_ACCESS_TOKEN');
     if (!token) return null;
-    if (quotaCache.value && nowMs() - quotaCache.at < 10 * 60000) return quotaCache.value;
-    try {
-      const get = p => httpFetch(`${LINE_API}/message/${p}`, { headers: { Authorization: `Bearer ${token}` },
-        signal: AbortSignal.timeout(5000) }).then(r => r.ok ? r.json() : null);
-      const [limit, used] = await Promise.all([get('quota'), get('quota/consumption')]);
-      if (!limit || !used) return null;
-      quotaCache = { at: nowMs(), value: { limit: limit.type === 'limited' ? limit.value : null, used: used.totalUsage } };
-      return quotaCache.value;
-    } catch (_) { return null; }
+    if (infoCache.value && infoCache.token === token && fresh(infoCache.at)) return infoCache.value;
+    const [bot, limit, used] = await Promise.all(['info', 'message/quota', 'message/quota/consumption'].map(p => lineGet(p, token)));
+    const cut = (v, n) => typeof v === 'string' && v ? v.slice(0, n) : null;
+    const refused = [bot, limit, used].find(r => r.status === 401 || r.status === 403);
+    const value = {
+      bot: bot.body ? { name: cut(bot.body.displayName, 80), basicId: cut(bot.body.basicId, 40), premiumId: cut(bot.body.premiumId, 40) } : null,
+      tokenError: refused ? `LINE refused the access token (${refused.status})` : null,
+      quota: limit.body && used.body ? { limit: limit.body.type === 'limited' ? limit.body.value : null, used: used.body.totalUsage } : null,
+    };
+    if (value.bot || value.tokenError) infoCache = { at: nowMs(), token, value };
+    return value;
+  }
+  // LINE counts a push to a group once per member: the count says what a brief
+  // costs, and tells two groups of one name apart.
+  const membersCache = new Map();
+  async function members(id) {
+    const token = env('HELPDESK_LINE_ACCESS_TOKEN');
+    if (!token) return null;
+    const c = membersCache.get(id);
+    if (c && fresh(c.at)) return c.n;
+    const r = await lineGet(`group/${encodeURIComponent(id)}/members/count`, token);
+    const n = r.body ? Number(r.body.count) : NaN;
+    if (!Number.isFinite(n)) return null;
+    membersCache.set(id, { at: nowMs(), n });
+    return n;
+  }
+  // A group first seen while the token was not set (or LINE did not answer)
+  // has no name: ask again, at most every 10 minutes for each group.
+  const nameAsked = new Map();
+  async function fillNames() {
+    if (!env('HELPDESK_LINE_ACCESS_TOKEN')) return;
+    const seen = await getSetting('team_line_groups');
+    const want = (Array.isArray(seen) ? seen : []).filter(g => g && !g.name && !g.leftAt
+      && !(nameAsked.has(g.id) && fresh(nameAsked.get(g.id))));
+    if (!want.length) return;
+    for (const g of want) nameAsked.set(g.id, nowMs());
+    const got = new Map((await Promise.all(want.map(async g => [g.id, await groupName(g.id)]))).filter(([, n]) => n));
+    if (got.size) await withGroups(st => { for (const g of st.groups) if (!g.name && got.has(g.id)) g.name = got.get(g.id); });
   }
 
   app.get('/api/bkk/admin/team/status', adminOnly, async (req, res) => {
     try {
-      const [s, group, seen, last, error, usage, hook] = await Promise.all([settings(), savedGroup(),
-        getSetting('team_line_groups'), getSetting('team_brief_last'), getSetting('team_brief_error'), quota(),
+      await fillNames().catch(e => console.warn('[team] group names not filled:', e.message));
+      const [s, group, seen, last, error, info, hook] = await Promise.all([settings(), savedGroup(),
+        getSetting('team_line_groups'), getSetting('team_brief_last'), getSetting('team_brief_error'), lineInfo(),
         getSetting('team_line_webhook_last')]);
       const groups = Array.isArray(seen) ? seen : [];
       const g = group && groups.find(x => x.id === group);
-      // The next time the timer sends each brief: today's at its weekday time,
-      // unless that is past or today's went already (by hand too), else tomorrow's.
+      const pending = x => !!x.pending && !x.leftAt && x.id !== group;
+      const count = new Map(await Promise.all(groups.filter(x => x.id === group || pending(x))
+        .map(async x => [x.id, await members(x.id)])));
+      // The next time the timer sends each brief: today's at its weekday time;
+      // within LATE_MIN after it, while today's has not gone (by hand too) or
+      // waits for a retry, at the next minute's tick; else tomorrow's.
       const now = nowMs(), today = bkkYmd(now);
       const marks = (await q(`SELECT key, value->>'state' AS state FROM bkk_settings WHERE key = ANY($1::text[])`,
         [Object.keys(BRIEF_AT).map(k => `${MARKER}${k}_${today}`)])).rows;
       const done = kind => marks.some(m => m.key === `${MARKER}${kind}_${today}` && m.state !== 'retry');
       const next = kind => {
         const t = Date.parse(bkkAt(today, briefAt(kind, today)));
-        return t > now && !done(kind) ? t : Date.parse(bkkAt(addDays(today, 1), briefAt(kind, addDays(today, 1))));
+        if (!done(kind) && now < t + LATE_MIN * 60000) return Math.max(t, now);
+        return Date.parse(bkkAt(addDays(today, 1), briefAt(kind, addDays(today, 1))));
       };
       const iso = t => new Date(t).toISOString();
       const hhmm = t => new Date(t + 7 * 3600000).toISOString().slice(11, 16);
       res.json({
-        channel: { secretSet: !!process.env.HELPDESK_LINE_CHANNEL_SECRET, tokenSet: !!process.env.HELPDESK_LINE_ACCESS_TOKEN },
-        group: { saved: !!group, ref: group ? groupRef(group) : null, name: g ? g.name : null, joinedAt: g ? g.joinedAt : null },
+        channel: { secretSet: !!env('HELPDESK_LINE_CHANNEL_SECRET'), tokenSet: !!env('HELPDESK_LINE_ACCESS_TOKEN'),
+          // Whose LINE account the token is (it must be the help desk's), or that LINE refuses it.
+          bot: info ? info.bot : null, tokenError: info ? info.tokenError : null },
+        group: { saved: !!group, ref: group ? groupRef(group) : null, name: g ? g.name : null, joinedAt: g ? g.joinedAt : null,
+          members: group ? count.get(group) ?? null : null },
         // pending: the help desk is in it, it gets nothing until accepted (team/group).
         groupsSeen: groups.map(x => ({ ref: groupRef(x.id), name: x.name, joinedAt: x.joinedAt, leftAt: x.leftAt,
-          saved: x.id === group, pending: !!x.pending && !x.leftAt && x.id !== group })),
+          saved: x.id === group, pending: pending(x), members: count.get(x.id) ?? null })),
         // at: the Bangkok time of each brief's next send; next: when it goes, null while off.
+        // dueNow: today's is late by under LATE_MIN and not sent: it goes (or would, once on) within a minute.
         briefs: { morning: s.morning, evening: s.evening, lang: s.lang,
           at: { morning: hhmm(next('morning')), evening: hhmm(next('evening')) }, morningByWeekday: BRIEF_AT.morning,
-          next: { morning: s.morning === 'on' ? iso(next('morning')) : null, evening: s.evening === 'on' ? iso(next('evening')) : null } },
+          next: { morning: s.morning === 'on' ? iso(next('morning')) : null, evening: s.evening === 'on' ? iso(next('evening')) : null },
+          dueNow: { morning: next('morning') <= now, evening: next('evening') <= now }, lateMin: LATE_MIN },
         lastSent: last || {},
         lastError: error,
-        quota: usage,
+        quota: info ? info.quota : null,
         // LINE reaches the webhook: the last signed event, and bad signatures since this server started.
         webhookLastAt: typeof hook === 'string' ? hook : null,
         badSignatures: stats.badSignatures,
@@ -1118,7 +1192,7 @@ function mountTeam(app, opts = {}) {
         if (r.moved) tell(`The team briefs go to the LINE group ${quoted(r.name)} now (accepted on the Desk).`);
         return res.json({ ok: true, saved: true, ref, name: r.name });
       }
-      const token = process.env.HELPDESK_LINE_ACCESS_TOKEN;
+      const token = env('HELPDESK_LINE_ACCESS_TOKEN');
       if (!token) return res.status(503).json({ error: 'HELPDESK_LINE_ACCESS_TOKEN is not set on the server' });
       let lr;
       try {
