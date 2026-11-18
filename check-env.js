@@ -10,6 +10,6 @@ line('NEO4J_USER');
 line('NEO4J_PASSWORD');
 // The Bangkok admin (bkk-api.js) and every student list (lib/staff-key.js) are closed without it: there is no default key.
 console.log(`${has('BKK_ADMIN_KEY') || has('SHOP_ADMIN_KEY') ? '✓' : '✗'} BKK_ADMIN_KEY (or SHOP_ADMIN_KEY)`);
-// Optional: the AYBKK help desk LINE OA (team briefs to the teacher group, team-brief.js).
-line('HELPDESK_LINE_CHANNEL_SECRET', '(optional)');
-line('HELPDESK_LINE_ACCESS_TOKEN', '(optional)');
+// Optional: the main AYBKK LINE OA (its webhook, messages to students, and the team briefs, team-brief.js).
+line('LINE_CHANNEL_SECRET', '(optional)');
+line('LINE_CHANNEL_ACCESS_TOKEN', '(optional)');

@@ -1,20 +1,24 @@
-// End-to-end test of the AYBKK help desk (team-brief.js) and the mat tick
-// (bkk-api.js) against a real Postgres. LINE is a stub: nothing leaves this machine.
-// Every name here is made up.
+// End-to-end test of the team briefs (team-brief.js), sent by the main AYBKK
+// LINE account, and the mat tick (bkk-api.js) against a real Postgres. LINE is a
+// stub and any other host is refused: nothing leaves this machine.
+// Every name and every LINE group id here is made up.
 process.env.BKK_ADMIN_KEY = 'testkey';
 process.env.MAIL_DRY_RUN = '1';
 process.env.BKK_TIMERS = 'off';   // the payment watch runs only when a test calls it
-process.env.HELPDESK_LINE_CHANNEL_SECRET = 'desk-secret';
-process.env.HELPDESK_LINE_ACCESS_TOKEN = 'desk-token';
+process.env.LINE_CHANNEL_SECRET = 'main-secret';
+process.env.LINE_CHANNEL_ACCESS_TOKEN = 'main-token';
 delete process.env.TELEGRAM_BOT_TOKEN;
 process.env.TELEGRAM_API_BASE = 'http://127.0.0.1:9';
 delete process.env.ANTHROPIC_API_KEY;
+delete process.env.META_PAGE_TOKEN;
 const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 const express = require('express');
 const { Pool } = require('pg');
 const { mountBkk } = require('../bkk-api.js');
 const { mountInbox } = require('../inbox.js');
-const { mountTeam, HELPDESK_PATH_RE, shortName, splitText } = require('../team-brief.js');
+const { mountTeam, shortName, splitText } = require('../team-brief.js');
 
 const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL ||
   'postgres://test:test@127.0.0.1:5432/teamtest' });
@@ -27,21 +31,34 @@ const ok = (name, cond, extra = '') => {
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const bkkAt = s => Date.parse(s + '+07:00');
 
+// Made-up LINE group ids, shaped like LINE's (C and 32 hex): never a real one.
+const GROUP = new Map();
+const gid = k => {
+  const id = 'C' + crypto.createHash('sha256').update(`aybkk-test-group:${k}`).digest('hex').slice(0, 32);
+  GROUP.set(id, k);
+  return id;
+};
+const anyId = text => [...GROUP.keys()].some(id => String(text).includes(id));
+
 // ── LINE stub ───────────────────────────────────────────────────────────────
 const lineCalls = [];
-let lineMode = 'ok', reqN = 0;
+let lineMode = 'ok', groupMode = 'ok', reqN = 0;
+const NAMES = { team1: 'AYBKK teachers', staff: 'AYBKK management & teaching (test)' };
 const lineFetch = async (url, o = {}) => {
   const u = new URL(url);
   if (u.hostname !== 'api.line.me') throw new Error('test: only api.line.me is stubbed, not ' + url);
   lineCalls.push({ path: u.pathname, method: o.method || 'GET', headers: o.headers || {}, body: o.body ? JSON.parse(o.body) : null });
   if ((o.headers || {}).Authorization === 'Bearer refused-token') return Response.json({ message: 'Authentication failed' }, { status: 401 });
-  if (u.pathname === '/v2/bot/info') return Response.json({ userId: 'Udesk', basicId: '@000desk', displayName: 'AYBKK help desk' });
-  if (u.pathname.endsWith('/members/count')) return Response.json({ count: u.pathname.split('/')[4] === 'Cmanage' ? 7 : 3 });
-  if (u.pathname.endsWith('/summary')) {
-    const id = u.pathname.split('/')[4];
-    return Response.json({ groupId: id, groupName: id === 'Cteam1' ? 'AYBKK teachers' : `Other ${id.slice(1)}` });
+  if (u.pathname === '/v2/bot/info') return Response.json({ userId: 'Umain', basicId: '@000test', displayName: 'AYBKK test account' });
+  const g = u.pathname.match(/^\/v2\/bot\/group\/([^/]+)\/(summary|members\/count)$/);
+  if (g) {
+    if (groupMode === 'down') throw new TypeError('fetch failed');
+    const k = GROUP.get(g[1]);
+    if (k === 'forbidden') return Response.json({ message: 'Forbidden' }, { status: 403 });
+    if (!k || k.startsWith('notin')) return Response.json({ message: 'Not found' }, { status: 404 });
+    if (g[2] === 'members/count') return Response.json({ count: k === 'manage' ? 7 : k === 'staff' ? 12 : 3 });
+    return Response.json({ groupId: g[1], groupName: NAMES[k] || `Other ${k}` });
   }
-  if (/^\/v2\/bot\/group\/[^/]+\/leave$/.test(u.pathname)) return new Response('{}', { status: 200 });
   if (u.pathname === '/v2/bot/message/quota') return Response.json({ type: 'limited', value: 300 });
   if (u.pathname === '/v2/bot/message/quota/consumption') return Response.json({ totalUsage: 42 });
   if (u.pathname === '/v2/bot/message/push') {
@@ -53,6 +70,18 @@ const lineFetch = async (url, o = {}) => {
   return new Response('{}', { status: 404 });
 };
 const pushes = () => lineCalls.filter(c => c.path === '/v2/bot/message/push');
+
+// The inbox (mounted beside, as in server.js) asks LINE with the global fetch:
+// api.line.me goes to the stub, this machine to itself, anything else is refused.
+const outside = [];
+const realFetch = globalThis.fetch;
+globalThis.fetch = (url, o) => {
+  const h = new URL(String(url)).hostname;
+  if (h === 'api.line.me') return lineFetch(String(url), o);
+  if (h === '127.0.0.1' || h === 'localhost') return realFetch(url, o);
+  outside.push(h);
+  return Promise.reject(new Error('test: no outside host ' + h));
+};
 
 // Signed like Cloudinary's private photos: an https URL with the size in it.
 const cloudUrl = (id, o) => `https://res.cloudinary.com/demo/image/authenticated/s--sig--/w_${o.transformation[0].width},f_${o.transformation[0].fetch_format}/${id}`;
@@ -72,14 +101,20 @@ const fakeDriver = { session: () => ({
   let clock = bkkAt('2026-11-10T04:00:00');
   const told = [];
   const app = express();
-  // As in server.js: the help desk webhook is left out of the JSON parser.
-  const jsonBody = express.json();
-  app.use((req, res, next) => HELPDESK_PATH_RE.test(req.path) ? next() : jsonBody(req, res, next));
+  // As in server.js: the JSON parser keeps the raw bytes of /line/webhook for the signatures.
+  app.use(express.json({ verify: (req, res, buf) => { if (/^\/(line|meta)\/webhook/.test(req.url)) req.rawBody = buf; } }));
   // Wait for its schema, not a guess: on a slow run the seeds below wrote bkk_members.source before it existed.
   await mountBkk(app, { pgPool: pool, cloudinary: fakeCloud });
-  mountInbox(app, { pgPool: pool, ai: null, notify: async () => true });
+  const inboxApi = mountInbox(app, { pgPool: pool, ai: null, notify: async () => true });
   const team = mountTeam(app, { pgPool: pool, cloudinary: fakeCloud, fetch: lineFetch, driver: fakeDriver,
     now: () => clock, notify: async t => { told.push(t); return true; } });
+  // server.js's /line/webhook hands each request to both (and answers LINE 200
+  // itself). Here the team's part is awaited, so each check sees its result.
+  app.post('/line/webhook', async (req, res) => {
+    inboxApi.takeLine(req);
+    await team.takeLine(req);
+    res.json({ status: 'ok' });
+  });
   await wait(1800);
   const srv = app.listen(0);
   const B = `http://127.0.0.1:${srv.address().port}`;
@@ -91,15 +126,17 @@ const fakeDriver = { session: () => ({
   const post = (p, body, headers = ADMIN) => J(p, { method: 'POST',
     headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(body) });
   const get = (p, headers = ADMIN) => J(p, { headers });
-  const hook = (events, secret = 'desk-secret') => {
-    const body = JSON.stringify({ destination: 'Udesk', events });
+  const hook = (events, secret = 'main-secret') => {
+    const body = JSON.stringify({ destination: 'Umain', events });
     const sig = crypto.createHmac('sha256', secret).update(body).digest('base64');
-    return fetch(B + '/line/helpdesk-webhook', { method: 'POST',
+    return fetch(B + '/line/webhook', { method: 'POST',
       headers: { 'Content-Type': 'application/json; charset=utf-8', 'X-Line-Signature': sig }, body });
   };
   const join = (groupId, ts) => ({ type: 'join', timestamp: ts, source: { type: 'group', groupId }, webhookEventId: 'e' + Math.random() });
   const leave = (groupId, ts) => ({ type: 'leave', timestamp: ts, source: { type: 'group', groupId } });
   const setting = async k => ((await pool.query('SELECT value FROM bkk_settings WHERE key=$1', [k])).rows[0] || {}).value;
+  const status = async () => (await get('/api/bkk/admin/team/status')).body;
+  const T1 = gid('team1'), T2 = gid('team2');
 
   console.log('\n# small helpers');
   ok('names are first names and the family initial', shortName('Anna Maria Bell') === 'Anna Maria B.' && shortName('Mai') === 'Mai'
@@ -114,110 +151,138 @@ const fakeDriver = { session: () => ({
   ok('text over 5,000 characters is split at line ends', parts.length === 3 && parts.every(p => p.length <= 5000)
      && parts.join('\n').split('\n').length === 300, parts.map(p => p.length).join(','));
 
-  console.log('\n# webhook');
-  delete process.env.HELPDESK_LINE_CHANNEL_SECRET;
-  ok('with no channel secret the webhook answers 503', (await hook([join('Cnone')])).status === 503);
-  process.env.HELPDESK_LINE_CHANNEL_SECRET = 'desk-secret';
-  const forged = await hook([join('Cforged')], 'wrong-secret');
-  ok('a bad signature is refused and saves nothing', forged.status === 401 && (await setting('team_line_group')) == null);
-  const noSig = await fetch(B + '/line/helpdesk-webhook', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ events: [join('Cnosig')] }) });
-  ok('no signature at all is refused too', noSig.status === 401 && (await setting('team_line_group')) == null);
-  ok('LINE\'s Verify button (no events) gets 200', (await hook([])).status === 200);
+  console.log('\n# the help desk is gone: one LINE account, the main one');
+  ok('there is no help desk webhook any more: POST /line/helpdesk-webhook is 404',
+     (await fetch(B + '/line/helpdesk-webhook', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{"events":[]}' })).status === 404);
+  const src = f => fs.readFileSync(path.join(__dirname, '..', f), 'utf8');
+  const leftOver = ['server.js', 'team-brief.js', 'check-env.js', 'CLAUDE.md', 'public/bkk-admin.html', 'test/student-lists-lock.test.js']
+    .filter(f => /HELPDESK|help ?desk/i.test(src(f)));
+  ok('no HELPDESK env, help desk route or help desk wording left in the code', leftOver.length === 0, JSON.stringify(leftOver));
+  const lineRoute = (src('server.js').match(/app\.post\('\/line\/webhook'[\s\S]*?\n\}\);/) || [''])[0];
+  ok('server.js hands /line/webhook to the team briefs right after the inbox, and mounts the team as `team`',
+     /inbox\.takeLine\(req\);\n\s*team\.takeLine\(req\);/.test(lineRoute) && /\nconst team = mountTeam\(app, \{ pgPool, cloudinary, driver \}\);\nteam\.start\(\);/.test(src('server.js')),
+     lineRoute.slice(0, 300));
 
-  const j1 = await hook([join('Cteam1', bkkAt('2026-11-07T09:00:00'))]);
-  ok('a join in a group saves the group', j1.status === 200 && (await setting('team_line_group')) === 'Cteam1', JSON.stringify(await setting('team_line_group')));
+  console.log('\n# the main webhook: signed or ignored, every group waits');
+  const pushes0 = pushes().length;
+  delete process.env.LINE_CHANNEL_SECRET;
+  await hook([join(gid('none'))]);
+  ok('with no channel secret nothing is read or kept, and it is not counted as a bad signature',
+     (await setting('team_line_groups')) == null && (await status()).badSignatures === 0);
+  process.env.LINE_CHANNEL_SECRET = 'main-secret';
+  const forged = await hook([join(gid('forged'))], 'wrong-secret');
+  ok('a bad signature is ignored (server.js still answers LINE) and saves nothing', forged.status === 200
+     && (await setting('team_line_groups')) == null && (await setting('team_line_group')) == null);
+  const noSig = await fetch(B + '/line/webhook', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ events: [join(gid('nosig'))] }) });
+  ok('no signature at all is ignored too, and both are counted', noSig.status === 200 && (await setting('team_line_groups')) == null
+     && (await status()).badSignatures === 2);
+  ok('LINE\'s Verify button (no events) is a signed event: the time is kept', (await hook([])).status === 200
+     && (await setting('team_line_webhook_last')) === new Date(clock).toISOString());
+
+  const j1 = await hook([join(T1, bkkAt('2026-11-07T09:00:00'))]);
+  ok('a signed join of the first group waits: the main account never saves a group by itself', j1.status === 200
+     && (await setting('team_line_group')) == null, JSON.stringify(await setting('team_line_group')));
   const seen = await setting('team_line_groups');
-  ok('...with the group name and join time in the list of groups seen', Array.isArray(seen) && seen.length === 1
-     && seen[0].name === 'AYBKK teachers' && seen[0].joinedAt === '2026-11-07T02:00:00.000Z', JSON.stringify(seen));
-  ok('...and Boonchu is told where the briefs go now', told.length === 1 && /AYBKK teachers/.test(told[0]), JSON.stringify(told));
+  ok('...it is in the list of groups seen, waiting, with its name and join time', Array.isArray(seen) && seen.length === 1
+     && seen[0].id === T1 && seen[0].pending === true && seen[0].name === 'AYBKK teachers' && seen[0].joinedAt === '2026-11-07T02:00:00.000Z', JSON.stringify(seen));
+  ok('...and Boonchu is told it waits and nothing gets the briefs yet', told.length === 1 && /"AYBKK teachers": it waits/.test(told[0])
+     && /No LINE group gets the team briefs yet/.test(told[0]) && /accept/.test(told[0]), JSON.stringify(told));
 
   const logs = [], logIt = console.log, warnIt = console.warn, errIt = console.error;
   console.log = console.warn = console.error = (...a) => logs.push(a.join(' '));
   const said = await hook([
-    { type: 'message', timestamp: Date.now(), source: { type: 'group', groupId: 'Cteam1', userId: 'Uteacher' },
+    { type: 'message', timestamp: Date.now(), source: { type: 'group', groupId: T1, userId: 'Uteacher' },
       replyToken: 'r1', message: { id: 'm1', type: 'text', text: 'SECRET GROUP WORDS 4471' } },
     { type: 'message', timestamp: Date.now(), source: { type: 'user', userId: 'Ustranger' },
-      replyToken: 'r2', message: { id: 'm2', type: 'text', text: 'SECRET DM WORDS 9902' } },
+      replyToken: 'r2', message: { id: 'm2', type: 'text', text: 'a student writes 9902' } },
     { type: 'follow', timestamp: Date.now(), source: { type: 'user', userId: 'Ustranger' } },
   ]);
+  await wait(300);   // the inbox saves the 1:1 chat on its own time
   console.log = logIt; console.warn = warnIt; console.error = errIt;
-  const everywhere = (await pool.query(`SELECT
-      (SELECT count(*) FROM bkk_settings WHERE value::text ~ 'SECRET')::int
+  const groupText = (await pool.query(`SELECT
+      (SELECT count(*) FROM bkk_settings WHERE value::text ~ 'SECRET|9902')::int
     + (SELECT count(*) FROM aybkk_inbox WHERE text ~ 'SECRET')::int AS n`)).rows[0].n;
-  ok('message text from a group or a 1:1 chat is never stored or logged, and still gets 200', said.status === 200
-     && everywhere === 0 && !logs.some(l => /SECRET/.test(l)) && (await setting('team_line_group')) === 'Cteam1',
-     JSON.stringify({ everywhere, logs }));
+  const dm = (await pool.query(`SELECT count(*)::int AS n FROM aybkk_inbox WHERE text ~ '9902'`)).rows[0].n;
+  ok('group text is never stored or logged; the team briefs keep no 1:1 text either (the inbox keeps the 1:1 chat, as before)',
+     said.status === 200 && groupText === 0 && dm === 1 && !logs.some(l => /SECRET/.test(l)) && (await setting('team_line_group')) == null,
+     JSON.stringify({ groupText, dm, logs }));
+  ok('...and nothing was sent to LINE by the webhook: no push, no reply', pushes().length === pushes0
+     && !lineCalls.some(c => /\/message\/reply/.test(c.path)));
 
-  await hook([join('Cteam2', bkkAt('2026-11-07T10:00:00'))]);
-  const seen2 = await setting('team_line_groups');
-  ok('a join to a second group does not move the briefs: that group waits', (await setting('team_line_group')) === 'Cteam1'
-     && seen2.find(g => g.id === 'Cteam2').pending === true && seen2.find(g => g.id === 'Cteam1').pending === false, JSON.stringify(seen2));
-  ok('...and Boonchu is told the briefs still go to the team group', told.length === 2
-     && /Other team2/.test(told[1]) && /still go to "AYBKK teachers"/.test(told[1]), JSON.stringify(told));
-  await hook([join('Cteam1', bkkAt('2026-11-07T09:00:00'))]);
-  await hook([join('Cteam2', bkkAt('2026-11-07T10:00:00'))]);
-  ok('a join LINE sends again changes nothing and tells nobody twice', (await setting('team_line_group')) === 'Cteam1' && told.length === 2);
-  const stW = await get('/api/bkk/admin/team/status');
-  const waiting = (stW.body.groupsSeen || []).find(g => g.pending);
-  ok('status lists the waiting group by a ref, never by its LINE id', stW.body.group.name === 'AYBKK teachers'
-     && waiting && waiting.name === 'Other team2' && /^[0-9a-f]{12}$/.test(waiting.ref) && !waiting.saved
-     && !JSON.stringify(stW.body).includes('Cteam'), JSON.stringify(stW.body.groupsSeen));
+  const stW = await status();
+  const waiting = (stW.groupsSeen || []).find(g => g.pending);
+  ok('status lists the waiting group by a ref, never by its LINE id', stW.group.saved === false
+     && waiting && waiting.name === 'AYBKK teachers' && /^[0-9a-f]{12}$/.test(waiting.ref) && !waiting.saved
+     && !anyId(JSON.stringify(stW)), JSON.stringify(stW.groupsSeen));
   ok('team/group needs the key', (await post('/api/bkk/admin/team/group', { accept: waiting.ref }, {})).status === 401
-     && (await setting('team_line_group')) === 'Cteam1');
+     && (await setting('team_line_group')) == null);
   ok('team/group refuses an empty body or an unknown ref', (await post('/api/bkk/admin/team/group', {})).status === 400
      && (await post('/api/bkk/admin/team/group', { accept: 'ffffffffffff' })).status === 404);
-  const acc = await post('/api/bkk/admin/team/group', { accept: waiting.ref });
-  ok('accepting the waiting group moves the briefs there, and Boonchu hears of it', acc.status === 200
-     && (await setting('team_line_group')) === 'Cteam2' && told.length === 3 && /Other team2/.test(told[2]), JSON.stringify([acc, told.at(-1)]));
-  await hook([leave('Cteam1', bkkAt('2026-11-07T10:30:00'))]);
-  ok('leaving a group that is not the saved one changes nothing', (await setting('team_line_group')) === 'Cteam2');
-  await hook([leave('Cteam2', bkkAt('2026-11-07T11:00:00'))]);
+  const acc1 = await post('/api/bkk/admin/team/group', { accept: waiting.ref });
+  ok('accepting the waiting group saves it, and Boonchu hears of it', acc1.status === 200 && acc1.body.saved === true
+     && (await setting('team_line_group')) === T1 && told.length === 2 && /"AYBKK teachers" now/.test(told[1]), JSON.stringify([acc1.body, told.at(-1)]));
+
+  await hook([join(T2, bkkAt('2026-11-07T10:00:00'))]);
+  const seen2 = await setting('team_line_groups');
+  ok('a join to a second group does not move the briefs: that group waits', (await setting('team_line_group')) === T1
+     && seen2.find(g => g.id === T2).pending === true && seen2.find(g => g.id === T1).pending === false, JSON.stringify(seen2));
+  ok('...and Boonchu is told the briefs still go to the team group', told.length === 3
+     && /another LINE group "Other team2"/.test(told[2]) && /still go to "AYBKK teachers"/.test(told[2]), JSON.stringify(told));
+  await hook([join(T1, bkkAt('2026-11-07T09:00:00'))]);
+  await hook([join(T2, bkkAt('2026-11-07T10:00:00'))]);
+  ok('a join LINE sends again changes nothing and tells nobody twice', (await setting('team_line_group')) === T1 && told.length === 3);
+  const w2 = (await status()).groupsSeen.find(g => g.pending);
+  const acc = await post('/api/bkk/admin/team/group', { accept: w2.ref });
+  ok('accepting the second waiting group moves the briefs there, and Boonchu hears of it', acc.status === 200
+     && (await setting('team_line_group')) === T2 && told.length === 4 && /Other team2/.test(told[3]), JSON.stringify([acc, told.at(-1)]));
+  await hook([leave(T1, bkkAt('2026-11-07T10:30:00'))]);
+  ok('leaving a group that is not the saved one changes nothing', (await setting('team_line_group')) === T2);
+  await hook([leave(T2, bkkAt('2026-11-07T11:00:00'))]);
   const afterLeave = await setting('team_line_groups');
   ok('leaving the saved group clears it', (await setting('team_line_group')) == null
-     && afterLeave.find(g => g.id === 'Cteam2').leftAt === '2026-11-07T04:00:00.000Z', JSON.stringify(afterLeave));
-  ok('a group the help desk has left cannot be accepted', (await post('/api/bkk/admin/team/group', { accept: waiting.ref })).status === 409
+     && afterLeave.find(g => g.id === T2).leftAt === '2026-11-07T04:00:00.000Z', JSON.stringify(afterLeave));
+  ok('a group the account has left cannot be accepted', (await post('/api/bkk/admin/team/group', { accept: w2.ref })).status === 409
      && (await setting('team_line_group')) == null);
+  ok('the account is never made to leave a group from here: { leave } is refused, LINE never asked',
+     (await post('/api/bkk/admin/team/group', { leave: w2.ref })).status === 400 && !lineCalls.some(c => /\/leave$/.test(c.path)));
 
   console.log('\n# admin routes need the key');
   for (const [m, p] of [['GET', '/api/bkk/admin/team/status'], ['GET', '/api/bkk/admin/team/preview?kind=morning'],
     ['POST', '/api/bkk/admin/team/send'], ['POST', '/api/bkk/admin/team/brief'], ['POST', '/api/bkk/admin/team/group'],
     ['GET', '/api/bkk/admin/inbox']]) {
-    const none = m === 'GET' ? await get(p, {}) : await post(p, { text: 'x', kind: 'morning' }, {});
-    const wrong = m === 'GET' ? await get(p, { 'x-bkk-key': 'nope' }) : await post(p, { text: 'x', kind: 'morning' }, { 'x-bkk-key': 'nope' });
+    const none = m === 'GET' ? await get(p, {}) : await post(p, { text: 'x', kind: 'morning', add: T1 }, {});
+    const wrong = m === 'GET' ? await get(p, { 'x-bkk-key': 'nope' }) : await post(p, { text: 'x', kind: 'morning', add: T1 }, { 'x-bkk-key': 'nope' });
     ok(`${m} ${p.split('?')[0]} is 401 without the key, or with a wrong one`, none.status === 401 && wrong.status === 401);
   }
   ok('nothing went to LINE from those', pushes().length === 0);
 
   console.log('\n# send');
-  delete process.env.HELPDESK_LINE_ACCESS_TOKEN;
+  delete process.env.LINE_CHANNEL_ACCESS_TOKEN;
   const noTok = await post('/api/bkk/admin/team/send', { text: 'Hello team' });
-  ok('send with no token gives a clear error', noTok.status === 503 && /HELPDESK_LINE_ACCESS_TOKEN is not set/.test(noTok.body.error), JSON.stringify(noTok));
-  process.env.HELPDESK_LINE_ACCESS_TOKEN = 'desk-token';
+  ok('send with no token gives a clear error', noTok.status === 503 && /LINE_CHANNEL_ACCESS_TOKEN is not set/.test(noTok.body.error), JSON.stringify(noTok));
+  process.env.LINE_CHANNEL_ACCESS_TOKEN = 'main-token';
   const noGroup = await post('/api/bkk/admin/team/send', { text: 'Hello team' });
-  ok('send with no group gives a clear error', noGroup.status === 409 && /No team group yet/.test(noGroup.body.error), JSON.stringify(noGroup));
+  ok('send with no group gives a clear error', noGroup.status === 409 && /No team group yet: accept the staff group/.test(noGroup.body.error), JSON.stringify(noGroup));
   ok('...and neither reached LINE', pushes().length === 0);
   ok('an empty text is refused', (await post('/api/bkk/admin/team/send', { text: '  ' })).status === 400);
 
-  await hook([join('Cteam1', bkkAt('2026-11-07T12:00:00'))]);
-  ok('with no group saved, the next join is saved again', (await setting('team_line_group')) === 'Cteam1');
-  await hook([join('Cstranger', bkkAt('2026-11-07T12:30:00'))]);
-  ok('(someone adds the help desk to a group of their own: it waits)', (await setting('team_line_group')) === 'Cteam1');
+  await hook([join(T1, bkkAt('2026-11-07T12:00:00'))]);
+  ok('with no group saved, a join back into a group still only waits', (await setting('team_line_group')) == null
+     && (await setting('team_line_groups')).find(g => g.id === T1).pending === true);
+  const back1 = (await status()).groupsSeen.find(g => g.pending && g.name === 'AYBKK teachers');
+  await post('/api/bkk/admin/team/group', { accept: back1.ref });
+  ok('...until staff accept it', (await setting('team_line_group')) === T1);
+  await hook([join(gid('stranger'), bkkAt('2026-11-07T12:30:00'))]);
+  ok('(someone adds the account to a group of their own: it waits)', (await setting('team_line_group')) === T1);
   const sent = await post('/api/bkk/admin/team/send', { text: 'ประชุมครู 10:00 วันเสาร์' });
   const p1 = pushes().at(-1);
-  ok('send pushes one text to the saved group with the help desk token', sent.status === 200 && sent.body.ok === true
-     && sent.body.requestId === `req-${reqN}` && p1.headers.Authorization === 'Bearer desk-token' && p1.method === 'POST'
-     && JSON.stringify(p1.body) === JSON.stringify({ to: 'Cteam1', messages: [{ type: 'text', text: 'ประชุมครู 10:00 วันเสาร์' }] })
+  ok('send pushes one text to the saved group with the main account\'s token (LINE_CHANNEL_ACCESS_TOKEN)', sent.status === 200 && sent.body.ok === true
+     && sent.body.requestId === `req-${reqN}` && p1.headers.Authorization === 'Bearer main-token' && p1.method === 'POST'
+     && JSON.stringify(p1.body) === JSON.stringify({ to: T1, messages: [{ type: 'text', text: 'ประชุมครู 10:00 วันเสาร์' }] })
      && /^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(p1.headers['X-Line-Retry-Key']),
      JSON.stringify([sent, p1]));
-  ok('...never to a group that is only waiting', !pushes().some(x => x.body.to === 'Cstranger'));
-  const stranger = (await get('/api/bkk/admin/team/status')).body.groupsSeen.find(g => g.name === 'Other stranger');
-  const gone = await post('/api/bkk/admin/team/group', { leave: stranger.ref });
-  const st2 = (await get('/api/bkk/admin/team/status')).body;
-  ok('team/group can make the help desk leave a waiting group', gone.status === 200 && gone.body.saved === true
-     && lineCalls.some(c => c.method === 'POST' && c.path === '/v2/bot/group/Cstranger/leave')
-     && st2.groupsSeen.find(g => g.name === 'Other stranger').leftAt && !st2.groupsSeen.some(g => g.pending)
-     && (await setting('team_line_group')) === 'Cteam1', JSON.stringify([gone, st2.groupsSeen]));
+  ok('...never to a group that is only waiting', !pushes().some(x => x.body.to === gid('stranger')));
   const long = Array.from({ length: 400 }, (_, i) => `บรรทัด ${i} ${'ก'.repeat(20)}`).join('\n');
   const before = pushes().length;
   const sentLong = await post('/api/bkk/admin/team/send', { text: long });
@@ -512,7 +577,7 @@ const fakeDriver = { session: () => ({
   ok('two calls at 05:00 send the morning brief once', morningPushes().length === 1
      && [...ta, ...tb].filter(r => r.sent).length === 1 && [...ta, ...tb].filter(r => r.skipped === 'already').length === 1, JSON.stringify([ta, tb]));
   const mp = morningPushes()[0];
-  ok('...to the team group, the brief as built', mp.body.to === 'Cteam1' && mp.body.messages[0].text === asBuilt && asBuilt.startsWith('☀️ บรีฟเช้า'));
+  ok('...to the team group, the brief as built', mp.body.to === T1 && mp.body.messages[0].text === asBuilt && asBuilt.startsWith('☀️ บรีฟเช้า'));
   const restarted = mountTeam(express(), { pgPool: pool, cloudinary: fakeCloud, fetch: lineFetch, now: () => clock });
   clock = bkkAt('2026-11-10T05:30:00');
   ok('a restart at 05:30 does not send it again', (await restarted.tick(clock))[0].skipped === 'already' && morningPushes().length === 1);
@@ -540,7 +605,7 @@ const fakeDriver = { session: () => ({
      && status1.body.briefs.morning === 'on' && status1.body.briefs.evening === 'on' && status1.body.briefs.lang === 'th'
      && status1.body.lastSent.morning.date === '2026-11-12' && status1.body.lastSent.evening.date === D
      && status1.body.quota.limit === 300 && status1.body.quota.used === 42 && status1.body.channel.tokenSet === true, JSON.stringify(status1.body));
-  ok('...and never the token, or a group id', !JSON.stringify(status1.body).includes('desk-token') && !JSON.stringify(status1.body).includes('Cteam'));
+  ok('...and never the token, or a group id', !JSON.stringify(status1.body).includes('main-token') && !anyId(JSON.stringify(status1.body)));
 
   lineMode = 'down';
   clock = bkkAt('2026-11-13T05:00:00');
@@ -912,42 +977,46 @@ const fakeDriver = { session: () => ({
   ok('...and the first-class guide (f3) says the mat is ฿200 if you tick it, in all 4', f3.length === 4
      && f3.every(x => x.includes('฿200') && !/VAT|НДС|增值税|ภาษี/.test(x)), JSON.stringify(f3));
 
-  console.log('\n# a group the help desk is in, but never heard joining');
+  console.log('\n# a group the account is in, but never heard joining');
   clock = bkkAt('2026-11-25T10:00:00');
   const groupsText = async () => JSON.stringify((await setting('team_line_groups')) || []);
   const toldBefore = told.length;
   const groupEv = (type, groupId, extra = {}) => ({ type, timestamp: clock, source: { type: 'group', groupId, userId: 'Ustaff' }, ...extra });
   const textEv = (groupId, text) => groupEv('message', groupId, { replyToken: 'r9', message: { id: 'm9', type: 'text', text } });
-  const unsigned = await fetch(B + '/line/helpdesk-webhook', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ destination: 'Udesk', events: [textEv('Cmanage', 'hello')] }) });
-  const badSig = await hook([textEv('Cmanage', 'hello')], 'not-the-secret');
-  ok('an unsigned or badly signed message from an unknown group is refused and changes nothing', unsigned.status === 401 && badSig.status === 401
-     && !(await groupsText()).includes('Cmanage') && told.length === toldBefore);
-  const stBad = (await get('/api/bkk/admin/team/status')).body;
-  ok('...and status counts bad signatures since the restart, with the last one\'s time', stBad.badSignatures >= 3
+  const MANAGE = gid('manage'), MEMBERS = gid('members');
+  const bad0 = (await status()).badSignatures;
+  const unsigned = await fetch(B + '/line/webhook', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ destination: 'Umain', events: [textEv(MANAGE, 'hello')] }) });
+  const badSig = await hook([textEv(MANAGE, 'hello')], 'not-the-secret');
+  ok('an unsigned or badly signed message from an unknown group is ignored and changes nothing', unsigned.status === 200 && badSig.status === 200
+     && !(await groupsText()).includes(MANAGE) && told.length === toldBefore);
+  const stBad = await status();
+  ok('...and status counts bad signatures since the restart, with the last one\'s time', stBad.badSignatures === bad0 + 2
      && stBad.badSignatureLastAt === new Date(clock).toISOString(), JSON.stringify([stBad.badSignatures, stBad.badSignatureLastAt]));
-  // The real case: the help desk was put in the staff group before LINE could reach the webhook, so no group is saved.
+  await hook([textEv('Cnot-a-group-id', 'hello'), textEv('C' + 'A'.repeat(32), 'hello')]);
+  ok('an event whose group id is not shaped like LINE\'s (C and 32 hex) is skipped', !/Cnot-a-group|CAAAA/.test(await groupsText()));
+  // The real case: the main account has been in the staff group for a long time, so its join was never heard.
   await post('/api/bkk/admin/team/group', { clear: true });
   const toldClear = told.length;
   const capLogs = [];
   console.log = console.warn = console.error = (...a) => capLogs.push(a.join(' '));
-  const first = await hook([textEv('Cmanage', 'SECRET CAPTURE WORDS 7731')]);
+  const first = await hook([textEv(MANAGE, 'SECRET CAPTURE WORDS 7731')]);
   console.log = logIt; console.warn = warnIt; console.error = errIt;
   const capSeen = await setting('team_line_groups');
-  const cm = (capSeen || []).find(g => g.id === 'Cmanage');
+  const cm = (capSeen || []).find(g => g.id === MANAGE);
   ok('a signed message from a group not known yet adds it as waiting, never saved by itself', first.status === 200
      && cm && cm.pending === true && cm.name === 'Other manage' && !cm.leftAt && (await setting('team_line_group')) == null, JSON.stringify(capSeen));
-  ok('...and Boonchu gets the waiting note, naming the group', told.length === toldClear + 1 && /"Other manage", waiting/.test(told.at(-1))
-     && /No LINE group gets the team briefs yet/.test(told.at(-1)) && /accept/.test(told.at(-1)), JSON.stringify(told.slice(toldClear)));
+  ok('...and Boonchu gets the waiting note once, naming the group', told.length === toldClear + 1 && /"Other manage": it waits/.test(told.at(-1))
+     && /No LINE group gets the team briefs yet/.test(told.at(-1)) && /Accept only the staff group/.test(told.at(-1)), JSON.stringify(told.slice(toldClear)));
   const capStored = (await pool.query(`SELECT count(*)::int AS n FROM bkk_settings WHERE value::text ~ 'SECRET CAPTURE'`)).rows[0].n;
   ok('...the message text is never stored or logged', capStored === 0 && !capLogs.some(l => /SECRET CAPTURE/.test(l)), JSON.stringify(capLogs));
-  const stCap = (await get('/api/bkk/admin/team/status')).body;
-  ok('status: the waiting group by its ref, and when LINE last reached the webhook with a good signature',
+  const stCap = await status();
+  ok('status: the waiting group by its ref, and when LINE last reached /line/webhook with a good signature',
      stCap.group.saved === false && stCap.groupsSeen.some(g => g.name === 'Other manage' && g.pending)
-     && stCap.webhookLastAt === new Date(clock).toISOString() && !JSON.stringify(stCap).includes('Cmanage'), JSON.stringify(stCap));
-  await hook([groupEv('memberJoined', 'Cmembers', { joined: { members: [{ type: 'user', userId: 'Unew' }] } })]);
+     && stCap.webhookLastAt === new Date(clock).toISOString() && !anyId(JSON.stringify(stCap)), JSON.stringify(stCap));
+  await hook([groupEv('memberJoined', MEMBERS, { joined: { members: [{ type: 'user', userId: 'Unew' }] } })]);
   ok('any group event counts: a member joining another unknown group makes it wait too',
-     (await setting('team_line_groups')).find(g => g.id === 'Cmembers').pending === true && told.length === toldClear + 2
+     (await setting('team_line_groups')).find(g => g.id === MEMBERS).pending === true && told.length === toldClear + 2
      && (await setting('team_line_group')) == null);
   // A known group (waiting or saved) talks all day: no write, no lock, not even a read.
   const sqls = [];
@@ -956,10 +1025,11 @@ const fakeDriver = { session: () => ({
   pool.query = function (sql, ...rest) { sqls.push(typeof sql === 'string' ? sql : (sql && sql.text) || ''); return realQuery.call(this, sql, ...rest); };
   pool.connect = function (...a) { connects++; return realConnect.apply(this, a); };
   clock += 20 * 1000;
-  const again = await hook([textEv('Cmanage', 'more words'), groupEv('memberLeft', 'Cmanage', { left: { members: [{ type: 'user', userId: 'Uold' }] } }),
-    textEv('Cmembers', 'hi')]);
+  const again = await hook([textEv(MANAGE, 'more words'), groupEv('memberLeft', MANAGE, { left: { members: [{ type: 'user', userId: 'Uold' }] } }),
+    textEv(MEMBERS, 'hi'), join(MANAGE, clock)]);
+  await wait(100);
   pool.query = realQuery; pool.connect = realConnect;
-  ok('a known group\'s messages write nothing (and the webhook time is kept at most once a minute)', again.status === 200
+  ok('a known group\'s messages and joins write nothing (and the webhook time is kept at most once a minute)', again.status === 200
      && !sqls.some(s => /bkk_settings/.test(s)) && connects === 0 && told.length === toldClear + 2
      && (await setting('team_line_webhook_last')) === new Date(clock - 20 * 1000).toISOString(), JSON.stringify({ sqls, connects }));
   clock += 60 * 1000;
@@ -967,61 +1037,134 @@ const fakeDriver = { session: () => ({
   ok('...a minute later LINE\'s Verify (no events) moves the webhook time on', (await setting('team_line_webhook_last')) === new Date(clock).toISOString());
   const capRef = stCap.groupsSeen.find(g => g.name === 'Other manage').ref;
   const capAcc = await post('/api/bkk/admin/team/group', { accept: capRef });
-  ok('accepting the waiting group saves it: the briefs go there now', capAcc.status === 200 && (await setting('team_line_group')) === 'Cmanage'
+  ok('accepting the waiting group saves it: the briefs go there now', capAcc.status === 200 && (await setting('team_line_group')) === MANAGE
      && /"Other manage" now/.test(told.at(-1)), JSON.stringify(capAcc.body));
-  await hook([join('Cmanage', clock - 3600 * 1000)]);
-  ok('the join LINE sends late, from before the message, changes nothing', (await setting('team_line_group')) === 'Cmanage'
-     && (await setting('team_line_groups')).find(g => g.id === 'Cmanage').pending === false);
-  await hook([leave('Cmembers', clock + 1000)]);
+  await hook([join(MANAGE, clock - 3600 * 1000)]);
+  ok('the join LINE sends late, from before the message, changes nothing', (await setting('team_line_group')) === MANAGE
+     && (await setting('team_line_groups')).find(g => g.id === MANAGE).pending === false);
+  await hook([leave(MEMBERS, clock + 1000)]);
   clock += 5000;
-  await hook([textEv('Cmembers', 'back again')]);
-  const back = (await setting('team_line_groups')).find(g => g.id === 'Cmembers');
-  ok('a group the help desk left, heard from again later, waits again', back.pending === true && !back.leftAt
-     && (await setting('team_line_group')) === 'Cmanage', JSON.stringify(back));
+  await hook([textEv(MEMBERS, 'back again')]);
+  const back = (await setting('team_line_groups')).find(g => g.id === MEMBERS);
+  ok('a group the account left, heard from again later, waits again', back.pending === true && !back.leftAt
+     && (await setting('team_line_group')) === MANAGE, JSON.stringify(back));
 
   console.log('\n# capture: one ping per group, names filled in later, whose token, what a brief costs');
   const summaries = id => lineCalls.filter(c => c.path === `/v2/bot/group/${id}/summary`).length;
   const toldBurst = told.length;
-  const burst = await Promise.all(Array.from({ length: 8 }, (_, i) => hook([textEv('Cburst', `burst ${i}`)])));
+  const BURST = gid('burst');
+  const burst = await Promise.all(Array.from({ length: 8 }, (_, i) => hook([textEv(BURST, `burst ${i}`)])));
   ok('a burst of messages from one unknown group: one name asked of LINE, one ping, it waits once', burst.every(r => r.status === 200)
-     && summaries('Cburst') === 1 && told.length === toldBurst + 1 && (await setting('team_line_groups')).filter(g => g.id === 'Cburst').length === 1);
+     && summaries(BURST) === 1 && told.length === toldBurst + 1 && (await setting('team_line_groups')).filter(g => g.id === BURST).length === 1);
   const toldFlood = told.length;
   let floodConnects = 0;
   const connect0 = pool.connect;
   pool.connect = function (...a) { floodConnects++; return connect0.apply(this, a); };
-  for (let round = 0; round < 3; round++) for (let i = 0; i < 12; i++) await hook([textEv(`Cflood${i}`, 'hi')]);
+  for (let round = 0; round < 3; round++) for (let i = 0; i < 12; i++) await hook([textEv(gid(`flood${i}`), 'hi')]);
   pool.connect = connect0;
   const keptFlood = await setting('team_line_groups');
   ok('more unknown groups than the list keeps, talking for three rounds: each pings once, one write each, the saved group kept',
-     told.length === toldFlood + 12 && floodConnects === 12 && keptFlood.length === 10 && keptFlood.some(g => g.id === 'Cmanage')
-     && (await setting('team_line_group')) === 'Cmanage', JSON.stringify({ pings: told.length - toldFlood, floodConnects }));
+     told.length === toldFlood + 12 && floodConnects === 12 && keptFlood.length === 10 && keptFlood.some(g => g.id === MANAGE)
+     && (await setting('team_line_group')) === MANAGE, JSON.stringify({ pings: told.length - toldFlood, floodConnects }));
   // Heard while the token was not set: no name. Once it is set, status asks LINE again.
-  delete process.env.HELPDESK_LINE_ACCESS_TOKEN;
-  await hook([textEv('Cnoname', 'hello')]);
-  const nameless = (await setting('team_line_groups')).find(g => g.id === 'Cnoname');
-  const stNoTok = (await get('/api/bkk/admin/team/status')).body;
-  process.env.HELPDESK_LINE_ACCESS_TOKEN = ' desk-token\n';
-  const stTok = (await get('/api/bkk/admin/team/status')).body;
+  const NONAME = gid('noname');
+  delete process.env.LINE_CHANNEL_ACCESS_TOKEN;
+  await hook([textEv(NONAME, 'hello')]);
+  const nameless = (await setting('team_line_groups')).find(g => g.id === NONAME);
+  const stNoTok = await status();
+  process.env.LINE_CHANNEL_ACCESS_TOKEN = ' main-token\n';
+  const stTok = await status();
   ok('a group first heard while the token was not set has no name; once the token is set, status fills it in',
      nameless && nameless.name === null && nameless.pending && stNoTok.channel.tokenSet === false && stNoTok.channel.bot === null
-     && stTok.groupsSeen.some(g => g.pending && g.name === 'Other noname') && (await setting('team_line_groups')).find(g => g.id === 'Cnoname').name === 'Other noname',
+     && stTok.groupsSeen.some(g => g.pending && g.name === 'Other noname') && (await setting('team_line_groups')).find(g => g.id === NONAME).name === 'Other noname',
      JSON.stringify([nameless, stTok.groupsSeen]));
-  ok('...status says whose LINE account the token is, and how many people each group has (LINE counts a group push per member)',
-     stTok.channel.tokenSet === true && stTok.channel.bot && stTok.channel.bot.name === 'AYBKK help desk' && stTok.channel.bot.basicId === '@000desk'
-     && stTok.channel.tokenError === null && stTok.group.members === 7 && stTok.groupsSeen.find(g => g.name === 'Other noname').members === 3,
+  ok('...status says whose LINE account the token is (the main account: name and basic id), and how many people each group has (LINE counts a group push per member)',
+     stTok.channel.tokenSet === true && stTok.channel.secretSet === true && stTok.channel.bot && stTok.channel.bot.name === 'AYBKK test account'
+     && stTok.channel.bot.basicId === '@000test' && stTok.channel.tokenError === null && stTok.group.members === 7
+     && stTok.groupsSeen.find(g => g.name === 'Other noname').members === 3
+     && lineCalls.filter(c => c.path === '/v2/bot/info').every(c => c.headers.Authorization === 'Bearer main-token'),
      JSON.stringify([stTok.channel, stTok.group]));
   const before0 = pushes().length;
   await post('/api/bkk/admin/team/send', { text: 'Trim check' });
   ok('...a token pasted with a space and a line end still works', pushes().length === before0 + 1
-     && pushes().at(-1).headers.Authorization === 'Bearer desk-token');
-  process.env.HELPDESK_LINE_ACCESS_TOKEN = 'refused-token';
-  const stRef = (await get('/api/bkk/admin/team/status')).body;
+     && pushes().at(-1).headers.Authorization === 'Bearer main-token');
+  process.env.LINE_CHANNEL_ACCESS_TOKEN = 'refused-token';
+  const stRef = await status();
   ok('...a token LINE refuses says so', stRef.channel.tokenSet === true && /refused the access token \(401\)/.test(stRef.channel.tokenError || '')
      && stRef.channel.bot === null && stRef.quota === null, JSON.stringify(stRef.channel));
-  process.env.HELPDESK_LINE_ACCESS_TOKEN = 'desk-token';
-  process.env.HELPDESK_LINE_CHANNEL_SECRET = 'desk-secret \n';
-  ok('a channel secret pasted with a line end still checks signatures', (await hook([])).status === 200);
-  process.env.HELPDESK_LINE_CHANNEL_SECRET = 'desk-secret';
+  process.env.LINE_CHANNEL_ACCESS_TOKEN = 'main-token';
+  process.env.LINE_CHANNEL_SECRET = 'main-secret \n';
+  clock += 2 * 60 * 1000;
+  const badBefore = (await status()).badSignatures;
+  await hook([]);
+  ok('a channel secret pasted with a line end still checks signatures', (await status()).badSignatures === badBefore
+     && (await setting('team_line_webhook_last')) === new Date(clock).toISOString());
+  process.env.LINE_CHANNEL_SECRET = 'main-secret';
+
+  console.log('\n# add a group by its ID (from the server log), then accept it');
+  const STAFF = gid('staff');
+  const addCalls = () => lineCalls.filter(c => /^\/v2\/bot\/group\//.test(c.path)).length;
+  const seenBefore = await groupsText();
+  const callsBefore = addCalls();
+  const shapes = ['Cnot-an-id', STAFF.slice(1), 'C' + STAFF.slice(1).toUpperCase(), STAFF + '0', 12345, '', null];
+  const badShape = await Promise.all(shapes.map(add => post('/api/bkk/admin/team/group', { add })));
+  ok('a badly shaped ID is 400 (C and 32 characters 0-9 and a-f), nothing stored, LINE never asked', badShape.every(r => r.status === 400
+     && /C and 32 characters/.test(r.body.error)) && (await groupsText()) === seenBefore && addCalls() === callsBefore, JSON.stringify(badShape.map(r => r.status)));
+  const told0 = told.length;
+  const notIn = await post('/api/bkk/admin/team/group', { add: gid('notin1') });
+  const forbidden = await post('/api/bkk/admin/team/group', { add: gid('forbidden') });
+  ok('an ID LINE does not know for the account (404, or 403) is 409 "not in that group", and nothing is stored', notIn.status === 409
+     && forbidden.status === 409 && /the AYBKK LINE account is not in that group/.test(notIn.body.error)
+     && !(await groupsText()).includes(gid('notin1')) && !(await groupsText()).includes(gid('forbidden')), JSON.stringify([notIn.body, forbidden.body]));
+  groupMode = 'down';
+  const down = await post('/api/bkk/admin/team/group', { add: STAFF });
+  groupMode = 'ok';
+  ok('LINE cannot be reached: 502, nothing stored', down.status === 502 && /could not be reached/.test(down.body.error)
+     && !(await groupsText()).includes(STAFF), JSON.stringify(down.body));
+  delete process.env.LINE_CHANNEL_ACCESS_TOKEN;
+  const noTokAdd = await post('/api/bkk/admin/team/group', { add: STAFF });
+  process.env.LINE_CHANNEL_ACCESS_TOKEN = 'main-token';
+  ok('no token: 503, nothing stored', noTokAdd.status === 503 && !(await groupsText()).includes(STAFF));
+  const pushesBeforeAdd = pushes().length;
+  clock += 60 * 1000;
+  const added = await post('/api/bkk/admin/team/group', { add: `  ${STAFF}\n` });
+  const listed = (await setting('team_line_groups')).find(g => g.id === STAFF);
+  ok('LINE 200: the group goes in as waiting with its name and member count; ref, name and members come back, never the id',
+     added.status === 200 && added.body.ok === true && added.body.name === NAMES.staff && added.body.members === 12 && added.body.saved === false
+     && /^[0-9a-f]{12}$/.test(added.body.ref) && !anyId(JSON.stringify(added.body))
+     && listed && listed.pending === true && listed.name === NAMES.staff && listed.joinedAt === new Date(clock).toISOString()
+     && (await setting('team_line_group')) === MANAGE, JSON.stringify([added.body, listed]));
+  ok('...asked of LINE with the main token, nothing pushed, nobody pinged', lineCalls.filter(c => c.path.startsWith(`/v2/bot/group/${STAFF}/`))
+     .every(c => c.headers.Authorization === 'Bearer main-token' && c.method === 'GET') && pushes().length === pushesBeforeAdd && told.length === told0);
+  const stAdd = await status();
+  const staffRow = stAdd.groupsSeen.find(g => g.ref === added.body.ref);
+  ok('...status shows it waiting by its ref, with its members, never the id', staffRow && staffRow.pending && staffRow.members === 12
+     && staffRow.name === NAMES.staff && !anyId(JSON.stringify(stAdd)), JSON.stringify(staffRow));
+  NAMES.staff = 'AYBKK management & teaching (renamed, test)';
+  const again2 = await post('/api/bkk/admin/team/group', { add: STAFF });
+  const kept2 = (await setting('team_line_groups')).filter(g => g.id === STAFF);
+  ok('adding it again refreshes the name: still one entry, still waiting', again2.status === 200 && again2.body.ref === added.body.ref
+     && kept2.length === 1 && kept2[0].name === NAMES.staff && kept2[0].pending === true && kept2[0].joinedAt === listed.joinedAt, JSON.stringify(kept2));
+  await hook([textEv(STAFF, 'hello from staff')]);
+  ok('a message from it after the add is a known group: no second entry, no ping', told.length === told0
+     && (await setting('team_line_groups')).filter(g => g.id === STAFF).length === 1);
+  const accStaff = await post('/api/bkk/admin/team/group', { accept: added.body.ref });
+  ok('accept saves it: the briefs go there now', accStaff.status === 200 && accStaff.body.saved === true
+     && (await setting('team_line_group')) === STAFF && /now \(accepted/.test(told.at(-1)), JSON.stringify(accStaff.body));
+  const savedAgain = await post('/api/bkk/admin/team/group', { add: STAFF });
+  ok('...looking the saved group up again says so and changes nothing', savedAgain.status === 200 && savedAgain.body.saved === true
+     && (await setting('team_line_group')) === STAFF);
+  const sentStaff = await post('/api/bkk/admin/team/send', { text: 'Staff check' });
+  ok('the push goes to that group only, with LINE_CHANNEL_ACCESS_TOKEN', sentStaff.status === 200 && pushes().at(-1).body.to === STAFF
+     && pushes().at(-1).headers.Authorization === 'Bearer main-token');
+  await hook([leave(STAFF, clock + 1000)]);
+  ok('the account leaving that group clears it', (await setting('team_line_group')) == null);
+
+  console.log('\n# never a reply, never a push from the webhook, never outside this machine');
+  ok('no reply, no leave, no other kind of call to LINE in the whole run', !lineCalls.some(c => /\/message\/(reply|multicast|broadcast|narrowcast)|\/leave$/.test(c.path)));
+  ok('every push went to a group staff had accepted at that time', pushes().every(p => [T1, T2, MANAGE, STAFF].includes(p.body.to)),
+     JSON.stringify([...new Set(pushes().map(p => GROUP.get(p.body.to) || 'unknown'))]));
+  ok('no request went to any host but api.line.me (stubbed) and this machine', outside.length === 0, JSON.stringify(outside));
   const noStore = await Promise.all(['/api/bkk/admin/team/status', '/api/bkk/admin/team/preview?kind=morning&date=2026-11-25']
     .map(u => fetch(B + u, { headers: ADMIN }).then(r => r.headers.get('cache-control'))));
   ok('status and preview (student names) are never kept by a browser or a proxy', noStore.every(h => h === 'private, no-store'), JSON.stringify(noStore));

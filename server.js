@@ -16,7 +16,7 @@ const { mountPartner } = require('./partner-api');
 const { mountIdcn } = require('./idcn-api');
 const { mountShop } = require('./shop-api');
 const { mountInbox, APPLY_PATH_RE, LEAD_PATH_RE } = require('./inbox');
-const { mountTeam, HELPDESK_PATH_RE } = require('./team-brief');
+const { mountTeam } = require('./team-brief');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
@@ -123,14 +123,13 @@ const upload = multer({
 // (/api/bkk/login/<token>, /p/<slug>).
 app.use((req, res, next) => { res.set('Referrer-Policy', 'strict-origin'); next(); });
 app.use(cors());
-// LINE and Meta sign the exact bytes they send; the inbox checks those signatures.
-// The public In-Depth application form and the /start first-step form read their own
-// bodies with small limits (inbox.js), and the help desk webhook reads its raw bytes
-// itself (team-brief.js).
+// LINE and Meta sign the exact bytes they send; the inbox and the team briefs
+// (team-brief.js) check those signatures. The public In-Depth application form and
+// the /start first-step form read their own bodies with small limits (inbox.js).
 const jsonBody = express.json({ limit: '10mb', verify: (req, res, buf) => {
   if (/^\/(line|meta)\/webhook/.test(req.url)) req.rawBody = buf;
 } });
-app.use((req, res, next) => APPLY_PATH_RE.test(req.path) || LEAD_PATH_RE.test(req.path) || HELPDESK_PATH_RE.test(req.path)
+app.use((req, res, next) => APPLY_PATH_RE.test(req.path) || LEAD_PATH_RE.test(req.path)
   ? next() : jsonBody(req, res, next));
 app.use(staffFiles);
 // The door tablet (/tablet, 17 Nov 2026) talks to this site only: names on it come
@@ -498,6 +497,7 @@ app.post('/line/webhook', express.json({ type: '*/*' }), async (req, res) => {
     const events = req.body.events || [];
     console.log('[LINE Webhook] Received events:', JSON.stringify(events).slice(0, 200));
     inbox.takeLine(req);
+    team.takeLine(req);
 
     for (const event of events) {
       // Capture group ID when bot receives a message in a group
@@ -654,9 +654,11 @@ mountIdcn(app, { pgPool });
 // hot ones pinged to Boonchu at once when ANTHROPIC_API_KEY is set
 const inbox = mountInbox(app, { pgPool });
 
-// The AYBKK help desk (a second LINE OA, internal): the morning teaching brief and the
-// 20:00 day summary to the teacher team's LINE group, and messages the Desk sends.
-mountTeam(app, { pgPool, cloudinary, driver }).start();
+// The team briefs from the main AYBKK LINE account: the morning teaching brief and the
+// 20:00 day summary to the staff LINE group accepted in Admin, and messages the Desk
+// sends. /line/webhook above hands each request to team.takeLine(req) too.
+const team = mountTeam(app, { pgPool, cloudinary, driver });
+team.start();
 
 // In-Depth Mysore course profiles: /idcn3/yangyang ('#' can't appear in a URL
 // path, so generation 3 is idcn3). The page reads course+slug from the path.

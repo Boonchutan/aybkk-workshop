@@ -1,6 +1,6 @@
-// team-brief.js: the AYBKK help desk, a second LINE Official Account (internal,
-// free plan; not the student account LINE @aybkk) that posts to the teacher
-// team's LINE group:
+// team-brief.js: the team briefs, sent by the main AYBKK LINE Official Account
+// (the same account students follow, token LINE_CHANNEL_ACCESS_TOKEN) to the one
+// staff LINE group accepted in Admin:
 //   morning        the teaching brief for today, per shala class (booked,
 //                  drop-ins, first class, first week, mats), online classes
 //                  apart, then who bought and never came, whose pass is ending
@@ -12,17 +12,20 @@
 // Mount:  const team = mountTeam(app, { pgPool, cloudinary, driver })
 //         team.start() runs the minute timer. server.js calls it; tests call
 //         team.tick(fakeNow) instead, so nothing runs on a clock in a test.
+//         team.takeLine(req): server.js's LINE webhook (/line/webhook) hands
+//         each request here too, next to inbox.takeLine(req).
 //
-// Env:    HELPDESK_LINE_CHANNEL_SECRET  checks the webhook's signature
-//         HELPDESK_LINE_ACCESS_TOKEN    pushes to the group
+// Env:    LINE_CHANNEL_SECRET        checks the webhook's signature
+//         LINE_CHANNEL_ACCESS_TOKEN  pushes to the group (shared with server.js)
 //
-// The webhook keeps only which group the help desk is in. Text written in a
-// group or a 1:1 chat is never stored, logged or forwarded. The first group it
-// joins gets the briefs; any later group waits until the Desk or staff accept
-// it (POST /api/bkk/admin/team/group), because the briefs carry student names
-// and private class photos. A group first seen from any other event (a message,
-// a member joining) also waits: the help desk was added before LINE could
-// reach the webhook, so its join was never heard.
+// From the webhook only which groups the account is in is kept. Text written in
+// a group or a 1:1 chat is never read, stored or logged here, and nothing is
+// ever sent back to a group: the briefs are scheduled pushes. The main account
+// is in several staff groups and anyone can add it to a group of their own,
+// while the briefs carry student names: so no group is ever saved by itself,
+// not even the first. Every group it hears of (a join, a message, a member
+// joining), or that staff add by its ID, waits until staff accept it
+// (POST /api/bkk/admin/team/group).
 // Briefs name students by first name and family initial only: no email, phone
 // or member code ever goes to LINE.
 // The Thai brief keeps class and package names in the original English
@@ -30,13 +33,9 @@
 // teacher name is written as stored, never transliterated (Boonchu, 7 Nov 2026).
 
 const crypto = require('crypto');
-const express = require('express');
 const { moonDaysBetween, rotationTeacher } = require('./bkk-api');
 const { telegram } = require('./inbox');
 
-// Matched the way Express matches the route, so server.js can leave every
-// spelling of it out of its JSON parser: the signature is over the raw bytes.
-const HELPDESK_PATH_RE = /^\/line\/helpdesk-webhook\/?$/i;
 const LINE_API = 'https://api.line.me/v2/bot';
 const PUSH_MAX = 5;                  // message objects per push
 const TEXT_MAX = 5000;               // characters per text message
@@ -54,12 +53,17 @@ const briefAt = (kind, ymd) => {
 const LATE_MIN = 60;                 // a server that was down sends late, up to this
 const TRIES = 3;                     // per brief per day, only when LINE did not answer
 const GROUPS_KEPT = 10;
+// A LINE group ID: C and 32 hex characters, as LINE writes it (lower case).
+const GROUP_ID_RE = /^C[0-9a-f]{32}$/;
 const MARKER = 'team_brief_sent_';
 const ATTENDED = `b.status='booked' AND b.checked_in_at IS NOT NULL`;
 const MAT_THB = 200;                 // mat rental, flat, VAT included, paid at the shala
 
 // A value pasted into Railway with a space or a line end still works.
 const env = k => String(process.env[k] || '').trim();
+// The main AYBKK LINE Official Account, the one server.js and inbox.js use.
+const TOKEN = 'LINE_CHANNEL_ACCESS_TOKEN';
+const SECRET = 'LINE_CHANNEL_SECRET';
 
 const safeEqual = (a, b) => {
   const x = Buffer.from(String(a || '')), y = Buffer.from(String(b || ''));
@@ -306,12 +310,10 @@ function mountTeam(app, opts = {}) {
     res.set('Cache-Control', 'private, no-store');
     return ADMIN_KEY && safeEqual(req.headers['x-bkk-key'], ADMIN_KEY) ? next() : res.status(401).json({ error: 'bad key' });
   };
-  const raw = express.raw({ type: () => true, limit: '256kb' });
 
   if (!pool) {
-    console.warn('⚠ team-brief: no pgPool, LINE help desk disabled');
-    app.post('/line/helpdesk-webhook', (req, res) => res.sendStatus(503));
-    return { tick: async () => [], start() {}, stop() {} };
+    console.warn('⚠ team-brief: no pgPool, LINE team briefs disabled');
+    return { tick: async () => [], start() {}, stop() {}, takeLine: async () => {} };
   }
   const q = (sql, params = []) => pool.query(sql, params);
   const stats = { badSignatures: 0, badAt: null };
@@ -347,13 +349,13 @@ function mountTeam(app, opts = {}) {
   async function teamSend(messages, { seed } = {}) {
     const fail = (status, error, extra = {}) => ({ ok: false, status, error, ...extra });
     try {
-      const token = env('HELPDESK_LINE_ACCESS_TOKEN');
-      if (!token) return fail(503, 'HELPDESK_LINE_ACCESS_TOKEN is not set on the server');
+      const token = env(TOKEN);
+      if (!token) return fail(503, `${TOKEN} is not set on the server`);
       const built = lineMessages(messages);
       if (built.error) return fail(400, built.error);
       if (!built.messages.length) return fail(400, 'nothing to send');
       const to = await savedGroup();
-      if (!to) return fail(409, 'No team group yet: add the AYBKK help desk to the team LINE group, or accept a waiting group (team/group)');
+      if (!to) return fail(409, 'No team group yet: accept the staff group in Admin, Settings, LINE team brief (team/group)');
       const requestIds = [];
       const base = seed || crypto.randomUUID();
       for (let i = 0; i < built.messages.length; i += PUSH_MAX) {
@@ -812,7 +814,7 @@ function mountTeam(app, opts = {}) {
 
   // ── webhook ───────────────────────────────────────────────────────────────
   async function groupName(id) {
-    const token = env('HELPDESK_LINE_ACCESS_TOKEN');
+    const token = env(TOKEN);
     if (!token) return null;
     try {
       const r = await httpFetch(`${LINE_API}/group/${encodeURIComponent(id)}/summary`,
@@ -821,7 +823,7 @@ function mountTeam(app, opts = {}) {
     } catch (_) { return null; }
   }
 
-  // The ids of the groups the help desk is in, as last read or written here:
+  // The ids of the groups the account is in, as last read or written here:
   // an event from a group it knows writes nothing.
   let known = null;
   const learn = (groups, saved) => {
@@ -870,50 +872,22 @@ function mountTeam(app, opts = {}) {
   }
   const tell = text => Promise.resolve(notify(text)).catch(() => {});
   const quoted = name => `"${name || 'no name'}"`;
-  // Boonchu's note for a group that waits: a second join, or a group first seen from another event.
-  const waitNote = (name, current) => `AYBKK help desk is in ${current ? 'another' : 'the'} LINE group ${quoted(name)}, waiting. ` +
+  // Boonchu's note for a group that waits.
+  const waitNote = (name, current) => `The AYBKK LINE account is in ${current ? 'another' : 'the'} LINE group ${quoted(name)}: it waits. ` +
     (current ? `The team briefs still go to ${quoted(current)}. ` : 'No LINE group gets the team briefs yet. ') +
-    'Nothing moves unless the Desk or staff accept it (Admin, Settings, LINE team brief). If you did not add it, ask the Desk to leave that group.';
+    'Nothing moves unless the Desk or staff accept it (Admin, Settings, LINE team brief). Accept only the staff group: the briefs carry student names.';
 
-  // The first group the help desk joins gets the briefs. A join to another
-  // group while one is saved only waits in the list: anyone who can add the
-  // help desk to a group could otherwise take the next brief, with its names
-  // and photos. Boonchu hears of every join. A join LINE sends again late
-  // never undoes a later join or leave.
-  async function joined(id, ts) {
-    const at = new Date(Number.isFinite(ts) ? ts : nowMs()).toISOString();
-    const name = await groupName(id);
-    const r = await withGroups(st => {
-      const had = st.groups.find(g => g.id === id);
-      if (had && (had.joinedAt > at || (had.leftAt && had.leftAt > at))) return null;
-      if (had && had.joinedAt === at && !had.leftAt) return null;   // the same join sent again
-      const first = !st.saved;
-      if (first) st.saved = id;
-      const waits = st.saved !== id;
-      st.groups = [{ id, name: name || (had && had.name) || null, joinedAt: at, leftAt: null, pending: waits },
-        ...st.groups.filter(g => g.id !== id)];
-      return { first, waits, current: (st.groups.find(g => g.id === st.saved) || {}).name };
-    });
-    if (!r) return;
-    if (r.first) {
-      console.log('[team] help desk joined a LINE group: team briefs go there now');
-      tell(`AYBKK help desk joined the LINE group ${quoted(name)}. The team briefs go to that group now. ` +
-        `If that was not you, remove the help desk from that group.`);
-    } else if (r.waits) {
-      console.log('[team] help desk was added to another LINE group: it waits, the briefs stay where they are');
-      tell(waitNote(name, r.current));
-    }
-  }
-
-  // Any other event from a group the help desk does not know (a message, a
-  // member joining): it was added before LINE could reach the webhook, so its
-  // join was never heard. That group waits, like a second join, and is never
-  // saved by itself, until the Desk or staff accept it.
-  // asked: the groups taken up here since this server started, so one group is
-  // one ping and one write, even in a burst or once it has dropped off the list
-  // of groups kept (GROUPS_KEPT). A leave forgets it.
+  // A group the account is in, heard of by a join or by any other event (a
+  // message, a member joining: it was in the group before LINE could reach the
+  // webhook), waits until staff accept it. Nothing is ever saved by itself:
+  // the main account is in several staff groups, and anyone can add it to a
+  // group of their own. Boonchu hears of each one once. An event LINE sends
+  // again, or late, from before the account left, changes nothing.
+  // asked: the groups taken up here since this server started, so a burst from
+  // one group is one name asked of LINE, one write and one ping, even once it
+  // has dropped off the list of groups kept (GROUPS_KEPT). A leave forgets it.
   const asked = new Set();
-  async function seenIn(id, ts) {
+  async function waits(id, ts) {
     const at = new Date(Number.isFinite(ts) ? ts : nowMs()).toISOString();
     const name = await groupName(id);
     const r = await withGroups(st => {
@@ -925,7 +899,7 @@ function mountTeam(app, opts = {}) {
       return mine ? null : { current: (st.groups.find(g => g.id === st.saved) || {}).name || null };
     });
     if (!r) return;
-    console.log('[team] help desk is in a LINE group it never heard joining: it waits to be accepted');
+    console.log('[team] the AYBKK LINE account is in a LINE group staff have not accepted: it waits');
     tell(waitNote(name, r.current));
   }
 
@@ -940,7 +914,7 @@ function mountTeam(app, opts = {}) {
       st.saved = null;
       return true;
     });
-    if (cleared) console.log('[team] help desk left the team group: briefs wait for a new group');
+    if (cleared) console.log('[team] the AYBKK LINE account left the team group: briefs wait for a new group');
   }
 
   // When LINE last reached the webhook with a good signature (its Verify button
@@ -954,40 +928,45 @@ function mountTeam(app, opts = {}) {
     catch (e) { heardAt = 0; console.error('[team] could not keep the webhook time:', e.message); }
   }
 
-  // Only which group an event came from is read: joins and leaves as they
-  // are, any other group event only for a group not known yet (seenIn). Text,
-  // a message in the group or a 1:1 chat, is never read: answered 200, dropped.
-  app.post('/line/helpdesk-webhook', raw, async (req, res) => {
-    const secret = env('HELPDESK_LINE_CHANNEL_SECRET');
-    if (!secret) return res.sendStatus(503);
-    const body = Buffer.isBuffer(req.body) ? req.body : req.rawBody;
-    if (!signed(body, req.headers['x-line-signature'], secret)) {
-      stats.badSignatures++;
-      stats.badAt = new Date(nowMs()).toISOString();
-      return res.sendStatus(401);
-    }
-    await heard();
-    let events = [];
-    try { events = JSON.parse(body.toString('utf8')).events; } catch (_) {}
-    for (const ev of Array.isArray(events) ? events : []) {
-      const src = ev && ev.source;
-      if (!src || src.type !== 'group' || typeof src.groupId !== 'string' || !src.groupId) continue;
-      try {
-        if (ev.type === 'join') await joined(src.groupId, ev.timestamp);
-        else if (ev.type === 'leave') await left(src.groupId, ev.timestamp);
-        else if (!(await knownGroups()).has(src.groupId) && !asked.has(src.groupId)) {
-          asked.add(src.groupId);
-          if (asked.size > 500) asked.delete(asked.values().next().value);
-          await seenIn(src.groupId, ev.timestamp).catch(e => { asked.delete(src.groupId); throw e; });
-        }
-      } catch (e) { await failed('webhook', e.message); }
-    }
-    res.sendStatus(200);
-  }, (err, req, res, next) => res.sendStatus(err.status === 413 ? 413 : 400));
+  // server.js's LINE webhook (/line/webhook) hands every request here, next to
+  // inbox.takeLine(req); server.js answers LINE. Signed by LINE (LINE_CHANNEL_SECRET
+  // over the raw bytes, constant time) or ignored and counted. Of a signed event
+  // only which group it came from is read: a leave as it is, any other event
+  // only for a group not known yet. Text is never read, and nothing is ever
+  // sent back to a group. Never throws.
+  async function takeLine(req) {
+    try {
+      const secret = env(SECRET);
+      if (!secret) return;
+      const body = req && req.rawBody;
+      if (!signed(body, req.headers && req.headers['x-line-signature'], secret)) {
+        stats.badSignatures++;
+        stats.badAt = new Date(nowMs()).toISOString();
+        return;
+      }
+      await heard();
+      let events = [];
+      try { events = JSON.parse(body.toString('utf8')).events; } catch (_) {}
+      for (const ev of Array.isArray(events) ? events : []) {
+        const src = ev && ev.source;
+        const id = src && src.type === 'group' && typeof src.groupId === 'string' ? src.groupId : '';
+        if (!GROUP_ID_RE.test(id)) continue;
+        try {
+          if (ev.type === 'leave') await left(id, ev.timestamp);
+          else if (!(await knownGroups()).has(id) && !asked.has(id)) {
+            asked.add(id);
+            if (asked.size > 500) asked.delete(asked.values().next().value);
+            await waits(id, ev.timestamp).catch(e => { asked.delete(id); throw e; });
+          }
+        } catch (e) { await failed('webhook', e.message); }
+      }
+    } catch (e) { console.error('[team] webhook:', e.message); }
+  }
 
   // ── admin (x-bkk-key: the Desk assistant, and staff) ──────────────────────
-  // What LINE says about the token: whose account it is (the help desk, not
-  // @aybkk), the month's messages, or that it refuses the token. Kept 10 minutes.
+  // What LINE says about the token: whose account it is (the main AYBKK account,
+  // its name and basic id), the month's messages (shared with every message to
+  // students), or that it refuses the token. Kept 10 minutes.
   const FRESH = 10 * 60000;
   const fresh = at => Math.abs(nowMs() - at) < FRESH;
   const lineGet = (path, token) => httpFetch(`${LINE_API}/${path}`, { headers: { Authorization: `Bearer ${token}` },
@@ -995,7 +974,7 @@ function mountTeam(app, opts = {}) {
     .catch(() => ({ status: 0, body: null }));
   let infoCache = { at: 0, token: null, value: null };
   async function lineInfo() {
-    const token = env('HELPDESK_LINE_ACCESS_TOKEN');
+    const token = env(TOKEN);
     if (!token) return null;
     if (infoCache.value && infoCache.token === token && fresh(infoCache.at)) return infoCache.value;
     const [bot, limit, used] = await Promise.all(['info', 'message/quota', 'message/quota/consumption'].map(p => lineGet(p, token)));
@@ -1013,7 +992,7 @@ function mountTeam(app, opts = {}) {
   // costs, and tells two groups of one name apart.
   const membersCache = new Map();
   async function members(id) {
-    const token = env('HELPDESK_LINE_ACCESS_TOKEN');
+    const token = env(TOKEN);
     if (!token) return null;
     const c = membersCache.get(id);
     if (c && fresh(c.at)) return c.n;
@@ -1027,7 +1006,7 @@ function mountTeam(app, opts = {}) {
   // has no name: ask again, at most every 10 minutes for each group.
   const nameAsked = new Map();
   async function fillNames() {
-    if (!env('HELPDESK_LINE_ACCESS_TOKEN')) return;
+    if (!env(TOKEN)) return;
     const seen = await getSetting('team_line_groups');
     const want = (Array.isArray(seen) ? seen : []).filter(g => g && !g.name && !g.leftAt
       && !(nameAsked.has(g.id) && fresh(nameAsked.get(g.id))));
@@ -1063,12 +1042,12 @@ function mountTeam(app, opts = {}) {
       const iso = t => new Date(t).toISOString();
       const hhmm = t => new Date(t + 7 * 3600000).toISOString().slice(11, 16);
       res.json({
-        channel: { secretSet: !!env('HELPDESK_LINE_CHANNEL_SECRET'), tokenSet: !!env('HELPDESK_LINE_ACCESS_TOKEN'),
-          // Whose LINE account the token is (it must be the help desk's), or that LINE refuses it.
+        channel: { secretSet: !!env(SECRET), tokenSet: !!env(TOKEN),
+          // Whose LINE account the token is (name and basic id), or that LINE refuses it.
           bot: info ? info.bot : null, tokenError: info ? info.tokenError : null },
         group: { saved: !!group, ref: group ? groupRef(group) : null, name: g ? g.name : null, joinedAt: g ? g.joinedAt : null,
           members: group ? count.get(group) ?? null : null },
-        // pending: the help desk is in it, it gets nothing until accepted (team/group).
+        // pending: the account is in it, it gets nothing until accepted (team/group).
         groupsSeen: groups.map(x => ({ ref: groupRef(x.id), name: x.name, joinedAt: x.joinedAt, leftAt: x.leftAt,
           saved: x.id === group, pending: pending(x), members: count.get(x.id) ?? null })),
         // at: the Bangkok time of each brief's next send; next: when it goes, null while off.
@@ -1080,7 +1059,7 @@ function mountTeam(app, opts = {}) {
         lastSent: last || {},
         lastError: error,
         quota: info ? info.quota : null,
-        // LINE reaches the webhook: the last signed event, and bad signatures since this server started.
+        // LINE reaches /line/webhook: the last signed event, and bad signatures since this server started.
         webhookLastAt: typeof hook === 'string' ? hook : null,
         badSignatures: stats.badSignatures,
         badSignatureLastAt: stats.badAt,
@@ -1163,14 +1142,44 @@ function mountTeam(app, opts = {}) {
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
-  // Which group gets the briefs: { accept: ref } moves them to a group the
-  // help desk is in, { leave: ref } makes it leave a group, { clear: true }
-  // stops them until a group is accepted or joined. ref is from team/status.
+  // { add: groupId }: a group looked up by its LINE ID (the server log of
+  // /line/webhook shows it) goes in the list of groups seen as waiting, or has
+  // its name refreshed; it is never saved by this. Only ref, name and member
+  // count come back, never the id.
+  async function addGroup(raw, res) {
+    const id = typeof raw === 'string' ? raw.trim() : '';
+    if (!GROUP_ID_RE.test(id)) return res.status(400).json({ error: 'a LINE group ID is C and 32 characters 0-9 and a-f' });
+    const token = env(TOKEN);
+    if (!token) return res.status(503).json({ error: `${TOKEN} is not set on the server` });
+    const [sum, count] = await Promise.all([`group/${id}/summary`, `group/${id}/members/count`].map(p => lineGet(p, token)));
+    if (sum.status === 0) return res.status(502).json({ error: 'LINE could not be reached' });
+    if (sum.status === 403 || sum.status === 404) return res.status(409).json({ error: 'the AYBKK LINE account is not in that group' });
+    if (sum.status !== 200) return res.status(502).json({ error: sum.status === 401 ? 'LINE refused the access token (401)' : `LINE answered ${sum.status}` });
+    const name = sum.body && typeof sum.body.groupName === 'string' && sum.body.groupName ? sum.body.groupName.slice(0, 80) : null;
+    const n = count.body ? Number(count.body.count) : NaN;
+    const members = Number.isFinite(n) ? n : null;
+    if (members != null) membersCache.set(id, { at: nowMs(), n: members });
+    const at = new Date(nowMs()).toISOString();
+    const saved = await withGroups(st => {
+      const had = st.groups.find(g => g.id === id);
+      const kept = had && !had.leftAt ? Object.assign(had, { name: name || had.name })
+        : { id, name, joinedAt: at, leftAt: null, pending: st.saved !== id };
+      st.groups = [kept, ...st.groups.filter(g => g.id !== id)];
+      return st.saved === id;
+    });
+    return res.json({ ok: true, ref: groupRef(id), name, members, saved });
+  }
+
+  // Which group gets the briefs: { add: groupId } (above), { accept: ref } moves
+  // them to a waiting group, { clear: true } stops them until a group is
+  // accepted. ref is from team/status or the add answer. Nothing here makes the
+  // account leave a group: it is the students' account too.
   app.post('/api/bkk/admin/team/group', adminOnly, async (req, res) => {
     const b = req.body || {};
-    const ref = typeof (b.accept || b.leave) === 'string' ? (b.accept || b.leave) : '';
-    if (!ref && b.clear !== true) return res.status(400).json({ error: 'send { accept: ref }, { leave: ref } or { clear: true }' });
     try {
+      if (Object.hasOwn(b, 'add')) return await addGroup(b.add, res);
+      const ref = typeof b.accept === 'string' ? b.accept : '';
+      if (!ref && b.clear !== true) return res.status(400).json({ error: 'send { add: groupId }, { accept: ref } or { clear: true }' });
       if (b.clear === true) {
         const was = await withGroups(st => { const w = st.saved; st.saved = null; return w; });
         if (was) tell('The team briefs are stopped: no LINE group gets them until one is accepted on the Desk.');
@@ -1179,41 +1188,21 @@ function mountTeam(app, opts = {}) {
       const seen = await getSetting('team_line_groups');
       const g = (Array.isArray(seen) ? seen : []).find(x => groupRef(x.id) === ref);
       if (!g) return res.status(404).json({ error: 'no group with that ref (see groupsSeen in team/status)' });
-      if (b.accept) {
-        const r = await withGroups(st => {
-          const x = st.groups.find(y => y.id === g.id);
-          if (!x || x.leftAt) return { gone: true };
-          const moved = st.saved !== x.id;
-          st.saved = x.id;
-          x.pending = false;
-          return { moved, name: x.name };
-        });
-        if (r.gone) return res.status(409).json({ error: 'the help desk is not in that group any more' });
-        if (r.moved) tell(`The team briefs go to the LINE group ${quoted(r.name)} now (accepted on the Desk).`);
-        return res.json({ ok: true, saved: true, ref, name: r.name });
-      }
-      const token = env('HELPDESK_LINE_ACCESS_TOKEN');
-      if (!token) return res.status(503).json({ error: 'HELPDESK_LINE_ACCESS_TOKEN is not set on the server' });
-      let lr;
-      try {
-        lr = await httpFetch(`${LINE_API}/group/${encodeURIComponent(g.id)}/leave`, { method: 'POST',
-          headers: { Authorization: `Bearer ${token}` }, signal: AbortSignal.timeout(10000) });
-      } catch (e) { return res.status(502).json({ error: `LINE could not be reached (${e.message})` }); }
-      if (!lr.ok) {
-        const j = await lr.json().catch(() => ({}));
-        return res.status(502).json({ error: `LINE answered ${lr.status}${j.message ? `: ${String(j.message).slice(0, 200)}` : ''}` });
-      }
-      const saved = await withGroups(st => {
+      const r = await withGroups(st => {
         const x = st.groups.find(y => y.id === g.id);
-        if (x) Object.assign(x, { leftAt: new Date(nowMs()).toISOString(), pending: false });
-        if (st.saved === g.id) st.saved = null;
-        return !!st.saved;
+        if (!x || x.leftAt) return { gone: true };
+        const moved = st.saved !== x.id;
+        st.saved = x.id;
+        x.pending = false;
+        return { moved, name: x.name };
       });
-      res.json({ ok: true, left: true, ref, saved });
+      if (r.gone) return res.status(409).json({ error: 'the AYBKK LINE account is not in that group any more' });
+      if (r.moved) tell(`The team briefs go to the LINE group ${quoted(r.name)} now (accepted on the Desk).`);
+      res.json({ ok: true, saved: true, ref, name: r.name });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
-  return { tick, start, stop, send: teamSend, build };
+  return { tick, start, stop, send: teamSend, build, takeLine };
 }
 
-module.exports = { mountTeam, HELPDESK_PATH_RE, shortName, splitText, retryKey };
+module.exports = { mountTeam, shortName, splitText, retryKey };
