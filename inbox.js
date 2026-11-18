@@ -156,6 +156,14 @@ const APPLY_MAX_BYTES = 64 * 1024;
 // so server.js can leave every spelling of it out of its 10 MB JSON parser.
 const APPLY_PATH_RE = /^\/api\/in-depth\/apply\/?$/i;
 const KEPT_LIST = 'priority-en';
+// Real fit, worked out by the server when an application is saved (the owner's rule, proposed
+// 18 Nov 2026; the numbers may change). A word must be the answer given; a number is the least
+// it may be. A question a list does not ask (dates, on the English list) is left out, and
+// "not sure" on the dates is not real fit. Teaching is not part of it, and the video is shown
+// on its own (link or chat). To change the rule, change this line.
+const REAL_FIT = { primary: 'yes', rooms: 'yes', dates: 'yes', mornings: 4, years: 2 };
+// The landing page each list's form sits on, as bkk_start_events names it (bkk-api.js).
+const LIST_PAGE = { 'gen3-zh': { page: 'in-depth-zh', lang: 'zh' }, 'priority-en': { page: 'in-depth-en', lang: 'en' } };
 const APPLY_FIELDS = {
   name: { max: 100, need: true, line: true },
   email: { max: 200, need: true, line: true },
@@ -179,6 +187,9 @@ const APPLY_FIELDS = {
   video: { max: 500, need: true },
   heard: { max: 200, line: true },
   question: { max: 1000 },
+  // Where the click came from (?src=) and the headline it was opened with (?for=): codes, not words.
+  src: { code: 40 },
+  for: { code: 40 },
 };
 // Baidu's share text is "链接: https://pan.baidu.com/s/… 提取码: abcd", so the
 // link is found inside the answer and the whole answer is kept.
@@ -217,7 +228,11 @@ function checkApplication(body) {
     if (f.list && f.list !== list) continue;
     if (k === 'video' && app.video_by === 'chat') continue;
     const raw = b[k];
-    if (f.one) {
+    if (f.code) {
+      // Cleaned as bkk_start_events cleans them; a wrong one is dropped, never a reason to refuse.
+      const v = typeof raw === 'string' ? raw.toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, f.code) : '';
+      if (v) app[k] = v;
+    } else if (f.one) {
       const v = String(raw ?? '');
       if (f.one.includes(v)) app[k] = v; else if (f.need || v) bad.push(k);
     } else if (f.int != null) {
@@ -248,6 +263,16 @@ function checkApplication(body) {
   app.video_by = app.video_by || 'link';
   return { app };
 }
+
+// → { fit, miss: [the parts of REAL_FIT the answers do not meet] }
+function realFit(a) {
+  const miss = Object.entries(REAL_FIT).filter(([k, want]) => {
+    if (a[k] == null) return k !== 'dates';
+    return typeof want === 'number' ? !(a[k] >= want) : a[k] !== want;
+  }).map(([k]) => k);
+  return { fit: !miss.length, miss };
+}
+const fitLine = f => f.fit ? 'yes' : `no (${f.miss.join(', ')})`;
 
 // ── First-step leads from the /start ad pages ──────────────────────────────
 // The 4-tap ladder ends on LINE, WhatsApp or WeChat; people without those leave
@@ -334,6 +359,8 @@ function applicationText(a) {
     a.video_by === 'chat' ? `Practice video: will send on ${VIDEO_CHAT[a.list].say}` : block('Practice video', a.video),
     a.heard ? `Heard about it from: ${a.heard}` : null,
     block('Question for the call', a.question),
+    `Real fit: ${fitLine(realFit(a))}`,
+    `Came from: ${a.src || '(no src)'}, headline: ${a.for || '(no for)'}`,
   ].filter(Boolean).join('\n');
 }
 
@@ -605,11 +632,14 @@ function mountInbox(app, opts = {}) {
         if (!p) {
           people.set(r.sender_id, { place: people.size + 1, joined: r.created_at, last: r.created_at, tries: 1,
             email: r.sender_id, name: r.sender_name, video: r.ref, video_by: r.triage.video_by || 'link',
+            fit: r.triage.fit ?? null, fit_miss: r.triage.fit_miss || [], src: r.triage.src || null, for: r.triage.for || null,
             summary: r.triage.summary, text: r.text });
         } else {
-          // A later try with the video to come by chat keeps an earlier link in view.
+          // A later try with the video to come by chat keeps an earlier link in view. Where the
+          // person first came from stays the first try's.
           Object.assign(p, { last: r.created_at, tries: p.tries + 1, name: r.sender_name, video: r.ref || p.video,
-            video_by: r.triage.video_by || 'link', summary: r.triage.summary, text: r.text });
+            video_by: r.triage.video_by || 'link', fit: r.triage.fit ?? null, fit_miss: r.triage.fit_miss || [],
+            src: p.src || r.triage.src || null, for: p.for || r.triage.for || null, summary: r.triage.summary, text: r.text });
         }
       }
       res.json({ list, about: APPLY_LISTS[list], count: people.size, applications: [...people.values()] });
@@ -656,6 +686,7 @@ function mountInbox(app, opts = {}) {
     const checked = checkApplication(body);
     if (checked.error) return res.status(checked.error === 'bar' ? 422 : 400).json(checked);
     const a = checked.app;
+    const fit = realFit(a);
     try {
       await ready;
       const summary = `In-Depth Mysore application, list ${a.list}, from ${a.country}: ${a.years} years, ` +
@@ -672,12 +703,22 @@ function mountInbox(app, opts = {}) {
           `INSERT INTO aybkk_inbox (channel, kind, direction, ext_id, sender_id, sender_name, text, ref, sent_at, triage, alerted_at)
            VALUES ('apply','application','in',$1,$2,$3,$4,$5,now(),$6,CASE WHEN $7 THEN now() END) RETURNING id`,
           [`apply:${crypto.randomUUID()}`, a.email, a.name, applicationText(a), a.link,
-            { lane: 'hot', list: a.list, video_by: a.video_by, summary, reply: '' }, !!ping])).rows[0];
+            { lane: 'hot', list: a.list, video_by: a.video_by, fit: fit.fit, fit_miss: fit.miss,
+              src: a.src || null, for: a.for || null, summary, reply: '' }, !!ping])).rows[0];
         return { id: row.id, ping };
       });
       if (!saved) {
         console.warn('[apply] throttled');
         return res.status(429).json({ error: 'busy' });
+      }
+      // The weekly counts (bkk-api.js, /api/bkk/admin/landing-weeks) read these anonymous rows, so
+      // they outlive the 90-day purge of the application itself. A failed count never fails the send.
+      const lp = LIST_PAGE[a.list];
+      if (lp) {
+        await q(`INSERT INTO bkk_start_events (page, kind, src, tag, lang)
+          SELECT $1, k, $2, $3, $4 FROM unnest($5::text[]) k`,
+          [lp.page, a.src || null, a.for || null, lp.lang, fit.fit ? ['sent', 'fit'] : ['sent']])
+          .catch(e => console.error('[apply] count failed:', e.message));
       }
       res.json({ ok: true });
       if (!saved.ping) return;
@@ -749,4 +790,4 @@ function mountInbox(app, opts = {}) {
   return { takeLine, purge };
 }
 
-module.exports = { mountInbox, parseMeta, checkApplication, checkLead, telegram, APPLY_PATH_RE, LEAD_PATH_RE };
+module.exports = { mountInbox, parseMeta, checkApplication, checkLead, realFit, telegram, REAL_FIT, APPLY_PATH_RE, LEAD_PATH_RE };

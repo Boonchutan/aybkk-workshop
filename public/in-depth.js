@@ -33,6 +33,33 @@
   let msgKey = '', sending = false;
   function say(k) { msgKey = k; formMsg.textContent = k ? M[k] : ''; }
 
+  // Counts for the staff's weekly box (bkk-api.js): one 'view' each time the page loads, then
+  // 'step2' and 'step3' once each when the form first shows them, after a restore too. Where the
+  // click came from (?src=) and the headline it was opened with (?for=) go with every count and
+  // with the application. Never ?from=: WeChat adds from=singlemessage or from=timeline itself.
+  // A count is sent and forgotten: it never waits, and a failed one changes nothing on the page.
+  const PAGE = form.getAttribute('data-page');
+  const FOR_TAGS = ['teacher', 'practice', 'room'];
+  const code = v => String(v || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40);
+  function param(k) {
+    const hit = location.search.slice(1).split('&').map(p => p.split('=')).filter(p => p[0] === k)[0];
+    if (!hit) return '';
+    try { return decodeURIComponent((hit[1] || '').replace(/\+/g, ' ')); } catch (_) { return ''; }
+  }
+  let SRC = '', TAG = '';
+  const reached = {};
+  function count(kind) {
+    if (!PAGE) return;
+    const body = JSON.stringify({ page: PAGE, kind: kind, src: SRC, tag: TAG, lang: M === MSG.zh ? 'zh' : 'en' });
+    try {
+      if (navigator.sendBeacon && navigator.sendBeacon('/api/bkk/start-event', new Blob([body], { type: 'application/json' }))) return;
+    } catch (_) {}
+    try {
+      fetch('/api/bkk/start-event', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true })
+        .catch(() => {});
+    } catch (_) {}
+  }
+
   const steps = [].slice.call(form.querySelectorAll('.step'));
   // A page cached from before the steps still works as one long form.
   const paged = steps.length > 1 && !!back && !!next;
@@ -115,7 +142,7 @@
   function save() {
     const v = {};
     SAVED.forEach(k => { v[k] = String(form.elements[k].value || ''); });
-    put({ at: Date.now(), step, v });
+    put({ at: Date.now(), step, v, src: SRC, tag: TAG });
   }
   function forget() { try { localStorage.removeItem(STORE); } catch (_) {} }
   function canStore() {
@@ -161,6 +188,7 @@
   function showStep(i, move) {
     step = i;
     if (!paged) return checkBar();
+    for (let n = 1; n <= i; n++) if (!reached[n]) { reached[n] = true; count('step' + (n + 1)); }
     steps.forEach((s, n) => { s.hidden = n !== i; });
     back.hidden = i === 0;
     next.hidden = i === steps.length - 1;
@@ -272,7 +300,7 @@
       focusField(bad[0]);
       return;
     }
-    const body = { list: form.getAttribute('data-list'), website: form.elements.website.value };
+    const body = { list: form.getAttribute('data-list'), website: form.elements.website.value, src: SRC, for: TAG };
     for (const k of KEYS) body[k] = val(k);
     const chat = byChat();
     if (chat) body.video = '';
@@ -304,6 +332,11 @@
   });
 
   const saved = load();
+  // The source and headline of this visit, or else of the visit the kept answers began on.
+  const kept = saved && fresh(saved.at) ? saved : {};
+  SRC = code(param('src')) || code(kept.src);
+  TAG = [code(param('for')), code(kept.tag)].filter(t => FOR_TAGS.indexOf(t) >= 0)[0] || '';
+  count('view');
   if (saved && fresh(saved.sent)) {
     showThanks(saved.video_by === 'chat', true);
     return;

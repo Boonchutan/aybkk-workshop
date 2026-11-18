@@ -14,6 +14,7 @@ const crypto = require('crypto');
 const net = require('net');
 const QRCode = require('qrcode');
 const { sendMail, render } = require('./mailer');
+const { REAL_FIT } = require('./inbox');
 
 const TZ_OFFSET = '+07:00';                    // Asia/Bangkok, no DST
 const SIGNIN_TTL_MIN = 30;                     // a sign-in link is short-lived
@@ -35,6 +36,13 @@ const LATE_ADD_DAYS = 7;                       // staff put someone who came on 
 // after it starts (Boonchu, 16 Nov 2026): Mysore 60, every other class 30.
 // bookCloseAt is the one place that reads it.
 const BOOK_LATE_MIN = { mysore: 60, default: 30 };
+// Landing pages counted in bkk_start_events, and the kinds each page may send. The In-Depth
+// pages' 'sent' and 'fit' are written by inbox.js when an application is saved, never by a page.
+const LANDING_KINDS = { start: ['view', 'tap', 'step'], 'in-depth-zh': ['view', 'step2', 'step3'], 'in-depth-en': ['view', 'step2', 'step3'] };
+// What the weekly box shows for each page, in ladder order. /start's q1..q3 and done are its 'step' rows.
+const LANDING_COLS = { 'in-depth-zh': ['view', 'step2', 'step3', 'sent', 'fit'], 'in-depth-en': ['view', 'step2', 'step3', 'sent', 'fit'],
+  start: ['view', 'tap', 'q1', 'q2', 'q3', 'done'] };
+const LANDING_WEEKS = 8;
 const VAT_PCT = 7;                             // Thai VAT, charged on price + online fee
 // The payment watch (Boonchu, 15 Nov 2026): stuck online payments are asked
 // about again by the server itself, and Telegram hears only about problems.
@@ -439,6 +447,12 @@ function mountBkk(app, opts = {}) {
     await q(`CREATE TABLE IF NOT EXISTS bkk_start_events (
       id SERIAL PRIMARY KEY, kind TEXT NOT NULL, src TEXT, lang TEXT, ch TEXT,
       created_at TIMESTAMPTZ DEFAULT now())`);
+    // The In-Depth pages count here too (18 Nov 2026): page names the landing page, tag the
+    // headline it was opened with (?for=). Still no IP, name, email or member id. Every
+    // /start and letter count reads page 'start' only, so In-Depth rows never move them.
+    await q(`ALTER TABLE bkk_start_events ADD COLUMN IF NOT EXISTS page TEXT NOT NULL DEFAULT 'start'`);
+    await q(`ALTER TABLE bkk_start_events ADD COLUMN IF NOT EXISTS tag TEXT`);
+    await q(`CREATE INDEX IF NOT EXISTS bkk_start_events_page_at ON bkk_start_events (page, created_at)`);
 
     // The Monday letter, email door. LINE, WeChat and Telegram readers join in
     // those apps, so only email lives here. An address counts once it is
@@ -3542,13 +3556,19 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
 
   app.post('/api/bkk/start-event', async (req, res) => {
     const b = req.body || {};
+    // No page is /start, as every caller before the In-Depth pages.
+    const page = b.page == null ? 'start' : typeof b.page === 'string' ? b.page : '';
+    if (!Object.hasOwn(LANDING_KINDS, page)) return res.status(400).json({ error: 'page' });
     // 'step': the first-step ladder (q1..q3 answered, done-<channel> at the end).
     // The staff reports count kind 'view' and 'tap' only, so steps never inflate them.
-    const kind = ['tap', 'step'].includes(b.kind) ? b.kind : 'view';
+    // /start counts an unknown kind as a view, as it always has; an In-Depth page sends its own kinds only.
+    let kind = LANDING_KINDS[page].includes(b.kind) ? b.kind : null;
+    if (!kind && page !== 'start') return res.status(400).json({ error: 'kind' });
+    kind = kind || 'view';
     const clean = (v, n) => String(v || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, n) || null;
     try {
-      await q(`INSERT INTO bkk_start_events (kind,src,lang,ch) VALUES ($1,$2,$3,$4)`,
-        [kind, clean(b.src, 40), clean(b.lang, 5), clean(b.ch, 10)]);
+      await q(`INSERT INTO bkk_start_events (page,kind,src,tag,lang,ch) VALUES ($1,$2,$3,$4,$5,$6)`,
+        [page, kind, clean(b.src, 40), clean(b.tag, 40), clean(b.lang, 5), page === 'start' ? clean(b.ch, 10) : null]);
       res.json({ success: true });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
@@ -3576,7 +3596,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       }
       // Which door the letter box's visitors take (LINE, WeChat, Telegram, email).
       const doors = (await q(`SELECT coalesce(ch,'-') AS ch, count(*)::int AS n FROM bkk_start_events
-        WHERE src='letter' AND kind='tap' AND created_at > now() - interval '30 days' GROUP BY 1 ORDER BY n DESC`)).rows;
+        WHERE page='start' AND src='letter' AND kind='tap' AND created_at > now() - interval '30 days' GROUP BY 1 ORDER BY n DESC`)).rows;
       res.json({ success: true, counts, doors });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
@@ -3587,9 +3607,48 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const { rows } = await q(
         `SELECT coalesce(src, '-') AS src, count(*) FILTER (WHERE kind = 'view')::int AS views,
            count(*) FILTER (WHERE kind = 'tap')::int AS taps
-         FROM bkk_start_events WHERE created_at > now() - interval '30 days' AND src IS DISTINCT FROM 'letter'
+         FROM bkk_start_events WHERE page='start' AND created_at > now() - interval '30 days' AND src IS DISTINCT FROM 'letter'
          GROUP BY 1 ORDER BY taps DESC, views DESC LIMIT 30`);
       res.json({ success: true, sources: rows });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Landing pages by week (18 Nov 2026): Monday to Sunday in Bangkok, the last LANDING_WEEKS
+  // weeks, newest first. Each page's ladder, and the same numbers split by source (?src=) and by
+  // headline tag (?for=), so the owner sees which source and which step loses people. Counts only:
+  // the rows hold no name, address or member id. The letter box's taps are not /start's.
+  app.get('/api/bkk/admin/landing-weeks', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const since = `date_trunc('week', now() AT TIME ZONE 'Asia/Bangkok') - interval '${LANDING_WEEKS - 1} weeks'`;
+      const weeks = (await q(`SELECT to_char(${since} + i * interval '1 week', 'YYYY-MM-DD') AS w
+        FROM generate_series(${LANDING_WEEKS - 1}, 0, -1) i`)).rows.map(r => r.w);
+      const { rows } = await q(
+        `SELECT page, to_char(date_trunc('week', created_at AT TIME ZONE 'Asia/Bangkok'), 'YYYY-MM-DD') AS week,
+           src, tag, CASE WHEN kind <> 'step' THEN kind WHEN ch LIKE 'done%' THEN 'done' ELSE ch END AS k, count(*)::int AS n
+         FROM bkk_start_events
+         WHERE created_at >= (${since}) AT TIME ZONE 'Asia/Bangkok' AND (page <> 'start' OR src IS DISTINCT FROM 'letter')
+         GROUP BY 1, 2, 3, 4, 5`);
+      const zero = cols => Object.fromEntries(cols.map(c => [c, 0]));
+      const pages = Object.entries(LANDING_COLS).map(([page, cols]) => ({ page, cols,
+        weeks: weeks.map(week => ({ week, n: zero(cols), bySrc: new Map(), byTag: new Map() })) }));
+      for (const r of rows) {
+        const p = pages.find(x => x.page === r.page), w = p && p.weeks.find(x => x.week === r.week);
+        if (!w || !p.cols.includes(r.k)) continue;
+        w.n[r.k] += r.n;
+        for (const [split, key] of [[w.bySrc, r.src], [w.byTag, r.tag]]) {
+          if (!split.has(key)) split.set(key, zero(p.cols));
+          split.get(key)[r.k] += r.n;
+        }
+      }
+      // A split lists its 30 biggest, by the ladder's first number, then the last.
+      const list = (split, name, cols) => [...split].map(([k, n]) => ({ [name]: k, n }))
+        .sort((a, b) => b.n[cols[0]] - a.n[cols[0]] || b.n[cols[cols.length - 1]] - a.n[cols[cols.length - 1]]).slice(0, 30);
+      for (const p of pages) for (const w of p.weeks) {
+        w.bySrc = list(w.bySrc, 'src', p.cols);
+        w.byTag = list(w.byTag, 'tag', p.cols);
+      }
+      res.json({ success: true, weeks, pages, fitRule: REAL_FIT });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 

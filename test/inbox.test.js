@@ -10,7 +10,7 @@ process.env.BKK_ADMIN_KEY = 'desk-key';
 const crypto = require('crypto');
 const express = require('express');
 const { Pool } = require('pg');
-const { mountInbox, telegram, APPLY_PATH_RE, LEAD_PATH_RE } = require('../inbox.js');
+const { mountInbox, telegram, realFit, REAL_FIT, APPLY_PATH_RE, LEAD_PATH_RE } = require('../inbox.js');
 
 // Own schema, so the fake timetable never touches the bkk tests' tables
 const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL ||
@@ -39,6 +39,9 @@ const alerts = [];
   await pool.query(`INSERT INTO bkk_class_slots (code, title, weekday, start_time, is_online) VALUES
     ('a','Mysore (1st batch)',1,'05:30',false), ('b','Mysore (1st batch)',2,'05:30',false),
     ('c','[Online] Led Primary series',1,'06:30',true)`);
+  // inbox.js counts each saved application in bkk-api.js's anonymous landing table; the same columns.
+  await pool.query(`CREATE TABLE bkk_start_events (id SERIAL PRIMARY KEY, kind TEXT NOT NULL, src TEXT, lang TEXT, ch TEXT,
+    created_at TIMESTAMPTZ DEFAULT now(), page TEXT NOT NULL DEFAULT 'start', tag TEXT)`);
 
   const app = express();
   // As in server.js: the application and first-step routes read their own bodies
@@ -763,6 +766,104 @@ const alerts = [];
   const zLi2 = ((await readList('?list=gen3-zh')).body.applications.find(x => x.email === 'li.link@example.com')) || {};
   ok('and a newer link still replaces it', ar.status === 200 && zLi2.tries === 3 && zLi2.video === 'https://youtu.be/li-new' &&
     zLi2.video_by === 'link', JSON.stringify(zLi2).slice(0, 200));
+
+  console.log('\n— where an application came from, and real fit —');
+  await pool.query(`UPDATE aybkk_inbox SET created_at = created_at - interval '25 hours',
+    alerted_at = alerted_at - interval '25 hours' WHERE channel='apply'`);
+  ok('the real fit rule is one named constant', JSON.stringify(REAL_FIT) === JSON.stringify({ primary: 'yes', rooms: 'yes', dates: 'yes', mornings: 4, years: 2 }));
+  ok('..."not sure" on the dates is not real fit; a list that does not ask the dates skips it',
+    JSON.stringify(realFit({ primary: 'yes', rooms: 'yes', dates: 'not_sure', mornings: 7, years: 9 })) === '{"fit":false,"miss":["dates"]}'
+    && JSON.stringify(realFit({ primary: 'yes', rooms: 'yes', mornings: 4, years: 2 })) === '{"fit":true,"miss":[]}');
+  let evAt = (await pool.query('SELECT coalesce(max(id), 0)::int AS m FROM bkk_start_events')).rows[0].m;
+  const newEvents = async () => {
+    const r = (await pool.query('SELECT id, page, kind, src, tag, lang FROM bkk_start_events WHERE id > $1 ORDER BY id', [evAt])).rows;
+    if (r.length) evAt = r[r.length - 1].id;
+    return r.map(({ id, ...e }) => e);
+  };
+  const lastApp = async () => { const a = await applied(); return a[a.length - 1]; };
+  const evStr = e => e.map(x => `${x.page}/${x.kind}/${x.src}/${x.tag}/${x.lang}`).join(' ');
+
+  ar = await apply(good({ email: 'wang.fit@example.com', name: '王小明', src: 'WX-Test', for: 'teacher', teaching: 'no', teach: '',
+    video_by: 'chat', video: '' }));
+  let fr = await lastApp();
+  ok('a fit application keeps where it came from and its headline, cleaned', ar.status === 200 && fr.sender_id === 'wang.fit@example.com'
+    && fr.triage.src === 'wx-test' && fr.triage.for === 'teacher', JSON.stringify(fr.triage));
+  ok('...real fit is worked out at save time: teaching no and a video by chat are still fit',
+    fr.triage.fit === true && JSON.stringify(fr.triage.fit_miss) === '[]', JSON.stringify(fr.triage));
+  ok('...the row text says it', /\nReal fit: yes\nCame from: wx-test, headline: teacher$/.test(fr.text), fr.text.slice(-80));
+  let ev = await newEvents();
+  ok('...and two anonymous counts are written: sent and fit, with page, src and tag', evStr(ev) ===
+    'in-depth-zh/sent/wx-test/teacher/zh in-depth-zh/fit/wx-test/teacher/zh', evStr(ev));
+
+  ar = await apply(good({ email: 'ana.unsure@example.com', name: 'Ana Example', dates: 'not_sure', mornings: 3, years: '1', src: 'reel-x', for: 'room' }));
+  fr = await lastApp();
+  ok('not sure of the dates, 3 mornings, 1 year: saved, not real fit, each part named', ar.status === 200 && fr.triage.fit === false
+    && JSON.stringify(fr.triage.fit_miss) === '["dates","mornings","years"]' && /\nReal fit: no \(dates, mornings, years\)\n/.test(fr.text),
+    JSON.stringify(fr.triage));
+  ev = await newEvents();
+  ok('...it counts as sent, not as fit', evStr(ev) === 'in-depth-zh/sent/reel-x/room/zh', evStr(ev));
+
+  const enFit = good({ list: 'priority-en', email: 'ana.en@example.com', name: 'Ana Example', country: 'Portugal', call_lang: 'en',
+    mornings: '4', years: '2', src: 'reel-en', for: 'practice' });
+  delete enFit.dates;
+  ar = await apply(enFit);
+  fr = await lastApp();
+  ev = await newEvents();
+  ok('the English list: 4 mornings and 2 years are just enough, and there is no dates question to fail', ar.status === 200
+    && fr.triage.fit === true && evStr(ev) === 'in-depth-en/sent/reel-en/practice/en in-depth-en/fit/reel-en/practice/en', evStr(ev));
+  ar = await apply({ ...enFit, email: 'ana.en2@example.com', years: '1', src: undefined, for: undefined });
+  fr = await lastApp();
+  ev = await newEvents();
+  ok('...1 year is not; no src and no for are kept as none', ar.status === 200 && fr.triage.fit === false
+    && JSON.stringify(fr.triage.fit_miss) === '["years"]' && fr.triage.src === null && fr.triage.for === null
+    && /\nCame from: \(no src\), headline: \(no for\)$/.test(fr.text) && evStr(ev) === 'in-depth-en/sent/null/null/en', `${evStr(ev)} ${fr.text.slice(-60)}`);
+
+  ar = await apply(good({ email: 'odd.src@example.com', src: ['wx-test'], for: 42 }));
+  fr = await lastApp();
+  ev = await newEvents();
+  ok('a src or for that is not text is dropped, never a reason to refuse', ar.status === 200 && fr.sender_id === 'odd.src@example.com'
+    && fr.triage.src === null && fr.triage.for === null && evStr(ev) === 'in-depth-zh/sent/null/null/zh in-depth-zh/fit/null/null/zh', evStr(ev));
+  ar = await apply(good({ email: 'long.src@example.com', src: 'Reel X!! ' + 'a'.repeat(60), for: 'Teacher' }));
+  fr = await lastApp();
+  await newEvents();
+  ok('...a long or odd one is cleaned to [a-z0-9_-], 40 at most', ar.status === 200 && fr.triage.src === 'reelx' + 'a'.repeat(35)
+    && fr.triage.for === 'teacher', JSON.stringify(fr.triage));
+
+  const n2 = (await applied()).length;
+  for (const [body, want] of [[good({ email: 'no1@example.com', primary: 'not_yet', src: 'wx-test' }), 422],
+    [good({ email: 'no2@example.com', dates: 'no', src: 'wx-test' }), 422], [good({ email: 'bad', src: 'wx-test' }), 400]]) {
+    ar = await apply(body);
+    ok(`a refused application (${ar.status}) counts nothing`, ar.status === want && (await newEvents()).length === 0 && (await applied()).length === n2);
+  }
+  ar = await apply(good({ email: 'bot2@example.com', website: 'x', src: 'wx-test' }));
+  ok('a filled honeypot counts nothing', ar.status === 200 && (await newEvents()).length === 0 && (await applied()).length === n2);
+
+  const zl3 = (await readList('?list=gen3-zh')).body;
+  const zFit = zl3.applications.find(x => x.email === 'wang.fit@example.com') || {};
+  const zNo = zl3.applications.find(x => x.email === 'ana.unsure@example.com') || {};
+  ok('the list shows src, for and real fit with what failed', zFit.src === 'wx-test' && zFit.for === 'teacher' && zFit.fit === true
+    && JSON.stringify(zFit.fit_miss) === '[]' && zNo.src === 'reel-x' && zNo.for === 'room' && zNo.fit === false
+    && JSON.stringify(zNo.fit_miss) === '["dates","mornings","years"]', JSON.stringify([zFit, zNo]).slice(0, 400));
+  const pOld = ((await readList('?list=priority-en')).body.applications.find(x => x.email === 'old-en@example.com')) || {};
+  ok('...a row saved before real fit existed reads as unknown, with no src or for', pOld.place === 1 && pOld.fit === null
+    && JSON.stringify(pOld.fit_miss) === '[]' && pOld.src === null && pOld.for === null, JSON.stringify(pOld).slice(0, 300));
+  ar = await apply(good({ email: 'ana.unsure@example.com', name: 'Ana Example', src: 'wx-other', for: 'practice' }));
+  await newEvents();
+  const zNo2 = ((await readList('?list=gen3-zh')).body.applications.find(x => x.email === 'ana.unsure@example.com')) || {};
+  ok('a second try shows its own real fit; where the person first came from stays', ar.status === 200 && zNo2.tries === 2
+    && zNo2.fit === true && zNo2.src === 'reel-x' && zNo2.for === 'room', JSON.stringify(zNo2).slice(0, 300));
+
+  const evCount = async () => (await pool.query('SELECT count(*)::int AS n FROM bkk_start_events')).rows[0].n;
+  const evN = await evCount();
+  await pool.query(`UPDATE aybkk_inbox SET created_at = now() - interval '91 days' WHERE sender_id = 'wang.fit@example.com'`);
+  await inbox.purge();
+  ok('the 90-day purge deletes the application and leaves its anonymous counts', (await applied()).every(x => x.sender_id !== 'wang.fit@example.com')
+    && await evCount() === evN);
+
+  await pool.query('ALTER TABLE bkk_start_events RENAME TO bkk_start_events_away');
+  ar = await apply(good({ email: 'no.table@example.com', src: 'wx-test' }));
+  ok('with no count table the application is still saved', ar.status === 200 && (await lastApp()).sender_id === 'no.table@example.com');
+  await pool.query('ALTER TABLE bkk_start_events_away RENAME TO bkk_start_events');
 
   const bare = express();
   mountInbox(bare, {});
