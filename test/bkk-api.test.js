@@ -190,8 +190,8 @@ const ok = (name, cond, extra = '') => {
     const sbk = await post('/api/bkk/bookings', { memberCode: who, slotId: shut.id, date: shut.d }, ADMIN);
     ok('...staff still can (it only asks for a pass)', sbk.status === 409 && /no active pass/.test(sbk.body.error), JSON.stringify(sbk.body));
     const dr = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Open Window', email: 'open.window@example.com', slotId: shut.id, date: shut.d });
-    ok('...nor buy a drop-in for one, and the reply names the last day', dr.status === 409 && dr.body.openUntil === floor
-       && dr.body.error.includes(floor), JSON.stringify(dr.body));
+    ok('...nor buy a drop-in for one (drop-ins open 2 weeks before the class), and the reply names the last day', dr.status === 409
+       && dr.body.dropinUntil === addD(today, 13) && dr.body.error.includes(addD(today, 13)), JSON.stringify(dr.body));
     await pool.query(`UPDATE bkk_settings SET value='"2020-01-01"' WHERE key='booking_open_until'`);
     ok('a day left behind in Settings never closes booking: it stays open the next 2 months',
        (await J('/api/bkk/schedule?days=1')).body.openUntil === floor);
@@ -1862,11 +1862,44 @@ const ok = (name, cond, extra = '') => {
     const weeksOn = n => { let d = addD(dc.date, 7 * n); while (isMoon(d)) d = addD(d, 7); return d; };
     const far = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Far Off', email: 'far.off@example.com',
       slotId: dc.slotId, date: weeksOn(104) });
-    ok('a drop-in for a class two years off is refused, naming the last day booking is open', far.status === 409
-       && /up to \d{4}-\d{2}-\d{2}/.test(far.body.error) && far.body.error.includes(far.body.openUntil), JSON.stringify(far.body));
+    const lastDrop = addD(new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10), 13);
+    ok('a drop-in for a class two years off is refused, naming the last day drop-ins are open', far.status === 409
+       && far.body.dropinUntil === lastDrop && /open 2 weeks before/.test(far.body.error) && far.body.error.includes(lastDrop), JSON.stringify(far.body));
     const month = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Month Off', email: 'month.off@example.com',
       slotId: dc.slotId, date: weeksOn(4) });
-    ok('...but a class a month off, past the two-week list, is fine', month.status === 200 && month.body.order, JSON.stringify(month.body).slice(0, 160));
+    ok('...and so is a class a month off (Boonchu, 19 Nov 2026: drop-ins open 2 weeks before)', month.status === 409
+       && month.body.dropinUntil === lastDrop && !month.body.order, JSON.stringify(month.body).slice(0, 160));
+    // The edge: a class on day 13 from today sells, one on day 14 does not.
+    const dropOn = async d => (await J(`/api/bkk/schedule?days=1&from=${d}`, { headers: ADMIN })).body.classes
+      .find(c => c.date === d && !c.isOnline && c.seatsLeft > 0) || null;
+    let inD = lastDrop, outD = addD(lastDrop, 1), inC = null, outC = null;
+    for (let i = 0; i < 7 && !inC; i++, inD = addD(inD, -1)) inC = await dropOn(inD);
+    for (let i = 0; i < 7 && !outC; i++, outD = addD(outD, 1)) outC = await dropOn(outD);
+    const inBuy = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Edge In', email: 'edge.in@example.com', slotId: inC.slotId, date: inC.date });
+    const outBuy = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Edge Out', email: 'edge.out@example.com', slotId: outC.slotId, date: outC.date });
+    ok('a drop-in sells up to the 14th day (today + 13) and not a day later', inBuy.status === 200 && inBuy.body.order
+       && outBuy.status === 409 && outBuy.body.dropinUntil === lastDrop && (inC.date === lastDrop || outC.date === addD(lastDrop, 1)),
+       JSON.stringify([inC.date, outC.date, inBuy.status, outBuy.body]));
+    const pageSrc = require('fs').readFileSync(require('path').join(__dirname, '../public/bkk.html'), 'utf8');
+    const apiSrc = require('fs').readFileSync(require('path').join(__dirname, '../bkk-api.js'), 'utf8');
+    {
+      // The page's own offer code: a class past the 2 weeks says when its drop-ins open, a nearer one opens the form.
+      const vm = require('vm');
+      const seg = pageSrc.slice(pageSrc.indexOf('  const singleClass = p =>'), pageSrc.indexOf('  window.buy = (code, pre, intro) =>'))
+        + pageSrc.slice(pageSrc.indexOf('  const offerDropin = (slotId, date, intro) =>'), pageSrc.indexOf('  // Book and cancel keep the student where they are'));
+      const seen = { alerts: [], buys: [] };
+      const ctx = { PRODUCTS: [{ code: 'dropin', kind: 'credits', credits: 1 }], alert: m => seen.alerts.push(m),
+        buy: (...a) => seen.buys.push(a), t: (k, ...a) => `${k}(${a.join(',')})`, fmtDay: iso => iso.slice(0, 10),
+        bkkToday: () => '2026-11-19', addDays: (d, n) => new Date(Date.parse(d + 'T00:00:00Z') + n * 864e5).toISOString().slice(0, 10) };
+      vm.createContext(ctx);
+      vm.runInContext(seg + '\n;this.offer = offerDropin;', ctx);
+      const r1 = ctx.offer(7, '2026-12-03'), r2 = ctx.offer(7, '2026-12-02'), r3 = ctx.offer(7, '2026-11-25', 'passLater(x)');
+      ok('the page: a class on day 15 says its drop-ins open on day 2 (20 Nov for 3 Dec); day 14 and nearer open the drop-in form',
+         r1 && r2 && r3 && seen.alerts.length === 1 && seen.alerts[0] === 'dropLater(2026-11-20)' && seen.buys.length === 2
+           && seen.buys[0][1].date === '2026-12-02' && seen.buys[0][2] === 'noPassDrop()' && seen.buys[1][2] === 'passLater(x)', JSON.stringify(seen));
+    }
+    ok('the booking page lists the same 2 weeks the server sells (DROP_DAYS = DROPIN_DAYS = 14)',
+       /const DROP_DAYS = 14;/.test(pageSrc) && /const DROPIN_DAYS = 14;/.test(apiSrc) && !/key\(c\) === preKey\)\) : \[\]/.test(pageSrc));
 
     const booked0 = seatOf(await sched(), dc).booked;
     const dOrd = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Drop In', email: 'drop.in@example.com',

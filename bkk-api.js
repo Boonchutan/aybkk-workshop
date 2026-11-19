@@ -967,6 +967,8 @@ function mountBkk(app, opts = {}) {
   // behind never closes booking, and never more than two years ahead.
   const OPEN_UNTIL_DEFAULT = '2027-12-31';
   const OPEN_MAX_DAYS = 730;
+  // A drop-in opens 2 weeks before its class: today and the next 13 days (Boonchu, 19 Nov 2026).
+  const DROPIN_DAYS = 14;
   async function openUntil() {
     const today = bkkToday(), floor = addDaysYmd(today, SCHEDULE_DAYS - 1), cap = addDaysYmd(today, OPEN_MAX_DAYS);
     const v = String(await getSetting('booking_open_until', OPEN_UNTIL_DEFAULT));
@@ -1064,10 +1066,10 @@ function mountBkk(app, opts = {}) {
         const { slotId, date } = req.body;
         if (!slotId || !isYmd(date) || !Number.isInteger(Number(slotId)))
           return res.status(400).json({ error: 'Pick the class for your drop-in.' });
-        // No further than booking is open: a seat sold for a class years off
-        // would outlive any change to the timetable before then.
-        const until = await openUntil();
-        if (date > until) return res.status(409).json({ error: `You can buy a drop-in for a class up to ${until}.`, openUntil: until });
+        // Drop-ins open 2 weeks before the class (DROPIN_DAYS); booking stays open longer.
+        const until = addDaysYmd(bkkToday(), DROPIN_DAYS - 1);
+        if (date > until) return res.status(409).json({
+          error: `Drop-ins open 2 weeks before the class: you can buy one for a class up to ${until}.`, dropinUntil: until });
         try {
           const c = await classCheck(pool, slotId, date);
           if (await seatsTaken(pool, slotId, date) >= c.capacity) throw new Error('class is full');

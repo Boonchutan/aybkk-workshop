@@ -1719,6 +1719,8 @@
   Object.assign(STR.en, {
     dropWhich: 'Which class is it for?', dropPick: 'Choose a class', dropNeed: 'Please choose the class for your drop-in.',
     dropNone: 'No class has free places right now.', noPassDrop: 'You need a pass to book. Buy a drop-in for this class:',
+    dropLater: d => `Drop-ins open 2 weeks before the class. You can buy one for this class from ${d}, or buy a pass to book it now.`,
+    passLater: d => `Your pass starts on ${d}, so it does not cover this class. Buy a drop-in for it:`,
     havePass: 'I already have a pass',
     paidBooked: (c, w) => `Payment confirmed 🙏 You are booked into ${c}, ${w}. See you in the shala.`,
     paidBookedMail: 'Open the link in your receipt email to see it on this phone.',
@@ -1727,6 +1729,8 @@
   Object.assign(STR.th, {
     dropWhich: 'ใช้กับคลาสไหน', dropPick: 'เลือกคลาส', dropNeed: 'กรุณาเลือกคลาสที่จะมาเรียน',
     dropNone: 'ตอนนี้ไม่มีคลาสที่ยังมีที่ว่าง', noPassDrop: 'ต้องมีแพ็กเกจก่อนจึงจะจองได้ ซื้อแบบครั้งเดียวสำหรับคลาสนี้ได้เลย',
+    dropLater: d => `ซื้อแบบครั้งเดียวได้ล่วงหน้า 2 สัปดาห์ก่อนคลาส ซื้อสำหรับคลาสนี้ได้ตั้งแต่ ${d} หรือซื้อแพ็กเกจเพื่อจองตอนนี้`,
+    passLater: d => `แพ็กเกจของคุณเริ่มวันที่ ${d} จึงใช้กับคลาสนี้ไม่ได้ ซื้อแบบครั้งเดียวสำหรับคลาสนี้ได้เลย`,
     havePass: 'ฉันมีแพ็กเกจอยู่แล้ว',
     paidBooked: (c, w) => `ชำระเงินเรียบร้อย 🙏 จองคลาส ${c} ${w} ให้แล้ว แล้วเจอกันที่ชาลา`,
     paidBookedMail: 'เปิดลิงก์ในอีเมลใบเสร็จเพื่อดูบนมือถือเครื่องนี้',
@@ -1735,6 +1739,8 @@
   Object.assign(STR.zh, {
     dropWhich: '要上哪一节课？', dropPick: '请选择课程', dropNeed: '请选择这次单次课要上的课程。',
     dropNone: '现在没有还有空位的课程。', noPassDrop: '预约需要会员卡。你可以为这节课购买单次课：',
+    dropLater: d => `单次课在上课前2周开放购买。这节课从${d}起可以买单次课，或者现在购买会员卡来预约。`,
+    passLater: d => `你的会员卡从${d}开始，不包括这节课。可以为这节课购买单次课：`,
     havePass: '我已经有会员卡',
     paidBooked: (c, w) => `付款成功 🙏 已为你预约 ${c}，${w}。道场见。`,
     paidBookedMail: '打开收据邮件里的链接，即可在这部手机上查看。',
@@ -1743,6 +1749,8 @@
   Object.assign(STR.ru, {
     dropWhich: 'На какое занятие?', dropPick: 'Выберите занятие', dropNeed: 'Выберите занятие для разового посещения.',
     dropNone: 'Сейчас нет занятий со свободными местами.', noPassDrop: 'Чтобы записаться, нужен абонемент. Купите разовое посещение на это занятие:',
+    dropLater: d => `Разовое посещение открывается за 2 недели до занятия. На это занятие его можно купить с ${d}, или купите абонемент, чтобы записаться сейчас.`,
+    passLater: d => `Ваш абонемент начинается ${d} и не покрывает это занятие. Купите разовое посещение на него:`,
     havePass: 'У меня уже есть абонемент',
     paidBooked: (c, w) => `Оплата получена 🙏 Вы записаны: ${c}, ${w}. До встречи в шале.`,
     paidBookedMail: 'Откройте ссылку в письме с чеком, чтобы увидеть запись на этом телефоне.',
@@ -3556,16 +3564,17 @@
   // A drop-in (one class) is bought for a class: the student picks it here, and
   // paying books it. pre = { slotId, date } when they came from a class's Book.
   const singleClass = p => p.kind === 'credits' && Number(p.credits) === 1;
+  // A drop-in opens 2 weeks before its class: today and the next 13 days (the server's DROPIN_DAYS).
+  const DROP_DAYS = 14;
+  const dropLast = () => addDays(bkkToday(), DROP_DAYS - 1);
   window.buy = (code, pre, intro) => {
     const p = PRODUCTS.find(x => x.code === code);
     if (!p) return;
     const single = singleClass(p);
-    const last = addDays(bkkToday(), 13);
+    const last = dropLast();
     const key = c => c.slotId + '|' + c.date;
     const preKey = pre ? pre.slotId + '|' + pre.date : '';
-    // The next two weeks, plus the class they tapped Book on, however far off.
-    const opts = single ? CLASSES.filter(c => c.seatsLeft > 0 && !isClosed(c)
-      && (c.date <= last || key(c) === preKey)) : [];
+    const opts = single ? CLASSES.filter(c => c.seatsLeft > 0 && !isClosed(c) && c.date <= last) : [];
     const picker = !single ? '' : opts.length
       ? `<label>${esc(t('dropWhich'))}</label><select id="bc"><option value="">${esc(t('dropPick'))}</option>${
           opts.map(c => `<option value="${esc(key(c))}"${c.isOnline ? ' data-online="1"' : ''} ${key(c) === preKey ? 'selected' : ''}>${
@@ -3657,11 +3666,13 @@
     };
   };
 
-  // No pass yet: offer a drop-in for this very class instead of a dead end.
-  const offerDropin = (slotId, date) => {
+  // No pass for this class: offer a drop-in for it instead of a dead end. A class
+  // more than 2 weeks off says the day its drop-ins open.
+  const offerDropin = (slotId, date, intro) => {
     const p = PRODUCTS.find(singleClass);
     if (!p) return false;
-    buy(p.code, { slotId, date }, t('noPassDrop'));
+    if (date > dropLast()) { alert(t('dropLater', fmtDay(addDays(date, 1 - DROP_DAYS) + 'T12:00:00+07:00'))); return true; }
+    buy(p.code, { slotId, date }, intro || t('noPassDrop'));
     return true;
   };
   // Book and cancel keep the student where they are (calendar, day list or
@@ -3687,7 +3698,10 @@
         body: JSON.stringify({ memberCode: code, slotId, date, needMat: MAT_WANT.has(slotId + '|' + date) }) });
       const j = await r.json();
       if (!r.ok) {
-        if (/no active pass/.test(j.error || '') && offerDropin(slotId, date)) return;
+        // A pass that starts later (its first class booked further on) says so.
+        const later = (/your pass starts on (\d{4}-\d{2}-\d{2})/.exec(j.error || '') || [])[1];
+        if (/no active pass/.test(j.error || '')
+          && offerDropin(slotId, date, later ? t('passLater', fmtDay(later + 'T12:00:00+07:00')) : null)) return;
         if (CLOSED_RE.test(j.error || '')) { BUSY = false; return shut(); }
         throw new Error(j.error);
       }
