@@ -326,9 +326,9 @@
     if (!L) bar.appendChild(el('span', '', WORDS.en.off));
     if (OFF) setOffline(true);
   }
-  // While a language is picked, the header, the lead line and the bar keep the
+  // While a language is picked, the header, the lead line, the list, the QR box and the bar keep the
   // height they had in Thai + English, so the buttons and the tiles stay put.
-  var KEEP = ['#classes', '#lead', '#offline'];
+  var KEEP = ['#classes', '#lead', '#grid', '.qrbox', '#offline'];
   function setLang(l) {
     KEEP.forEach(function (s) {
       var e = $(s);
