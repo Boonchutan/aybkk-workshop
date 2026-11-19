@@ -1869,37 +1869,47 @@ const ok = (name, cond, extra = '') => {
       slotId: dc.slotId, date: weeksOn(4) });
     ok('...and so is a class a month off (Boonchu, 19 Nov 2026: drop-ins open 2 weeks before)', month.status === 409
        && month.body.dropinUntil === lastDrop && !month.body.order, JSON.stringify(month.body).slice(0, 160));
-    // The edge: a class on day 13 from today sells, one on day 14 does not.
-    const dropOn = async d => (await J(`/api/bkk/schedule?days=1&from=${d}`, { headers: ADMIN })).body.classes
-      .find(c => c.date === d && !c.isOnline && c.seatsLeft > 0) || null;
-    let inD = lastDrop, outD = addD(lastDrop, 1), inC = null, outC = null;
-    for (let i = 0; i < 7 && !inC; i++, inD = addD(inD, -1)) inC = await dropOn(inD);
-    for (let i = 0; i < 7 && !outC; i++, outD = addD(outD, 1)) outC = await dropOn(outD);
-    const inBuy = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Edge In', email: 'edge.in@example.com', slotId: inC.slotId, date: inC.date });
-    const outBuy = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Edge Out', email: 'edge.out@example.com', slotId: outC.slotId, date: outC.date });
-    ok('a drop-in sells up to the 14th day (today + 13) and not a day later', inBuy.status === 200 && inBuy.body.order
-       && outBuy.status === 409 && outBuy.body.dropinUntil === lastDrop && (inC.date === lastDrop || outC.date === addD(lastDrop, 1)),
-       JSON.stringify([inC.date, outC.date, inBuy.status, outBuy.body]));
     const pageSrc = require('fs').readFileSync(require('path').join(__dirname, '../public/bkk.html'), 'utf8');
     const apiSrc = require('fs').readFileSync(require('path').join(__dirname, '../bkk-api.js'), 'utf8');
     {
-      // The page's own offer code: a class past the 2 weeks says when its drop-ins open, a nearer one opens the form.
+      // The page's own code (19 Nov 2026): the drop-in class list, and the offer when a student has no pass for a class.
       const vm = require('vm');
       const seg = pageSrc.slice(pageSrc.indexOf('  const singleClass = p =>'), pageSrc.indexOf('  window.buy = (code, pre, intro) =>'))
-        + pageSrc.slice(pageSrc.indexOf('  const offerDropin = (slotId, date, intro) =>'), pageSrc.indexOf('  // Book and cancel keep the student where they are'));
-      const seen = { alerts: [], buys: [] };
-      const ctx = { PRODUCTS: [{ code: 'dropin', kind: 'credits', credits: 1 }], alert: m => seen.alerts.push(m),
-        buy: (...a) => seen.buys.push(a), t: (k, ...a) => `${k}(${a.join(',')})`, fmtDay: iso => iso.slice(0, 10),
-        bkkToday: () => '2026-11-19', addDays: (d, n) => new Date(Date.parse(d + 'T00:00:00Z') + n * 864e5).toISOString().slice(0, 10) };
-      vm.createContext(ctx);
-      vm.runInContext(seg + '\n;this.offer = offerDropin;', ctx);
-      const r1 = ctx.offer(7, '2026-12-03'), r2 = ctx.offer(7, '2026-12-02'), r3 = ctx.offer(7, '2026-11-25', 'passLater(x)');
-      ok('the page: a class on day 15 says its drop-ins open on day 2 (20 Nov for 3 Dec); day 14 and nearer open the drop-in form',
-         r1 && r2 && r3 && seen.alerts.length === 1 && seen.alerts[0] === 'dropLater(2026-11-20)' && seen.buys.length === 2
-           && seen.buys[0][1].date === '2026-12-02' && seen.buys[0][2] === 'noPassDrop()' && seen.buys[1][2] === 'passLater(x)', JSON.stringify(seen));
+        + pageSrc.slice(pageSrc.indexOf('  // A class more than 2 weeks off: the day its drop-ins open'), pageSrc.indexOf('  // Book and cancel keep the student where they are'));
+      const make = code => {
+        const seen = { buys: [], tabs: [], els: {} };
+        const el = sel => seen.els[sel] || (seen.els[sel] = { innerHTML: '', open: false, showModal() { this.open = true; }, close() { this.open = false; } });
+        const ctx = { PRODUCTS: [{ code: 'dropin', kind: 'credits', credits: 1 }], buy: (...a) => seen.buys.push(a),
+          t: (k, ...a) => `${k}(${a.join(',')})`, esc: x => String(x), fmtDay: iso => iso.slice(0, 10), myCode: () => code,
+          $: el, tab: x => seen.tabs.push(x), isClosed: c => !!c.closed,
+          bkkToday: () => '2026-11-19', addDays: (d, n) => new Date(Date.parse(d + 'T00:00:00Z') + n * 864e5).toISOString().slice(0, 10) };
+        vm.createContext(ctx);
+        vm.runInContext(seg + '\n;this.pg = { offer: offerDropin, dropOpts, dropLast };', ctx);
+        return { pg: ctx.pg, seen };
+      };
+      const list = [['2026-11-20', 3], ['2026-12-02', 1], ['2026-12-03', 5], ['2026-12-09', 5], ['2026-11-25', 0], ['2026-11-26', 4, true]]
+        .map(([date, seatsLeft, closed]) => ({ date, seatsLeft, closed }));
+      const a = make('');
+      ok('the page: the drop-in list keeps classes with a place up to today + 13 (2 Dec on 19 Nov), never later, full or closed',
+         a.pg.dropOpts(list, a.pg.dropLast()).map(c => c.date).join() === '2026-11-20,2026-12-02');
+      const far = a.pg.offer(7, '2026-12-03'), farHtml = a.seen.els['#dlgIn'].innerHTML;
+      const near = a.pg.offer(7, '2026-12-02');
+      ok('the page, signed out: a class on day 15 shows when its drop-ins open (20 Nov for 3 Dec), packages, and "I already have a pass"; day 14 opens the drop-in form',
+         far && near && a.seen.els['#dlg'].open && farHtml.includes('dropLater(2026-11-20)') && farHtml.includes('havePass()')
+           && farHtml.includes('seePkgs()') && !farHtml.includes('passLaterFar') && a.seen.buys.length === 1
+           && a.seen.buys[0][1].date === '2026-12-02' && a.seen.buys[0][2] === 'noPassDrop()', JSON.stringify([farHtml, a.seen.buys]));
+      a.seen.els['#fdHave'].onclick();
+      ok('...and "I already have a pass" goes to My account', a.seen.tabs.join() === 'me' && !a.seen.els['#dlg'].open);
+      const b = make('BTESTCODE');
+      b.pg.offer(7, '2026-12-20', '2027-02-15');
+      const bHtml = b.seen.els['#dlgIn'].innerHTML;
+      b.pg.offer(7, '2026-11-25', '2027-02-15');
+      ok('the page, signed in with a pass that starts later: a far class says why the pass does not cover it, a near one opens the form saying so',
+         bHtml.includes('passLaterFar(2027-02-15)') && bHtml.includes('dropLater(2026-12-07)') && !bHtml.includes('havePass')
+           && b.seen.buys.length === 1 && b.seen.buys[0][2] === 'passLater(2027-02-15)', JSON.stringify([bHtml, b.seen.buys]));
     }
-    ok('the booking page lists the same 2 weeks the server sells (DROP_DAYS = DROPIN_DAYS = 14)',
-       /const DROP_DAYS = 14;/.test(pageSrc) && /const DROPIN_DAYS = 14;/.test(apiSrc) && !/key\(c\) === preKey\)\) : \[\]/.test(pageSrc));
+    ok('the booking page lists the same 2 weeks the server sells (DROP_DAYS = DROPIN_DAYS = 14), through dropOpts',
+       /const DROP_DAYS = 14;/.test(pageSrc) && /const DROPIN_DAYS = 14;/.test(apiSrc) && /const opts = single \? dropOpts\(CLASSES, last\) : \[\];/.test(pageSrc));
 
     const booked0 = seatOf(await sched(), dc).booked;
     const dOrd = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Drop In', email: 'drop.in@example.com',
@@ -6629,6 +6639,29 @@ const ok = (name, cond, extra = '') => {
          && !row(next, 'my2330') && !row(next, 'led2330') && (next.classes || []).every(c => c.date >= D1),
        JSON.stringify({ night, late: row(late, 'my2330'), next: row(next, 'my2330') }));
     await pool.query(`UPDATE bkk_class_slots SET active=false WHERE code LIKE 'test_edge_%'`);
+
+    // Drop-ins 2 weeks ahead (19 Nov 2026), on a fixed day: today + 13 is Wed 2 Dec, + 14 is Thu 3 Dec, both working days.
+    cc = at('2026-11-19', '12:00:00');
+    const dayClass = async d => ((await JC(`/api/bkk/schedule?days=1&from=${d}`, { headers: ADMIN })).body.classes || [])
+      .filter(c => c.date === d && !c.isOnline && c.seatsLeft > 1);
+    const [in1] = await dayClass('2026-12-02'), [out1] = await dayClass('2026-12-03');
+    const far1 = (await dayClass('2026-12-29'))[0] || (await dayClass('2026-12-30'))[0];
+    const buyFor = (c, who) => postC('/api/bkk/orders', { productCode: 'dropin', name: who, email: `${who.replace(/ /g, '.').toLowerCase()}@example.com`, slotId: c.slotId, date: c.date });
+    const bIn = await buyFor(in1, 'Edge In'), bOut = await buyFor(out1, 'Edge Out');
+    ok('a drop-in sells for a class on day 14 (Wed 2 Dec, today + 13) and not on day 15 (Thu 3 Dec), on 19 Nov', in1 && out1
+       && bIn.status === 200 && bIn.body.order && bOut.status === 409 && bOut.body.dropinUntil === '2026-12-02', JSON.stringify([bIn.status, bOut.body]));
+    // A drop-in credit with no class yet (staff gave it, or its class was cancelled before payment).
+    const credit = async who => (await post('/api/bkk/admin/passes', { name: who, email: `${who.replace(/ /g, '.').toLowerCase()}@example.com`, productCode: 'dropin' }, ADMIN)).body.member.code;
+    const cr1 = await credit('Credit One'), cr2 = await credit('Credit Two');
+    const useOut = await postC('/api/bkk/bookings', { memberCode: cr1, slotId: out1.slotId, date: out1.date });
+    const useIn = await postC('/api/bkk/bookings', { memberCode: cr1, slotId: in1.slotId, date: in1.date });
+    const staffOut = await postC('/api/bkk/bookings', { memberCode: cr2, slotId: out1.slotId, date: out1.date }, ADMIN);
+    ok('a drop-in credit with no date books a class up to 2 Dec, not 3 Dec, as the student; staff can still use it for 3 Dec',
+       useOut.status === 409 && useOut.body.dropinUntil === '2026-12-02' && /2 weeks before/.test(useOut.body.error)
+         && useIn.status === 200 && staffOut.status === 200, JSON.stringify([useOut.body, useIn.body, staffOut.body]));
+    const month1 = await post('/api/bkk/admin/passes', { name: 'Month Far', email: 'month.far@example.com', productCode: 'unlim1' }, ADMIN);
+    const farBook = await postC('/api/bkk/bookings', { memberCode: month1.body.member.code, slotId: far1.slotId, date: far1.date });
+    ok('...a 1-month pass still books a class 40 days off', far1 && farBook.status === 200, JSON.stringify(farBook.body));
 
     // The teacher-names reminder on real days, with nothing confirmed yet.
     await pool.query(`DELETE FROM bkk_settings WHERE key='teachers_shown_through'`);
