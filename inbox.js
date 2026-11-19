@@ -55,7 +55,7 @@ const safeEqual = (a, b) => {
 };
 
 function lineSigned(rawBody, signature) {
-  const secret = process.env.LINE_CHANNEL_SECRET;
+  const secret = String(process.env.LINE_CHANNEL_SECRET || '').trim();   // as team-brief.js reads it
   if (!secret || !rawBody || !signature) return false;
   return safeEqual(signature, crypto.createHmac('sha256', secret).update(rawBody).digest('base64'));
 }

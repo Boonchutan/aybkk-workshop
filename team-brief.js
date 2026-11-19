@@ -1,23 +1,34 @@
-// team-brief.js: the AYBKK help desk, a second LINE Official Account (internal,
-// free plan; not the student account LINE @aybkk) that posts to the teacher
-// team's LINE group:
-//   05:00 Bangkok  the teaching brief for today (who is booked, who is new,
-//                  whose pass is ending, who has not paid, who needs a mat)
+// team-brief.js: the team briefs, sent by the main AYBKK LINE Official Account
+// (the same account students follow, token LINE_CHANNEL_ACCESS_TOKEN) to the one
+// staff LINE group accepted in Admin:
+//   morning        the teaching brief for today, per shala class (booked,
+//                  drop-ins, first class, first week, mats), online classes
+//                  apart, then who bought and never came, whose pass is ending
+//                  and who has not paid. Bangkok time by weekday (BRIEF_AT):
+//                  Tue to Fri 05:00, Mon 05:30, Sat and Sun 06:00.
 //   20:00 Bangkok  the summary of the day on aybkk.net
 //   any time       a message Boonchu approved through the Desk assistant
 //
 // Mount:  const team = mountTeam(app, { pgPool, cloudinary, driver })
 //         team.start() runs the minute timer. server.js calls it; tests call
 //         team.tick(fakeNow) instead, so nothing runs on a clock in a test.
+//         team.takeLine(req): server.js's LINE webhook (/line/webhook) hands
+//         each request here too, next to inbox.takeLine(req).
 //
-// Env:    HELPDESK_LINE_CHANNEL_SECRET  checks the webhook's signature
-//         HELPDESK_LINE_ACCESS_TOKEN    pushes to the group
+// Env:    LINE_CHANNEL_SECRET        checks the webhook's signature
+//         LINE_CHANNEL_ACCESS_TOKEN  pushes to the group (shared with server.js)
 //
-// The webhook keeps only which group the help desk is in. Text written in a
-// group or a 1:1 chat is never stored, logged or forwarded. The first group it
-// joins gets the briefs; any later group waits until the Desk or staff accept
-// it (POST /api/bkk/admin/team/group), because the briefs carry student names
-// and private class photos.
+// From the webhook only which groups the account is in is kept. Text written in
+// a group or a 1:1 chat is never read, stored or logged here, and nothing is
+// ever sent back to a group: the briefs are scheduled pushes. The main account
+// is in several staff groups and anyone can add it to a group of their own,
+// while the briefs carry student names: so no group is ever saved by itself,
+// not even the first. Every group it hears of (a join, a message, a member
+// joining), or that staff add by its ID, waits until staff accept it
+// (POST /api/bkk/admin/team/group). Until 19 Nov 2026 a second LINE account
+// sent the briefs and kept its group and switches under the same keys: once per
+// database (the marker 'team_line_sender') all of that is cleared, so the main
+// account starts with no group, nothing waiting and both briefs off.
 // Briefs name students by first name and family initial only: no email, phone
 // or member code ever goes to LINE.
 // The Thai brief keeps class and package names in the original English
@@ -25,25 +36,37 @@
 // teacher name is written as stored, never transliterated (Boonchu, 7 Nov 2026).
 
 const crypto = require('crypto');
-const express = require('express');
 const { moonDaysBetween, rotationTeacher } = require('./bkk-api');
 const { telegram } = require('./inbox');
 
-// Matched the way Express matches the route, so server.js can leave every
-// spelling of it out of its JSON parser: the signature is over the raw bytes.
-const HELPDESK_PATH_RE = /^\/line\/helpdesk-webhook\/?$/i;
 const LINE_API = 'https://api.line.me/v2/bot';
 const PUSH_MAX = 5;                  // message objects per push
 const TEXT_MAX = 5000;               // characters per text message
 const URL_MAX = 2000;                // LINE's limit for an image URL
 const SEND_MAX = PUSH_MAX * TEXT_MAX;
-const BRIEF_AT = { morning: '05:00', evening: '20:00' };
+// Bangkok send time. Morning by weekday, 0 Sunday (Boonchu, 18 Nov 2026): 05:00
+// on the Mysore days (first class 05:30), 05:30 on Monday (Led Primary 06:30),
+// 06:00 on Sunday (Mysore 07:00) and on Saturday, one brief for both Led
+// classes (07:00 and 08:45). A moon day or a closed day keeps its weekday's time.
+const BRIEF_AT = { morning: ['06:00', '05:30', '05:00', '05:00', '05:00', '05:00', '06:00'], evening: '20:00' };
+const briefAt = (kind, ymd) => {
+  const t = BRIEF_AT[kind];
+  return Array.isArray(t) ? t[new Date(`${ymd}T12:00:00Z`).getUTCDay()] : t;
+};
 const LATE_MIN = 60;                 // a server that was down sends late, up to this
 const TRIES = 3;                     // per brief per day, only when LINE did not answer
-const GROUPS_KEPT = 10;
+const GROUPS_KEPT = 100;             // groups seen, newest first: the saved one is always kept
+// A LINE group ID: C and 32 hex characters, as LINE writes it (lower case).
+const GROUP_ID_RE = /^C[0-9a-f]{32}$/;
 const MARKER = 'team_brief_sent_';
 const ATTENDED = `b.status='booked' AND b.checked_in_at IS NOT NULL`;
 const MAT_THB = 200;                 // mat rental, flat, VAT included, paid at the shala
+
+// A value pasted into Railway with a space or a line end still works.
+const env = k => String(process.env[k] || '').trim();
+// The main AYBKK LINE Official Account, the one server.js and inbox.js use.
+const TOKEN = 'LINE_CHANNEL_ACCESS_TOKEN';
+const SECRET = 'LINE_CHANNEL_SECRET';
 
 const safeEqual = (a, b) => {
   const x = Buffer.from(String(a || '')), y = Buffer.from(String(b || ''));
@@ -130,21 +153,30 @@ const MON = {
 };
 const baht = n => '฿' + Math.round(Number(n) || 0).toLocaleString('en-US');
 const pl = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+// A name stored as only a phone number or an email has nothing to show: say so,
+// never a bare '?' a teacher cannot read at 5 am.
+const named = (L, raw) => { const s = shortName(raw); return s === '?' ? L.noName : s; };
 const list = (names, max = 15) => names.length > max ? `${names.slice(0, max).join(', ')} +${names.length - max}` : names.join(', ');
 
 const WORDS = {
   th: {
     day: d => { const t = new Date(`${d}T12:00:00Z`); return `${WD.th[t.getUTCDay()]} ${t.getUTCDate()} ${MON.th[t.getUTCMonth()]}`; },
     item: en => en || 'แพ็กเกจ',
+    noName: 'ไม่มีชื่อในระบบ',
     mHead: d => `☀️ บรีฟเช้า ${d}`,
     closed: c => c.why === 'none' ? 'วันนี้ไม่มีคลาสในตาราง'
       : c.why === 'cancelled' ? `วันนี้ชาลาปิด ยกเลิกทุกคลาส${c.note ? ` (${c.note})` : ''}`
       : `วันนี้ชาลาปิด ${c.why === 'full' ? 'วันพระจันทร์เต็มดวง' : 'วันพระจันทร์ดับ'} (moon day)`,
-    cLine: (time, title, teacher, n) => `${time} ${title}${teacher ? ` · ครู ${teacher}` : ''} · จอง ${n}`,
+    cHead: (time, title, teacher) => `🧘 ${time} ${title}${teacher ? ` · ครู ${teacher}` : ''}`,
+    cBooked: n => `จอง ${n} คน`,
+    cDrop: (n, names) => `ดรอปอิน ${n}: ${names}`,
+    cFirst: (n, names) => `มาครั้งแรกวันนี้ ${n}: ${names}`,
+    cWeek: (n, names) => `สัปดาห์แรก ${n}: ${names}`,
+    cMats: (n, names) => `เช่าเสื่อ ${n} (${baht(MAT_THB)} รวม VAT จ่ายที่ชาลา): ${names}`,
     cOff: (time, title, note) => `${time} ${title} · ยกเลิก${note ? ` (${note})` : ''}`,
-    nobody: 'ยังไม่มีคนจอง',
-    newH: '🌱 นักเรียนใหม่ ช่วยกันต้อนรับ',
-    newFirst: (n, time) => `• ${n} มาครั้งแรก ${time}`,
+    onlineH: '💻 ออนไลน์ (Zoom)',
+    oLine: (time, title, n) => `${time} ${title} · จอง ${n}`,
+    boughtH: '🛒 ซื้อแล้ว ยังไม่เคยมา',
     newBought: (n, item, day, next) => `• ${n} ซื้อ ${item} เมื่อ ${day} ยังไม่เช็กอินใน aybkk.net${next ? ` (จองไว้ ${next})` : ' ยังไม่มีการจองใน aybkk.net'}`,
     endH: '⏳ ใกล้หมด ชวนคุยเรื่องต่อแพ็กเกจ',
     endDate: (n, item, until) => `• ${n} ${item} หมด ${until}`,
@@ -154,8 +186,7 @@ const WORDS = {
     paySeat: (n, time, why) => `• ${n} จอง ${time} ${why}`,
     why: { none: 'แต่ยังไม่มีแพ็กเกจ', ended: d => `แต่แพ็กเกจหมดไปแล้ว ${d}`, frozen: 'แต่แพ็กเกจพักไว้อยู่',
       void: 'แต่แพ็กเกจถูกยกเลิกแล้ว' },
-    matH: `🧘 เตรียมเสื่อให้ (เก็บ ${baht(MAT_THB)})`,
-    mTotal: o => `รวม ${o.classes} คลาส · จอง ${o.booked} · ใหม่ ${o.fresh} · ใกล้หมด ${o.ending} · ยังไม่จ่าย ${o.unpaid} · เสื่อ ${o.mats}`,
+    mTotal: o => `รวม ${o.classes} คลาส · จอง ${o.booked} · ดรอปอิน ${o.dropin} · ครั้งแรก ${o.first} · สัปดาห์แรก ${o.week} · เสื่อ ${o.mats} · ใกล้หมด ${o.ending} · ยังไม่จ่าย ${o.unpaid}`,
 
     eHead: (d, upTo) => `🌙 สรุปวันนี้ ${d} (ตั้งแต่ 20:00 เมื่อวาน ถึง ${upTo})`,
     moneyH: '💰 เงิน',
@@ -200,15 +231,21 @@ const WORDS = {
   en: {
     day: d => { const t = new Date(`${d}T12:00:00Z`); return `${WD.en[t.getUTCDay()]} ${t.getUTCDate()} ${MON.en[t.getUTCMonth()]}`; },
     item: en => en || 'pass',
+    noName: 'no name on file',
     mHead: d => `☀️ Teaching brief ${d}`,
     closed: c => c.why === 'none' ? 'No classes on the timetable today.'
       : c.why === 'cancelled' ? `The shala is closed today: every class is cancelled${c.note ? ` (${c.note})` : ''}.`
       : `The shala is closed today: ${c.why === 'full' ? 'full moon' : 'new moon'} day.`,
-    cLine: (time, title, teacher, n) => `${time} ${title}${teacher ? ` · ${teacher}` : ''} · ${n} booked`,
+    cHead: (time, title, teacher) => `🧘 ${time} ${title}${teacher ? ` · ${teacher}` : ''}`,
+    cBooked: n => `${n} booked`,
+    cDrop: (n, names) => `Drop-in ${n}: ${names}`,
+    cFirst: (n, names) => `First class today ${n}: ${names}`,
+    cWeek: (n, names) => `First week ${n}: ${names}`,
+    cMats: (n, names) => `Mat rental ${n} (${baht(MAT_THB)} incl. VAT, paid at the shala): ${names}`,
     cOff: (time, title, note) => `${time} ${title} · cancelled${note ? ` (${note})` : ''}`,
-    nobody: 'Nobody booked yet',
-    newH: '🌱 New students, please welcome',
-    newFirst: (n, time) => `• ${n}, first class today at ${time}`,
+    onlineH: '💻 Online (Zoom)',
+    oLine: (time, title, n) => `${time} ${title} · ${n} booked`,
+    boughtH: '🛒 Bought, not here yet',
     newBought: (n, item, day, next) => `• ${n} bought ${item} on ${day}, no aybkk.net check-in yet${next ? ` (booked ${next})` : ', no aybkk.net booking yet'}`,
     endH: '⏳ Ending soon, talk about renewing',
     endDate: (n, item, until) => `• ${n}: ${item}, ends ${until}`,
@@ -218,8 +255,7 @@ const WORDS = {
     paySeat: (n, time, why) => `• ${n}: booked ${time} but ${why}`,
     why: { none: 'has no pass', ended: d => `the pass ended ${d}`, frozen: 'the pass is paused',
       void: 'the pass was voided' },
-    matH: `🧘 Have a mat ready (collect ${baht(MAT_THB)} each)`,
-    mTotal: o => `Total: ${pl(o.classes, 'class', 'classes')} · ${o.booked} booked · ${o.fresh} new · ${o.ending} ending · ${o.unpaid} not paid · ${pl(o.mats, 'mat', 'mats')}`,
+    mTotal: o => `Total: ${pl(o.classes, 'class', 'classes')} · ${o.booked} booked · ${o.dropin} drop-in · ${o.first} first time · ${o.week} first week · ${pl(o.mats, 'mat', 'mats')} · ${o.ending} ending · ${o.unpaid} not paid`,
 
     eHead: (d, upTo) => `🌙 Today on aybkk.net, ${d} (20:00 yesterday to ${upTo})`,
     moneyH: '💰 Money',
@@ -272,17 +308,53 @@ function mountTeam(app, opts = {}) {
   const nowMs = typeof opts.now === 'function' ? opts.now : Date.now;
   const notify = opts.notify || telegram;
   const ADMIN_KEY = process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY || '';
-  const adminOnly = (req, res, next) => ADMIN_KEY && safeEqual(req.headers['x-bkk-key'], ADMIN_KEY)
-    ? next() : res.status(401).json({ error: 'bad key' });
-  const raw = express.raw({ type: () => true, limit: '256kb' });
+  // Preview and status carry student names: never kept by a browser or a proxy.
+  const adminOnly = (req, res, next) => {
+    res.set('Cache-Control', 'private, no-store');
+    if (!(ADMIN_KEY && safeEqual(req.headers['x-bkk-key'], ADMIN_KEY))) return res.status(401).json({ error: 'bad key' });
+    ready().then(() => next(), e => res.status(503).json({ error: `team brief settings not ready: ${e.message}` }));
+  };
 
   if (!pool) {
-    console.warn('⚠ team-brief: no pgPool, LINE help desk disabled');
-    app.post('/line/helpdesk-webhook', (req, res) => res.sendStatus(503));
-    return { tick: async () => [], start() {}, stop() {} };
+    console.warn('⚠ team-brief: no pgPool, LINE team briefs disabled');
+    return { tick: async () => [], start() {}, stop() {}, takeLine: async () => {} };
   }
   const q = (sql, params = []) => pool.query(sql, params);
-  const stats = { badSignatures: 0 };
+  const stats = { badSignatures: 0, badAt: null };
+  const tell = text => Promise.resolve(notify(text)).catch(() => {});
+
+  // Once per database, before anything here reads a group or a switch: what the
+  // LINE account used before left under these keys is cleared (see the top).
+  // A failure is tried again on the next use, and nothing is sent until then.
+  let readyP = null;
+  const ready = () => readyP || (readyP = startClean().catch(e => { readyP = null; throw e; }));
+  async function startClean() {
+    const client = await pool.connect();
+    let was = [];
+    try {
+      await client.query('BEGIN');
+      const first = (await client.query(`INSERT INTO bkk_settings (key,value) VALUES ('team_line_sender','"main"')
+        ON CONFLICT (key) DO NOTHING RETURNING key`)).rowCount === 1;
+      if (first) {
+        was = (await client.query(`SELECT key, value FROM bkk_settings
+          WHERE key IN ('team_line_group','team_brief_morning','team_brief_evening')`)).rows;
+        await client.query(`DELETE FROM bkk_settings
+          WHERE key IN ('team_line_group','team_line_groups','team_line_webhook_last','team_brief_error')`);
+        await client.query(`UPDATE bkk_settings SET value='"off"', updated_at=now()
+          WHERE key IN ('team_brief_morning','team_brief_evening') AND value IS DISTINCT FROM '"off"'`);
+      }
+      await client.query('COMMIT');
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      throw e;
+    } finally { client.release(); }
+    const had = was.some(r => r.key === 'team_line_group'), on = was.some(r => r.key !== 'team_line_group' && r.value === 'on');
+    if (!had && !on) return;
+    console.log('[team] briefs now from the main AYBKK LINE account: the old group and switches were cleared');
+    tell('The team briefs now come from the main AYBKK LINE account. The group and switches kept for the LINE account '
+      + 'used before were cleared: no LINE group gets the briefs, and the morning brief and the evening summary are off. '
+      + 'Accept the staff group in Admin, Settings, LINE team brief, then switch on what you want.');
+  }
 
   const getSetting = async key => (await q('SELECT value FROM bkk_settings WHERE key=$1', [key])).rows[0]?.value ?? null;
   const putSetting = (key, value) => q(`INSERT INTO bkk_settings (key,value) VALUES ($1,$2)
@@ -315,13 +387,14 @@ function mountTeam(app, opts = {}) {
   async function teamSend(messages, { seed } = {}) {
     const fail = (status, error, extra = {}) => ({ ok: false, status, error, ...extra });
     try {
-      const token = process.env.HELPDESK_LINE_ACCESS_TOKEN;
-      if (!token) return fail(503, 'HELPDESK_LINE_ACCESS_TOKEN is not set on the server');
+      const token = env(TOKEN);
+      if (!token) return fail(503, `${TOKEN} is not set on the server`);
       const built = lineMessages(messages);
       if (built.error) return fail(400, built.error);
       if (!built.messages.length) return fail(400, 'nothing to send');
+      await ready();
       const to = await savedGroup();
-      if (!to) return fail(409, 'No team group yet: add the AYBKK help desk to the team LINE group, or accept a waiting group (team/group)');
+      if (!to) return fail(409, 'No team group yet: accept the staff group in Admin, Settings, LINE team brief (team/group)');
       const requestIds = [];
       const base = seed || crypto.randomUUID();
       for (let i = 0; i < built.messages.length; i += PUSH_MAX) {
@@ -376,26 +449,45 @@ function mountTeam(app, opts = {}) {
   const CARRIES_ON = `EXISTS (SELECT 1 FROM bkk_passes x WHERE x.member_id=p.member_id AND x.id<>p.id
     AND x.status IN ('active','frozen') AND (x.valid_until IS NULL OR x.valid_until > coalesce(p.valid_until, $1::date))
     AND (x.kind='unlimited' OR x.credits_used < x.credits_total))`;
-  // Students who were already with the shala before aybkk.net (moved over from Rezerv).
-  const FROM_REZERV = `(m.source IS NOT DISTINCT FROM 'rezerv' OR EXISTS (SELECT 1 FROM bkk_passes x WHERE x.member_id=m.id AND x.source='rezerv')
-    OR EXISTS (SELECT 1 FROM bkk_bookings x WHERE x.member_id=m.id AND x.source='rezerv'))`;
+  // Students who were already with the shala before aybkk.net (moved over from
+  // Rezerv): imported, matched by the member import (rezerv_id), or with any
+  // seat on a Rezerv package (the door's add for a Rezerv holder it could not
+  // find, cover 'rezerv'; moved_at: a Rezerv seat moved onto a pass here).
+  const FROM_REZERV = `(m.source IS NOT DISTINCT FROM 'rezerv' OR m.rezerv_id IS NOT NULL
+    OR EXISTS (SELECT 1 FROM bkk_passes x WHERE x.member_id=m.id AND x.source='rezerv')
+    OR EXISTS (SELECT 1 FROM bkk_bookings x WHERE x.member_id=m.id
+      AND (x.source='rezerv' OR x.cover='rezerv' OR x.moved_at IS NOT NULL)))`;
+
+  // A class Rezerv gave back for a cancelled class is imported as a Drop-in
+  // pass (bkk-api.js, CREDIT_NOTE): a regular's credit, never a drop-in.
+  const CREDIT_BACK = '%a class Rezerv gave back%';
 
   async function morning(date, L) {
     const lines = [L.mHead(L.day(date))];
     const { closed, classes } = await classesOn(date);
     if (closed) return { text: [...lines, L.closed(closed)].join('\n') };
 
-    const [seats, fresh, bought, ending, orders] = await Promise.all([
+    const [seats, news, bought, ending, orders] = await Promise.all([
+      // A drop-in seat is one on a pass of the Drop-in product: the door's
+      // walk-in and an online drop-in both sell that pass and book with it
+      // (cover 'pass'); 'dropin' as a cover is only ever a word in a reply.
       q(`SELECT b.slot_id, b.member_id, b.need_mat, b.cover, b.pass_id, m.name,
-           p.status AS pass_status, to_char(p.valid_until,'YYYY-MM-DD') AS until
+           p.status AS pass_status, to_char(p.valid_until,'YYYY-MM-DD') AS until,
+           (b.cover IS NOT DISTINCT FROM 'dropin' OR (pr.code IS NOT DISTINCT FROM 'dropin'
+             AND coalesce(p.note,'') NOT LIKE $2)) AS dropin
          FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id LEFT JOIN bkk_passes p ON p.id=b.pass_id
-         WHERE b.class_date=$1::date AND b.status='booked' AND b.slot_id IS NOT NULL ORDER BY lower(m.name), b.id`, [date]),
-      // First class ever is today.
-      q(`SELECT DISTINCT b.member_id FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
-         WHERE b.class_date=$1::date AND b.status='booked' AND NOT ${FROM_REZERV}
-           AND (m.joined_on IS NULL OR m.joined_on >= $1::date - 7)
-           AND NOT EXISTS (SELECT 1 FROM bkk_bookings x WHERE x.member_id=b.member_id AND x.status='booked'
-             AND x.checked_in_at IS NOT NULL AND x.class_date < $1::date)`, [date]),
+         LEFT JOIN bkk_products pr ON pr.id=p.product_id
+         WHERE b.class_date=$1::date AND b.status='booked' AND b.slot_id IS NOT NULL ORDER BY lower(m.name), b.id`, [date, CREDIT_BACK]),
+      // New to the shala, booked today. fresh: the first class ever is today
+      // (joined in the last 7 days, or no join date). Otherwise the first week:
+      // came before, and joined or first came in the last 7 days.
+      q(`SELECT m.id AS member_id, fv.first IS NULL AS fresh FROM bkk_members m
+         JOIN LATERAL (SELECT min(x.class_date) AS first FROM bkk_bookings x WHERE x.member_id=m.id AND x.status='booked'
+           AND x.checked_in_at IS NOT NULL AND x.class_date < $1::date) fv ON true
+         WHERE EXISTS (SELECT 1 FROM bkk_bookings b WHERE b.member_id=m.id AND b.class_date=$1::date AND b.status='booked')
+           AND NOT ${FROM_REZERV}
+           AND CASE WHEN fv.first IS NULL THEN m.joined_on IS NULL OR m.joined_on >= $1::date - 7
+             ELSE m.joined_on >= $1::date - 7 OR fv.first >= $1::date - 7 END`, [date]),
       // First pass bought in the last 7 days, never came, not booked today.
       q(`SELECT m.name, fp.item_en, to_char(fp.at AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS day,
            (SELECT to_char(min(x.class_date),'YYYY-MM-DD') FROM bkk_bookings x WHERE x.member_id=m.id
@@ -430,26 +522,41 @@ function mountTeam(app, opts = {}) {
            AND NOT EXISTS (SELECT 1 FROM bkk_orders x WHERE x.member_id=o.member_id AND x.status='paid' AND x.created_at > o.created_at)
          ORDER BY o.created_at, o.id`, [date]),
     ]);
-    const time = new Map(classes.map(c => [c.id, c.time]));
-    const name = r => shortName(r.name);
-    let shown = 0;
-    for (const c of classes) {
+    const where = new Map(classes.map(c => [c.id, c.online ? `${c.time} (Zoom)` : c.time]));
+    const name = r => named(L, r.name);
+    const names = rows => list(rows.map(name));
+    const isNew = new Map(news.rows.map(r => [r.member_id, r.fresh ? 'first' : 'week']));
+
+    // The shala's classes in timetable order. Someone booked twice today is new
+    // under their first class only; drop-ins and mats are per seat.
+    const shala = classes.filter(c => !c.online), held = shala.filter(c => !c.off);
+    const seen = new Set();
+    const total = { classes: held.length, booked: 0, dropin: 0, first: 0, week: 0, mats: 0 };
+    for (const c of shala) {
       if (c.off) { lines.push('', L.cOff(c.time, c.title, c.note)); continue; }
-      shown++;
       const here = seats.rows.filter(s => s.slot_id === c.id);
-      lines.push('', L.cLine(c.time, c.title, c.teacher, here.length), here.length ? here.map(name).join(', ') : L.nobody);
+      const fresh = here.filter(s => isNew.has(s.member_id) && !seen.has(s.member_id));
+      for (const s of fresh) seen.add(s.member_id);
+      const part = {
+        dropin: here.filter(s => s.dropin), mats: here.filter(s => s.need_mat),
+        first: fresh.filter(s => isNew.get(s.member_id) === 'first'), week: fresh.filter(s => isNew.get(s.member_id) === 'week'),
+      };
+      total.booked += here.length;
+      for (const k of Object.keys(part)) total[k] += part[k].length;
+      lines.push('', L.cHead(c.time, c.title, c.teacher), L.cBooked(here.length),
+        ...[[L.cDrop, part.dropin], [L.cFirst, part.first], [L.cWeek, part.week], [L.cMats, part.mats]]
+          .filter(([, rows]) => rows.length).map(([fn, rows]) => fn(rows.length, names(rows))));
     }
 
-    const freshIds = new Set(fresh.rows.map(r => r.member_id));
-    const firstSeat = new Map();
-    for (const s of seats.rows) {
-      if (!freshIds.has(s.member_id)) continue;
-      const t = time.get(s.slot_id) || '';
-      if (!firstSeat.has(s.member_id) || t < firstSeat.get(s.member_id).t) firstSeat.set(s.member_id, { t, n: name(s) });
-    }
-    const newLines = [...[...firstSeat.values()].sort((a, b) => a.t.localeCompare(b.t)).map(x => L.newFirst(x.n, x.t)),
-      ...bought.rows.map(r => L.newBought(name(r), L.item(r.item_en), L.day(r.day), r.next && L.day(r.next)))];
-    if (newLines.length) lines.push('', L.newH, ...newLines);
+    // Online classes (Zoom) apart, a count each: nobody to welcome or hand a mat.
+    // Under the Zoom header the title's own "[Online]" says nothing more.
+    const online = classes.filter(c => c.online);
+    const bare = t => String(t || '').replace(/^\s*\[online\]\s*/i, '');
+    if (online.length) lines.push('', L.onlineH, ...online.map(c => c.off ? L.cOff(c.time, bare(c.title), c.note)
+      : L.oLine(c.time, bare(c.title), seats.rows.filter(s => s.slot_id === c.id).length)));
+
+    const boughtLines = bought.rows.map(r => L.newBought(name(r), L.item(r.item_en), L.day(r.day), r.next && L.day(r.next)));
+    if (boughtLines.length) lines.push('', L.boughtH, ...boughtLines);
 
     const endLines = ending.rows.map(r => r.kind === 'credits' && r.left <= 2
       ? L.endLeft(name(r), L.item(r.item_en), Math.max(0, r.left), r.until && L.day(r.until))
@@ -462,16 +569,10 @@ function mountTeam(app, opts = {}) {
       : s.pass_status !== 'active' ? L.why.void : s.until && s.until < date ? L.why.ended(L.day(s.until)) : null;
     const unpaidSeats = seats.rows.filter(s => s.cover !== 'rezerv' && why(s));
     const payLines = [...orders.rows.map(r => L.payOrder(name(r), L.item(r.item_en), baht(r.amount_thb), L.day(r.day), r.refno)),
-      ...unpaidSeats.map(s => L.paySeat(name(s), time.get(s.slot_id), why(s)))];
+      ...unpaidSeats.map(s => L.paySeat(name(s), where.get(s.slot_id), why(s)))];
     if (payLines.length) lines.push('', L.payH, ...payLines);
 
-    const mats = classes.map(c => [c, seats.rows.filter(s => s.slot_id === c.id && s.need_mat && !c.off)]).filter(([, m]) => m.length);
-    if (mats.length) lines.push('', L.matH, ...mats.map(([c, m]) => `• ${c.time} ${m.map(name).join(', ')}`));
-
-    const live = new Set(classes.filter(c => !c.off).map(c => c.id));
-    lines.push('', L.mTotal({ classes: shown, booked: seats.rows.filter(s => live.has(s.slot_id)).length,
-      fresh: newLines.length, ending: endLines.length, unpaid: payLines.length,
-      mats: mats.reduce((n, [, m]) => n + m.length, 0) }));
+    lines.push('', L.mTotal({ ...total, ending: endLines.length, unpaid: payLines.length }));
     return { text: lines.join('\n') };
   }
 
@@ -516,7 +617,7 @@ function mountTeam(app, opts = {}) {
   // From 20:00 yesterday to 20:00 today, so a payment, a sign-up or a chat late
   // at night is in the next summary. Check-ins and no-shows are today's classes.
   async function evening(date, L) {
-    const from = bkkAt(addDays(date, -1), BRIEF_AT.evening), to = bkkAt(date, BRIEF_AT.evening);
+    const from = bkkAt(addDays(date, -1), briefAt('evening', addDays(date, -1))), to = bkkAt(date, briefAt('evening', date));
     const cut = Math.min(Date.parse(to), nowMs());
     const W = [from, to];
     const tomorrow = addDays(date, 1);
@@ -591,9 +692,9 @@ function mountTeam(app, opts = {}) {
         FROM aybkk_inbox x WHERE direction='in' AND created_at >= $1 AND created_at < $2 GROUP BY channel`);
     } catch (_) {}
 
-    const name = r => shortName(r.name);
+    const name = r => named(L, r.name);
     // Sent by hand before 20:00, it says how far the day has got.
-    const upTo = cut > Date.parse(from) ? new Date(cut + 7 * 3600000).toISOString().slice(11, 16) : BRIEF_AT.evening;
+    const upTo = cut > Date.parse(from) ? new Date(cut + 7 * 3600000).toISOString().slice(11, 16) : briefAt('evening', date);
     const lines = [L.eHead(L.day(date), upTo)];
 
     const sum = (rows, k) => rows.reduce((n, r) => n + (Number(r[k]) || 0), 0);
@@ -729,12 +830,13 @@ function mountTeam(app, opts = {}) {
   async function tick(at = nowMs()) {
     const date = bkkYmd(at);
     const due = Object.keys(BRIEF_AT).filter(kind => {
-      const t = Date.parse(bkkAt(date, BRIEF_AT[kind]));
+      const t = Date.parse(bkkAt(date, briefAt(kind, date)));
       return at >= t && at < t + LATE_MIN * 60000;
     });
     if (!due.length) return [];
     const out = [];
     try {
+      await ready();
       const s = await settings();
       for (const kind of due) if (s[kind] === 'on') out.push(await sendBrief(kind, date, s.lang));
     } catch (e) { await failed('timer', e.message); }
@@ -743,6 +845,7 @@ function mountTeam(app, opts = {}) {
   let timer = null;
   function start() {
     if (timer) return;
+    ready().catch(e => console.error('[team] could not clear the old team group yet:', e.message));
     const run = () => tick().catch(e => console.error('[team] tick failed:', e.message));
     timer = setInterval(run, 60 * 1000);
     timer.unref();
@@ -752,13 +855,29 @@ function mountTeam(app, opts = {}) {
 
   // ── webhook ───────────────────────────────────────────────────────────────
   async function groupName(id) {
-    const token = process.env.HELPDESK_LINE_ACCESS_TOKEN;
+    const token = env(TOKEN);
     if (!token) return null;
     try {
       const r = await httpFetch(`${LINE_API}/group/${encodeURIComponent(id)}/summary`,
         { headers: { Authorization: `Bearer ${token}` }, signal: AbortSignal.timeout(5000) });
       return r.ok ? String((await r.json()).groupName || '').slice(0, 80) || null : null;
     } catch (_) { return null; }
+  }
+
+  // The ids of the groups the account is in, as last read or written here:
+  // an event from a group it knows writes nothing.
+  let known = null;
+  const learn = (groups, saved) => {
+    known = new Set(groups.filter(g => g && !g.leftAt).map(g => g.id));
+    if (saved) known.add(saved);
+    return known;
+  };
+  async function knownGroups() {
+    if (known) return known;
+    const r = (await q(`SELECT key, value FROM bkk_settings WHERE key IN ('team_line_groups','team_line_group')`)).rows;
+    const v = k => (r.find(x => x.key === k) || {}).value;
+    return learn(Array.isArray(v('team_line_groups')) ? v('team_line_groups') : [],
+      typeof v('team_line_group') === 'string' ? v('team_line_group') : null);
   }
 
   // Which group gets the briefs ('team_line_group') and every group seen
@@ -785,128 +904,219 @@ function mountTeam(app, opts = {}) {
         else await client.query(`DELETE FROM bkk_settings WHERE key='team_line_group'`);
       }
       await client.query('COMMIT');
+      learn(st.groups, st.saved);
       return out;
     } catch (e) {
       await client.query('ROLLBACK').catch(() => {});
       throw e;
     } finally { client.release(); }
   }
-  const tell = text => Promise.resolve(notify(text)).catch(() => {});
   const quoted = name => `"${name || 'no name'}"`;
+  // Boonchu's note for a group that waits.
+  const waitNote = (name, current) => `The AYBKK LINE account is in ${current ? 'another' : 'the'} LINE group ${quoted(name)}: it waits. ` +
+    (current ? `The team briefs still go to ${quoted(current)}. ` : 'No LINE group gets the team briefs yet. ') +
+    'Nothing moves unless the Desk or staff accept it (Admin, Settings, LINE team brief). Accept only the staff group: the briefs carry student names.';
 
-  // The first group the help desk joins gets the briefs. A join to another
-  // group while one is saved only waits in the list: anyone who can add the
-  // help desk to a group could otherwise take the next brief, with its names
-  // and photos. Boonchu hears of every join. A join LINE sends again late
-  // never undoes a later join or leave.
-  async function joined(id, ts) {
+  // A group the account is in, heard of by a join or by any other event (a
+  // message, a member joining: it was in the group before LINE could reach the
+  // webhook), waits until staff accept it. Nothing is ever saved by itself:
+  // the main account is in several staff groups, and anyone can add it to a
+  // group of their own. Boonchu hears of each one once. An event LINE sends
+  // again, or late, from before the account left, changes nothing.
+  // asked: the groups taken up here since this server started, so a burst from
+  // one group is one name asked of LINE, one write and one ping, even once it
+  // has dropped off the list of groups kept (GROUPS_KEPT). A leave forgets it.
+  const asked = new Set();
+  async function waits(id, ts) {
     const at = new Date(Number.isFinite(ts) ? ts : nowMs()).toISOString();
     const name = await groupName(id);
     const r = await withGroups(st => {
       const had = st.groups.find(g => g.id === id);
-      if (had && (had.joinedAt > at || (had.leftAt && had.leftAt > at))) return null;
-      if (had && had.joinedAt === at && !had.leftAt) return null;   // the same join sent again
-      const first = !st.saved;
-      if (first) st.saved = id;
-      const waits = st.saved !== id;
-      st.groups = [{ id, name: name || (had && had.name) || null, joinedAt: at, leftAt: null, pending: waits },
+      if (had && !had.leftAt) return null;   // known
+      if (had && had.leftAt >= at) return 'late';   // from before it left
+      const mine = st.saved === id;
+      st.groups = [{ id, name: name || (had && had.name) || null, joinedAt: at, leftAt: null, pending: !mine },
         ...st.groups.filter(g => g.id !== id)];
-      return { first, waits, current: (st.groups.find(g => g.id === st.saved) || {}).name };
+      return mine ? null : { current: (st.groups.find(g => g.id === st.saved) || {}).name || null };
     });
-    if (!r) return;
-    if (r.first) {
-      console.log('[team] help desk joined a LINE group: team briefs go there now');
-      tell(`AYBKK help desk joined the LINE group ${quoted(name)}. The team briefs go to that group now. ` +
-        `If that was not you, remove the help desk from that group.`);
-    } else if (r.waits) {
-      console.log('[team] help desk was added to another LINE group: it waits, the briefs stay where they are');
-      tell(`AYBKK help desk was added to another LINE group, ${quoted(name)}. The team briefs still go to ${quoted(r.current)}. ` +
-        `Nothing moves unless the Desk or staff accept the new group. If you did not add it, ask the Desk to leave that group.`);
-    }
+    if (r === 'late') asked.delete(id);   // so a later rejoin is still heard
+    if (!r || r === 'late') return;
+    console.log('[team] the AYBKK LINE account is in a LINE group staff have not accepted: it waits');
+    tell(waitNote(name, r.current));
   }
 
   async function left(id, ts) {
+    asked.delete(id);
     const at = new Date(Number.isFinite(ts) ? ts : nowMs()).toISOString();
     const cleared = await withGroups(st => {
       const had = st.groups.find(g => g.id === id);
-      if (had && had.joinedAt > at) return false;   // left before a later join
+      if (had && had.joinedAt > at) return null;   // left before a later join
       if (had) Object.assign(had, { leftAt: at, pending: false });
-      if (st.saved !== id) return false;
+      if (st.saved !== id) return null;
       st.saved = null;
-      return true;
+      return { name: had ? had.name : null };
     });
-    if (cleared) console.log('[team] help desk left the team group: briefs wait for a new group');
+    if (!cleared) return;
+    console.log('[team] the AYBKK LINE account left the team group: briefs wait for a new group');
+    tell(`The AYBKK LINE account is not in the LINE group ${quoted(cleared.name)} any more (it left, or someone removed it): `
+      + 'the team briefs stop until staff accept another group (Admin, Settings, LINE team brief).');
   }
 
-  // Only group joins and leaves are read. Every other event, a message in the
-  // group or a 1:1 chat included, is answered 200 and dropped unread.
-  app.post('/line/helpdesk-webhook', raw, async (req, res) => {
-    const secret = process.env.HELPDESK_LINE_CHANNEL_SECRET;
-    if (!secret) return res.sendStatus(503);
-    const body = Buffer.isBuffer(req.body) ? req.body : req.rawBody;
-    if (!signed(body, req.headers['x-line-signature'], secret)) {
-      stats.badSignatures++;
-      return res.sendStatus(401);
-    }
-    let events = [];
-    try { events = JSON.parse(body.toString('utf8')).events; } catch (_) {}
-    for (const ev of Array.isArray(events) ? events : []) {
-      const src = ev && ev.source;
-      if (!src || src.type !== 'group' || typeof src.groupId !== 'string' || !src.groupId) continue;
-      try {
-        if (ev.type === 'join') await joined(src.groupId, ev.timestamp);
-        else if (ev.type === 'leave') await left(src.groupId, ev.timestamp);
-      } catch (e) { await failed('webhook', e.message); }
-    }
-    res.sendStatus(200);
-  }, (err, req, res, next) => res.sendStatus(err.status === 413 ? 413 : 400));
+  // When LINE last reached the webhook with a good signature (its Verify button
+  // too), kept at most once a minute, so staff can see LINE gets through.
+  let heardAt = 0;
+  async function heard() {
+    const now = nowMs();
+    if (now >= heardAt && now - heardAt < 60000) return;
+    heardAt = now;
+    try { await putSetting('team_line_webhook_last', new Date(now).toISOString()); }
+    catch (e) { heardAt = 0; console.error('[team] could not keep the webhook time:', e.message); }
+  }
+
+  // server.js's LINE webhook (/line/webhook) hands every request here, next to
+  // inbox.takeLine(req); server.js answers LINE. Signed by LINE (LINE_CHANNEL_SECRET
+  // over the raw bytes, constant time) or ignored and counted. Of a signed event
+  // only which group it came from is read: a leave as it is, any other event
+  // only for a group not known yet. Text is never read, and nothing is ever
+  // sent back to a group. Never throws.
+  async function takeLine(req) {
+    try {
+      const secret = env(SECRET);
+      if (!secret) return;
+      const body = req && req.rawBody;
+      if (!signed(body, req.headers && req.headers['x-line-signature'], secret)) {
+        stats.badSignatures++;
+        stats.badAt = new Date(nowMs()).toISOString();
+        return;
+      }
+      await ready();
+      await heard();
+      let events = [];
+      try { events = JSON.parse(body.toString('utf8')).events; } catch (_) {}
+      for (const ev of Array.isArray(events) ? events : []) {
+        const src = ev && ev.source;
+        const id = src && src.type === 'group' && typeof src.groupId === 'string' ? src.groupId : '';
+        if (!GROUP_ID_RE.test(id)) continue;
+        try {
+          if (ev.type === 'leave') await left(id, ev.timestamp);
+          else if (!(await knownGroups()).has(id) && !asked.has(id)) {
+            asked.add(id);
+            if (asked.size > 500) asked.delete(asked.values().next().value);
+            await waits(id, ev.timestamp).catch(e => { asked.delete(id); throw e; });
+          }
+        } catch (e) { await failed('webhook', e.message); }
+      }
+    } catch (e) { console.error('[team] webhook:', e.message); }
+  }
 
   // ── admin (x-bkk-key: the Desk assistant, and staff) ──────────────────────
-  let quotaCache = { at: 0, value: null };
-  async function quota() {
-    const token = process.env.HELPDESK_LINE_ACCESS_TOKEN;
+  // What LINE says about the token: whose account it is (the main AYBKK account,
+  // its name and basic id), the month's messages (shared with every message to
+  // students), or that it refuses the token. Kept 10 minutes.
+  const FRESH = 10 * 60000;
+  const fresh = at => Math.abs(nowMs() - at) < FRESH;
+  const lineGet = (path, token) => httpFetch(`${LINE_API}/${path}`, { headers: { Authorization: `Bearer ${token}` },
+    signal: AbortSignal.timeout(5000) }).then(async r => ({ status: r.status, body: r.ok ? await r.json().catch(() => null) : null }))
+    .catch(() => ({ status: 0, body: null }));
+  let infoCache = { at: 0, token: null, value: null };
+  async function lineInfo() {
+    const token = env(TOKEN);
     if (!token) return null;
-    if (quotaCache.value && nowMs() - quotaCache.at < 10 * 60000) return quotaCache.value;
-    try {
-      const get = p => httpFetch(`${LINE_API}/message/${p}`, { headers: { Authorization: `Bearer ${token}` },
-        signal: AbortSignal.timeout(5000) }).then(r => r.ok ? r.json() : null);
-      const [limit, used] = await Promise.all([get('quota'), get('quota/consumption')]);
-      if (!limit || !used) return null;
-      quotaCache = { at: nowMs(), value: { limit: limit.type === 'limited' ? limit.value : null, used: used.totalUsage } };
-      return quotaCache.value;
-    } catch (_) { return null; }
+    if (infoCache.value && infoCache.token === token && fresh(infoCache.at)) return infoCache.value;
+    const [bot, limit, used] = await Promise.all(['info', 'message/quota', 'message/quota/consumption'].map(p => lineGet(p, token)));
+    const cut = (v, n) => typeof v === 'string' && v ? v.slice(0, n) : null;
+    // 401 is a token LINE refuses. A 403 is about the plan or a permission, not the token.
+    const refused = [bot, limit, used].find(r => r.status === 401);
+    const value = {
+      bot: bot.body ? { name: cut(bot.body.displayName, 80), basicId: cut(bot.body.basicId, 40), premiumId: cut(bot.body.premiumId, 40) } : null,
+      tokenError: refused ? `LINE refused the access token (${refused.status})` : null,
+      quota: limit.body && used.body ? { limit: limit.body.type === 'limited' ? limit.body.value : null, used: used.body.totalUsage } : null,
+    };
+    if (value.bot || value.tokenError) infoCache = { at: nowMs(), token, value };
+    return value;
+  }
+  // LINE counts a push to a group once per member: the count says what a brief
+  // costs, and tells two groups of one name apart.
+  const membersCache = new Map();
+  async function members(id) {
+    const token = env(TOKEN);
+    if (!token) return null;
+    const c = membersCache.get(id);
+    if (c && fresh(c.at)) return c.n;
+    const r = await lineGet(`group/${encodeURIComponent(id)}/members/count`, token);
+    const n = r.body ? Number(r.body.count) : NaN;
+    if (!Number.isFinite(n)) return null;
+    membersCache.set(id, { at: nowMs(), n });
+    return n;
+  }
+  // A group first seen while the token was not set (or LINE did not answer)
+  // has no name: ask again, at most every 10 minutes for each group.
+  const nameAsked = new Map();
+  async function fillNames() {
+    if (!env(TOKEN)) return;
+    const seen = await getSetting('team_line_groups');
+    const want = (Array.isArray(seen) ? seen : []).filter(g => g && !g.name && !g.leftAt
+      && !(nameAsked.has(g.id) && fresh(nameAsked.get(g.id))));
+    if (!want.length) return;
+    for (const g of want) nameAsked.set(g.id, nowMs());
+    const got = new Map((await Promise.all(want.map(async g => [g.id, await groupName(g.id)]))).filter(([, n]) => n));
+    if (got.size) await withGroups(st => { for (const g of st.groups) if (!g.name && got.has(g.id)) g.name = got.get(g.id); });
   }
 
   app.get('/api/bkk/admin/team/status', adminOnly, async (req, res) => {
     try {
-      const [s, group, seen, last, error, usage] = await Promise.all([settings(), savedGroup(),
-        getSetting('team_line_groups'), getSetting('team_brief_last'), getSetting('team_brief_error'), quota()]);
+      await fillNames().catch(e => console.warn('[team] group names not filled:', e.message));
+      const [s, group, seen, last, error, info, hook] = await Promise.all([settings(), savedGroup(),
+        getSetting('team_line_groups'), getSetting('team_brief_last'), getSetting('team_brief_error'), lineInfo(),
+        getSetting('team_line_webhook_last')]);
       const groups = Array.isArray(seen) ? seen : [];
       const g = group && groups.find(x => x.id === group);
+      const pending = x => !!x.pending && !x.leftAt && x.id !== group;
+      const count = new Map(await Promise.all(groups.filter(x => x.id === group || pending(x))
+        .map(async x => [x.id, await members(x.id)])));
+      // The next time the timer sends each brief: today's at its weekday time;
+      // within LATE_MIN after it, while today's has not gone (by hand too) or
+      // waits for a retry, at the next minute's tick; else tomorrow's.
+      const now = nowMs(), today = bkkYmd(now);
+      const marks = (await q(`SELECT key, value->>'state' AS state FROM bkk_settings WHERE key = ANY($1::text[])`,
+        [Object.keys(BRIEF_AT).map(k => `${MARKER}${k}_${today}`)])).rows;
+      const done = kind => marks.some(m => m.key === `${MARKER}${kind}_${today}` && m.state !== 'retry');
       const next = kind => {
-        const now = nowMs(), today = bkkYmd(now);
-        const t = Date.parse(bkkAt(today, BRIEF_AT[kind]));
-        return new Date(t > now ? t : Date.parse(bkkAt(addDays(today, 1), BRIEF_AT[kind]))).toISOString();
+        const t = Date.parse(bkkAt(today, briefAt(kind, today)));
+        if (!done(kind) && now < t + LATE_MIN * 60000) return Math.max(t, now);
+        return Date.parse(bkkAt(addDays(today, 1), briefAt(kind, addDays(today, 1))));
       };
+      const iso = t => new Date(t).toISOString();
+      const hhmm = t => new Date(t + 7 * 3600000).toISOString().slice(11, 16);
       res.json({
-        channel: { secretSet: !!process.env.HELPDESK_LINE_CHANNEL_SECRET, tokenSet: !!process.env.HELPDESK_LINE_ACCESS_TOKEN },
-        group: { saved: !!group, ref: group ? groupRef(group) : null, name: g ? g.name : null, joinedAt: g ? g.joinedAt : null },
-        // pending: the help desk is in it, it gets nothing until accepted (team/group).
+        channel: { secretSet: !!env(SECRET), tokenSet: !!env(TOKEN),
+          // Whose LINE account the token is (name and basic id), or that LINE refuses it.
+          bot: info ? info.bot : null, tokenError: info ? info.tokenError : null },
+        group: { saved: !!group, ref: group ? groupRef(group) : null, name: g ? g.name : null, joinedAt: g ? g.joinedAt : null,
+          members: group ? count.get(group) ?? null : null },
+        // pending: the account is in it, it gets nothing until accepted (team/group).
         groupsSeen: groups.map(x => ({ ref: groupRef(x.id), name: x.name, joinedAt: x.joinedAt, leftAt: x.leftAt,
-          saved: x.id === group, pending: !!x.pending && !x.leftAt && x.id !== group })),
-        briefs: { morning: s.morning, evening: s.evening, lang: s.lang, at: BRIEF_AT,
-          next: { morning: s.morning === 'on' ? next('morning') : null, evening: s.evening === 'on' ? next('evening') : null } },
+          saved: x.id === group, pending: pending(x), members: count.get(x.id) ?? null })),
+        // at: the Bangkok time of each brief's next send; next: when it goes, null while off.
+        // dueNow: today's is late by under LATE_MIN and not sent: it goes (or would, once on) within a minute.
+        briefs: { morning: s.morning, evening: s.evening, lang: s.lang,
+          at: { morning: hhmm(next('morning')), evening: hhmm(next('evening')) }, morningByWeekday: BRIEF_AT.morning,
+          next: { morning: s.morning === 'on' ? iso(next('morning')) : null, evening: s.evening === 'on' ? iso(next('evening')) : null },
+          dueNow: { morning: next('morning') <= now, evening: next('evening') <= now }, lateMin: LATE_MIN },
         lastSent: last || {},
         lastError: error,
-        quota: usage,
+        quota: info ? info.quota : null,
+        // LINE reaches /line/webhook: the last signed event, and bad signatures since this server started.
+        webhookLastAt: typeof hook === 'string' ? hook : null,
         badSignatures: stats.badSignatures,
+        badSignatureLastAt: stats.badAt,
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
   const briefArgs = (src, res) => {
     const kind = String(src.kind || '');
-    if (!BRIEF_AT[kind]) { res.status(400).json({ error: 'kind must be morning or evening' }); return null; }
+    if (!Object.hasOwn(BRIEF_AT, kind)) { res.status(400).json({ error: 'kind must be morning or evening' }); return null; }
     return kind;
   };
 
@@ -933,7 +1143,7 @@ function mountTeam(app, opts = {}) {
     const force = (req.body || {}).force === true;
     try {
       const now = nowMs(), date = bkkYmd(now);
-      const sofar = kind === 'evening' && now < Date.parse(bkkAt(date, BRIEF_AT.evening));
+      const sofar = kind === 'evening' && now < Date.parse(bkkAt(date, briefAt('evening', date)));
       const key = `${MARKER}${kind}_${date}`;
       let mark = null;
       if (!sofar) {
@@ -979,57 +1189,78 @@ function mountTeam(app, opts = {}) {
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
-  // Which group gets the briefs: { accept: ref } moves them to a group the
-  // help desk is in, { leave: ref } makes it leave a group, { clear: true }
-  // stops them until a group is accepted or joined. ref is from team/status.
+  // { add: groupId }: a group looked up by its LINE ID (the server log of
+  // /line/webhook shows it) goes in the list of groups seen as waiting, or has
+  // its name refreshed; it is never saved by this. Only ref, name and member
+  // count come back, never the id.
+  async function addGroup(raw, res) {
+    const id = typeof raw === 'string' ? raw.trim() : '';
+    if (!GROUP_ID_RE.test(id)) return res.status(400).json({ error: 'a LINE group ID is C and 32 characters 0-9 and a-f' });
+    const token = env(TOKEN);
+    if (!token) return res.status(503).json({ error: `${TOKEN} is not set on the server` });
+    const [sum, count] = await Promise.all([`group/${id}/summary`, `group/${id}/members/count`].map(p => lineGet(p, token)));
+    // line: what LINE answered (0: not reached), so the page can say it in Thai too.
+    if (sum.status === 0) return res.status(502).json({ error: 'LINE could not be reached', line: 0 });
+    if (sum.status === 403 || sum.status === 404) return res.status(409).json({ error: 'the AYBKK LINE account is not in that group' });
+    if (sum.status !== 200) return res.status(502).json({ error: sum.status === 401 ? 'LINE refused the access token (401)' : `LINE answered ${sum.status}`,
+      line: sum.status });
+    const name = sum.body && typeof sum.body.groupName === 'string' && sum.body.groupName ? sum.body.groupName.slice(0, 80) : null;
+    const n = count.body ? Number(count.body.count) : NaN;
+    const members = Number.isFinite(n) ? n : null;
+    if (members != null) membersCache.set(id, { at: nowMs(), n: members });
+    const at = new Date(nowMs()).toISOString();
+    const saved = await withGroups(st => {
+      const had = st.groups.find(g => g.id === id);
+      // A group accepted before and replaced since waits again, so it can be accepted again.
+      const kept = had && !had.leftAt ? Object.assign(had, { name: name || had.name, pending: st.saved !== id })
+        : { id, name, joinedAt: at, leftAt: null, pending: st.saved !== id };
+      st.groups = [kept, ...st.groups.filter(g => g.id !== id)];
+      return st.saved === id;
+    });
+    return res.json({ ok: true, ref: groupRef(id), name, members, saved });
+  }
+
+  // Which group gets the briefs: { add: groupId } (above), { accept: ref } moves
+  // them to a waiting group, { clear: true } stops them until a group is
+  // accepted. ref is from team/status or the add answer. Nothing here makes the
+  // account leave a group: it is the students' account too.
   app.post('/api/bkk/admin/team/group', adminOnly, async (req, res) => {
     const b = req.body || {};
-    const ref = typeof (b.accept || b.leave) === 'string' ? (b.accept || b.leave) : '';
-    if (!ref && b.clear !== true) return res.status(400).json({ error: 'send { accept: ref }, { leave: ref } or { clear: true }' });
     try {
+      if (Object.hasOwn(b, 'add')) return await addGroup(b.add, res);
+      const ref = typeof b.accept === 'string' ? b.accept : '';
+      if (!ref && b.clear !== true) return res.status(400).json({ error: 'send { add: groupId }, { accept: ref } or { clear: true }' });
       if (b.clear === true) {
-        const was = await withGroups(st => { const w = st.saved; st.saved = null; return w; });
-        if (was) tell('The team briefs are stopped: no LINE group gets them until one is accepted on the Desk.');
+        const was = await withGroups(st => {
+          const w = st.groups.find(g => g.id === st.saved);
+          if (w && !w.leftAt) w.pending = true;   // it waits again, so it can be accepted again
+          const had = st.saved;
+          st.saved = null;
+          return had;
+        });
+        if (was) tell('The team briefs are stopped: no LINE group gets them until staff or the Desk accept one (Admin, Settings, LINE team brief).');
         return res.json({ ok: true, saved: false });
       }
       const seen = await getSetting('team_line_groups');
       const g = (Array.isArray(seen) ? seen : []).find(x => groupRef(x.id) === ref);
       if (!g) return res.status(404).json({ error: 'no group with that ref (see groupsSeen in team/status)' });
-      if (b.accept) {
-        const r = await withGroups(st => {
-          const x = st.groups.find(y => y.id === g.id);
-          if (!x || x.leftAt) return { gone: true };
-          const moved = st.saved !== x.id;
-          st.saved = x.id;
-          x.pending = false;
-          return { moved, name: x.name };
-        });
-        if (r.gone) return res.status(409).json({ error: 'the help desk is not in that group any more' });
-        if (r.moved) tell(`The team briefs go to the LINE group ${quoted(r.name)} now (accepted on the Desk).`);
-        return res.json({ ok: true, saved: true, ref, name: r.name });
-      }
-      const token = process.env.HELPDESK_LINE_ACCESS_TOKEN;
-      if (!token) return res.status(503).json({ error: 'HELPDESK_LINE_ACCESS_TOKEN is not set on the server' });
-      let lr;
-      try {
-        lr = await httpFetch(`${LINE_API}/group/${encodeURIComponent(g.id)}/leave`, { method: 'POST',
-          headers: { Authorization: `Bearer ${token}` }, signal: AbortSignal.timeout(10000) });
-      } catch (e) { return res.status(502).json({ error: `LINE could not be reached (${e.message})` }); }
-      if (!lr.ok) {
-        const j = await lr.json().catch(() => ({}));
-        return res.status(502).json({ error: `LINE answered ${lr.status}${j.message ? `: ${String(j.message).slice(0, 200)}` : ''}` });
-      }
-      const saved = await withGroups(st => {
+      const r = await withGroups(st => {
         const x = st.groups.find(y => y.id === g.id);
-        if (x) Object.assign(x, { leftAt: new Date(nowMs()).toISOString(), pending: false });
-        if (st.saved === g.id) st.saved = null;
-        return !!st.saved;
+        if (!x || x.leftAt) return { gone: true };
+        const moved = st.saved !== x.id;
+        const prev = moved && st.groups.find(y => y.id === st.saved);
+        if (prev && !prev.leftAt) prev.pending = true;   // the group it replaces waits again
+        st.saved = x.id;
+        x.pending = false;
+        return { moved, name: x.name };
       });
-      res.json({ ok: true, left: true, ref, saved });
+      if (r.gone) return res.status(409).json({ error: 'the AYBKK LINE account is not in that group any more' });
+      if (r.moved) tell(`The team briefs go to the LINE group ${quoted(r.name)} now (accepted by staff or the Desk).`);
+      res.json({ ok: true, saved: true, ref, name: r.name });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
-  return { tick, start, stop, send: teamSend, build };
+  return { tick, start, stop, send: teamSend, build, takeLine };
 }
 
-module.exports = { mountTeam, HELPDESK_PATH_RE, shortName, splitText, retryKey };
+module.exports = { mountTeam, shortName, splitText, retryKey };

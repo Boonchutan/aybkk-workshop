@@ -1,20 +1,24 @@
-// End-to-end test of the AYBKK help desk (team-brief.js) and the mat tick
-// (bkk-api.js) against a real Postgres. LINE is a stub: nothing leaves this machine.
-// Every name here is made up.
+// End-to-end test of the team briefs (team-brief.js), sent by the main AYBKK
+// LINE account, and the mat tick (bkk-api.js) against a real Postgres. LINE is a
+// stub and any other host is refused: nothing leaves this machine.
+// Every name and every LINE group id here is made up.
 process.env.BKK_ADMIN_KEY = 'testkey';
 process.env.MAIL_DRY_RUN = '1';
 process.env.BKK_TIMERS = 'off';   // the payment watch runs only when a test calls it
-process.env.HELPDESK_LINE_CHANNEL_SECRET = 'desk-secret';
-process.env.HELPDESK_LINE_ACCESS_TOKEN = 'desk-token';
+process.env.LINE_CHANNEL_SECRET = 'main-secret';
+process.env.LINE_CHANNEL_ACCESS_TOKEN = 'main-token';
 delete process.env.TELEGRAM_BOT_TOKEN;
 process.env.TELEGRAM_API_BASE = 'http://127.0.0.1:9';
 delete process.env.ANTHROPIC_API_KEY;
+delete process.env.META_PAGE_TOKEN;
 const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 const express = require('express');
 const { Pool } = require('pg');
 const { mountBkk } = require('../bkk-api.js');
 const { mountInbox } = require('../inbox.js');
-const { mountTeam, HELPDESK_PATH_RE, shortName, splitText } = require('../team-brief.js');
+const { mountTeam, shortName, splitText } = require('../team-brief.js');
 
 const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL ||
   'postgres://test:test@127.0.0.1:5432/teamtest' });
@@ -27,18 +31,36 @@ const ok = (name, cond, extra = '') => {
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const bkkAt = s => Date.parse(s + '+07:00');
 
+// Made-up LINE group ids, shaped like LINE's (C and 32 hex): never a real one.
+const GROUP = new Map();
+const gid = k => {
+  const id = 'C' + crypto.createHash('sha256').update(`aybkk-test-group:${k}`).digest('hex').slice(0, 32);
+  GROUP.set(id, k);
+  return id;
+};
+const anyId = text => [...GROUP.keys()].some(id => String(text).includes(id));
+
 // ── LINE stub ───────────────────────────────────────────────────────────────
 const lineCalls = [];
-let lineMode = 'ok', reqN = 0;
+let lineMode = 'ok', groupMode = 'ok', reqN = 0;
+const NAMES = { team1: 'AYBKK teachers', staff: 'AYBKK management & teaching (test)' };
 const lineFetch = async (url, o = {}) => {
   const u = new URL(url);
   if (u.hostname !== 'api.line.me') throw new Error('test: only api.line.me is stubbed, not ' + url);
   lineCalls.push({ path: u.pathname, method: o.method || 'GET', headers: o.headers || {}, body: o.body ? JSON.parse(o.body) : null });
-  if (u.pathname.endsWith('/summary')) {
-    const id = u.pathname.split('/')[4];
-    return Response.json({ groupId: id, groupName: id === 'Cteam1' ? 'AYBKK teachers' : `Other ${id.slice(1)}` });
+  if ((o.headers || {}).Authorization === 'Bearer refused-token') return Response.json({ message: 'Authentication failed' }, { status: 401 });
+  if ((o.headers || {}).Authorization === 'Bearer plan-token') return Response.json({ message: 'Not authorized to use the API' }, { status: 403 });
+  if (u.pathname === '/v2/bot/info') return Response.json({ userId: 'Umain', basicId: '@000test', displayName: 'AYBKK test account' });
+  const g = u.pathname.match(/^\/v2\/bot\/group\/([^/]+)\/(summary|members\/count)$/);
+  if (g) {
+    if (groupMode === 'down') throw new TypeError('fetch failed');
+    if (/^\d+$/.test(groupMode)) return Response.json({ message: 'x' }, { status: Number(groupMode) });
+    const k = GROUP.get(g[1]);
+    if (k === 'forbidden') return Response.json({ message: 'Forbidden' }, { status: 403 });
+    if (!k || k.startsWith('notin')) return Response.json({ message: 'Not found' }, { status: 404 });
+    if (g[2] === 'members/count') return Response.json({ count: k === 'manage' ? 7 : k === 'staff' ? 12 : 3 });
+    return Response.json({ groupId: g[1], groupName: NAMES[k] || `Other ${k}` });
   }
-  if (/^\/v2\/bot\/group\/[^/]+\/leave$/.test(u.pathname)) return new Response('{}', { status: 200 });
   if (u.pathname === '/v2/bot/message/quota') return Response.json({ type: 'limited', value: 300 });
   if (u.pathname === '/v2/bot/message/quota/consumption') return Response.json({ totalUsage: 42 });
   if (u.pathname === '/v2/bot/message/push') {
@@ -50,6 +72,18 @@ const lineFetch = async (url, o = {}) => {
   return new Response('{}', { status: 404 });
 };
 const pushes = () => lineCalls.filter(c => c.path === '/v2/bot/message/push');
+
+// The inbox (mounted beside, as in server.js) asks LINE with the global fetch:
+// api.line.me goes to the stub, this machine to itself, anything else is refused.
+const outside = [];
+const realFetch = globalThis.fetch;
+globalThis.fetch = (url, o) => {
+  const h = new URL(String(url)).hostname;
+  if (h === 'api.line.me') return lineFetch(String(url), o);
+  if (h === '127.0.0.1' || h === 'localhost') return realFetch(url, o);
+  outside.push(h);
+  return Promise.reject(new Error('test: no outside host ' + h));
+};
 
 // Signed like Cloudinary's private photos: an https URL with the size in it.
 const cloudUrl = (id, o) => `https://res.cloudinary.com/demo/image/authenticated/s--sig--/w_${o.transformation[0].width},f_${o.transformation[0].fetch_format}/${id}`;
@@ -69,14 +103,20 @@ const fakeDriver = { session: () => ({
   let clock = bkkAt('2026-11-10T04:00:00');
   const told = [];
   const app = express();
-  // As in server.js: the help desk webhook is left out of the JSON parser.
-  const jsonBody = express.json();
-  app.use((req, res, next) => HELPDESK_PATH_RE.test(req.path) ? next() : jsonBody(req, res, next));
+  // As in server.js: the JSON parser keeps the raw bytes of /line/webhook for the signatures.
+  app.use(express.json({ verify: (req, res, buf) => { if (/^\/(line|meta)\/webhook/.test(req.url)) req.rawBody = buf; } }));
   // Wait for its schema, not a guess: on a slow run the seeds below wrote bkk_members.source before it existed.
   await mountBkk(app, { pgPool: pool, cloudinary: fakeCloud });
-  mountInbox(app, { pgPool: pool, ai: null, notify: async () => true });
+  const inboxApi = mountInbox(app, { pgPool: pool, ai: null, notify: async () => true });
   const team = mountTeam(app, { pgPool: pool, cloudinary: fakeCloud, fetch: lineFetch, driver: fakeDriver,
     now: () => clock, notify: async t => { told.push(t); return true; } });
+  // server.js's /line/webhook hands each request to both (and answers LINE 200
+  // itself). Here the team's part is awaited, so each check sees its result.
+  app.post('/line/webhook', async (req, res) => {
+    inboxApi.takeLine(req);
+    await team.takeLine(req);
+    res.json({ status: 'ok' });
+  });
   await wait(1800);
   const srv = app.listen(0);
   const B = `http://127.0.0.1:${srv.address().port}`;
@@ -88,15 +128,17 @@ const fakeDriver = { session: () => ({
   const post = (p, body, headers = ADMIN) => J(p, { method: 'POST',
     headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(body) });
   const get = (p, headers = ADMIN) => J(p, { headers });
-  const hook = (events, secret = 'desk-secret') => {
-    const body = JSON.stringify({ destination: 'Udesk', events });
+  const hook = (events, secret = 'main-secret') => {
+    const body = JSON.stringify({ destination: 'Umain', events });
     const sig = crypto.createHmac('sha256', secret).update(body).digest('base64');
-    return fetch(B + '/line/helpdesk-webhook', { method: 'POST',
+    return fetch(B + '/line/webhook', { method: 'POST',
       headers: { 'Content-Type': 'application/json; charset=utf-8', 'X-Line-Signature': sig }, body });
   };
   const join = (groupId, ts) => ({ type: 'join', timestamp: ts, source: { type: 'group', groupId }, webhookEventId: 'e' + Math.random() });
   const leave = (groupId, ts) => ({ type: 'leave', timestamp: ts, source: { type: 'group', groupId } });
   const setting = async k => ((await pool.query('SELECT value FROM bkk_settings WHERE key=$1', [k])).rows[0] || {}).value;
+  const status = async () => (await get('/api/bkk/admin/team/status')).body;
+  const T1 = gid('team1'), T2 = gid('team2');
 
   console.log('\n# small helpers');
   ok('names are first names and the family initial', shortName('Anna Maria Bell') === 'Anna Maria B.' && shortName('Mai') === 'Mai'
@@ -111,110 +153,138 @@ const fakeDriver = { session: () => ({
   ok('text over 5,000 characters is split at line ends', parts.length === 3 && parts.every(p => p.length <= 5000)
      && parts.join('\n').split('\n').length === 300, parts.map(p => p.length).join(','));
 
-  console.log('\n# webhook');
-  delete process.env.HELPDESK_LINE_CHANNEL_SECRET;
-  ok('with no channel secret the webhook answers 503', (await hook([join('Cnone')])).status === 503);
-  process.env.HELPDESK_LINE_CHANNEL_SECRET = 'desk-secret';
-  const forged = await hook([join('Cforged')], 'wrong-secret');
-  ok('a bad signature is refused and saves nothing', forged.status === 401 && (await setting('team_line_group')) == null);
-  const noSig = await fetch(B + '/line/helpdesk-webhook', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ events: [join('Cnosig')] }) });
-  ok('no signature at all is refused too', noSig.status === 401 && (await setting('team_line_group')) == null);
-  ok('LINE\'s Verify button (no events) gets 200', (await hook([])).status === 200);
+  console.log('\n# the help desk is gone: one LINE account, the main one');
+  ok('there is no help desk webhook any more: POST /line/helpdesk-webhook is 404',
+     (await fetch(B + '/line/helpdesk-webhook', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{"events":[]}' })).status === 404);
+  const src = f => fs.readFileSync(path.join(__dirname, '..', f), 'utf8');
+  const leftOver = ['server.js', 'team-brief.js', 'check-env.js', 'CLAUDE.md', 'public/bkk-admin.html', 'test/student-lists-lock.test.js']
+    .filter(f => /HELPDESK|help ?desk/i.test(src(f)));
+  ok('no HELPDESK env, help desk route or help desk wording left in the code', leftOver.length === 0, JSON.stringify(leftOver));
+  const lineRoute = (src('server.js').match(/app\.post\('\/line\/webhook'[\s\S]*?\n\}\);/) || [''])[0];
+  ok('server.js hands /line/webhook to the team briefs right after the inbox, and mounts the team as `team`',
+     /inbox\.takeLine\(req\);\n\s*team\.takeLine\(req\);/.test(lineRoute) && /\nconst team = mountTeam\(app, \{ pgPool, cloudinary, driver \}\);\nteam\.start\(\);/.test(src('server.js')),
+     lineRoute.slice(0, 300));
 
-  const j1 = await hook([join('Cteam1', bkkAt('2026-11-07T09:00:00'))]);
-  ok('a join in a group saves the group', j1.status === 200 && (await setting('team_line_group')) === 'Cteam1', JSON.stringify(await setting('team_line_group')));
+  console.log('\n# the main webhook: signed or ignored, every group waits');
+  const pushes0 = pushes().length;
+  delete process.env.LINE_CHANNEL_SECRET;
+  await hook([join(gid('none'))]);
+  ok('with no channel secret nothing is read or kept, and it is not counted as a bad signature',
+     (await setting('team_line_groups')) == null && (await status()).badSignatures === 0);
+  process.env.LINE_CHANNEL_SECRET = 'main-secret';
+  const forged = await hook([join(gid('forged'))], 'wrong-secret');
+  ok('a bad signature is ignored (server.js still answers LINE) and saves nothing', forged.status === 200
+     && (await setting('team_line_groups')) == null && (await setting('team_line_group')) == null);
+  const noSig = await fetch(B + '/line/webhook', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ events: [join(gid('nosig'))] }) });
+  ok('no signature at all is ignored too, and both are counted', noSig.status === 200 && (await setting('team_line_groups')) == null
+     && (await status()).badSignatures === 2);
+  ok('LINE\'s Verify button (no events) is a signed event: the time is kept', (await hook([])).status === 200
+     && (await setting('team_line_webhook_last')) === new Date(clock).toISOString());
+
+  const j1 = await hook([join(T1, bkkAt('2026-11-07T09:00:00'))]);
+  ok('a signed join of the first group waits: the main account never saves a group by itself', j1.status === 200
+     && (await setting('team_line_group')) == null, JSON.stringify(await setting('team_line_group')));
   const seen = await setting('team_line_groups');
-  ok('...with the group name and join time in the list of groups seen', Array.isArray(seen) && seen.length === 1
-     && seen[0].name === 'AYBKK teachers' && seen[0].joinedAt === '2026-11-07T02:00:00.000Z', JSON.stringify(seen));
-  ok('...and Boonchu is told where the briefs go now', told.length === 1 && /AYBKK teachers/.test(told[0]), JSON.stringify(told));
+  ok('...it is in the list of groups seen, waiting, with its name and join time', Array.isArray(seen) && seen.length === 1
+     && seen[0].id === T1 && seen[0].pending === true && seen[0].name === 'AYBKK teachers' && seen[0].joinedAt === '2026-11-07T02:00:00.000Z', JSON.stringify(seen));
+  ok('...and Boonchu is told it waits and nothing gets the briefs yet', told.length === 1 && /"AYBKK teachers": it waits/.test(told[0])
+     && /No LINE group gets the team briefs yet/.test(told[0]) && /accept/.test(told[0]), JSON.stringify(told));
 
   const logs = [], logIt = console.log, warnIt = console.warn, errIt = console.error;
   console.log = console.warn = console.error = (...a) => logs.push(a.join(' '));
   const said = await hook([
-    { type: 'message', timestamp: Date.now(), source: { type: 'group', groupId: 'Cteam1', userId: 'Uteacher' },
+    { type: 'message', timestamp: Date.now(), source: { type: 'group', groupId: T1, userId: 'Uteacher' },
       replyToken: 'r1', message: { id: 'm1', type: 'text', text: 'SECRET GROUP WORDS 4471' } },
     { type: 'message', timestamp: Date.now(), source: { type: 'user', userId: 'Ustranger' },
-      replyToken: 'r2', message: { id: 'm2', type: 'text', text: 'SECRET DM WORDS 9902' } },
+      replyToken: 'r2', message: { id: 'm2', type: 'text', text: 'a student writes 9902' } },
     { type: 'follow', timestamp: Date.now(), source: { type: 'user', userId: 'Ustranger' } },
   ]);
+  await wait(300);   // the inbox saves the 1:1 chat on its own time
   console.log = logIt; console.warn = warnIt; console.error = errIt;
-  const everywhere = (await pool.query(`SELECT
-      (SELECT count(*) FROM bkk_settings WHERE value::text ~ 'SECRET')::int
+  const groupText = (await pool.query(`SELECT
+      (SELECT count(*) FROM bkk_settings WHERE value::text ~ 'SECRET|9902')::int
     + (SELECT count(*) FROM aybkk_inbox WHERE text ~ 'SECRET')::int AS n`)).rows[0].n;
-  ok('message text from a group or a 1:1 chat is never stored or logged, and still gets 200', said.status === 200
-     && everywhere === 0 && !logs.some(l => /SECRET/.test(l)) && (await setting('team_line_group')) === 'Cteam1',
-     JSON.stringify({ everywhere, logs }));
+  const dm = (await pool.query(`SELECT count(*)::int AS n FROM aybkk_inbox WHERE text ~ '9902'`)).rows[0].n;
+  ok('group text is never stored or logged; the team briefs keep no 1:1 text either (the inbox keeps the 1:1 chat, as before)',
+     said.status === 200 && groupText === 0 && dm === 1 && !logs.some(l => /SECRET/.test(l)) && (await setting('team_line_group')) == null,
+     JSON.stringify({ groupText, dm, logs }));
+  ok('...and nothing was sent to LINE by the webhook: no push, no reply', pushes().length === pushes0
+     && !lineCalls.some(c => /\/message\/reply/.test(c.path)));
 
-  await hook([join('Cteam2', bkkAt('2026-11-07T10:00:00'))]);
-  const seen2 = await setting('team_line_groups');
-  ok('a join to a second group does not move the briefs: that group waits', (await setting('team_line_group')) === 'Cteam1'
-     && seen2.find(g => g.id === 'Cteam2').pending === true && seen2.find(g => g.id === 'Cteam1').pending === false, JSON.stringify(seen2));
-  ok('...and Boonchu is told the briefs still go to the team group', told.length === 2
-     && /Other team2/.test(told[1]) && /still go to "AYBKK teachers"/.test(told[1]), JSON.stringify(told));
-  await hook([join('Cteam1', bkkAt('2026-11-07T09:00:00'))]);
-  await hook([join('Cteam2', bkkAt('2026-11-07T10:00:00'))]);
-  ok('a join LINE sends again changes nothing and tells nobody twice', (await setting('team_line_group')) === 'Cteam1' && told.length === 2);
-  const stW = await get('/api/bkk/admin/team/status');
-  const waiting = (stW.body.groupsSeen || []).find(g => g.pending);
-  ok('status lists the waiting group by a ref, never by its LINE id', stW.body.group.name === 'AYBKK teachers'
-     && waiting && waiting.name === 'Other team2' && /^[0-9a-f]{12}$/.test(waiting.ref) && !waiting.saved
-     && !JSON.stringify(stW.body).includes('Cteam'), JSON.stringify(stW.body.groupsSeen));
+  const stW = await status();
+  const waiting = (stW.groupsSeen || []).find(g => g.pending);
+  ok('status lists the waiting group by a ref, never by its LINE id', stW.group.saved === false
+     && waiting && waiting.name === 'AYBKK teachers' && /^[0-9a-f]{12}$/.test(waiting.ref) && !waiting.saved
+     && !anyId(JSON.stringify(stW)), JSON.stringify(stW.groupsSeen));
   ok('team/group needs the key', (await post('/api/bkk/admin/team/group', { accept: waiting.ref }, {})).status === 401
-     && (await setting('team_line_group')) === 'Cteam1');
+     && (await setting('team_line_group')) == null);
   ok('team/group refuses an empty body or an unknown ref', (await post('/api/bkk/admin/team/group', {})).status === 400
      && (await post('/api/bkk/admin/team/group', { accept: 'ffffffffffff' })).status === 404);
-  const acc = await post('/api/bkk/admin/team/group', { accept: waiting.ref });
-  ok('accepting the waiting group moves the briefs there, and Boonchu hears of it', acc.status === 200
-     && (await setting('team_line_group')) === 'Cteam2' && told.length === 3 && /Other team2/.test(told[2]), JSON.stringify([acc, told.at(-1)]));
-  await hook([leave('Cteam1', bkkAt('2026-11-07T10:30:00'))]);
-  ok('leaving a group that is not the saved one changes nothing', (await setting('team_line_group')) === 'Cteam2');
-  await hook([leave('Cteam2', bkkAt('2026-11-07T11:00:00'))]);
+  const acc1 = await post('/api/bkk/admin/team/group', { accept: waiting.ref });
+  ok('accepting the waiting group saves it, and Boonchu hears of it', acc1.status === 200 && acc1.body.saved === true
+     && (await setting('team_line_group')) === T1 && told.length === 2 && /"AYBKK teachers" now/.test(told[1]), JSON.stringify([acc1.body, told.at(-1)]));
+
+  await hook([join(T2, bkkAt('2026-11-07T10:00:00'))]);
+  const seen2 = await setting('team_line_groups');
+  ok('a join to a second group does not move the briefs: that group waits', (await setting('team_line_group')) === T1
+     && seen2.find(g => g.id === T2).pending === true && seen2.find(g => g.id === T1).pending === false, JSON.stringify(seen2));
+  ok('...and Boonchu is told the briefs still go to the team group', told.length === 3
+     && /another LINE group "Other team2"/.test(told[2]) && /still go to "AYBKK teachers"/.test(told[2]), JSON.stringify(told));
+  await hook([join(T1, bkkAt('2026-11-07T09:00:00'))]);
+  await hook([join(T2, bkkAt('2026-11-07T10:00:00'))]);
+  ok('a join LINE sends again changes nothing and tells nobody twice', (await setting('team_line_group')) === T1 && told.length === 3);
+  const w2 = (await status()).groupsSeen.find(g => g.pending);
+  const acc = await post('/api/bkk/admin/team/group', { accept: w2.ref });
+  ok('accepting the second waiting group moves the briefs there, and Boonchu hears of it', acc.status === 200
+     && (await setting('team_line_group')) === T2 && told.length === 4 && /Other team2/.test(told[3]), JSON.stringify([acc, told.at(-1)]));
+  await hook([leave(T1, bkkAt('2026-11-07T10:30:00'))]);
+  ok('leaving a group that is not the saved one changes nothing', (await setting('team_line_group')) === T2);
+  await hook([leave(T2, bkkAt('2026-11-07T11:00:00'))]);
   const afterLeave = await setting('team_line_groups');
   ok('leaving the saved group clears it', (await setting('team_line_group')) == null
-     && afterLeave.find(g => g.id === 'Cteam2').leftAt === '2026-11-07T04:00:00.000Z', JSON.stringify(afterLeave));
-  ok('a group the help desk has left cannot be accepted', (await post('/api/bkk/admin/team/group', { accept: waiting.ref })).status === 409
+     && afterLeave.find(g => g.id === T2).leftAt === '2026-11-07T04:00:00.000Z', JSON.stringify(afterLeave));
+  ok('a group the account has left cannot be accepted', (await post('/api/bkk/admin/team/group', { accept: w2.ref })).status === 409
      && (await setting('team_line_group')) == null);
+  ok('the account is never made to leave a group from here: { leave } is refused, LINE never asked',
+     (await post('/api/bkk/admin/team/group', { leave: w2.ref })).status === 400 && !lineCalls.some(c => /\/leave$/.test(c.path)));
 
   console.log('\n# admin routes need the key');
   for (const [m, p] of [['GET', '/api/bkk/admin/team/status'], ['GET', '/api/bkk/admin/team/preview?kind=morning'],
     ['POST', '/api/bkk/admin/team/send'], ['POST', '/api/bkk/admin/team/brief'], ['POST', '/api/bkk/admin/team/group'],
     ['GET', '/api/bkk/admin/inbox']]) {
-    const none = m === 'GET' ? await get(p, {}) : await post(p, { text: 'x', kind: 'morning' }, {});
-    const wrong = m === 'GET' ? await get(p, { 'x-bkk-key': 'nope' }) : await post(p, { text: 'x', kind: 'morning' }, { 'x-bkk-key': 'nope' });
+    const none = m === 'GET' ? await get(p, {}) : await post(p, { text: 'x', kind: 'morning', add: T1 }, {});
+    const wrong = m === 'GET' ? await get(p, { 'x-bkk-key': 'nope' }) : await post(p, { text: 'x', kind: 'morning', add: T1 }, { 'x-bkk-key': 'nope' });
     ok(`${m} ${p.split('?')[0]} is 401 without the key, or with a wrong one`, none.status === 401 && wrong.status === 401);
   }
   ok('nothing went to LINE from those', pushes().length === 0);
 
   console.log('\n# send');
-  delete process.env.HELPDESK_LINE_ACCESS_TOKEN;
+  delete process.env.LINE_CHANNEL_ACCESS_TOKEN;
   const noTok = await post('/api/bkk/admin/team/send', { text: 'Hello team' });
-  ok('send with no token gives a clear error', noTok.status === 503 && /HELPDESK_LINE_ACCESS_TOKEN is not set/.test(noTok.body.error), JSON.stringify(noTok));
-  process.env.HELPDESK_LINE_ACCESS_TOKEN = 'desk-token';
+  ok('send with no token gives a clear error', noTok.status === 503 && /LINE_CHANNEL_ACCESS_TOKEN is not set/.test(noTok.body.error), JSON.stringify(noTok));
+  process.env.LINE_CHANNEL_ACCESS_TOKEN = 'main-token';
   const noGroup = await post('/api/bkk/admin/team/send', { text: 'Hello team' });
-  ok('send with no group gives a clear error', noGroup.status === 409 && /No team group yet/.test(noGroup.body.error), JSON.stringify(noGroup));
+  ok('send with no group gives a clear error', noGroup.status === 409 && /No team group yet: accept the staff group/.test(noGroup.body.error), JSON.stringify(noGroup));
   ok('...and neither reached LINE', pushes().length === 0);
   ok('an empty text is refused', (await post('/api/bkk/admin/team/send', { text: '  ' })).status === 400);
 
-  await hook([join('Cteam1', bkkAt('2026-11-07T12:00:00'))]);
-  ok('with no group saved, the next join is saved again', (await setting('team_line_group')) === 'Cteam1');
-  await hook([join('Cstranger', bkkAt('2026-11-07T12:30:00'))]);
-  ok('(someone adds the help desk to a group of their own: it waits)', (await setting('team_line_group')) === 'Cteam1');
+  await hook([join(T1, bkkAt('2026-11-07T12:00:00'))]);
+  ok('with no group saved, a join back into a group still only waits', (await setting('team_line_group')) == null
+     && (await setting('team_line_groups')).find(g => g.id === T1).pending === true);
+  const back1 = (await status()).groupsSeen.find(g => g.pending && g.name === 'AYBKK teachers');
+  await post('/api/bkk/admin/team/group', { accept: back1.ref });
+  ok('...until staff accept it', (await setting('team_line_group')) === T1);
+  await hook([join(gid('stranger'), bkkAt('2026-11-07T12:30:00'))]);
+  ok('(someone adds the account to a group of their own: it waits)', (await setting('team_line_group')) === T1);
   const sent = await post('/api/bkk/admin/team/send', { text: 'ประชุมครู 10:00 วันเสาร์' });
   const p1 = pushes().at(-1);
-  ok('send pushes one text to the saved group with the help desk token', sent.status === 200 && sent.body.ok === true
-     && sent.body.requestId === `req-${reqN}` && p1.headers.Authorization === 'Bearer desk-token' && p1.method === 'POST'
-     && JSON.stringify(p1.body) === JSON.stringify({ to: 'Cteam1', messages: [{ type: 'text', text: 'ประชุมครู 10:00 วันเสาร์' }] })
+  ok('send pushes one text to the saved group with the main account\'s token (LINE_CHANNEL_ACCESS_TOKEN)', sent.status === 200 && sent.body.ok === true
+     && sent.body.requestId === `req-${reqN}` && p1.headers.Authorization === 'Bearer main-token' && p1.method === 'POST'
+     && JSON.stringify(p1.body) === JSON.stringify({ to: T1, messages: [{ type: 'text', text: 'ประชุมครู 10:00 วันเสาร์' }] })
      && /^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(p1.headers['X-Line-Retry-Key']),
      JSON.stringify([sent, p1]));
-  ok('...never to a group that is only waiting', !pushes().some(x => x.body.to === 'Cstranger'));
-  const stranger = (await get('/api/bkk/admin/team/status')).body.groupsSeen.find(g => g.name === 'Other stranger');
-  const gone = await post('/api/bkk/admin/team/group', { leave: stranger.ref });
-  const st2 = (await get('/api/bkk/admin/team/status')).body;
-  ok('team/group can make the help desk leave a waiting group', gone.status === 200 && gone.body.saved === true
-     && lineCalls.some(c => c.method === 'POST' && c.path === '/v2/bot/group/Cstranger/leave')
-     && st2.groupsSeen.find(g => g.name === 'Other stranger').leftAt && !st2.groupsSeen.some(g => g.pending)
-     && (await setting('team_line_group')) === 'Cteam1', JSON.stringify([gone, st2.groupsSeen]));
+  ok('...never to a group that is only waiting', !pushes().some(x => x.body.to === gid('stranger')));
   const long = Array.from({ length: 400 }, (_, i) => `บรรทัด ${i} ${'ก'.repeat(20)}`).join('\n');
   const before = pushes().length;
   const sentLong = await post('/api/bkk/admin/team/send', { text: long });
@@ -324,38 +394,43 @@ const fakeDriver = { session: () => ({
   ok('preview builds the brief and does not send it', m.status === 200 && pushes().length === sentBefore
      && m.body.kind === 'morning' && m.body.date === D && m.body.lang === 'th');
   ok('Thai by default, with the day', mt.startsWith('☀️ บรีฟเช้า อ. 10 พ.ย.'), mt.split('\n')[0]);
-  ok('each class in time order: time, class, teacher, how many booked, and the names',
-     mt.includes('05:30 Mysore (1st batch) · ครู Boonchu · จอง 3\nAnna B., Rex R., Tom H.')
-     && mt.includes('07:30 Mysore (2nd batch) · ครู Boonchu · จอง 1\nChai D.')
-     && mt.indexOf('05:30 Mysore') < mt.indexOf('07:30 Mysore'));
-  ok('NEW: first class ever today, and a first pass bought this week by someone who has not come yet',
-     mt.includes('🌱 นักเรียนใหม่ ช่วยกันต้อนรับ\n• Chai D. มาครั้งแรก 07:30\n• Mali S. ซื้อ 1 month unlimited เมื่อ ศ. 6 พ.ย. ยังไม่เช็กอินใน aybkk.net ยังไม่มีการจองใน aybkk.net'));
-  ok('...but not a student who came before, or one moved over from Rezerv', !/Anna B\. มาครั้งแรก|Tom H\. มาครั้งแรก|Rex R\. มาครั้งแรก/.test(mt));
+  ok('each shala class in time order: its own short section with the teacher, how many booked, who is new, mats',
+     mt.includes('\n\n🧘 05:30 Mysore (1st batch) · ครู Boonchu\nจอง 3 คน\nสัปดาห์แรก 1: Anna B.\nเช่าเสื่อ 1 (฿200 รวม VAT จ่ายที่ชาลา): Anna B.\n\n')
+     && mt.includes('\n\n🧘 07:30 Mysore (2nd batch) · ครู Boonchu\nจอง 1 คน\nมาครั้งแรกวันนี้ 1: Chai D.\n\n')
+     && mt.indexOf('05:30 Mysore') < mt.indexOf('07:30 Mysore'), mt);
+  ok('...the count only: the full list of names booked is gone', !mt.includes('Rex R.') && !/Tom H\.(?! จอง 05:30)/.test(mt));
+  ok('BOUGHT, NOT HERE YET: a first pass bought this week by someone who has not come, under its own header',
+     mt.includes('🛒 ซื้อแล้ว ยังไม่เคยมา\n• Mali S. ซื้อ 1 month unlimited เมื่อ ศ. 6 พ.ย. ยังไม่เช็กอินใน aybkk.net ยังไม่มีการจองใน aybkk.net') && !mt.includes('🌱'));
+  ok('...first time and first week never a student who came before the week, or one moved over from Rezerv',
+     !/(มาครั้งแรกวันนี้|สัปดาห์แรก) \d+: .*(Tom H\.|Rex R\.)/.test(mt));
   ok('ENDING SOON: a pass ending within 7 days and a credit pass with 2 or fewer classes, with the end date',
      mt.includes('⏳ ใกล้หมด ชวนคุยเรื่องต่อแพ็กเกจ\n• Anna B. 3 months unlimited หมด ส. 14 พ.ย.\n• Ploy W. 8 classes / 2 months เหลือ 1 ครั้ง ใช้ได้ถึง อ. 1 ธ.ค.'));
   ok('...not someone who already renewed, or who has not come for over 30 days', !mt.includes('Zoe R.') && !mt.includes('Gus G.'));
   ok('NOT PAID: an online order pending from the last 3 days, and a booking today with no valid pass',
      mt.includes(`💳 ยังไม่จ่าย ช่วยตามเก็บเงิน\n• Kim L. สั่ง 3 months unlimited ฿26,412 ยังไม่ได้จ่าย (สั่ง จ. 9 พ.ย., ref ${kimRef})\n• Tom H. จอง 05:30 แต่แพ็กเกจถูกยกเลิกแล้ว`));
   ok('...not an older order, one the student paid since, or a Rezerv seat', !mt.includes('Sam O.') && !mt.includes('Nina P.') && !/Rex R\. จอง/.test(mt));
-  ok('NEEDS A MAT: who ticked it, by class, and staff collect ฿200 (VAT included, nothing added)',
-     mt.includes('🧘 เตรียมเสื่อให้ (เก็บ ฿200)\n• 05:30 Anna B.') && !/VAT|฿214/.test(mt));
+  ok('MATS: in the class, ฿200 with VAT included, paid at the shala; the old day-level mat section is gone',
+     mt.includes('เช่าเสื่อ 1 (฿200 รวม VAT จ่ายที่ชาลา): Anna B.') && !mt.includes('เตรียมเสื่อ') && !/฿214/.test(mt));
   ok('class and package names stay in the original English in the Thai brief', !/มายซอร์|รอบแรก|ไม่จำกัด|ครั้ง \/ 1 เดือน/.test(mt), mt);
-  ok('one closing line with the totals', mt.trim().split('\n').at(-1) === 'รวม 2 คลาส · จอง 4 · ใหม่ 2 · ใกล้หมด 2 · ยังไม่จ่าย 2 · เสื่อ 1', mt.trim().split('\n').at(-1));
+  ok('one closing line with the shala totals', mt.trim().split('\n').at(-1)
+     === 'รวม 2 คลาส · จอง 4 · ดรอปอิน 0 · ครั้งแรก 1 · สัปดาห์แรก 1 · เสื่อ 1 · ใกล้หมด 2 · ยังไม่จ่าย 2', mt.trim().split('\n').at(-1));
+  ok('no online section on a day with no online class', !mt.includes('💻'));
   ok('never an email, a phone number or a member code', !/@|0899000|BTEAM/.test(mt));
   ok('no em dash anywhere', !/—/.test(mt));
 
   const me = await get(`/api/bkk/admin/team/preview?kind=morning&date=${D}&lang=en`);
   const met = me.body.text || '';
-  ok('English when asked', met.startsWith('☀️ Teaching brief Tue 10 Nov') && met.includes('05:30 Mysore (1st batch) · Boonchu · 3 booked')
-     && met.includes('• Chai D., first class today at 07:30') && met.includes('• Anna B.: 3 months unlimited, ends Sat 14 Nov')
+  ok('English when asked', met.startsWith('☀️ Teaching brief Tue 10 Nov')
+     && met.includes('🧘 05:30 Mysore (1st batch) · Boonchu\n3 booked\nFirst week 1: Anna B.\nMat rental 1 (฿200 incl. VAT, paid at the shala): Anna B.')
+     && met.includes('🧘 07:30 Mysore (2nd batch) · Boonchu\n1 booked\nFirst class today 1: Chai D.')
+     && met.includes('🛒 Bought, not here yet\n• Mali S. bought 1 month unlimited') && met.includes('• Anna B.: 3 months unlimited, ends Sat 14 Nov')
      && met.includes('💳 Not paid, please collect\n') && met.includes('• Tom H.: booked 05:30 but the pass was voided')
-     && met.includes('🧘 Have a mat ready (collect ฿200 each)\n• 05:30 Anna B.')
-     && met.trim().endsWith('Total: 2 classes · 4 booked · 2 new · 2 ending · 2 not paid · 1 mat'), met);
+     && met.trim().endsWith('Total: 2 classes · 4 booked · 0 drop-in · 1 first time · 1 first week · 1 mat · 2 ending · 2 not paid'), met);
 
   const sat = (await get('/api/bkk/admin/team/preview?kind=morning&date=2026-11-14')).body.text || '';
-  ok('Saturday in Thai: Led and [Online] class titles exactly as on the timetable, the rotating teacher as stored',
-     sat.includes('\n07:00 Led Primary series · ครู Jamsai · จอง 0\n') && sat.includes('\n07:00 [Online] Led Primary series · ครู Jamsai · จอง 0\n')
-     && sat.includes('\n08:45 Led Intermediate series · ครู Boonchu · จอง 0\n') && sat.includes('\n09:00 [Online] Led Intermediate series · ครู Boonchu · จอง 0'), sat);
+  ok('Saturday in Thai: Led class titles as on the timetable, the rotating teacher as stored, online apart (no "[Online]" under the Zoom header)',
+     sat.includes('\n🧘 07:00 Led Primary series · ครู Jamsai\nจอง 0 คน\n') && sat.includes('\n🧘 08:45 Led Intermediate series · ครู Boonchu\nจอง 0 คน\n')
+     && sat.includes('\n💻 ออนไลน์ (Zoom)\n07:00 Led Primary series · จอง 0\n09:00 Led Intermediate series · จอง 0\n') && !sat.includes('[Online]'), sat);
 
   const moon = await get('/api/bkk/admin/team/preview?kind=morning&date=2026-11-09');
   ok('moon day: one line saying the shala is closed and why, then stop',
@@ -504,7 +579,7 @@ const fakeDriver = { session: () => ({
   ok('two calls at 05:00 send the morning brief once', morningPushes().length === 1
      && [...ta, ...tb].filter(r => r.sent).length === 1 && [...ta, ...tb].filter(r => r.skipped === 'already').length === 1, JSON.stringify([ta, tb]));
   const mp = morningPushes()[0];
-  ok('...to the team group, the brief as built', mp.body.to === 'Cteam1' && mp.body.messages[0].text === asBuilt && asBuilt.startsWith('☀️ บรีฟเช้า'));
+  ok('...to the team group, the brief as built', mp.body.to === T1 && mp.body.messages[0].text === asBuilt && asBuilt.startsWith('☀️ บรีฟเช้า'));
   const restarted = mountTeam(express(), { pgPool: pool, cloudinary: fakeCloud, fetch: lineFetch, now: () => clock });
   clock = bkkAt('2026-11-10T05:30:00');
   ok('a restart at 05:30 does not send it again', (await restarted.tick(clock))[0].skipped === 'already' && morningPushes().length === 1);
@@ -532,7 +607,7 @@ const fakeDriver = { session: () => ({
      && status1.body.briefs.morning === 'on' && status1.body.briefs.evening === 'on' && status1.body.briefs.lang === 'th'
      && status1.body.lastSent.morning.date === '2026-11-12' && status1.body.lastSent.evening.date === D
      && status1.body.quota.limit === 300 && status1.body.quota.used === 42 && status1.body.channel.tokenSet === true, JSON.stringify(status1.body));
-  ok('...and never the token, or a group id', !JSON.stringify(status1.body).includes('desk-token') && !JSON.stringify(status1.body).includes('Cteam'));
+  ok('...and never the token, or a group id', !JSON.stringify(status1.body).includes('main-token') && !anyId(JSON.stringify(status1.body)));
 
   lineMode = 'down';
   clock = bkkAt('2026-11-13T05:00:00');
@@ -551,10 +626,10 @@ const fakeDriver = { session: () => ({
   await team.tick(bkkAt('2026-11-13T05:02:00'));
   ok('...and then not again', pushes().length === countNow);
   lineMode = '400';
-  await team.tick(bkkAt('2026-11-14T05:00:00'));
+  await team.tick(bkkAt('2026-11-14T06:00:00'));   // a Saturday: 06:00
   lineMode = 'ok';
   const after400 = pushes().length;
-  await team.tick(bkkAt('2026-11-14T05:01:00'));
+  await team.tick(bkkAt('2026-11-14T06:01:00'));
   ok('a LINE refusal (400) is not tried again that day', pushes().length === after400
      && (await setting('team_brief_sent_morning_2026-11-14')).state === 'failed');
 
@@ -573,9 +648,9 @@ const fakeDriver = { session: () => ({
   const forDay = (list, d) => list.filter(p => p.body.messages[0].text.split('\n')[0].includes(d));
   clock = bkkAt('2026-11-16T04:58:00');
   const early16 = await post('/api/bkk/admin/team/brief', { kind: 'morning' });
-  clock = bkkAt('2026-11-16T05:00:00');
+  clock = bkkAt('2026-11-16T05:30:00');   // a Monday: 05:30
   const tick16 = await team.tick(clock);
-  ok('a morning brief sent by hand at 04:58 is the day\'s brief: 05:00 does not send another', early16.status === 200
+  ok('a morning brief sent by hand at 04:58 is the day\'s brief: 05:30 does not send another', early16.status === 200
      && tick16[0].skipped === 'already' && forDay(morningPushes(), ' 16 พ.ย.').length === 1, JSON.stringify([early16.body, tick16]));
   clock = bkkAt('2026-11-16T15:12:00');
   const sofar = await post('/api/bkk/admin/team/brief', { kind: 'evening' });
@@ -601,6 +676,225 @@ const fakeDriver = { session: () => ({
      && (await setting('team_brief_sent_morning_2026-11-17')).state === 'sent'
      && forDay(morningPushes(), ' 17 พ.ย.').length === 2,   // the one tried while LINE was down, and the one by hand
      JSON.stringify([down17, hand17.body, tick17]));
+
+  console.log('\n# the morning brief by class: Thu 19, Fri 20, Sat 21, Mon 23 Nov (made-up people)');
+  const ana = await member('Ana Example', { email: 'ana.example@example.com' });
+  const anaDrop = await pass(ana, 'dropin', { from: '2026-11-19', until: '2026-11-20', used: 1, created: '2026-11-18T20:00:00+07:00' });
+  await seat(ana, 'my530_4', '2026-11-19', { pass: anaDrop, mat: true, in: '2026-11-19T05:29:00+07:00' });
+  const anaPack = await pass(ana, 'pack8', { from: '2026-11-21', until: '2027-01-20', used: 3, created: '2026-11-19T08:00:00+07:00' });
+  await seat(ana, 'lp_sat_6', '2026-11-21', { pass: anaPack, mat: true, in: '2026-11-21T06:55:00+07:00' });
+  await seat(ana, 'li_sat_6', '2026-11-21', { pass: anaPack, in: '2026-11-21T08:40:00+07:00' });
+  await seat(ana, 'lp_mon_1', '2026-11-23', { pass: anaPack });
+  const wang = await member('王小明', { email: 'wang.xm@example.com' });
+  const wangPass = await pass(wang, 'unlim1', { from: '2026-11-16', until: '2026-12-16', created: '2026-11-15T09:00:00+07:00' });
+  await seat(wang, 'lp_mon_1', '2026-11-16', { pass: wangPass, in: '2026-11-16T06:31:00+07:00' });
+  await seat(wang, 'my530_4', '2026-11-19', { pass: wangPass });
+  await seat(wang, 'my730_4', '2026-11-19', { pass: wangPass });
+  await seat(wang, 'li_sat_6', '2026-11-21', { pass: wangPass, in: '2026-11-21T08:41:00+07:00' });
+  await seat(wang, 'olp_mon_1', '2026-11-23', { pass: wangPass });
+  // Moved over from Rezerv, first visit on aybkk.net two days ago, on a class Rezerv gave back (a Drop-in pass): never new, never a drop-in.
+  const rosa = await member('Rosa Example');
+  const rosaPass = await pass(rosa, 'unlim1', { from: '2026-11-01', until: '2026-12-01', source: 'rezerv', created: '2026-11-16T09:00:00+07:00' });
+  await seat(rosa, 'my530_3', '2026-11-17', { pass: rosaPass, in: '2026-11-17T05:30:00+07:00' });
+  const rosaBack = await pass(rosa, 'dropin', { source: 'rezerv', created: '2026-11-16T09:00:00+07:00' });
+  await pool.query(`UPDATE bkk_passes SET note='moved from Rezerv; a class Rezerv gave back' WHERE id=$1`, [rosaBack]);
+  await seat(rosa, 'my530_4', '2026-11-19', { pass: rosaBack });
+  // Joined 10 days ago, first came 8 days ago: past the first week.
+  const tess = await member('Tess Example', { joined: '2026-11-09' });
+  const tessPass = await pass(tess, 'unlim1', { from: '2026-11-11', until: '2026-12-11', created: '2026-11-09T09:00:00+07:00' });
+  await seat(tess, 'my530_3', '2026-11-11', { pass: tessPass, in: '2026-11-11T05:30:00+07:00' });
+  await seat(tess, 'my730_4', '2026-11-19', { pass: tessPass });
+  const ben = await member('Ben Example');
+  const benPass = await pass(ben, 'unlim3', { from: '2026-10-06', until: '2027-01-04', created: '2026-10-05T09:00:00+07:00' });
+  await seat(ben, 'my730_2', '2026-10-06', { pass: benPass, in: '2026-10-06T07:30:00+07:00' });
+  await seat(ben, 'my730_4', '2026-11-19', { pass: benPass, mat: true });
+  await seat(ben, 'li_sat_6', '2026-11-21', { pass: benPass });
+  await seat(ben, 'my530_5', '2026-11-20', { pass: benPass });
+  await seat(ben, 'my730_5', '2026-11-20', { pass: benPass });
+  // The walk-in a teacher sold at the desk: a Drop-in pass, first class ever.
+  const leo = await member('Leo Example');
+  const leoDrop = await pass(leo, 'dropin', { from: '2026-11-19', until: '2026-11-20', used: 1, created: '2026-11-19T07:20:00+07:00' });
+  await seat(leo, 'my730_4', '2026-11-19', { pass: leoDrop, source: 'door', in: '2026-11-19T07:21:00+07:00' });
+  const nora = await member('Nora Example');
+  await seat(nora, 'my730_4', '2026-11-19', {});
+  const mia = await member('Mia Example');
+  const miaDrop = await pass(mia, 'dropin', { from: '2026-11-21', until: '2026-11-22', used: 1, created: '2026-11-20T18:00:00+07:00' });
+  await seat(mia, 'lp_sat_6', '2026-11-21', { pass: miaDrop, mat: true, in: '2026-11-21T06:58:00+07:00' });
+  // Online only: Zoom students are counted, never named.
+  const olga = await member('Olga Example');
+  const olgaPass = await pass(olga, 'unlim1', { from: '2026-11-21', until: '2026-12-21', created: '2026-11-20T09:00:00+07:00' });
+  await seat(olga, 'olp_sat_6', '2026-11-21', { pass: olgaPass });
+  await seat(olga, 'olp_mon_1', '2026-11-23', { pass: olgaPass });
+  await pool.query(`INSERT INTO bkk_class_overrides (slot_id,class_date,cancelled,note) VALUES ($1,'2026-11-20',true,'teacher away')`, [(await slot('my730_5')).id]);
+  await pool.query(`INSERT INTO bkk_class_overrides (slot_id,class_date,cancelled,note) VALUES ($1,'2026-11-23',true,'Zoom training')`, [(await slot('olp_mon_1')).id]);
+  const brief = async (d, lang = 'th') => (await get(`/api/bkk/admin/team/preview?kind=morning&date=${d}&lang=${lang}`)).body.text || '';
+  const section = (t, head) => t.split('\n\n').find(x => x.startsWith(head)) || '';
+  const tu19 = await brief('2026-11-19');
+  console.log(tu19.split('\n').map(l => '      | ' + l).join('\n'));
+  const c530 = section(tu19, '🧘 05:30 '), c730 = section(tu19, '🧘 07:30 ');
+  ok('Thursday: each Mysore batch has its own block, the booked count, then only the lines that have someone',
+     c530.split('\n')[1] === 'จอง 3 คน' && c730.split('\n')[1] === 'จอง 5 คน' && tu19.indexOf(c530) < tu19.indexOf(c730), JSON.stringify([c530, c730]));
+  ok('DROP-IN: a seat on a pass of the Drop-in product (bought online, or sold at the desk), per class',
+     c530.includes('\nดรอปอิน 1: Ana E.') && c730.includes('\nดรอปอิน 1: Leo E.'), JSON.stringify([c530, c730]));
+  ok('...never a class Rezerv gave back, though it is imported as a Drop-in pass', !/ดรอปอิน[^\n]*Rosa/.test(tu19));
+  ok('FIRST TIME: first class ever today', c530.includes('\nมาครั้งแรกวันนี้ 1: Ana E.') && c730.includes('\nมาครั้งแรกวันนี้ 2: Leo E., Nora E.'), JSON.stringify([c530, c730]));
+  ok('FIRST WEEK: came before, first visit in the last 7 days; booked twice today, listed under the first class only',
+     c530.includes('\nสัปดาห์แรก 1: 王小明') && !c730.includes('สัปดาห์แรก'), JSON.stringify([c530, c730]));
+  ok('...never a student from Rezerv, or one who joined 10 days ago', !/Rosa E\.|Tess E\./.test(tu19), tu19);
+  ok('MATS: per seat, ฿200 including VAT, paid at the shala', c530.endsWith('\nเช่าเสื่อ 1 (฿200 รวม VAT จ่ายที่ชาลา): Ana E.')
+     && c730.endsWith('\nเช่าเสื่อ 1 (฿200 รวม VAT จ่ายที่ชาลา): Ben E.'), JSON.stringify([c530, c730]));
+  ok('...a class block in this order: header, booked, drop-in, first time, first week, mats',
+     c530 === '🧘 05:30 Mysore (1st batch) · ครู M\nจอง 3 คน\nดรอปอิน 1: Ana E.\nมาครั้งแรกวันนี้ 1: Ana E.\nสัปดาห์แรก 1: 王小明\nเช่าเสื่อ 1 (฿200 รวม VAT จ่ายที่ชาลา): Ana E.', c530);
+  ok('...the seat with no pass is still in not paid', tu19.includes('💳 ยังไม่จ่าย ช่วยตามเก็บเงิน\n• Nora E. จอง 07:30 แต่ยังไม่มีแพ็กเกจ'), tu19);
+  ok('...and the total counts shala classes, first time and first week once per person',
+     tu19.trim().split('\n').at(-1) === 'รวม 2 คลาส · จอง 8 · ดรอปอิน 2 · ครั้งแรก 3 · สัปดาห์แรก 1 · เสื่อ 2 · ใกล้หมด 1 · ยังไม่จ่าย 1', tu19.trim().split('\n').at(-1));
+  const fr20 = await brief('2026-11-20');
+  ok('a cancelled class keeps its cancelled line, the other class its block', fr20.includes('\n\n07:30 Mysore (2nd batch) · ยกเลิก (teacher away)')
+     && section(fr20, '🧘 05:30 ').split('\n')[1] === 'จอง 1 คน' && fr20.trim().endsWith('รวม 1 คลาส · จอง 1 · ดรอปอิน 0 · ครั้งแรก 0 · สัปดาห์แรก 0 · เสื่อ 0 · ใกล้หมด 1 · ยังไม่จ่าย 0'), fr20);
+  const sa21 = await brief('2026-11-21');
+  console.log(sa21.split('\n').map(l => '      | ' + l).join('\n'));
+  const lp = section(sa21, '🧘 07:00 Led Primary'), li = section(sa21, '🧘 08:45 Led Intermediate');
+  ok('Saturday: one brief, Led Primary and Led Intermediate each with their own details',
+     lp.startsWith('🧘 07:00 Led Primary series · ครู ') && lp.includes('\nจอง 2 คน\nดรอปอิน 1: Mia E.\nมาครั้งแรกวันนี้ 1: Mia E.\nสัปดาห์แรก 1: Ana E.\nเช่าเสื่อ 2 (฿200 รวม VAT จ่ายที่ชาลา): Ana E., Mia E.')
+     && li === '🧘 08:45 Led Intermediate series · ครู Boonchu\nจอง 3 คน\nสัปดาห์แรก 1: 王小明', JSON.stringify([lp, li]));
+  ok('...online classes kept apart after them: a count each, no names, no mats',
+     section(sa21, '💻') === '💻 ออนไลน์ (Zoom)\n07:00 Led Primary series · จอง 1\n09:00 Led Intermediate series · จอง 0'
+     && sa21.indexOf('💻') > sa21.indexOf('🧘 08:45') && !sa21.includes('Olga'), sa21);
+  ok('...and the total is the shala only', sa21.trim().endsWith('รวม 2 คลาส · จอง 5 · ดรอปอิน 1 · ครั้งแรก 1 · สัปดาห์แรก 2 · เสื่อ 2 · ใกล้หมด 1 · ยังไม่จ่าย 0'), sa21.trim().split('\n').at(-1));
+  const sa21en = await brief('2026-11-21', 'en');
+  ok('...in English in step', section(sa21en, '🧘 08:45 ') === '🧘 08:45 Led Intermediate series · Boonchu\n3 booked\nFirst week 1: 王小明'
+     && section(sa21en, '🧘 07:00 ').includes('\n2 booked\nDrop-in 1: Mia E.\nFirst class today 1: Mia E.\nFirst week 1: Ana E.\nMat rental 2 (฿200 incl. VAT, paid at the shala): Ana E., Mia E.')
+     && section(sa21en, '💻') === '💻 Online (Zoom)\n07:00 Led Primary series · 1 booked\n09:00 Led Intermediate series · 0 booked'
+     && sa21en.trim().endsWith('Total: 2 classes · 5 booked · 1 drop-in · 1 first time · 2 first week · 2 mats · 1 ending · 0 not paid'), sa21en);
+  const mo23 = await brief('2026-11-23');
+  console.log(mo23.split('\n').map(l => '      | ' + l).join('\n'));
+  ok('Monday: Led Primary in the shala, and a cancelled online class says so', section(mo23, '🧘 06:30 ') === '🧘 06:30 Led Primary series · ครู Boonchu\nจอง 1 คน\nสัปดาห์แรก 1: Ana E.'
+     && section(mo23, '💻') === '💻 ออนไลน์ (Zoom)\n06:30 Led Primary series · ยกเลิก (Zoom training)', mo23);
+  const every = [tu19, fr20, sa21, sa21en, mo23].join('\n');
+  ok('never an email, a phone number or a member code in any of them, and no em dash', !/@|example\.com|0899000|BTEAM|\u2014/.test(every));
+
+  console.log('\n# the morning send time by weekday');
+  const nextAt = async at => { clock = bkkAt(at); return (await get('/api/bkk/admin/team/status')).body.briefs; };
+  const nexts = [];
+  // Within the hour after its time, today's brief not sent yet: the timer sends it at its next tick, so next is now.
+  for (const [at, want, hhmm, due] of [['2026-11-19T04:00:00', '2026-11-19T05:00:00', '05:00', false],
+    ['2026-11-19T05:00:00', '2026-11-19T05:00:00', '05:00', true], ['2026-11-20T05:01:00', '2026-11-20T05:01:00', '05:01', true],
+    ['2026-11-20T06:00:00', '2026-11-21T06:00:00', '06:00', false], ['2026-11-21T05:30:00', '2026-11-21T06:00:00', '06:00', false],
+    ['2026-11-21T06:00:00', '2026-11-21T06:00:00', '06:00', true], ['2026-11-22T06:30:00', '2026-11-22T06:30:00', '06:30', true],
+    ['2026-11-22T07:00:00', '2026-11-23T05:30:00', '05:30', false], ['2026-11-23T05:00:00', '2026-11-23T05:30:00', '05:30', false],
+    ['2026-11-23T05:31:00', '2026-11-23T05:31:00', '05:31', true], ['2026-11-23T06:30:00', '2026-11-24T05:00:00', '05:00', false]]) {
+    const b = await nextAt(at);
+    nexts.push([at, b.next.morning, b.at.morning, b.dueNow.morning]);
+    if (b.next.morning !== new Date(bkkAt(want)).toISOString() || b.at.morning !== hhmm || b.dueNow.morning !== due) nexts.push('WRONG');
+  }
+  ok('status says when the next morning brief really goes, on each weekday, late by under an hour too (and the evening stays 20:00)', !nexts.includes('WRONG')
+     && (await nextAt('2026-11-22T06:30:00')).at.evening === '20:00', JSON.stringify(nexts));
+  const forDate = d => morningPushes().filter(p => p.body.messages[0].text.split('\n')[0].endsWith(d));
+  const moonMon = [await team.tick(bkkAt('2026-11-09T05:00:00')), await team.tick(bkkAt('2026-11-09T05:29:00'))];
+  clock = bkkAt('2026-11-09T05:30:00');
+  const moonMon2 = await team.tick(clock);
+  ok('Monday: 05:00 sends nothing; 05:30 sends, a moon day with the shala closed text', moonMon.every(r => r.length === 0) && moonMon2.length === 1 && moonMon2[0].sent
+     && forDate('จ. 9 พ.ย.').length === 1 && forDate('จ. 9 พ.ย.')[0].body.messages[0].text === '☀️ บรีฟเช้า จ. 9 พ.ย.\nวันนี้ชาลาปิด วันพระจันทร์ดับ (moon day)',
+     JSON.stringify([moonMon, moonMon2]));
+  clock = bkkAt('2026-11-24T05:00:00');
+  const fullMoon = await team.tick(clock);
+  ok('a full moon Tuesday: the closed text at the Tuesday time, 05:00', fullMoon.length === 1 && fullMoon[0].sent
+     && forDate('อ. 24 พ.ย.')[0].body.messages[0].text === '☀️ บรีฟเช้า อ. 24 พ.ย.\nวันนี้ชาลาปิด วันพระจันทร์เต็มดวง (moon day)', JSON.stringify(fullMoon));
+  clock = bkkAt('2026-11-19T05:00:00');
+  const thu = await team.tick(clock);
+  ok('Thursday 05:00 sends the brief as built', thu.length === 1 && thu[0].sent && forDate('พฤ. 19 พ.ย.').length === 1
+     && forDate('พฤ. 19 พ.ย.')[0].body.messages[0].text === tu19, JSON.stringify(thu));
+  const satEarly = [await team.tick(bkkAt('2026-11-21T05:00:00')), await team.tick(bkkAt('2026-11-21T05:59:00'))];
+  clock = bkkAt('2026-11-21T06:00:00');
+  const satRun = await team.tick(clock);
+  const satPush = forDate('ส. 21 พ.ย.');
+  ok('Saturday: nothing before 06:00, then one push with both Led classes and the online section',
+     satEarly.every(r => r.length === 0) && satRun.length === 1 && satRun[0].sent && satPush.length === 1
+     && satPush[0].body.messages.length === 1 && satPush[0].body.messages[0].text === sa21, JSON.stringify([satEarly, satRun]));
+  const sunEarly = await team.tick(bkkAt('2026-11-22T05:00:00'));
+  clock = bkkAt('2026-11-22T06:00:00');
+  const sunRun = await team.tick(clock);
+  ok('Sunday: nothing at 05:00, the brief at 06:00', sunEarly.length === 0 && sunRun.length === 1 && sunRun[0].sent
+     && forDate('อา. 22 พ.ย.').length === 1 && forDate('อา. 22 พ.ย.')[0].body.messages[0].text.includes('🧘 07:00 Mysore Sunday'), JSON.stringify(sunRun));
+  const monEarly = await team.tick(bkkAt('2026-11-23T05:00:00'));
+  clock = bkkAt('2026-11-23T06:15:00');
+  const monLate = await team.tick(clock);
+  clock = bkkAt('2026-11-23T06:20:00');
+  const monAgain = await team.tick(clock);
+  ok('Monday 23: nothing at 05:00; a server back at 06:15 (late by under an hour) sends it once',
+     monEarly.length === 0 && monLate.length === 1 && monLate[0].sent && monAgain[0].skipped === 'already'
+     && forDate('จ. 23 พ.ย.').length === 1 && forDate('จ. 23 พ.ย.')[0].body.messages[0].text === mo23, JSON.stringify([monEarly, monLate, monAgain]));
+  ok('...and after it went, status says the next one is Tuesday 05:00', (await nextAt('2026-11-23T06:16:00')).next.morning
+     === new Date(bkkAt('2026-11-24T05:00:00')).toISOString());
+
+  console.log('\n# never new: Rezerv students the import did not mark; a name with nothing to show; Zoom seats (Wed 25, Sat 28 Nov)');
+  // The door's add for a Rezerv package holder it could not find (POST /api/bkk/admin/walkin, cover rezerv):
+  // a new profile with no source and no join date, and a checked-in seat on cover 'rezerv'.
+  const ruth = await member('Ruth Example');
+  await seat(ruth, 'my530_5', '2026-11-20', { cover: 'rezerv', source: 'door', in: '2026-11-20T05:40:00+07:00' });
+  const ruthPass = await pass(ruth, 'unlim1', { from: '2026-11-21', until: '2026-12-21', created: '2026-11-20T09:00:00+07:00' });
+  await seat(ruth, 'my530_3', '2026-11-25', { pass: ruthPass });
+  // A profile from aybkk.net the Rezerv member import matched: rezerv_id and the old join date, no source.
+  const ines = await member('Ines Example', { joined: '2019-03-01' });
+  await pool.query(`UPDATE bkk_members SET rezerv_id='RZ-TEST-1' WHERE id=$1`, [ines]);
+  const inesPass = await pass(ines, 'unlim1', { from: '2026-11-20', until: '2026-12-20', created: '2026-11-20T08:00:00+07:00' });
+  await seat(ines, 'my530_5', '2026-11-20', { pass: inesPass, in: '2026-11-20T05:31:00+07:00' });
+  await seat(ines, 'my530_3', '2026-11-25', { pass: inesPass });
+  // A Rezerv seat staff moved onto a pass here (moved_at), then a first visit on aybkk.net.
+  const moe = await member('Moe Example');
+  const moePass = await pass(moe, 'unlim1', { from: '2026-11-20', until: '2026-12-20', created: '2026-11-20T08:00:00+07:00' });
+  const moeSeat = await seat(moe, 'my530_5', '2026-11-20', { pass: moePass, in: '2026-11-20T05:32:00+07:00' });
+  await pool.query(`UPDATE bkk_bookings SET moved_at='2026-11-20T09:00:00+07:00' WHERE id=$1`, [moeSeat]);
+  await seat(moe, 'my530_3', '2026-11-25', { pass: moePass });
+  // Really new this week, to show the rule still finds them.
+  const pia = await member('Pia Example', { joined: '2026-11-20' });
+  const piaPass = await pass(pia, 'unlim1', { from: '2026-11-20', until: '2026-12-20', created: '2026-11-20T08:00:00+07:00' });
+  await seat(pia, 'my530_5', '2026-11-20', { pass: piaPass, in: '2026-11-20T05:33:00+07:00' });
+  await seat(pia, 'my530_3', '2026-11-25', { pass: piaPass });
+  // A name stored as only a phone number: a drop-in with a mat.
+  const phoneOnly = await member('0812345678');
+  const phoneDrop = await pass(phoneOnly, 'dropin', { from: '2026-11-25', until: '2026-11-26', used: 1, created: '2026-11-24T09:00:00+07:00' });
+  await seat(phoneOnly, 'my530_3', '2026-11-25', { pass: phoneDrop, mat: true });
+  const we25 = await brief('2026-11-25');
+  console.log(we25.split('\n').map(l => '      | ' + l).join('\n'));
+  const w530 = section(we25, '🧘 05:30 ');
+  ok('a Rezerv student is never new: added at the door on a Rezerv package, matched by the import, or a moved Rezerv seat',
+     !/Ruth E\.|Ines E\.|Moe E\./.test(we25) && w530.includes('\nสัปดาห์แรก 1: Pia E.'), w530);
+  ok('a name with nothing to show (only a phone number) says so, never "?" and never the number',
+     w530.includes('\nดรอปอิน 1: ไม่มีชื่อในระบบ') && w530.includes('\nมาครั้งแรกวันนี้ 1: ไม่มีชื่อในระบบ')
+     && w530.includes('(฿200 รวม VAT จ่ายที่ชาลา): ไม่มีชื่อในระบบ') && !/\?|0812345678/.test(we25), we25);
+  ok('...in English too', (await brief('2026-11-25', 'en')).includes('\nDrop-in 1: no name on file'));
+  const zed = await member('Zed Example');
+  await seat(zed, 'olp_sat_6', '2026-11-28', {});
+  await seat(zed, 'lp_sat_6', '2026-11-28', {});
+  const sa28 = await brief('2026-11-28');
+  ok('not paid: a Zoom seat at the same time as a shala class says (Zoom)', sa28.includes('\n• Zed E. จอง 07:00 (Zoom) แต่ยังไม่มีแพ็กเกจ')
+     && sa28.includes('\n• Zed E. จอง 07:00 แต่ยังไม่มีแพ็กเกจ'), sa28);
+
+  console.log('\n# switched on, or back up, within the hour after the time: status says now, and the timer sends');
+  clock = bkkAt('2026-11-26T05:20:00');
+  await post('/api/bkk/admin/settings', { teamBriefMorning: 'off' });
+  const offLate = (await get('/api/bkk/admin/team/status')).body.briefs;
+  ok('off at Thu 05:20: no next, but status says switching on sends today\'s within a minute', offLate.next.morning === null
+     && offLate.dueNow.morning === true && offLate.at.morning === '05:20', JSON.stringify(offLate));
+  await post('/api/bkk/admin/settings', { teamBriefMorning: 'on' });
+  const onLate = (await get('/api/bkk/admin/team/status')).body.briefs;
+  const late26 = pushes().length;
+  clock = bkkAt('2026-11-26T05:21:00');
+  const tick26 = await team.tick(clock);
+  ok('...switched on at 05:20: next is now, and the 05:21 tick posts it', onLate.next.morning === new Date(bkkAt('2026-11-26T05:20:00')).toISOString()
+     && onLate.dueNow.morning === true && tick26.length === 1 && tick26[0].sent && pushes().length === late26 + 1, JSON.stringify([onLate, tick26]));
+  const after26 = (await get('/api/bkk/admin/team/status')).body.briefs;
+  ok('...once sent, next is Friday 05:00', after26.next.morning === new Date(bkkAt('2026-11-27T05:00:00')).toISOString() && after26.dueNow.morning === false);
+  await pool.query(`INSERT INTO bkk_settings (key,value) VALUES ('team_brief_sent_morning_2026-11-27','{"state":"retry","tries":1}')`);
+  clock = bkkAt('2026-11-27T05:10:00');
+  const retry27 = (await get('/api/bkk/admin/team/status')).body.briefs;
+  const tick27 = await team.tick(clock);
+  ok('LINE was down at Fri 05:00 (a retry waits): status says now, and the next tick sends it', retry27.dueNow.morning === true
+     && retry27.next.morning === new Date(clock).toISOString() && tick27.length === 1 && tick27[0].sent, JSON.stringify([retry27, tick27]));
+  clock = bkkAt('2026-11-27T06:00:00');
+  ok('...an hour after the time, with nothing to send, next is Saturday 06:00', (await get('/api/bkk/admin/team/status')).body.briefs.next.morning
+     === new Date(bkkAt('2026-11-28T06:00:00')).toISOString());
 
   console.log('\n# the mat tick on bookings');
   const sch = (await get('/api/bkk/schedule?days=14')).body.classes || [];
@@ -640,6 +934,18 @@ const fakeDriver = { session: () => ({
   await post(`/api/bkk/admin/orders/${drop.body.order.id}/force-activate`, {});
   const inClass3 = await get(`/api/bkk/admin/class?slotId=${room.slotId}&date=${room.date}`);
   ok('a drop-in bought for the class carries the tick to its seat', inClass3.body.roster.some(r => r.name === 'Drop Mat' && r.needMat === true));
+  // The other way a drop-in is sold: at the desk or from the calendar (walk-in, cover dropin). Both book on a Drop-in pass.
+  const walk = await post('/api/bkk/admin/walkin', { cover: 'dropin', method: 'cash', slotId: room.slotId, date: room.date, checkIn: false,
+    name: 'Leo Walkin', email: 'leo.walkin@example.com' });
+  const walkSeat = (await pool.query(`SELECT b.cover, pr.code FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
+    JOIN bkk_passes p ON p.id=b.pass_id JOIN bkk_products pr ON pr.id=p.product_id WHERE m.name='Leo Walkin'`)).rows[0];
+  const roomAt = new Date(Date.parse(room.startAt) + 7 * 3600000).toISOString().slice(11, 16);
+  const roomText = (await get(`/api/bkk/admin/team/preview?kind=morning&date=${room.date}`)).body.text || '';
+  const roomBlock = roomText.split('\n\n').find(x => x.startsWith(`🧘 ${roomAt} ${room.title}`)) || '';
+  ok('the morning brief counts both as drop-ins in their class: the seat says cover pass, its pass is the Drop-in product',
+     walk.status === 200 && walk.body.cover === 'dropin' && walkSeat && walkSeat.cover === 'pass' && walkSeat.code === 'dropin'
+     && roomBlock.includes('\nดรอปอิน 2: Drop M., Leo W.') && roomBlock.includes('\nเช่าเสื่อ 1 (฿200 รวม VAT จ่ายที่ชาลา): Drop M.'),
+     JSON.stringify([walk.body, walkSeat, roomBlock]));
 
   // A far class booked first starts the pass window there; a nearer seat on
   // the same pass moves the start to it (same length), so both are paid for.
@@ -681,6 +987,324 @@ const fakeDriver = { session: () => ({
   const upEve = (await get('/api/bkk/admin/team/preview?kind=evening&date=2026-11-13&lang=en')).body.text || '';
   ok('an upgrade at the desk is in the evening money as its own item, with the desk line', upEve.includes('Paid: 1 order, ฿10,593')
      && upEve.includes('• Upgrade 1 to 3 months ×1 ฿10,593') && /cash 1 ฿10,593/.test(upEve), upEve.split('\n').slice(0, 7).join(' | '));
+
+  console.log('\n# a group the account is in, but never heard joining');
+  clock = bkkAt('2026-11-25T10:00:00');
+  const groupsText = async () => JSON.stringify((await setting('team_line_groups')) || []);
+  const toldBefore = told.length;
+  const groupEv = (type, groupId, extra = {}) => ({ type, timestamp: clock, source: { type: 'group', groupId, userId: 'Ustaff' }, ...extra });
+  const textEv = (groupId, text) => groupEv('message', groupId, { replyToken: 'r9', message: { id: 'm9', type: 'text', text } });
+  const MANAGE = gid('manage'), MEMBERS = gid('members');
+  const bad0 = (await status()).badSignatures;
+  const unsigned = await fetch(B + '/line/webhook', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ destination: 'Umain', events: [textEv(MANAGE, 'hello')] }) });
+  const badSig = await hook([textEv(MANAGE, 'hello')], 'not-the-secret');
+  ok('an unsigned or badly signed message from an unknown group is ignored and changes nothing', unsigned.status === 200 && badSig.status === 200
+     && !(await groupsText()).includes(MANAGE) && told.length === toldBefore);
+  const stBad = await status();
+  ok('...and status counts bad signatures since the restart, with the last one\'s time', stBad.badSignatures === bad0 + 2
+     && stBad.badSignatureLastAt === new Date(clock).toISOString(), JSON.stringify([stBad.badSignatures, stBad.badSignatureLastAt]));
+  await hook([textEv('Cnot-a-group-id', 'hello'), textEv('C' + 'A'.repeat(32), 'hello')]);
+  ok('an event whose group id is not shaped like LINE\'s (C and 32 hex) is skipped', !/Cnot-a-group|CAAAA/.test(await groupsText()));
+  // The real case: the main account has been in the staff group for a long time, so its join was never heard.
+  await post('/api/bkk/admin/team/group', { clear: true });
+  const toldClear = told.length;
+  const capLogs = [];
+  console.log = console.warn = console.error = (...a) => capLogs.push(a.join(' '));
+  const first = await hook([textEv(MANAGE, 'SECRET CAPTURE WORDS 7731')]);
+  console.log = logIt; console.warn = warnIt; console.error = errIt;
+  const capSeen = await setting('team_line_groups');
+  const cm = (capSeen || []).find(g => g.id === MANAGE);
+  ok('a signed message from a group not known yet adds it as waiting, never saved by itself', first.status === 200
+     && cm && cm.pending === true && cm.name === 'Other manage' && !cm.leftAt && (await setting('team_line_group')) == null, JSON.stringify(capSeen));
+  ok('...and Boonchu gets the waiting note once, naming the group', told.length === toldClear + 1 && /"Other manage": it waits/.test(told.at(-1))
+     && /No LINE group gets the team briefs yet/.test(told.at(-1)) && /Accept only the staff group/.test(told.at(-1)), JSON.stringify(told.slice(toldClear)));
+  const capStored = (await pool.query(`SELECT count(*)::int AS n FROM bkk_settings WHERE value::text ~ 'SECRET CAPTURE'`)).rows[0].n;
+  ok('...the message text is never stored or logged', capStored === 0 && !capLogs.some(l => /SECRET CAPTURE/.test(l)), JSON.stringify(capLogs));
+  const stCap = await status();
+  ok('status: the waiting group by its ref, and when LINE last reached /line/webhook with a good signature',
+     stCap.group.saved === false && stCap.groupsSeen.some(g => g.name === 'Other manage' && g.pending)
+     && stCap.webhookLastAt === new Date(clock).toISOString() && !anyId(JSON.stringify(stCap)), JSON.stringify(stCap));
+  await hook([groupEv('memberJoined', MEMBERS, { joined: { members: [{ type: 'user', userId: 'Unew' }] } })]);
+  ok('any group event counts: a member joining another unknown group makes it wait too',
+     (await setting('team_line_groups')).find(g => g.id === MEMBERS).pending === true && told.length === toldClear + 2
+     && (await setting('team_line_group')) == null);
+  // A known group (waiting or saved) talks all day: no write, no lock, not even a read.
+  const sqls = [];
+  let connects = 0;
+  const realQuery = pool.query, realConnect = pool.connect;
+  pool.query = function (sql, ...rest) { sqls.push(typeof sql === 'string' ? sql : (sql && sql.text) || ''); return realQuery.call(this, sql, ...rest); };
+  pool.connect = function (...a) { connects++; return realConnect.apply(this, a); };
+  clock += 20 * 1000;
+  const again = await hook([textEv(MANAGE, 'more words'), groupEv('memberLeft', MANAGE, { left: { members: [{ type: 'user', userId: 'Uold' }] } }),
+    textEv(MEMBERS, 'hi'), join(MANAGE, clock)]);
+  await wait(100);
+  pool.query = realQuery; pool.connect = realConnect;
+  ok('a known group\'s messages and joins write nothing (and the webhook time is kept at most once a minute)', again.status === 200
+     && !sqls.some(s => /bkk_settings/.test(s)) && connects === 0 && told.length === toldClear + 2
+     && (await setting('team_line_webhook_last')) === new Date(clock - 20 * 1000).toISOString(), JSON.stringify({ sqls, connects }));
+  clock += 60 * 1000;
+  await hook([]);
+  ok('...a minute later LINE\'s Verify (no events) moves the webhook time on', (await setting('team_line_webhook_last')) === new Date(clock).toISOString());
+  const capRef = stCap.groupsSeen.find(g => g.name === 'Other manage').ref;
+  const capAcc = await post('/api/bkk/admin/team/group', { accept: capRef });
+  ok('accepting the waiting group saves it: the briefs go there now', capAcc.status === 200 && (await setting('team_line_group')) === MANAGE
+     && /"Other manage" now/.test(told.at(-1)), JSON.stringify(capAcc.body));
+  await hook([join(MANAGE, clock - 3600 * 1000)]);
+  ok('the join LINE sends late, from before the message, changes nothing', (await setting('team_line_group')) === MANAGE
+     && (await setting('team_line_groups')).find(g => g.id === MANAGE).pending === false);
+  await hook([leave(MEMBERS, clock + 1000)]);
+  clock += 5000;
+  await hook([textEv(MEMBERS, 'back again')]);
+  const back = (await setting('team_line_groups')).find(g => g.id === MEMBERS);
+  ok('a group the account left, heard from again later, waits again', back.pending === true && !back.leftAt
+     && (await setting('team_line_group')) === MANAGE, JSON.stringify(back));
+  clock += 5000;
+  await hook([leave(MEMBERS, clock)]);
+  await hook([{ ...textEv(MEMBERS, 'sent before the leave'), timestamp: clock - 2000 }]);
+  const lateSaw = (await setting('team_line_groups')).find(g => g.id === MEMBERS);
+  clock += 5000;
+  await hook([textEv(MEMBERS, 'back once more')]);
+  const rejoin = (await setting('team_line_groups')).find(g => g.id === MEMBERS);
+  ok('a message LINE sends late, from before a leave, changes nothing, and the rejoin after it still waits',
+     !!lateSaw.leftAt && rejoin.pending === true && !rejoin.leftAt && (await setting('team_line_group')) === MANAGE,
+     JSON.stringify([lateSaw, rejoin]));
+
+  console.log('\n# capture: one ping per group, names filled in later, whose token, what a brief costs');
+  const summaries = id => lineCalls.filter(c => c.path === `/v2/bot/group/${id}/summary`).length;
+  const toldBurst = told.length;
+  const BURST = gid('burst');
+  const burst = await Promise.all(Array.from({ length: 8 }, (_, i) => hook([textEv(BURST, `burst ${i}`)])));
+  ok('a burst of messages from one unknown group: one name asked of LINE, one ping, it waits once', burst.every(r => r.status === 200)
+     && summaries(BURST) === 1 && told.length === toldBurst + 1 && (await setting('team_line_groups')).filter(g => g.id === BURST).length === 1);
+  const toldFlood = told.length;
+  let floodConnects = 0;
+  const connect0 = pool.connect;
+  pool.connect = function (...a) { floodConnects++; return connect0.apply(this, a); };
+  for (let round = 0; round < 3; round++) for (let i = 0; i < 12; i++) await hook([textEv(gid(`flood${i}`), 'hi')]);
+  pool.connect = connect0;
+  const keptFlood = await setting('team_line_groups');
+  const floodIds = Array.from({ length: 12 }, (_, i) => gid(`flood${i}`));
+  ok('twelve more unknown groups, talking for three rounds: each pings once, one write each, all kept (up to 100), the saved one too',
+     told.length === toldFlood + 12 && floodConnects === 12 && floodIds.every(id => keptFlood.some(g => g.id === id && g.pending))
+     && keptFlood.length > 12 && keptFlood.length <= 100 && keptFlood.some(g => g.id === MANAGE)
+     && (await setting('team_line_group')) === MANAGE, JSON.stringify({ pings: told.length - toldFlood, floodConnects, kept: keptFlood.length }));
+  // A deploy: a fresh server hears the same groups again. They are in the list, so: no ping, no write.
+  const signedReq = events => {
+    const raw = Buffer.from(JSON.stringify({ destination: 'Umain', events }));
+    return { rawBody: raw, headers: { 'x-line-signature': crypto.createHmac('sha256', 'main-secret').update(raw).digest('base64') } };
+  };
+  const toldDeploy = told.length;
+  const groupsRow = async () => (await pool.query(`SELECT value, updated_at FROM bkk_settings WHERE key='team_line_groups'`)).rows[0];
+  const rowBefore = await groupsRow();
+  const deployed = mountTeam(express(), { pgPool: pool, fetch: lineFetch, now: () => clock, notify: async t => { told.push(t); return true; } });
+  const summariesBefore = lineCalls.filter(c => /\/summary$/.test(c.path)).length;
+  for (const id of floodIds) await deployed.takeLine(signedReq([textEv(id, 'hi after the deploy')]));
+  const rowAfter = await groupsRow();
+  ok('...after a restart the same twelve groups talk again: no ping again, no write, LINE not asked', told.length === toldDeploy
+     && JSON.stringify(rowAfter) === JSON.stringify(rowBefore) && lineCalls.filter(c => /\/summary$/.test(c.path)).length === summariesBefore,
+     JSON.stringify({ pings: told.length - toldDeploy }));
+  // Heard while the token was not set: no name. Once it is set, status asks LINE again.
+  const NONAME = gid('noname');
+  delete process.env.LINE_CHANNEL_ACCESS_TOKEN;
+  await hook([textEv(NONAME, 'hello')]);
+  const nameless = (await setting('team_line_groups')).find(g => g.id === NONAME);
+  const stNoTok = await status();
+  process.env.LINE_CHANNEL_ACCESS_TOKEN = ' main-token\n';
+  const stTok = await status();
+  ok('a group first heard while the token was not set has no name; once the token is set, status fills it in',
+     nameless && nameless.name === null && nameless.pending && stNoTok.channel.tokenSet === false && stNoTok.channel.bot === null
+     && stTok.groupsSeen.some(g => g.pending && g.name === 'Other noname') && (await setting('team_line_groups')).find(g => g.id === NONAME).name === 'Other noname',
+     JSON.stringify([nameless, stTok.groupsSeen]));
+  ok('...status says whose LINE account the token is (the main account: name and basic id), and how many people each group has (LINE counts a group push per member)',
+     stTok.channel.tokenSet === true && stTok.channel.secretSet === true && stTok.channel.bot && stTok.channel.bot.name === 'AYBKK test account'
+     && stTok.channel.bot.basicId === '@000test' && stTok.channel.tokenError === null && stTok.group.members === 7
+     && stTok.groupsSeen.find(g => g.name === 'Other noname').members === 3
+     && lineCalls.filter(c => c.path === '/v2/bot/info').every(c => c.headers.Authorization === 'Bearer main-token'),
+     JSON.stringify([stTok.channel, stTok.group]));
+  const before0 = pushes().length;
+  await post('/api/bkk/admin/team/send', { text: 'Trim check' });
+  ok('...a token pasted with a space and a line end still works', pushes().length === before0 + 1
+     && pushes().at(-1).headers.Authorization === 'Bearer main-token');
+  process.env.LINE_CHANNEL_ACCESS_TOKEN = 'refused-token';
+  const stRef = await status();
+  ok('...a token LINE refuses says so', stRef.channel.tokenSet === true && /refused the access token \(401\)/.test(stRef.channel.tokenError || '')
+     && stRef.channel.bot === null && stRef.quota === null, JSON.stringify(stRef.channel));
+  process.env.LINE_CHANNEL_ACCESS_TOKEN = 'plan-token';
+  const stPlan = await status();
+  ok('...a 403 from LINE (a plan or permission answer) is not called a refused token, so nobody is told to put a new one on Railway',
+     stPlan.channel.tokenSet === true && stPlan.channel.tokenError === null && stPlan.channel.bot === null, JSON.stringify(stPlan.channel));
+  process.env.LINE_CHANNEL_ACCESS_TOKEN = 'main-token';
+  process.env.LINE_CHANNEL_SECRET = 'main-secret \n';
+  clock += 2 * 60 * 1000;
+  const badBefore = (await status()).badSignatures;
+  await hook([]);
+  ok('a channel secret pasted with a line end still checks signatures', (await status()).badSignatures === badBefore
+     && (await setting('team_line_webhook_last')) === new Date(clock).toISOString());
+  await hook([{ type: 'message', timestamp: Date.now(), source: { type: 'user', userId: 'Utrim' },
+    replyToken: 'r3', message: { id: 'm3', type: 'text', text: 'a student writes 5518' } }]);
+  await wait(300);
+  ok('...and the inbox checks it the same way: the 1:1 message is kept, so the box and the inbox never disagree',
+     (await pool.query(`SELECT count(*)::int AS n FROM aybkk_inbox WHERE text ~ '5518'`)).rows[0].n === 1);
+  process.env.LINE_CHANNEL_SECRET = 'main-secret';
+
+  console.log('\n# add a group by its ID (from the server log), then accept it');
+  const STAFF = gid('staff');
+  const addCalls = () => lineCalls.filter(c => /^\/v2\/bot\/group\//.test(c.path)).length;
+  const seenBefore = await groupsText();
+  const callsBefore = addCalls();
+  const shapes = ['Cnot-an-id', STAFF.slice(1), 'C' + STAFF.slice(1).toUpperCase(), STAFF + '0', 12345, '', null];
+  const badShape = await Promise.all(shapes.map(add => post('/api/bkk/admin/team/group', { add })));
+  ok('a badly shaped ID is 400 (C and 32 characters 0-9 and a-f), nothing stored, LINE never asked', badShape.every(r => r.status === 400
+     && /C and 32 characters/.test(r.body.error)) && (await groupsText()) === seenBefore && addCalls() === callsBefore, JSON.stringify(badShape.map(r => r.status)));
+  const told0 = told.length;
+  const notIn = await post('/api/bkk/admin/team/group', { add: gid('notin1') });
+  const forbidden = await post('/api/bkk/admin/team/group', { add: gid('forbidden') });
+  ok('an ID LINE does not know for the account (404, or 403) is 409 "not in that group", and nothing is stored', notIn.status === 409
+     && forbidden.status === 409 && /the AYBKK LINE account is not in that group/.test(notIn.body.error)
+     && !(await groupsText()).includes(gid('notin1')) && !(await groupsText()).includes(gid('forbidden')), JSON.stringify([notIn.body, forbidden.body]));
+  groupMode = 'down';
+  const down = await post('/api/bkk/admin/team/group', { add: STAFF });
+  groupMode = 'ok';
+  ok('LINE cannot be reached: 502, nothing stored', down.status === 502 && /could not be reached/.test(down.body.error) && down.body.line === 0
+     && !(await groupsText()).includes(STAFF), JSON.stringify(down.body));
+  const said502 = [], SAID = gid('said');
+  for (const m of ['429', '500']) { groupMode = m; said502.push(await post('/api/bkk/admin/team/group', { add: SAID })); }
+  groupMode = 'ok';
+  process.env.LINE_CHANNEL_ACCESS_TOKEN = 'refused-token';
+  said502.push(await post('/api/bkk/admin/team/group', { add: SAID }));
+  process.env.LINE_CHANNEL_ACCESS_TOKEN = 'main-token';
+  ok('...any other LINE answer is 502 with what LINE said (line: 429, 500, 401), so the page can say it in Thai; nothing stored',
+     said502.map(r => `${r.status}:${r.body.line}`).join(',') === '502:429,502:500,502:401' && !(await groupsText()).includes(SAID),
+     JSON.stringify(said502.map(r => r.body)));
+  delete process.env.LINE_CHANNEL_ACCESS_TOKEN;
+  const noTokAdd = await post('/api/bkk/admin/team/group', { add: STAFF });
+  process.env.LINE_CHANNEL_ACCESS_TOKEN = 'main-token';
+  ok('no token: 503, nothing stored', noTokAdd.status === 503 && !(await groupsText()).includes(STAFF));
+  const pushesBeforeAdd = pushes().length;
+  clock += 60 * 1000;
+  const added = await post('/api/bkk/admin/team/group', { add: `  ${STAFF}\n` });
+  const listed = (await setting('team_line_groups')).find(g => g.id === STAFF);
+  ok('LINE 200: the group goes in as waiting with its name and member count; ref, name and members come back, never the id',
+     added.status === 200 && added.body.ok === true && added.body.name === NAMES.staff && added.body.members === 12 && added.body.saved === false
+     && /^[0-9a-f]{12}$/.test(added.body.ref) && !anyId(JSON.stringify(added.body))
+     && listed && listed.pending === true && listed.name === NAMES.staff && listed.joinedAt === new Date(clock).toISOString()
+     && (await setting('team_line_group')) === MANAGE, JSON.stringify([added.body, listed]));
+  ok('...asked of LINE with the main token, nothing pushed, nobody pinged', lineCalls.filter(c => c.path.startsWith(`/v2/bot/group/${STAFF}/`))
+     .every(c => c.headers.Authorization === 'Bearer main-token' && c.method === 'GET') && pushes().length === pushesBeforeAdd && told.length === told0,
+     JSON.stringify(told.slice(told0)));
+  const stAdd = await status();
+  const staffRow = stAdd.groupsSeen.find(g => g.ref === added.body.ref);
+  ok('...status shows it waiting by its ref, with its members, never the id', staffRow && staffRow.pending && staffRow.members === 12
+     && staffRow.name === NAMES.staff && !anyId(JSON.stringify(stAdd)), JSON.stringify(staffRow));
+  NAMES.staff = 'AYBKK management & teaching (renamed, test)';
+  const again2 = await post('/api/bkk/admin/team/group', { add: STAFF });
+  const kept2 = (await setting('team_line_groups')).filter(g => g.id === STAFF);
+  ok('adding it again refreshes the name: still one entry, still waiting', again2.status === 200 && again2.body.ref === added.body.ref
+     && kept2.length === 1 && kept2[0].name === NAMES.staff && kept2[0].pending === true && kept2[0].joinedAt === listed.joinedAt, JSON.stringify(kept2));
+  await hook([textEv(STAFF, 'hello from staff')]);
+  ok('a message from it after the add is a known group: no second entry, no ping', told.length === told0
+     && (await setting('team_line_groups')).filter(g => g.id === STAFF).length === 1);
+  const accStaff = await post('/api/bkk/admin/team/group', { accept: added.body.ref });
+  ok('accept saves it: the briefs go there now', accStaff.status === 200 && accStaff.body.saved === true
+     && (await setting('team_line_group')) === STAFF && /now \(accepted/.test(told.at(-1)), JSON.stringify(accStaff.body));
+  const savedAgain = await post('/api/bkk/admin/team/group', { add: STAFF });
+  ok('...looking the saved group up again says so and changes nothing', savedAgain.status === 200 && savedAgain.body.saved === true
+     && (await setting('team_line_group')) === STAFF);
+  const sentStaff = await post('/api/bkk/admin/team/send', { text: 'Staff check' });
+  ok('the push goes to that group only, with LINE_CHANNEL_ACCESS_TOKEN', sentStaff.status === 200 && pushes().at(-1).body.to === STAFF
+     && pushes().at(-1).headers.Authorization === 'Bearer main-token');
+  // Staff accept the wrong group by mistake, then go back to the staff group by its ID.
+  const FRONT = gid('front');
+  const frontAdd = await post('/api/bkk/admin/team/group', { add: FRONT });
+  await post('/api/bkk/admin/team/group', { accept: frontAdd.body.ref });
+  const pend = async id => ((await setting('team_line_groups')).find(g => g.id === id) || {}).pending;
+  ok('accepting another group puts the one it replaces back to waiting', (await setting('team_line_group')) === FRONT
+     && (await pend(STAFF)) === true && (await status()).groupsSeen.find(g => g.ref === added.body.ref).pending === true);
+  const backAdd = await post('/api/bkk/admin/team/group', { add: STAFF });
+  ok('...looking the staff group up again shows it waiting (not saved), so Accept is offered', backAdd.status === 200
+     && backAdd.body.saved === false && (await pend(STAFF)) === true && (await setting('team_line_group')) === FRONT, JSON.stringify(backAdd.body));
+  const backAcc = await post('/api/bkk/admin/team/group', { accept: backAdd.body.ref });
+  ok('...and accepting it moves the briefs back; the wrong group waits again', backAcc.status === 200 && (await setting('team_line_group')) === STAFF
+     && (await pend(FRONT)) === true && (await pend(STAFF)) === false && /now \(accepted by staff or the Desk\)/.test(told.at(-1)), told.at(-1));
+  await post('/api/bkk/admin/team/group', { clear: true });
+  ok('{ clear: true } stops the briefs and the group waits again', (await setting('team_line_group')) == null && (await pend(STAFF)) === true
+     && /stopped/.test(told.at(-1)));
+  const clearAdd = await post('/api/bkk/admin/team/group', { add: STAFF });
+  await post('/api/bkk/admin/team/group', { accept: clearAdd.body.ref });
+  ok('...looked up again it is waiting and can be accepted again', clearAdd.body.saved === false && (await setting('team_line_group')) === STAFF);
+  const toldLeave = told.length;
+  await hook([leave(STAFF, clock + 1000)]);
+  ok('the account leaving that group clears it, and Boonchu is told the briefs stop', (await setting('team_line_group')) == null
+     && told.length === toldLeave + 1 && /not in the LINE group "AYBKK management & teaching \(renamed, test\)" any more/.test(told.at(-1))
+     && /briefs stop until staff accept another group/.test(told.at(-1)), JSON.stringify(told.slice(toldLeave)));
+  await hook([leave(FRONT, clock + 2000)]);
+  ok('...leaving a group that only waits tells nobody', told.length === toldLeave + 1);
+
+  console.log('\n# the LINE account used before: what it left is cleared once, before anything is read or sent');
+  // As the old sender left a database: its first join saved by itself, both briefs on, its webhook time and an error.
+  const OLD = gid('old-sender');
+  const seedOld = async () => {
+    await pool.query(`DELETE FROM bkk_settings WHERE key='team_line_sender'`);
+    for (const [k, v] of [['team_line_group', OLD], ['team_line_groups', [{ id: OLD, name: 'Old sender group (test)', joinedAt: '2026-11-08T01:00:00.000Z', leftAt: null, pending: false }]],
+      ['team_brief_morning', 'on'], ['team_brief_evening', 'on'], ['team_line_webhook_last', '2026-11-15T01:00:00.000Z'],
+      ['team_brief_error', { at: '2026-11-15T01:00:00.000Z', what: 'message', error: 'an old error' }]]) {
+      await pool.query(`INSERT INTO bkk_settings (key,value) VALUES ($1,$2) ON CONFLICT (key) DO UPDATE SET value=$2`, [k, JSON.stringify(v)]);
+    }
+  };
+  await seedOld();
+  // The database is down while the new server starts: nothing is read or sent until the clearing has run.
+  clock = bkkAt('2026-11-27T20:00:30');
+  const pushesOld = pushes().length, toldOld = told.length;
+  const downPool = { query: (...a) => pool.query(...a), connect: () => Promise.reject(new Error('test: database not ready')) };
+  const notReady = mountTeam(express(), { pgPool: downPool, fetch: lineFetch, now: () => clock, notify: async t => { told.push(t); return true; } });
+  const earlyTick = await notReady.tick(clock);
+  ok('while the clearing cannot run, the 20:00 tick sends nothing (not to the old group either)', earlyTick.length === 0
+     && pushes().length === pushesOld && (await setting('team_line_group')) === OLD);
+  const appOld = express();
+  appOld.use(express.json({ verify: (req, res, buf) => { if (/^\/line\/webhook/.test(req.url)) req.rawBody = buf; } }));
+  const fresh = mountTeam(appOld, { pgPool: pool, fetch: lineFetch, now: () => clock, notify: async t => { told.push(t); return true; } });
+  appOld.post('/line/webhook', async (req, res) => { await fresh.takeLine(req); res.json({ status: 'ok' }); });
+  const srvOld = appOld.listen(0);
+  const BO = `http://127.0.0.1:${srvOld.address().port}`;
+  const stOld = await (await fetch(BO + '/api/bkk/admin/team/status', { headers: ADMIN })).json();
+  ok('the first status on the new server: no group, nothing waiting, both briefs off, no old webhook time or error',
+     stOld.group.saved === false && stOld.groupsSeen.length === 0 && stOld.briefs.morning === 'off' && stOld.briefs.evening === 'off'
+     && stOld.webhookLastAt === null && stOld.lastError == null && (await setting('team_line_group')) == null
+     && (await setting('team_line_groups')) == null && (await setting('team_brief_morning')) === 'off' && (await setting('team_line_sender')) === 'main',
+     JSON.stringify(stOld));
+  ok('...the admin settings route agrees: both off', (await post('/api/bkk/admin/settings', {})).body.teamBrief.morning === 'off'
+     && (await post('/api/bkk/admin/settings', {})).body.teamBrief.evening === 'off');
+  ok('...and Boonchu is told once what was cleared', told.length === toldOld + 1 && /now come from the main AYBKK LINE account/.test(told.at(-1))
+     && /morning brief and the evening summary are off/.test(told.at(-1)), JSON.stringify(told.slice(toldOld)));
+  const oldTick = await fresh.tick(clock);
+  ok('...the 20:00 tick sends nothing', oldTick.length === 0 && pushes().length === pushesOld);
+  const oldBody = JSON.stringify({ destination: 'Umain', events: [join(OLD, clock)] });
+  const joinOld = await fetch(BO + '/line/webhook', { method: 'POST', headers: { 'Content-Type': 'application/json',
+    'X-Line-Signature': crypto.createHmac('sha256', 'main-secret').update(oldBody).digest('base64') }, body: oldBody });
+  const oldSeen = (await setting('team_line_groups')) || [];
+  ok('the main account later added to that old group: it waits and Boonchu hears of it, like any group', joinOld.status === 200
+     && oldSeen.find(g => g.id === OLD).pending === true && (await setting('team_line_group')) == null
+     && told.length === toldOld + 2 && /it waits/.test(told.at(-1)), JSON.stringify([oldSeen, told.slice(toldOld)]));
+  srvOld.close();
+  // It runs once per database: a later restart keeps what staff set since.
+  await post('/api/bkk/admin/team/group', { accept: (await status()).groupsSeen.find(g => g.name === 'Other old-sender').ref });
+  await post('/api/bkk/admin/settings', { teamBriefEvening: 'on' });
+  const later = mountTeam(express(), { pgPool: pool, fetch: lineFetch, now: () => clock, notify: async t => { told.push(t); return true; } });
+  const toldLater = told.length;
+  await later.tick(bkkAt('2026-11-27T20:01:00'));
+  ok('...a later restart clears nothing: the accepted group and the switch stay, and that evening goes there', (await setting('team_line_group')) === OLD
+     && (await setting('team_brief_evening')) === 'on' && told.length === toldLater && pushes().at(-1).body.to === OLD);
+  await post('/api/bkk/admin/settings', { teamBriefEvening: 'off' });
+
+  console.log('\n# never a reply, never a push from the webhook, never outside this machine');
+  ok('no reply, no leave, no other kind of call to LINE in the whole run', !lineCalls.some(c => /\/message\/(reply|multicast|broadcast|narrowcast)|\/leave$/.test(c.path)));
+  ok('every push went to a group staff had accepted at that time', pushes().every(p => [T1, T2, MANAGE, STAFF, OLD].includes(p.body.to)),
+     JSON.stringify([...new Set(pushes().map(p => GROUP.get(p.body.to) || 'unknown'))]));
+  ok('no request went to any host but api.line.me (stubbed) and this machine', outside.length === 0, JSON.stringify(outside));
+  const noStore = await Promise.all(['/api/bkk/admin/team/status', '/api/bkk/admin/team/preview?kind=morning&date=2026-11-25']
+    .map(u => fetch(B + u, { headers: ADMIN }).then(r => r.headers.get('cache-control'))));
+  ok('status and preview (student names) are never kept by a browser or a proxy', noStore.every(h => h === 'private, no-store'), JSON.stringify(noStore));
 
   console.log(`\n${PASS} passed, ${FAIL} failed`);
   srv.close(); await pool.end();
