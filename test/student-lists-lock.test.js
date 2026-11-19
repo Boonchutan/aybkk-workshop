@@ -8,6 +8,7 @@ const net = require('net');
 const os = require('os');
 const fs = require('fs');
 const path = require('path');
+const vm = require('vm');
 const { spawn } = require('child_process');
 const { Pool } = require('pg');
 
@@ -269,6 +270,37 @@ fs.writeFileSync(path.join(PRIVATE, 'rosters', 'hefei.json'), JSON.stringify({ w
     if (r.status === 200 && /AYBKK Door/.test(r.text)) odd.push([p, /default-src 'none'/.test(r.headers['content-security-policy'] || '') && r.headers['cache-control'] === 'no-cache']);
   }
   ok('...however the address is spelled, the tablet page never comes without that header', odd.length >= 4 && odd.every(x => x[1]), JSON.stringify(odd));
+  // Every word on the tablet in Thai, English, Chinese and Russian (19 Nov 2026), and
+  // its class names exactly as the booking page shows them.
+  const tabletSrc = (await request('GET', '/tablet')).text;
+  const table = (src, name) => {
+    let i = src.search(new RegExp('\\b' + name + ' = \\{')), depth = 0, q = null;
+    if (i < 0) return null;
+    i = src.indexOf('{', i);
+    for (const start = i; i < src.length; i++) {
+      const ch = src[i];
+      if (q) { if (ch === '\\') i++; else if (ch === q) q = null; }
+      else if (ch === "'" || ch === '"') q = ch;
+      else if (ch === '{') depth++;
+      else if (ch === '}' && !--depth) return vm.runInNewContext('(' + src.slice(start, i + 1) + ')');
+    }
+    return null;
+  };
+  const LANGS = ['th', 'en', 'zh', 'ru'];
+  const W = table(tabletSrc, 'WORDS') || {};
+  const said = v => String(typeof v === 'function' ? v('Ana E.', '05:30', '06:30', '04:30') : v);
+  const filled = v => Array.isArray(v) ? v.length === 7 && v.every(x => typeof x === 'string' && x.trim())
+    : (typeof v === 'string' || typeof v === 'function') && said(v).trim() !== '' && !/undefined/.test(said(v));
+  const gaps = LANGS.flatMap(l => Object.keys(W.th || {}).filter(k => !W[l] || !filled(W[l][k])
+    || (l === 'zh' && typeof W[l][k] === 'string' && /[,.?!:;]/.test(W[l][k]))).map(k => `${l}.${k}`));
+  ok('the tablet has every word in th, en, zh and ru, none missing or empty, Chinese with full-width marks',
+    Object.keys(W).sort().join() === [...LANGS].sort().join() && Object.keys(W.th || {}).length >= 15 && !gaps.length
+    && LANGS.every(l => Object.keys(W[l]).sort().join() === Object.keys(W.th).sort().join()), `${Object.keys(W)} ${gaps.join()}`);
+  const clsOf = src => JSON.stringify(table(src, 'CLASS_WORDS'), (k, v) => Object.prototype.toString.call(v) === '[object RegExp]' ? String(v) : v);
+  const tabCls = table(tabletSrc, 'CLASS_WORDS') || {};
+  ok("...its class names are the booking page's, in th, zh and ru", ['th', 'zh', 'ru'].every(l => (tabCls[l] || []).length > 3)
+    && clsOf(tabletSrc) === clsOf(fs.readFileSync(path.join(ROOT, 'public', 'bkk.html'), 'utf8')), clsOf(tabletSrc).slice(0, 80));
+  ok('...and no long dash and no "ไม่ต้องมา" anywhere on the page', !/—/.test(tabletSrc) && !tabletSrc.includes('ไม่ต้องมา'));
   for (const [m, p] of [['GET', '/api/bkk/door/now'], ['POST', '/api/bkk/door/checkin'], ['GET', '/api/bkk/door/qr']]) {
     const none = await request(m, p, {}, m === 'POST' ? {} : undefined), staff = await request(m, p, STAFF, m === 'POST' ? {} : undefined);
     ok(`${p} answers 401 without a door key, the staff key included`, none.status === 401 && staff.status === 401

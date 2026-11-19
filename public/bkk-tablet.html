@@ -22,7 +22,7 @@
   body{font:18px/1.45 'Plex',-apple-system,'Helvetica Neue','PingFang SC','Hiragino Sans GB',sans-serif;
     -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation;overflow-x:hidden}
   button{font:inherit;color:inherit;touch-action:manipulation}
-  .num{font-family:'Work Sans',sans-serif;font-variant-numeric:tabular-nums}
+  .num{font-family:'Work Sans','Plex',-apple-system,'Helvetica Neue','PingFang SC','Hiragino Sans GB',sans-serif;font-variant-numeric:tabular-nums}
   .th{font-size:.92em;color:var(--soft)}
 
   /* No internet: a yellow bar over everything, the list greyed and still. */
@@ -45,6 +45,7 @@
   #pair .stu{background:var(--paper);border:1px solid var(--warn);border-radius:16px;padding:16px 24px;margin:0 0 30px;max-width:720px}
   #pair .stu b{display:block;font-size:24px}
   #pair .stu span{display:block;font-size:20px;color:var(--soft)}
+  #pair .stu span.more{font-size:18px}
 
   /* The class list */
   header{position:sticky;top:0;z-index:10;background:#17121a;border-bottom:1px solid var(--line);
@@ -87,6 +88,8 @@
   .still .big{font-size:160px;font-weight:700;line-height:1;letter-spacing:.02em}
   .still .next{font-size:30px;margin:34px 0 6px;max-width:900px}
   .still .next.th{font-size:26px;margin-top:0}
+  .still .next.more{font-size:22px;color:var(--soft);margin:16px 0 0}
+  .still .next.more + .more{margin-top:4px}
   #night{background:#000}
   #night .num{font-size:40px;color:#4a3d50}
 
@@ -133,14 +136,12 @@
 </head>
 <body>
 
-<div id="offline" hidden role="alert">ไม่มีอินเทอร์เน็ต ระบบยังไม่ได้บันทึกการเช็กอิน กรุณาบอกครู
-  <span>No internet. Your tap is not saved. Please tell the teacher.</span></div>
+<div id="offline" hidden role="alert"></div>
 
 <section id="pair" hidden>
   <h1>AYBKK</h1>
   <p class="sub">แท็บเล็ตหน้าประตู · Door tablet</p>
-  <p class="stu"><b>Check-in is not working right now. Please tell the teacher.</b>
-    <span>ตอนนี้ยังเช็กอินที่นี่ไม่ได้ กรุณาบอกครู</span></p>
+  <p class="stu" id="stu"></p>
   <div id="code" class="num" aria-live="polite">&nbsp;</div>
   <p class="say">Ask Boonchu or M to type this code in Admin, Settings, Door tablets.</p>
   <p class="say th">ให้ Boonchu หรือ M พิมพ์รหัสนี้ใน Admin หน้า ตั้งค่า ช่อง แท็บเล็ตหน้าประตู</p>
@@ -155,20 +156,22 @@
     <div id="clock" class="num" aria-label="Bangkok time"></div>
   </header>
   <main>
-    <p class="lead">Tap your name to check in.<span class="th">แตะชื่อของคุณเพื่อเช็กอิน</span></p>
+    <p class="lead" id="lead"></p>
     <div class="grid" id="grid"></div>
     <div class="qrbox">
       <div id="qr" aria-hidden="true"></div>
-      <div><p>Not on the list? Book on your phone, then tap your name.</p>
-        <p class="th">ไม่เจอชื่อของคุณ? จองคลาสในโทรศัพท์ก่อน แล้วแตะชื่อของคุณ</p></div>
+      <div><p id="qrA"></p>
+        <p class="th" id="qrB"></p></div>
     </div>
   </main>
 </section>
 
 <section id="wait" class="still" hidden>
   <div class="big num" id="waitClock"></div>
-  <p class="next" id="waitEn"></p>
-  <p class="next th" id="waitTh"></p>
+  <p class="next" id="waitEn" lang="en"></p>
+  <p class="next th" id="waitTh" lang="th"></p>
+  <p class="next more" id="waitZh" lang="zh-Hans"></p>
+  <p class="next more" id="waitRu" lang="ru"></p>
 </section>
 
 <section id="night" class="still" hidden><div class="num" id="nightClock"></div></section>
@@ -208,34 +211,75 @@
   var KEY_NAME = 'aybkk_door_key';
   var KEY = store.get(KEY_NAME) || '';
 
-  // The confirm, welcome and refusal words. null = Thai and English together;
-  // a language button picks one for this student only.
+  // Every word a student reads here. LANG null = Thai and English together; a
+  // language button turns the list, the confirm and the result into that one
+  // language for this student only. Screens with no buttons show all four.
   var WORDS = {
     th: { q: 'ใช่คุณไหม', yes: 'ใช่ เช็กอินเลย', no: 'ไม่ใช่',
       hi: function (n) { return 'ยินดีต้อนรับ ' + n; }, done: 'เช็กอินเรียบร้อยแล้ว',
       already: function (t) { return 'เช็กอินไว้แล้วเมื่อ ' + t + ' น.'; },
-      bad: 'เช็กอินที่นี่ไม่ได้', bad2: 'กรุณาบอกครู หรือทักมาทาง LINE @aybkk' },
+      bad: 'เช็กอินที่นี่ไม่ได้', bad2: 'กรุณาบอกครู หรือทักมาทาง LINE @aybkk',
+      lead: 'แตะชื่อของคุณเพื่อเช็กอิน', qr: 'ไม่เจอชื่อของคุณ? จองคลาสในโทรศัพท์ก่อน แล้วแตะชื่อของคุณ',
+      none: 'ยังไม่มีชื่อในรายการ', isIn: 'เช็กอินแล้ว',
+      off: 'ไม่มีอินเทอร์เน็ต ระบบยังไม่ได้บันทึกการเช็กอิน กรุณาบอกครู',
+      stop: 'ตอนนี้ยังเช็กอินที่นี่ไม่ได้ กรุณาบอกครู',
+      moon: 'วันพระจันทร์ AYBKK ปิดวันนี้',
+      tomorrow: 'พรุ่งนี้', days: ['วันอาทิตย์', 'วันจันทร์', 'วันอังคาร', 'วันพุธ', 'วันพฤหัสบดี', 'วันศุกร์', 'วันเสาร์'],
+      time: function (t) { return t + ' น.'; },
+      next: function (d, c, t, o) { return 'คลาสถัดไป: ' + (d ? d + ' ' : '') + c + ' ' + t + ' น. รายชื่อขึ้นตั้งแต่ ' + o + ' น.'; } },
     en: { q: 'Is this you?', yes: 'Yes, check me in', no: 'No',
       hi: function (n) { return 'Welcome, ' + n.replace(/\.$/, '') + '.'; }, done: 'You are checked in.',
       already: function (t) { return 'Already checked in at ' + t + '.'; },
-      bad: 'We can’t check you in here.', bad2: 'Please see the teacher, or message LINE @aybkk.' },
+      bad: 'We can’t check you in here.', bad2: 'Please see the teacher, or message LINE @aybkk.',
+      lead: 'Tap your name to check in.', qr: 'Not on the list? Book on your phone, then tap your name.',
+      none: 'Nobody is on the list yet.', isIn: 'checked in',
+      off: 'No internet. Your tap is not saved. Please tell the teacher.',
+      stop: 'Check-in is not working right now. Please tell the teacher.',
+      moon: 'Moon day. The shala is closed today.',
+      tomorrow: 'Tomorrow', days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+      time: function (t) { return t; },
+      next: function (d, c, t, o) { return 'Next class: ' + (d ? d + ', ' : '') + c + ' ' + t + '. Names show from ' + o + '.'; } },
     zh: { q: '这是你吗？', yes: '是的，帮我签到', no: '不是',
       hi: function (n) { return '欢迎你，' + n; }, done: '签到成功。',
       already: function (t) { return '你已在 ' + t + ' 签到。'; },
-      bad: '这里无法为你签到。', bad2: '请找老师，或在 LINE 上联系 @aybkk。' },
+      bad: '这里无法为你签到。', bad2: '请找老师，或在 LINE 上联系 @aybkk。',
+      lead: '点击你的名字签到。', qr: '名单上没有你？先用手机预约，再点击你的名字。',
+      none: '名单上还没有名字。', isIn: '已签到',
+      off: '没有网络，签到没有保存。请告诉老师。',
+      stop: '现在无法在这里签到，请告诉老师。',
+      moon: '今天是月亮日，道场停课。',
+      tomorrow: '明天', days: ['周日', '周一', '周二', '周三', '周四', '周五', '周六'],
+      time: function (t) { return t; },
+      next: function (d, c, t, o) { return '下一节课：' + (d ? d + ' ' : '') + t + ' ' + c + '。' + o + ' 开始显示名单。'; } },
     ru: { q: 'Это вы?', yes: 'Да, отметьте меня', no: 'Нет',
       hi: function (n) { return 'Добро пожаловать, ' + n + '!'; }, done: 'Вы отмечены.',
       already: function (t) { return 'Вы уже отмечены в ' + t + '.'; },
-      bad: 'Здесь не получается отметиться.', bad2: 'Подойдите к учителю или напишите нам в LINE @aybkk.' },
+      bad: 'Здесь не получается отметиться.', bad2: 'Подойдите к учителю или напишите нам в LINE @aybkk.',
+      lead: 'Нажмите на своё имя, чтобы отметиться.', qr: 'Вас нет в списке? Запишитесь на занятие с телефона, затем нажмите на своё имя.',
+      none: 'В списке пока никого нет.', isIn: 'отметка есть',
+      off: 'Нет интернета. Отметка не сохранилась. Пожалуйста, скажите учителю.',
+      stop: 'Сейчас здесь не получается отметиться. Пожалуйста, скажите учителю.',
+      moon: 'Лунный день. Сегодня шала закрыта.',
+      tomorrow: 'завтра', days: ['в воскресенье', 'в понедельник', 'во вторник', 'в среду', 'в четверг', 'в пятницу', 'в субботу'],
+      time: function (t) { return t; },
+      next: function (d, c, t, o) { return 'Следующее занятие: ' + (d ? d + ' ' : '') + 'в ' + t + ', ' + c + '. Список появится в ' + o + '.'; } },
   };
   var LANGS = [['th', 'ไทย'], ['en', 'EN'], ['zh', '中文'], ['ru', 'RU']];
+  var HTML_LANG = { th: 'th', en: 'en', zh: 'zh-Hans', ru: 'ru' };
   var LANG = null;
-  var WD = { th: ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'],
-    en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] };
-  var CLASS_TH = [[/\[Online\]/g, '[ออนไลน์]'], [/Mysore/g, 'มายซอร์'], [/\(1st batch\)/g, '(รอบแรก)'],
-    [/\(2nd batch\)/g, '(รอบสอง)'], [/Sunday/g, 'วันอาทิตย์'], [/Led Primary series/g, 'Led Primary'],
-    [/Led Intermediate series/g, 'Led Intermediate']];
-  var classTh = function (t) { return CLASS_TH.reduce(function (s, r) { return s.replace(r[0], r[1]); }, String(t || '')); };
+  // Class names as the booking page (bkk.html) shows them, so a student sees the
+  // name they booked. Anything not listed stays as the shala wrote it.
+  var CLASS_WORDS = {
+    th: [[/\[Online\]/g, '[ออนไลน์]'], [/Mysore Sunday/g, 'มายซอร์ วันอาทิตย์'], [/Mysore/g, 'มายซอร์'],
+      [/\(1st batch\)/g, '(รอบแรก)'], [/\(2nd batch\)/g, '(รอบสอง)'], [/ series/g, '']],
+    zh: [[/\[Online\]/g, '[线上]'], [/Mysore Sunday/g, '周日迈索尔'], [/Mysore/g, '迈索尔'],
+      [/\(1st batch\)/g, '（第一批）'], [/\(2nd batch\)/g, '（第二批）'],
+      [/Led Primary series/g, '初级序列引导课'], [/Led Intermediate series/g, '中级序列引导课']],
+    ru: [[/\[Online\]/g, '[Онлайн]'], [/Mysore Sunday/g, 'Майсор, воскресенье'], [/Mysore/g, 'Майсор'],
+      [/\(1st batch\)/g, '(1-й поток)'], [/\(2nd batch\)/g, '(2-й поток)'],
+      [/Led Primary series/g, 'Led: первая серия'], [/Led Intermediate series/g, 'Led: промежуточная серия']],
+  };
+  var cls = function (l, t) { return (CLASS_WORDS[l] || []).reduce(function (s, r) { return s.replace(r[0], r[1]); }, String(t || '')); };
 
   // Bangkok time from the server's clock, never the iPad's time zone.
   var base = { server: 0, local: 0 };
@@ -261,6 +305,26 @@
     $('#offline').hidden = !on;
     document.body.classList.toggle('off', on);
     if (on) document.documentElement.style.setProperty('--offH', $('#offline').offsetHeight + 'px');
+  }
+  // The words on the list screen and the offline bar: one language when one is
+  // picked, else as they always were (English over Thai; the bar Thai over English).
+  function paintWords() {
+    var L = LANG ? WORDS[LANG] : null;
+    $('#lead').textContent = L ? L.lead : WORDS.en.lead;
+    if (!L) $('#lead').appendChild(el('span', 'th', WORDS.th.lead));
+    $('#qrA').textContent = L ? L.qr : WORDS.en.qr;
+    $('#qrB').textContent = L ? '' : WORDS.th.qr;
+    $('#qrB').hidden = !!L;
+    var bar = $('#offline');
+    bar.textContent = L ? L.off : WORDS.th.off;
+    if (!L) bar.appendChild(el('span', '', WORDS.en.off));
+    if (OFF) setOffline(true);
+  }
+  function setLang(l) {
+    LANG = l;
+    document.documentElement.lang = HTML_LANG[l || 'th'];
+    langButtons($('#langsTop'));
+    paintWords();
   }
 
   var api = function (url, opts) {
@@ -373,20 +437,15 @@
     if (m >= 21 * 60 || m < 4 * 60 + 30) { show('night'); $('#nightClock').textContent = hm(now); return; }
     show('wait');
     $('#waitClock').textContent = hm(now);
+    // Nobody can pick a language here: all four, English and Thai first.
     var n = DATA.next;
-    if (DATA.moon) {
-      $('#waitEn').textContent = 'Moon day. The shala is closed today.';
-      $('#waitTh').textContent = 'วันพระจันทร์ AYBKK ปิดวันนี้';
-    } else if (n) {
-      var today = bkk(now).slice(0, 10), tomorrow = bkk(now + 86400000).slice(0, 10);
-      var wd = new Date(n.date + 'T12:00:00Z').getUTCDay();
-      var dayEn = n.date === today ? '' : n.date === tomorrow ? 'Tomorrow, ' : WD.en[wd] + ', ';
-      var dayTh = n.date === today ? '' : n.date === tomorrow ? 'พรุ่งนี้ ' : 'วัน' + WD.th[wd] + ' ';
-      $('#waitEn').textContent = 'Next class: ' + dayEn + n.title + ' ' + n.start + '. Names show from ' + n.opens + '.';
-      $('#waitTh').textContent = 'คลาสถัดไป: ' + dayTh + classTh(n.title) + ' ' + n.start + ' น. รายชื่อขึ้นตั้งแต่ ' + n.opens + ' น.';
-    } else {
-      $('#waitEn').textContent = ''; $('#waitTh').textContent = '';
-    }
+    var today = bkk(now).slice(0, 10), tomorrow = bkk(now + 86400000).slice(0, 10);
+    var wd = n ? new Date(n.date + 'T12:00:00Z').getUTCDay() : 0;
+    [['en', '#waitEn'], ['th', '#waitTh'], ['zh', '#waitZh'], ['ru', '#waitRu']].forEach(function (x) {
+      var L = WORDS[x[0]];
+      var day = !n || n.date === today ? '' : n.date === tomorrow ? L.tomorrow : L.days[wd];
+      $(x[1]).textContent = DATA.moon ? L.moon : n ? L.next(day, cls(x[0], n.title), n.start, n.opens) : '';
+    });
   }
 
   var TONES = ['#c07ec8', '#ff8fbf', '#8fc7ff', '#ffc857', '#7fdcb4', '#f0a882', '#b7a6ff', '#e6d27a'];
@@ -403,18 +462,20 @@
     head.textContent = '';
     DATA.classes.forEach(function (c) {
       var b = el('b');
-      b.appendChild(el('span', 'num', c.start));
-      b.appendChild(document.createTextNode(c.title));
+      b.appendChild(el('span', 'num', LANG ? WORDS[LANG].time(c.start) : c.start));
+      b.appendChild(document.createTextNode(LANG ? cls(LANG, c.title) : c.title));
       head.appendChild(b);
-      head.appendChild(el('span', '', classTh(c.title) + ' ' + c.start + ' น.'));
+      if (!LANG) head.appendChild(el('span', '', cls('th', c.title) + ' ' + c.start + ' น.'));
     });
     $('#clock').textContent = hm(nowMs());
     var many = DATA.classes.length > 1;
+    // Read aloud in the picked language; with none, in English as always.
+    var A = WORDS[LANG || 'en'];
     var grid = $('#grid');
     grid.textContent = '';
     if (!DATA.seats.length) {
-      var p = el('p', 'empty', 'Nobody is on the list yet.');
-      p.appendChild(el('span', 'th', ' ยังไม่มีชื่อในรายการ'));
+      var p = el('p', 'empty', LANG ? A.none : WORDS.en.none);
+      if (!LANG) p.appendChild(el('span', 'th', ' ' + WORDS.th.none));
       grid.appendChild(p);
       return;
     }
@@ -429,7 +490,7 @@
       b.appendChild(el('span', 'nm', s.n));
       if (many) b.appendChild(el('span', 'at num', s.c));
       if (s.in) { var ok = el('span', 'ok', '✓'); ok.setAttribute('aria-hidden', 'true'); b.appendChild(ok); }
-      b.setAttribute('aria-label', s.n + (s.in ? ', checked in' : '') + (many ? ', ' + s.c : ''));
+      b.setAttribute('aria-label', s.n + (s.in ? ', ' + A.isIn : '') + (many ? ', ' + A.time(s.c) : ''));
       grid.appendChild(b);
     });
   }
@@ -454,8 +515,8 @@
       b.setAttribute('lang', l[0]);
       b.setAttribute('aria-pressed', LANG === l[0] ? 'true' : 'false');
       b.addEventListener('click', function () {
-        LANG = LANG === l[0] ? null : l[0];
-        langButtons($('#langsTop'));
+        setLang(LANG === l[0] ? null : l[0]);
+        if (SCREEN === 'list') paintList();
         if (OPEN && OPEN.kind === 'confirm') { paintConfirm(); armOver(8000); }
       });
       box.appendChild(b);
@@ -485,6 +546,7 @@
   var classAt = function (c) {
     if (!c || !DATA || !DATA.classes || DATA.classes.length < 2) return '';
     var k = DATA.classes.filter(function (x) { return x.start === c; })[0];
+    if (LANG) return WORDS[LANG].time(c) + (k ? ' ' + cls(LANG, k.title) : '');
     return c + (k ? ' ' + k.title : '');
   };
   // A tap that lands in the first moment of a screen is the second half of a
@@ -511,8 +573,7 @@
   function back() {
     var done = OPEN && OPEN.kind === 'result';
     closeOverlays();
-    LANG = null;
-    langButtons($('#langsTop'));
+    setLang(null);
     if (done) window.scrollTo(0, 0);
     if (PENDING && !busy()) take(PENDING); else render();
   }
@@ -596,7 +657,7 @@
     if (PENDING && !busy()) take(PENDING);
     var idle = Date.now() - lastTouch;
     // A language someone picked on the list and walked away from.
-    if (LANG && !OPEN && idle > 15000) { LANG = null; langButtons($('#langsTop')); }
+    if (LANG && !OPEN && idle > 15000) { setLang(null); if (SCREEN === 'list') paintList(); }
     if (!OPEN && idle > 30000 && window.scrollY > 0) window.scrollTo(0, 0);
     if (STALE && !OPEN && !OFF && idle > 60000) reloadWhenUp();
     var m = bkkMin(now);
@@ -624,7 +685,13 @@
     if (document.visibilityState === 'visible') { wake(); if (KEY) load(); }
   });
 
-  langButtons($('#langsTop'));
+  // The pairing screen has no buttons: the student line in all four.
+  ['en', 'th', 'zh', 'ru'].forEach(function (l, i) {
+    var s = el(i ? 'span' : 'b', i > 1 ? 'more' : '', WORDS[l].stop);
+    s.lang = HTML_LANG[l];
+    $('#stu').appendChild(s);
+  });
+  setLang(null);
   wake();
   if (KEY) start(); else pair();
 })();

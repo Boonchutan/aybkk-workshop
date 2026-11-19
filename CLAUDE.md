@@ -102,7 +102,9 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
   Fonts are self-hosted in `public/fonts/` (Long Cang for display, IBM Plex Sans
   Thai for text) because the Google Fonts CDN is blocked in China.
 - **Door tablet:** `public/bkk-tablet.html` at `/tablet` (an iPad at the door, iPadOS 16 Safari, Guided Access).
-  Students tap their own booked tile, "Is this you?", and are checked in. It holds a door key in the header
+  Students tap their own booked tile, "Is this you?", and are checked in. The whole screen follows the language
+  button (ไทย, EN, 中文, RU); with none picked it is Thai + English; screens with no buttons (waiting, moon day,
+  pairing) show all 4. It holds a door key in the header
   `x-door-key` (localStorage `aybkk_door_key`), never the admin key. Pair it in Admin, Settings, Door tablets:
   the tablet shows a code, staff type it there; one tablet at a time, Unpair ends it. The door key opens only
   `/api/bkk/door/*` and those routes take nothing else: it sees "Name L." and in or not for the seats of today's
