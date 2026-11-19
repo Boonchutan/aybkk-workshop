@@ -175,7 +175,7 @@ fs.writeFileSync(path.join(PRIVATE, 'rosters', 'hefei.json'), JSON.stringify({ w
     TELEGRAM_BOT_TOKEN: '', BOONCHU_CHAT_ID: '', PAYSO_MERCHANT_ID: '', PAYSO_SECRET_KEY: '', PAYSO_API_KEY: '',
     BKK_TIMERS: 'off', TELEGRAM_API_BASE: 'http://127.0.0.1:9' };
   for (const k of ['SHOP_ADMIN_KEY', 'RAILWAY_ENVIRONMENT', 'RUN_BOT', 'ENABLE_TUNNEL', 'NOTION_API_KEY',
-    'ANTHROPIC_API_KEY', 'OPENROUTER_API_KEY', 'HELPDESK_LINE_ACCESS_TOKEN', 'HELPDESK_LINE_CHANNEL_SECRET', 'LINE_CHANNEL_SECRET',
+    'ANTHROPIC_API_KEY', 'OPENROUTER_API_KEY', 'LINE_CHANNEL_SECRET',
     'LINE_CHANNEL_ACCESS_TOKEN', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET']) delete env[k];
   const child = spawn(process.execPath, ['-e', PRELOAD], { cwd: ROOT, env, stdio: ['ignore', 'pipe', 'pipe'] });
   let log = '';

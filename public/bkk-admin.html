@@ -183,6 +183,27 @@
   .pw .pwrow{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px}
   .pw .pwrow .pwl{margin-right:0}
   .pw input[type=time]{padding:6px 8px;font-size:15px}
+  /* Settings: the LINE team brief from the main AYBKK LINE account (19 Nov 2026). */
+  .tb .tbr{display:flex;flex-wrap:wrap;gap:0 8px;margin:6px 0;font-size:14px}
+  .tb .tbr>span:last-child{min-width:0;overflow-wrap:anywhere}
+  .tb .tbr .tbw{color:#8a6a12;font-weight:700}
+  .tb .tbg{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0;padding:8px 0;border-top:1px solid var(--line)}
+  .tb .tbg>span{min-width:0;overflow-wrap:anywhere}
+  .tb .tbg .btn{flex:none}
+  .tb .tbn{margin:-8px 0 10px 31px}
+  .tb .tbpre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;padding:10px;border:1px solid var(--line);border-radius:7px;
+    background:var(--wall);font:14px/1.55 'Plex',-apple-system,'Helvetica Neue','PingFang SC',sans-serif}
+  .tb .tbpre:empty{display:none}
+  .tb .tbe{display:block;margin-top:4px;overflow-wrap:anywhere;font-size:13px;font-weight:400}
+  .tb .tbg .tbw{font-size:13px}
+  .tb .tbtap{margin:4px 0 0}
+  .tb .tbadd{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+  .tb .tbadd p{margin:4px 0}
+  .tb .tbrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+  .tb .tbrow input{flex:1 1 220px;min-width:0;font-size:16px;font-family:ui-monospace,Menlo,Consolas,monospace}
+  .tb .tbrow .btn{flex:none}
+  @media (max-width:640px),(pointer:coarse){.tb .btn,.tb .pwl,.tb .tbrow input{min-height:44px}}
+  @media (prefers-color-scheme:dark){.tb .tbr .tbw{color:#f0c75e}}
   .rr{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:10px 0;border-top:1px solid var(--line)}
   /* The student's face, or their initials, so staff can put a name to a face (9 Nov 2026). */
   .rr .av{flex:none;display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;
@@ -1068,6 +1089,101 @@
     tgtNoChat: 'ยังไม่มีแชทที่จะส่งไป (BOONCHU_CHAT_ID ใน Railway)',
     tgtSent: 'ส่งข้อความทดสอบแล้ว ดูใน Telegram ได้เลย',
     tgtFail: 'Telegram ส่งไม่ถึง ถ้าขึ้นว่า "chat not found" หรือ "blocked": เปิดบอทนี้ใน Telegram กด Start แล้วลองอีกครั้ง',
+  });
+  // Settings: the LINE team brief from the main AYBKK LINE account (19 Nov 2026).
+  // The LINE console's own words (Channel secret, Channel access token) and the
+  // Railway names stay in English so Alex can match them, with Thai beside them.
+  Object.assign(STR.en, {
+    tbTitle: 'LINE team brief (main AYBKK LINE account)',
+    tbHelp: 'The main AYBKK LINE account, the one students follow, posts the morning teaching brief and the 20:00 day summary to the one staff LINE group you accept here. It never replies in a group.',
+    tbLoading: 'Loading…', tbRetry: 'Try again', tbTimes: 'Morning brief (Bangkok)',
+    tbWd: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    tbSecret: 'Channel secret (LINE_CHANNEL_SECRET)', tbToken: 'Channel access token (LINE_CHANNEL_ACCESS_TOKEN)', tbSet: 'set', tbNotSet: 'not set',
+    tbTokenIs: (n, id) => `set: ${n}${id ? ` (${id})` : ''}`,
+    tbTokenBad: "set, but LINE refuses it: put the main AYBKK account's long-lived Channel access token on Railway again",
+    tbTokenNoAnswer: 'set, LINE did not answer just now',
+    tbHook: 'Last signed event from LINE (/line/webhook)', tbHookNever: 'none yet: LINE has not sent a signed event to /line/webhook',
+    tbHookNoSecret: 'the server cannot check LINE yet: LINE_CHANNEL_SECRET is not set',
+    tbHookWrong: "Bad signatures but no good one: the Channel secret on Railway (LINE_CHANNEL_SECRET) is not the main AYBKK account's. Copy it from the LINE console, Basic settings.",
+    tbBad: 'Bad signatures since restart', tbGroup: 'Group', tbMembers: n => `${n} members`,
+    tbNoGroup: 'no group yet: add the staff group by its ID below, or post one message in it, then Accept it here',
+    tbNoGroupWait: 'not yet: accept the group below', tbNoGroupToken: 'no group yet: set the Channel access token first',
+    tbNoName: 'name not known yet: set the Channel access token, then open this tab again',
+    tbSameName: 'Two groups have this name: check the members and the time before you accept.',
+    tbWaiting: 'Waiting for you to accept:', tbWaitSince: t => `waiting since ${t}`, tbAccept: 'Accept',
+    tbQAccept: (n, m, cur) => `Send the team briefs to the LINE group "${n}"${m != null ? ` (${m} members)` : ''}${cur ? ` instead of "${cur}"` : ''}? They carry student first names.`,
+    tbQAcceptOn: list => ` Already switched on, so it goes to this group: ${list}.`,
+    tbOnItem: (kind, when, now) => `${kind === 'morning' ? 'the morning brief' : 'the evening summary'} (${now ? 'within a minute' : `next ${when}`})`,
+    tbAnd: ' and ',
+    tbMorning: 'Morning brief', tbEvening: 'Evening summary (20:00)', tbOnTap: 'The switches save as soon as you tap them.',
+    tbNeedGroup: 'Accept the team group first (Group, above), then switch it on.',
+    tbQOn: (kind, g, now) => `Switch on the ${kind === 'morning' ? 'morning brief' : 'evening summary'}? It posts student first names (with the family initial) to the LINE group "${g}".${now ? " Today's goes within a minute." : ''}`,
+    tbQCost: (need, limit, used) => ` It needs about ${need} LINE messages a month. The main account's plan allows ${limit} a month, and ${used} are used already this month, by messages to students too: when they run out, LINE stops the briefs and the messages to students until next month.`,
+    tbNext: t => `next ${t}`, tbNow: 'now (within a minute)', tbOff: 'off', tbLast: t => `last sent ${t}`, tbNever: 'not sent yet',
+    tbWontGroup: 'will not send: no group yet', tbWontToken: 'will not send: Channel access token not set',
+    tbWontBad: 'will not send: LINE refuses the Channel access token',
+    tbErr: t => `Last error (${t}):`, tbErrOld: t => `An older error, from before the last good send (${t}):`,
+    tbE401: "LINE refuses the Channel access token: put the main AYBKK account's token (LINE_CHANNEL_ACCESS_TOKEN) on Railway again.",
+    tbE429: "This month's LINE messages ran out (LINE answered 429): the briefs and the messages to students go again next month, or move the AYBKK account to a bigger plan.",
+    tbE403: 'LINE answered 403: the account or its plan is not allowed to do this. The token is not the problem, so keep it as it is on Railway, and check the plan in LINE Official Account Manager.',
+    tbE409: 'No group yet.', tbENoToken: 'LINE_CHANNEL_ACCESS_TOKEN is not set on Railway.',
+    tbQuota: "Main account's LINE messages this month (shared with messages to students)", tbNoLimit: 'no limit',
+    tbCost: 'LINE messages one brief needs', tbCostV: (n, m) => `about ${n} a month (${m} members × about 30 days)`,
+    tbOver: (need, limit, used) => `With what is switched on, the briefs need about ${need} LINE messages a month. The main account's plan allows ${limit} a month, and ${used} are used already this month: that quota also carries every message to students. When it runs out, LINE stops both until next month. Keep one brief on, or move the AYBKK account to a bigger plan.`,
+    tbPreview: "Preview tomorrow's morning brief", tbPreviewWait: 'Building…',
+    tbAddTitle: 'Add the group by its ID', tbAddHelp: 'The ID starts with C. The Desk can find it in the server log; pasting the whole log line works too. Nothing is sent to the group.',
+    tbAddPh: 'C then 32 characters', tbLookUp: 'Look up', tbLookWait: 'Looking up…', tbFound: 'Found:',
+    tbFoundSaved: 'This group already gets the team briefs.',
+    tbAddBad: 'That is not a LINE group ID: it is C and 32 characters, 0-9 and a-f.',
+    tbAddNotIn: 'The AYBKK LINE account is not in that group. Check the ID, or add the account to the group first.',
+    tbAddNoReach: 'LINE could not be reached. Try again in a minute.',
+    tbAddLine: n => `LINE answered ${n}. Try again in a minute.`,
+  });
+  Object.assign(STR.th, {
+    tbTitle: 'บรีฟทีมทาง LINE (บัญชี LINE หลักของ AYBKK)',
+    tbHelp: 'บัญชี LINE หลักของ AYBKK (บัญชีเดียวกับที่นักเรียนแอดไว้) ส่งบรีฟเช้าก่อนสอน และสรุปของวันตอน 20:00 เข้ากลุ่ม LINE ของทีม เฉพาะกลุ่มเดียวที่กดรับไว้ที่นี่ และจะไม่ตอบข้อความในกลุ่ม',
+    tbLoading: 'กำลังโหลด…', tbRetry: 'ลองอีกครั้ง', tbTimes: 'บรีฟเช้า (เวลากรุงเทพฯ)',
+    tbWd: ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'],
+    tbSecret: 'Channel secret (รหัสลับของแชนเนล, LINE_CHANNEL_SECRET)', tbToken: 'Channel access token (โทเคนสำหรับส่งข้อความ, LINE_CHANNEL_ACCESS_TOKEN)', tbSet: 'ตั้งแล้ว', tbNotSet: 'ยังไม่ได้ตั้ง',
+    tbTokenIs: (n, id) => `ตั้งแล้ว: ${n}${id ? ` (${id})` : ''}`,
+    tbTokenBad: 'ตั้งแล้ว แต่ LINE ไม่รับ: ใส่ Channel access token (long-lived) ของบัญชี LINE หลักของ AYBKK ใหม่ใน Railway',
+    tbTokenNoAnswer: 'ตั้งแล้ว แต่ LINE ยังไม่ตอบตอนนี้',
+    tbHook: 'อีเวนต์จาก LINE ที่ลายเซ็นถูกต้องล่าสุด (/line/webhook)', tbHookNever: 'ยังไม่มี: LINE ยังไม่เคยส่งอีเวนต์ที่ลายเซ็นถูกต้องมาที่ /line/webhook',
+    tbHookNoSecret: 'เซิร์ฟเวอร์ยังตรวจ LINE ไม่ได้: ยังไม่ได้ตั้ง LINE_CHANNEL_SECRET',
+    tbHookWrong: 'มีลายเซ็นไม่ถูกต้อง แต่ยังไม่มีที่ถูกต้องเลย: Channel secret ใน Railway (LINE_CHANNEL_SECRET) ไม่ใช่ของบัญชี LINE หลักของ AYBKK ให้คัดลอกจาก LINE console หน้า Basic settings',
+    tbBad: 'ลายเซ็นไม่ถูกต้อง ตั้งแต่เซิร์ฟเวอร์เริ่มใหม่', tbGroup: 'กลุ่ม', tbMembers: n => `${n} คน`,
+    tbNoGroup: 'ยังไม่มีกลุ่ม: เพิ่มกลุ่มทีมด้วย ID ด้านล่าง หรือส่งข้อความสักข้อความในกลุ่มนั้น แล้วกดรับกลุ่มที่นี่',
+    tbNoGroupWait: 'ยังไม่มี: กดรับกลุ่มด้านล่าง', tbNoGroupToken: 'ยังไม่มีกลุ่ม: ตั้ง Channel access token ก่อน',
+    tbNoName: 'ยังไม่รู้ชื่อกลุ่ม: ตั้ง Channel access token แล้วเปิดแท็บนี้อีกครั้ง',
+    tbSameName: 'มีสองกลุ่มที่ใช้ชื่อนี้: เช็กจำนวนคนและเวลาก่อนกดรับ',
+    tbWaiting: 'รอให้กดรับ:', tbWaitSince: t => `รอตั้งแต่ ${t}`, tbAccept: 'รับกลุ่มนี้',
+    tbQAccept: (n, m, cur) => `ส่งบรีฟทีมเข้ากลุ่ม LINE "${n}"${m != null ? ` (${m} คน)` : ''}${cur ? ` แทนกลุ่ม "${cur}"` : ''} ใช่ไหม? ในบรีฟมีชื่อนักเรียน`,
+    tbQAcceptOn: list => ` ตอนนี้เปิดอยู่แล้ว จึงจะส่งเข้ากลุ่มนี้: ${list}`,
+    tbOnItem: (kind, when, now) => `${kind === 'morning' ? 'บรีฟเช้า' : 'สรุปตอนเย็น'} (${now ? 'ภายใน 1 นาที' : `ครั้งต่อไป ${when}`})`,
+    tbAnd: ' และ ',
+    tbMorning: 'บรีฟเช้า', tbEvening: 'สรุปตอนเย็น (20:00)', tbOnTap: 'สวิตช์บันทึกทันทีที่แตะ',
+    tbNeedGroup: 'กดรับกลุ่มทีมก่อน (ดูช่องกลุ่มด้านบน) แล้วค่อยเปิด',
+    tbQOn: (kind, g, now) => `เปิด${kind === 'morning' ? 'บรีฟเช้า' : 'สรุปตอนเย็น'}ใช่ไหม? จะส่งชื่อนักเรียน (ชื่อและอักษรแรกของนามสกุล) เข้ากลุ่ม LINE "${g}"${now ? ' บรีฟของวันนี้จะส่งภายใน 1 นาที' : ''}`,
+    tbQCost: (need, limit, used) => ` ต้องใช้ประมาณ ${need} ข้อความ LINE ต่อเดือน แพ็กเกจของบัญชีหลักให้ ${limit} ต่อเดือน และเดือนนี้ใช้ไปแล้ว ${used} ซึ่งรวมข้อความที่ส่งถึงนักเรียนด้วย: ถ้าหมด LINE จะหยุดส่งทั้งบรีฟและข้อความถึงนักเรียนจนถึงเดือนหน้า`,
+    tbNext: t => `ครั้งต่อไป ${t}`, tbNow: 'ตอนนี้ (ภายใน 1 นาที)', tbOff: 'ปิดอยู่', tbLast: t => `ส่งล่าสุด ${t}`, tbNever: 'ยังไม่เคยส่ง',
+    tbWontGroup: 'จะไม่ส่ง: ยังไม่มีกลุ่ม', tbWontToken: 'จะไม่ส่ง: ยังไม่ได้ตั้ง Channel access token',
+    tbWontBad: 'จะไม่ส่ง: LINE ไม่รับ Channel access token',
+    tbErr: t => `ผิดพลาดล่าสุด (${t}):`, tbErrOld: t => `ข้อผิดพลาดเก่า ก่อนการส่งที่สำเร็จล่าสุด (${t}):`,
+    tbE401: 'LINE ไม่รับ Channel access token: ใส่ token ของบัญชี LINE หลักของ AYBKK (LINE_CHANNEL_ACCESS_TOKEN) ใหม่ใน Railway',
+    tbE429: 'ข้อความ LINE ของเดือนนี้หมดแล้ว (LINE ตอบ 429): บรีฟและข้อความถึงนักเรียนจะส่งได้อีกเดือนหน้า หรือเปลี่ยนบัญชี AYBKK เป็นแพ็กเกจที่ใหญ่ขึ้น',
+    tbE403: 'LINE ตอบ 403: บัญชีหรือแพ็กเกจนี้ไม่ได้รับอนุญาตให้ทำสิ่งนี้ ปัญหาไม่ได้อยู่ที่ token จึงให้คง token ใน Railway ไว้เหมือนเดิม และเช็กแพ็กเกจใน LINE Official Account Manager',
+    tbE409: 'ยังไม่มีกลุ่ม', tbENoToken: 'ยังไม่ได้ตั้ง LINE_CHANNEL_ACCESS_TOKEN ใน Railway',
+    tbQuota: 'ข้อความ LINE เดือนนี้ของบัญชีหลัก (ใช้ร่วมกับข้อความที่ส่งถึงนักเรียน)', tbNoLimit: 'ไม่จำกัด',
+    tbCost: 'ข้อความ LINE ที่บรีฟหนึ่งอย่างใช้', tbCostV: (n, m) => `ประมาณ ${n} ต่อเดือน (${m} คน × ประมาณ 30 วัน)`,
+    tbOver: (need, limit, used) => `เท่าที่เปิดอยู่ บรีฟใช้ประมาณ ${need} ข้อความ LINE ต่อเดือน แพ็กเกจของบัญชีหลักให้ ${limit} ต่อเดือน และเดือนนี้ใช้ไปแล้ว ${used} โควตานี้ใช้ส่งข้อความถึงนักเรียนด้วย ถ้าหมด LINE จะหยุดส่งทั้งสองอย่างจนถึงเดือนหน้า เปิดไว้แค่บรีฟเดียว หรือเปลี่ยนบัญชี AYBKK เป็นแพ็กเกจที่ใหญ่ขึ้น`,
+    tbPreview: 'ดูตัวอย่างบรีฟเช้าพรุ่งนี้', tbPreviewWait: 'กำลังสร้าง…',
+    tbAddTitle: 'เพิ่มกลุ่มด้วย ID', tbAddHelp: 'ID ของกลุ่มขึ้นต้นด้วย C ขอได้จาก Desk (อยู่ในล็อกของเซิร์ฟเวอร์) จะวางทั้งบรรทัดของล็อกก็ได้ ระบบจะไม่ส่งอะไรเข้ากลุ่ม',
+    tbAddPh: 'C ตามด้วยอีก 32 ตัว', tbLookUp: 'ค้นหา', tbLookWait: 'กำลังค้นหา…', tbFound: 'เจอกลุ่ม:',
+    tbFoundSaved: 'กลุ่มนี้รับบรีฟทีมอยู่แล้ว',
+    tbAddBad: 'นี่ไม่ใช่ ID กลุ่ม LINE: ID กลุ่มคือ C ตามด้วยอีก 32 ตัว ที่เป็น 0-9 หรือ a-f',
+    tbAddNotIn: 'บัญชี LINE ของ AYBKK ไม่ได้อยู่ในกลุ่มนี้ เช็ก ID อีกครั้ง หรือเพิ่มบัญชีเข้ากลุ่มก่อน',
+    tbAddNoReach: 'ติดต่อ LINE ไม่ได้ ลองใหม่อีกครั้งในอีกสักครู่',
+    tbAddLine: n => `LINE ตอบ ${n} ลองใหม่อีกครั้งในอีกสักครู่`,
   });
   // Settings: the door tablet (17 Nov 2026).
   Object.assign(STR.en, {
@@ -3200,7 +3316,7 @@
     if (current !== 'settings' || SUB) return;
     const byStatus = {};
     for (const c of letter) byStatus[c.status] = (byStatus[c.status] || 0) + c.n;
-    $('#view').innerHTML = `${PW ? pwBox(PW) : ''}${PW && PW.booking ? bookingBox(PW.booking) : ''}<div class="box">
+    $('#view').innerHTML = `${PW ? pwBox(PW) : ''}${PW && PW.booking ? bookingBox(PW.booking) : ''}${tbBox(null)}<div class="box">
       <b>${T('feeTitle')}</b>
       <p class="muted">${T('feeHelp')}</p>
       <p><input id="sur" type="number" min="0" max="20" step="0.5" value="${p.surchargePct}" style="width:90px"> %
@@ -3254,7 +3370,194 @@
       <p id="doorMsg" role="status"></p>
       <div id="doorList">${doorList(DOORS)}</div>
       </div>`;
+    TB_ADD = null;
+    loadTb();
   }
+  // The LINE team brief (team-brief.js): whether LINE reaches the main AYBKK
+  // account, which group gets the briefs, a group added by its ID, the two
+  // switches and tomorrow's morning text.
+  // Filled after the page shows: the status asks LINE for the month's quota.
+  let TB = null;
+  // The last look-up by ID: { ref, name, members, saved } or { error, value }.
+  // The ID itself is never kept once LINE found the group.
+  let TB_ADD = null, TB_LOOK = false;
+  const tbWhen = iso => `${day(iso)} ${time(iso)}`;
+  const TB_DAYS = 30;   // a brief goes every day, moon days too
+  // "Tue, Wed, Thu, Fri 05:00 · Mon 05:30 · Sat, Sun 06:00", from the server's own times.
+  const tbTimes = at => {
+    if (!Array.isArray(at) || at.length !== 7) return '';
+    const by = new Map();
+    for (const d of [1, 2, 3, 4, 5, 6, 0]) by.set(at[d], [...(by.get(at[d]) || []), T('tbWd')[d]]);
+    return [...by].sort((x, y) => String(x[0]).localeCompare(String(y[0]))).map(([t, ds]) => `${ds.join(', ')} ${t}`).join(' · ');
+  };
+  const tbOnCount = (st, also) => ['morning', 'evening'].filter(k => k === also || (st.briefs || {})[k] === 'on').length;
+  const tbLead = e => /LINE answered 401/.test(e) ? 'tbE401' : /LINE answered 403/.test(e) ? 'tbE403' : /LINE answered 429/.test(e) ? 'tbE429'
+    : /No team group yet/.test(e) ? 'tbE409' : /ACCESS_TOKEN is not set/.test(e) ? 'tbENoToken' : null;
+  // A waiting group: its name, members and since when, with Accept.
+  const tbWait = (g, mem, twice, lead) => `<p class="tbg"><span>${lead ? `${esc(lead)} ` : ''}${g.name
+    ? `<b>${esc(g.name)}</b>` : `<span class="tbw">${esc(T('tbNoName'))}</span>`}${mem(g.members)}<br>
+    <span class="muted">${esc(T('tbWaitSince', g.joinedAt ? tbWhen(g.joinedAt) : '?'))}</span>${twice(g.name) ? `<br><span class="tbw">${esc(T('tbSameName'))}</span>` : ''}</span>
+    <button class="btn pink" onclick="tbAccept('${esc(g.ref)}')"${g.name ? '' : ' disabled'}>${esc(T('tbAccept'))}</button></p>`;
+  const tbBox = (st, failed) => {
+    const head = `<b>${T('tbTitle')}</b><p class="muted">${T('tbHelp')}</p>`;
+    if (!st) return `<div class="box pw tb" id="tbBox">${head}<p class="${failed ? 'flash warn' : 'muted'}" role="status">${esc(T(failed ? 'failed' : 'tbLoading'))}</p>
+      ${failed ? `<p><button class="btn gray" onclick="tbReload()">${esc(T('tbRetry'))}</button></p>` : ''}</div>`;
+    const row = (k, v, warn) => `<p class="tbr"><span class="muted">${esc(T(k))}</span><span${warn ? ' class="tbw"' : ''}>${v}</span></p>`;
+    const ch = st.channel || {}, grp = st.group || {}, b = st.briefs || {}, last = st.lastSent || {};
+    const waiting = (st.groupsSeen || []).filter(g => g.pending);
+    const found = TB_ADD && TB_ADD.ref ? TB_ADD : null;
+    const named = [grp.saved ? grp.name : null, ...waiting.map(g => g.name)].filter(Boolean);
+    const twice = n => !!n && named.filter(x => x === n).length > 1;
+    const mem = m => m != null ? ` <span class="muted">· ${esc(T('tbMembers', Number(m)))}</span>` : '';
+    const token = !ch.tokenSet ? esc(T('tbNotSet')) : ch.tokenError ? esc(T('tbTokenBad'))
+      : ch.bot ? esc(T('tbTokenIs', ch.bot.name || '?', ch.bot.basicId)) : esc(T('tbTokenNoAnswer'));
+    const hook = st.webhookLastAt ? tbWhen(st.webhookLastAt) : T(ch.secretSet ? 'tbHookNever' : 'tbHookNoSecret');
+    const wont = !grp.saved ? 'tbWontGroup' : !ch.tokenSet ? 'tbWontToken' : ch.tokenError ? 'tbWontBad' : null;
+    const sw = (kind, label) => {
+      const on = b[kind] === 'on', sent = last[kind] && last[kind].at;
+      const when = !on ? T('tbOff') : wont ? T(wont) : b.dueNow && b.dueNow[kind] ? T('tbNext', T('tbNow'))
+        : b.next && b.next[kind] ? T('tbNext', tbWhen(b.next[kind])) : T('tbOff');
+      return `<label class="pwl"><input type="checkbox" id="tb_${kind}"${on ? ' checked' : ''} onchange="tbSwitch('${kind}',this)"><span>${esc(T(label))}</span></label>
+        <p class="muted tbn"><span${on && wont ? ' class="tbw"' : ''}>${esc(when)}</span> · ${esc(sent ? T('tbLast', tbWhen(sent)) : T('tbNever'))}</p>`;
+    };
+    const q = st.quota, m = Number(grp.members);
+    const per = grp.saved && Number.isFinite(m) && m > 0 ? m * TB_DAYS : null;
+    const need = per != null ? per * tbOnCount(st) : 0;
+    // Messages to students use the same quota: what this month used already counts.
+    const used = q && Number.isFinite(Number(q.used)) ? Number(q.used) : 0;
+    const over = per != null && need > 0 && q && q.limit != null && need + used > Number(q.limit);
+    // An error from before the last good send no longer says something is broken.
+    const good = Math.max(0, ...Object.values(last).map(x => Date.parse(x && x.at) || 0));
+    const err = st.lastError && st.lastError.error ? st.lastError : null;
+    const old = err && good > (Date.parse(err.at) || 0);
+    const lead = err && tbLead(String(err.error));
+    return `<div class="box pw tb" id="tbBox">${head}
+      ${row('tbTimes', esc(tbTimes(b.morningByWeekday)))}
+      ${row('tbSecret', esc(T(ch.secretSet ? 'tbSet' : 'tbNotSet')), !ch.secretSet)}
+      ${row('tbToken', token, !ch.tokenSet || !!ch.tokenError || !ch.bot)}
+      ${row('tbHook', esc(hook), !st.webhookLastAt)}
+      ${row('tbBad', `${Number(st.badSignatures) || 0}${st.badSignatureLastAt ? ` <span class="muted">(${esc(tbWhen(st.badSignatureLastAt))})</span>` : ''}`, st.badSignatures > 0)}
+      ${!st.webhookLastAt && ch.secretSet && st.badSignatures > 0 ? `<p class="flash warn">${esc(T('tbHookWrong'))}</p>` : ''}
+      ${row('tbGroup', grp.saved ? `${grp.name ? `<b>${esc(grp.name)}</b>` : esc(T('tbNoName'))}${mem(grp.members)}`
+        : esc(T(waiting.length ? 'tbNoGroupWait' : ch.tokenSet ? 'tbNoGroup' : 'tbNoGroupToken')), !grp.saved)}
+      ${waiting.some(g => !found || g.ref !== found.ref) ? `<p class="muted" style="margin:10px 0 0">${esc(T('tbWaiting'))}</p>${waiting
+        .filter(g => !found || g.ref !== found.ref).map(g => tbWait(g, mem, twice)).join('')}` : ''}
+      <div class="tbadd"><p><b>${esc(T('tbAddTitle'))}</b></p><p class="muted">${esc(T('tbAddHelp'))}</p>
+        <p class="tbrow"><input id="tbAddId" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
+          maxlength="300" enterkeyhint="search" placeholder="${esc(T('tbAddPh'))}" aria-label="${esc(T('tbAddTitle'))}" value="${esc(TB_ADD && TB_ADD.error ? TB_ADD.value : '')}"
+          onkeydown="if(event.key==='Enter')tbLookUp()">
+        <button class="btn gray" id="tbAddBtn" onclick="tbLookUp()">${esc(T('tbLookUp'))}</button></p>
+        <div id="tbAddOut" role="status">${TB_ADD && TB_ADD.error ? `<p class="flash warn">${esc(TB_ADD.error)}</p>`
+          : !found ? '' : found.saved || (grp.saved && grp.ref === found.ref) ? `<p class="tbg"><span>${esc(T('tbFound'))} <b>${esc(found.name || '?')}</b>${mem(found.members)}<br>
+            <span class="muted">${esc(T('tbFoundSaved'))}</span></span></p>`
+          : waiting.some(g => g.ref === found.ref) ? tbWait({ ...waiting.find(g => g.ref === found.ref), members: found.members ?? waiting.find(g => g.ref === found.ref).members }, mem, twice, T('tbFound'))
+          : ''}</div></div>
+      <div style="margin-top:10px">${sw('morning', 'tbMorning')}${sw('evening', 'tbEvening')}<p class="muted tbtap">${esc(T('tbOnTap'))}</p></div>
+      ${q && Number.isFinite(Number(q.used)) ? row('tbQuota', `${Number(q.used)} / ${q.limit == null ? esc(T('tbNoLimit')) : Number(q.limit)}`) : ''}
+      ${per != null ? row('tbCost', esc(T('tbCostV', per, m))) : ''}
+      ${over ? `<p class="flash warn">${esc(T('tbOver', need, Number(q.limit), used))}</p>` : ''}
+      ${err ? `<p class="${old ? 'muted' : 'flash warn'}">${esc(old ? T('tbErrOld', tbWhen(new Date(good).toISOString())) : T('tbErr', err.at ? tbWhen(err.at) : '?'))}
+        ${lead ? `<b>${esc(T(lead))}</b>` : ''} <span class="tbe">${esc(`${err.what || ''}: ${err.error}`)}</span></p>` : ''}
+      <p style="margin-top:12px"><button class="btn gray" id="tbPrevBtn" onclick="tbPreview()">${esc(T('tbPreview'))}</button></p>
+      <pre class="tbpre" id="tbPre"></pre></div>`;
+  };
+  const tbStatus = () => api('/api/bkk/admin/team/status').then(r => r.ok ? r.json() : null).catch(() => null);
+  const loadTb = async () => {
+    const st = await tbStatus();
+    if (current !== 'settings' || SUB || !$('#tbBox')) return;
+    if (st) TB = st;
+    $('#tbBox').outerHTML = tbBox(st, !st);
+  };
+  window.tbReload = () => { if ($('#tbBox')) $('#tbBox').outerHTML = tbBox(null); loadTb(); };
+  window.tbSwitch = async (kind, el) => {
+    const on = el.checked;
+    el.disabled = true;
+    if (on) {
+      // As things are now: the group, and whether today's goes at once.
+      const st = await tbStatus();
+      if (current !== 'settings' || SUB || !$('#tbBox')) return;
+      if (st) TB = st;
+      const back = () => { el.checked = false; el.disabled = false; };
+      if (!TB || !(TB.group && TB.group.saved)) { back(); alert(T('tbNeedGroup')); return; }
+      const q = TB.quota, m = Number(TB.group.members);
+      const need = Number.isFinite(m) && m > 0 ? m * TB_DAYS * tbOnCount(TB, kind) : 0;
+      const used = q && Number.isFinite(Number(q.used)) ? Number(q.used) : 0;
+      const cost = q && q.limit != null && need > 0 && need + used > Number(q.limit) ? T('tbQCost', need, Number(q.limit), used) : '';
+      if (!confirm(T('tbQOn', kind, TB.group.name || '?', !!(TB.briefs && TB.briefs.dueNow && TB.briefs.dueNow[kind])) + cost)) { back(); return; }
+    }
+    const r = await api('/api/bkk/admin/settings', { method: 'POST',
+      body: JSON.stringify({ [kind === 'morning' ? 'teamBriefMorning' : 'teamBriefEvening']: on ? 'on' : 'off' }) }).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (current !== 'settings' || SUB || !$('#tbBox')) return;
+    if (!r || !r.ok) { el.checked = !on; el.disabled = false; alert(j.error || T('failed')); return; }
+    loadTb();
+  };
+  window.tbAccept = async ref => {
+    // As things are now: which briefs are on, and what this group replaces.
+    const st = await tbStatus();
+    if (current !== 'settings' || SUB || !$('#tbBox')) return;
+    if (st) TB = st;
+    const g = TB && (TB.groupsSeen || []).find(x => x.ref === ref && x.pending);
+    if (!g || !g.name) return;
+    const cur = TB.group && TB.group.saved ? TB.group.name || '?' : null;
+    const b = TB.briefs || {};
+    const on = ['morning', 'evening'].filter(k => b[k] === 'on' && b.next && b.next[k])
+      .map(k => T('tbOnItem', k, tbWhen(b.next[k]), !!(b.dueNow && b.dueNow[k])));
+    const mem = g.members != null ? g.members : TB_ADD && TB_ADD.ref === ref ? TB_ADD.members : null;
+    if (!confirm(T('tbQAccept', g.name, mem, cur) + (on.length ? T('tbQAcceptOn', on.join(T('tbAnd'))) : ''))) return;
+    const r = await api('/api/bkk/admin/team/group', { method: 'POST', body: JSON.stringify({ accept: ref }) }).catch(() => null);
+    if (!r) { alert(T('failed')); return; }
+    if (await shout(r)) { TB_ADD = null; loadTb(); }
+  };
+  // Look a group up by its LINE ID: found, it waits in the list (never saved by
+  // this) and shows its name and members with Accept; the field is emptied.
+  window.tbLookUp = async () => {
+    const el = $('#tbAddId');
+    if (!el || TB_LOOK) return;
+    // A pasted log line, quotes, capitals or an invisible character still give
+    // the one group ID in it; anything else goes as typed and is refused.
+    const raw = el.value;
+    const ids = [...new Set([...raw.replace(/[\u200b-\u200d\u2060\ufeff]/g, '').matchAll(/\bC([0-9a-f]{32})\b/gi)]
+      .map(m => 'C' + m[1].toLowerCase()))];
+    const id = ids.length === 1 ? ids[0] : raw.trim();
+    TB_LOOK = true;
+    const btn = on => { const x = $('#tbAddBtn'); if (x) { x.disabled = !on; x.textContent = T(on ? 'tbLookUp' : 'tbLookWait'); } };
+    btn(false);
+    let r = null, j = {};
+    try {
+      r = await api('/api/bkk/admin/team/group', { method: 'POST', body: JSON.stringify({ add: id }) }).catch(() => null);
+      j = r ? await r.json().catch(() => ({})) : {};
+    } finally { TB_LOOK = false; }
+    if (current !== 'settings' || SUB || !$('#tbBox')) return;
+    if (r && r.ok && j.ref) {
+      TB_ADD = { ref: j.ref, name: j.name || null, members: j.members ?? null, saved: !!j.saved };
+      return loadTb();
+    }
+    const line = r && r.status === 502 ? Number(j.line) : NaN;
+    const msg = !r || line === 0 ? T('tbAddNoReach') : r.status === 400 ? T('tbAddBad') : r.status === 409 ? T('tbAddNotIn')
+      : r.status === 503 ? T('tbENoToken') : line === 401 ? T('tbE401') : line === 429 ? T('tbE429')
+      : Number.isFinite(line) && line > 0 ? T('tbAddLine', line) : r.status === 502 ? T('tbAddNoReach') : j.error || T('failed');
+    TB_ADD = { error: msg, value: raw.trim() };
+    if (TB) $('#tbBox').outerHTML = tbBox(TB);
+    else { btn(true); $('#tbAddOut').innerHTML = `<p class="flash warn">${esc(msg)}</p>`; }
+  };
+  let TB_PREV = false;
+  window.tbPreview = async () => {
+    if (TB_PREV) return;
+    TB_PREV = true;
+    const btn = on => { const x = $('#tbPrevBtn'); if (x) { x.disabled = !on; x.textContent = T(on ? 'tbPreview' : 'tbPreviewWait'); } };
+    btn(false);
+    const lang = TB && TB.briefs && TB.briefs.lang === 'en' ? 'en' : 'th';
+    let r = null, j = {};
+    try {
+      r = await api(`/api/bkk/admin/team/preview?kind=morning&date=${addDays(bkkYmd(), 1)}&lang=${lang}`).catch(() => null);
+      j = r ? await r.json().catch(() => ({})) : {};
+    } finally { TB_PREV = false; }
+    const out = $('#tbPre');
+    if (current !== 'settings' || SUB || !out) return;
+    btn(true);
+    out.textContent = r && r.ok ? j.text || '' : (j.error || T('failed'));
+  };
   // The door tablet: pair one by its code, see when it was used, unpair it.
   let DOORS = [];
   const doorList = list => !list.length ? `<p class="muted">${T('doorNone')}</p>`
