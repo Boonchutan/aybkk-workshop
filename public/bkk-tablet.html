@@ -24,6 +24,9 @@
   button{font:inherit;color:inherit;touch-action:manipulation}
   .num{font-family:'Work Sans','Plex',-apple-system,'Helvetica Neue','PingFang SC','Hiragino Sans GB',sans-serif;font-variant-numeric:tabular-nums}
   .th{font-size:.92em;color:var(--soft)}
+  /* Plex has no Cyrillic or Chinese: a Russian or Chinese line takes the iPad's own font from end to end,
+     so its digits and commas match its letters. Names and times keep theirs. */
+  .w:lang(ru),.w:lang(zh){font-family:-apple-system,'Helvetica Neue','PingFang SC','Hiragino Sans GB',sans-serif}
 
   /* No internet: a yellow bar over everything, the list greyed and still. */
   #offline{position:fixed;left:0;right:0;top:0;z-index:40;background:var(--warn);color:#241a02;
@@ -54,6 +57,7 @@
   header .cls b{display:block;font-size:24px;font-weight:600;line-height:1.25;overflow-wrap:anywhere}
   header .cls b .num{color:var(--plum);margin-right:8px}
   header .cls > span{display:block;color:var(--soft);font-size:16px}
+  header .cls.keep,#offline.keep{display:flex;flex-direction:column;justify-content:center}
   #clock{font-size:54px;font-weight:700;line-height:1}
   .langs{display:flex;gap:8px}
   .langs button{min-width:62px;height:52px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:var(--paper);
@@ -90,6 +94,8 @@
   .still .next.th{font-size:26px;margin-top:0}
   .still .next.more{font-size:22px;color:var(--soft);margin:16px 0 0}
   .still .next.more + .more{margin-top:4px}
+  .still .next.more:empty{display:none}
+  #waitZh{word-break:keep-all}
   #night{background:#000}
   #night .num{font-size:40px;color:#4a3d50}
 
@@ -136,7 +142,7 @@
 </head>
 <body>
 
-<div id="offline" hidden role="alert"></div>
+<div id="offline" class="w" hidden role="alert"></div>
 
 <section id="pair" hidden>
   <h1>AYBKK</h1>
@@ -151,16 +157,16 @@
 
 <section id="list" hidden>
   <header>
-    <div class="cls" id="classes"></div>
+    <div class="cls w" id="classes"></div>
     <div class="langs" id="langsTop"></div>
     <div id="clock" class="num" aria-label="Bangkok time"></div>
   </header>
   <main>
-    <p class="lead" id="lead"></p>
+    <p class="lead w" id="lead"></p>
     <div class="grid" id="grid"></div>
     <div class="qrbox">
       <div id="qr" aria-hidden="true"></div>
-      <div><p id="qrA"></p>
+      <div><p class="w" id="qrA"></p>
         <p class="th" id="qrB"></p></div>
     </div>
   </main>
@@ -170,30 +176,30 @@
   <div class="big num" id="waitClock"></div>
   <p class="next" id="waitEn" lang="en"></p>
   <p class="next th" id="waitTh" lang="th"></p>
-  <p class="next more" id="waitZh" lang="zh-Hans"></p>
-  <p class="next more" id="waitRu" lang="ru"></p>
+  <p class="next more w" id="waitZh" lang="zh-Hans"></p>
+  <p class="next more w" id="waitRu" lang="ru"></p>
 </section>
 
 <section id="night" class="still" hidden><div class="num" id="nightClock"></div></section>
 
 <div id="confirm" class="over" hidden role="dialog" aria-modal="true" aria-labelledby="cWho">
   <div class="ini" id="cIni"></div>
-  <p class="q" id="cQ"></p>
+  <p class="q w" id="cQ"></p>
   <p class="q2" id="cQ2"></p>
   <div class="who" id="cWho"></div>
   <p class="when num" id="cAt" hidden></p>
-  <button id="yes"></button>
-  <button id="no"></button>
+  <button id="yes" class="w"></button>
+  <button id="no" class="w"></button>
   <div class="langs" id="langsOver"></div>
 </div>
 
 <div id="result" class="over" hidden role="status" aria-live="assertive">
   <div class="mark" id="rMark"></div>
   <p class="r0 num" id="rAt" hidden></p>
-  <p class="r1" id="r1"></p>
-  <p class="r2" id="r2"></p>
-  <p class="r3" id="r3"></p>
-  <p class="r4" id="r4"></p>
+  <p class="r1 w" id="r1"></p>
+  <p class="r2 w" id="r2"></p>
+  <p class="r3 w" id="r3"></p>
+  <p class="r4 w" id="r4"></p>
 </div>
 
 <script>
@@ -244,8 +250,8 @@
       already: function (t) { return '你已在 ' + t + ' 签到。'; },
       bad: '这里无法为你签到。', bad2: '请找老师，或在 LINE 上联系 @aybkk。',
       lead: '点击你的名字签到。', qr: '名单上没有你？先用手机预约，再点击你的名字。',
-      none: '名单上还没有名字。', isIn: '已签到',
-      off: '没有网络，签到没有保存。请告诉老师。',
+      none: '名单上还没有人。', isIn: '已签到',
+      off: '没有网络，签到未保存。请告诉老师。',
       stop: '现在无法在这里签到，请告诉老师。',
       moon: '今天是月亮日，道场停课。',
       tomorrow: '明天', days: ['周日', '周一', '周二', '周三', '周四', '周五', '周六'],
@@ -257,8 +263,8 @@
       bad: 'Здесь не получается отметиться.', bad2: 'Подойдите к учителю или напишите нам в LINE @aybkk.',
       lead: 'Нажмите на своё имя, чтобы отметиться.', qr: 'Вас нет в списке? Запишитесь на занятие с телефона, затем нажмите на своё имя.',
       none: 'В списке пока никого нет.', isIn: 'отметка есть',
-      off: 'Нет интернета. Отметка не сохранилась. Пожалуйста, скажите учителю.',
-      stop: 'Сейчас здесь не получается отметиться. Пожалуйста, скажите учителю.',
+      off: 'Нет интернета. Отметка не сохранилась. Пожалуйста, сообщите учителю.',
+      stop: 'Сейчас здесь не получается отметиться. Пожалуйста, сообщите учителю.',
       moon: 'Лунный день. Сегодня шала закрыта.',
       tomorrow: 'завтра', days: ['в воскресенье', 'в понедельник', 'во вторник', 'в среду', 'в четверг', 'в пятницу', 'в субботу'],
       time: function (t) { return t; },
@@ -320,7 +326,16 @@
     if (!L) bar.appendChild(el('span', '', WORDS.en.off));
     if (OFF) setOffline(true);
   }
+  // While a language is picked, the header, the lead line and the bar keep the
+  // height they had in Thai + English, so the buttons and the tiles stay put.
+  var KEEP = ['#classes', '#lead', '#offline'];
   function setLang(l) {
+    KEEP.forEach(function (s) {
+      var e = $(s);
+      if (l && !LANG) e.style.minHeight = e.getBoundingClientRect().height + 'px';
+      if (!l) e.style.minHeight = '';
+      e.classList.toggle('keep', !!l);
+    });
     LANG = l;
     document.documentElement.lang = HTML_LANG[l || 'th'];
     langButtons($('#langsTop'));
@@ -345,6 +360,7 @@
     DATA = null; PENDING = null; DONE = {}; closeOverlays();
     clearTimeout(timers.load);
     setOffline(false);
+    setLang(null);
     pair();
   }
   // GEN: only the newest pairing request is followed; an older loop stops.
@@ -441,9 +457,11 @@
     var n = DATA.next;
     var today = bkk(now).slice(0, 10), tomorrow = bkk(now + 86400000).slice(0, 10);
     var wd = n ? new Date(n.date + 'T12:00:00Z').getUTCDay() : 0;
+    // "Mysore Sunday" already says the day.
+    var named = n && String(n.title || '').indexOf(WORDS.en.days[wd]) >= 0;
     [['en', '#waitEn'], ['th', '#waitTh'], ['zh', '#waitZh'], ['ru', '#waitRu']].forEach(function (x) {
       var L = WORDS[x[0]];
-      var day = !n || n.date === today ? '' : n.date === tomorrow ? L.tomorrow : L.days[wd];
+      var day = !n || n.date === today ? '' : n.date === tomorrow ? L.tomorrow : named ? '' : L.days[wd];
       $(x[1]).textContent = DATA.moon ? L.moon : n ? L.next(day, cls(x[0], n.title), n.start, n.opens) : '';
     });
   }
@@ -470,11 +488,11 @@
     $('#clock').textContent = hm(nowMs());
     var many = DATA.classes.length > 1;
     // Read aloud in the picked language; with none, in English as always.
-    var A = WORDS[LANG || 'en'];
+    var A = WORDS[LANG || 'en'], sep = LANG === 'zh' ? '，' : ', ';
     var grid = $('#grid');
     grid.textContent = '';
     if (!DATA.seats.length) {
-      var p = el('p', 'empty', LANG ? A.none : WORDS.en.none);
+      var p = el('p', 'empty w', LANG ? A.none : WORDS.en.none);
       if (!LANG) p.appendChild(el('span', 'th', ' ' + WORDS.th.none));
       grid.appendChild(p);
       return;
@@ -488,9 +506,9 @@
       ini.setAttribute('aria-hidden', 'true');
       b.appendChild(ini);
       b.appendChild(el('span', 'nm', s.n));
-      if (many) b.appendChild(el('span', 'at num', s.c));
+      if (many) b.appendChild(el('span', 'at num', LANG ? A.time(s.c) : s.c));
       if (s.in) { var ok = el('span', 'ok', '✓'); ok.setAttribute('aria-hidden', 'true'); b.appendChild(ok); }
-      b.setAttribute('aria-label', s.n + (s.in ? ', ' + A.isIn : '') + (many ? ', ' + A.time(s.c) : ''));
+      b.setAttribute('aria-label', s.n + (s.in ? sep + A.isIn : '') + (many ? sep + A.time(s.c) : ''));
       grid.appendChild(b);
     });
   }
@@ -517,7 +535,7 @@
       b.addEventListener('click', function () {
         setLang(LANG === l[0] ? null : l[0]);
         if (SCREEN === 'list') paintList();
-        if (OPEN && OPEN.kind === 'confirm') { paintConfirm(); armOver(8000); }
+        if (OPEN && OPEN.kind === 'confirm') { paintConfirm(); if (!OPEN.sent) armOver(8000); }
       });
       box.appendChild(b);
     });
@@ -597,8 +615,11 @@
         }
       });
     }, function () {
+      // No internet: the bar in the student's language, 15 s from now, as if they had just touched it.
+      lastTouch = Date.now();
       setOffline(true);
-      back();
+      closeOverlays();
+      render();
     });
   });
 
@@ -687,7 +708,7 @@
 
   // The pairing screen has no buttons: the student line in all four.
   ['en', 'th', 'zh', 'ru'].forEach(function (l, i) {
-    var s = el(i ? 'span' : 'b', i > 1 ? 'more' : '', WORDS[l].stop);
+    var s = el(i ? 'span' : 'b', i > 1 ? 'more w' : '', WORDS[l].stop);
     s.lang = HTML_LANG[l];
     $('#stu').appendChild(s);
   });
