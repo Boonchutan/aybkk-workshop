@@ -939,6 +939,27 @@
   .msg.ok{background:var(--blush);color:var(--plum)}
   .msg.bad{background:#fdeaea;color:#a33}
   .msg .acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+  /* The student agreement: step 2 of buying, the booking and My account dialog, and the page sections. */
+  .agree .terms{margin:10px 0 0}
+  .agree #cHead:focus{outline:none}
+  .agree h4.cgh,.tbody h4.cgh{margin:16px 0 4px;font:700 var(--fs-s)/20px var(--f-text);color:var(--plum)}
+  .agree ol.tl,.tbody ol.tl{margin:0;padding-left:26px}
+  .agree ol.tl li,.tbody ol.tl li{margin:0 0 8px;font-size:15px;line-height:1.5}
+  .agree label.ctick{display:flex;gap:10px;align-items:flex-start;margin:18px 0 0;font:600 15px/1.45 var(--f-text);cursor:pointer}
+  .agree label.ctick input{width:24px;height:24px;min-height:0;margin:1px 0 0;padding:0;flex:0 0 auto;accent-color:var(--plum);cursor:pointer}
+  .agree .cu20{margin:0}
+  .agree .cu20 .linkbtn{font-size:var(--fs-s);text-decoration:underline;text-underline-offset:.18em}
+  .agree #cSig{margin:2px 0 0}
+  .agree .cdata{margin:14px 0 0}
+  .linkbtn.inl{display:inline;min-height:0;padding:0;font:inherit;color:var(--plum);text-decoration:underline;text-underline-offset:.18em}
+  .agree .cpriv{margin:6px 0 0;padding:4px 14px 10px;background:var(--wall)}
+  .agree .cpriv p,.tbody p{margin:0 0 8px;font-size:15px;line-height:1.5}
+  .agreebar{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;margin:0 0 14px;padding:10px 14px;background:var(--blush);color:var(--plum);font-size:15px;line-height:1.4}
+  .agreebar .linkbtn{min-height:44px;color:var(--plum);font-weight:700;text-decoration:underline;text-underline-offset:.18em}
+  .agreecard{border-left:4px solid var(--plum)}
+  p.agreed{margin:0 0 14px}
+  .terms .tbody{max-width:70ch}
+  @media (min-width:1100px){ .sec.terms > .card > .tbody{grid-column:c 1/c 9} }
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   .skel{display:grid;gap:12px;margin:4px 0 16px}
   .skel i{display:block;height:16px;background:linear-gradient(90deg,var(--line) 30%,rgba(232,69,140,.10) 50%,var(--line) 70%);background-size:300% 100%;animation:skel 1.4s ease-in-out infinite}
@@ -1207,6 +1228,10 @@
       <p class="rm" hidden><button type="button" class="readmore" aria-expanded="true" aria-controls="findTh findIg findFb findTt findWx">Read more</button></p>
     </div>
   </section>
+
+  <!-- The student agreement and the privacy notice (/policy, /privacy), drawn from /api/bkk/consent once the switch is on. -->
+  <section id="policy" class="sec sgrid terms" hidden></section>
+  <section id="privacy" class="sec sgrid terms" hidden></section>
 </div>
 
 <footer class="sgrid"><figure class="wallart"><img src="/img/aybkk-old-mysore-1218.jpg" srcset="/img/aybkk-old-mysore-760.jpg 760w, /img/aybkk-old-mysore-1218.jpg 1218w" sizes="(min-width:1300px) 1218px, 92vw" width="1218" height="578" loading="lazy" decoding="async" alt="Watercolour from the AYBKK shala wall: a yoga class in old Mysore. अभ्यासात्सिद्धिमाप्नोति, abhyāsāt siddhim āpnoti: By practice, success comes."></figure><span class="brush">AYBKK</span><p class="faddr">Ashtanga Yoga Center of Bangkok · S31 Hotel, Sukhumvit 31</p></footer>
@@ -1941,6 +1966,39 @@
     bookClosedNow: '这节课的预约已截止。' });
   Object.assign(STR.ru, { bookClosed: 'Запись закрыта', closesAt: t => `Запись до ${t}`,
     bookClosedNow: 'Запись на это занятие уже закрыта.' });
+  // The student agreement's buttons and notes (20 Nov 2026). Its own words come from the server.
+  Object.assign(STR.en, { cBack: 'Back', cNeedTick: 'Please tick the box to agree.', cNeedName: 'Please type your name (2 letters or more).',
+    cNameL: 'Your name, as your signature', cOver20: '20 or older?', cChanged: 'The agreement was just updated. Please read it again.',
+    cFail: 'That did not work just now. Please try again.', cThanks: 'Thank you. Your agreement is saved.',
+    cCopy: 'A copy is on its way to your email.', cClose: 'Close', cCardH: 'Student agreement',
+    cCardP: 'Please read it and agree once, before your next class. It takes about 2 minutes.', cCardBtn: 'Read and agree',
+    cSigned: (v, d) => `Student agreement ${v}, agreed on ${d}.`, cReadIt: 'Read it',
+    cGuardian: 'Under 20: your parent or guardian still needs to come to the shala with you before your first class, to agree.',
+    cBanner: 'Please read the student agreement once. It takes about 2 minutes.', cBannerBtn: 'Read it' });
+  Object.assign(STR.th, { cBack: 'กลับ', cNeedTick: 'กรุณาติ๊กช่องเพื่อยอมรับก่อน', cNeedName: 'กรุณาพิมพ์ชื่อของคุณ (อย่างน้อย 2 ตัวอักษร)',
+    cNameL: 'ชื่อของคุณ (ใช้เป็นลายมือชื่อ)', cOver20: 'อายุ 20 ปีขึ้นไป?', cChanged: 'ข้อตกลงเพิ่งมีการปรับปรุง กรุณาอ่านอีกครั้ง',
+    cFail: 'ยังไม่สำเร็จในตอนนี้ กรุณาลองอีกครั้ง', cThanks: 'ขอบคุณ เราบันทึกการยอมรับของคุณแล้ว',
+    cCopy: 'เราส่งสำเนาไปที่อีเมลของคุณแล้ว', cClose: 'ปิด', cCardH: 'ข้อตกลงนักเรียน',
+    cCardP: 'โปรดอ่านและยอมรับสักครั้งก่อนคลาสถัดไป ใช้เวลาประมาณ 2 นาที', cCardBtn: 'อ่านและยอมรับ',
+    cSigned: (v, d) => `ข้อตกลงนักเรียน ${v} ยอมรับเมื่อ ${d}`, cReadIt: 'อ่าน',
+    cGuardian: 'อายุต่ำกว่า 20 ปี: ผู้ปกครองยังต้องมาที่ชาลาพร้อมคุณก่อนคลาสแรก เพื่อลงชื่อให้ความยินยอม',
+    cBanner: 'โปรดอ่านข้อตกลงนักเรียนสักครั้ง ใช้เวลาประมาณ 2 นาที', cBannerBtn: 'อ่านเลย' });
+  Object.assign(STR.zh, { cBack: '返回', cNeedTick: '请先勾选同意。', cNeedName: '请填写您的姓名（至少 2 个字）。',
+    cNameL: '您的姓名（作为签名）', cOver20: '已满 20 岁？', cChanged: '协议刚刚更新，请再读一遍。',
+    cFail: '暂时没有成功，请再试一次。', cThanks: '谢谢，您的同意已保存。',
+    cCopy: '副本已发往您的邮箱。', cClose: '关闭', cCardH: '学生协议',
+    cCardP: '下次上课前，请阅读并同意一次，大约需要 2 分钟。', cCardBtn: '阅读并同意',
+    cSigned: (v, d) => `学生协议 ${v}，于 ${d} 同意。`, cReadIt: '查看',
+    cGuardian: '未满 20 岁：第一次上课前，您的父母或监护人还需要陪您来道场表示同意。',
+    cBanner: '请阅读一次学生协议，大约需要 2 分钟。', cBannerBtn: '阅读' });
+  Object.assign(STR.ru, { cBack: 'Назад', cNeedTick: 'Пожалуйста, поставьте галочку, чтобы согласиться.', cNeedName: 'Пожалуйста, введите имя (минимум 2 буквы).',
+    cNameL: 'Ваше имя (как подпись)', cOver20: 'Вам 20 или больше?', cChanged: 'Соглашение только что обновилось. Пожалуйста, прочитайте его ещё раз.',
+    cFail: 'Сейчас не получилось. Пожалуйста, попробуйте ещё раз.', cThanks: 'Спасибо. Ваше согласие сохранено.',
+    cCopy: 'Копия уже отправлена вам на email.', cClose: 'Закрыть', cCardH: 'Соглашение ученика',
+    cCardP: 'Пожалуйста, прочитайте его и согласитесь один раз до следующего занятия. Это займёт около 2 минут.', cCardBtn: 'Прочитать и согласиться',
+    cSigned: (v, d) => `Соглашение ученика ${v}, согласие от ${d}.`, cReadIt: 'Прочитать',
+    cGuardian: 'Вам меньше 20: перед первым занятием ваш родитель или опекун должен прийти с вами в шалу и дать согласие.',
+    cBanner: 'Пожалуйста, прочитайте соглашение ученика один раз. Это займёт около 2 минут.', cBannerBtn: 'Прочитать' });
 
   // The Packages tab reads like the price poster (Boonchu, 12 Nov 2026). Its other lines are the price list's
   // own keys (flexH, mo12, n12, pick, polH, pol1a ...). ppDrop and ppPack are the poster's names for the two
@@ -2071,6 +2129,7 @@
     try { localStorage.setItem('aybkk_lang', LANG); } catch (_) {}
     applyLang();
     if (LOADED) tab(current);
+    if (CONSENT_P) loadConsent();
   }));
   // ── Read more: every section with data-fold starts folded (its .xm parts hidden). One button per section.
   function setFold(sec, open) {
@@ -2269,6 +2328,15 @@
       tab(current);
       if (HERO_BUY && current === 'packages') heroBuy();
       HERO_BUY = false;
+      // The agreement's text, off the timetable's path. /book?consent=1 (the message at the switch) opens it.
+      loadConsent().then(() => {
+        const qs = new URLSearchParams(location.search);
+        if (qs.get('consent') === '1') {
+          qs.delete('consent');
+          history.replaceState(null, '', location.pathname + (qs.toString() ? '?' + qs : '') + location.hash);
+          if (consentOn()) { tab('me'); openAgreement('me'); }
+        } else if (current === 'schedule' && !OPEN && consentOn() && CONSENT.mode === 'ask' && consentDue()) renderSchedule();
+      });
     } catch (e) {
       $('#view').removeAttribute('aria-busy');
       $('#view').innerHTML = `<div class="msg bad" role="alert"><p>${esc(t('loadFail'))}</p><div class="acts">
@@ -2485,13 +2553,13 @@
   // What this student booked, keyed like the schedule (slotId|Bangkok date).
   // Only a hint for the timetable: a failed or 404 /me never signs anyone out
   // here, renderMe keeps that job.
-  let MINE = { code: '', ok: false, map: new Map() }, MINE_LOAD = null;
+  let MINE = { code: '', ok: false, map: new Map(), me: null }, MINE_LOAD = null;
   function setMine(code, d) {
     const map = new Map();
     // startedToday: today's seats in a class that has begun, still on the timetable.
     for (const b of [...((d && d.bookings) || []), ...((d && d.startedToday) || [])])
       map.set(b.slot_id + '|' + (b.classDate || bkkDate(b.start_at)), b);
-    MINE = { code, ok: !!(d && d.member), map };
+    MINE = { code, ok: !!(d && d.member), map, me: d && d.member ? d : null };
     // A failed /me keeps the initials it had: only an answer changes who this is.
     if (d && d.member) ACCT_WHO = { code, name: d.member.name || '', gone: false,
       photo: (d.photo && d.photo.small) || '', large: (d.photo && d.photo.large) || '' };
@@ -2747,7 +2815,9 @@
     // A month with its bright poster shows the poster as the month calendar (its dates are
     // tappable); the dark calendar stays for the week view and for months without a poster.
     const poster = CALVIEW === 'month' ? posterBox(calMonth, my) : '';
-    $('#view').innerHTML = sw + (poster ? posterNav(has, today) + poster : cal) + dayList(my);
+    const bar = consentOn() && CONSENT.mode === 'ask' && consentDue() ? `<p class="agreebar"><span>${esc(t('cBanner'))}</span>
+      <button type="button" class="linkbtn" data-act="agreeOpen">${esc(t('cBannerBtn'))}</button></p>` : '';
+    $('#view').innerHTML = bar + sw + (poster ? posterNav(has, today) + poster : cal) + dayList(my);
     if (CALVIEW === 'week') {
       // Phones scroll the week sideways: start at the chosen day, or today.
       const box = $('#view .wkbox');
@@ -3070,8 +3140,16 @@
           <input id="myMail" type="email" autocomplete="email" placeholder="you@example.com">
           <p style="margin-top:10px"><button class="btn pink" onclick="saveMyEmail()">${esc(t('addEmailBtn'))}</button></p>
           <div id="mailMsg"></div></div>`;
+      // The agreement, once it is on: a card first until it is signed, then one quiet line.
+      const cs = d.consent && d.consent.mode !== 'off' ? d.consent : null;
+      const agree = !cs ? '' : !cs.signed ? `<div class="pkg agreecard"><h3>${esc(t('cCardH'))}</h3>
+          <p class="note">${esc(t('cCardP'))}</p>
+          <p style="margin-top:12px"><button type="button" class="btn pink" data-act="agreeOpen">${esc(t('cCardBtn'))}</button></p></div>`
+        : `<p class="note agreed">${esc(t('cSigned', cs.version, dayLong(bkkDate(cs.signedAt))))}
+          <a href="#policy">${esc(t('cReadIt'))}</a></p>${cs.under20 && !cs.guardianSigned ? `<p class="msg ok">${esc(t('cGuardian'))}</p>` : ''}`;
       $('#view').innerHTML = `<p class="note">${esc(t('member'))} <b>${esc(d.member.code)}</b> · ${esc(d.member.name)}
         · <button type="button" class="signout" style="min-height:0;padding:0" onclick="signOutMe()">${esc(t('notYou', d.member.name))}</button></p>
+        ${agree}
         <div id="faceBox"></div>
         ${habit}
         ${CN_HOST ? '' : '<div id="revBox"></div>'}
@@ -3574,6 +3652,171 @@
     }
   };
 
+  // ── The student agreement (20 Nov 2026) ───────────────────────────────────────
+  // Its words live on the server (/api/bkk/consent), pinned per version, in the reader's
+  // language; this page only lays them out. With the switch off nothing here shows. Buying,
+  // it is step 2 of the dialog, before the gateway; a booking the server holds back for it
+  // opens it and books in the same tap; My account has a card until it is signed.
+  let CONSENT = null, CONSENT_AT = '', CONSENT_P = null, TERMS = null, TERMS_SEEN = false;
+  const consentOn = () => !!CONSENT && CONSENT.mode !== 'off';
+  function loadConsent(force) {
+    if (!force && CONSENT_P && CONSENT_AT === LANG) return CONSENT_P;
+    const at = CONSENT_AT = LANG;
+    CONSENT_P = getJSON('/api/bkk/consent?lang=' + encodeURIComponent(at)).then(c => {
+      if (at === CONSENT_AT) { CONSENT = c; drawTerms(); }
+      return c;
+    }).catch(() => { if (at === CONSENT_AT) CONSENT_P = null; return CONSENT; });
+    return CONSENT_P;
+  }
+  const fillC = (s, o) => String(s).replace(/\{(\w+)\}/g, (m, k) => (o[k] != null ? o[k] : m));
+  const dayLong = ymd => {
+    try { return new Date(ymd + 'T12:00:00+07:00').toLocaleDateString(LOCALE[LANG] || 'en-GB',
+      { timeZone: 'Asia/Bangkok', day: 'numeric', month: 'short', year: 'numeric' }); } catch (_) { return ymd; }
+  };
+  // Counts only (no name, no code): how often the agreement is shown, and agreed to.
+  const cEvent = (kind, src) => {
+    try { fetch('/api/bkk/start-event', { method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true,
+      body: JSON.stringify({ page: 'book', kind: 'consent-' + kind, src, lang: LANG }) }).catch(() => {}); } catch (_) {}
+  };
+  // All 18 lines open, numbered straight through their groups; line 17's day is the go-live day.
+  function termsLines(c) {
+    let n = 0;
+    const since = c.since ? dayLong(c.since) : '…';
+    return c.text.agreement.groups.map(([h, lines]) => `<h4 class="cgh">${esc(h)}</h4><ol class="tl" start="${n + 1}">${
+      lines.map(l => { n++; return `<li>${esc(fillC(l, { since }))}</li>`; }).join('')}</ol>`).join('');
+  }
+  const privacyHtml = c => c.text.privacy.sections.map(([h, p]) => `<h4 class="cgh">${esc(h)}</h4><p>${esc(p)}</p>`).join('');
+  // The agreement and the privacy notice as sections of the page (/policy, /privacy). A link
+  // from a receipt (?agreement=v1) shows the version it was signed under.
+  const TERMS_V = (/^v\d{1,3}$/.exec(new URLSearchParams(location.search).get('agreement') || '') || [])[0];
+  async function drawTerms() {
+    const pol = $('#policy'), prv = $('#privacy');
+    pol.hidden = prv.hidden = !consentOn();
+    if (!consentOn()) return;
+    let c = CONSENT;
+    if (TERMS_V && TERMS_V !== c.version) {
+      if (!TERMS || TERMS.lang !== CONSENT.lang || TERMS.version !== TERMS_V)
+        TERMS = await getJSON(`/api/bkk/consent?lang=${encodeURIComponent(CONSENT.lang)}&version=${TERMS_V}`).catch(() => null);
+      if (TERMS && TERMS.version === TERMS_V) c = TERMS;
+    }
+    pol.innerHTML = `<h2 id="agreement">${esc(c.text.agreement.title)} · ${esc(c.version)}</h2><div class="card"><div class="tbody">${termsLines(c)}</div></div>`;
+    prv.innerHTML = `<h2>${esc(c.text.privacy.title)}</h2><div class="card"><div class="tbody">${privacyHtml(c)}</div></div>`;
+    // /policy and /privacy land on #policy and #privacy, hidden until the text came in.
+    const id = location.hash.slice(1);
+    if (!TERMS_SEEN && ['policy', 'privacy', 'agreement'].includes(id)) { TERMS_SEEN = true; document.getElementById(id).scrollIntoView(); }
+  }
+  // where: 'buy', 'book' or 'me'. Buying, the signature is the name typed in step 1 (Back to
+  // change it); elsewhere the profile name, which the student can change. practised: the
+  // one-time confirm heading for a student who has come before.
+  function agreementForm(where, { name = '', total = 0, practised = false } = {}) {
+    const c = CONSENT, a = c.text.agreement;
+    const go = where === 'buy' ? fillC(a.agreePay, { total: baht(total) }) : where === 'book' ? a.agreeBook : a.agree;
+    const data = esc(a.data).replace('{privacy}',
+      `<button type="button" class="linkbtn inl" id="cPriv" aria-expanded="false" aria-controls="cPrivBox">${esc(a.privacyLink)}</button>`);
+    return `<div class="agree">
+      ${practised ? `<h3 id="cHead" tabindex="-1">${esc(a.confirmTitle)}</h3><p class="note">${esc(a.confirmLead)}</p>`
+        : `<h3 id="cHead" tabindex="-1">${esc(a.title)} · ${esc(c.version)}</h3><p class="note">${esc(a.lead)}</p>`}
+      <div class="terms">${termsLines(c)}</div>
+      ${where === 'buy' ? '' : `<label for="cName">${esc(t('cNameL'))}</label><input id="cName" autocomplete="name" value="${esc(name)}">`}
+      <label class="ctick"><input type="checkbox" id="cTick"><span id="cTickT">${esc(a.tick)}</span></label>
+      <p class="cu20"><button type="button" class="linkbtn" id="cU20">${esc(a.under20)}</button></p>
+      <p class="note" id="cSig"></p>
+      <p class="note cdata"><b>${esc(a.dataH)}</b> ${data}</p>
+      <div id="cPrivBox" class="cpriv" hidden>${privacyHtml(c)}</div>
+      <div id="cMsg" role="status"></div>
+      <p class="dacts"><button class="btn pink" id="cGo">${esc(go)}</button>
+        ${where === 'buy' ? `<button type="button" class="btn ghost" id="cBack">‹ ${esc(t('cBack'))}</button>`
+          : `<button type="button" class="btn ghost" id="cCancel">${esc(t('cancel'))}</button>`}</p>
+    </div>`;
+  }
+  // The agreement opens at its first line: the dialog would otherwise scroll to the name box,
+  // the first thing it can focus. Focus goes to the heading, so a screen reader starts there.
+  const toTop = () => {
+    const h = $('#cHead');
+    if (h) h.focus({ preventScroll: true });
+    $('#dlg').scrollTop = 0;
+    requestAnimationFrame(() => { $('#dlg').scrollTop = 0; });
+  };
+  // Wires the form drawn in root; returns read(), which gives the tick for the server or
+  // null (with the reason shown).
+  function wireAgreement(root, where, getName) {
+    const a = CONSENT.text.agreement, q = s => root.querySelector(s);
+    let u20 = false;
+    const sig = () => { q('#cSig').textContent = fillC(a.signed, { name: getName().trim() || '…', date: dayLong(bkkToday()), version: CONSENT.version }); };
+    sig();
+    if (q('#cName')) q('#cName').addEventListener('input', sig);
+    q('#cU20').onclick = e => {
+      u20 = !u20;
+      q('#cTickT').textContent = u20 ? a.tickUnder20 : a.tick;
+      e.currentTarget.textContent = u20 ? t('cOver20') : a.under20;
+      q('#cTick').checked = false;
+    };
+    q('#cPriv').onclick = () => {
+      const box = q('#cPrivBox');
+      box.hidden = !box.hidden;
+      q('#cPriv').setAttribute('aria-expanded', String(!box.hidden));
+    };
+    cEvent('shown', where);
+    return () => {
+      const name = getName().replace(/\s+/g, ' ').trim(), say = k => { q('#cMsg').innerHTML = `<div class="msg bad">${esc(t(k))}</div>`; return null; };
+      if (!q('#cTick').checked) return say('cNeedTick');
+      if (name.length < 2) return say('cNeedName');
+      q('#cMsg').innerHTML = '';
+      cEvent('agreed', where);
+      return { agree: true, version: CONSENT.version, lang: CONSENT.lang, name, under20: u20 };
+    };
+  }
+  // A signed-in student signs on their own phone: a booking the server held back for it (after:
+  // the same booking again), the My account card, the ask-mode bar, or /book?consent=1.
+  async function openAgreement(where, after) {
+    await loadConsent();
+    const code = myCode();
+    if (!consentOn() || !code) return;
+    let me = MINE.code === code ? MINE.me : null;
+    if (!me) { try { me = await getJSON('/api/bkk/me/' + encodeURIComponent(code)); setMine(code, me); } catch (_) {} }
+    if (code !== myCode() || (where === 'me' && me && me.consent && me.consent.signed)) return;
+    $('#dlgIn').innerHTML = agreementForm(where, { name: me && me.member ? me.member.name : '',
+      practised: !!(me && me.history && me.history.practised > 0) });
+    if (!$('#dlg').open) $('#dlg').showModal();
+    toTop();
+    const read = wireAgreement($('#dlgIn'), where, () => $('#cName').value);
+    $('#cCancel').onclick = () => $('#dlg').close();
+    $('#cGo').onclick = async () => {
+      const body = read();
+      if (!body) return;
+      $('#cGo').disabled = true;
+      try {
+        const r = await fetch(`/api/bkk/me/${encodeURIComponent(code)}/consent`, { method: 'POST',
+          headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind: 'agreement', ...body }) });
+        const j = await r.json().catch(() => ({}));
+        // A page left open across a new version: the new text, said so.
+        if (r.status === 409 && j.error === 'consent') {
+          await loadConsent(true);
+          await openAgreement(where, after);
+          if ($('#cMsg')) $('#cMsg').innerHTML = `<div class="msg bad">${esc(t('cChanged'))}</div>`;
+          return;
+        }
+        if (!r.ok || !j.consent) throw new Error(t('cFail'));
+        if (MINE.code === code && MINE.me) MINE.me.consent = j.consent;
+        if (after) { $('#dlg').close(); return after(); }
+        $('#dlgIn').innerHTML = `<h3>${esc(t('cThanks'))}</h3>${j.emailed ? `<p class="note">${esc(t('cCopy'))}</p>` : ''}
+          <p class="dacts"><button class="btn pink" onclick="document.getElementById('dlg').close()">${esc(t('cClose'))}</button></p>`;
+        if (current === 'me') renderMe(); else if (current === 'schedule') renderSchedule();
+      } catch (e) {
+        if ($('#cMsg')) $('#cMsg').innerHTML = `<div class="msg bad">${esc(e.message || t('cFail'))}</div>`;
+        if ($('#cGo')) $('#cGo').disabled = false;
+      }
+    };
+  }
+  // In 'ask' a signed-in student who has not signed sees one line over the timetable; never a block.
+  const consentDue = () => {
+    const me = MINE.code && MINE.code === myCode() ? MINE.me : null;
+    return !!(me && me.consent && me.consent.mode !== 'off' && !me.consent.signed);
+  };
+  document.addEventListener('click', e => {
+    if (e.target.closest && e.target.closest('[data-act="agreeOpen"]')) openAgreement('me');
+  });
+
   // A drop-in (one class) is bought for a class: the student picks it here, and
   // paying books it. pre = { slotId, date } when they came from a class's Book.
   const singleClass = p => p.kind === 'credits' && Number(p.credits) === 1;
@@ -3596,7 +3839,8 @@
       : `<div class="msg bad">${esc(t('dropNone'))}</div>`;
     // The price as every price list shows it, before VAT, then what is paid online and why it is more.
     const name = PP[p.code] ? t(PP[p.code][0]) : pkgName(p);
-    $('#dlgIn').innerHTML = `<h3>${esc(name)} · ${baht(p.price_thb)}\u00a0+VAT</h3>
+    // Step 1 is the form; step 2 (bs2) the agreement, before the gateway. Back keeps the form as typed.
+    $('#dlgIn').innerHTML = `<div id="bs1"><h3>${esc(name)} · ${baht(p.price_thb)} +VAT</h3>
       <p class="note" style="margin:0 0 4px">${esc(t('ppPay'))} <b>${baht(p.total_thb)}</b> ${esc(t('ppIncl', SURCHARGE, VAT))}</p>
       ${intro ? `<p class="note" style="margin:0 0 4px">${esc(intro)}</p>` : ''}
       ${picker}
@@ -3607,36 +3851,63 @@
       <div id="bmsg"></div>
       <p class="dacts"><button class="btn pink" id="bgo" ${single && !opts.length ? 'disabled' : ''}>${esc(t('pay'))}</button>
       <button class="btn ghost" onclick="document.getElementById('dlg').close()">${esc(t('cancel'))}</button></p>
-      ${intro ? `<p><button class="linkbtn" id="bhave">${esc(t('havePass'))}</button></p>` : ''}`;
+      ${intro ? `<p><button class="linkbtn" id="bhave">${esc(t('havePass'))}</button></p>` : ''}</div>
+      <div id="bs2" hidden></div>`;
     $('#dlg').showModal();
+    loadConsent();
     // An online class is practised at home: no mat to rent, so no tick.
     const onlinePick = () => !!($('#bc') && $('#bc').selectedOptions[0] && $('#bc').selectedOptions[0].dataset.online);
     const syncMat = () => { if ($('#bmat')) $('#bmat').closest('label').style.display = onlinePick() ? 'none' : ''; };
     if ($('#bc')) $('#bc').addEventListener('change', syncMat);
     syncMat();
     if ($('#bhave')) $('#bhave').onclick = () => { $('#dlg').close(); tab('me'); };
-    $('#bgo').onclick = async () => {
+    const onStep2 = () => !$('#bs2').hidden;
+    const toStep1 = () => { $('#bs2').hidden = true; $('#bs1').hidden = false; };
+    const say = html => { (onStep2() && $('#cMsg') ? $('#cMsg') : $('#bmsg')).innerHTML = html; };
+    const busy = on => { $('#bgo').disabled = on; if ($('#cGo')) $('#cGo').disabled = on; };
+    // The profile this browser holds, when the email typed is its own: signed, it needs no tick.
+    const held = email => {
+      const me = MINE.code && MINE.code === myCode() ? MINE.me : null;
+      return me && me.member && String(me.member.email || '').toLowerCase() === email.toLowerCase() ? me : null;
+    };
+    const step2 = note => {
+      const email = $('#be').value.trim(), me = held(email);
+      $('#bs1').hidden = true;
+      $('#bs2').hidden = false;
+      $('#bs2').innerHTML = agreementForm('buy', { total: p.total_thb, practised: !!(me && me.history && me.history.practised > 0) });
+      const read = wireAgreement($('#bs2'), 'buy', () => $('#bn').value);
+      if (note) $('#cMsg').innerHTML = `<div class="msg bad">${esc(note)}</div>`;
+      $('#cBack').onclick = () => { toStep1(); busy(false); $('#bgo').focus(); };
+      $('#cGo').onclick = () => { const c = read(); if (c) send(c); };
+      toTop();
+    };
+    const send = async consent => {
       const name = $('#bn').value.trim(), email = $('#be').value.trim(), phone = $('#bp').value.trim();
       const [slotId, date] = single && $('#bc') ? $('#bc').value.split('|') : [];
-      if (single && !date) { $('#bmsg').innerHTML = `<div class="msg bad">${esc(t('dropNeed'))}</div>`; return; }
-      // A class whose booking closed while the form was open is never sent.
       const picked = single && CLASSES.find(c => key(c) === slotId + '|' + date);
+      // A class whose booking closed while the form was open is never sent.
       const shut = () => {
+        toStep1();
         if (picked) { picked.closed = true; DIRTY = true; }
         const o = $('#bc') && $('#bc').selectedOptions[0];
         if (o) o.disabled = true;
         $('#bmsg').innerHTML = `<div class="msg bad">${esc(t('bookClosedNow'))}</div>`;
       };
       if (picked && isClosed(picked)) return shut();
-      if (!name || !email) { $('#bmsg').innerHTML = '<div class="msg bad">Name and email are required.</div>'; return; }
-      $('#bgo').disabled = true;
+      busy(true);
       try {
         const r = await fetch('/api/bkk/orders', { method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ productCode: code, name, email, phone, memberCode: myCode(),
+          body: JSON.stringify({ productCode: code, name, email, phone, memberCode: myCode(), ...(consent ? { consent } : {}),
             ...(single ? { slotId: Number(slotId), date, needMat: !!($('#bmat') && $('#bmat').checked) && !onlinePick() } : {}) }) });
         const j = await r.json();
-        if (!r.ok && CLOSED_RE.test(j.error || '')) { $('#bgo').disabled = false; return shut(); }
+        if (!r.ok && CLOSED_RE.test(j.error || '')) { busy(false); return shut(); }
+        // The agreement the server asks for (or a newer version of it): step 2, with the text as it is now.
+        if (r.status === 409 && j.error === 'consent') {
+          await loadConsent(!!consent);
+          busy(false);
+          if (consentOn()) return step2(consent ? t('cChanged') : '');
+        }
         if (!r.ok) throw new Error(j.error || 'could not create order');
         // An email that already has a profile: its code is not handed to this
         // browser (anyone can type an email). The receipt email signs them in.
@@ -3660,6 +3931,7 @@
           document.body.appendChild(f);
           (window.aybkkBook || (g => g()))(() => f.submit());
         } else if (j.payLink) {
+          toStep1();
           $('#bmsg').innerHTML = `<div class="msg ok">
             <b>${esc(j.order.product)} — ฿${j.payLink.amount.toLocaleString()}</b><br>
             Reference <b>#${esc(j.payLink.refno)}</b>${known ? ` · member code <b>${esc(known)}</b>` : ''}<br>
@@ -3669,14 +3941,31 @@
               onclick="window.aybkkBook && aybkkBook()" href="${esc(j.payLink.url)}" target="_blank" rel="noopener">Pay ฿${j.payLink.amount.toLocaleString()}</a></p>`;
           $('#bgo').style.display = 'none';
         } else {
+          toStep1();
           $('#bmsg').innerHTML = `<div class="msg ok">Order ${esc(j.order.refno)} created.<br>
             ${esc(j.payUnavailable || '')}<br>${known ? `Your member code is <b>${esc(known)}</b>.` : esc(t('haveProfile'))}</div>`;
-          $('#bgo').disabled = false;
+          busy(false);
         }
       } catch (e) {
-        $('#bmsg').innerHTML = `<div class="msg bad">${esc(e.message)}</div>`;
-        $('#bgo').disabled = false;
+        say(`<div class="msg bad">${esc(e.message)}</div>`);
+        busy(false);
       }
+    };
+    $('#bgo').onclick = async () => {
+      const name = $('#bn').value.trim(), email = $('#be').value.trim();
+      const [slotId, date] = single && $('#bc') ? $('#bc').value.split('|') : [];
+      if (single && !date) { $('#bmsg').innerHTML = `<div class="msg bad">${esc(t('dropNeed'))}</div>`; return; }
+      const picked = single && CLASSES.find(c => key(c) === slotId + '|' + date);
+      if (picked && isClosed(picked)) return send(null);
+      if (!name || !email) { $('#bmsg').innerHTML = '<div class="msg bad">Name and email are required.</div>'; return; }
+      $('#bmsg').innerHTML = '';
+      // The agreement always comes before the gateway: on the way back the page knows the order only from this browser.
+      busy(true);
+      await loadConsent();
+      busy(false);
+      const me = held(email);
+      if (consentOn() && !(me && me.consent && me.consent.signed)) return step2();
+      send(null);
     };
   };
 
@@ -3726,6 +4015,9 @@
         body: JSON.stringify({ memberCode: code, slotId, date, needMat: MAT_WANT.has(slotId + '|' + date) }) });
       const j = await r.json();
       if (!r.ok) {
+        // In 'require' the server holds a student's own booking for the agreement: sign, then the
+        // same booking goes through in the same tap.
+        if (j.error === 'consent') { BUSY = false; openAgreement('book', () => book(slotId, date)); return; }
         // A drop-in they hold is for a class up to 2 weeks ahead.
         if (j.dropinUntil) return alert(t('dropUse', fmtDay(addDays(date, 1 - DROP_DAYS) + 'T12:00:00+07:00')));
         // A pass that starts later (its first class booked further on) says so.

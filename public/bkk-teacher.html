@@ -59,6 +59,7 @@
   .seat .acts .btn{padding:8px 13px;font-size:13.5px}
   .flag{display:inline-block;font-size:11.5px;font-weight:700;border-radius:5px;padding:1px 7px;margin-left:6px;white-space:nowrap}
   .flag.chk{background:#fff3d6;color:#6b520e}.flag.rz{background:#e3f0ff;color:#1d4f86}.flag.add{background:var(--blush);color:var(--plum)}
+  .flag.agr{background:#fde4e1;color:#8a1c12}
   .flag.two{background:#ffe3e0;color:#8a1f14}
   .addbox{margin-top:10px;background:var(--wall);border:1px solid var(--line);border-radius:8px;padding:10px}
   .hit{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--paper);border:1px solid var(--line);
@@ -66,6 +67,7 @@
   .hit b{flex:1;min-width:0;font-weight:600;overflow-wrap:anywhere}
   .say{font-size:13.5px;margin:8px 0 0;min-height:1.2em}
   .say.bad{color:#b3261e}.say.good{color:#187a43}
+  @media (prefers-color-scheme:dark){.flag.agr{background:#4f1a14;color:#ffb4a8}}
   @media (prefers-color-scheme:dark){.flag.chk{background:#4a3a12;color:#ffd98a}.flag.rz{background:#16324f;color:#9fcbff}
     .flag.two{background:#4f1d17;color:#ffb4a8}.in{color:#3ddc97}
     .say.bad{color:#ff8f8f}.say.good{color:#3ddc97}}
@@ -159,6 +161,9 @@
       // alsoAt: another seat of theirs today, often a wrong class booked by mistake (a second class used).
       const tags = (s.rezerv ? '<span class="flag rz">Rezerv</span>' : '') + (s.checkPass ? '<span class="flag chk">Check pass</span>' : '')
         + (s.added ? '<span class="flag add">added here</span>' : '')
+        // The student agreement, only while it is on: two true/false from the server, nothing else.
+        + (s.signed === false ? '<span class="flag agr">not signed · ask about injuries</span>' : '')
+        + (s.under20 === true ? '<span class="flag agr">under 20 · guardian not signed</span>' : '')
         + ((s.alsoAt || []).length ? `<span class="flag two">also booked ${esc(s.alsoAt.join(', '))}</span>` : '');
       const who = s.checkinVia ? ` · ${esc(s.checkinVia === 'tablet' ? 'tablet' : s.checkinBy || s.checkinVia)}` : '';
       return `<div class="seat" data-b="${Number(s.bookingId)}">
@@ -256,6 +261,9 @@
           ? esc(pass.name_en) + (pass.kind === 'unlimited' ? ''
               : ': ' + (pass.credits_total - pass.credits_used) + ' classes left')
           : 'No active pass.'}</p>
+        ${d.consent ? `<p class="muted">${d.consent.signed ? 'Student agreement signed.'
+          : '<span class="flag agr" style="margin:0">Student agreement not signed</span> Ask about injuries before class.'}${
+          d.consent.under20 ? ' <span class="flag agr">under 20 · guardian not signed</span>' : ''}</p>` : ''}
       </div>
 
       <div class="box">
