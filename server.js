@@ -1903,75 +1903,6 @@ async function quoteForCard({ studentId, type, lang, session, location, workshop
   return shuffleSeeded(pool, seed)[cohortIdx];
 }
 
-// POST /api/journal/share-to-group/:studentId
-// Called from student.html after a Russia student completes their daily journal.
-// Server fetches the rendered share card and posts it to the student's city group.
-app.post('/api/journal/share-to-group/:studentId', async (req, res) => {
-  const session = driver.session();
-  try {
-    const { studentId } = req.params;
-
-    const result = await session.run(
-      `MATCH (s:Student) WHERE s.id = $id
-       RETURN s.name AS name, s.city AS city, s.location AS location,
-              s.language AS language, s.telegramChatId AS tgChatId
-       LIMIT 1`,
-      { id: studentId }
-    );
-    if (result.records.length === 0) return res.status(404).json({ error: 'Student not found' });
-
-    const r = result.records[0];
-    const name = r.get('name') || 'Student';
-    const city = r.get('city') || '';
-    const location = r.get('location') || '';
-    const language = r.get('language') || 'en';
-    const tgChatId = r.get('tgChatId') || '';
-
-    if (location !== 'russia') return res.json({ posted: false, reason: 'not a Russia student' });
-
-    const groupMap = { spb: process.env.RU_GROUP_CHAT_ID_SPB, moscow: process.env.RU_GROUP_CHAT_ID_MOSCOW };
-    const groupId = groupMap[city];
-    if (!groupId) return res.json({ posted: false, reason: `no group chat_id for city ${city}` });
-
-    const token = process.env.TELEGRAM_BOT_TOKEN;
-    if (!token) return res.status(500).json({ error: 'TELEGRAM_BOT_TOKEN not set on server' });
-
-    // Skip Boonchu's test entries
-    if (process.env.BOONCHU_CHAT_ID && String(tgChatId) === String(process.env.BOONCHU_CHAT_ID)) {
-      return res.json({ posted: false, reason: 'test mode (Boonchu)' });
-    }
-
-    // Fetch the journal-type share card
-    const cardRes = await fetch(`https://aybkk-ashtanga.up.railway.app/api/share-card/${encodeURIComponent(studentId)}?type=journal`);
-    if (!cardRes.ok) throw new Error(`share-card fetch ${cardRes.status}`);
-    const cardBuf = Buffer.from(await cardRes.arrayBuffer());
-
-    // Caption
-    const today = new Date();
-    const dateLabel = today.toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-    const caption = language === 'ru'
-      ? `🙏 ${name} · ${dateLabel}\nПрактика записана.`
-      : `🙏 ${name} · ${dateLabel}\nPractice logged.`;
-
-    // POST multipart to Telegram sendPhoto
-    const fd = new FormData();
-    fd.append('chat_id', String(groupId));
-    fd.append('caption', caption);
-    fd.append('photo', new Blob([cardBuf], { type: 'image/png' }), 'journal-card.png');
-
-    const tgRes = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, { method: 'POST', body: fd });
-    const tgJson = await tgRes.json();
-    if (!tgJson.ok) throw new Error(`telegram sendPhoto ${tgJson.description}`);
-
-    res.json({ posted: true, city, groupId });
-  } catch (err) {
-    console.error('[journal share-to-group]', err.message);
-    res.status(500).json({ error: err.message });
-  } finally {
-    await session.close();
-  }
-});
-
 app.get('/api/share-card/:studentId', async (req, res) => {
   const session = driver.session();
   try {
@@ -2072,7 +2003,7 @@ app.get('/api/orientations/ru', staffOnly, async (req, res) => {
     const cityFilter = city ? `AND s.city = $city` : '';
     const result = await session.run(`
       MATCH (s:Student)
-      WHERE s.location = 'russia' OR s.id STARTS WITH 'ru-'
+      WHERE (s.location = 'russia' OR s.id STARTS WITH 'ru-')
       ${cityFilter}
       RETURN s.id AS id, s.name AS name, s.email AS email, s.city AS city,
              s.size AS size, s.experience AS experience, s.lastAsana AS lastAsana,
@@ -3815,16 +3746,22 @@ async function start() {
   }
 }
 
+// A bot that keeps failing within a minute (a revoked token, a second copy polling) waits
+// twice as long each time, up to 5 minutes; one that ran longer comes back in 5s.
+let botRestartMs = 5000;
 function startBot() {
   const { spawn } = require('child_process');
   console.log('[bot-supervisor] starting assessment-bot.js as managed child');
+  const startedAt = Date.now();
   const child = spawn('node', ['assessment-bot.js'], {
     stdio: 'inherit',
     env: process.env,
   });
   child.on('exit', (code, signal) => {
-    console.log(`[bot-supervisor] bot exited (code=${code}, signal=${signal}) — restarting in 5s`);
-    setTimeout(startBot, 5000);
+    if (Date.now() - startedAt > 60000) botRestartMs = 5000;
+    console.log(`[bot-supervisor] bot exited (code=${code}, signal=${signal}) — restarting in ${botRestartMs / 1000}s`);
+    setTimeout(startBot, botRestartMs);
+    botRestartMs = Math.min(botRestartMs * 2, 300000);
   });
   child.on('error', (err) => {
     console.error('[bot-supervisor] spawn error:', err.message);

@@ -2011,26 +2011,6 @@ function showShareCard() {
     if (photoBg) photoBg.style.opacity = '0';
     if (overlay) overlay.style.opacity = '0';
   }
-
-  // Russia students: also post the journal share card to their workshop group
-  // (the digital Mysore room — everyone sees everyone practice).
-  if (isRussian && studentId) {
-    fetch('/api/journal/share-to-group/' + encodeURIComponent(studentId), { method: 'POST' })
-      .then(r => r.json())
-      .then(data => {
-        if (data.posted) {
-          const msg = currentLang === 'ru'
-            ? '✓ Открытка отправлена в группу'
-            : '✓ Card shared to the workshop group';
-          // Tiny non-blocking confirmation under the card
-          const el = document.createElement('div');
-          el.textContent = msg;
-          el.style.cssText = 'text-align:center;color:#6b9e6b;font-size:13px;margin:8px 0 -4px;font-weight:500;';
-          card.parentNode.insertBefore(el, card.nextSibling);
-        }
-      })
-      .catch(() => { /* silent — student doesn't need to know if it failed */ });
-  }
 }
 
 // WeChat share — intentionally removed (duplicate below)

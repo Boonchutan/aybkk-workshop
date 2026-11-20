@@ -1065,7 +1065,8 @@ bot.on('message', async (ctx) => {
   if (!isPrivate(ctx)) return;
   const state = getState(ctx);
   const msg = ctx.message.text;
-  if (!msg) return;
+  // A command the bot does not know is never data: not a tag, a note or a search.
+  if (!msg || msg.startsWith('/')) return;
   const l = T[state.lang];
 
   // Main menu buttons
@@ -1204,7 +1205,11 @@ async function main() {
   });
 
   // Listed, not left out: Telegram keeps the last list a bot asked for.
-  bot.start({ allowed_updates: ['message', 'callback_query'] });
+  // A 401 or 409 ends polling for good: exit, so the supervisor in server.js starts a new bot.
+  bot.start({ allowed_updates: ['message', 'callback_query'] }).catch((e) => {
+    console.error('✗ polling stopped:', e.message);
+    process.exit(1);
+  });
   console.log('✓ AYBKK Student Progress Bot started');
   console.log('  Bot: @AYBKKstudentProgress_bot');
 }

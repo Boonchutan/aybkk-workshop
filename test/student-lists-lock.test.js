@@ -50,6 +50,7 @@ grammy.Bot.prototype.start = function () {
     ru = ru || /[\\u0400-\\u04FF]/.test(JSON.stringify(payload || {}));
     return { ok: true, result: { message_id: 1, date: 0, chat: { id: 1, type: 'private' } } };
   });
+  return new Promise(() => {}); // like grammY: start() settles only when polling stops
 };
 require(process.env.LOCK_TEST_BOT);
 let n = 1;
@@ -393,8 +394,8 @@ fs.writeFileSync(path.join(PRIVATE, 'rosters', 'hefei.json'), JSON.stringify({ w
 
   console.log('\n— the teacher bot lists members to teachers only —');
   const runs = await botRun([[7001, '/students'], [7002, '/search'], [7002, 'all'], [7003, '📋 All'], [5001, '/students'], [5002, '/students'],
-    [7004, '/start'], [7004, 'Hey'], [7004, '/help'], [5002, '/start'], [5002, 'Hey']]);
-  ok('the bot ran every update', runs.length === 11, `${runs.length}`);
+    [7004, '/start'], [7004, 'Hey'], [7004, '/help'], [5002, '/start'], [5002, 'Hey'], [5001, '/search'], [5001, '/help']]);
+  ok('the bot ran every update', runs.length === 13, `${runs.length}`);
   for (const r of runs.slice(0, 4)) ok(`a stranger sending ${r.text} gets silence`, r.messages === 0, `${r.messages}`);
   ok('a teacher still gets the member list', runs[4] && runs[4].buttons > 0);
   ok('BOONCHU_CHAT_ID still gets the member list', runs[5] && runs[5].buttons > 0);
@@ -402,6 +403,13 @@ fs.writeFileSync(path.join(PRIVATE, 'rosters', 'hefei.json'), JSON.stringify({ w
   for (const r of runs.slice(6, 9)) ok(`a stranger sending ${r.text} gets silence, no Russia sign-up`, r.messages === 0, `${r.messages}`);
   for (const r of runs.slice(9, 11)) ok(`BOONCHU_CHAT_ID sending ${r.text} gets the teacher menu, not the Russia sign-up`,
     r.messages === 1 && r.buttons > 0 && !r.ru, JSON.stringify(r));
+  ok('a command it does not know, typed into a search, is not searched for', runs[11] && runs[11].messages === 1 && runs[12] && runs[12].messages === 0,
+    JSON.stringify(runs.slice(11)));
+  for (const h of [{}, STAFF]) {
+    const r = await request('POST', '/api/journal/share-to-group/lock-test-x', h);
+    ok(`POST /api/journal/share-to-group is gone${h === STAFF ? ' (with the key too)' : ''}: no journal card goes to a Telegram group`,
+      r.status === 404 && !r.json, shape(r));
+  }
 
   // The student agreement (20 Nov 2026): its text is public and holds no student; who signed,
   // the Not signed list, a guardian's paper and the switch are staff only. Off, as it ships:
