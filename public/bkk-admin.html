@@ -409,6 +409,8 @@
       progPhotos: 'Photos added today', progStudentsIn: n => `${n} students in them`, progUntagged: 'Photos with nobody tagged',
       progNotes: 'Teacher notes today', progAll: (ph, st, no) => `All time: ${ph} photos for ${st} students, ${no} notes.`,
       emailBtn: 'Change email', qEmail: n => `New email for ${n}.\nLeave it empty to remove the email.`,
+      nameBtn: 'Change name', qRename: n => `New name for ${n}.\nThe old name still finds this student in search.`,
+      nameDone: 'Name changed.', nameBad: 'A name is 1 to 80 characters, without < or >.', wasNames: x => `was ${x}`,
       qMove: (e, o) => `${e} is on ${o.name}'s profile (${o.code}).\n\nMove it to this student? ${o.name}'s profile will have no email.`,
       emailDone: 'Email saved.',
       outBtn: 'Sign out all phones', qOut: n => `Sign ${n} out on every phone?\n\nUse this when the wrong person opened ${n}'s profile. Anyone holding it, the wrong person too, loses it. Old sign-in links stop working. Then send ${n} a new sign-in link.`,
@@ -518,6 +520,8 @@
       progPhotos: 'รูปที่ใส่วันนี้', progStudentsIn: n => `มีนักเรียน ${n} คนในรูป`, progUntagged: 'รูปที่ยังไม่แตะชื่อ',
       progNotes: 'คำแนะนำครูวันนี้', progAll: (ph, st, no) => `ทั้งหมด: รูป ${ph} รูป ของนักเรียน ${st} คน คำแนะนำ ${no} รายการ`,
       emailBtn: 'เปลี่ยนอีเมล', qEmail: n => `อีเมลใหม่ของ ${n}\nเว้นว่างไว้เพื่อลบอีเมล`,
+      nameBtn: 'เปลี่ยนชื่อ', qRename: n => `ชื่อใหม่ของ ${n}\nยังค้นหานักเรียนคนนี้ด้วยชื่อเดิมได้`,
+      nameDone: 'เปลี่ยนชื่อแล้ว', nameBad: 'ชื่อต้องยาว 1 ถึง 80 ตัวอักษร และไม่มี < หรือ >', wasNames: x => `ชื่อเดิม ${x}`,
       qMove: (e, o) => `${e} อยู่ในโปรไฟล์ของ ${o.name} (${o.code})\n\nย้ายมาที่นักเรียนคนนี้ไหม? โปรไฟล์ของ ${o.name} จะไม่มีอีเมล`,
       emailDone: 'บันทึกอีเมลแล้ว',
       qOutMail: (n, e) => `${e} อยู่ในโปรไฟล์ของ ${n} ตอนนี้\n\nพิมพ์ เก็บ ถ้าเป็นอีเมลของ ${n} เอง\nพิมพ์ ลบ ถ้าเป็นของคนอื่น (ไม่อย่างนั้นเขาเข้าได้อีกด้วยอีเมลนี้)\n\nยกเลิก = หยุด ไม่มีอะไรเปลี่ยน`,
@@ -1406,7 +1410,8 @@
       ${whoBtn(m.code, m.name, 'who-s-' + m.code)} <span class="muted">${esc(m.code)}</span>
       <button class="btn sm" style="float:right" onclick="showHistory('${esc(m.code)}')">${T('histBtn')}</button><br>
       <span class="muted">${esc(m.email || T('noEmail'))}${m.phone ? ' · ' + esc(m.phone) : ''}
-        · ${T('upcoming', m.booked)}${m.source === 'rezerv' ? ' · Rezerv' + (m.rezerv_id ? ' ' + esc(m.rezerv_id) : '') : ''}</span>
+        · ${T('upcoming', m.booked)}${m.source === 'rezerv' ? ' · Rezerv' + (m.rezerv_id ? ' ' + esc(m.rezerv_id) : '') : ''}${
+          (m.former_names || []).length ? ' · ' + esc(T('wasNames', m.former_names.join(', '))) : ''}</span>
       ${(m.passes || []).map(p => `<div style="margin-top:8px">
         <span class="pill ${p.status === 'active' ? 'paid' : 'pending'}">${esc(W(p.status))}</span>
         ${esc(pkgName(p))} —
@@ -1421,6 +1426,7 @@
       <p style="margin-top:8px"><button class="btn" onclick="bookFor('${esc(m.code)}')">${T('bookBtn')}</button>
         <button class="btn pink" onclick="signinLink('${esc(m.code)}')">${T('linkBtn')}</button>
         <button class="btn pink" onclick="showQr('${esc(m.code)}', this)">${T('qrBtn')}</button>
+        <button class="btn gray" onclick="changeName('${esc(m.code)}')">${T('nameBtn')}</button>
         <button class="btn gray" onclick="changeEmail('${esc(m.code)}')">${T('emailBtn')}</button>
         <button class="btn red" onclick="signOutAll('${esc(m.code)}')">${T('outBtn')}</button>
         <button class="btn gray" onclick="mergeInto('${esc(m.code)}')">${T('mergeBtn')}</button></p>
@@ -1431,6 +1437,16 @@
   };
 
   let FOUND = {};
+  // A student who goes by another name. The old one stays searchable.
+  window.changeName = async (code) => {
+    const m = FOUND[code]; if (!m) return;
+    const name = ask(T('qRename', m.name), m.name); if (name === null) return;
+    const clean = name.replace(/\s+/g, ' ').trim();
+    if (clean === m.name) return;
+    if (!clean || clean.length > 80 || /[<>]/.test(clean)) return alert(T('nameBad'));
+    const r = await api(`/api/bkk/admin/members/${encodeURIComponent(code)}/name`, { method: 'POST', body: JSON.stringify({ name: clean }) });
+    if (await shout(r)) { alert(T('nameDone')); findStudents(); }
+  };
   // Fix a wrong email. One that sits on another profile moves only after M
   // confirms which profile it leaves.
   window.changeEmail = async (code) => {
