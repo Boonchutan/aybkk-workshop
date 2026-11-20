@@ -375,14 +375,99 @@ const ok = (name, cond, extra = '') => {
     ok('a folded code changes the kept profile, not the folded one', viaFold.status === 200 && viaFold.body.member.code === who.code
        && (await one(`SELECT name FROM bkk_members WHERE code=$1`, [who.code])).name === NEW
        && (await one(`SELECT name FROM bkk_members WHERE code=$1`, [fold.code])).name === 'Fold Renamo', JSON.stringify(viaFold.body));
-    const page = require('fs').readFileSync(require('path').join(__dirname, '../public/bkk-admin.html'), 'utf8');
-    ok('Admin: each student has a Change name button next to Change email, in EN and TH',
-       page.includes(`onclick="changeName('\${esc(m.code)}')"`) && /nameBtn: 'Change name'/.test(page) && /nameBtn: 'เปลี่ยนชื่อ'/.test(page));
     for (const c of [fold.code, who.code]) {
       await pool.query(`DELETE FROM bkk_passes WHERE member_id=(SELECT id FROM bkk_members WHERE code=$1)`, [c]);
       await pool.query(`UPDATE bkk_members SET merged_into=NULL WHERE code=$1`, [c]);
     }
-    await pool.query(`DELETE FROM bkk_import_refs WHERE member_id IN (SELECT id FROM bkk_members WHERE code = ANY($1))`, [[fold.code, who.code]]).catch(() => {});
+
+    // Capitals or spaces only: the name is tidied, no "old name" is made.
+    let seq = 0;
+    const mk = async (name, email) => (await pool.query(`INSERT INTO bkk_members (code,name,email) VALUES ($1,$2,$3) RETURNING code`,
+      ['BTRENAME' + String(++seq).padStart(5, '0'), name, email])).rows[0].code;
+    const hits = async (term, code) => ((await J('/api/bkk/admin/members?q=' + encodeURIComponent(term), { headers: ADMIN })).body.members || [])
+      .some(m => m.code === code);
+    const cs = await mk('beta  lower', 'beta.lower@example.com');
+    await rn(cs, 'Beta Lower');
+    const csRow = await one(`SELECT name, former_names FROM bkk_members WHERE code=$1`, [cs]);
+    ok('a fix of capitals or double spaces only keeps no old name', csRow.name === 'Beta Lower' && csRow.former_names === null, JSON.stringify(csRow));
+
+    // A wrong rename can be taken back off: forget drops that old name only.
+    await rn(cs, 'Wrong Pick');
+    await rn(cs, 'Beta Lower');
+    const before = await hits('wrong pick', cs);
+    const fg = await post(`/api/bkk/admin/members/${cs}/name`, { forget: '  wrong   PICK ' }, ADMIN);
+    const fgRow = await one(`SELECT name, former_names FROM bkk_members WHERE code=$1`, [cs]);
+    ok('...and a wrong old name is removed (any capitals or spaces), the name kept', fg.status === 200 && fgRow.name === 'Beta Lower'
+       && fgRow.former_names === null && before && !(await hits('wrong pick', cs)), JSON.stringify([fg.body, fgRow, before]));
+
+    // A renamed profile folded into another by the real merge: both searches still find the kept one by the old name.
+    const A = await mk('Merge Oldname', 'merge.a@example.com');
+    await rn(A, 'Merge Newname');
+    const K = await mk('Merge Newname', 'merge.k@example.com');
+    const mg = await post(`/api/bkk/admin/members/${K}/merge`, { from: A, sure: true }, ADMIN);
+    const adm = ((await J('/api/bkk/admin/members?q=' + encodeURIComponent('merge oldname'), { headers: ADMIN })).body.members || []).map(m => m.code);
+    const tch2 = (await J('/api/bkk/teacher/members?q=' + encodeURIComponent('merge oldname'), { headers: { 'x-teacher-key': tch.body.passcode } })).body.members || [];
+    ok('a renamed profile merged into another: Admin and teacher search still find the kept one by the old name', mg.status === 200
+       && adm.join() === K && tch2.length === 1 && tch2[0].name === 'Merge Newname', JSON.stringify([mg.status, mg.body.error, adm, tch2]));
+
+    // The old CSV import never guesses: a name someone has now goes to them; one two students had before is skipped.
+    const X = 'Csv Shared';
+    const p1 = await mk(X, 'csv.p1@example.com'); await rn(p1, 'Csv Moved One');
+    const p2 = await mk(X, 'csv.p2@example.com'); await rn(p2, 'Csv Moved Two');
+    const twoWas = await post('/api/bkk/admin/import', { rows: [{ name: X, plan: '1 month', until: '2027-01-31' }] }, ADMIN);
+    const passesOf = async c => (await one(`SELECT count(*)::int AS n FROM bkk_passes p JOIN bkk_members m ON m.id=p.member_id WHERE m.code=$1`, [c])).n;
+    ok('the old CSV import skips a name two students had before, and gives no pass', twoWas.status === 200
+       && (twoWas.body.skipped || []).some(x => /2 students had this name before/.test(x)) && await passesOf(p1) === 0 && await passesOf(p2) === 0,
+       JSON.stringify(twoWas.body));
+    const nowX = await mk(X, 'csv.now@example.com');
+    const cur = await post('/api/bkk/admin/import', { rows: [{ name: X, plan: '1 month', until: '2027-01-31' }] }, ADMIN);
+    ok('...and a name one student has now goes to that student, not to one who had it before', cur.status === 200
+       && await passesOf(nowX) === 1 && await passesOf(p1) === 0 && await passesOf(p2) === 0, JSON.stringify(cur.body));
+
+    // A merge landing while the rename waits for its lock: the rename follows it to the kept profile.
+    const F2 = await mk('Race Folded', 'race.f@example.com'), K2 = await mk('Race Kept', 'race.k@example.com');
+    const hold = await pool.connect();
+    await hold.query('BEGIN');
+    await hold.query(`UPDATE bkk_members SET merged_into=(SELECT id FROM bkk_members WHERE code=$1) WHERE code=$2`, [K2, F2]);
+    const racing = rn(F2, 'Race Winner');
+    await new Promise(r => setTimeout(r, 400));
+    await hold.query('COMMIT'); hold.release();
+    const raced = await racing;
+    const kRow = await one(`SELECT name FROM bkk_members WHERE code=$1`, [K2]), fRow = await one(`SELECT name FROM bkk_members WHERE code=$1`, [F2]);
+    ok('a merge that lands while a rename waits: the kept profile gets the name, the folded one keeps its own', raced.status === 200
+       && raced.body.member.code === K2 && kRow.name === 'Race Winner' && fRow.name === 'Race Folded', JSON.stringify([raced.body, kRow, fRow]));
+
+    // The Admin page's own code: Change name and the × on an old name.
+    const vm = require('vm');
+    const page = require('fs').readFileSync(require('path').join(__dirname, '../public/bkk-admin.html'), 'utf8');
+    const seg = page.slice(page.indexOf('  let FOUND = {};'), page.indexOf('  // Fix a wrong email.'));
+    const run = (answer, member, okConfirm = true) => {
+      const seen = { posts: [], alerts: [], found: 0 };
+      const ctx = { ask: () => answer, alert: m => seen.alerts.push(m), confirm: () => okConfirm, T: (k, ...a) => `${k}(${a.join(',')})`,
+        api: async (url, o) => { seen.posts.push([url, JSON.parse(o.body)]); return { ok: true }; }, shout: async () => ({ success: true }),
+        findStudents: () => { seen.found++; }, encodeURIComponent };
+      vm.createContext(ctx);
+      vm.runInContext(seg + '\n;FOUND.B1 = ' + JSON.stringify(member) + ';this.pg = { changeName: window.changeName, forgetName: window.forgetName };',
+        Object.assign(ctx, { window: ctx }));
+      return { seen, pg: ctx.pg };
+    };
+    const tries = [[null], ['Same  Name'], [''], ['a<b'], ['  New   Name ']];
+    const outs = [];
+    // Stored with a double space (checkout only trims): OK on the untouched prompt is no change.
+    for (const [ans] of tries) { const r = run(ans, { code: 'B1', name: 'Same  Name' }); await r.pg.changeName('B1'); outs.push(r.seen); }
+    ok('Admin page: Cancel, an unchanged name (spaces aside), an empty name or one with < > send nothing; a good one is sent tidied, then the list refreshes',
+       outs[0].posts.length === 0 && outs[1].posts.length === 0 && outs[2].posts.length === 0 && outs[2].alerts[0] === 'nameBad()'
+         && outs[3].posts.length === 0 && outs[4].posts.length === 1 && outs[4].posts[0][0] === '/api/bkk/admin/members/B1/name'
+         && outs[4].posts[0][1].name === 'New Name' && outs[4].found === 1, JSON.stringify(outs));
+    const fz = run(null, { code: 'B1', name: 'Now', former_names: ['Then'] });
+    await fz.pg.forgetName('B1', 0);
+    const fzNo = run(null, { code: 'B1', name: 'Now', former_names: ['Then'] }, false);
+    await fzNo.pg.forgetName('B1', 0);
+    ok('...the × on an old name asks first, then sends forget for that name only', fz.seen.posts.length === 1
+       && fz.seen.posts[0][1].forget === 'Then' && fzNo.seen.posts.length === 0, JSON.stringify([fz.seen, fzNo.seen]));
+    ok('...each old name is shown escaped, with its × found by position (never the name inside the onclick)',
+       /m\.former_names\.map\(\(n, i\) => `\$\{esc\(n\)\} <button/.test(page) && /onclick="forgetName\('\$\{esc\(m\.code\)\}',\$\{i\}\)"/.test(page)
+       && page.includes(`onclick="changeName('\${esc(m.code)}')"`) && /nameBtn: 'Change name'/.test(page) && /nameBtn: 'เปลี่ยนชื่อ'/.test(page));
   }
 
   console.log('\n— 8 classes / 1 month replaced the 10-class pack (6 Nov 2026) —');
