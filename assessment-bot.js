@@ -22,16 +22,6 @@ const driver = neo4j.driver(NEO4J_URI, neo4j.auth.basic(NEO4J_USER, NEO4J_PASSWO
 
 const bot = new Bot(BOT_TOKEN);
 
-// Wire Russia student flow EARLY — its handlers run before teacher handlers
-// so an in-progress orientation (or /start ru payload) routes to the Russia flow.
-let russia = null;
-try {
-  russia = require('./russia-bot.js');
-  russia.attach(bot);
-} catch (e) {
-  console.error('✗ russia-bot.js not loaded:', e.message);
-}
-
 // ============ TRANSLATIONS ============
 const T = {
   en: {
@@ -1213,14 +1203,8 @@ async function main() {
     console.error('Bot error:', err.message);
   });
 
-  // Russia bot's scheduler starts after bot polls (so it can use bot.api)
-  if (russia && russia.startScheduler) russia.startScheduler(bot);
-
-  // Explicitly request my_chat_member updates so the auto-detect-on-add DM works
-  // (Telegram doesn't include these in long-poll by default).
-  bot.start({
-    allowed_updates: ['message', 'callback_query', 'my_chat_member', 'chat_member', 'edited_message'],
-  });
+  // Listed, not left out: Telegram keeps the last list a bot asked for.
+  bot.start({ allowed_updates: ['message', 'callback_query'] });
   console.log('✓ AYBKK Student Progress Bot started');
   console.log('  Bot: @AYBKKstudentProgress_bot');
 }

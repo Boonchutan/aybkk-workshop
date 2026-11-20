@@ -34,19 +34,20 @@ require(process.env.LOCK_TEST_SERVER);
 `;
 
 // The teacher bot gets made-up updates; its outgoing calls are caught, never sent, and
-// reported as one line of JSON each: how many messages and buttons went out.
+// reported as one line of JSON each: how many messages and buttons went out, and whether any was in Russian.
 const BOT_HARNESS = `
 const grammy = require('grammy');
 const neo4j = require('neo4j-driver');
 const recs = Array.from({ length: 11 }, (_, i) => ({ get: k => k === 'name' ? 'Locktest Member ' + i : k === 'id' ? 'lock-' + i : /count/i.test(k) ? neo4j.int(1) : null }));
 neo4j.driver = () => ({ session: () => ({ run: async () => ({ records: recs }), close: async () => {} }), close: async () => {}, verifyConnectivity: async () => {} });
-let bot, sent = [];
+let bot, sent = [], ru = false;
 grammy.Bot.prototype.start = function () {
   bot = this;
   this.botInfo = { id: 1, is_bot: true, first_name: 'T', username: 't_bot', can_join_groups: true, can_read_all_group_messages: false, supports_inline_queries: false };
   this.api.config.use(async (prev, method, payload) => {
     const kb = payload && payload.reply_markup && (payload.reply_markup.inline_keyboard || payload.reply_markup.keyboard);
     sent.push(kb ? kb.flat().length : 0);
+    ru = ru || /[\\u0400-\\u04FF]/.test(JSON.stringify(payload || {}));
     return { ok: true, result: { message_id: 1, date: 0, chat: { id: 1, type: 'private' } } };
   });
 };
@@ -55,10 +56,10 @@ let n = 1;
 (async () => {
   while (!bot) await new Promise(r => setTimeout(r, 20));
   for (const [from, text] of JSON.parse(process.env.LOCK_TEST_UPDATES)) {
-    sent = [];
+    sent = []; ru = false;
     await bot.handleUpdate({ update_id: n++, message: { message_id: n, date: 0, chat: { id: from, type: 'private' }, from: { id: from, is_bot: false, first_name: 'X' }, text,
       ...(text.startsWith('/') ? { entities: [{ type: 'bot_command', offset: 0, length: text.split(' ')[0].length }] } : {}) } });
-    process.stdout.write('@@' + JSON.stringify({ from, text, messages: sent.length, buttons: sent.reduce((a, b) => a + b, 0) }) + '\\n');
+    process.stdout.write('@@' + JSON.stringify({ from, text, messages: sent.length, buttons: sent.reduce((a, b) => a + b, 0), ru }) + '\\n');
   }
   process.exit(0);
 })();
@@ -66,8 +67,7 @@ let n = 1;
 function botRun(updates, extra = {}) {
   const env = { ...process.env, TELEGRAM_BOT_TOKEN: '1:lock-test', TEACHER_CHAT_IDS: '5001', BOONCHU_CHAT_ID: '5002',
     LOCK_TEST_BOT: path.join(ROOT, 'assessment-bot.js'), LOCK_TEST_UPDATES: JSON.stringify(updates),
-    DATA_DIR: fs.mkdtempSync(path.join(os.tmpdir(), 'lock-bot-')), NEO4J_URI: 'bolt://127.0.0.1:9',
-    RUSSIA_BOT_API_BASE: 'http://127.0.0.1:9', ...extra };
+    NEO4J_URI: 'bolt://127.0.0.1:9', ...extra };
   return new Promise(resolve => {
     const c = spawn(process.execPath, ['-e', BOT_HARNESS], { cwd: ROOT, env, stdio: ['ignore', 'pipe', 'ignore'] });
     let out = '';
@@ -392,14 +392,16 @@ fs.writeFileSync(path.join(PRIVATE, 'rosters', 'hefei.json'), JSON.stringify({ w
   }
 
   console.log('\n— the teacher bot lists members to teachers only —');
-  const runs = await botRun([[7001, '/students'], [7002, '/search'], [7002, 'all'], [7003, '📋 All'], [5001, '/students'], [5002, '/students'], [7004, '/start']]);
-  ok('the bot ran every update', runs.length === 7, `${runs.length}`);
+  const runs = await botRun([[7001, '/students'], [7002, '/search'], [7002, 'all'], [7003, '📋 All'], [5001, '/students'], [5002, '/students'],
+    [7004, '/start'], [7004, 'Hey'], [7004, '/help'], [5002, '/start'], [5002, 'Hey']]);
+  ok('the bot ran every update', runs.length === 11, `${runs.length}`);
   for (const r of runs.slice(0, 4)) ok(`a stranger sending ${r.text} gets silence`, r.messages === 0, `${r.messages}`);
   ok('a teacher still gets the member list', runs[4] && runs[4].buttons > 0);
   ok('BOONCHU_CHAT_ID still gets the member list', runs[5] && runs[5].buttons > 0);
-  ok('a stranger pressing Start still gets the Russia sign-up', runs[6] && runs[6].messages === 1);
-  const noAdmin = await botRun([[7005, '/export']], { BOONCHU_CHAT_ID: '' });
-  ok('/export gives nothing to anyone while BOONCHU_CHAT_ID is unset', noAdmin.length === 1 && noAdmin[0].messages === 0, JSON.stringify(noAdmin.map(r => r.messages)));
+  // The Russia WS sign-up ended with the workshop (May 2026): Start opens nothing for a stranger.
+  for (const r of runs.slice(6, 9)) ok(`a stranger sending ${r.text} gets silence, no Russia sign-up`, r.messages === 0, `${r.messages}`);
+  for (const r of runs.slice(9, 11)) ok(`BOONCHU_CHAT_ID sending ${r.text} gets the teacher menu, not the Russia sign-up`,
+    r.messages === 1 && r.buttons > 0 && !r.ru, JSON.stringify(r));
 
   // The student agreement (20 Nov 2026): its text is public and holds no student; who signed,
   // the Not signed list, a guardian's paper and the switch are staff only. Off, as it ships:
