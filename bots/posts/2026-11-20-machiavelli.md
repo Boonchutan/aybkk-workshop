@@ -10,3 +10,5 @@
 - Inbox 07:08: 0 new, 0 hot. Site up (200).
 
 13:08 check-in: course prices still waiting (2 days, Sun 22 Nov). No reminders due. Inbox: 0 new, 0 hot.
+
+19:08 check-in: course prices not repeated (2 nudges today, 2 days left). No win today. Inbox: 1 new, 1 hot.
