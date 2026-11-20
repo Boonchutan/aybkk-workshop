@@ -967,6 +967,8 @@ function mountBkk(app, opts = {}) {
   // behind never closes booking, and never more than two years ahead.
   const OPEN_UNTIL_DEFAULT = '2027-12-31';
   const OPEN_MAX_DAYS = 730;
+  // A drop-in opens 2 weeks before its class: today and the next 13 days (Boonchu, 19 Nov 2026).
+  const DROPIN_DAYS = 14;
   async function openUntil() {
     const today = bkkToday(), floor = addDaysYmd(today, SCHEDULE_DAYS - 1), cap = addDaysYmd(today, OPEN_MAX_DAYS);
     const v = String(await getSetting('booking_open_until', OPEN_UNTIL_DEFAULT));
@@ -1064,10 +1066,10 @@ function mountBkk(app, opts = {}) {
         const { slotId, date } = req.body;
         if (!slotId || !isYmd(date) || !Number.isInteger(Number(slotId)))
           return res.status(400).json({ error: 'Pick the class for your drop-in.' });
-        // No further than booking is open: a seat sold for a class years off
-        // would outlive any change to the timetable before then.
-        const until = await openUntil();
-        if (date > until) return res.status(409).json({ error: `You can buy a drop-in for a class up to ${until}.`, openUntil: until });
+        // Drop-ins open 2 weeks before the class (DROPIN_DAYS); booking stays open longer.
+        const until = addDaysYmd(bkkToday(), DROPIN_DAYS - 1);
+        if (date > until) return res.status(409).json({
+          error: `Drop-ins open 2 weeks before the class: you can buy one for a class up to ${until}.`, dropinUntil: until });
         try {
           const c = await classCheck(pool, slotId, date);
           if (await seatsTaken(pool, slotId, date) >= c.capacity) throw new Error('class is full');
@@ -2609,15 +2611,20 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
 
     let pass = null;
     if (cover === 'pass') {
+      // A student books with a one-class credit (a drop-in) only up to 2 weeks
+      // ahead, as one is sold (DROPIN_DAYS). Staff, the door and paid orders are not held to it.
+      const dropCap = staff ? null : addDaysYmd(bkkToday(), DROPIN_DAYS - 1);
+      const args = passId ? [member.id, date, passId, dropCap] : [member.id, date, dropCap];
+      const capAt = '$' + args.length + '::date';
+      const oneOk = `(p.kind <> 'credits' OR p.credits_total <> 1 OR ${capAt} IS NULL OR $2::date <= ${capAt})`;
       pass = (await db.query(
         `SELECT p.* FROM bkk_passes p
          WHERE p.member_id=$1
            AND ${over ? PASS_LIVE_ON('$2::date') : `p.status='active' AND (p.valid_from IS NULL OR p.valid_from <= $2::date)
              AND (p.valid_until IS NULL OR p.valid_until >= $2::date)`}
-           AND (p.kind='unlimited' OR p.credits_used < p.credits_total)
+           AND (p.kind='unlimited' OR p.credits_used < p.credits_total) AND ${oneOk}
            ${passId ? 'AND p.id=$3' : ''}
-         ORDER BY p.valid_from NULLS LAST, p.id LIMIT 1 FOR UPDATE`,
-        passId ? [member.id, date, passId] : [member.id, date])).rows[0];
+         ORDER BY p.valid_from NULLS LAST, p.id LIMIT 1 FOR UPDATE`, args)).rows[0];
       // A pass covers no day before its window. One whose window its first
       // class set (a later class booked first) starts again at this earlier
       // class, keeping its length, while every class booked on it still fits.
@@ -2628,14 +2635,21 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
           `SELECT p.* FROM bkk_passes p
            WHERE p.member_id=$1 AND p.status='active' AND p.valid_from > $2::date
              AND p.valid_until = p.valid_from + p.valid_days
-             AND (p.kind='unlimited' OR p.credits_used < p.credits_total)
+             AND (p.kind='unlimited' OR p.credits_used < p.credits_total) AND ${oneOk}
              ${passId ? 'AND p.id=$3' : ''}
              AND NOT EXISTS (SELECT 1 FROM bkk_bookings b WHERE b.pass_id=p.id AND b.status <> 'cancelled'
                AND (b.class_date < p.valid_from OR b.class_date > $2::date + p.valid_days))
-           ORDER BY p.valid_from, p.id LIMIT 1 FOR UPDATE OF p`,
-          passId ? [member.id, date, passId] : [member.id, date])).rows[0];
+           ORDER BY p.valid_from, p.id LIMIT 1 FOR UPDATE OF p`, args)).rows[0];
         if (pass) pass = (await db.query(`UPDATE bkk_passes SET valid_from=$2::date, valid_until=$2::date + valid_days
           WHERE id=$1 RETURNING *`, [pass.id, date])).rows[0];
+      }
+      if (!pass && dropCap && date > dropCap) {
+        const held = (await db.query(`SELECT 1 FROM bkk_passes p WHERE p.member_id=$1 AND p.status='active'
+            AND p.kind='credits' AND p.credits_total=1 AND p.credits_used < p.credits_total
+            AND (p.valid_from IS NULL OR p.valid_from <= $2::date) AND (p.valid_until IS NULL OR p.valid_until >= $2::date)
+          LIMIT 1`, [member.id, date])).rows[0];
+        if (held) throw Object.assign(new Error(`a drop-in opens 2 weeks before the class: use yours for a class up to ${dropCap}`),
+          { dropinUntil: dropCap });
       }
       if (!pass) {
         const later = (await db.query(`SELECT to_char(min(valid_from),'YYYY-MM-DD') AS f FROM bkk_passes
@@ -2694,7 +2708,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     } catch (e) {
       await client.query('ROLLBACK');
       const msg = /duplicate key/.test(e.message) ? 'you already booked this class' : e.message;
-      res.status(409).json({ error: msg });
+      res.status(409).json({ error: msg, ...(e.dropinUntil ? { dropinUntil: e.dropinUntil } : {}) });
     } finally { client.release(); }
   });
 
