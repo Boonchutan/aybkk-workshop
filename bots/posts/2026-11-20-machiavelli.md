@@ -8,3 +8,5 @@
 - Reel: Plato's daily run is paused (expected). Carne posted: 0 new leads, 2 open, 1 follow-up due today.
 - Score: wins this week (from Mon 16 Nov): none reported. Last win 6 Nov. 180K new leads: 0.
 - Inbox 07:08: 0 new, 0 hot. Site up (200).
+
+13:08 check-in: course prices still waiting (2 days, Sun 22 Nov). No reminders due. Inbox: 0 new, 0 hot.
