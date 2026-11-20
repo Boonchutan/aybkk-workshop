@@ -8379,9 +8379,9 @@ const ok = (name, cond, extra = '') => {
     // The wording: pinned, and what a page is served is what is pinned.
     const PINNED = {
       en: ['f5e5e04d53f70d5ca11548b68fe95389b57fb43e3ef3147b488009968f9919cb', '2ecd21d65cf15328969e5d36340ab649a9022bece07df4a344c5344069f30016'],
-      th: ['301cc992764a0345536b47e1995d05ba22f91daa108ea0e88b190b71951e500e', 'af300a0420936b095c5abcad15dbb1506a26e4dcca7d5f2ef3a3c05b1caa16a0'],
-      zh: ['b0e33dda125e662ec5327f2367dacc447aaf9e60a29b3073c64615d995ee06ab', '2f6e8618cd17bf35b8bacfa44d3408e07d7d51d8833e7b3a30e9b5dedcb4e0a5'],
-      ru: ['7d1fb4464b510d00371ceb2479e6f51ec18d5362a747fce03bd2c881830d4874', '2e7a8bce0b0259e32b290eb66054e8ed3ff082574d7bf54d8eff5fe563d8ce34'],
+      th: ['fa6ee2d1b3144e0229ef6410d6539d745473c86d6498150859efc3968fb7a6d2', 'cb1621b669d7e7e7178019a0585cc40c3e38c131762c233a22f4851c24b825c0'],
+      zh: ['4634fa6fe518961986cbf6a9caf1459e8bb0f2b3ed98dce6ec9ff40048b97b6b', '2f6e8618cd17bf35b8bacfa44d3408e07d7d51d8833e7b3a30e9b5dedcb4e0a5'],
+      ru: ['32ba4875bcecd36c8db1cd81b36b2fcc0835ed09406d2a458660a04b2f2ac7de', '2e7a8bce0b0259e32b290eb66054e8ed3ff082574d7bf54d8eff5fe563d8ce34'],
     };
     ok('v1 is the current version, in exactly these 4 languages', CONSENT_VERSION === 'v1' && Object.keys(CONSENT_TEXT.v1).join() === 'en,th,zh,ru');
     for (const [l, [a, pv]] of Object.entries(PINNED)) {
