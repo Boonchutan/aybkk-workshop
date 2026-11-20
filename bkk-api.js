@@ -38,10 +38,11 @@ const LATE_ADD_DAYS = 7;                       // staff put someone who came on 
 const BOOK_LATE_MIN = { mysore: 60, default: 30 };
 // Landing pages counted in bkk_start_events, and the kinds each page may send. The In-Depth
 // pages' 'sent' and 'fit' are written by inbox.js when an application is saved, never by a page.
-const LANDING_KINDS = { start: ['view', 'tap', 'step'], 'in-depth-zh': ['view', 'step2', 'step3'], 'in-depth-en': ['view', 'step2', 'step3'] };
+const LANDING_KINDS = { start: ['view', 'tap', 'step'], 'in-depth-zh': ['view', 'step2', 'step3'], 'in-depth-en': ['view', 'step2', 'step3'],
+  book: ['consent-shown', 'consent-agreed'] };
 // What the weekly box shows for each page, in ladder order. /start's q1..q3 and done are its 'step' rows.
 const LANDING_COLS = { 'in-depth-zh': ['view', 'step2', 'step3', 'sent', 'fit'], 'in-depth-en': ['view', 'step2', 'step3', 'sent', 'fit'],
-  start: ['view', 'tap', 'q1', 'q2', 'q3', 'done'] };
+  start: ['view', 'tap', 'q1', 'q2', 'q3', 'done'], book: ['consent-shown', 'consent-agreed'] };
 const LANDING_WEEKS = 8;
 const LANDING_SPLIT_TOP = 30;                  // a week's split by source or tag: the biggest 30, then one "other" row
 // Counts from one address an hour, kept in memory only. Generous: a phone network in China puts
@@ -68,6 +69,263 @@ const PAY_WATCH = {
   lineMaxDays: 7,                              // a money line covers the time since the last one, at most this far back
 };
 const MANUAL_NOTE = 'MANUAL ACTIVATION by admin';
+
+// The student agreement and the privacy notice (Nov 2026). One version is the whole agreement:
+// a signature (bkk_consents) records it and the sha256 of its exact text, which
+// test/bkk-api.test.js pins, so a version is never edited quietly: changed words are a new
+// version, and old versions stay here for the people who signed them. EN and TH are "v1 draft 2"
+// as written for Boonchu (20 Nov 2026), not approved yet; line 13's last phrase ("or where Thai
+// law gives you a right to a refund") waits for his yes and the lawyer's read. {since} in line 17
+// is the day the switch first left off; the privacy notice's {legal_name}, {address} and {email}
+// come from Admin, Settings. The notice names every service personal data goes to (inbox.js:
+// LINE, Meta, Anthropic, Telegram; team-brief.js: LINE; server.js: Neo4j): a new one is a new version.
+const CONSENT_VERSION = 'v1';
+const CONSENT_LANGS = ['en', 'th', 'zh', 'ru'];
+const CONSENT_TEXT = {
+  v1: {
+    en: {
+      agreement: {
+        title: 'Before your first class',
+        lead: 'Please read this once. It takes about 2 minutes.',
+        confirmTitle: 'A one-time confirm.',
+        confirmLead: 'Thank you for practising with us. We now keep this short agreement on file for every student. Read it once. Your pass and bookings stay as they are.',
+        groups: [
+          ['Your practice', [
+            'Ashtanga is a physical practice. Like any exercise, it can cause injury.',
+            'You may feel sore or tired the next day, or for a few days, especially when you are new. This is common. Sharp pain, or pain that does not ease, is different: tell the teacher, and see a doctor.',
+            'Practise within your own limits. You can stop and rest at any time. If you feel pain, dizziness or unwell, stop and tell the teacher.',
+            'Before class, tell the teacher in person about any injury, health condition, surgery or pregnancy. If you are not sure you should practise, ask your doctor first.',
+            'Teachers may give hands-on adjustments. You can say no at any time, before or during class.',
+            'If you are hurt because AYBKK, its teachers or staff acted on purpose or carelessly, AYBKK stays responsible under Thai law. AYBKK is not responsible for the normal risks of practice when nobody is at fault. Nothing here limits your rights under Thai law.',
+          ]],
+          ['In the shala', [
+            'Book every class in advance on aybkk.net, and check in at the door before practice.',
+            'Cancel at least 5 hours before class to keep your credit.',
+            'No photos and no videos in the shala.',
+            'No phones, no talking and no water during practice. If you need water for a health reason, tell the teacher.',
+            'Bring your own mat and a towel, or tick "I need a mat" when you book and rent one at the shala for ฿200. After practice, clean your mat and the floor around it with the spray we provide.',
+            'The shala is closed on full moon and new moon days.',
+          ]],
+          ['Your pass', [
+            'All passes are final once purchased, unless we can’t give the classes you paid for (if we close or move) or where Thai law gives you a right to a refund.',
+            'Your pass is just for you, not shareable.',
+            'Freeze up to 30 days (or as your doctor’s note says, up to 2 months) for a broken bone, an eye problem, surgery, or pregnancy and birth. Other cases: talk with us. Please tell us on LINE @aybkk before it starts.',
+            'Moving away, or your doctor says stop? If a freeze doesn’t fit, a 3, 6 or 12-month membership can pass once to someone new to AYBKK. Same end date. Fee ฿1,500. Ask us on LINE @aybkk first.',
+            'A pass bought before {since} keeps the terms it was sold with.',
+          ]],
+          ['Your photo', [
+            'A profile photo is your choice. If you add one, it shows on your tile on the check-in iPad at the door, where other students can see it, and in your teachers’ and staff lists. You can remove it any time in My account.',
+          ]],
+        ],
+        tick: 'I have read this and I agree. I am 20 or older.',
+        under20: 'Under 20?',
+        tickUnder20: 'I have read this and I agree. I am under 20. My parent or guardian will come with me to the shala before my first class to agree.',
+        signed: 'Signed as: {name} · {date} · {version}. We email you a copy.',
+        dataH: 'Your data:',
+        data: 'AYBKK keeps your name, contact details, bookings, check-ins, payments and this agreement, to run your classes. The {privacy} says who else handles them, how long we keep them, and how to see, correct or delete them.',
+        privacyLink: 'Privacy notice',
+        agreePay: 'Agree and pay {total}', agreeBook: 'Agree and book', agree: 'Agree',
+      },
+      privacy: {
+        title: 'Privacy notice',
+        sections: [
+          ['Who we are', '{legal_name} runs AYBKK (Ashtanga Yoga Center of Bangkok), {address}. Contact us at {email} or on LINE @aybkk.'],
+          ['What we keep', 'Your name, email and phone, the language you use, your bookings, check-ins, passes and payments. The record of the agreement you signed: its version, the name and email you gave, the date and time, and whether you are under 20 (then also your guardian’s name and the day on their paper). Messages you send us on LINE, Instagram or Facebook. What you wrote in an orientation form, which can include injuries and an emergency contact. If there are any: notes your teachers write about your practice, your 12-week check numbers, class photos you are tagged in, and your profile photo. The internet address (IP) a sign-in link was asked from. We never see or keep your card number.'],
+          ['Why', 'To run your classes: bookings, check-in, passes, payments and receipts. To show what you agreed to. To help your teachers teach you, including knowing about an injury. To answer your messages. We need these to give you classes. We never sell your data.'],
+          ['Who else handles it', 'PaySolutions takes online payments. Resend sends our emails. Cloudinary stores photos. Google: teachers put class photos in Google Drive before they go to profiles, and Google Ads runs only if you tap OK on the cookie bar. Railway runs the server and database of this site. Neo4j stores orientation forms. LINE carries our LINE chats, and the daily class list we send to our staff group (first name and initial, classes and passes). Meta carries Instagram and Facebook messages. Anthropic (Claude) reads the messages you send us, to sort them and draft our replies. Telegram carries alerts to our staff, for example about a payment or a new message, with its text. Some of these services keep data outside Thailand.'],
+          ['How long', 'The record of the agreement you signed: 10 years after your last class, because a claim can come that late. Payment records: 5 years, as tax law asks. Messages: 90 days. Everything else: deleted 2 years after your last class, or sooner if you ask.'],
+          ['Your rights', 'You can ask to see your data, get a copy, correct it or delete it. Write to {email} or message LINE @aybkk. You can remove your profile photo yourself in My account. We keep the agreement record and payment records for the times above even if you ask us to delete the rest. If you are not happy with how we handle your data, you can complain to the Personal Data Protection Committee of Thailand.'],
+        ],
+      },
+    },
+    th: {
+      agreement: {
+        title: 'ก่อนเริ่มคลาสแรก',
+        lead: 'โปรดอ่านสักครั้ง ใช้เวลาประมาณ 2 นาที',
+        confirmTitle: 'ยืนยันครั้งเดียว',
+        confirmLead: 'ขอบคุณที่ฝึกกับเรามาตลอด ตอนนี้เราเก็บข้อตกลงสั้น ๆ นี้ไว้ในระบบสำหรับนักเรียนทุกคน อ่านเพียงครั้งเดียว แพ็กเกจและการจองของคุณยังเหมือนเดิม',
+        groups: [
+          ['การฝึกของคุณ', [
+            'อัษฎางคโยคะเป็นการฝึกทางกาย เช่นเดียวกับการออกกำลังกายทั่วไป อาจเกิดการบาดเจ็บได้',
+            'วันรุ่งขึ้นหรือหลายวันหลังฝึก คุณอาจรู้สึกปวดเมื่อยหรืออ่อนล้า โดยเฉพาะช่วงแรก ซึ่งพบได้บ่อย แต่หากเจ็บแปลบ หรือเจ็บไม่ทุเลา ให้แจ้งครูและปรึกษาแพทย์',
+            'ฝึกตามขีดจำกัดของร่างกายตัวเอง หยุดหรือพักได้ทุกเมื่อ หากรู้สึกเจ็บ เวียนหัว หรือไม่สบาย ให้หยุดและบอกครู',
+            'ก่อนเข้าคลาส แจ้งครูโดยตรงหากมีอาการบาดเจ็บ ปัญหาสุขภาพ เคยผ่าตัด หรือตั้งครรภ์ หากไม่แน่ใจว่าควรฝึกหรือไม่ ให้ปรึกษาแพทย์ก่อน',
+            'ครูอาจสัมผัสเพื่อช่วยจัดท่า (adjustment) คุณปฏิเสธได้ทุกเมื่อ ทั้งก่อนและระหว่างคลาส',
+            'หากคุณได้รับบาดเจ็บจากการกระทำโดยจงใจหรือประมาทเลินเล่อของ AYBKK ครู หรือทีมงาน AYBKK ยังคงต้องรับผิดตามกฎหมายไทย AYBKK ไม่ต้องรับผิดต่อความเสี่ยงตามปกติของการฝึกที่ไม่ได้เกิดจากความผิดของผู้ใด ข้อความในหน้านี้ไม่จำกัดสิทธิ์ใด ๆ ของคุณตามกฎหมายไทย',
+          ]],
+          ['ในชาลา', [
+            'จองทุกคลาสล่วงหน้าที่ aybkk.net และเช็กอินที่หน้าห้องก่อนฝึก',
+            'ยกเลิกล่วงหน้าอย่างน้อย 5 ชั่วโมงเพื่อไม่เสียสิทธิ์',
+            'ห้ามถ่ายรูปและถ่ายวิดีโอในชาลา',
+            'ระหว่างการฝึก ห้ามใช้โทรศัพท์ งดพูดคุย และงดดื่มน้ำ หากจำเป็นต้องดื่มน้ำด้วยเหตุผลด้านสุขภาพ โปรดแจ้งครู',
+            'นำเสื่อโยคะและผ้าเช็ดตัวมาเอง หรือติ๊ก "ต้องการเช่าเสื่อ" ตอนจอง แล้วเช่าที่ชาลา ฿200 ฝึกเสร็จแล้ว ทำความสะอาดเสื่อและพื้นรอบ ๆ ด้วยสเปรย์ที่เราเตรียมไว้',
+            'AYBKK ปิดในวันพระจันทร์เต็มดวงและวันพระจันทร์ดับ (moon day)',
+          ]],
+          ['แพ็กเกจของคุณ', [
+            'ขอสงวนสิทธิ์ไม่คืนเงินหลังชำระ ยกเว้นกรณีที่เราให้บริการตามที่ชำระไว้ไม่ได้ (เช่น ปิดหรือย้ายสถานที่) หรือกรณีที่กฎหมายไทยกำหนดให้คืนเงิน',
+            '1 แพ็กเกจต่อ 1 ท่าน ไม่สามารถแบ่งกันใช้ได้',
+            'เราพักแพ็กเกจให้ได้สูงสุด 30 วัน (หรือตามใบรับรองแพทย์ ไม่เกิน 2 เดือน) กรณีกระดูกหัก ปัญหาดวงตา ผ่าตัด หรือตั้งครรภ์และคลอดบุตร กรณีอื่นคุยกับเราได้ กรุณาแจ้งทาง LINE @aybkk ก่อนเริ่มพักทุกครั้ง',
+            'ต้องย้ายออกจากกรุงเทพฯ หรือแพทย์ให้หยุดฝึก? หากการพักแพ็กเกจไม่ตอบโจทย์ สมาชิก 3, 6 และ 12 เดือน โอนให้ผู้ที่ยังไม่เคยเป็นสมาชิก AYBKK ได้ 1 ครั้ง วันหมดอายุเดิม ค่าธรรมเนียม ฿1,500 กรุณาแจ้งทาง LINE @aybkk ก่อน',
+            'แพ็กเกจที่ซื้อก่อนวันที่ {since} ใช้เงื่อนไขตามที่ซื้อไว้',
+          ]],
+          ['รูปโปรไฟล์', [
+            'จะเพิ่มรูปโปรไฟล์หรือไม่ก็ได้ หากเพิ่มรูป รูปจะแสดงบนช่องชื่อของคุณในไอแพดเช็กอินที่หน้าห้อง ซึ่งนักเรียนคนอื่นมองเห็นได้ และในรายชื่อของครูและทีมงาน ลบรูปได้ทุกเมื่อในแท็บ "บัญชีของฉัน"',
+          ]],
+        ],
+        tick: 'ฉันได้อ่านและยอมรับข้อตกลงนี้แล้ว และฉันอายุ 20 ปีขึ้นไป',
+        under20: 'อายุต่ำกว่า 20 ปี?',
+        tickUnder20: 'ฉันได้อ่านและยอมรับข้อตกลงนี้แล้ว ฉันอายุต่ำกว่า 20 ปี ผู้ปกครองจะมาที่ชาลาพร้อมฉันก่อนคลาสแรก เพื่อลงชื่อให้ความยินยอม',
+        signed: 'ลงชื่อโดย: {name} · {date} · {version} เราจะส่งสำเนาไปที่อีเมลของคุณ',
+        dataH: 'ข้อมูลของคุณ:',
+        data: 'AYBKK เก็บชื่อ ข้อมูลติดต่อ การจอง การเช็กอิน การชำระเงิน และข้อตกลงนี้ไว้ เพื่อจัดการคลาสของคุณ อ่าน{privacy}เพื่อดูว่าใครอีกบ้างที่ดูแลข้อมูล เก็บไว้นานเท่าใด และวิธีขอดู แก้ไข หรือลบข้อมูล',
+        privacyLink: 'ประกาศความเป็นส่วนตัว',
+        agreePay: 'ยอมรับและชำระเงิน {total}', agreeBook: 'ยอมรับและจองคลาส', agree: 'ยอมรับ',
+      },
+      privacy: {
+        title: 'ประกาศความเป็นส่วนตัว',
+        sections: [
+          ['เราคือใคร', '{legal_name} เป็นผู้ดำเนินการ AYBKK (Ashtanga Yoga Center of Bangkok) {address} ติดต่อเราได้ที่ {email} หรือ LINE @aybkk'],
+          ['ข้อมูลที่เราเก็บ', 'ชื่อ อีเมล เบอร์โทร ภาษาที่คุณใช้ การจอง การเช็กอิน แพ็กเกจ และการชำระเงินของคุณ บันทึกข้อตกลงที่คุณลงชื่อไว้ ได้แก่ ฉบับ ชื่อและอีเมลที่คุณใส่ วันที่และเวลา และคุณอายุต่ำกว่า 20 ปีหรือไม่ (หากใช่ จะมีชื่อผู้ปกครองและวันที่ในเอกสารที่ผู้ปกครองลงชื่อด้วย) ข้อความที่คุณส่งถึงเราทาง LINE, Instagram หรือ Facebook สิ่งที่คุณเขียนในแบบฟอร์มปฐมนิเทศ (orientation) ซึ่งอาจมีอาการบาดเจ็บและผู้ติดต่อกรณีฉุกเฉิน และหากมี: บันทึกที่ครูเขียนเกี่ยวกับการฝึกของคุณ ตัวเลขการเช็ก 12 สัปดาห์ รูปในคลาสที่มีชื่อคุณ และรูปโปรไฟล์ของคุณ รวมถึงหมายเลขไอพี (IP) ที่ใช้ขอลิงก์เข้าสู่ระบบ เราไม่เห็นและไม่เก็บเลขบัตรของคุณ'],
+          ['เก็บไว้เพื่ออะไร', 'เพื่อจัดการคลาสของคุณ ได้แก่ การจอง การเช็กอิน แพ็กเกจ การชำระเงิน และใบเสร็จ เพื่อเป็นหลักฐานว่าคุณยอมรับข้อใดไว้ เพื่อช่วยให้ครูสอนคุณได้ดี รวมถึงรู้เรื่องอาการบาดเจ็บ และเพื่อตอบข้อความของคุณ ข้อมูลเหล่านี้จำเป็นต่อการให้บริการคลาส เราไม่ขายข้อมูลของคุณ'],
+          ['ใครอีกบ้างที่ดูแลข้อมูล', 'PaySolutions รับชำระเงินออนไลน์ Resend ส่งอีเมลของเรา Cloudinary เก็บรูปภาพ Google: ครูเก็บรูปในคลาสไว้ใน Google Drive ก่อนนำขึ้นโปรไฟล์ และ Google Ads ทำงานเฉพาะเมื่อคุณกด "ตกลง" ที่แถบคุกกี้ Railway ดูแลเซิร์ฟเวอร์และฐานข้อมูลของเว็บไซต์นี้ Neo4j เก็บแบบฟอร์มปฐมนิเทศ LINE รับส่งแชต LINE ของเรา และรายชื่อคลาสประจำวันที่เราส่งเข้ากลุ่มทีมงาน (ชื่อและอักษรแรกของนามสกุล คลาส และแพ็กเกจ) Meta รับส่งข้อความ Instagram และ Facebook Anthropic (Claude) อ่านข้อความที่คุณส่งถึงเรา เพื่อจัดลำดับและร่างคำตอบ Telegram ส่งการแจ้งเตือนถึงทีมงาน เช่น เรื่องการชำระเงินหรือข้อความใหม่ พร้อมเนื้อความ บางบริการเก็บข้อมูลไว้นอกประเทศไทย'],
+          ['เก็บไว้นานเท่าใด', 'บันทึกข้อตกลงที่คุณลงชื่อ: 10 ปีหลังคลาสสุดท้ายของคุณ เพราะอาจมีการเรียกร้องสิทธิ์ได้นานถึงเท่านั้น บันทึกการชำระเงิน: 5 ปี ตามที่กฎหมายภาษีกำหนด ข้อความแชต: 90 วัน ข้อมูลอื่นทั้งหมด: ลบภายใน 2 ปีหลังคลาสสุดท้ายของคุณ หรือเร็วกว่านั้นหากคุณขอ'],
+          ['สิทธิ์ของคุณ', 'คุณขอดูข้อมูล ขอสำเนา ขอแก้ไข หรือขอลบข้อมูลได้ เขียนมาที่ {email} หรือทักมาที่ LINE @aybkk คุณลบรูปโปรไฟล์เองได้ในแท็บ "บัญชีของฉัน" เราเก็บบันทึกข้อตกลงและบันทึกการชำระเงินไว้ตามระยะเวลาข้างต้น แม้คุณขอให้ลบข้อมูลอื่น หากไม่พอใจวิธีที่เราดูแลข้อมูล คุณร้องเรียนต่อคณะกรรมการคุ้มครองข้อมูลส่วนบุคคลได้'],
+        ],
+      },
+    },
+    // NEEDS A NATIVE CHECK: Chinese, translated from the English by Claude (20 Nov 2026), not yet
+    // read by a native speaker. Keep the switch off until one has. Lines 13 to 16 are the site's own
+    // Member notes (bkk.html pol1a..pol4b, 你 and 课程卡), as the English and Thai quote aybkk.net.
+    zh: {
+      agreement: {
+        title: '第一次上课之前',
+        lead: '请完整阅读一次，大约需要 2 分钟。',
+        confirmTitle: '只需确认一次。',
+        confirmLead: '感谢你一直和我们一起练习。现在我们为每一位学生存档这份简短的协议。请阅读一次。你的课程卡和预约都保持不变。',
+        groups: [
+          ['你的练习', [
+            '阿斯汤加是一种身体练习。和任何运动一样，它可能造成受伤。',
+            '第二天或之后几天，你可能会感到酸痛或疲倦，刚开始练习时尤其如此。这很常见。但刺痛，或一直不缓解的疼痛就不一样了：请告诉老师，并去看医生。',
+            '在自己的能力范围内练习。你可以随时停下来休息。如果感到疼痛、头晕或身体不适，请停下并告诉老师。',
+            '上课前，请当面告诉老师你的任何伤病、健康状况、手术或怀孕情况。如果不确定自己是否适合练习，请先咨询医生。',
+            '老师可能会用手为你调整体式。你可以在课前或课中随时拒绝。',
+            '如果你因 AYBKK、其老师或工作人员的故意或过失行为而受伤，AYBKK 仍须依照泰国法律承担责任。对于无人过错时的正常练习风险，AYBKK 不承担责任。本页任何内容均不限制你依照泰国法律享有的权利。',
+          ]],
+          ['在道场', [
+            '每节课都请提前在 aybkk.net 预约，并在练习前到门口签到。',
+            '请至少在上课前 5 小时取消，以保留课次。',
+            '道场内禁止拍照和录像。',
+            '练习期间禁止使用手机、禁止交谈、禁止喝水。如果因健康原因需要喝水，请告诉老师。',
+            '请自带瑜伽垫和毛巾，或在预约时勾选“需要租瑜伽垫”，在道场以 ฿200 租用。练习后，请用我们提供的喷雾清洁你的垫子和周围的地面。',
+            '每逢满月和新月，道场休息。',
+          ]],
+          ['你的课程卡', [
+            '课程卡一经购买，不予退款，除非我们无法提供你已付费的课程（道场关闭或搬迁），或泰国法律规定你有权退款。',
+            '课程卡仅限本人使用，不能与他人共用。',
+            '可暂停最多30天（或按医生证明，最多2个月），适用于骨折、眼睛问题、手术、怀孕和生产。其他情况可以和我们商量。请在暂停开始前，通过 LINE @aybkk 告诉我们。',
+            '要离开曼谷，或医生让你停练？如果暂停不合适，3个月、6个月或12个月会员可转让一次，给从未在 AYBKK 办过卡的新学员。到期日不变，手续费 ฿1,500。请先在 LINE @aybkk 联系我们。',
+            '在 {since} 之前购买的课程卡，保留购买时的条款。',
+          ]],
+          ['你的照片', [
+            '是否添加头像照片由你决定。如果添加，照片会显示在门口签到 iPad 上你的名字格里，其他学生可以看到；也会出现在老师和工作人员的名单中。你可以随时在“我的账户”中删除。',
+          ]],
+        ],
+        tick: '我已阅读并同意。我已年满 20 岁。',
+        under20: '未满 20 岁？',
+        tickUnder20: '我已阅读并同意。我未满 20 岁。在第一次上课前，我的父母或监护人会陪我到道场表示同意。',
+        signed: '签名：{name} · {date} · {version}。我们会把副本发到你的邮箱。',
+        dataH: '你的资料：',
+        data: 'AYBKK 保存你的姓名、联系方式、预约、签到、付款记录以及这份协议，用于安排你的课程。{privacy}说明了还有谁会处理这些资料、我们保存多久，以及如何查看、更正或删除。',
+        privacyLink: '隐私声明',
+        agreePay: '同意并支付 {total}', agreeBook: '同意并预约', agree: '同意',
+      },
+      privacy: {
+        title: '隐私声明',
+        sections: [
+          ['我们是谁', '{legal_name} 经营 AYBKK（Ashtanga Yoga Center of Bangkok），地址：{address}。联系方式：{email} 或 LINE @aybkk。'],
+          ['我们保存什么', '你的姓名、邮箱和电话，你使用的语言，你的预约、签到、课程卡和付款记录。你签署的协议记录：版本、你填写的姓名和邮箱、日期和时间，以及你是否未满 20 岁（如果是，还有监护人的姓名和其书面同意上的日期）。你通过 LINE、Instagram 或 Facebook 发给我们的消息。你在入门表格（orientation）中填写的内容，其中可能包括伤病情况和紧急联系人。如果有的话，还包括：老师写下的关于你练习的笔记、你的 12 周检查数据、标记了你的课堂照片，以及你的头像照片。申请登录链接时使用的网络地址（IP）。我们看不到，也不保存你的银行卡号。'],
+          ['为什么保存', '用于安排你的课程：预约、签到、课程卡、付款和收据；证明你同意了哪些内容；帮助老师更好地教你，包括了解你的伤病情况；回复你的消息。我们需要这些资料才能为你提供课程。我们绝不出售你的资料。'],
+          ['还有谁处理这些资料', 'PaySolutions 处理在线付款。Resend 发送我们的邮件。Cloudinary 保存照片。Google：老师先把课堂照片放在 Google Drive，再放到个人页面；只有当你在 Cookie 提示栏点击“好的”时，才会使用 Google Ads。Railway 运行本网站的服务器和数据库。Neo4j 保存入门表格。LINE 传送我们的 LINE 聊天，以及我们每天发到员工群的课程名单（名字和姓氏首字母、课程和课程卡）。Meta 传送 Instagram 和 Facebook 消息。Anthropic（Claude）会阅读你发给我们的消息，用于分类并起草我们的回复。Telegram 向我们的工作人员发送提醒，例如关于付款或新消息的提醒，并附上消息内容。其中一些服务会在泰国境外保存资料。'],
+          ['保存多久', '你签署的协议记录：在你最后一节课后保存 10 年，因为索赔可能在这么久之后才提出。付款记录：按照税法要求保存 5 年。聊天消息：90 天。其他所有资料：在你最后一节课后 2 年内删除；如果你提出要求，可以更早删除。'],
+          ['你的权利', '你可以要求查看你的资料、获取副本、更正或删除。请发邮件到 {email}，或通过 LINE @aybkk 联系我们。你可以在“我的账户”中自行删除头像照片。即使你要求删除其他资料，我们也会按上述期限保存协议记录和付款记录。如果你对我们处理资料的方式不满意，可以向泰国个人数据保护委员会投诉。'],
+        ],
+      },
+    },
+    // NEEDS A NATIVE CHECK: Russian, translated from the English by Claude (20 Nov 2026), not yet
+    // read by a native speaker. Keep the switch off until one has. Lines 13 to 16 are the site's own
+    // Member notes (bkk.html pol1a..pol4b).
+    ru: {
+      agreement: {
+        title: 'Перед первым занятием',
+        lead: 'Пожалуйста, прочитайте это один раз. Это займёт около 2 минут.',
+        confirmTitle: 'Подтвердите один раз.',
+        confirmLead: 'Спасибо, что практикуете с нами. Теперь мы храним это короткое соглашение для каждого ученика. Прочитайте его один раз. Ваш абонемент и записи остаются как есть.',
+        groups: [
+          ['Ваша практика', [
+            'Аштанга является физической практикой. Как и любые упражнения, она может привести к травме.',
+            'На следующий день или несколько дней вы можете чувствовать боль в мышцах или усталость, особенно в начале. Это обычное дело. С острой болью или болью, которая не проходит, всё иначе: скажите учителю и обратитесь к врачу.',
+            'Практикуйте в пределах своих возможностей. Вы можете остановиться и отдохнуть в любой момент. Если вы чувствуете боль, головокружение или недомогание, остановитесь и скажите учителю.',
+            'Перед занятием лично сообщите учителю о любой травме, проблеме со здоровьем, операции или беременности. Если вы не уверены, что вам можно практиковать, сначала посоветуйтесь с врачом.',
+            'Учителя могут делать корректировки руками (ассисты). Вы можете отказаться в любой момент, до или во время занятия.',
+            'Если вы получите травму из-за умышленных или неосторожных действий AYBKK, его учителей или сотрудников, AYBKK несёт ответственность по законодательству Таиланда. AYBKK не отвечает за обычные риски практики, когда никто не виноват. Ничто здесь не ограничивает ваши права по законодательству Таиланда.',
+          ]],
+          ['В шале', [
+            'Записывайтесь на каждое занятие заранее на aybkk.net и отмечайтесь у входа перед практикой.',
+            'Отменяйте запись минимум за 5 часов до занятия, чтобы оно не списалось.',
+            'В шале нельзя фотографировать и снимать видео.',
+            'Во время практики нельзя пользоваться телефоном, разговаривать и пить воду. Если вам нужна вода по состоянию здоровья, скажите учителю.',
+            'Приносите свой коврик и полотенце или отметьте «Нужен коврик» при записи и возьмите коврик в аренду в шале за ฿200. После практики протрите коврик и пол вокруг него спреем, который мы даём.',
+            'В дни полнолуния и новолуния шала закрыта.',
+          ]],
+          ['Ваш абонемент', [
+            'Оплаченный абонемент не возвращается, кроме случаев, когда мы не можем провести оплаченные занятия (если шала закроется или переедет) или когда законодательство Таиланда даёт вам право на возврат.',
+            'Абонемент только для вас, делиться им нельзя.',
+            'Заморозка до 30 дней (или по справке врача, до 2 месяцев): перелом, проблемы с глазами, операция, беременность и роды. Другие случаи обсудим. Напишите нам в LINE @aybkk до начала заморозки.',
+            'Уезжаете или врач велит сделать перерыв? Если заморозка не подходит, абонемент на 3, 6 или 12 месяцев можно один раз передать человеку, который ещё не занимался в AYBKK. Дата окончания та же. Сбор ฿1,500. Сначала напишите нам в LINE @aybkk.',
+            'Абонемент, купленный до {since}, сохраняет условия, на которых он был продан.',
+          ]],
+          ['Ваше фото', [
+            'Фото профиля добавляется по вашему желанию. Если вы его добавите, оно появится на вашей плитке на iPad для отметки у входа, где его видят другие ученики, а также в списках ваших учителей и сотрудников. Удалить фото можно в любой момент в разделе «Мой аккаунт».',
+          ]],
+        ],
+        tick: 'Я прочитал(а) и согласен(на). Мне 20 лет или больше.',
+        under20: 'Вам меньше 20?',
+        tickUnder20: 'Я прочитал(а) и согласен(на). Мне меньше 20 лет. Перед первым занятием мой родитель или опекун придёт со мной в шалу, чтобы дать согласие.',
+        signed: 'Подпись: {name} · {date} · {version}. Мы отправим вам копию на email.',
+        dataH: 'Ваши данные:',
+        data: 'AYBKK хранит ваше имя, контактные данные, записи, отметки о посещении, платежи и это соглашение, чтобы проводить ваши занятия. В документе «{privacy}» сказано, кто ещё обрабатывает эти данные, как долго мы их храним и как их посмотреть, исправить или удалить.',
+        privacyLink: 'Уведомление о конфиденциальности',
+        agreePay: 'Согласиться и оплатить {total}', agreeBook: 'Согласиться и записаться', agree: 'Согласиться',
+      },
+      privacy: {
+        title: 'Уведомление о конфиденциальности',
+        sections: [
+          ['Кто мы', '{legal_name} управляет AYBKK (Ashtanga Yoga Center of Bangkok), {address}. Связаться с нами: {email} или LINE @aybkk.'],
+          ['Что мы храним', 'Ваше имя, email и телефон, язык, которым вы пользуетесь, ваши записи, отметки о посещении, абонементы и платежи. Запись о подписанном вами соглашении: версия, указанные вами имя и email, дата и время, а также отметка, если вам меньше 20 лет (тогда ещё имя вашего родителя или опекуна и дата на его бумаге). Сообщения, которые вы пишете нам в LINE, Instagram или Facebook. То, что вы написали в анкете для новичков (orientation): там могут быть травмы и контакт на экстренный случай. Кроме того, если они есть: заметки учителей о вашей практике, ваши данные 12-недельной проверки, фото с занятий, где вы отмечены, и ваше фото профиля. IP-адрес, с которого запросили ссылку для входа. Номер вашей карты мы не видим и не храним.'],
+          ['Зачем', 'Чтобы проводить ваши занятия: записи, отметки, абонементы, платежи и чеки. Чтобы подтверждать, с чем вы согласились. Чтобы учителям было легче вас учить, в том числе знать о травме. Чтобы отвечать на ваши сообщения. Без этих данных мы не можем проводить для вас занятия. Мы никогда не продаём ваши данные.'],
+          ['Кто ещё обрабатывает данные', 'PaySolutions принимает онлайн-платежи. Resend отправляет наши письма. Cloudinary хранит фотографии. Google: учителя кладут фото с занятий в Google Drive, прежде чем добавить их в профили, а Google Ads работает, только если вы нажмёте OK в панели cookie. Railway обеспечивает работу сервера и базы данных этого сайта. Neo4j хранит анкеты для новичков. LINE передаёт наши чаты в LINE и ежедневный список занятий, который мы отправляем в группу сотрудников (имя и первая буква фамилии, занятия и абонементы). Meta передаёт сообщения Instagram и Facebook. Anthropic (Claude) читает сообщения, которые вы нам пишете, чтобы сортировать их и готовить черновики наших ответов. Telegram доставляет нашим сотрудникам уведомления, например о платеже или новом сообщении, вместе с его текстом. Некоторые из этих сервисов хранят данные за пределами Таиланда.'],
+          ['Как долго', 'Запись о подписанном соглашении: 10 лет после вашего последнего занятия, потому что претензия может появиться так поздно. Платёжные записи: 5 лет, как требует налоговое законодательство. Сообщения в чатах: 90 дней. Всё остальное удаляется через 2 года после вашего последнего занятия или раньше, если вы попросите.'],
+          ['Ваши права', 'Вы можете попросить показать ваши данные, выдать их копию, исправить или удалить их. Напишите на {email} или в LINE @aybkk. Фото профиля можно удалить самостоятельно в разделе «Мой аккаунт». Запись о соглашении и платёжные записи мы храним указанные выше сроки, даже если вы попросите удалить остальное. Если вас не устраивает, как мы обращаемся с вашими данными, вы можете подать жалобу в Комитет по защите персональных данных Таиланда.'],
+        ],
+      },
+    },
+  },
+};
+// The idcn pattern: a version this server would ask people to sign must have English and Thai.
+function checkConsentText(text = CONSENT_TEXT, version = CONSENT_VERSION) {
+  const v = text[version];
+  if (!/^v\d{1,3}$/.test(version) || !v) throw new Error(`bkk-api: consent ${version} has no text`);
+  for (const l of ['en', 'th']) {
+    const x = v[l];
+    if (!x || !x.agreement || !x.privacy || !Array.isArray(x.agreement.groups) || !x.agreement.groups.length)
+      throw new Error(`bkk-api: consent ${version} has no ${l.toUpperCase()} text`);
+  }
+}
+checkConsentText();
+const consentLangs = (version = CONSENT_VERSION) => CONSENT_LANGS.filter(l => CONSENT_TEXT[version] && CONSENT_TEXT[version][l]);
+// What a signature points at: the agreement as written, in the language it was shown in.
+const consentSha = (version, lang) => crypto.createHash('sha256').update(JSON.stringify(CONSENT_TEXT[version][lang].agreement)).digest('hex');
+const privacySha = (version, lang) => crypto.createHash('sha256').update(JSON.stringify(CONSENT_TEXT[version][lang].privacy)).digest('hex');
 
 // ── seed data (from aybkk.com, captured 2026-08-05) ─────────────────────────
 // price_thb is the BASE price. The online surcharge is a setting, applied at
@@ -628,6 +886,23 @@ function mountBkk(app, opts = {}) {
       device_id INTEGER REFERENCES bkk_door_devices(id))`);
     await q(`CREATE INDEX IF NOT EXISTS bkk_door_pairings_code ON bkk_door_pairings (code_hash)`);
     await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_door_devices_one_live ON bkk_door_devices ((true)) WHERE revoked_at IS NULL`);
+    // The student agreement (Nov 2026). Append-only: a row is an event, never edited. kind
+    // 'agreement' or 'guardian' (more optional ticks can come later; given false withdraws one).
+    // via: 'checkout' (the buyer holds the profile), 'checkout-email' (an existing profile's email
+    // typed at checkout, written only once paid), 'self' (the student's own phone) or 'desk' (staff
+    // recording a guardian's paper; signed_on is the day on that paper). email_at: the email then.
+    // No UNIQUE: a merge moves rows, and both profiles may have signed. No IP, browser or health field.
+    await q(`CREATE TABLE IF NOT EXISTS bkk_consents (
+      id SERIAL PRIMARY KEY, member_id INTEGER NOT NULL REFERENCES bkk_members(id),
+      kind TEXT NOT NULL, version TEXT NOT NULL, given BOOLEAN NOT NULL DEFAULT true,
+      signed_name TEXT, under20 BOOLEAN NOT NULL DEFAULT false, guardian_name TEXT, signed_on DATE,
+      lang TEXT, via TEXT NOT NULL, order_id INTEGER, email_at TEXT, text_sha TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now())`);
+    await q(`CREATE INDEX IF NOT EXISTS bkk_consents_member ON bkk_consents (member_id, kind, version)`);
+    await q(`CREATE INDEX IF NOT EXISTS bkk_consents_order ON bkk_consents (order_id) WHERE order_id IS NOT NULL`);
+    // What the checkout's tick said, {agree, version, lang, name, under20}: activateOrder writes
+    // the row from it when the buyer did not hold the profile.
+    await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS consent JSONB`);
 
     // Catalogue: a package added to SEED_PRODUCTS reaches a running shala on the
     // next boot. ON CONFLICT leaves existing rows alone, so a price changed or a
@@ -899,18 +1174,103 @@ function mountBkk(app, opts = {}) {
   const memberByCode = async (code, db = pool) =>
     liveMember(db, (await db.query('SELECT * FROM bkk_members WHERE code=$1', [String(code || '')])).rows[0]);
 
-  async function findOrCreateMember({ name, email, phone }) {
+  // The profile checkout would sell to for this email, or null for a new one.
+  async function memberByEmail(email, db = pool) {
     const em = (email || '').trim().toLowerCase();
-    if (em) {
-      const r = await q('SELECT * FROM bkk_members WHERE lower(email) = $1 LIMIT 1', [em]);
-      const m = await liveMember(pool, r.rows[0]);
-      if (m) return m;
-    }
-    const r = await q(
+    if (!em) return null;
+    return liveMember(db, (await db.query('SELECT * FROM bkk_members WHERE lower(email) = $1 LIMIT 1', [em])).rows[0]);
+  }
+  async function findOrCreateMember({ name, email, phone }, db = pool) {
+    const em = (email || '').trim().toLowerCase();
+    const m = await memberByEmail(em, db);
+    if (m) return m;
+    const r = await db.query(
       `INSERT INTO bkk_members (code,name,email,phone) VALUES ($1,$2,$3,$4) RETURNING *`,
       [memberCode(), (name || '').trim() || 'Student', em || null, (phone || '').trim() || null]);
     return r.rows[0];
   }
+
+  // ── the student agreement (Nov 2026) ──────────────────────────────────────
+  // consent_mode: 'off' (nothing anywhere changes), 'ask' (checkout asks; My account and the
+  // timetable remind), 'require' (a student's own booking asks too). Staff, the door, /teach,
+  // payments and imports are never refused: an unsigned profile is flagged on staff screens.
+  const CONSENT_MODES = ['off', 'ask', 'require'];
+  const consentMode = async () => { const v = await getSetting('consent_mode', 'off'); return CONSENT_MODES.includes(v) ? v : 'off'; };
+  // The privacy notice names the business: three settings staff fill in, all public text.
+  const PRIVACY_KEYS = { name: 'privacy_legal_name', address: 'privacy_address', email: 'privacy_email' };
+  async function privacySettings() {
+    const r = await q(`SELECT key, value FROM bkk_settings WHERE key = ANY($1::text[])`, [Object.values(PRIVACY_KEYS)]);
+    return Object.fromEntries(Object.entries(PRIVACY_KEYS).map(([k, key]) => {
+      const v = (r.rows.find(x => x.key === key) || {}).value;
+      return [k, typeof v === 'string' ? v : ''];
+    }));
+  }
+  // A member (column or $n) who signed the current agreement, on any route that reads it.
+  const SIGNED = a => `EXISTS (SELECT 1 FROM bkk_consents c WHERE c.member_id = ${a} AND c.kind = 'agreement'
+    AND c.given AND c.version = '${CONSENT_VERSION}')`;
+  // Signed as under 20, and no guardian's paper recorded yet.
+  const GUARDIAN_DUE = a => `(EXISTS (SELECT 1 FROM bkk_consents c WHERE c.member_id = ${a} AND c.kind = 'agreement'
+    AND c.given AND c.under20 AND c.version = '${CONSENT_VERSION}') AND NOT EXISTS (SELECT 1 FROM bkk_consents g
+    WHERE g.member_id = ${a} AND g.kind = 'guardian' AND g.given AND g.version = '${CONSENT_VERSION}'))`;
+  const consentOk = async (db, memberId) => (await db.query(`SELECT ${SIGNED('$1::int')} AS ok`, [memberId])).rows[0].ok;
+  const sameName = (a, b) => String(a || '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim()
+    === String(b || '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+  // Where a profile stands on the current version. The signature shown is the student's own
+  // (their phone or a checkout they held) before one typed by a buyer with their email.
+  async function consentOf(db, m) {
+    const rows = (await db.query(`SELECT kind, via, signed_name, under20, guardian_name,
+        to_char(signed_on,'YYYY-MM-DD') AS signed_on, created_at, lang
+      FROM bkk_consents WHERE member_id=$1 AND version=$2 AND given ORDER BY created_at, id`, [m.id, CONSENT_VERSION])).rows;
+    const ag = rows.filter(r => r.kind === 'agreement');
+    const own = ag.find(r => r.via !== 'checkout-email') || ag[0] || null;
+    const g = rows.filter(r => r.kind === 'guardian').pop() || null;
+    return { version: CONSENT_VERSION, signed: !!own, signedAt: own ? own.created_at : null, signedName: own ? own.signed_name : null,
+      via: own ? own.via : null, nameDiffers: !!own && !sameName(own.signed_name, m.name), under20: !!(own && own.under20),
+      guardianSigned: !!g, guardianName: g ? g.guardian_name : null, guardianOn: g ? g.signed_on : null };
+  }
+  // The tick a page sends: {agree, version, lang, name, under20}. A stale version is a 409 the
+  // page answers by loading the new text; no tick is 409 at checkout (show the screen) and 400 elsewhere.
+  function readConsent(c, { name, noTick = 409 } = {}) {
+    const refuse = (status, extra = {}) => ({ status, body: { error: 'consent', version: CONSENT_VERSION, ...extra } });
+    if (!c || typeof c !== 'object') return refuse(noTick);
+    if (c.version !== CONSENT_VERSION) return refuse(409, { stale: true });
+    if (c.agree !== true) return noTick === 400 ? { status: 400, body: { error: 'Tick the box to agree.' } } : refuse(noTick);
+    const n = String(c.name ?? name ?? '').replace(/\s+/g, ' ').trim();
+    if (n.length < 2 || n.length > 120) return { status: 400, body: { error: 'Please type your name (2 letters or more).' } };
+    if (!consentLangs().includes(c.lang)) return { status: 400, body: { error: `lang must be one of ${consentLangs().join(', ')}` } };
+    return { value: { agree: true, version: CONSENT_VERSION, lang: c.lang, name: n, under20: c.under20 === true } };
+  }
+  const insertConsent = (db, { memberId, kind = 'agreement', name = null, under20 = false, guardianName = null, signedOn = null,
+    lang = null, via, orderId = null, email = null, version = CONSENT_VERSION }) => db.query(
+    `INSERT INTO bkk_consents (member_id,kind,version,given,signed_name,under20,guardian_name,signed_on,lang,via,order_id,email_at,text_sha)
+     VALUES ($1,$2,$3,true,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *`,
+    [memberId, kind, version, name, under20 === true, guardianName, signedOn, lang, via, orderId, email,
+      lang && CONSENT_TEXT[version] && CONSENT_TEXT[version][lang] ? consentSha(version, lang) : null]).then(r => r.rows[0]);
+  // The copy the agreement promises ("We email you a copy"), in the language it was signed in.
+  // to: the email at signing. A tick typed at checkout by someone with an existing profile's email
+  // ('checkout-email') greets the profile's owner and says someone else may have bought it.
+  async function emailAgreement(to, row, owner) {
+    if (!to || !CONSENT_TEXT[row.version] || !CONSENT_TEXT[row.version][row.lang || 'en']) return;
+    const lang = row.lang || 'en', x = CONSENT_TEXT[row.version][lang].agreement;
+    const since = await getSetting('consent_since', null);
+    const other = row.via === 'checkout-email';
+    const t = render('agreement', lang, { name: other && owner ? owner : row.signed_name, signedName: row.signed_name, other,
+      version: row.version, text: x, under20: row.under20,
+      date: dayIn(lang, row.created_at), since: typeof since === 'string' ? dayIn(lang, `${since}T12:00:00${TZ_OFFSET}`) : null,
+      link: `${baseUrl()}/book?agreement=${row.version}#policy` });
+    await sendMail({ to, subject: t.subject, html: t.html, text: t.text, tag: 'agreement' });
+  }
+  // A checkout's tick is emailed once the order is paid, never before: an unpaid order with a
+  // typed email sends nothing to that address, as the receipt.
+  async function emailOrderAgreement(order) {
+    const row = (await q(`SELECT * FROM bkk_consents WHERE order_id=$1 AND kind='agreement' ORDER BY id LIMIT 1`, [order.id])).rows[0];
+    if (!row) return;
+    const m = (await q('SELECT name FROM bkk_members WHERE id=$1', [row.member_id])).rows[0];
+    await emailAgreement(row.email_at, row, m && m.name);
+  }
+  const DAY_LOCALE = { en: 'en-GB', th: 'th-TH', zh: 'zh-CN', ru: 'ru-RU' };
+  const dayIn = (lang, at) => new Date(at).toLocaleDateString(DAY_LOCALE[lang] || 'en-GB',
+    { timeZone: 'Asia/Bangkok', day: 'numeric', month: 'short', year: 'numeric' });
 
   // Active pass for a member, preferring one that is already started.
   async function activePass(memberId) {
@@ -934,6 +1294,31 @@ function mountBkk(app, opts = {}) {
       return { mode: 'link', missingForGateway: missing };
     return { mode: 'none', missing };
   }
+
+  // The agreement and the privacy notice, for the page to show: text only, no personal data.
+  // ?lang= (English when that version has no such language), ?version= for an older version
+  // someone signed. since: the day the agreement first went on (its "a pass bought before"), once it has.
+  app.get('/api/bkk/consent', async (req, res) => {
+    try {
+      const version = Object.hasOwn(CONSENT_TEXT, String(req.query.version || '')) ? String(req.query.version) : CONSENT_VERSION;
+      const langs = consentLangs(version);
+      const lang = langs.includes(req.query.lang) ? req.query.lang : 'en';
+      const [mode, priv, since] = await Promise.all([consentMode(), privacySettings(), getSetting('consent_since', null)]);
+      const x = CONSENT_TEXT[version][lang];
+      const fill = s => s.replace(/\{(legal_name|address|email)\}/g, (all, k) => priv[k === 'legal_name' ? 'name' : k] || all);
+      res.set('Cache-Control', 'no-cache');
+      res.json({ mode, version, current: CONSENT_VERSION, lang, langs, since: typeof since === 'string' ? since : null,
+        sha: consentSha(version, lang),
+        text: { agreement: x.agreement,
+          privacy: { title: x.privacy.title, sections: x.privacy.sections.map(([h, p]) => [h, fill(p)]) } } });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+  // /policy (the agreement, which holds the shala's rules) and /privacy open those sections of
+  // the booking page, once the agreement is on.
+  app.get(['/policy', '/privacy'], async (req, res, next) => {
+    try { if (await consentMode() === 'off') return next(); } catch (_) { return next(); }
+    res.redirect(302, '/book#' + req.path.slice(1));
+  });
 
   // ── public: catalogue + schedule ──────────────────────────────────────────
   app.get('/api/bkk/products', async (req, res) => {
@@ -1080,31 +1465,61 @@ function mountBkk(app, opts = {}) {
       }
 
       const before = await rawByEmail(pool, email);
-      const member = await findOrCreateMember({ name, email, phone });
       // Typing someone's email at checkout must not open their profile (photos,
       // teacher notes): an existing profile's code goes back only to a browser
       // that already holds it (a merged-in code counts, and stays as it is).
       // Everyone else signs in from the receipt email.
       const holder = before && req.body.memberCode ? await memberByCode(req.body.memberCode) : null;
-      const showCode = !before || (!!holder && holder.id === member.id);
+      // The agreement comes before the gateway, and before a profile is made, so a refusal
+      // leaves nobody and nothing behind. A browser holding a profile that has signed needs no tick.
+      let consent = null;
+      if (await consentMode() !== 'off') {
+        const target = before ? await memberByEmail(email) : null;
+        const signed = !!target && !!holder && holder.id === target.id && await consentOk(pool, target.id);
+        if (!signed) {
+          const c = readConsent(req.body.consent, { name });
+          if (!c.value) return res.status(c.status).json(c.body);
+          consent = c.value;
+        }
+      }
       const pct = await surcharge();
       const { fee, vat, total } = breakdown(pr.price_thb, pct);
 
       // refno is unique-indexed and partly random, so a clash is possible if two
       // orders land in the same millisecond. Retry rather than 500 at a student.
-      let o = null;
-      for (let attempt = 0; attempt < 5 && !o; attempt++) {
-        try {
-          o = (await q(
-            `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb,slot_id,class_date,need_mat,mail_to)
-             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
-            [newRefno(), pr.id, member.id, pr.price_thb, fee, vat, total,
-             cls && cls.slotId, cls && cls.date, !!cls && req.body.needMat === true,
-             before && before.id !== member.id ? String(email).trim().toLowerCase() : null])).rows[0];
-        } catch (e) {
-          if (!/duplicate key/.test(e.message) || attempt === 4) throw e;
+      // A new profile, the order and its consent row (the buyer holds the profile) go in
+      // together, so a failure leaves no profile without its order.
+      let o = null, member = null, showCode = false;
+      const client = await pool.connect();
+      try {
+        await client.query('BEGIN');
+        member = await findOrCreateMember({ name, email, phone }, client);
+        showCode = !before || (!!holder && holder.id === member.id);
+        for (let attempt = 0; attempt < 5 && !o; attempt++) {
+          await client.query('SAVEPOINT o');
+          try {
+            o = (await client.query(
+              `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb,slot_id,class_date,need_mat,mail_to,consent)
+               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *`,
+              [newRefno(), pr.id, member.id, pr.price_thb, fee, vat, total,
+               cls && cls.slotId, cls && cls.date, !!cls && req.body.needMat === true,
+               before && before.id !== member.id ? String(email).trim().toLowerCase() : null,
+               consent && JSON.stringify(consent)])).rows[0];
+            await client.query('RELEASE SAVEPOINT o');
+          } catch (e) {
+            await client.query('ROLLBACK TO SAVEPOINT o');
+            if (!/duplicate key/.test(e.message) || attempt === 4) throw e;
+          }
         }
-      }
+        // An email that already has a profile, typed by a browser that does not hold it, marks
+        // nobody yet: activateOrder writes that row once the order is paid ('checkout-email').
+        if (consent && showCode) await insertConsent(client, { memberId: member.id, name: consent.name, under20: consent.under20,
+          lang: consent.lang, via: 'checkout', orderId: o.id, email: String(email).trim().toLowerCase() });
+        await client.query('COMMIT');
+      } catch (e) {
+        await client.query('ROLLBACK').catch(() => {});
+        throw e;
+      } finally { client.release(); }
 
       const cfg = paysoConfig();
       res.json({
@@ -1461,9 +1876,27 @@ function mountBkk(app, opts = {}) {
       await client.query('BEGIN');
       const upd = await client.query(
         `UPDATE bkk_orders SET status='paid', verified_at=now(), gateway_ref=$2, gateway_note=$3
-         WHERE id=$1 AND status IN ('pending','failed','mismatch') RETURNING slot_id, to_char(class_date,'YYYY-MM-DD') AS class_date`,
+         WHERE id=$1 AND status IN ('pending','failed','mismatch')
+         RETURNING slot_id, to_char(class_date,'YYYY-MM-DD') AS class_date, consent, member_id, mail_to`,
         [order.id, verdict.raw ? JSON.stringify(verdict.raw).slice(0, 400) : null, verdict.note || null]);
       if (!upd.rows.length) { await client.query('ROLLBACK'); return null; }   // already activated, or void
+      // The checkout's tick for a profile the buyer did not hold lands with the payment, never
+      // before it. A failure here is logged and never stops the activation.
+      const tick = upd.rows[0].consent;
+      if (tick && tick.agree === true && CONSENT_TEXT[tick.version] && CONSENT_TEXT[tick.version][tick.lang]) {
+        await client.query('SAVEPOINT consent');
+        try {
+          if (!(await client.query('SELECT 1 FROM bkk_consents WHERE order_id=$1 LIMIT 1', [order.id])).rows.length) {
+            const who = (await client.query('SELECT email FROM bkk_members WHERE id=$1', [upd.rows[0].member_id])).rows[0];
+            await insertConsent(client, { memberId: upd.rows[0].member_id, name: tick.name, under20: tick.under20, lang: tick.lang,
+              version: tick.version, via: 'checkout-email', orderId: order.id, email: upd.rows[0].mail_to || (who && who.email) || null });
+          }
+          await client.query('RELEASE SAVEPOINT consent');
+        } catch (e) {
+          await client.query('ROLLBACK TO SAVEPOINT consent');
+          console.error(`[bkk] consent for order ${order.id} not saved:`, e.message);
+        }
+      }
       const pass = (await client.query(
         `INSERT INTO bkk_passes (member_id,product_id,order_id,kind,credits_total,daily_cap,valid_days)
          VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
@@ -1523,6 +1956,7 @@ function mountBkk(app, opts = {}) {
     // After COMMIT, and awaited only so failures are logged. The pass already
     // exists; a mail server having a bad day must not undo a paid order.
     emailReceipt(order, pr, cls && { ...cls, booked }).catch(e => console.error('[bkk] receipt failed:', e.message));
+    emailOrderAgreement(order).catch(e => console.error('[bkk] agreement copy failed:', e.message));
     return {
       booking: booked ? { title: cls.name, startAt: seat.startAt, overCapacity: seat.overCapacity, already: seat.already } : null,
       bookingError: cls && seat.error ? seat.error : null,
@@ -1542,10 +1976,14 @@ function mountBkk(app, opts = {}) {
     await q(`INSERT INTO bkk_login_tokens (token,member_id,email,ip,expires_at)
              VALUES ($1,$2,$3,'receipt', now() + interval '30 days')`,
       [token, via.id, via.email]);
+    // Once the agreement is on, the receipt says which one the pass was bought under, for the
+    // owner to read when someone else bought it for them.
+    const agreement = await consentMode() !== 'off' && await consentOk(pool, m.id)
+      ? { version: CONSENT_VERSION, link: `${baseUrl()}/book?agreement=${CONSENT_VERSION}#agreement` } : null;
     const t = render('receipt', m.lang || 'en', {
       name: m.name, product: product.name_en,
       amount: order.amount_thb, base: order.base_thb, fee: order.fee_thb, vat: order.vat_thb || 0,
-      refno: order.refno, link: `${baseUrl()}/api/bkk/login/${token}`, cls,
+      refno: order.refno, link: `${baseUrl()}/api/bkk/login/${token}`, cls, agreement,
     });
     await sendMail({ to: via.email, subject: t.subject, html: t.html, text: t.text, tag: 'receipt' });
   }
@@ -1938,6 +2376,7 @@ function mountBkk(app, opts = {}) {
       log.rows.bkk_passes = await moveAll('bkk_passes');
       log.rows.bkk_bookings = await moveAll('bkk_bookings');
       log.rows.bkk_notes = await moveAll('bkk_notes');
+      log.rows.bkk_consents = await moveAll('bkk_consents');
       // One a day, one tag a photo: what the kept profile already has stays put.
       log.rows.bkk_checks = await client.query(`UPDATE bkk_checks SET member_id=$1 WHERE member_id=$2
         AND taken_on NOT IN (SELECT taken_on FROM bkk_checks WHERE member_id=$1) RETURNING id`, [K, F]).then(ids);
@@ -1998,7 +2437,7 @@ function mountBkk(app, opts = {}) {
       if ((await client.query('SELECT 1 FROM bkk_members WHERE merged_into=$1 AND id<>$2 AND merged_at > $3',
         [K, F, f.merged_at])).rows.length) return await stop(409, { error: 'another profile was merged into this one since: undo that one first' });
       const ids = r => r.rows.map(x => x.id);
-      for (const t of ['bkk_orders', 'bkk_passes', 'bkk_bookings', 'bkk_notes', 'bkk_checks']) {
+      for (const t of ['bkk_orders', 'bkk_passes', 'bkk_bookings', 'bkk_notes', 'bkk_checks', 'bkk_consents']) {
         await client.query(`UPDATE ${t} SET member_id=$1 WHERE member_id=$2 AND id = ANY($3::int[])`, [F, K, L.rows[t] || []]);
       }
       await client.query(`UPDATE bkk_photo_members SET member_id=$1 WHERE member_id=$2 AND photo_id = ANY($3::int[])`,
@@ -2015,6 +2454,10 @@ function mountBkk(app, opts = {}) {
       since.passes = await client.query(`UPDATE bkk_passes SET member_id=$1 WHERE member_id=$2
         AND (order_id = ANY($3::int[]) OR (source='rezerv' AND via_member = ANY($4::int[]))) RETURNING id`,
         [F, K, [...(L.rows.bkk_orders || []), ...since.orders], fam]).then(ids);
+      // A checkout's tick goes back with its order: one made with the folded email since, or one
+      // paid since on an order the merge moved (activateOrder writes it on whoever holds the order).
+      since.consents = await client.query(`UPDATE bkk_consents SET member_id=$1 WHERE member_id=$2 AND order_id = ANY($3::int[])
+        RETURNING id`, [F, K, [...(L.rows.bkk_orders || []), ...since.orders]]).then(ids);
       since.visits = await client.query(`UPDATE bkk_bookings b SET member_id=$1 WHERE b.member_id=$2 AND b.source='rezerv'
         AND b.via_member = ANY($3::int[]) AND NOT (b.status='booked' AND EXISTS (SELECT 1 FROM bkk_bookings o WHERE o.member_id=$1
           AND o.slot_id=b.slot_id AND o.class_date=b.class_date AND o.status='booked')) RETURNING b.id`, [F, K, fam]).then(ids);
@@ -2531,7 +2974,12 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
            ORDER BY b.start_at DESC, b.id DESC LIMIT 10`, [m.id]),
       ]);
       const c = count.rows[0];
+      // The agreement, once it is on: signed or not, and whether a guardian still has to come.
+      const mode = await consentMode();
+      const st = mode === 'off' ? null : await consentOf(pool, m);
       res.json({
+        ...(st ? { consent: { mode, version: st.version, signed: st.signed, signedAt: st.signedAt, under20: st.under20,
+          guardianSigned: st.guardianSigned } } : {}),
         member: { code: m.code, name: m.name, email: m.email, journalId: await journalId(m) },
         photo: faceLinks(m.photo_id, m.code),
         history: { practised: c.practised, days: c.days, thisMonth: c.this_month, recent: recent.rows },
@@ -2545,6 +2993,39 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         bookings, startedToday,
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // The student signs the agreement on their own phone ('self'), with the same trust as every
+  // /me/:code route: the code is the sign-in. Signing again changes nothing; a copy goes by email.
+  app.post('/api/bkk/me/:code/consent', async (req, res) => {
+    const b = req.body || {};
+    if ((b.kind || 'agreement') !== 'agreement') return res.status(400).json({ error: 'kind must be agreement' });
+    // Read before the transaction holds a client; every query after BEGIN goes through it.
+    const mode = await consentMode();
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const m0 = await memberByCode(req.params.code, client);
+      if (!m0) { await client.query('ROLLBACK'); return res.status(404).json({ error: 'not found' }); }
+      // off: the page opened it while the switch was on; it closes the screen and goes on.
+      if (mode === 'off') { await client.query('ROLLBACK'); return res.status(409).json({ error: 'the agreement is not on', off: true }); }
+      const c = readConsent(b, { noTick: 400 });
+      if (!c.value) { await client.query('ROLLBACK'); return res.status(c.status).json(c.body); }
+      // One at a time per profile, so two taps never sign twice.
+      const m = (await client.query('SELECT * FROM bkk_members WHERE id=$1 FOR UPDATE', [m0.id])).rows[0];
+      let row = null;
+      if (!(await consentOk(client, m.id))) row = await insertConsent(client, { memberId: m.id, name: c.value.name,
+        under20: c.value.under20, lang: c.value.lang, via: 'self', email: m.email ? String(m.email).toLowerCase() : null });
+      await client.query('COMMIT');
+      if (row) emailAgreement(row.email_at, row).catch(e => console.error('[bkk] agreement copy failed:', e.message));
+      const st = await consentOf(client, m);
+      res.json({ success: true, already: !row, emailed: !!(row && m.email),
+        consent: { mode, version: st.version, signed: st.signed, signedAt: st.signedAt,
+          under20: st.under20, guardianSigned: st.guardianSigned } });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      res.status(500).json({ error: e.message });
+    } finally { client.release(); }
   });
 
   // ── booking ───────────────────────────────────────────────────────────────
@@ -2734,20 +3215,28 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   app.post('/api/bkk/bookings', async (req, res) => {
     const { memberCode: mcode, slotId, date } = req.body || {};
     if (!mcode || !slotId || !date) return res.status(400).json({ error: 'memberCode, slotId and date required' });
+    const staff = isAdmin(req);
+    // Read before the transaction: a query on the pool while this one holds a client can wait forever.
+    const ask = !staff && await consentMode() === 'require';
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
       const m = await memberByCode(mcode, client);
       if (!m) throw new Error('member not found');
-      const staff = isAdmin(req);
       const { booking: b } = await takeSeat(client, { member: m, slotId, date, staff,
         cover: 'pass', source: staff ? 'staff' : 'student', needMat: req.body.needMat === true });
+      // In 'require', a student's own booking that would go through waits for the agreement:
+      // after takeSeat, so a full class or a moon day keeps its own answer, and before COMMIT,
+      // so the rollback leaves no seat, no pass clock started and no class used. Staff never wait.
+      if (ask && !(await consentOk(client, m.id)))
+        throw Object.assign(new Error('consent'), { consent: true });
       await client.query('COMMIT');
       res.json({ success: true, booking: b });
     } catch (e) {
       await client.query('ROLLBACK');
       const msg = /duplicate key/.test(e.message) ? 'you already booked this class' : e.message;
-      res.status(409).json({ error: msg, ...(e.dropinUntil ? { dropinUntil: e.dropinUntil } : {}) });
+      res.status(409).json({ error: msg, ...(e.dropinUntil ? { dropinUntil: e.dropinUntil } : {}),
+        ...(e.consent ? { version: CONSENT_VERSION } : {}) });
     } finally { client.release(); }
   });
 
@@ -3627,6 +4116,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     // No page is /start, as every caller before the In-Depth pages.
     const page = b.page == null ? 'start' : typeof b.page === 'string' ? b.page : '';
     if (!Object.hasOwn(LANDING_KINDS, page)) return res.status(400).json({ error: 'page' });
+    // The agreement's counts exist only while it is on.
+    if (page === 'book' && await consentMode() === 'off') return res.status(400).json({ error: 'page' });
     // Every page names its kind; a body with none (or one that is not JSON) is not a visit.
     if (b.kind == null || b.kind === '') return res.status(400).json({ error: 'kind' });
     // 'step': the first-step ladder (q1..q3 answered, done-<channel> at the end).
@@ -3726,7 +4217,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         q(`SELECT DISTINCT page, week, ch FROM (${kept}) e WHERE k IN ('sent', 'fit') AND ch IS NOT NULL`, args),
       ]);
       const zero = cols => Object.fromEntries(cols.map(c => [c, 0]));
-      const pages = Object.entries(LANDING_COLS).map(([page, cols]) => ({ page, cols,
+      // The agreement's counts show once it is on (or once it has any).
+      const bookOn = await consentMode() !== 'off' || totals.rows.some(r => r.page === 'book');
+      const pages = Object.entries(LANDING_COLS).filter(([page]) => page !== 'book' || bookOn).map(([page, cols]) => ({ page, cols,
         weeks: weeks.map(week => ({ week, n: zero(cols), bySrc: new Map(), byTag: new Map(), olderRule: false })) }));
       const at = r => { const p = pages.find(x => x.page === r.page); return p && p.weeks.find(x => x.week === r.week); };
       for (const r of totals.rows) { const w = at(r); if (w) w.n[r.k] += r.n; }
@@ -3794,9 +4287,11 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     try {
       const today = bkkToday();
       // pass_name / dropin let the door label a row: a drop-in, or a Rezerv seat.
-      // photo: the student's face, so the door can greet them by name.
+      // photo: the student's face, so the door can greet them by name. consent: signed the
+      // agreement, only while it is on.
+      const on = await consentMode() !== 'off';
       const r = await q(
-        `SELECT s.title, b.class_date, b.start_at, m.name, m.code, m.photo_id, b.checked_in_at,
+        `SELECT s.title, b.class_date, b.start_at, m.name, m.code, m.photo_id, b.checked_in_at,${on ? ` ${SIGNED('m.id')} AS consent,` : ''}
            b.slot_id, b.cover, b.source, b.need_mat, pr.name_en AS pass_name,
            coalesce(pr.kind = 'credits' AND pr.credits = 1, false) AS dropin
          FROM bkk_bookings b JOIN bkk_class_slots s ON s.id=b.slot_id
@@ -3876,6 +4371,16 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       min: addDaysYmd(today, SCHEDULE_DAYS - 1), max: addDaysYmd(today, OPEN_MAX_DAYS) };
   }
 
+  // What keeps the agreement off: a language the current version lacks, or a privacy fact not filled in.
+  const consentGaps = priv => [...CONSENT_LANGS.filter(l => !consentLangs().includes(l)).map(l => `${l.toUpperCase()} text`),
+    ...Object.keys(PRIVACY_KEYS).filter(k => !priv[k]).map(k => `privacy ${k}`)];
+  async function consentSettings() {
+    const [mode, priv, since] = await Promise.all([consentMode(), privacySettings(), getSetting('consent_since', null)]);
+    const missing = consentGaps(priv);
+    return { mode, version: CONSENT_VERSION, langs: consentLangs(), privacy: priv, privacyFilled: Object.values(priv).every(Boolean),
+      since: typeof since === 'string' ? since : null, canTurnOn: !missing.length, missing };
+  }
+
   // What the Settings tab shows. Telegram: whether the token and chat are set
   // (never their values) and how the last send went.
   app.get('/api/bkk/admin/settings', async (req, res) => {
@@ -3884,7 +4389,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     try {
       res.json({ surchargePct: await surcharge(), teamBrief: await teamSettings(),
         payWatch: await payWatchSettings(), telegram: await telegramStatus(), payment: { mode: paymentStatus().mode },
-        booking: await bookingSettings() });
+        booking: await bookingSettings(), consent: await consentSettings() });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -3951,6 +4456,28 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
           return res.status(400).json({ error: 'teachersThrough must be a month (YYYY-MM), this month or later' });
         team.push(['teachers_shown_through', m]);
       }
+      // The agreement switch and the privacy notice's three facts. The switch leaves off only when
+      // the current version is in all 4 languages and those facts are filled in, as they would be after this save.
+      const priv = await privacySettings();
+      for (const [field, k, max] of [['privacyName', 'name', 200], ['privacyAddress', 'address', 400], ['privacyEmail', 'email', 200]]) {
+        if (b[field] === undefined) continue;
+        const v = typeof b[field] === 'string' ? b[field].replace(/\s+/g, ' ').trim() : null;
+        if (v === null || v.length > max || /[<>{}]/.test(v)) return res.status(400).json({ error: `${field}: plain text, up to ${max} characters` });
+        if (k === 'email' && v && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return res.status(400).json({ error: 'privacyEmail must be an email address' });
+        priv[k] = v;
+        team.push([PRIVACY_KEYS[k], v]);
+      }
+      const modeWas = await consentMode();
+      let mode = modeWas;
+      if (b.consentMode !== undefined) {
+        if (!CONSENT_MODES.includes(b.consentMode)) return res.status(400).json({ error: `consentMode must be ${CONSENT_MODES.join(', ')}` });
+        mode = b.consentMode;
+      }
+      if (mode !== 'off') {
+        const gaps = consentGaps(priv);
+        if (gaps.length) return res.status(400).json({ error: `the agreement cannot be on yet: ${gaps.join(', ')} missing`, missing: gaps });
+      }
+      if (b.consentMode !== undefined) team.push(['consent_mode', mode]);
       const links = b.links || {};
       for (const k of LINK_KEYS) {
         if (links[k] === undefined) continue;
@@ -3967,8 +4494,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         await q(`INSERT INTO bkk_settings (key,value) VALUES ($1,$2)
                  ON CONFLICT (key) DO UPDATE SET value=$2, updated_at=now()`, [key, JSON.stringify(val)]);
       }
+      // The policy's "a pass bought before ..." is the day the agreement first went on.
+      if (mode !== 'off') await q(`INSERT INTO bkk_settings (key,value) VALUES ('consent_since',$1) ON CONFLICT (key) DO NOTHING`,
+        [JSON.stringify(bkkToday())]);
+      if (mode !== modeWas) console.log(`✓ bkk: student agreement ${modeWas} → ${mode}`);
       res.json({ success: true, surchargePct: await surcharge(), teamBrief: await teamSettings(),
-        payWatch: await payWatchSettings(), telegram: await telegramStatus(), booking: await bookingSettings() });
+        payWatch: await payWatchSettings(), telegram: await telegramStatus(), booking: await bookingSettings(),
+        consent: await consentSettings() });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -4030,7 +4562,11 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (adminOnly(req, res)) return;
     try {
       const term = String(req.query.q || '').trim();
-      if (term.length < 2) return res.json({ members: [] });
+      // ?consent=missing (once the agreement is on): people with a pass live today who have not
+      // signed the current version, with or without a search term.
+      const mode = await consentMode();
+      const missing = req.query.consent === 'missing' && mode !== 'off';
+      if (term.length < 2 && !missing) return res.json({ members: [] });
       const like = `%${term.toLowerCase()}%`;
       // ?on=YYYY-MM-DD: has_pass for a class that is over, as takeSeat's late
       // rule sees it (PASS_LIVE_ON). pass_starts: every pass that counts starts
@@ -4039,22 +4575,27 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const day = on ? '$2::date' : `(now() AT TIME ZONE 'Asia/Bangkok')::date`;
       const usable = `p.member_id = m.id AND ${on ? PASS_LIVE_ON(day) : `p.status='active' AND (p.valid_until IS NULL OR p.valid_until >= ${day})`}
              AND (p.kind='unlimited' OR p.credits_used < p.credits_total)`;
+      const live = `EXISTS (SELECT 1 FROM bkk_passes p WHERE p.member_id = m.id AND p.status='active'
+        AND (p.valid_until IS NULL OR p.valid_until >= (now() AT TIME ZONE 'Asia/Bangkok')::date)
+        AND (p.kind='unlimited' OR p.credits_used < p.credits_total))`;
       const r = await q(
         `SELECT m.*,
            (SELECT count(*)::int FROM bkk_bookings b
              WHERE b.member_id = m.id AND b.status='booked' AND b.start_at >= now()) AS booked,
+           ${mode === 'off' ? '' : `${SIGNED('m.id')} AS consent_signed, ${GUARDIAN_DUE('m.id')} AS guardian_due,`}
            EXISTS (SELECT 1 FROM bkk_passes p WHERE ${usable}) AS has_pass,
            (SELECT to_char(min(p.valid_from),'YYYY-MM-DD') FROM bkk_passes p WHERE ${usable}
              HAVING bool_and(coalesce(p.valid_from > ${day}, false))) AS pass_starts
          FROM bkk_members m
-         WHERE m.merged_into IS NULL AND (lower(m.name) LIKE $1 OR lower(m.email) LIKE $1
+         WHERE m.merged_into IS NULL ${missing ? `AND ${live} AND NOT ${SIGNED('m.id')}` : ''}
+           AND (${missing && term.length < 2 ? 'true OR ' : ''}lower(m.name) LIKE $1 OR lower(m.email) LIKE $1
             OR EXISTS (SELECT 1 FROM unnest(coalesce(m.former_names, '{}')) n WHERE lower(n) LIKE $1)
             OR lower(m.code) LIKE $1 OR coalesce(m.phone,'') LIKE $1 OR lower(coalesce(m.rezerv_id,'')) LIKE $1
             OR EXISTS (SELECT 1 FROM bkk_members f WHERE f.merged_into = m.id
               AND (lower(f.code) LIKE $1 OR lower(coalesce(f.rezerv_id,'')) LIKE $1 OR lower(f.name) LIKE $1
                 OR lower(coalesce(f.email,'')) LIKE $1 OR coalesce(f.phone,'') LIKE $1
                 OR EXISTS (SELECT 1 FROM unnest(coalesce(f.former_names, '{}')) n WHERE lower(n) LIKE $1))))
-         ORDER BY m.name LIMIT 25`, on ? [like, on] : [like]);
+         ORDER BY m.name LIMIT ${missing ? 200 : 25}`, on ? [like, on] : [like]);
       const ids = r.rows.map(m => m.id);
       const [passes, folded] = ids.length ? await Promise.all([q(
         `SELECT p.*, pr.name_en, pr.name_th FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
@@ -4062,8 +4603,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         `SELECT merged_into, code, name, email, rezerv_id, to_char(merged_at AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS merged_on
          FROM bkk_members WHERE merged_into = ANY($1::int[]) ORDER BY merged_at`, [ids])]).then(rs => rs.map(x => x.rows)) : [[], []];
       res.json({
-        members: r.rows.map(({ merge_log, ...m }) => ({
-          ...m, passes: passes.filter(p => p.member_id === m.id),
+        members: r.rows.map(({ merge_log, consent_signed, guardian_due, ...m }) => ({
+          ...m, ...(mode === 'off' ? {} : { consent: { signed: consent_signed, guardianDue: guardian_due } }),
+          passes: passes.filter(p => p.member_id === m.id),
           folded: folded.filter(f => f.merged_into === m.id).map(({ merged_into, ...f }) => f),
         })),
       });
@@ -5041,6 +5583,23 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   }
 
   // One student, all of it: every visit, payment, pass and note, newest first.
+  // A guardian signed the paper agreement at the desk for a student under 20: staff record the
+  // guardian's name and the day on the paper ('desk'). Staff never sign for the student.
+  app.post('/api/bkk/admin/members/:code/guardian', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const m = await memberByCode(req.params.code);
+      if (!m) return res.status(404).json({ error: 'member not found' });
+      if (await consentMode() === 'off') return res.status(409).json({ error: 'the agreement is not on' });
+      const name = String((req.body || {}).name || '').replace(/\s+/g, ' ').trim();
+      const date = String((req.body || {}).date || '').trim();
+      if (name.length < 2 || name.length > 120 || /[<>]/.test(name)) return res.status(400).json({ error: "the guardian's name, 2 to 120 letters" });
+      if (!realYmd(date) || date > bkkToday() || date < '2026-01-01') return res.status(400).json({ error: 'date: the day on the paper, YYYY-MM-DD, not in the future' });
+      await insertConsent(pool, { memberId: m.id, kind: 'guardian', guardianName: name, signedOn: date, via: 'desk' });
+      res.json({ success: true, consent: await consentOf(pool, m) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
   app.get('/api/bkk/admin/members/:code/history', async (req, res) => {
     if (adminOnly(req, res)) return;
     try {
@@ -5079,7 +5638,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const running = v => v.status === 'booked' && !v.checked_in_at && !upcoming(v)
         && (v.time == null ? v.date === today : now - new Date(v.start_at) < (v.duration_min || 120) * 60000);
       const next = visits.rows.filter(v => upcoming(v) || running(v)).reverse();
+      const cmode = await consentMode();
       res.json({
+        ...(cmode === 'off' ? {} : { consent: { mode: cmode, ...(await consentOf(pool, m)) } }),
         member: { code: m.code, name: m.name, email: m.email, phone: m.phone, joinedOn: pgDate(m.joined_on),
           source: m.source, rezervId: m.rezerv_id, createdAt: m.created_at },
         summary: {
@@ -5655,9 +6216,12 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
            ORDER BY b.start_at DESC LIMIT 20`, [m.id]),
       ]);
       // Opened from today's list (a ref): the member code stays off the answer.
+      const cOn = await consentMode() !== 'off';
+      const st = cOn ? await consentOf(pool, m) : null;
       res.json({
         member: { ...(byRef ? {} : { code: m.code }), ref: memberRef(await serverSecret(), m.id),
           name: m.name, email: m.email, phone: m.phone, photo: faceSmall(m.photo_id, m.code), journalId: await journalId(m) },
+        ...(st ? { consent: { signed: st.signed, under20: st.under20 && !st.guardianSigned } } : {}),
         passes: passes.rows, notes: notes.rows, recent: recent.rows,
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
@@ -5703,6 +6267,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
            (b.cover IS DISTINCT FROM 'rezerv' AND NOT EXISTS (SELECT 1 FROM bkk_passes p
               WHERE p.member_id = b.member_id AND ${PASS_LIVE_ON('$1::date')})) AS check_pass,
            (SELECT count(*)::int FROM bkk_notes n WHERE n.member_id=m.id) AS notes,
+           ${SIGNED('m.id')} AS signed, ${GUARDIAN_DUE('m.id')} AS under20,
            lm.day AS last_main, lm.days AS last_main_days
          FROM bkk_bookings b
          JOIN bkk_members m ON m.id=b.member_id
@@ -5718,10 +6283,12 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       // mistake (a second class used) shows on both rows.
       const times = new Map();
       for (const b of r.rows) times.set(b.member_id, [...(times.get(b.member_id) || []), [b.booking_id, bkkHm(new Date(b.start_at).getTime())]]);
+      // The agreement, as two true/false only while it is on: signed, and under 20 with no guardian yet.
+      const cOn = await consentMode() !== 'off';
       res.json({
         date: today, classes,
-        students: r.rows.map(({ member_id, booking_id, slot_id, is_online, checkin_via, checkin_by, check_pass, code, photo_id, ...s }) => ({
-          ...s, photo: faceSmall(photo_id, code), ref: memberRef(sec, member_id), bookingId: booking_id, slotId: slot_id, isOnline: is_online,
+        students: r.rows.map(({ member_id, booking_id, slot_id, is_online, checkin_via, checkin_by, check_pass, code, photo_id, signed, under20, ...s }) => ({
+          ...s, ...(cOn ? { signed: signed === true, under20: under20 === true } : {}), photo: faceSmall(photo_id, code), ref: memberRef(sec, member_id), bookingId: booking_id, slotId: slot_id, isOnline: is_online,
           checkinVia: checkin_via, checkinBy: checkin_by, rezerv: s.cover === 'rezerv', checkPass: check_pass,
           alsoAt: times.get(member_id).filter(x => x[0] !== booking_id).map(x => x[1]) })),
       });
@@ -6742,7 +7309,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       }
       const rows = (await q(
         `SELECT b.id, b.status, b.checked_in_at, b.booked_at, b.cancelled_at, b.cancel_reason, b.cover, b.source, b.need_mat,
-           m.code, m.name, m.photo_id, pr.name_en AS pass_name, coalesce(pr.kind = 'credits' AND pr.credits = 1, false) AS dropin
+           m.code, m.name, m.photo_id, pr.name_en AS pass_name, coalesce(pr.kind = 'credits' AND pr.credits = 1, false) AS dropin,
+           ${SIGNED('m.id')} AS consent
          FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
          LEFT JOIN bkk_passes p ON p.id=b.pass_id LEFT JOIN bkk_products pr ON pr.id=p.product_id
          WHERE b.class_date=$1::date AND ${bySlot ? 'b.slot_id=$2'
@@ -6760,6 +7328,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         noShows: live.filter(b => b.status === 'noshow').length } });
       const startMs = Date.parse(c.startAt), now = bkkNow().getTime();
       const dur = slot ? (slot.duration_min || 120) : null;
+      const cOn = await consentMode() !== 'off';
       const started = now >= startMs;
       // classCheck's staff rule: a name can go on the list until the class ends,
       // and after it (as someone who came) for LATE_ADD_DAYS days.
@@ -6772,7 +7341,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
           mats: live.filter(b => b.status === 'booked' && b.need_mat).length },
         roster: live.map(b => ({ bookingId: b.id, code: b.code, name: b.name, status: b.status,
           checkedInAt: b.checked_in_at, bookedAt: b.booked_at, cover: b.cover, source: b.source,
-          passName: b.pass_name, dropin: b.dropin, needMat: b.need_mat, photo: faceSmall(b.photo_id, b.code) }))
+          passName: b.pass_name, dropin: b.dropin, needMat: b.need_mat, photo: faceSmall(b.photo_id, b.code),
+          ...(cOn ? { consent: b.consent } : {}) }))
           .sort((a, b) => String(a.name).localeCompare(String(b.name)) || a.bookingId - b.bookingId),
         cancelledList: rows.filter(b => b.status === 'cancelled')
           .sort((a, b) => (b.cancelled_at || 0) - (a.cancelled_at || 0) || b.id - a.id)
@@ -7150,4 +7720,5 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
 const express = require('express');
 const express_urlencoded_safe = express.urlencoded({ extended: false });
 
-module.exports = { mountBkk, CANCEL_CUTOFF_HOURS, SEED_PRODUCTS, SEED_SLOTS, moonDaysBetween, rotationTeacher, parseWhen };
+module.exports = { mountBkk, CANCEL_CUTOFF_HOURS, SEED_PRODUCTS, SEED_SLOTS, moonDaysBetween, rotationTeacher, parseWhen,
+  CONSENT_VERSION, CONSENT_TEXT, checkConsentText };

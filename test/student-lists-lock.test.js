@@ -401,6 +401,26 @@ fs.writeFileSync(path.join(PRIVATE, 'rosters', 'hefei.json'), JSON.stringify({ w
   const noAdmin = await botRun([[7005, '/export']], { BOONCHU_CHAT_ID: '' });
   ok('/export gives nothing to anyone while BOONCHU_CHAT_ID is unset', noAdmin.length === 1 && noAdmin[0].messages === 0, JSON.stringify(noAdmin.map(r => r.messages)));
 
+  // The student agreement (20 Nov 2026): its text is public and holds no student; who signed,
+  // the Not signed list, a guardian's paper and the switch are staff only. Off, as it ships:
+  // /policy and /privacy are not there and /book only carries the sections, hidden.
+  console.log('\n-- the student agreement --');
+  const ct = await request('GET', '/api/bkk/consent?lang=th');
+  ok('the agreement text needs no key, is off as shipped, and holds no student', ct.status === 200 && ct.json && ct.json.mode === 'off'
+    && Object.keys(ct.json).sort().join() === 'current,lang,langs,mode,sha,since,text,version' && !/"code"|"member|signed_name|email_at|Locktest/.test(ct.text),
+    shape(ct));
+  for (const [m, p, body] of [['GET', '/api/bkk/admin/members?consent=missing'], ['POST', '/api/bkk/admin/members/BLOCKTEST0001/guardian', { name: 'Pat Example', date: '2026-11-20' }],
+    ['POST', '/api/bkk/admin/settings', { consentMode: 'ask' }]]) {
+    const r = await request(m, p, {}, body), w = await request(m, p, { 'x-bkk-key': 'wrong' }, body);
+    ok(`${m} ${p.split('?')[0]} → 401 without the staff key, or with a wrong one, and nothing more`, r.status === 401 && w.status === 401
+      && Object.keys(r.json || {}).join() === 'error' && Object.keys(w.json || {}).join() === 'error', `${shape(r)} ${shape(w)}`);
+  }
+  ok('...and the switch is still off', (await request('GET', '/api/bkk/consent')).json.mode === 'off');
+  const pol = await request('GET', '/policy'), prv = await request('GET', '/privacy'), bk = await request('GET', '/book');
+  ok('off: /policy and /privacy are not there, and /book carries the two sections hidden', pol.status === 404 && prv.status === 404 && bk.status === 200
+    && bk.text.includes('<section id="policy" class="sec sgrid terms" hidden></section>') && bk.text.includes('<section id="privacy" class="sec sgrid terms" hidden></section>'),
+    `${pol.status} ${prv.status} ${bk.status}`);
+
   console.log('\n-- the server outlives a database connection the database ends --');
   await request('GET', '/api/bkk/schedule?days=3');
   const cut = (await pool.query(`SELECT count(pg_terminate_backend(pid))::int AS n FROM pg_stat_activity

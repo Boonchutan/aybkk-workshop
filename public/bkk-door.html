@@ -85,6 +85,8 @@
   .row .tag.rz{color:#8fc7ff;border-color:rgba(143,199,255,.4)}
   .row .tag.dp{color:var(--pink);border-color:rgba(255,111,174,.4)}
   .row .tag.mt{color:#ffc857;border-color:rgba(255,200,87,.5)}
+  /* The student agreement not signed yet (only while it is on): ask them at the desk. */
+  .row .agdot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#ff5a4f;margin-left:6px;vertical-align:middle}
   .add{width:100%;margin:0 0 12px;padding:13px;border-radius:8px;border:1px dashed var(--plum);
     background:none;color:var(--plum);font:inherit;font-weight:600;font-size:15px;cursor:pointer}
   .add:disabled{opacity:.35;cursor:default}
@@ -320,7 +322,7 @@
       !term || String(b.name).toLowerCase().includes(term) || String(b.code).toLowerCase().includes(term));
     $('#list').innerHTML = rows.length ? rows.map(b => `
       <button class="row ${b.checked_in_at ? 'in' : ''}" data-code="${esc(b.code)}">
-        ${face(b)}<span class="nm">${esc(b.name)}<span class="cd">${esc(b.code)}${tags(b).map(([t, c]) =>
+        ${face(b)}<span class="nm">${esc(b.name)}${b.consent === false ? '<i class="agdot" role="img" aria-label="Agreement not signed" title="Agreement not signed"></i>' : ''}<span class="cd">${esc(b.code)}${tags(b).map(([t, c]) =>
           `<i class="tag ${c}">${esc(t)}</i>`).join('')}</span></span>
         <span class="st">${b.checked_in_at ? '✓ in ' + time(b.checked_in_at) : 'tap to check in'}</span>
       </button>`).join('')

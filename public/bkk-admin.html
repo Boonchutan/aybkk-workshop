@@ -34,6 +34,10 @@
   #gate{max-width:340px;margin:16vh auto;text-align:center}
   .muted{color:var(--soft);font-size:12.5px}
   .in{color:#187a43;font-weight:700}
+  .agno{color:#b42318;font-weight:700}
+  .agdot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#d92d20;vertical-align:middle;margin-left:4px}
+  .agl{margin:6px 0 0}
+  .agl.agwarn{color:#b42318;font-weight:700}
   .lang{display:flex;gap:4px}
   .lang button{padding:6px 8px;border:1.5px solid rgba(253,247,250,.35);border-radius:6px;background:none;color:#fdf7fa;
     font:700 13px/1 'Work Sans','Plex',sans-serif;cursor:pointer}
@@ -1226,9 +1230,9 @@
     lwHelp: 'Monday to Sunday, Bangkok time, the last 8 weeks. Counts only, no names. Tap a week to split it by source (?\u2060src=) and by headline (?\u2060for=).',
     lwHow: 'Opens and steps count page openings, not people: a reload or a return counts again, so Step 3 can be higher than Sent. Sent counts each person\u2019s first application, Real fit their first one that fits; either can come from a visit in an earlier week. A return without ?\u2060src= keeps the first visit\u2019s source.',
     lwPage: { 'in-depth-zh': ['In-Depth, Chinese page', 'cn.aybkk.net/in-depth'], 'in-depth-en': ['In-Depth, English page', 'aybkk.net/in-depth'],
-      start: ['Start page', 'aybkk.net/start'] },
+      start: ['Start page', 'aybkk.net/start'], book: ['Student agreement, buying and booking', 'aybkk.net/book'] },
     lwCol: { view: 'Opens', views: 'Views', step2: 'Step 2', step3: 'Step 3', sent: 'Sent', fit: 'Real fit',
-      tap: 'Tapped book', q1: 'Q1', q2: 'Q2', q3: 'Q3', done: 'Done' },
+      tap: 'Tapped book', q1: 'Q1', q2: 'Q2', q3: 'Q3', done: 'Done', 'consent-shown': 'Shown', 'consent-agreed': 'Agreed' },
     lwWeek: 'Week of', lwBySrc: 'By source (?\u2060src=)', lwByTag: 'By headline (?\u2060for=)', lwNone: '(none)', lwOther: 'All the others',
     lwRule: 'Real fit', lwRuleK: { primary: 'Primary by heart', rooms: 'Mysore and led classes', dates: 'All 30 days (Chinese page)',
       mornings: 'Mornings a week', years: 'Years of Ashtanga' },
@@ -1240,14 +1244,49 @@
     lwHelp: 'จันทร์ถึงอาทิตย์ เวลากรุงเทพฯ 8 สัปดาห์ล่าสุด นับจำนวนอย่างเดียว ไม่มีชื่อ แตะที่สัปดาห์เพื่อดูแยกตามที่มา (?\u2060src=) และตามพาดหัว (?\u2060for=)',
     lwHow: 'เปิดดูและขั้นต่าง ๆ นับตามครั้งที่เปิดหน้า ไม่ได้นับคน รีโหลดหรือกลับมาเปิดอีกก็นับเพิ่ม ขั้น 3 จึงอาจสูงกว่าส่งแล้ว ส่งแล้วนับใบสมัครใบแรกของแต่ละคน ตรงเกณฑ์นับใบแรกที่ตรงเกณฑ์ ทั้งสองอย่างอาจมาจากการเข้าชมในสัปดาห์ก่อน ถ้ากลับมาโดยไม่มี ?\u2060src= จะนับตามที่มาของครั้งแรก',
     lwPage: { 'in-depth-zh': ['In-Depth หน้าภาษาจีน', 'cn.aybkk.net/in-depth'], 'in-depth-en': ['In-Depth หน้าภาษาอังกฤษ', 'aybkk.net/in-depth'],
-      start: ['หน้า Start', 'aybkk.net/start'] },
+      start: ['หน้า Start', 'aybkk.net/start'], book: ['ข้อตกลงนักเรียน ตอนซื้อและตอนจอง', 'aybkk.net/book'] },
     lwCol: { view: 'เปิดดู', views: 'เข้าชม', step2: 'ถึงขั้น 2', step3: 'ถึงขั้น 3', sent: 'ส่งแล้ว', fit: 'ตรงเกณฑ์',
-      tap: 'กดจอง', q1: 'ข้อ 1', q2: 'ข้อ 2', q3: 'ข้อ 3', done: 'จบ' },
+      tap: 'กดจอง', q1: 'ข้อ 1', q2: 'ข้อ 2', q3: 'ข้อ 3', done: 'จบ', 'consent-shown': 'แสดง', 'consent-agreed': 'ยอมรับ' },
     lwWeek: 'สัปดาห์เริ่ม', lwBySrc: 'แยกตามที่มา (?\u2060src=)', lwByTag: 'แยกตามพาดหัว (?\u2060for=)', lwNone: '(ไม่มี)', lwOther: 'ที่มาอื่น ๆ รวมกัน',
     lwRule: 'ตรงเกณฑ์', lwRuleK: { primary: 'จำ Primary ได้ทั้งชุด', rooms: 'เคยฝึกคลาสมายซอร์และคลาส Led', dates: 'มาได้ครบ 30 วัน (หน้าภาษาจีน)',
       mornings: 'เช้าต่อสัปดาห์', years: 'ปีที่ฝึกอัษฎางค์' },
     lwRuleV: { yes: 'ใช่' }, lwOrMore: n => `${n} ขึ้นไป`, lwRuleEnd: ' การสอนและวิดีโอไม่นับในเกณฑ์นี้',
     lwOlder: 'สัปดาห์ที่มี * นับตรงเกณฑ์ด้วยเกณฑ์ก่อนหน้า',
+  });
+  // The student agreement (20 Nov 2026): the profile line, the lists, the switch.
+  Object.assign(STR.en, {
+    agOn: (v, d, n, via) => `Agreement ${v} · ${d} · signed as ${n} · ${via}`,
+    agVia: { self: 'own phone', checkout: 'online checkout', 'checkout-email': 'online checkout, by someone with this email', desk: 'desk' },
+    agNot: 'Not signed', agOther: 'Signed by another name, ask at the desk',
+    agU20: 'Under 20 · guardian not signed', agU20ok: (n, d) => `Under 20 · guardian ${n} signed on ${d}`,
+    agGuard: 'Record guardian', qGuardName: 'Guardian\u2019s name, as on the paper:', qGuardDate: 'The day on the paper (YYYY-MM-DD):',
+    agGuardDone: 'Guardian recorded.',
+    agMissing: 'Not signed', agMissingHelp: 'People with a pass live today who have not signed the current agreement. Show QR signs them in on their own phone, where the agreement opens.',
+    agCol: 'Agreed', agYes: 'yes', agNo: 'no',
+    agTitle: 'Student agreement',
+    agHelp: 'Off: nothing changes for anyone. Ask: checkout asks for the agreement, and My account and the timetable remind. Require: a student\u2019s own booking asks too. Staff, the door, /teach, payments and imports are never stopped.',
+    agMode: { off: 'Off', ask: 'Ask', require: 'Require' },
+    agVer: (v, l) => `Version ${v} · languages: ${l}`, agSince: d => `on since ${d}`,
+    agPriv: 'Privacy notice', agPrivName: 'Legal name of the business or owner', agPrivAddr: 'Address', agPrivMail: 'Contact email',
+    agPrivFilled: 'filled in', agPrivEmpty: 'not filled in yet', agCant: m => `It cannot be switched on yet: ${m} missing.`,
+    agSure: m => `Switch the student agreement to "${m}"?`,
+  });
+  Object.assign(STR.th, {
+    agOn: (v, d, n, via) => `ข้อตกลง ${v} · ${d} · ลงชื่อโดย ${n} · ${via}`,
+    agVia: { self: 'โทรศัพท์ของนักเรียนเอง', checkout: 'ตอนชำระเงินออนไลน์', 'checkout-email': 'ตอนชำระเงินออนไลน์ โดยคนที่ใช้อีเมลนี้', desk: 'เคาน์เตอร์' },
+    agNot: 'ยังไม่ลงชื่อ', agOther: 'ลงชื่อด้วยชื่ออื่น ถามที่เคาน์เตอร์',
+    agU20: 'อายุต่ำกว่า 20 · ผู้ปกครองยังไม่ลงชื่อ', agU20ok: (n, d) => `อายุต่ำกว่า 20 · ผู้ปกครอง ${n} ลงชื่อเมื่อ ${d}`,
+    agGuard: 'บันทึกผู้ปกครอง', qGuardName: 'ชื่อผู้ปกครองตามที่เขียนในกระดาษ:', qGuardDate: 'วันที่ในกระดาษ (YYYY-MM-DD):',
+    agGuardDone: 'บันทึกผู้ปกครองแล้ว',
+    agMissing: 'ยังไม่ลงชื่อ', agMissingHelp: 'คนที่มีแพ็กเกจใช้ได้วันนี้ แต่ยังไม่ได้ลงชื่อข้อตกลงฉบับปัจจุบัน กด QR ให้นักเรียนเข้าสู่ระบบในโทรศัพท์ตัวเอง แล้วข้อตกลงจะเปิดขึ้น',
+    agCol: 'ข้อตกลง', agYes: 'ลงแล้ว', agNo: 'ยัง',
+    agTitle: 'ข้อตกลงนักเรียน',
+    agHelp: 'ปิด: ไม่มีอะไรเปลี่ยนสำหรับใคร ถาม: ตอนชำระเงินจะขอให้ยอมรับข้อตกลง และบัญชีของฉันกับตารางเรียนจะเตือน บังคับ: การจองของนักเรียนเองก็จะขอด้วย ทีมงาน หน้าห้อง /teach การชำระเงิน และการนำเข้าข้อมูล จะไม่ถูกหยุด',
+    agMode: { off: 'ปิด', ask: 'ถาม', require: 'บังคับ' },
+    agVer: (v, l) => `ฉบับ ${v} · ภาษา: ${l}`, agSince: d => `เปิดใช้ตั้งแต่ ${d}`,
+    agPriv: 'ประกาศความเป็นส่วนตัว', agPrivName: 'ชื่อนิติบุคคลหรือเจ้าของกิจการ', agPrivAddr: 'ที่อยู่', agPrivMail: 'อีเมลติดต่อ',
+    agPrivFilled: 'กรอกครบแล้ว', agPrivEmpty: 'ยังไม่ได้กรอก', agCant: m => `ยังเปิดไม่ได้: ยังขาด ${m}`,
+    agSure: m => `เปลี่ยนข้อตกลงนักเรียนเป็น "${m}"?`,
   });
   const T =(k, ...a) => { const v = STR[LANG][k] ?? STR.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
   const W = w => STR[LANG].words[w] || w;
@@ -1358,7 +1397,8 @@
       <b>${T('students')}</b>
       <p class="muted">${T('searchHelp')}</p>
       <p><input id="q" placeholder="${esc(T('searchPh'))}" style="width:68%" value="${esc(term || '')}">
-      <button class="btn" onclick="findStudents()">${T('search')}</button></p>
+      <button class="btn" onclick="findStudents()">${T('search')}</button>
+      <button class="btn gray" id="agMiss" onclick="findMissing()" hidden>${esc(T('agMissing'))}</button></p>
       <div id="results"></div>
     </div>
     <div class="box">
@@ -1382,6 +1422,8 @@
       <div id="impOut"></div>
     </div>`;
     $('#q').onkeydown = e => { if (e.key === 'Enter') findStudents(); };
+    // The "Not signed" list only once the student agreement is on.
+    fetch('/api/bkk/consent?lang=en').then(r => r.json()).then(c => { const b = $('#agMiss'); if (b) b.hidden = c.mode === 'off'; }).catch(() => {});
     if (!term) return;
     await findStudents();
     if (back && current === 'students' && !SUB) backTo(back);
@@ -1405,11 +1447,21 @@
     if (term.length < 2) { $('#results').innerHTML = `<p class="muted">${T('twoLetters')}</p>`; return; }
     await loadThNames();
     const d = await api('/api/bkk/admin/members?q=' + encodeURIComponent(term)).then(r => r.json());
+    paintFound(d.members || [], '');
+  };
+  // Not signed: everyone with a pass live today who has not signed the current agreement.
+  window.findMissing = async () => {
+    await loadThNames();
+    const d = await api('/api/bkk/admin/members?consent=missing').then(r => r.json()).catch(() => ({}));
     const ms = d.members || [];
+    paintFound(ms, `<p class="muted"><b>${esc(T('agMissing'))}</b> · ${ms.length} · ${esc(T('agMissingHelp'))}</p>`);
+  };
+  function paintFound(ms, head) {
     FOUND = Object.fromEntries(ms.map(m => [m.code, m]));
-    if (!ms.length) { $('#results').innerHTML = `<p class="muted">${T('nobody')}</p>`; return; }
-    $('#results').innerHTML = ms.map(m => `<div style="border-top:1px solid var(--line);padding:12px 0">
-      ${whoBtn(m.code, m.name, 'who-s-' + m.code)} <span class="muted">${esc(m.code)}</span>
+    if (!ms.length) { $('#results').innerHTML = head + `<p class="muted">${T('nobody')}</p>`; return; }
+    $('#results').innerHTML = head + ms.map(m => `<div style="border-top:1px solid var(--line);padding:12px 0">
+      ${whoBtn(m.code, m.name, 'who-s-' + m.code)}${m.consent && !m.consent.signed
+        ? ` <span class="agdot" role="img" aria-label="${esc(T('agNot'))}" title="${esc(T('agNot'))}"></span>` : ''} <span class="muted">${esc(m.code)}</span>
       <button class="btn sm" style="float:right" onclick="showHistory('${esc(m.code)}')">${T('histBtn')}</button><br>
       <span class="muted">${esc(m.email || T('noEmail'))}${m.phone ? ' · ' + esc(m.phone) : ''}
         · ${T('upcoming', m.booked)}${m.source === 'rezerv' ? ' · Rezerv' + (m.rezerv_id ? ' ' + esc(m.rezerv_id) : '') : ''}${
@@ -1437,7 +1489,7 @@
         <button class="btn sm gray" onclick="unmerge('${esc(f.code)}')">${T('undoBtn')}</button>`).join(' ')}</p>` : ''}
       <div id="sl_${esc(m.code)}"></div>
     </div>`).join('');
-  };
+  }
 
   let FOUND = {};
   // A student who goes by another name. The old one stays searchable.
@@ -2033,7 +2085,9 @@
         histBtn(b.code)].filter(Boolean).join('');
       return `<div class="rr${b.status === 'noshow' ? ' miss' : ''}">${face(b)}
         <div class="rm">${whoBtn(b.code, b.name, 'who-r-' + id)}${b.needMat && b.status === 'booked'
-          ? ` <span class="pill mat" title="${esc(T('tMats'))}">${esc(T('matPill'))}</span>` : ''}<br><span class="muted">${esc([b.code, cover, src].filter(Boolean).join(' · '))}</span></div>
+          ? ` <span class="pill mat" title="${esc(T('tMats'))}">${esc(T('matPill'))}</span>` : ''}<br><span class="muted">${esc([b.code, cover, src].filter(Boolean).join(' · '))}</span>${
+          b.consent === undefined ? '' : b.consent ? `<br><span class="muted">${esc(T('agCol'))} ${esc(T('agYes'))}</span>`
+            : `<br><span class="agno">${esc(T('agCol'))} ${esc(T('agNo'))}</span>`}</div>
         <div class="rs">${st}</div><div class="ra">${acts}</div></div>`;
     });
     const rosterBox = `<div class="box"><b>${T('rosterH')}</b> <span class="muted">${roster.length}</span>
@@ -2379,7 +2433,8 @@
         <span class="muted" style="display:block">${T('bookedIn', list.length, inCount)}${mats ? ` · ${esc(T('tMats'))} ${mats}` : ''}</span></div>
         <button class="btn sm" id="open-${g.slotId}" onclick="todayOpen(${g.slotId},'${esc(g.date)}',this.id)">${T('openClass')}</button></div>
         ${list.length ? `<table class="tdl">${list.map(b => `<tr>
-          <td class="nm">${whoBtn(b.code, b.name, `who-t-${g.slotId}-${b.code}`)}${b.need_mat ? ` <span class="pill mat">${esc(T('matPill'))}</span>` : ''}</td>
+          <td class="nm">${whoBtn(b.code, b.name, `who-t-${g.slotId}-${b.code}`)}${b.need_mat ? ` <span class="pill mat">${esc(T('matPill'))}</span>` : ''}${
+            b.consent === false ? `<br><span class="agno">${esc(T('agNot'))}</span>` : ''}</td>
           <td class="muted">${esc(b.code)}</td>
           <td>${b.checked_in_at ? `<span class="in">${T('checkedIn')}</span>` : `<span class="muted">${T('notYet')}</span>`}</td>
         </tr>`).join('')}</table>` : `<p class="muted">${T('rosterNone')}</p>`}</div>`;
@@ -2806,6 +2861,29 @@
       ${h.nextBookingsMore ? `<p class="muted">${esc(T('nowMoreBook', h.nextBookingsMore))}</p>` : ''}</div>`;
   }
 
+  // The agreement on a profile, once it is on: when, as whom and where it was signed, or a red
+  // Not signed with Show QR (the student signs on their own phone; staff never sign for them).
+  function agreeLine(h) {
+    const c = h.consent;
+    if (!c) return '';
+    const code = h.member.code;
+    if (!c.signed) return `<p class="agl"><span class="agno">${esc(T('agNot'))}</span>
+      <button class="btn pink sm" onclick="showQr('${esc(code)}', this)">${T('qrBtn')}</button></p>`;
+    const via = (T('agVia') || {})[c.via] || c.via;
+    return `<p class="agl">${esc(T('agOn', c.version, ymdLong(bkkYmd(Date.parse(c.signedAt))), c.signedName, via))}</p>
+      ${c.nameDiffers ? `<p class="agl agwarn">${esc(T('agOther'))}</p>` : ''}
+      ${!c.under20 ? '' : c.guardianSigned ? `<p class="agl">${esc(T('agU20ok', c.guardianName, ymdLong(c.guardianOn)))}</p>`
+        : `<p class="agl agwarn">${esc(T('agU20'))} <button class="btn sm" onclick="recordGuardian('${esc(code)}')">${T('agGuard')}</button></p>`}`;
+  }
+  window.recordGuardian = async code => {
+    const name = ask(T('qGuardName'));
+    if (!name) return;
+    const date = ask(T('qGuardDate'), bkkYmd());
+    if (!date) return;
+    const r = await api(`/api/bkk/admin/members/${encodeURIComponent(code)}/guardian`, { method: 'POST', body: JSON.stringify({ name, date }) });
+    if (await shout(r)) { alert(T('agGuardDone')); showHistory(code); }
+  };
+
   function paintHistory() {
     const h = HIST, m = h.member, s = h.summary;
     const more = (k, list) => !HIST_ALL[k] && list.length > HIST_ROWS
@@ -2816,6 +2894,7 @@
     const head = `<div class="box hhead">${backBtn()}
       <h2>${esc(m.name)}</h2>
       <div class="muted">${[m.code, m.email, m.phone].filter(Boolean).map(esc).join(' · ')}</div>
+      ${agreeLine(h)}
       ${nowBox(h)}
       <div class="muted">${about.filter(Boolean).map(esc).join(' · ')}</div>
       <div class="tiles">
@@ -3342,7 +3421,7 @@
     if (current !== 'settings' || SUB) return;
     const byStatus = {};
     for (const c of letter) byStatus[c.status] = (byStatus[c.status] || 0) + c.n;
-    $('#view').innerHTML = `${PW ? pwBox(PW) : ''}${PW && PW.booking ? bookingBox(PW.booking) : ''}${tbBox(null)}<div class="box">
+    $('#view').innerHTML = `${PW && PW.consent ? agreeBox(PW.consent) : ''}${PW ? pwBox(PW) : ''}${PW && PW.booking ? bookingBox(PW.booking) : ''}${tbBox(null)}<div class="box">
       <b>${T('feeTitle')}</b>
       <p class="muted">${T('feeHelp')}</p>
       <p><input id="sur" type="number" min="0" max="20" step="0.5" value="${p.surchargePct}" style="width:90px"> %
@@ -3801,6 +3880,31 @@
   // How far ahead students can book, and the last month whose teachers they see (Nov 2026).
   const monthName = m => { try { return new Date(m + '-15T12:00:00Z').toLocaleDateString(locale(), { timeZone: 'UTC', month: 'long', year: 'numeric' }); } catch (_) { return m; } };
   const nextMonthOf = m => new Date(Date.parse(m + '-28T12:00:00Z') + 7 * 864e5).toISOString().slice(0, 7);
+  // The student agreement's switch (staff key only), its version and languages, and the privacy
+  // notice's three facts. It leaves off only with all 4 languages and those filled in.
+  function agreeBox(c) {
+    const gap = x => /^privacy /.test(x) ? T({ name: 'agPrivName', address: 'agPrivAddr', email: 'agPrivMail' }[x.slice(8)]) : x.replace(/ text$/, '');
+    const lock = c.mode === 'off' && !c.canTurnOn;
+    return `<div class="box" id="agBox"><b>${T('agTitle')}</b>
+      <p class="muted">${esc(T('agHelp'))}</p>
+      <p>${esc(T('agVer', c.version, c.langs.map(l => l.toUpperCase()).join(', ')))}${c.since && c.mode !== 'off' ? ' · ' + esc(T('agSince', ymdLong(c.since))) : ''}</p>
+      <p>${['off', 'ask', 'require'].map(m => `<button class="btn ${c.mode === m ? 'pink' : 'gray'}" aria-pressed="${c.mode === m}"
+        onclick="setAgree('${m}')"${m !== 'off' && lock ? ' disabled' : ''}>${esc(T('agMode')[m])}</button>`).join(' ')}</p>
+      ${c.canTurnOn ? '' : `<p style="color:var(--red,#b42318)">${esc(T('agCant', c.missing.map(gap).join(', ')))}</p>`}
+      <p style="margin-top:14px"><b>${T('agPriv')}</b> <span class="muted">${esc(c.privacyFilled ? T('agPrivFilled') : T('agPrivEmpty'))}</span></p>
+      <p><label for="agPN">${esc(T('agPrivName'))}</label><input id="agPN" value="${esc(c.privacy.name)}" maxlength="200" style="width:100%"></p>
+      <p><label for="agPA">${esc(T('agPrivAddr'))}</label><input id="agPA" value="${esc(c.privacy.address)}" maxlength="400" style="width:100%"></p>
+      <p><label for="agPE">${esc(T('agPrivMail'))}</label><input id="agPE" type="email" value="${esc(c.privacy.email)}" maxlength="200" style="width:100%"></p>
+      <p><button class="btn" onclick="savePriv()">${T('save')}</button></p></div>`;
+  }
+  window.setAgree = async m => {
+    if (!confirm(T('agSure', T('agMode')[m]))) return;
+    if (await shout(await api('/api/bkk/admin/settings', { method: 'POST', body: JSON.stringify({ consentMode: m }) }))) renderSettings();
+  };
+  window.savePriv = async () => {
+    const body = { privacyName: $('#agPN').value, privacyAddress: $('#agPA').value, privacyEmail: $('#agPE').value };
+    if (await shout(await api('/api/bkk/admin/settings', { method: 'POST', body: JSON.stringify(body) }))) renderSettings();
+  };
   function bookingBox(b) {
     const cur = bkkYmd().slice(0, 7), after = nextMonthOf(b.teachersThrough);
     const show = b.showMonth || (after > cur ? after : cur);
