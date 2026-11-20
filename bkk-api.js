@@ -1786,28 +1786,37 @@ function mountBkk(app, opts = {}) {
 
   // Change a student's name (Boonchu, 20 Nov 2026: a student goes by another
   // name). The old one is kept in former_names, so a search or an import by it
-  // still finds this profile. A folded code changes the profile it was folded into.
+  // still finds this profile; a fix of capitals or spaces only keeps none.
+  // { forget } takes one old name off (a rename made by mistake). A folded
+  // code changes the profile it was folded into.
   app.post('/api/bkk/admin/members/:code/name', async (req, res) => {
     if (adminOnly(req, res)) return;
-    const name = String((req.body || {}).name || '').replace(/\s+/g, ' ').trim();
-    if (!name || name.length > 80 || /[\u0000-\u001f\u007f<>]/.test(name))
+    const b = req.body || {};
+    const key = s => String(s || '').replace(/\s+/g, ' ').trim().toLowerCase();
+    const forget = b.forget != null && b.name == null ? key(b.forget) : null;
+    const name = String(b.name || '').replace(/\s+/g, ' ').trim();
+    if (forget === null && (!name || name.length > 80 || /[\u0000-\u001f\u007f<>]/.test(name)))
       return res.status(400).json({ error: 'a name is 1 to 80 characters, without < or >' });
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      const live = await memberByCode(req.params.code, client);
-      const m = live && (await client.query('SELECT id, code, name, former_names FROM bkk_members WHERE id=$1 FOR UPDATE',
-        [live.id])).rows[0];
-      if (!m) { await client.query('ROLLBACK'); return res.status(404).json({ error: 'member not found' }); }
-      const was = (m.former_names || []).filter(n => n.toLowerCase() !== name.toLowerCase());
-      if (m.name !== name && m.name && !was.some(n => n.toLowerCase() === m.name.toLowerCase())) was.push(m.name);
+      // Locked by code, then along merged_into: a merge landing meanwhile is followed, never written past.
+      const cols = 'id, code, name, former_names, merged_into';
+      let m = (await client.query(`SELECT ${cols} FROM bkk_members WHERE code=$1 FOR UPDATE`, [String(req.params.code || '')])).rows[0];
+      for (let hop = 0; m && m.merged_into && hop < 10; hop++)
+        m = (await client.query(`SELECT ${cols} FROM bkk_members WHERE id=$1 FOR UPDATE`, [m.merged_into])).rows[0];
+      if (!m || m.merged_into) { await client.query('ROLLBACK'); return res.status(404).json({ error: 'member not found' }); }
+      const now = forget === null ? name : m.name;
+      const was = (m.former_names || []).filter(n => key(n) !== key(now) && key(n) !== forget);
+      if (forget === null && m.name && key(m.name) !== key(name) && !was.some(n => key(n) === key(m.name))) was.push(m.name);
       const r = (await client.query('UPDATE bkk_members SET name=$2, former_names=$3 WHERE id=$1 RETURNING code, name, former_names',
-        [m.id, name, was.length ? was : null])).rows[0];
+        [m.id, now, was.length ? was : null])).rows[0];
       await client.query('COMMIT');
-      console.log(`✓ bkk: name of ${r.code} changed by admin`);
+      console.log(`✓ bkk: ${forget === null ? 'name' : 'an old name'} of ${r.code} changed by admin`);
       res.json({ success: true, member: { code: r.code, name: r.name, formerNames: r.former_names || [] } });
     } catch (e) {
       await client.query('ROLLBACK').catch(() => {});
+      if (e.code === '40P01') return res.status(409).json({ error: 'this profile was being merged at the same moment: try again' });
       res.status(500).json({ error: e.message });
     } finally { client.release(); }
   });
@@ -4043,7 +4052,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
             OR lower(m.code) LIKE $1 OR coalesce(m.phone,'') LIKE $1 OR lower(coalesce(m.rezerv_id,'')) LIKE $1
             OR EXISTS (SELECT 1 FROM bkk_members f WHERE f.merged_into = m.id
               AND (lower(f.code) LIKE $1 OR lower(coalesce(f.rezerv_id,'')) LIKE $1 OR lower(f.name) LIKE $1
-                OR lower(coalesce(f.email,'')) LIKE $1 OR coalesce(f.phone,'') LIKE $1)))
+                OR lower(coalesce(f.email,'')) LIKE $1 OR coalesce(f.phone,'') LIKE $1
+                OR EXISTS (SELECT 1 FROM unnest(coalesce(f.former_names, '{}')) n WHERE lower(n) LIKE $1))))
          ORDER BY m.name LIMIT 25`, on ? [like, on] : [like]);
       const ids = r.rows.map(m => m.id);
       const [passes, folded] = ids.length ? await Promise.all([q(
@@ -4162,8 +4172,15 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
 
         let m = email && email.includes('@')
           ? await liveMember(pool, (await q('SELECT * FROM bkk_members WHERE lower(email)=$1 LIMIT 1', [email])).rows[0]) : null;
-        if (!m) m = await liveMember(pool, (await q(`SELECT * FROM bkk_members WHERE lower(name)=lower($1)
-          OR lower($1) = ANY (SELECT lower(n) FROM unnest(coalesce(former_names, '{}')) n) ORDER BY id LIMIT 1`, [name])).rows[0]);
+        if (!m) m = await liveMember(pool, (await q('SELECT * FROM bkk_members WHERE lower(name)=lower($1) ORDER BY id LIMIT 1', [name])).rows[0]);
+        // Nobody has the name now: a student who had it before (Change name), when only one did.
+        if (!m) {
+          const was = new Map();
+          for (const r of (await q(`SELECT * FROM bkk_members WHERE lower($1) = ANY (SELECT lower(n) FROM unnest(coalesce(former_names, '{}')) n)
+            ORDER BY id`, [name])).rows) { const x = await liveMember(pool, r); if (x) was.set(x.id, x); }
+          if (was.size > 1) { out.skipped.push(`${name}: ${was.size} students had this name before, add their email`); continue; }
+          m = [...was.values()][0] || null;
+        }
         if (!m) {
           m = (await q(`INSERT INTO bkk_members (code,name,email,phone) VALUES ($1,$2,$3,$4) RETURNING *`,
             [memberCode(), name, email.includes('@') ? email : null, phone || null])).rows[0];
@@ -5979,7 +5996,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
          WHERE m.merged_into IS NULL AND (lower(m.name) LIKE $1 OR lower(coalesce(m.email,'')) LIKE $1
            OR EXISTS (SELECT 1 FROM unnest(coalesce(m.former_names, '{}')) n WHERE lower(n) LIKE $1)
            OR EXISTS (SELECT 1 FROM bkk_members f WHERE f.merged_into = m.id
-             AND (lower(f.name) LIKE $1 OR lower(coalesce(f.email,'')) LIKE $1)))
+             AND (lower(f.name) LIKE $1 OR lower(coalesce(f.email,'')) LIKE $1
+               OR EXISTS (SELECT 1 FROM unnest(coalesce(f.former_names, '{}')) n WHERE lower(n) LIKE $1))))
          ORDER BY m.name LIMIT 20`, [`%${term}%`, bkkToday()]), serverSecret()]);
       res.json({ members: r.rows.map(m => ({ ref: memberRef(sec, m.id), name: m.name, hint: emailHint(m.email),
         passToday: m.pass_today })) });
