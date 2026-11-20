@@ -117,6 +117,7 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
   `/teach` can check in, undo, add someone with a started pass and take off its own add (today, in person,
   each saying who in `bkk_bookings.checkin_via`/`checkin_by`); wrong teacher passcodes lock an address out, but a
   browser that signed in before sends its `X-Teacher-Known` mark and is counted on its own (the shala wifi is one address).
+- **Student agreement:** the text is `CONSENT_TEXT` in `bkk-api.js` (v1: EN and TH "draft 2", ZH and RU need a native check), hashes pinned in `test/bkk-api.test.js` (new words are a new version), served at `GET /api/bkk/consent`; signatures go to append-only `bkk_consents`. Admin, Settings, Student agreement holds the switch `consent_mode`: off as shipped (nothing changes), ask (checkout asks before the gateway), require (a student's own booking asks too). It cannot leave off without all 4 languages and the privacy notice's legal name, address and email. Payments, staff, /teach, imports and check-ins are never refused. The door key and `/tablet` get nothing of it; `/teach` gets only `signed` and `under20` as true/false.
 - **Inbox:** `inbox.js` keeps 1:1 chats from the LINE Official Account (`/line/webhook`) and
   Instagram/Facebook DMs and comments (`/meta/webhook`) in `aybkk_inbox` for 90 days.
   Machi reads `GET /api/inbox` (header `x-inbox-key`). Env: `INBOX_KEY`; `LINE_CHANNEL_SECRET`
