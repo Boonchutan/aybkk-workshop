@@ -582,6 +582,8 @@ function mountBkk(app, opts = {}) {
     await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS merged_into INTEGER REFERENCES bkk_members(id)`);
     await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS merged_at TIMESTAMPTZ`);
     await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS merge_log JSONB`);
+    // Names a profile had before staff changed it (Change name), still found by search and the import.
+    await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS former_names TEXT[]`);
     // Checkout with a folded profile's email: the pass lands on the kept profile,
     // the receipt and its sign-in link go to the address that was typed.
     await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS mail_to TEXT`);
@@ -1778,6 +1780,34 @@ function mountBkk(app, opts = {}) {
       await client.query('ROLLBACK').catch(() => {});
       // A student saved the same address a moment ago: same answer as a clash.
       if (e.code === '23505' && email && await clash()) return;
+      res.status(500).json({ error: e.message });
+    } finally { client.release(); }
+  });
+
+  // Change a student's name (Boonchu, 20 Nov 2026: a student goes by another
+  // name). The old one is kept in former_names, so a search or an import by it
+  // still finds this profile. A folded code changes the profile it was folded into.
+  app.post('/api/bkk/admin/members/:code/name', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const name = String((req.body || {}).name || '').replace(/\s+/g, ' ').trim();
+    if (!name || name.length > 80 || /[\u0000-\u001f\u007f<>]/.test(name))
+      return res.status(400).json({ error: 'a name is 1 to 80 characters, without < or >' });
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const live = await memberByCode(req.params.code, client);
+      const m = live && (await client.query('SELECT id, code, name, former_names FROM bkk_members WHERE id=$1 FOR UPDATE',
+        [live.id])).rows[0];
+      if (!m) { await client.query('ROLLBACK'); return res.status(404).json({ error: 'member not found' }); }
+      const was = (m.former_names || []).filter(n => n.toLowerCase() !== name.toLowerCase());
+      if (m.name !== name && m.name && !was.some(n => n.toLowerCase() === m.name.toLowerCase())) was.push(m.name);
+      const r = (await client.query('UPDATE bkk_members SET name=$2, former_names=$3 WHERE id=$1 RETURNING code, name, former_names',
+        [m.id, name, was.length ? was : null])).rows[0];
+      await client.query('COMMIT');
+      console.log(`✓ bkk: name of ${r.code} changed by admin`);
+      res.json({ success: true, member: { code: r.code, name: r.name, formerNames: r.former_names || [] } });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
       res.status(500).json({ error: e.message });
     } finally { client.release(); }
   });
@@ -4009,6 +4039,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
              HAVING bool_and(coalesce(p.valid_from > ${day}, false))) AS pass_starts
          FROM bkk_members m
          WHERE m.merged_into IS NULL AND (lower(m.name) LIKE $1 OR lower(m.email) LIKE $1
+            OR EXISTS (SELECT 1 FROM unnest(coalesce(m.former_names, '{}')) n WHERE lower(n) LIKE $1)
             OR lower(m.code) LIKE $1 OR coalesce(m.phone,'') LIKE $1 OR lower(coalesce(m.rezerv_id,'')) LIKE $1
             OR EXISTS (SELECT 1 FROM bkk_members f WHERE f.merged_into = m.id
               AND (lower(f.code) LIKE $1 OR lower(coalesce(f.rezerv_id,'')) LIKE $1 OR lower(f.name) LIKE $1
@@ -4131,7 +4162,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
 
         let m = email && email.includes('@')
           ? await liveMember(pool, (await q('SELECT * FROM bkk_members WHERE lower(email)=$1 LIMIT 1', [email])).rows[0]) : null;
-        if (!m) m = await liveMember(pool, (await q('SELECT * FROM bkk_members WHERE lower(name)=lower($1) ORDER BY id LIMIT 1', [name])).rows[0]);
+        if (!m) m = await liveMember(pool, (await q(`SELECT * FROM bkk_members WHERE lower(name)=lower($1)
+          OR lower($1) = ANY (SELECT lower(n) FROM unnest(coalesce(former_names, '{}')) n) ORDER BY id LIMIT 1`, [name])).rows[0]);
         if (!m) {
           m = (await q(`INSERT INTO bkk_members (code,name,email,phone) VALUES ($1,$2,$3,$4) RETURNING *`,
             [memberCode(), name, email.includes('@') ? email : null, phone || null])).rows[0];
@@ -4256,7 +4288,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   }
 
   // Rezerv id, then email, then phone (the last 9 digits: 081… and +6681… are
-  // one number), then the exact name. Someone found by phone or name who
+  // one number), then the exact name (or a name staff changed it from). Someone found by phone or name who
   // carries a different Rezerv id is somebody else. One whose email, or for a
   // phone their name, says it is somebody else is a clash: never merged.
   // A folded profile still answers to its own Rezerv id, email, phone and name,
@@ -4290,7 +4322,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const other = m => f.rezervId && m.rezerv_id && m.rezerv_id !== f.rezervId;
     const norm = s => String(s || '').replace(/\s+/g, ' ').trim().toLowerCase();
     const emailOff = m => f.email && m.email && m.email.toLowerCase() !== f.email;
-    const nameOff = m => f.name && norm(m.name) !== norm(f.name);
+    // A name staff changed (former_names) is still this student's.
+    const nameOff = m => f.name && norm(m.name) !== norm(f.name) && !(m.former_names || []).some(n => norm(n) === norm(f.name));
     const clashOf = m => emailOff(m) ? { code: 'clashOtherEmail', vals: [m.name, m.code, m.email] }
       : { code: 'clashPhone', vals: [f.phone, m.name, m.code, f.name] };
     const digits = String(f.phone || '').replace(/\D/g, '');
@@ -4306,7 +4339,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     }
     if (f.name) {
       const rows = (await db.query(
-        `SELECT * FROM bkk_members WHERE lower(regexp_replace(btrim(name), '\\s+', ' ', 'g')) = lower($1) ORDER BY id`,
+        `SELECT * FROM bkk_members WHERE lower(regexp_replace(btrim(name), '\\s+', ' ', 'g')) = lower($1)
+           OR EXISTS (SELECT 1 FROM unnest(coalesce(former_names, '{}')) n WHERE lower(regexp_replace(btrim(n), '\\s+', ' ', 'g')) = lower($1))
+         ORDER BY id`,
         [f.name.replace(/\s+/g, ' ').trim()])).rows.filter(m => !other(m));
       const fits = await perStudent(rows.filter(m => !emailOff(m)));
       if (fits.length === 1) return fits[0];
@@ -5942,6 +5977,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
              AND ${PASS_LIVE_ON('$2::date')} AND p.valid_from IS NOT NULL AND p.valid_from <= $2::date
              AND (p.kind='unlimited' OR p.credits_used < p.credits_total)) AS pass_today FROM bkk_members m
          WHERE m.merged_into IS NULL AND (lower(m.name) LIKE $1 OR lower(coalesce(m.email,'')) LIKE $1
+           OR EXISTS (SELECT 1 FROM unnest(coalesce(m.former_names, '{}')) n WHERE lower(n) LIKE $1)
            OR EXISTS (SELECT 1 FROM bkk_members f WHERE f.merged_into = m.id
              AND (lower(f.name) LIKE $1 OR lower(coalesce(f.email,'')) LIKE $1)))
          ORDER BY m.name LIMIT 20`, [`%${term}%`, bkkToday()]), serverSecret()]);

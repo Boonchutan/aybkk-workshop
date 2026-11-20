@@ -319,6 +319,72 @@ const ok = (name, cond, extra = '') => {
     }
   }
 
+  console.log('\n— staff change a student\'s name; the old one still finds her (20 Nov 2026) —');
+  {
+    // Made-up people only: this repo is public.
+    const OLD = 'ทดลอง ชื่อเก่า', NEW = 'Renamo';
+    const imp = rows => post('/api/bkk/admin/import/members', { rows, dryRun: false }, ADMIN);
+    const one = async (sql, args = []) => (await pool.query(sql, args)).rows[0] || {};
+    await imp([{ name: OLD, phone: '085-111-2299' }, { name: 'Fold Renamo', email: 'fold.renamo@example.com' }]);
+    const who = await one(`SELECT code FROM bkk_members WHERE name=$1`, [OLD]);
+    const rn = (code, name, h = ADMIN) => post(`/api/bkk/admin/members/${encodeURIComponent(code)}/name`, { name }, h);
+    const r1 = await rn(who.code, `  ${NEW}  `);
+    const row = await one(`SELECT name, former_names FROM bkk_members WHERE code=$1`, [who.code]);
+    ok('staff change a name: the new one is saved (spaces trimmed), the old one kept', r1.status === 200 && r1.body.member.name === NEW
+       && row.name === NEW && JSON.stringify(row.former_names) === JSON.stringify([OLD]) && JSON.stringify(r1.body.member.formerNames) === JSON.stringify([OLD]),
+       JSON.stringify([r1.body, row]));
+    const find = async (term, h = ADMIN) => ((await J('/api/bkk/admin/members?q=' + encodeURIComponent(term), { headers: h })).body.members || [])
+      .filter(m => m.code === who.code);
+    const byOld = await find('ชื่อเก่า'), byNew = await find('renamo');
+    ok('...Admin search finds her by the new name and by the old one, and shows the old one', byNew.length === 1 && byOld.length === 1
+       && JSON.stringify(byOld[0].former_names) === JSON.stringify([OLD]), JSON.stringify(byOld));
+    const again = await imp([{ name: OLD, phone: '+66 85 111 2299' }, { name: OLD }]);
+    const count = await one(`SELECT count(*)::int AS n FROM bkk_members WHERE name=$1 OR name=$2`, [OLD, NEW]);
+    ok('...a Rezerv import under the old name (with her phone, or name only) finds her: no second profile', again.status === 200
+       && again.body.added === 0 && again.body.matched === 2 && count.n === 1, JSON.stringify([again.body, count]));
+    const csv = await post('/api/bkk/admin/import', { rows: [{ name: OLD, plan: '1 month', until: '2027-01-31' }] }, ADMIN);
+    ok('...and so does the old CSV import', csv.status === 200 && (await one(`SELECT count(*)::int AS n FROM bkk_members WHERE name=$1`, [OLD])).n === 0
+       && (await one(`SELECT count(*)::int AS n FROM bkk_passes p JOIN bkk_members m ON m.id=p.member_id WHERE m.code=$1`, [who.code])).n === 1,
+       JSON.stringify(csv.body));
+    // Another student really named OLD: her phone still picks her, never "2 students named …".
+    await pool.query(`INSERT INTO bkk_members (code,name,email) VALUES ('BTESTTWIN001',$1,'other.oldname@example.com')`, [OLD]);
+    const twin = await imp([{ name: OLD, phone: '0851112299' }]);
+    ok('...with someone else now named the old name, her phone still finds her', twin.body.matched === 1 && twin.body.added === 0
+       && !(twin.body.skipped || []).length, JSON.stringify(twin.body));
+    await pool.query(`DELETE FROM bkk_members WHERE code='BTESTTWIN001'`);
+    const tch = await post('/api/bkk/admin/teachers', { name: 'Rename Tagger' }, ADMIN);
+    const tagged = (await J('/api/bkk/teacher/members?q=' + encodeURIComponent('ชื่อเก่า'), { headers: { 'x-teacher-key': tch.body.passcode } })).body.members || [];
+    ok('...and the photo tagging search (teachers) finds her by the old name too', tagged.some(m => m.name === NEW), JSON.stringify(tagged));
+    const back = await rn(who.code, OLD);
+    const row2 = await one(`SELECT name, former_names FROM bkk_members WHERE code=$1`, [who.code]);
+    ok('changing it back keeps each old name once, never the name in use', back.status === 200 && row2.name === OLD
+       && JSON.stringify(row2.former_names) === JSON.stringify([NEW]), JSON.stringify(row2));
+    const bad = await Promise.all(['', '   ', 'x'.repeat(81), 'Evil <b>', 'bell\u0007name'].map(n => rn(who.code, n)));
+    ok('a name that is empty, over 80 characters, or has < > or control characters is refused', bad.every(r => r.status === 400)
+       && (await one(`SELECT name FROM bkk_members WHERE code=$1`, [who.code])).name === OLD, JSON.stringify(bad.map(r => r.status)));
+    const tab = await rn(who.code, 'Tab\tName\n');
+    ok('...a tab or line break pasted in becomes one space', tab.status === 200 && tab.body.member.name === 'Tab Name', JSON.stringify(tab.body));
+    await rn(who.code, OLD);
+    ok('...without it: 401, and nothing changes', (await rn(who.code, 'Sneaky', {})).status === 401
+       && (await one(`SELECT name FROM bkk_members WHERE code=$1`, [who.code])).name === OLD);
+    ok('an unknown code is 404', (await rn('NOSUCHCODE1', 'Anyone')).status === 404);
+    // A folded (merged) code changes the profile it was folded into.
+    const fold = await one(`SELECT code FROM bkk_members WHERE email='fold.renamo@example.com'`);
+    await pool.query(`UPDATE bkk_members SET merged_into=(SELECT id FROM bkk_members WHERE code=$1) WHERE code=$2`, [who.code, fold.code]);
+    const viaFold = await rn(fold.code, NEW);
+    ok('a folded code changes the kept profile, not the folded one', viaFold.status === 200 && viaFold.body.member.code === who.code
+       && (await one(`SELECT name FROM bkk_members WHERE code=$1`, [who.code])).name === NEW
+       && (await one(`SELECT name FROM bkk_members WHERE code=$1`, [fold.code])).name === 'Fold Renamo', JSON.stringify(viaFold.body));
+    const page = require('fs').readFileSync(require('path').join(__dirname, '../public/bkk-admin.html'), 'utf8');
+    ok('Admin: each student has a Change name button next to Change email, in EN and TH',
+       page.includes(`onclick="changeName('\${esc(m.code)}')"`) && /nameBtn: 'Change name'/.test(page) && /nameBtn: 'เปลี่ยนชื่อ'/.test(page));
+    for (const c of [fold.code, who.code]) {
+      await pool.query(`DELETE FROM bkk_passes WHERE member_id=(SELECT id FROM bkk_members WHERE code=$1)`, [c]);
+      await pool.query(`UPDATE bkk_members SET merged_into=NULL WHERE code=$1`, [c]);
+    }
+    await pool.query(`DELETE FROM bkk_import_refs WHERE member_id IN (SELECT id FROM bkk_members WHERE code = ANY($1))`, [[fold.code, who.code]]).catch(() => {});
+  }
+
   console.log('\n— 8 classes / 1 month replaced the 10-class pack (6 Nov 2026) —');
   {
     const marker = async () => (await pool.query(`SELECT count(*)::int AS n FROM bkk_settings WHERE key='pack8_replaces_pack10'`)).rows[0].n;
