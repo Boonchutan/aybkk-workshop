@@ -71,10 +71,12 @@
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:18px 10px;cursor:pointer;text-align:center}
   .tile:active{background:var(--paper2)}
   .ini{position:relative;overflow:hidden;width:84px;height:84px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-    font-family:'Work Sans',sans-serif;font-weight:700;font-size:32px;color:#17121a;flex:none}
-  /* The student's photo over the initials, drawn only once it has loaded. */
+    font-family:'Work Sans',sans-serif;font-weight:700;font-size:32px;color:#17121a;flex:none;background:var(--tone)}
+  /* The student's photo over the initials, drawn only once it has loaded. Once
+     it has faded in, the tone goes (lit), or its edge shows as a thin ring. */
   .ini img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border-radius:50%;opacity:0;transition:opacity .2s}
   .ini img.on{opacity:1}
+  .ini.lit{background:none}
   .tile .nm{font-size:23px;font-weight:600;line-height:1.2;max-width:100%;overflow-wrap:anywhere}
   .tile .at{position:absolute;top:10px;left:12px;font-size:14px;color:var(--soft)}
   .tile.in{border-color:rgba(61,220,151,.45);background:#18131c}
@@ -361,6 +363,7 @@
   function unpaired() {
     KEY = ''; store.del(KEY_NAME);
     DATA = null; PENDING = null; DONE = {}; FACES = {}; closeOverlays();
+    $('#grid').textContent = ''; $('#cIni').textContent = ''; $('#cWho').textContent = '';
     clearTimeout(timers.load);
     setOffline(false);
     setLang(null);
@@ -484,10 +487,10 @@
   // this you?" (Boonchu, 20 Nov 2026). Each <img> is kept and moved into the
   // new tile on every repaint, so a photo never blinks and stays on screen with
   // no internet. One that fails to load is taken out (the initials show) and
-  // tried again a minute later. Kept by the photo's id, the first part of the
-  // link: the link itself changes every 6 hours (07:00 is one), and the photo
-  // on screen stays until the new link has loaded. slot: one <img> per tile of
-  // that student, and 'c' for "Is this you?".
+  // that link is tried again a minute later. Kept by the photo's id, the first
+  // part of the link: the link ends with its class, so a student on two classes
+  // has two, and the photo on screen stays until a new link has loaded. slot:
+  // one <img> per tile of that student, and 'c' for "Is this you?".
   var FACES = {};
   var faceKey = function (src) { return String(src).split('/').pop().split('.')[0]; };
   function nextFace(f, slot, old, src) {
@@ -506,18 +509,20 @@
   }
   function faceImg(src, slot) {
     var k = faceKey(src);
-    var f = FACES[k] || (FACES[k] = { imgs: {}, bad: 0, src: src });
-    if (f.src !== src) { f.src = src; f.bad = 0; }
-    if (f.bad && Date.now() - f.bad < 60000) return null;
+    var f = FACES[k] || (FACES[k] = { imgs: {}, bad: {} });
+    if (f.bad[src] && Date.now() - f.bad[src] < 60000) return null;
     var img = f.imgs[slot];
     if (img) { if (img.getAttribute('src') !== src) nextFace(f, slot, img, src); return img; }
     img = document.createElement('img');
     img.alt = '';
-    img.onload = function () { img.className = 'on'; };
+    img.onload = function () {
+      img.className = 'on';
+      setTimeout(function () { if (img.parentNode && img.className === 'on') img.parentNode.classList.add('lit'); }, 250);
+    };
     img.onerror = function () {
-      f.bad = Date.now();
+      f.bad[img.getAttribute('src')] = Date.now();
       if (f.imgs[slot] === img) delete f.imgs[slot];
-      if (img.parentNode) img.parentNode.removeChild(img);
+      if (img.parentNode) { img.parentNode.classList.remove('lit'); img.parentNode.removeChild(img); }
     };
     img.src = src;
     if (img.complete && img.naturalWidth) img.className = 'on';
@@ -526,8 +531,9 @@
   }
   function paintIni(box, s, slot) {
     box.textContent = initials(s.n);
-    box.style.background = tone(s.n);
+    box.style.setProperty('--tone', tone(s.n));
     var img = s.f ? faceImg(s.f, slot) : null;
+    box.classList.toggle('lit', !!img && img.className === 'on');
     if (img) box.appendChild(img);
   }
   function paintList() {
@@ -558,9 +564,9 @@
       var b = el('button', 'tile' + (s.in ? ' in' : ''));
       b.type = 'button';
       b.setAttribute('data-t', s.t);
-      var ini = el('span', 'ini');
-      if (s.f) used[s.f] = (used[s.f] || 0) + 1;
-      paintIni(ini, s, 'g' + (s.f ? used[s.f] : 0));
+      var ini = el('span', 'ini'), k = s.f ? faceKey(s.f) : '';
+      if (k) used[k] = (used[k] || 0) + 1;
+      paintIni(ini, s, 'g' + (k ? used[k] : 0));
       ini.setAttribute('aria-hidden', 'true');
       b.appendChild(ini);
       b.appendChild(el('span', 'nm', s.n));
