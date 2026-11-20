@@ -190,8 +190,8 @@ const ok = (name, cond, extra = '') => {
     const sbk = await post('/api/bkk/bookings', { memberCode: who, slotId: shut.id, date: shut.d }, ADMIN);
     ok('...staff still can (it only asks for a pass)', sbk.status === 409 && /no active pass/.test(sbk.body.error), JSON.stringify(sbk.body));
     const dr = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Open Window', email: 'open.window@example.com', slotId: shut.id, date: shut.d });
-    ok('...nor buy a drop-in for one, and the reply names the last day', dr.status === 409 && dr.body.openUntil === floor
-       && dr.body.error.includes(floor), JSON.stringify(dr.body));
+    ok('...nor buy a drop-in for one (drop-ins open 2 weeks before the class), and the reply names the last day', dr.status === 409
+       && dr.body.dropinUntil === addD(today, 13) && dr.body.error.includes(addD(today, 13)), JSON.stringify(dr.body));
     await pool.query(`UPDATE bkk_settings SET value='"2020-01-01"' WHERE key='booking_open_until'`);
     ok('a day left behind in Settings never closes booking: it stays open the next 2 months',
        (await J('/api/bkk/schedule?days=1')).body.openUntil === floor);
@@ -317,6 +317,72 @@ const ok = (name, cond, extra = '') => {
       ok('...back on a near month, a refresh drops the later days and asks for nothing', srv.calls.length === 0 && pg.st().FAR_TO === null
          && pg.st().CLASSES.every(c => c.date <= '2027-01-17'));
     }
+  }
+
+  console.log('\n— staff change a student\'s name; the old one still finds her (20 Nov 2026) —');
+  {
+    // Made-up people only: this repo is public.
+    const OLD = 'ทดลอง ชื่อเก่า', NEW = 'Renamo';
+    const imp = rows => post('/api/bkk/admin/import/members', { rows, dryRun: false }, ADMIN);
+    const one = async (sql, args = []) => (await pool.query(sql, args)).rows[0] || {};
+    await imp([{ name: OLD, phone: '085-111-2299' }, { name: 'Fold Renamo', email: 'fold.renamo@example.com' }]);
+    const who = await one(`SELECT code FROM bkk_members WHERE name=$1`, [OLD]);
+    const rn = (code, name, h = ADMIN) => post(`/api/bkk/admin/members/${encodeURIComponent(code)}/name`, { name }, h);
+    const r1 = await rn(who.code, `  ${NEW}  `);
+    const row = await one(`SELECT name, former_names FROM bkk_members WHERE code=$1`, [who.code]);
+    ok('staff change a name: the new one is saved (spaces trimmed), the old one kept', r1.status === 200 && r1.body.member.name === NEW
+       && row.name === NEW && JSON.stringify(row.former_names) === JSON.stringify([OLD]) && JSON.stringify(r1.body.member.formerNames) === JSON.stringify([OLD]),
+       JSON.stringify([r1.body, row]));
+    const find = async (term, h = ADMIN) => ((await J('/api/bkk/admin/members?q=' + encodeURIComponent(term), { headers: h })).body.members || [])
+      .filter(m => m.code === who.code);
+    const byOld = await find('ชื่อเก่า'), byNew = await find('renamo');
+    ok('...Admin search finds her by the new name and by the old one, and shows the old one', byNew.length === 1 && byOld.length === 1
+       && JSON.stringify(byOld[0].former_names) === JSON.stringify([OLD]), JSON.stringify(byOld));
+    const again = await imp([{ name: OLD, phone: '+66 85 111 2299' }, { name: OLD }]);
+    const count = await one(`SELECT count(*)::int AS n FROM bkk_members WHERE name=$1 OR name=$2`, [OLD, NEW]);
+    ok('...a Rezerv import under the old name (with her phone, or name only) finds her: no second profile', again.status === 200
+       && again.body.added === 0 && again.body.matched === 2 && count.n === 1, JSON.stringify([again.body, count]));
+    const csv = await post('/api/bkk/admin/import', { rows: [{ name: OLD, plan: '1 month', until: '2027-01-31' }] }, ADMIN);
+    ok('...and so does the old CSV import', csv.status === 200 && (await one(`SELECT count(*)::int AS n FROM bkk_members WHERE name=$1`, [OLD])).n === 0
+       && (await one(`SELECT count(*)::int AS n FROM bkk_passes p JOIN bkk_members m ON m.id=p.member_id WHERE m.code=$1`, [who.code])).n === 1,
+       JSON.stringify(csv.body));
+    // Another student really named OLD: her phone still picks her, never "2 students named …".
+    await pool.query(`INSERT INTO bkk_members (code,name,email) VALUES ('BTESTTWIN001',$1,'other.oldname@example.com')`, [OLD]);
+    const twin = await imp([{ name: OLD, phone: '0851112299' }]);
+    ok('...with someone else now named the old name, her phone still finds her', twin.body.matched === 1 && twin.body.added === 0
+       && !(twin.body.skipped || []).length, JSON.stringify(twin.body));
+    await pool.query(`DELETE FROM bkk_members WHERE code='BTESTTWIN001'`);
+    const tch = await post('/api/bkk/admin/teachers', { name: 'Rename Tagger' }, ADMIN);
+    const tagged = (await J('/api/bkk/teacher/members?q=' + encodeURIComponent('ชื่อเก่า'), { headers: { 'x-teacher-key': tch.body.passcode } })).body.members || [];
+    ok('...and the photo tagging search (teachers) finds her by the old name too', tagged.some(m => m.name === NEW), JSON.stringify(tagged));
+    const back = await rn(who.code, OLD);
+    const row2 = await one(`SELECT name, former_names FROM bkk_members WHERE code=$1`, [who.code]);
+    ok('changing it back keeps each old name once, never the name in use', back.status === 200 && row2.name === OLD
+       && JSON.stringify(row2.former_names) === JSON.stringify([NEW]), JSON.stringify(row2));
+    const bad = await Promise.all(['', '   ', 'x'.repeat(81), 'Evil <b>', 'bell\u0007name'].map(n => rn(who.code, n)));
+    ok('a name that is empty, over 80 characters, or has < > or control characters is refused', bad.every(r => r.status === 400)
+       && (await one(`SELECT name FROM bkk_members WHERE code=$1`, [who.code])).name === OLD, JSON.stringify(bad.map(r => r.status)));
+    const tab = await rn(who.code, 'Tab\tName\n');
+    ok('...a tab or line break pasted in becomes one space', tab.status === 200 && tab.body.member.name === 'Tab Name', JSON.stringify(tab.body));
+    await rn(who.code, OLD);
+    ok('...without it: 401, and nothing changes', (await rn(who.code, 'Sneaky', {})).status === 401
+       && (await one(`SELECT name FROM bkk_members WHERE code=$1`, [who.code])).name === OLD);
+    ok('an unknown code is 404', (await rn('NOSUCHCODE1', 'Anyone')).status === 404);
+    // A folded (merged) code changes the profile it was folded into.
+    const fold = await one(`SELECT code FROM bkk_members WHERE email='fold.renamo@example.com'`);
+    await pool.query(`UPDATE bkk_members SET merged_into=(SELECT id FROM bkk_members WHERE code=$1) WHERE code=$2`, [who.code, fold.code]);
+    const viaFold = await rn(fold.code, NEW);
+    ok('a folded code changes the kept profile, not the folded one', viaFold.status === 200 && viaFold.body.member.code === who.code
+       && (await one(`SELECT name FROM bkk_members WHERE code=$1`, [who.code])).name === NEW
+       && (await one(`SELECT name FROM bkk_members WHERE code=$1`, [fold.code])).name === 'Fold Renamo', JSON.stringify(viaFold.body));
+    const page = require('fs').readFileSync(require('path').join(__dirname, '../public/bkk-admin.html'), 'utf8');
+    ok('Admin: each student has a Change name button next to Change email, in EN and TH',
+       page.includes(`onclick="changeName('\${esc(m.code)}')"`) && /nameBtn: 'Change name'/.test(page) && /nameBtn: 'เปลี่ยนชื่อ'/.test(page));
+    for (const c of [fold.code, who.code]) {
+      await pool.query(`DELETE FROM bkk_passes WHERE member_id=(SELECT id FROM bkk_members WHERE code=$1)`, [c]);
+      await pool.query(`UPDATE bkk_members SET merged_into=NULL WHERE code=$1`, [c]);
+    }
+    await pool.query(`DELETE FROM bkk_import_refs WHERE member_id IN (SELECT id FROM bkk_members WHERE code = ANY($1))`, [[fold.code, who.code]]).catch(() => {});
   }
 
   console.log('\n— 8 classes / 1 month replaced the 10-class pack (6 Nov 2026) —');
@@ -1862,11 +1928,54 @@ const ok = (name, cond, extra = '') => {
     const weeksOn = n => { let d = addD(dc.date, 7 * n); while (isMoon(d)) d = addD(d, 7); return d; };
     const far = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Far Off', email: 'far.off@example.com',
       slotId: dc.slotId, date: weeksOn(104) });
-    ok('a drop-in for a class two years off is refused, naming the last day booking is open', far.status === 409
-       && /up to \d{4}-\d{2}-\d{2}/.test(far.body.error) && far.body.error.includes(far.body.openUntil), JSON.stringify(far.body));
+    const lastDrop = addD(new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10), 13);
+    ok('a drop-in for a class two years off is refused, naming the last day drop-ins are open', far.status === 409
+       && far.body.dropinUntil === lastDrop && /open 2 weeks before/.test(far.body.error) && far.body.error.includes(lastDrop), JSON.stringify(far.body));
     const month = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Month Off', email: 'month.off@example.com',
       slotId: dc.slotId, date: weeksOn(4) });
-    ok('...but a class a month off, past the two-week list, is fine', month.status === 200 && month.body.order, JSON.stringify(month.body).slice(0, 160));
+    ok('...and so is a class a month off (Boonchu, 19 Nov 2026: drop-ins open 2 weeks before)', month.status === 409
+       && month.body.dropinUntil === lastDrop && !month.body.order, JSON.stringify(month.body).slice(0, 160));
+    const pageSrc = require('fs').readFileSync(require('path').join(__dirname, '../public/bkk.html'), 'utf8');
+    const apiSrc = require('fs').readFileSync(require('path').join(__dirname, '../bkk-api.js'), 'utf8');
+    {
+      // The page's own code (19 Nov 2026): the drop-in class list, and the offer when a student has no pass for a class.
+      const vm = require('vm');
+      const seg = pageSrc.slice(pageSrc.indexOf('  const singleClass = p =>'), pageSrc.indexOf('  window.buy = (code, pre, intro) =>'))
+        + pageSrc.slice(pageSrc.indexOf('  // A class more than 2 weeks off: the day its drop-ins open'), pageSrc.indexOf('  // Book and cancel keep the student where they are'));
+      const make = code => {
+        const seen = { buys: [], tabs: [], els: {} };
+        const el = sel => seen.els[sel] || (seen.els[sel] = { innerHTML: '', open: false, showModal() { this.open = true; }, close() { this.open = false; } });
+        const ctx = { PRODUCTS: [{ code: 'dropin', kind: 'credits', credits: 1 }], buy: (...a) => seen.buys.push(a),
+          t: (k, ...a) => `${k}(${a.join(',')})`, esc: x => String(x), fmtDay: iso => iso.slice(0, 10), myCode: () => code,
+          $: el, tab: x => seen.tabs.push(x), isClosed: c => !!c.closed,
+          bkkToday: () => '2026-11-19', addDays: (d, n) => new Date(Date.parse(d + 'T00:00:00Z') + n * 864e5).toISOString().slice(0, 10) };
+        vm.createContext(ctx);
+        vm.runInContext(seg + '\n;this.pg = { offer: offerDropin, dropOpts, dropLast };', ctx);
+        return { pg: ctx.pg, seen };
+      };
+      const list = [['2026-11-20', 3], ['2026-12-02', 1], ['2026-12-03', 5], ['2026-12-09', 5], ['2026-11-25', 0], ['2026-11-26', 4, true]]
+        .map(([date, seatsLeft, closed]) => ({ date, seatsLeft, closed }));
+      const a = make('');
+      ok('the page: the drop-in list keeps classes with a place up to today + 13 (2 Dec on 19 Nov), never later, full or closed',
+         a.pg.dropOpts(list, a.pg.dropLast()).map(c => c.date).join() === '2026-11-20,2026-12-02');
+      const far = a.pg.offer(7, '2026-12-03'), farHtml = a.seen.els['#dlgIn'].innerHTML;
+      const near = a.pg.offer(7, '2026-12-02');
+      ok('the page, signed out: a class on day 15 shows when its drop-ins open (20 Nov for 3 Dec), packages, and "I already have a pass"; day 14 opens the drop-in form',
+         far && near && a.seen.els['#dlg'].open && farHtml.includes('dropLater(2026-11-20)') && farHtml.includes('havePass()')
+           && farHtml.includes('seePkgs()') && !farHtml.includes('passLaterFar') && a.seen.buys.length === 1
+           && a.seen.buys[0][1].date === '2026-12-02' && a.seen.buys[0][2] === 'noPassDrop()', JSON.stringify([farHtml, a.seen.buys]));
+      a.seen.els['#fdHave'].onclick();
+      ok('...and "I already have a pass" goes to My account', a.seen.tabs.join() === 'me' && !a.seen.els['#dlg'].open);
+      const b = make('BTESTCODE');
+      b.pg.offer(7, '2026-12-20', '2027-02-15');
+      const bHtml = b.seen.els['#dlgIn'].innerHTML;
+      b.pg.offer(7, '2026-11-25', '2027-02-15');
+      ok('the page, signed in with a pass that starts later: a far class says why the pass does not cover it, a near one opens the form saying so',
+         bHtml.includes('passLaterFar(2027-02-15)') && bHtml.includes('dropLater(2026-12-07)') && !bHtml.includes('havePass')
+           && b.seen.buys.length === 1 && b.seen.buys[0][2] === 'passLater(2027-02-15)', JSON.stringify([bHtml, b.seen.buys]));
+    }
+    ok('the booking page lists the same 2 weeks the server sells (DROP_DAYS = DROPIN_DAYS = 14), through dropOpts',
+       /const DROP_DAYS = 14;/.test(pageSrc) && /const DROPIN_DAYS = 14;/.test(apiSrc) && /const opts = single \? dropOpts\(CLASSES, last\) : \[\];/.test(pageSrc));
 
     const booked0 = seatOf(await sched(), dc).booked;
     const dOrd = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Drop In', email: 'drop.in@example.com',
@@ -6596,6 +6705,29 @@ const ok = (name, cond, extra = '') => {
          && !row(next, 'my2330') && !row(next, 'led2330') && (next.classes || []).every(c => c.date >= D1),
        JSON.stringify({ night, late: row(late, 'my2330'), next: row(next, 'my2330') }));
     await pool.query(`UPDATE bkk_class_slots SET active=false WHERE code LIKE 'test_edge_%'`);
+
+    // Drop-ins 2 weeks ahead (19 Nov 2026), on a fixed day: today + 13 is Wed 2 Dec, + 14 is Thu 3 Dec, both working days.
+    cc = at('2026-11-19', '12:00:00');
+    const dayClass = async d => ((await JC(`/api/bkk/schedule?days=1&from=${d}`, { headers: ADMIN })).body.classes || [])
+      .filter(c => c.date === d && !c.isOnline && c.seatsLeft > 1);
+    const [in1] = await dayClass('2026-12-02'), [out1] = await dayClass('2026-12-03');
+    const far1 = (await dayClass('2026-12-29'))[0] || (await dayClass('2026-12-30'))[0];
+    const buyFor = (c, who) => postC('/api/bkk/orders', { productCode: 'dropin', name: who, email: `${who.replace(/ /g, '.').toLowerCase()}@example.com`, slotId: c.slotId, date: c.date });
+    const bIn = await buyFor(in1, 'Edge In'), bOut = await buyFor(out1, 'Edge Out');
+    ok('a drop-in sells for a class on day 14 (Wed 2 Dec, today + 13) and not on day 15 (Thu 3 Dec), on 19 Nov', in1 && out1
+       && bIn.status === 200 && bIn.body.order && bOut.status === 409 && bOut.body.dropinUntil === '2026-12-02', JSON.stringify([bIn.status, bOut.body]));
+    // A drop-in credit with no class yet (staff gave it, or its class was cancelled before payment).
+    const credit = async who => (await post('/api/bkk/admin/passes', { name: who, email: `${who.replace(/ /g, '.').toLowerCase()}@example.com`, productCode: 'dropin' }, ADMIN)).body.member.code;
+    const cr1 = await credit('Credit One'), cr2 = await credit('Credit Two');
+    const useOut = await postC('/api/bkk/bookings', { memberCode: cr1, slotId: out1.slotId, date: out1.date });
+    const useIn = await postC('/api/bkk/bookings', { memberCode: cr1, slotId: in1.slotId, date: in1.date });
+    const staffOut = await postC('/api/bkk/bookings', { memberCode: cr2, slotId: out1.slotId, date: out1.date }, ADMIN);
+    ok('a drop-in credit with no date books a class up to 2 Dec, not 3 Dec, as the student; staff can still use it for 3 Dec',
+       useOut.status === 409 && useOut.body.dropinUntil === '2026-12-02' && /2 weeks before/.test(useOut.body.error)
+         && useIn.status === 200 && staffOut.status === 200, JSON.stringify([useOut.body, useIn.body, staffOut.body]));
+    const month1 = await post('/api/bkk/admin/passes', { name: 'Month Far', email: 'month.far@example.com', productCode: 'unlim1' }, ADMIN);
+    const farBook = await postC('/api/bkk/bookings', { memberCode: month1.body.member.code, slotId: far1.slotId, date: far1.date });
+    ok('...a 1-month pass still books a class 40 days off', far1 && farBook.status === 200, JSON.stringify(farBook.body));
 
     // The teacher-names reminder on real days, with nothing confirmed yet.
     await pool.query(`DELETE FROM bkk_settings WHERE key='teachers_shown_through'`);
