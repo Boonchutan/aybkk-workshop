@@ -185,10 +185,11 @@
     <div class="box"><b>Someone else</b>
       <p class="muted">Anyone who is not practising today.</p>
       <input id="code" placeholder="member code, e.g. B…">
-      <p style="margin-top:10px"><button class="btn ghost" onclick="open_($('#code').value.trim())">Open</button></p>
+      <p style="margin-top:10px"><button class="btn ghost" onclick="open_(document.getElementById('code').value.trim())">Open</button></p>
     </div>`;
     faceFallback();
   }
+  window.today = today;
   const say = (id, text, kind) => { const e = $('#' + id); if (e) { e.className = 'say ' + (kind || ''); e.textContent = text; } };
   window.fixSeat = async (id, undo) => {
     const r = await api(`/api/bkk/teacher/bookings/${id}/checkin`, { method: 'POST', body: JSON.stringify({ undo }) }).catch(() => null);
