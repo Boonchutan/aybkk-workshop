@@ -1903,75 +1903,6 @@ async function quoteForCard({ studentId, type, lang, session, location, workshop
   return shuffleSeeded(pool, seed)[cohortIdx];
 }
 
-// POST /api/journal/share-to-group/:studentId
-// Called from student.html after a Russia student completes their daily journal.
-// Server fetches the rendered share card and posts it to the student's city group.
-app.post('/api/journal/share-to-group/:studentId', async (req, res) => {
-  const session = driver.session();
-  try {
-    const { studentId } = req.params;
-
-    const result = await session.run(
-      `MATCH (s:Student) WHERE s.id = $id
-       RETURN s.name AS name, s.city AS city, s.location AS location,
-              s.language AS language, s.telegramChatId AS tgChatId
-       LIMIT 1`,
-      { id: studentId }
-    );
-    if (result.records.length === 0) return res.status(404).json({ error: 'Student not found' });
-
-    const r = result.records[0];
-    const name = r.get('name') || 'Student';
-    const city = r.get('city') || '';
-    const location = r.get('location') || '';
-    const language = r.get('language') || 'en';
-    const tgChatId = r.get('tgChatId') || '';
-
-    if (location !== 'russia') return res.json({ posted: false, reason: 'not a Russia student' });
-
-    const groupMap = { spb: process.env.RU_GROUP_CHAT_ID_SPB, moscow: process.env.RU_GROUP_CHAT_ID_MOSCOW };
-    const groupId = groupMap[city];
-    if (!groupId) return res.json({ posted: false, reason: `no group chat_id for city ${city}` });
-
-    const token = process.env.TELEGRAM_BOT_TOKEN;
-    if (!token) return res.status(500).json({ error: 'TELEGRAM_BOT_TOKEN not set on server' });
-
-    // Skip Boonchu's test entries
-    if (process.env.BOONCHU_CHAT_ID && String(tgChatId) === String(process.env.BOONCHU_CHAT_ID)) {
-      return res.json({ posted: false, reason: 'test mode (Boonchu)' });
-    }
-
-    // Fetch the journal-type share card
-    const cardRes = await fetch(`https://aybkk-ashtanga.up.railway.app/api/share-card/${encodeURIComponent(studentId)}?type=journal`);
-    if (!cardRes.ok) throw new Error(`share-card fetch ${cardRes.status}`);
-    const cardBuf = Buffer.from(await cardRes.arrayBuffer());
-
-    // Caption
-    const today = new Date();
-    const dateLabel = today.toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-    const caption = language === 'ru'
-      ? `🙏 ${name} · ${dateLabel}\nПрактика записана.`
-      : `🙏 ${name} · ${dateLabel}\nPractice logged.`;
-
-    // POST multipart to Telegram sendPhoto
-    const fd = new FormData();
-    fd.append('chat_id', String(groupId));
-    fd.append('caption', caption);
-    fd.append('photo', new Blob([cardBuf], { type: 'image/png' }), 'journal-card.png');
-
-    const tgRes = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, { method: 'POST', body: fd });
-    const tgJson = await tgRes.json();
-    if (!tgJson.ok) throw new Error(`telegram sendPhoto ${tgJson.description}`);
-
-    res.json({ posted: true, city, groupId });
-  } catch (err) {
-    console.error('[journal share-to-group]', err.message);
-    res.status(500).json({ error: err.message });
-  } finally {
-    await session.close();
-  }
-});
-
 app.get('/api/share-card/:studentId', async (req, res) => {
   const session = driver.session();
   try {
@@ -2063,126 +1994,7 @@ app.get('/api/share-card/:studentId', async (req, res) => {
   }
 });
 
-// ─── Russia WS 2026 — orientation save/list ─────────────────────────────
-// POST /api/orientations/ru — Telegram bot calls this after the chat orientation flow
-app.post('/api/orientations/ru', async (req, res) => {
-  try {
-    const {
-      name, email, city, size, experience, lastAsana,
-      difficulties, injuries, language, workshop,
-      telegramChatId, telegramUsername, telegramFirstName, telegramLastName,
-      telegramPhotoFileId, photoUrl, quizResults
-    } = req.body;
-
-    if (!name) return res.status(400).json({ success: false, error: 'name required' });
-    if (!city || !['spb', 'moscow'].includes(city)) return res.status(400).json({ success: false, error: 'city must be spb or moscow' });
-
-    const datetime = new Date().toISOString();
-    const baseUrl = getBaseUrl(req);
-    const tgChatStr = String(telegramChatId || '');
-    const emailStr = (email || '').trim().toLowerCase();
-
-    const diffStr = Array.isArray(difficulties) ? difficulties.join(', ') : (difficulties || '');
-    const quizStr = JSON.stringify(quizResults || []);
-
-    const session = driver.session();
-    try {
-      // Look up existing RU Student by telegramChatId, then by email — so a repeat
-      // registration updates the same row instead of creating a duplicate.
-      let existingId = null;
-      let existingLink = null;
-      if (tgChatStr) {
-        const r = await session.run(
-          `MATCH (s:Student {location: 'russia', telegramChatId: $tg})
-           RETURN s.id AS id, s.journalLink AS link
-           ORDER BY s.createdAt DESC LIMIT 1`,
-          { tg: tgChatStr }
-        );
-        if (r.records.length) {
-          existingId = r.records[0].get('id');
-          existingLink = r.records[0].get('link');
-        }
-      }
-      if (!existingId && emailStr) {
-        const r = await session.run(
-          `MATCH (s:Student {location: 'russia'})
-           WHERE toLower(s.email) = $em AND s.email <> ''
-           RETURN s.id AS id, s.journalLink AS link
-           ORDER BY s.createdAt DESC LIMIT 1`,
-          { em: emailStr }
-        );
-        if (r.records.length) {
-          existingId = r.records[0].get('id');
-          existingLink = r.records[0].get('link');
-        }
-      }
-
-      const studentId = existingId || ('ru-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6));
-      const journalLink = existingLink || (baseUrl + '/student.html?id=' + studentId
-        + '&name=' + encodeURIComponent(name)
-        + '&lang=' + (language || 'ru')
-        + '&location=russia'
-        + '&city=' + city);
-
-      // Orientation = audit log of every registration event (always CREATE).
-      await session.run(`
-        CREATE (o:Orientation {
-          id: $id, name: $name, email: $email, city: $city, size: $size,
-          experience: $experience, lastAsana: $lastAsana, difficulties: $diff,
-          injuries: $injuries, language: $language, workshop: $workshop,
-          telegramChatId: $tgChat, telegramUsername: $tgUser,
-          telegramFirstName: $tgFirst, telegramLastName: $tgLast,
-          telegramPhotoFileId: $tgPhoto,
-          photoUrl: $photoUrl, quizResults: $quiz, location: 'russia',
-          createdAt: datetime($createdAt)
-        })`, {
-        id: studentId, name, email: email || '', city, size: size || '',
-        experience: experience || '', lastAsana: lastAsana || '', diff: diffStr,
-        injuries: injuries || '', language: language || 'ru',
-        workshop: workshop || 'AYBKK Russia WS May 2026',
-        tgChat: tgChatStr, tgUser: telegramUsername || '',
-        tgFirst: telegramFirstName || '', tgLast: telegramLastName || '',
-        tgPhoto: telegramPhotoFileId || '',
-        photoUrl: photoUrl || '', quiz: quizStr, createdAt: datetime,
-      });
-
-      // Student = canonical profile (one per person). MERGE on id so a repeat
-      // registration updates the existing node and journals stay attached.
-      await session.run(`
-        MERGE (s:Student { id: $id })
-        ON CREATE SET
-          s.createdAt = datetime($createdAt),
-          s.classType = 'russia-workshop',
-          s.location = 'russia',
-          s.isActive = true
-        SET
-          s.name = $name, s.email = $email, s.city = $city, s.size = $size,
-          s.oriented = true,
-          s.language = $language, s.workshop = $workshop, s.injuries = $injuries,
-          s.experience = $experience, s.lastAsana = $lastAsana,
-          s.telegramChatId = $tgChat, s.telegramUsername = $tgUser,
-          s.telegramPhotoFileId = $tgPhoto,
-          s.photoUrl = $photoUrl, s.journalLink = $journalLink,
-          s.updatedAt = datetime($createdAt)
-        `, {
-        id: studentId, name, email: email || '', city, size: size || '',
-        language: language || 'ru', workshop: workshop || 'AYBKK Russia WS May 2026',
-        injuries: injuries || '', experience: experience || '', lastAsana: lastAsana || '',
-        tgChat: tgChatStr, tgUser: telegramUsername || '',
-        tgPhoto: telegramPhotoFileId || '',
-        photoUrl: photoUrl || '', journalLink, createdAt: datetime,
-      });
-
-      res.json({ success: true, studentId, journalLink, name, reused: !!existingId });
-    } finally {
-      await session.close();
-    }
-  } catch (err) {
-    console.error('[ru orientation save]', err.message);
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
-
+// ─── Russia WS 2026 (ended May 2026) — orientation list ─────────────────
 // GET /api/orientations/ru — list RU students (?city=spb|moscow, ?format=csv)
 app.get('/api/orientations/ru', staffOnly, async (req, res) => {
   const session = driver.session();
@@ -2191,7 +2003,7 @@ app.get('/api/orientations/ru', staffOnly, async (req, res) => {
     const cityFilter = city ? `AND s.city = $city` : '';
     const result = await session.run(`
       MATCH (s:Student)
-      WHERE s.location = 'russia' OR s.id STARTS WITH 'ru-'
+      WHERE (s.location = 'russia' OR s.id STARTS WITH 'ru-')
       ${cityFilter}
       RETURN s.id AS id, s.name AS name, s.email AS email, s.city AS city,
              s.size AS size, s.experience AS experience, s.lastAsana AS lastAsana,
@@ -3934,16 +3746,22 @@ async function start() {
   }
 }
 
+// A bot that keeps failing within a minute (a revoked token, a second copy polling) waits
+// twice as long each time, up to 5 minutes; one that ran longer comes back in 5s.
+let botRestartMs = 5000;
 function startBot() {
   const { spawn } = require('child_process');
   console.log('[bot-supervisor] starting assessment-bot.js as managed child');
+  const startedAt = Date.now();
   const child = spawn('node', ['assessment-bot.js'], {
     stdio: 'inherit',
     env: process.env,
   });
   child.on('exit', (code, signal) => {
-    console.log(`[bot-supervisor] bot exited (code=${code}, signal=${signal}) — restarting in 5s`);
-    setTimeout(startBot, 5000);
+    if (Date.now() - startedAt > 60000) botRestartMs = 5000;
+    console.log(`[bot-supervisor] bot exited (code=${code}, signal=${signal}) — restarting in ${botRestartMs / 1000}s`);
+    setTimeout(startBot, botRestartMs);
+    botRestartMs = Math.min(botRestartMs * 2, 300000);
   });
   child.on('error', (err) => {
     console.error('[bot-supervisor] spawn error:', err.message);
