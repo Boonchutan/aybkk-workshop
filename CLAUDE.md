@@ -186,6 +186,7 @@ From 12 Nov 2026, every price + 7% VAT (posters: bots/media/2026-11-06-price-pos
 - 1 month 9,600 · 3 months 19,500 (6,500/month; Boonchu, 6 Nov 2026) · 6 months 34,200 (5,700/month, teacher's pick) · 12 months 63,600 (5,300/month, 12 months only; Boonchu, 11 Nov 2026: was 32,000 and 59,900)
 - Drop-in 1,500 · 8 classes 7,600, use within 2 months (Boonchu, 9 Nov 2026)
 - One price for everyone: no returning-student or promo price. The Sharathji promotion (Duo, Rookie Pack, Reset & Restart, Back to the Beat) ended on 11 Nov 2026.
+- First-week upgrade (Boonchu, 18 Nov 2026): a 1-month pass bought here (online or at the desk) at 9,600 can become 3 months up to day 7 of the pass (day 1 = first class) for the difference, 9,900 +VAT, so 19,500 in all: not a promo. My account (online) and the Admin profile (desk); rule in `bkk-api.js` (`UPGRADE`, `upgradeFor`).
 - Unlimited (monthly) members: no minimum, no set 4 days a week (Boonchu, 9 Nov 2026). Thai: "ไม่กำหนด 4 วันต่ออาทิตย์ มาฝึกตามเวลาที่สะดวก", never "ไม่ต้องมา...".
 
 Passes sold before 12 Nov keep what was bought: 12 months sold before 21 Oct keep their 13 months, Rezerv's old 45,000 THB 6-month passes are honored, and 10-class packs stay valid.

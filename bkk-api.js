@@ -82,6 +82,9 @@ const SEED_PRODUCTS = [
   // sold and the Rezerv imports that point at it.
   { code: 'pack10',    name_en: '10 classes / 3 months', name_th: '10 ครั้ง / 3 เดือน', price_thb: 14000, kind: 'credits',   credits: 10, valid_days: 90,  daily_cap: null, sort: 25, active: false },
   { code: 'unlim1',    name_en: '1 month unlimited',     name_th: '1 เดือน ไม่จำกัด',   price_thb: 9600,  kind: 'unlimited', credits: null, valid_days: 30,  daily_cap: 2, sort: 30 },
+  // The first-week upgrade (UPGRADE): never on sale by itself and never a pass.
+  // Its price is worked out at each sale (upgradePrice), so price_thb is not read.
+  { code: 'up1to3',    name_en: 'Upgrade 1 to 3 months', name_th: 'อัปเกรดจาก 1 เป็น 3 เดือน', price_thb: 0, kind: 'upgrade', credits: null, valid_days: 0, daily_cap: null, sort: 35, active: false },
   { code: 'unlim3',    name_en: '3 months unlimited',    name_th: '3 เดือน ไม่จำกัด',   price_thb: 25800, kind: 'unlimited', credits: null, valid_days: 90,  daily_cap: 2, sort: 50 },
   { code: 'unlim6m',   name_en: '6 months unlimited',    name_th: '6 เดือน ไม่จำกัด',   price_thb: 34200, kind: 'unlimited', credits: null, valid_days: 180, daily_cap: 2, sort: 60, active: false },
   { code: 'unlim12m',  name_en: '12 months unlimited',   name_th: '12 เดือน ไม่จำกัด',  price_thb: 78000, kind: 'unlimited', credits: null, valid_days: 365, daily_cap: 2, sort: 70 },
@@ -101,6 +104,18 @@ const PRICE_SWITCH = {
   // already switched at 32,000 / 59,900 moves once; a price staff set stays.
   raise: { key: 'prices_6m12m_from_2026_11_12', from: { unlim6m: 32000, unlim12m: 59900 } },
 };
+// The first-week upgrade (Boonchu, 18 Nov 2026): a 1-month pass bought here at
+// today's 1-month price becomes the 3-month pass up to the end of day `days`
+// (day 1 is its first class, a Bangkok date; one not started yet counts) for the
+// difference only. In all the student pays the 3-month price: no promotion, one
+// price for everyone. The same pass changes; no second pass is made.
+// payH: an online upgrade paid later than this after it was started changes no
+// pass (the payment watch stops asking then too). holdS: a second online try made
+// this soon after one is refused (two tabs at once). deskHoldMin: a desk upgrade
+// being made holds off any other for this long.
+const UPGRADE = { code: 'up1to3', from: 'unlim1', to: 'unlim3', days: 7, payH: PAY_WATCH.maxAgeH, holdS: 60, deskHoldMin: 10 };
+// The one place the difference is worked out, from the catalogue as it is now.
+const upgradePrice = (from, to) => to.price_thb - from.price_thb;
 
 // weekday: 0=Sun … 6=Sat
 // Moon days: the shala is closed on the Bangkok date of every new and full moon.
@@ -627,6 +642,14 @@ function mountBkk(app, opts = {}) {
       approved_at TIMESTAMPTZ, name TEXT, used_at TIMESTAMPTZ,
       device_id INTEGER REFERENCES bkk_door_devices(id))`);
     await q(`CREATE INDEX IF NOT EXISTS bkk_door_pairings_code ON bkk_door_pairings (code_hash)`);
+    // The first-week upgrade (18 Nov 2026). upgrade_of: the pass an upgrade order
+    // is for. upgrade_order: the paid order that made the pass 3 months (one at
+    // most), upgraded_from: the package it was, so a void can put it back.
+    await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS upgrade_of INTEGER REFERENCES bkk_passes(id)`);
+    await q(`CREATE INDEX IF NOT EXISTS bkk_orders_upgrade_of ON bkk_orders (upgrade_of) WHERE upgrade_of IS NOT NULL`);
+    await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS upgrade_order INTEGER REFERENCES bkk_orders(id)`);
+    await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS upgraded_from INTEGER REFERENCES bkk_products(id)`);
+    await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_passes_upgrade_order ON bkk_passes (upgrade_order) WHERE upgrade_order IS NOT NULL`);
     await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_door_devices_one_live ON bkk_door_devices ((true)) WHERE revoked_at IS NULL`);
 
     // Catalogue: a package added to SEED_PRODUCTS reaches a running shala on the
@@ -786,6 +809,151 @@ function mountBkk(app, opts = {}) {
     return { fee, vat, total: base + fee + vat };
   }
 
+  // ── the first-week upgrade (18 Nov 2026) ──────────────────────────────────
+  // The upgrade and the two packages it joins, as the catalogue has them now.
+  async function upgradeProducts(db) {
+    const r = (await db.query('SELECT * FROM bkk_products WHERE code = ANY($1::text[])',
+      [[UPGRADE.code, UPGRADE.from, UPGRADE.to]])).rows;
+    const [up, from, to] = [UPGRADE.code, UPGRADE.from, UPGRADE.to].map(c => r.find(p => p.code === c));
+    return up && from && to && upgradePrice(from, to) > 0 ? { up, from, to, price: upgradePrice(from, to) } : null;
+  }
+  // The member's pass the upgrade is for, or null: from the 1-month package, bought
+  // here (online or at the desk; never a Rezerv pass or its copy) at today's
+  // 1-month price, active (a paused one is not), never upgraded, and not past day
+  // UPGRADE.days of its window, or not started. lock: FOR UPDATE, in the caller's
+  // transaction. lastDay: the last day it can be upgraded (null: not started).
+  async function upgradeFor(db, memberId, { passId = null, lock = false } = {}) {
+    const P = await upgradeProducts(db);
+    if (!P) return null;
+    const p = (await db.query(`SELECT p.*, to_char(p.valid_from + $4::int - 1, 'YYYY-MM-DD') AS last_day,
+        to_char(p.valid_until + ($6::int - p.valid_days), 'YYYY-MM-DD') AS new_until
+      FROM bkk_passes p JOIN bkk_orders o ON o.id = p.order_id
+      WHERE p.member_id=$1 AND p.product_id=$2 AND p.status='active' AND p.upgrade_order IS NULL
+        AND p.source IS DISTINCT FROM 'rezerv' AND p.twin_of IS NULL
+        AND o.source IS NULL AND o.status='paid' AND o.upgrade_of IS NULL AND o.base_thb=$3
+        AND (p.valid_from IS NULL OR p.valid_from + $4::int - 1 >= $5::date)
+        ${passId ? 'AND p.id=$7' : ''}
+      ORDER BY p.valid_from NULLS LAST, p.id LIMIT 1 ${lock ? 'FOR UPDATE OF p' : ''}`,
+      [memberId, P.from.id, P.from.price_thb, UPGRADE.days, bkkToday(), P.to.valid_days, ...(passId ? [passId] : [])])).rows[0];
+    return p ? { ...P, pass: p, lastDay: p.last_day, newUntil: p.new_until } : null;
+  }
+  // Why an upgrade is refused: the pass is 3 months already (a second upgrade), or none can be.
+  // passId: the pass the request was about; without one, only a pass still running counts
+  // (an upgraded pass that ended long ago says nothing about today's 1 month).
+  async function upgradeRefused(memberId, passId = null) {
+    const p = (await q(`SELECT to_char(valid_until,'YYYY-MM-DD') AS until FROM bkk_passes
+      WHERE member_id=$1 AND upgrade_order IS NOT NULL AND status IN ('active','frozen')
+        AND (valid_until IS NULL OR valid_until >= $2::date) ${passId ? 'AND id=$3' : ''} ORDER BY id DESC LIMIT 1`,
+      [memberId, bkkToday(), ...(passId ? [passId] : [])])).rows[0];
+    return p ? { error: 'This pass is 3 months already.', upgraded: true, until: p.until } : { error: UPGRADE_NO, notEligible: true };
+  }
+  // What a page shows for it: the price before VAT, the last day, and the end it gives (null: not started).
+  const upgradeOut = u => u && { passId: u.pass.id, priceThb: u.price, lastDay: u.lastDay, newUntil: u.newUntil };
+  const UPGRADE_NO = 'This pass cannot be upgraded: the upgrade to 3 months is for a 1-month pass bought on aybkk.net, in its first week.';
+  // A new upgrade order, checked and made in one transaction with the pass locked,
+  // so one being turned on at the same moment is seen. null: not (or no longer) eligible.
+  // { busy }: another upgrade for this pass is being made right now (a desk sale not
+  // turned on yet, or an online try from a moment ago), so this one is not made.
+  async function newUpgradeOrder(member, { pct = 0, method = 'online', saleId = null, passId = null } = {}) {
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const u = await upgradeFor(client, member.id, { passId, lock: true });
+      if (!u) { await client.query('ROLLBACK'); return null; }
+      const busy = (await client.query(`SELECT refno, method FROM bkk_orders WHERE upgrade_of=$1 AND status='pending' AND source IS NULL
+          AND ((method = ANY($2::text[]) AND created_at > now() - make_interval(mins => $3))
+            OR ($4::text = 'online' AND method = 'online' AND created_at > now() - make_interval(secs => $5)))
+        ORDER BY id DESC LIMIT 1`, [u.pass.id, DESK_METHODS, UPGRADE.deskHoldMin, method, UPGRADE.holdS])).rows[0];
+      if (busy) { await client.query('ROLLBACK'); return { busy: { refno: String(busy.refno), method: busy.method } }; }
+      const { fee, vat, total } = breakdown(u.price, pct);
+      let o = null;
+      for (let attempt = 0; attempt < 5 && !o; attempt++) {
+        await client.query('SAVEPOINT refno');
+        try {
+          o = (await client.query(
+            `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb,method,request_id,upgrade_of,mail_to)
+             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,(SELECT mail_to FROM bkk_orders WHERE id=$11)) RETURNING *`,
+            [newRefno(), u.up.id, member.id, u.price, fee, vat, total, method, saleId, u.pass.id, u.pass.order_id])).rows[0];
+        } catch (e) {
+          await client.query('ROLLBACK TO SAVEPOINT refno');
+          if (e.constraint === 'bkk_orders_request_id' || !/duplicate key/.test(e.message) || attempt === 4) throw e;
+        }
+      }
+      await client.query('COMMIT');
+      return { o, u };
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      throw e;
+    } finally { client.release(); }
+  }
+  // Upgrade tries for this pass still waiting (2 days back): PaySolutions is asked
+  // about each first, so one paid whose postback was lost turns the pass on now and
+  // a second upgrade is refused. Gives the ones still not paid, newest first, and
+  // applied: a try that check just turned on. All at once, so the wait is one
+  // inquiry at most; a try asked about in the last 2 minutes (a Retry, the confirm
+  // after a 409) is not asked again, and none is while the check is failing.
+  async function openUpgrades(passId) {
+    const open = () => q(`SELECT o.id, o.refno, o.amount_thb, ${PAY_AT} AS at,
+        o.checked_at IS NOT NULL AND o.checked_at > to_timestamp($3::double precision / 1000) - interval '2 minutes' AS asked
+      FROM bkk_orders o
+      WHERE o.upgrade_of=$1 AND o.status IN ('pending','failed') AND o.method='online' AND o.source IS NULL
+        AND o.created_at >= now() - make_interval(hours => $2) ORDER BY o.created_at DESC, o.id DESC LIMIT 3`,
+      [passId, PAY_WATCH.maxAgeH, nowMs()]).then(r => r.rows);
+    const before = await open();
+    const failing = await getSetting(FAILING, null);
+    const ask = failing && failing.since ? [] : before.filter(o => !o.asked);
+    await Promise.all(ask.map(o => verifyAndActivate(Number(o.refno))
+      .catch(e => console.error('[bkk pay] upgrade check failed:', e.message))));
+    const still = ask.length ? await open() : before;
+    const applied = ask.length ? (await q('SELECT 1 FROM bkk_passes WHERE id=$1 AND upgrade_order = ANY($2::int[])',
+      [passId, before.map(o => o.id)])).rows.length > 0 : false;
+    return Object.assign(still, { applied });
+  }
+  // What became of a paid upgrade order: did it make its pass 3 months, until when,
+  // and if not, why (from its note).
+  async function upgradeState(o) {
+    const p = (await q(`SELECT upgrade_order, to_char(valid_until,'YYYY-MM-DD') AS until FROM bkk_passes WHERE id=$1`,
+      [o.upgrade_of])).rows[0];
+    const note = (await q('SELECT status, gateway_note FROM bkk_orders WHERE id=$1', [o.id])).rows[0] || {};
+    const applied = !!p && p.upgrade_order === o.id;
+    const said = applied ? null : note.status !== 'paid' ? `the order is ${note.status || 'gone'}`
+      : ((/upgrade not applied: ([^|]+)/.exec(note.gateway_note || '') || [])[1] || 'the pass was not changed').trim();
+    return { applied, until: applied ? p.until : null, why: said };
+  }
+  // Paid: the same pass becomes the 3-month pass, in the caller's transaction
+  // with the pass locked, so a double postback, a postback and an inquiry, two
+  // servers or two upgrade orders change it once. Its window keeps its start and
+  // gains the difference in days (a pass as sold ends valid_from + 90 days, as its
+  // first class would set it); one not started only takes the new length. Bookings
+  // stay. Not applied (paid twice, the pass changed since, or an online try paid
+  // more than UPGRADE.payH hours after it was started): the order stays paid, its
+  // note says why, and the caller pings. Staff turning one on by hand (byHand)
+  // decide the late case themselves. The pass is locked by itself: a lock taken
+  // through a join loses a row another upgrade or a void changed meanwhile.
+  async function applyUpgrade(db, order, { byHand = false } = {}) {
+    const p = (await db.query('SELECT * FROM bkk_passes WHERE id=$1 FOR UPDATE', [order.upgrade_of])).rows[0];
+    const pr = p && (await db.query('SELECT code, name_en FROM bkk_products WHERE id=$1', [p.product_id])).rows[0];
+    const by = p && p.upgrade_order && (await db.query('SELECT refno FROM bkk_orders WHERE id=$1', [p.upgrade_order])).rows[0];
+    const to = (await db.query('SELECT * FROM bkk_products WHERE code=$1', [UPGRADE.to])).rows[0];
+    const late = !byHand && !DESK_METHODS.includes(order.method)
+      && nowMs() - new Date(order.created_at).getTime() > UPGRADE.payH * 3600e3;
+    const stop = !p ? 'no pass on this order' : p.upgrade_order ? `the pass was upgraded already by ref ${by ? by.refno : p.upgrade_order}`
+      : late ? `paid more than ${UPGRADE.payH} hours after the upgrade was started`
+      : !pr || pr.code !== UPGRADE.from ? 'the pass is not the 1-month pass any more'
+      : !['active', 'frozen'].includes(p.status) ? `the pass is ${p.status}` : !to ? 'there is no 3-month package' : null;
+    if (stop) {
+      await db.query(`UPDATE bkk_orders SET gateway_note = coalesce(gateway_note || ' | ', '') || $2 WHERE id=$1`,
+        [order.id, `upgrade not applied: ${stop}`]);
+      return { applied: false, why: stop };
+    }
+    const r = (await db.query(`UPDATE bkk_passes SET product_id=$2, kind=$3, daily_cap=$4, valid_days=$5,
+        valid_until = valid_until + ($5::int - valid_days), upgrade_order=$6, upgraded_from=product_id,
+        note = coalesce(note || ' | ', '') || $7
+      WHERE id=$1 RETURNING to_char(valid_until,'YYYY-MM-DD') AS until`,
+      [p.id, to.id, to.kind, to.daily_cap, to.valid_days, order.id, `upgraded to ${to.name_en} by order ${order.refno}`])).rows[0];
+    return { applied: true, passId: p.id, until: r.until, name: to.name_en, fromName: pr.name_en };
+  }
+
   // ── helpers ───────────────────────────────────────────────────────────────
   // The code in a browser is the sign-in, so it must not be guessable: 64 random
   // bits (the old clock-plus-3-characters codes stay valid, but new ones are not).
@@ -940,7 +1108,7 @@ function mountBkk(app, opts = {}) {
     try {
       await switchPrices();
       const pct = await surcharge();
-      const r = await q('SELECT * FROM bkk_products WHERE active ORDER BY sort, id');
+      const r = await q(`SELECT * FROM bkk_products WHERE active AND kind <> 'upgrade' ORDER BY sort, id`);
       res.json({
         surchargePct: pct,
         vatPct: VAT_PCT,
@@ -955,6 +1123,9 @@ function mountBkk(app, opts = {}) {
           const b = breakdown(p.price_thb, pct);
           return { ...p, fee_thb: b.fee, vat_thb: b.vat, total_thb: b.total };
         }),
+        // Items sold but never listed (the first-week upgrade): their names only, so a
+        // Thai page can show them in Payments and Reports. Never a price or a code.
+        itemNames: (await q(`SELECT name_en AS en, name_th AS th FROM bkk_products WHERE kind = 'upgrade'`)).rows,
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
@@ -1053,6 +1224,7 @@ function mountBkk(app, opts = {}) {
   app.post('/api/bkk/orders', async (req, res) => {
     try {
       const { productCode, name, email, phone } = req.body || {};
+      if (productCode === UPGRADE.code) return await upgradeCheckout(req, res);
       if (!productCode || !(name || '').trim() || !(email || '').trim())
         return res.status(400).json({ error: 'name, email and product are required' });
 
@@ -1117,6 +1289,36 @@ function mountBkk(app, opts = {}) {
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
+
+  // The upgrade online, from My account: the member code is the sign-in, the pass
+  // is the one upgradeFor finds, and it goes through the same checkout as every
+  // package (the online fee and VAT on the difference, the same pay page).
+  async function upgradeCheckout(req, res) {
+    const code = String((req.body || {}).memberCode || '');
+    const member = code ? await memberByCode(code) : null;
+    if (!member) return res.status(404).json({ error: 'Open My account first: the upgrade is for the pass on your profile.' });
+    await switchPrices();
+    const first = await upgradeFor(pool, member.id);
+    if (!first) return res.status(409).json(await upgradeRefused(member.id));
+    // An earlier try PaySolutions has just said is paid made this pass 3 months (paidNow).
+    if ((await openUpgrades(first.pass.id)).applied)
+      return res.status(409).json({ ...await upgradeRefused(member.id, first.pass.id), paidNow: true });
+    const made = await newUpgradeOrder(member, { pct: await surcharge(), passId: first.pass.id });
+    if (!made) return res.status(409).json(await upgradeRefused(member.id, first.pass.id));
+    if (made.busy) return res.status(409).json({ busy: true,
+      error: 'A payment for this upgrade was started a moment ago. If the pay page did not open, try again in a minute.' });
+    const { o, u } = made, cfg = paysoConfig();
+    // A 1-month sold at the desk may have no email on the profile: the one its receipt went to.
+    const email = member.email || o.mail_to || '';
+    res.json({
+      order: { id: o.id, refno: String(o.refno), amount: o.amount_thb, product: u.up.name_en },
+      member: { code },
+      pay: cfg ? buildPayForm(cfg, o, u.up, { ...member, email }, req) : null,
+      payLink: cfg ? null : paysnLink(o, u.up),
+      payUnavailable: (cfg || paysnLink(o, u.up)) ? undefined :
+        'Online payment is not configured yet: the shala will contact you to arrange payment.',
+    });
+  }
 
   // Pay.sn is PaySolutions' no-code product: a payment link, no API key, no
   // secret, and therefore nothing we can verify server-side. Orders paid this
@@ -1215,10 +1417,13 @@ function mountBkk(app, opts = {}) {
 
   // now: the payment watch's clock (paySweep passes its own); out.verdict: what
   // PaySolutions answered, for the sweep.
+  // A paid upgrade also says whether it made the pass 3 months, and until when.
+  const paidOut = async o => ({ ...await orderBooking(o),
+    ...(o.upgrade_of ? { upgrade: await upgradeState(o).then(u => ({ applied: u.applied, until: u.until })) } : {}) });
   async function verifyAndActivate(refno, { now = nowMs(), out = {} } = {}) {
     const o = (await q('SELECT * FROM bkk_orders WHERE refno = $1', [refno])).rows[0];
     if (!o) return { status: 'unknown' };
-    if (o.status === 'paid') return { status: 'paid', already: true, ...await orderBooking(o) };
+    if (o.status === 'paid') return { status: 'paid', already: true, ...await paidOut(o) };
     // A Rezerv payment is history: it never goes near the gateway or a pass.
     if (o.source === 'rezerv') return { status: o.status };
     // Voided by staff after a check with the bank or PaySolutions: final. Never
@@ -1233,7 +1438,7 @@ function mountBkk(app, opts = {}) {
     await (verdict.failed ? checkFailing(verdict.why, now) : checkWorks()).catch(e => console.error('[bkk pay] check health failed:', e.message));
     // Staff (or another path) may have turned the order on while PaySolutions
     // was being asked: a paid order keeps its status and its note.
-    const alreadyPaid = async () => ({ status: 'paid', already: true, ...await orderBooking(o) });
+    const alreadyPaid = async () => ({ status: 'paid', already: true, ...await paidOut(o) });
     if (!verdict.paid) {
       const upd = await q(`UPDATE bkk_orders SET gateway_note = $2 WHERE id = $1 AND status <> 'paid' RETURNING id`,
         [o.id, (verdict.note || 'not confirmed').slice(0, 300)]);
@@ -1258,7 +1463,7 @@ function mountBkk(app, opts = {}) {
       return { status: 'mismatch' };
     }
     await activateOrder(o, verdict);
-    return { status: 'paid', ...await orderBooking(o) };
+    return { status: 'paid', ...await paidOut(o) };
   }
 
   // ── problem pings (15 Nov 2026) ───────────────────────────────────────────
@@ -1456,7 +1661,7 @@ function mountBkk(app, opts = {}) {
   async function activateOrder(order, verdict = {}, opts = {}) {
     const pr = (await q('SELECT * FROM bkk_products WHERE id = $1', [order.product_id])).rows[0];
     const client = await pool.connect();
-    let seat = null, cls = null;
+    let seat = null, cls = null, up = null;
     try {
       await client.query('BEGIN');
       const upd = await client.query(
@@ -1464,10 +1669,12 @@ function mountBkk(app, opts = {}) {
          WHERE id=$1 AND status IN ('pending','failed','mismatch') RETURNING slot_id, to_char(class_date,'YYYY-MM-DD') AS class_date`,
         [order.id, verdict.raw ? JSON.stringify(verdict.raw).slice(0, 400) : null, verdict.note || null]);
       if (!upd.rows.length) { await client.query('ROLLBACK'); return null; }   // already activated, or void
-      const pass = (await client.query(
+      // An upgrade changes the pass it is for; every other package makes a pass.
+      const pass = order.upgrade_of ? null : (await client.query(
         `INSERT INTO bkk_passes (member_id,product_id,order_id,kind,credits_total,daily_cap,valid_days)
          VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
         [order.member_id, pr.id, order.id, pr.kind, pr.credits, pr.daily_cap, pr.valid_days])).rows[0];
+      if (order.upgrade_of) up = await applyUpgrade(client, order, { byHand: !!opts.byHand });
       const { slot_id: slotId, class_date: date } = upd.rows[0];
       if (slotId && date) {
         // The seat must never cost the student the payment. A class cancelled
@@ -1503,7 +1710,8 @@ function mountBkk(app, opts = {}) {
     } finally { client.release(); }
 
     const booked = cls && !seat.error;
-    console.log(`✓ bkk: pass activated for order ${order.id} (${pr.name_en})${cls ? (booked
+    console.log(up ? `${up.applied ? '✓' : '⚠'} bkk: upgrade order ${order.id} ${up.applied ? `made pass ${up.passId} 3 months` : `paid, not applied: ${up.why}`}`
+      : `✓ bkk: pass activated for order ${order.id} (${pr.name_en})${cls ? (booked
       ? `, booked ${cls.name} ${cls.when}` : `, could NOT book ${cls.name} ${cls.when}: ${seat.error}`) : ''}`);
     // A ping for each sale only when Boonchu asks for it (ping_each_sale): the
     // sales go in the daily money line. Problems always ping; staff's own
@@ -1512,20 +1720,27 @@ function mountBkk(app, opts = {}) {
     (async () => {
       if (cls && !booked && !opts.byHand) await alertOnce(order, 'nobook',
         `⚠ Paid, but could not book ${cls.name}, ${cls.when}: ${seat.error}.`, 'They keep a 1-class credit: book them by hand.');
+      // An upgrade paid twice (or for a pass that changed since) changes nothing: this
+      // ping is the double check for it, so the package check below is not run too.
+      if (up && !up.applied && !opts.byHand) await alertOnce(order, 'upgrade',
+        `⚠ Upgrade paid, but the pass was not changed: ${up.why}.`, 'Check the bank or PaySolutions; refund this one, then void it in Payments.');
       if (!opts.byHand && await getSetting('ping_each_sale', 'off') === 'on') {
         const lines = [`💳 AYBKK payment (${order.method || 'online'})`, `${pr.name_en} · ฿${order.amount_thb}`, `refno ${order.refno}`];
         if (booked) lines.push(`📅 ${seat.already ? 'Already on the list' : 'Booked'}: ${cls.name}, ${cls.when}`
           + (seat.overCapacity ? `\n⚠ over capacity: ${seat.taken + 1} for ${seat.capacity} places` : ''));
         await notify(lines.join('\n'));
       }
-      await doubleCheck(order, pr, opts.byHand);
+      if (!up) await doubleCheck(order, pr, opts.byHand);
     })().catch(e => console.error('[bkk pay] ping failed:', e.message));
     // After COMMIT, and awaited only so failures are logged. The pass already
     // exists; a mail server having a bad day must not undo a paid order.
-    emailReceipt(order, pr, cls && { ...cls, booked }).catch(e => console.error('[bkk] receipt failed:', e.message));
+    // An upgrade not applied is refunded, so it gets no receipt that says the pass is active.
+    if (!up || up.applied) emailReceipt(order, up ? { ...pr, name_en: `${up.name} (upgraded from ${up.fromName})` } : pr,
+      cls && { ...cls, booked }).catch(e => console.error('[bkk] receipt failed:', e.message));
     return {
       booking: booked ? { title: cls.name, startAt: seat.startAt, overCapacity: seat.overCapacity, already: seat.already } : null,
       bookingError: cls && seat.error ? seat.error : null,
+      ...(up ? { upgrade: up } : {}),
     };
   }
 
@@ -2006,6 +2221,9 @@ function mountBkk(app, opts = {}) {
       since.passes = await client.query(`UPDATE bkk_passes SET member_id=$1 WHERE member_id=$2
         AND (order_id = ANY($3::int[]) OR (source='rezerv' AND via_member = ANY($4::int[]))) RETURNING id`,
         [F, K, [...(L.rows.bkk_orders || []), ...since.orders], fam]).then(ids);
+      // An upgrade sale goes with the pass it upgraded (it has no pass of its own and may have no email).
+      since.upgrades = await client.query(`UPDATE bkk_orders SET member_id=$1 WHERE member_id=$2 AND upgrade_of = ANY($3::int[]) RETURNING id`,
+        [F, K, [...(L.rows.bkk_passes || []), ...since.passes]]).then(ids);
       since.visits = await client.query(`UPDATE bkk_bookings b SET member_id=$1 WHERE b.member_id=$2 AND b.source='rezerv'
         AND b.via_member = ANY($3::int[]) AND NOT (b.status='booked' AND EXISTS (SELECT 1 FROM bkk_bookings o WHERE o.member_id=$1
           AND o.slot_id=b.slot_id AND o.class_date=b.class_date AND o.status='booked')) RETURNING b.id`, [F, K, fam]).then(ids);
@@ -2522,6 +2740,11 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
            ORDER BY b.start_at DESC, b.id DESC LIMIT 10`, [m.id]),
       ]);
       const c = count.rows[0];
+      // The first-week upgrade, offered on the pass it is for while it is open.
+      await switchPrices();
+      const up = await upgradeFor(pool, m.id);
+      // What paying online takes, shown before the pay page: the difference, the online fee and VAT.
+      const upPay = up && { ...breakdown(up.price, await surcharge()), surchargePct: await surcharge(), vatPct: VAT_PCT };
       res.json({
         member: { code: m.code, name: m.name, email: m.email, journalId: await journalId(m) },
         photo: faceLinks(m.photo_id, m.code),
@@ -2531,6 +2754,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
           name: p.name_en, nameTh: p.name_th, kind: p.kind, status: p.status,
           creditsLeft: p.kind === 'unlimited' ? null : (p.credits_total - p.credits_used),
           validFrom: p.valid_from, validUntil: p.valid_until, dailyCap: p.daily_cap,
+          ...(up && up.pass.id === p.id ? { upgrade: { priceThb: up.price, lastDay: up.lastDay, newUntil: up.newUntil, ...upPay } } : {}),
         })),
         renewals: Math.max(0, stays - 1),
         bookings, startedToday,
@@ -2921,7 +3145,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (!o) return null;
     if (o.status === 'pending') await activateOrder(o, { note: `${o.method} at the desk` });
     return { success: true, repeat: true, member: { code: o.code, name: o.member_name },
-      order: { refno: String(o.refno), amount: o.amount_thb, vat: o.vat_thb, method: o.method } };
+      order: { refno: String(o.refno), amount: o.amount_thb, vat: o.vat_thb, method: o.method },
+      // An upgrade answers with what it did the first time: 3 months, or paid and not applied.
+      ...(o.upgrade_of ? { upgrade: await upgradeState(o) } : {}) };
   }
 
   // One desk sale per id at a time in this process: the second waits, then finds
@@ -2957,6 +3183,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     try {
       const { productCode, name, email, phone, method, slotId, checkIn } = req.body || {};
       if (!DESK_METHODS.includes(method)) return res.status(400).json({ error: 'method must be cash, transfer or card' });
+      if (productCode === UPGRADE.code) return await deskUpgrade(req, res, rid);
       if (!(name || '').trim()) return res.status(400).json({ error: 'name is required' });
       if (rid) {
         const first = await saleDone(rid);
@@ -3005,6 +3232,44 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         order: { refno: String(o.refno), amount: total, vat, method },
         booking: act && act.booking || undefined, bookingError: act && act.bookingError || undefined });
     } catch (e) { res.status(500).json({ error: e.message }); }
+  }
+
+  // The upgrade at the desk, from the student's profile: the same rules and the
+  // same pass, no online fee, requestId as for every desk sale. An online upgrade
+  // for this pass still waiting is asked about first; one still not paid answers
+  // 409 repeatOf (open: true) until confirmRepeat, as a sale made twice does.
+  async function deskUpgrade(req, res, rid) {
+    const b = req.body || {};
+    if (rid) {
+      const first = await saleDone(rid);
+      if (first) return res.json(first);
+    }
+    const member = b.memberCode ? await memberByCode(b.memberCode) : null;
+    if (!member) return res.status(404).json({ error: 'member not found' });
+    await switchPrices();
+    const first = await upgradeFor(pool, member.id);
+    if (!first) return res.status(409).json(await upgradeRefused(member.id));
+    const open = await openUpgrades(first.pass.id);
+    if (open.applied) return res.status(409).json({ ...await upgradeRefused(member.id, first.pass.id), paidNow: true });
+    if (open.length && b.confirmRepeat !== true) return res.status(409).json({
+      error: `This student started an online upgrade (ref ${open[0].refno}) that is not paid yet. If both get paid, refund one.`,
+      repeatOf: { refno: String(open[0].refno), at: open[0].at, method: 'online', amount: open[0].amount_thb, open: true } });
+    let made;
+    try {
+      made = await newUpgradeOrder(member, { method: b.method, saleId: rid, passId: first.pass.id });
+    } catch (e) {
+      const done = e.constraint === 'bkk_orders_request_id' && await saleDone(rid);
+      if (done) return res.json(done);
+      throw e;
+    }
+    if (!made) return res.status(409).json(await upgradeRefused(member.id, first.pass.id));
+    if (made.busy) return res.status(409).json({ busy: true,
+      error: `This upgrade is being sold on another device right now (ref ${made.busy.refno}). Open Payments in a minute before you sell it again.` });
+    const act = await activateOrder(made.o, { note: `${b.method} at the desk` });
+    const up = act && act.upgrade;
+    res.json({ success: true, member: { code: member.code, name: member.name },
+      order: { refno: String(made.o.refno), amount: made.o.amount_thb, vat: made.o.vat_thb, method: b.method },
+      ...(up ? { upgrade: { applied: up.applied, until: up.until || null, why: up.why || null } } : {}) });
   }
 
   // The door: whoever is here goes on the class list, checked in. A student with
@@ -3143,7 +3408,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         error: `This student already paid for this (ref ${paid.refno}). Send confirm to activate anyway.`,
         paidAlready: { refno: String(paid.refno), at: paid.at, method: paid.method } });
       const act = await activateOrder(o, { note: MANUAL_NOTE + (paid ? `, paid already as ref ${paid.refno}` : '') }, { byHand: true });
-      res.json({ success: true, booking: act && act.booking || undefined, bookingError: act && act.bookingError || undefined });
+      res.json({ success: true, booking: act && act.booking || undefined, bookingError: act && act.bookingError || undefined,
+        upgradeError: act && act.upgrade && !act.upgrade.applied ? act.upgrade.why : undefined });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -3241,19 +3507,23 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
          WHERE o.status='refund' AND o.source IS DISTINCT FROM 'rezerv' AND ${win}`, span),
       // Each problem once: a wrong amount found in this line's time, and an
       // online order that turned 1 hour old in it still not paid.
+      // An upgrade paid in it that changed no pass (paid twice) is one too.
       q(`SELECT count(*) FILTER (WHERE status='mismatch' AND checked_at > $1::timestamptz AND checked_at <= $2::timestamptz)::int AS mismatch,
            count(*) FILTER (WHERE status='pending' AND method='online' AND amount_thb > 0
-             AND created_at > $1::timestamptz - make_interval(mins => $3) AND created_at <= $2::timestamptz - make_interval(mins => $3))::int AS stuck
-         FROM bkk_orders WHERE source IS NULL`, [...span, PAY_WATCH.stuckMin]),
+             AND created_at > $1::timestamptz - make_interval(mins => $3) AND created_at <= $2::timestamptz - make_interval(mins => $3))::int AS stuck,
+           count(*) FILTER (WHERE status='paid' AND upgrade_of IS NOT NULL AND verified_at > $1::timestamptz AND verified_at <= $2::timestamptz
+             AND NOT EXISTS (SELECT 1 FROM bkk_passes p WHERE p.upgrade_order=o.id))::int AS upgrade
+         FROM bkk_orders o WHERE source IS NULL`, [...span, PAY_WATCH.stuckMin]),
       getSetting(FAILING, null),
     ]);
     const sum = (rows, k) => rows.reduce((a, r) => a + r[k], 0);
     const online = sales.rows.filter(r => r.method === 'online'), desk = sales.rows.filter(r => r.method !== 'online');
     const rf = refunds.rows[0], op = open.rows[0];
     const head = `AYBKK money, ${bkkClock(from)} to ${bkkClock(until)}`;
-    const problems = `New problems: mismatch ${op.mismatch}, online orders started but not paid over 1 hour ${op.stuck}`;
+    const problems = `New problems: mismatch ${op.mismatch}, online orders started but not paid over 1 hour ${op.stuck}`
+      + (op.upgrade ? `, upgrades paid that changed no pass ${op.upgrade}` : '');
     const check = failing && failing.since && failing.pinged && `PaySolutions check: failing since ${bkkClock(Date.parse(failing.since))} (${gwText(failing.why)})`;
-    if (!sales.rows.length && !rf.n) return [`${head}: No sales.`, (op.mismatch || op.stuck) && problems, check].filter(Boolean).join('\n');
+    if (!sales.rows.length && !rf.n) return [`${head}: No sales.`, (op.mismatch || op.stuck || op.upgrade) && problems, check].filter(Boolean).join('\n');
     return [head,
       `Online sales: ${sum(online, 'n')}, ฿${thb(sum(online, 'thb'))}`,
       `Desk sales: ${sum(desk, 'n')}, ฿${thb(sum(desk, 'thb'))}`
@@ -3370,6 +3640,46 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (o.source) return await stop(409, { error: 'A payment moved from Rezerv is not voided here. GET /api/bkk/admin/doubles lists the Rezerv lines a rule can settle (a, b) and the ones a person decides (e). If an aybkk.net order is the copy, void that order instead.' });
       if (o.status === 'void') return await stop(200, { success: true, already: true });
       if (o.status !== 'paid') return await stop(409, { error: 'only a paid order can be voided' });
+      // An upgrade that made its pass 3 months takes it back to 1 month, but only while
+      // nothing booked or used on it falls after the 1-month end: a class there would
+      // be left with no pass, so the void is refused. One never applied (paid twice)
+      // changes no pass. Another upgrade for the same pass that was paid and changed
+      // nothing (the double) takes this one's place instead: the pass stays 3 months on
+      // that money, so no paid upgrade is left holding nothing.
+      let back = null, movedTo = null;
+      if (o.upgrade_of) {
+        // The pass locked by itself first: a lock through a join loses a row changed meanwhile.
+        await client.query('SELECT 1 FROM bkk_passes WHERE id=$1 FOR UPDATE', [o.upgrade_of]);
+        const p = (await client.query(`SELECT p.id, p.status, f.kind, f.daily_cap, f.valid_days AS days,
+            to_char(p.valid_until - (p.valid_days - f.valid_days), 'YYYY-MM-DD') AS until
+          FROM bkk_passes p JOIN bkk_products f ON f.id=p.upgraded_from
+          WHERE p.id=$1 AND p.upgrade_order=$2`, [o.upgrade_of, o.id])).rows[0];
+        // Read, not locked: an upgrade being turned on right now is still pending here, and
+        // finds the pass at 1 month once this void is done, so it applies then.
+        const other = p && p.status !== 'void' && (await client.query(`SELECT x.id, x.refno FROM bkk_orders x
+          WHERE x.upgrade_of=$1 AND x.id<>$2 AND x.status='paid' AND x.source IS NULL
+            AND NOT EXISTS (SELECT 1 FROM bkk_passes y WHERE y.upgrade_order=x.id)
+          ORDER BY coalesce(x.verified_at, x.created_at), x.id LIMIT 1`, [p.id, o.id])).rows[0];
+        if (other) {
+          await client.query(`UPDATE bkk_passes SET upgrade_order=$2, note = coalesce(note || ' | ', '') || $3 WHERE id=$1`,
+            [p.id, other.id, `upgrade now held by order ${other.refno}: upgrade ${o.refno} void`]);
+          // Its note says so too, unless another void holds that row right now (the pass note is enough then).
+          await client.query(`UPDATE bkk_orders SET gateway_note = coalesce(gateway_note || ' | ', '') || $2
+            WHERE id = (SELECT id FROM bkk_orders WHERE id=$1 FOR UPDATE SKIP LOCKED)`,
+            [other.id, `holds the upgrade since ref ${o.refno} was voided on ${bkkToday()}`]);
+          movedTo = String(other.refno);
+        } else if (p && p.status !== 'void') {
+          const late = p.until && (await client.query(`SELECT to_char(min(class_date),'YYYY-MM-DD') AS d FROM bkk_bookings
+            WHERE pass_id=$1 AND status <> 'cancelled' AND class_date > $2::date`, [p.id, p.until])).rows[0].d;
+          if (late) return await stop(409, { classAfter: late, oneMonthEnd: p.until,
+            error: `A class on ${late} is booked or used on this pass, after its 1-month end (${p.until}). Cancel that booking first, or keep this upgrade.` });
+          await client.query(`UPDATE bkk_passes SET product_id=upgraded_from, kind=$2, daily_cap=$3, valid_days=$4,
+              valid_until = valid_until - (valid_days - $4::int), upgrade_order=NULL, upgraded_from=NULL,
+              note = coalesce(note || ' | ', '') || $5
+            WHERE id=$1`, [p.id, p.kind, p.daily_cap, p.days, `back to 1 month: upgrade ${o.refno} void`]);
+          back = { passId: p.id, until: p.until };
+        }
+      }
       // Classes the import carried over from the Rezerv copy of this pass were used
       // on that pass, which comes back: they do not stop the void.
       const passes = (await client.query(
@@ -3377,16 +3687,23 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
            EXISTS (SELECT 1 FROM bkk_bookings b WHERE b.pass_id=p.id AND b.status <> 'cancelled') AS booked
          FROM bkk_passes p LEFT JOIN bkk_passes tw ON tw.twin_of=p.id AND tw.source='rezerv'
          WHERE p.order_id=$1 FOR UPDATE OF p`, [o.id])).rows;
+      // A 1-month sale whose pass was upgraded since (read with the pass locked above):
+      // the upgrade is voided first, so no paid upgrade is left on a pass that is gone.
+      const upped = (await client.query(`SELECT x.refno FROM bkk_passes p JOIN bkk_orders x ON x.id=p.upgrade_order
+        WHERE p.order_id=$1 AND p.status <> 'void' AND x.status='paid' LIMIT 1`, [o.id])).rows[0];
+      if (upped) return await stop(409, { upgradedBy: String(upped.refno),
+        error: `This pass was upgraded to 3 months by ref ${upped.refno}. Void that upgrade first.` });
       if (passes.some(p => p.status !== 'void' && (p.booked || p.credits_used > p.carried))) return await stop(409, { classUsed: true,
         error: 'A class is booked or used on this pass. Cancel that booking first, or keep this sale.' });
       const said = `Void: ${reason} (by staff, ${bkkToday()})`;
       const gone = (await client.query(`UPDATE bkk_passes SET status='void', note = coalesce(note || ' | ', '') || $2
         WHERE order_id=$1 AND status <> 'void' RETURNING id`, [o.id, `voided: order ${o.refno} void`])).rows.map(p => p.id);
-      const back = await twinPassBack(client, gone, `aybkk.net order ${o.refno} was made void on ${bkkToday()}`);
+      const rzBack = await twinPassBack(client, gone, `aybkk.net order ${o.refno} was made void on ${bkkToday()}`);
       await client.query(`UPDATE bkk_orders SET status='void', gateway_note = $2 || coalesce(' | ' || gateway_note, '') WHERE id=$1`,
         [o.id, said]);
       await client.query('COMMIT');
-      res.json({ success: true, refno: String(o.refno), note: said, passesVoided: gone.length, rezervPassBack: back });
+      res.json({ success: true, refno: String(o.refno), note: said, passesVoided: gone.length, rezervPassBack: rzBack,
+        ...(o.upgrade_of ? { oneMonthAgain: back, ...(movedTo ? { stillUpgradedBy: movedTo } : {}) } : {}) });
     } catch (e) {
       await client.query('ROLLBACK').catch(() => {});
       res.status(500).json({ error: e.message });
@@ -3477,7 +3794,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const c = (await db.query(`SELECT r.id AS rid, a.id AS aid, o.refno, to_char(${payDay('o')},'YYYY-MM-DD') AS paid_on,
         coalesce(pr.name_en, 'pass') AS item, pr.code = 'dropin' AS dropin, m.code, m.name
       FROM bkk_passes r JOIN bkk_passes a ON a.member_id=r.member_id AND a.source IS DISTINCT FROM 'rezerv'
-        AND a.status IN ('active','frozen') AND ${famOf('a')} = ${famOf('r')}
+        AND a.status IN ('active','frozen')
+        AND (${famOf('a')} = ${famOf('r')} OR (a.upgraded_from IS NOT NULL AND ${famId('a.upgraded_from')} = ${famOf('r')}))
         AND (a.valid_until IS NULL OR a.valid_until >= $1::date)
       JOIN bkk_orders o ON o.id=a.order_id AND o.source IS DISTINCT FROM 'rezerv' AND o.status='paid'
       JOIN bkk_members m ON m.id=r.member_id LEFT JOIN bkk_products pr ON pr.id=r.product_id
@@ -4072,6 +4390,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       await switchPrices();
       const pr = (await q('SELECT * FROM bkk_products WHERE code=$1', [productCode])).rows[0];
       if (!pr) return res.status(404).json({ error: 'product not found' });
+      if (pr.kind === 'upgrade') return res.status(409).json({ error: 'The upgrade is not a pass: sell it from the student profile.' });
 
       let m = memberCode
         ? await memberByCode(memberCode)
@@ -4588,7 +4907,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     // Rezerv never sold the 6-month from 12 Nov 2026, and it shares its name with the old one.
     const exact = (await db.query(
       `SELECT * FROM bkk_products WHERE (lower(name_en)=lower($1) OR lower(coalesce(name_th,''))=lower($1) OR code=lower($1))
-         AND code <> 'unlim6m' ORDER BY id LIMIT 1`, [item])).rows[0];
+         AND code <> 'unlim6m' AND kind <> 'upgrade' ORDER BY id LIMIT 1`, [item])).rows[0];
     if (exact) return exact;
     const plan = ITEM_PLANS.find(([re]) => re.test(item));
     // Payments may come before the passes that make the retired 2-, 6- and 13-month packages.
@@ -4854,7 +5173,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         p.status IN ('active','frozen') AND NOT EXISTS (SELECT 1 FROM bkk_passes x WHERE x.twin_of=p.id) AS free,
         (p.product_id=$4 OR lower(px.name_en) = lower($5)) AS same
       FROM bkk_passes p JOIN bkk_orders o ON o.id=p.order_id JOIN bkk_products px ON px.id=p.product_id
-      WHERE p.member_id=$1 AND px.code = ANY($2::text[]) AND o.status='paid' AND o.source IS DISTINCT FROM 'rezerv'
+      WHERE p.member_id=$1 AND o.status='paid' AND o.source IS DISTINCT FROM 'rezerv'
+        AND (px.code = ANY($2::text[]) OR EXISTS (SELECT 1 FROM bkk_products ux WHERE ux.id=p.upgraded_from AND ux.code = ANY($2::text[])))
         AND (abs(${PAY_DAY} - $3::date) <= ${COPY_DAYS} OR abs(p.valid_from - $3::date) <= ${COPY_DAYS})
         AND NOT EXISTS (SELECT 1 FROM bkk_orders r JOIN bkk_products rx ON rx.id=r.product_id
           WHERE r.member_id=$1 AND rx.code = ANY($2::text[]) AND r.source='rezerv' AND r.status='paid' AND r.amount_thb > 0
@@ -5036,7 +5356,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
            FROM bkk_bookings b LEFT JOIN bkk_class_slots s ON s.id=b.slot_id
            WHERE b.member_id=$1 ORDER BY b.class_date DESC, b.start_at DESC, b.id DESC`, [m.id]),
         q(`SELECT o.id, to_char(${PAY_AT} AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS date,
-             to_char(${PAY_AT} AT TIME ZONE 'Asia/Bangkok','HH24:MI') AS time, coalesce(pr.name_en, o.item_name) AS item,
+             to_char(${PAY_AT} AT TIME ZONE 'Asia/Bangkok','HH24:MI') AS time, coalesce(pr.name_en, o.item_name) AS item, pr.name_th AS item_th,
              o.amount_thb, o.base_thb, o.fee_thb, o.vat_thb, o.method, o.status, o.source, o.refno, o.gateway_note
            FROM bkk_orders o LEFT JOIN bkk_products pr ON pr.id=o.product_id
            WHERE o.member_id=$1 ORDER BY ${PAY_AT} DESC, o.id DESC`, [m.id]),
@@ -5051,6 +5371,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
            FROM bkk_checks WHERE member_id=$1 ORDER BY taken_on DESC`, [m.id]),
         activePass(m.id),
       ]);
+      await switchPrices();
+      const up = await upgradeFor(pool, m.id);
+      // An online try for it not paid yet (as the database has it; PaySolutions is asked when staff sell).
+      const upOpen = up && (await q(`SELECT o.refno::text AS refno, o.amount_thb AS amount, ${PAY_AT} AS at FROM bkk_orders o
+        WHERE o.upgrade_of=$1 AND o.status IN ('pending','failed') AND o.method='online' AND o.source IS NULL
+          AND o.created_at >= now() - make_interval(hours => $2) ORDER BY o.created_at DESC, o.id DESC LIMIT 1`,
+        [up.pass.id, PAY_WATCH.maxAgeH])).rows[0];
       const today = bkkToday();
       const daysAgo = n => ymd(new Date(Date.parse(`${today}T12:00:00${TZ_OFFSET}`) - n * 86400000));
       const came = visits.rows.filter(v => visitStatusOut(v) === 'attended');
@@ -5081,6 +5408,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
             creditsLeft: active.kind === 'unlimited' ? null : active.credits_total - active.credits_used } : null,
         },
         membership: membershipOut(passes.rows, visits.rows, today),
+        // The first-week upgrade at the desk: no online fee, so the price is the difference plus VAT.
+        upgrade: up ? { ...upgradeOut(up), ...breakdown(up.price, 0), openTry: upOpen || null } : null,
         nextBookings: next.slice(0, 5).map(v => ({ date: v.date, time: v.time, class: v.class, cover: v.cover,
           onNow: v.time != null && running(v) })),
         nextBookingsMore: Math.max(0, next.length - 5),
@@ -5090,7 +5419,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
           cover: v.cover, source: v.source, upcoming: upcoming(v), passId: v.pass_id,
           moved: !!v.moved_at && !!v.pass_id && (v.status === 'booked'
             || (v.status === 'cancelled' && !/^merged:/.test(v.cancel_reason || ''))) })),
-        payments: pays.rows.map(o => ({ id: o.id, date: o.date, time: o.time, item: o.item, amount: o.amount_thb,
+        payments: pays.rows.map(o => ({ id: o.id, date: o.date, time: o.time, item: o.item, itemTh: o.item_th, amount: o.amount_thb,
           base: o.base_thb, fee: o.fee_thb, vat: o.vat_thb, method: o.method, status: o.status,
           source: o.source || 'aybkk', refno: String(o.refno), note: o.gateway_note })),
         notes: notes.rows.map(n => ({ id: n.id, date: n.date, createdAt: n.created_at, teacher: n.teacher,
@@ -6514,6 +6843,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (!code) return res.status(400).json({ error: 'code required' });
       await switchPrices();
       const existing = (await q('SELECT * FROM bkk_products WHERE code=$1', [code])).rows[0];
+      if (existing && existing.kind === 'upgrade') return res.status(409).json({
+        error: 'The first-week upgrade follows the 1- and 3-month prices and is never sold by itself: change those instead.' });
 
       if (existing) {
         // Only what was sent — an omitted field must not blank an existing one.

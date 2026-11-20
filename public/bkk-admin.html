@@ -289,6 +289,10 @@
   .now .np .l i{display:inline-block;width:0;position:relative;left:-8px;white-space:pre;font-style:normal}
   .now .np .nt{font-family:'Work Sans','Plex',sans-serif;font-weight:800}
   .now h3~h3{margin-top:10px}
+  /* The first-week upgrade at the desk, under the 1-month pass it is for. */
+  .now .upg{flex-basis:100%;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:6px 0 2px}
+  .now .upg .sellout{flex-basis:100%}
+  .now .upg .btn{min-height:44px}
   /* Two columns: when, then the class, so the class names line up and a long one wraps under itself. Under 340 px the class goes under its day. */
   .now .nbs{display:grid;grid-template-columns:auto minmax(0,1fr);gap:3px 12px;padding:2px 0;font-size:14px}
   .now .nbs>span{overflow-wrap:anywhere}
@@ -1015,6 +1019,39 @@
       + (paused ? `; ใน Rezerv พักแพ็กเกจนี้ไว้${paused !== '-' ? ` ตั้งแต่ ${paused}` : ''}: แพ็กเกจที่เก็บไว้ยังไม่ได้พักที่นี่` : ''),
   });
   Object.assign(STR.th.words, { twin: 'ขายครั้งเดียวกัน' });
+  // The first-week upgrade at the desk (18 Nov 2026), from the profile.
+  Object.assign(STR.en, {
+    upBtn: p => `Upgrade to 3 months (${p}\u00a0+VAT)`,
+    upUntil: d => `First-week upgrade open until ${d}`,
+    upFirstWeek: 'First-week upgrade open until day 7 of this pass',
+    upName: 'Upgrade 1 to 3 months',
+    upConfirm: (name, base, vat, total, method, until) => `${name}\nUpgrade 1 month to 3 months: ${base} + VAT ${vat}\nTake ${total} (${method}), VAT included.\n`
+      + `${until ? `The pass then runs until ${until}.` : 'The pass then runs 3 months from the first class.'}\n\nOnly press OK once you have the money.`,
+    upDone: (amt, method, ref, until) => `Done. ${amt} ${method} · ref ${ref}\nThe pass is 3 months now${until ? `, until ${until}` : ''}.`,
+    upNotApplied: why => `Paid, but the pass was not changed: ${why}.\nGive the money back, then void this sale.`,
+    qUpOpen: (d, r, amt) => `This student started an online upgrade on ${d} (ref ${r}, ${amt}) that is not paid yet.\nIf both get paid, one is refunded. Sell the upgrade at the desk anyway?`,
+    upHaveA: 'This pass is 3 months already.',
+    upNoA: 'This pass cannot be upgraded any more: its first week is over, or it changed.',
+    upPaidNowA: 'An online upgrade this student paid has just come through: the pass is 3 months now. Take no money at the desk.',
+    upBusyA: 'This upgrade is being sold on another device right now. Open Payments in a minute before you sell it again.',
+    upCheckA: ref => `Sold (ref ${ref}), but this page could not see whether the pass changed. Open the profile and Payments to check.`,
+  });
+  Object.assign(STR.th, {
+    upBtn: p => `อัปเกรดเป็น 3 เดือน (${p}\u00a0+VAT)`,
+    upUntil: d => `อัปเกรดสัปดาห์แรกได้ถึง ${d}`,
+    upFirstWeek: 'อัปเกรดสัปดาห์แรกได้ถึงวันที่ 7 ของแพ็กเกจนี้',
+    upName: 'อัปเกรดจาก 1 เป็น 3 เดือน',
+    upConfirm: (name, base, vat, total, method, until) => `${name}\nอัปเกรด 1 เดือนเป็น 3 เดือน: ${base} + VAT ${vat}\nรับเงิน ${total} (${method}) รวม VAT แล้ว\n`
+      + `${until ? `แพ็กเกจจะใช้ได้ถึง ${until}` : 'แพ็กเกจจะใช้ได้ 3 เดือนนับจากคลาสแรก'}\n\nกด OK หลังจากได้รับเงินแล้วเท่านั้น`,
+    upDone: (amt, method, ref, until) => `เรียบร้อย ${amt} ${method} · เลขอ้างอิง ${ref}\nตอนนี้เป็นแพ็กเกจ 3 เดือนแล้ว${until ? ` ใช้ได้ถึง ${until}` : ''}`,
+    upNotApplied: why => `ได้รับเงินแล้ว แต่แพ็กเกจไม่เปลี่ยน: ${why}\nคืนเงินให้นักเรียน แล้วยกเลิกรายการนี้`,
+    qUpOpen: (d, r, amt) => `นักเรียนคนนี้เริ่มอัปเกรดออนไลน์ไว้เมื่อ ${d} (เลขอ้างอิง ${r}, ${amt}) แต่ยังไม่ได้จ่าย\nถ้าจ่ายทั้งสองทาง ต้องคืนเงินหนึ่งรายการ จะขายอัปเกรดที่เคาน์เตอร์เลยไหม?`,
+    upHaveA: 'แพ็กเกจนี้เป็น 3 เดือนแล้ว',
+    upNoA: 'แพ็กเกจนี้อัปเกรดไม่ได้แล้ว: เลยสัปดาห์แรก หรือแพ็กเกจเปลี่ยนไป',
+    upPaidNowA: 'นักเรียนจ่ายอัปเกรดออนไลน์แล้ว เพิ่งเข้ามาเมื่อครู่ ตอนนี้แพ็กเกจเป็น 3 เดือนแล้ว ไม่ต้องรับเงินที่เคาน์เตอร์',
+    upBusyA: 'กำลังขายอัปเกรดนี้จากอีกเครื่องอยู่ รอสักครู่แล้วเปิดดูหน้าการชำระเงินก่อนขายอีกครั้ง',
+    upCheckA: ref => `ขายแล้ว (เลขอ้างอิง ${ref}) แต่หน้านี้ไม่เห็นว่าแพ็กเกจเปลี่ยนหรือยัง เปิดโปรไฟล์และหน้าการชำระเงินเพื่อตรวจดู`,
+  });
   // A name opens the profile, which starts with what they can use today; a
   // class opens from Today; someone who came to a class that is over is added (Nov 2026).
   Object.assign(STR.en, {
@@ -1260,6 +1297,7 @@
     TH_NAMES = {};
     PAY_MODE = (d.payment || {}).mode || null;
     for (const x of d.products || []) if (x.name_th) { TH_NAMES[x.id] = x.name_th; TH_BY_EN[x.name_en] = x.name_th; }
+    for (const x of d.itemNames || []) if (x.th) TH_BY_EN[x.en] = x.th;
     const p = (d.products || []).find(x => x.code === 'dropin');
     if (p) DROP_PRICE = p.price_thb + Math.round(p.price_thb * (d.vatPct || 0) / 100);
   };
@@ -1732,17 +1770,49 @@
     if (!r || r.status >= 500 || (r.ok && !j.order)) { keepSell(); paintSell(); if (!$('#sellOut')) alert(T('sellLost')); return; }
     if (r.status === 409 && j.repeatOf) {
       const x = j.repeatOf;
-      if (confirm(T('qRepeat', whenPaid(x.at), x.refno, W(x.method), '฿' + Number(x.amount).toLocaleString()))) {
+      if (confirm(x.open ? T('qUpOpen', whenPaid(x.at), x.refno, '฿' + Number(x.amount).toLocaleString())
+        : T('qRepeat', whenPaid(x.at), x.refno, W(x.method), '฿' + Number(x.amount).toLocaleString()))) {
         sale.confirmRepeat = true;
         return sendSale();
       }
       SELL = null; keepSell(); paintSell(); return;
     }
     SELL = null; keepSell(); paintSell();
-    if (!r.ok) { alert(j.error || T('failed')); return; }
+    if (!r.ok) {
+      alert(j.paidNow ? T('upPaidNowA') : j.upgraded ? T('upHaveA') : j.busy ? T('upBusyA') : j.notEligible ? T('upNoA') : j.error || T('failed'));
+      if (j.paidNow && SUB === 'history' && HIST && HIST.member.code === sale.memberCode) showHistory(sale.memberCode);
+      return;
+    }
+    if (sale.productCode === UPGRADE_CODE) {
+      // A sale without the upgrade's outcome is not called done: staff check before they keep the money.
+      const u = j.upgrade;
+      alert(!u ? T('upCheckA', j.order.refno) : !u.applied ? T('upNotApplied', u.why) : T('upDone', '฿' + j.order.amount.toLocaleString(), W(j.order.method),
+        j.order.refno, u.until ? ymdLong(u.until) : null));
+      if (SUB === 'history' && HIST && HIST.member.code === sale.memberCode) showHistory(sale.memberCode);
+      return;
+    }
     alert(T('doneSale', '฿' + j.order.amount.toLocaleString(), W(j.order.method), j.order.refno, j.member.name, j.member.code));
     renderStudents(sale.name);
   }
+  // The first-week upgrade at the desk, from the profile: the desk sale's own path
+  // (one id per sale, Retry, a 409 for an online try still open), for the pass the server offered it on.
+  const UPGRADE_CODE = 'up1to3';
+  window.upgradeDesk = async () => {
+    const h = HIST, u = h && h.upgrade;
+    if (!u) return;
+    if (SELL) { if (!SELL.busy) alert(T('sellPending')); return; }
+    // An online try still open is asked about before staff are told to take any money.
+    const o = u.openTry;
+    if (o && !confirm(T('qUpOpen', whenPaid(o.at), o.refno, '฿' + Number(o.amount).toLocaleString()))) return;
+    const m = ask(T('qPaidHow'), '1'); if (!m) return;
+    const method = { 1: 'cash', 2: 'transfer', 3: 'card' }[m];
+    if (!method) return alert(T('pick123'));
+    if (!confirm(T('upConfirm', h.member.name, baht(u.priceThb), baht(u.vat), baht(u.total), W(method),
+      u.newUntil ? ymdLong(u.newUntil) : null))) return;
+    SELL = { productCode: UPGRADE_CODE, memberCode: h.member.code, method, requestId: newId(), name: h.member.name,
+      ...(o ? { confirmRepeat: true } : {}), what: [h.member.name, T('upName'), baht(u.total), W(method)].join(' · ') };
+    await sendSale();
+  };
   window.sellRetry = () => { if (SELL && !SELL.busy) sendSale(); };
 
   window.bookFor = async (code) => {
@@ -2643,6 +2713,7 @@
     // A drop-in bought for a class that was cancelled or over by now: the pass
     // is live but nobody is on the list, and this list does not show the class.
     else if (j.bookingError) alert(T('activatedNoClass', j.bookingError));
+    else if (j.upgradeError) alert(T('upNotApplied', j.upgradeError));
     renderOrders({ keep: true, show: r.ok ? id : null });
   };
 
@@ -2783,7 +2854,11 @@
       !p.started ? '' : !p.cameDays ? line([T('nowCame0')]) : line([T('nowCame', p.cameDays),
         p.cameOnline ? T('nowOnline', p.cameOnline) : '', p.perWeek ? T('nowWeek', p.perWeek) : '',
         T('nowCame28', p.cameLast28), T('nowLast', ymdLong(p.lastCame, true, p.lastCame > recent))])}${
-      p.endsSoonCameLittle ? line([T('nowEndsLow')], ' nt') : ''}</div>`;
+      p.endsSoonCameLittle ? line([T('nowEndsLow')], ' nt') : ''}${
+      h.upgrade && h.upgrade.passId === p.passId ? `<div class="upg"><span>${esc(h.upgrade.lastDay
+        ? T('upUntil', ymdLong(h.upgrade.lastDay)) : T('upFirstWeek'))}</span>
+        <button class="btn pink sm" onclick="upgradeDesk()"${SELL && SELL.busy ? ' disabled' : ''}>${esc(T('upBtn', baht(h.upgrade.priceThb)))}</button>
+        <div id="sellOut" class="sellout" role="status" aria-live="polite">${sellOutHtml()}</div></div>` : ''}</div>`;
     const list = h.membership || [], next = h.nextBookings || [];
     const none = !list.some(p => p.state === 'active' || p.state === 'firstClass');
     // The coming days need no year, so when and class fit side by side on a phone.
@@ -2798,6 +2873,8 @@
 
   function paintHistory() {
     const h = HIST, m = h.member, s = h.summary;
+    // A package off the price list (the first-week upgrade) brings its Thai name with it.
+    for (const o of h.payments || []) if (o.itemTh) TH_BY_EN[o.item] = o.itemTh;
     const more = (k, list) => !HIST_ALL[k] && list.length > HIST_ROWS
       ? `<p><button class="btn gray sm" onclick="histMore('${k}')">${T('showAll', list.length.toLocaleString())}</button></p>` : '';
     const cut = (k, list) => HIST_ALL[k] ? list : list.slice(0, HIST_ROWS);
