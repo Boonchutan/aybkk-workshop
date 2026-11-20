@@ -443,12 +443,32 @@ fs.writeFileSync(path.join(PRIVATE, 'rosters', 'hefei.json'), JSON.stringify({ w
     ok(`${mode}: /book, the other orientation forms and the staff page are untouched; /policy opens /book#policy`,
       others[0].status === 200 && others[1].status === 200 && others[2].status === 200 && others[3].status === 302 && others[3].headers.location === '/book#policy',
       others.map(r => r.status).join());
+    const odd = await Promise.all(['/Policy', '/policy/', '/privacy', '/PRIVACY/'].map(p => request('GET', p)));
+    ok(`${mode}: /Policy and /policy/ open /book#policy, /privacy and /PRIVACY/ open /book#privacy (ids the page knows)`,
+      odd.map(r => `${r.status} ${r.headers.location}`).join() === '302 /book#policy,302 /book#policy,302 /book#privacy,302 /book#privacy',
+      odd.map(r => `${r.status} ${r.headers.location}`).join());
     const saved = await formSave();
     ok(`${mode}: POST /api/orientations/bkk still answers`, saved.status === 200 && saved.json && saved.json.success === true, shape(saved));
     const list = await request('GET', '/api/orientations/bkk', STAFF);
     ok(`${mode}: the staff GET /api/orientations/bkk still answers, and still needs the key`, list.status === 200 && Array.isArray(list.json.students)
       && (await request('GET', '/api/orientations/bkk')).status === 401, shape(list));
   }
+  // A database that takes the setting read and never answers (here: bkk_settings locked by another
+  // session): the old form and /policy must not hang. After 1.5 s the switch reads as off.
+  const locker = await pool.connect();
+  try {
+    await locker.query('BEGIN');
+    await locker.query('LOCK TABLE bkk_settings IN ACCESS EXCLUSIVE MODE');
+    const t0 = Date.now();
+    const hung = await Promise.race([Promise.all([['GET', '/bkk'], ['GET', '/orientation-bkk.html'], ['HEAD', '/bkk'], ['GET', '/policy'],
+      ...Array.from({ length: 12 }, () => ['GET', '/bkk'])].map(([m, p]) => request(m, p))), new Promise(r => setTimeout(r, 8000, null))]);
+    const ms = Date.now() - t0;
+    ok('setting read hangs: the old form (12 at once too, more than the pool holds) and /policy answer as off, within 5 s',
+      hung && ms < 5000 && isForm(hung[0]) && isForm(hung[1]) && hung[2].status === 200 && hung[3].status === 404 && hung.slice(4).every(isForm),
+      hung ? `${ms} ms, ${hung.map(r => r.status).join()}` : 'no answer in 8 s');
+  } finally { await locker.query('ROLLBACK').catch(() => {}); locker.release(); }
+  const back = await request('GET', '/bkk');
+  ok('...and once the database answers again, /bkk goes to /book', back.status === 302 && back.headers.location === '/book', `${back.status}`);
   ok('the switch goes back off', await sw('off') === 200 && (await request('GET', '/api/bkk/consent')).json.mode === 'off');
   for (const p of ['/bkk', '/orientation-bkk.html']) ok(`off again: GET ${p} is the form`, isForm(await request('GET', p)));
   ok('off again: /policy is not there', (await request('GET', '/policy')).status === 404);

@@ -8378,10 +8378,10 @@ const ok = (name, cond, extra = '') => {
 
     // The wording: pinned, and what a page is served is what is pinned.
     const PINNED = {
-      en: ['f5e5e04d53f70d5ca11548b68fe95389b57fb43e3ef3147b488009968f9919cb', '96d28dab4e7141cd39365fe28e37582b967e5984587bd2b3d0c76247998812ee'],
-      th: ['90eded927c1f3c4f2ccf49cc72d38e49b8990791574f74f2e60ae0aa3e09c675', '602c9efa5c07d55388a4fa017d04d04b0d776ba0436396387ad44435727be19e'],
-      zh: ['b0e33dda125e662ec5327f2367dacc447aaf9e60a29b3073c64615d995ee06ab', '26855ecd743827851d2f8fa17fc83f2c22a35b1b3d2925a4f6e9ab163b1a4faa'],
-      ru: ['b1f390e78688fdf92a984f3454b9e62a018389f0de30a974fc71e5a8b2f8ce48', 'b1fee99f061d907f23f8a1dc0952321083373ce7802e9d18d87d0cae65a4686e'],
+      en: ['f5e5e04d53f70d5ca11548b68fe95389b57fb43e3ef3147b488009968f9919cb', '2ecd21d65cf15328969e5d36340ab649a9022bece07df4a344c5344069f30016'],
+      th: ['301cc992764a0345536b47e1995d05ba22f91daa108ea0e88b190b71951e500e', 'af300a0420936b095c5abcad15dbb1506a26e4dcca7d5f2ef3a3c05b1caa16a0'],
+      zh: ['b0e33dda125e662ec5327f2367dacc447aaf9e60a29b3073c64615d995ee06ab', '2f6e8618cd17bf35b8bacfa44d3408e07d7d51d8833e7b3a30e9b5dedcb4e0a5'],
+      ru: ['7d1fb4464b510d00371ceb2479e6f51ec18d5362a747fce03bd2c881830d4874', '2e7a8bce0b0259e32b290eb66054e8ed3ff082574d7bf54d8eff5fe563d8ce34'],
     };
     ok('v1 is the current version, in exactly these 4 languages', CONSENT_VERSION === 'v1' && Object.keys(CONSENT_TEXT.v1).join() === 'en,th,zh,ru');
     for (const [l, [a, pv]] of Object.entries(PINNED)) {
@@ -8412,10 +8412,12 @@ const ok = (name, cond, extra = '') => {
         }) && fallback === f3[0], JSON.stringify(f3.map(x => x.slice(0, 50))));
     }
     // The privacy notice names every service the code hands personal data to (inbox.js, team-brief.js,
-    // server.js included), and the messages and orientation answers kept.
-    ok('the privacy notice names every service that handles the data, in every language', ['en', 'th', 'zh', 'ru'].every(l => {
+    // server.js included: Neo4j keeps orientation forms and journals, OpenRouter writes the staff AI summary
+    // of a journal), and the messages, orientation answers and practice journal kept.
+    ok('the privacy notice names every service that handles the data, and the practice journal, in every language', ['en', 'th', 'zh', 'ru'].every(l => {
       const txt = CONSENT_TEXT.v1[l].privacy.sections.map(x => x[1]).join(' ');
-      return ['PaySolutions', 'Resend', 'Cloudinary', 'Google', 'Railway', 'Telegram', 'LINE', 'Meta', 'Instagram', 'Facebook', 'Anthropic', 'Neo4j', 'IP', '90']
+      return ['PaySolutions', 'Resend', 'Cloudinary', 'Google', 'Railway', 'Telegram', 'LINE', 'Meta', 'Instagram', 'Facebook', 'Anthropic', 'Neo4j',
+        'OpenRouter', 'DeepSeek', 'IP', '90', { en: 'practice journal', th: 'บันทึกการฝึก', zh: '练习日记', ru: 'дневник практики' }[l]]
         .every(w => txt.includes(w));
     }));
     const throwsWith = (fn, re) => { try { fn(); return false; } catch (e) { return re.test(e.message); } };

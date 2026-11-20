@@ -135,7 +135,8 @@ app.use(staffFiles);
 // The old Bangkok orientation form (/bkk) and its "not liable" waiver give way to the student
 // agreement: while it is on (bkk-api.js consent_mode ask or require), new students start on /book,
 // with no query string carried over. Before the static files, read as express.static reads the
-// path, so /orientation-bkk.html goes the same way. Off, or no Bangkok database: the form as before.
+// path, so /orientation-bkk.html goes the same way. Off, no Bangkok database, or one that does not
+// answer within 1.5 s (bkk-api.js consentModeSoon): the form as before.
 const OLD_BKK_FORM = /^\/(bkk\/?|orientation-bkk\.html)$/i;
 app.use((req, res, next) => {
   const mode = req.app.locals.bkkConsentMode;

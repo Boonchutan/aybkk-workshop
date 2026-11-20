@@ -79,7 +79,7 @@ const MANUAL_NOTE = 'MANUAL ACTIVATION by admin';
 // notice. Thai calls a third person เค้า, never เขา. {since} in line 17
 // is the day the switch first left off; the privacy notice's {legal_name}, {address} and {email}
 // come from Admin, Settings. The notice names every service personal data goes to (inbox.js:
-// LINE, Meta, Anthropic, Telegram; team-brief.js: LINE; server.js: Neo4j): a new one is a new version.
+// LINE, Meta, Anthropic, Telegram; team-brief.js: LINE; server.js: Neo4j, OpenRouter): a new one is a new version.
 const CONSENT_VERSION = 'v1';
 const CONSENT_LANGS = ['en', 'th', 'zh', 'ru'];
 const CONSENT_TEXT = {
@@ -131,9 +131,9 @@ const CONSENT_TEXT = {
         title: 'Privacy notice',
         sections: [
           ['Who we are', '{legal_name} runs AYBKK (Ashtanga Yoga Center of Bangkok), {address}. Contact us at {email} or on LINE @aybkk.'],
-          ['What we keep', 'Your name, email and phone, the language you use, your bookings, check-ins, passes and payments. The record of the agreement you signed: its version, the name and email you gave, the date and time, and whether you are under 20 (then also your guardian’s name and the day on their paper). Messages you send us on LINE, Instagram or Facebook. What you wrote in an orientation form, which can include injuries and an emergency contact. If there are any: notes your teachers write about your practice, your 12-week check numbers, class photos you are tagged in, and your profile photo. The internet address (IP) a sign-in link was asked from. We never see or keep your card number.'],
+          ['What we keep', 'Your name, email and phone, the language you use, your bookings, check-ins, passes and payments. The record of the agreement you signed: its version, the name and email you gave, the date and time, and whether you are under 20 (then also your guardian’s name and the day on their paper). Messages you send us on LINE, Instagram or Facebook. What you wrote in an orientation form, which can include injuries and an emergency contact. If there are any: your practice journal, notes your teachers write about your practice, your 12-week check numbers, class photos you are tagged in, and your profile photo. The internet address (IP) a sign-in link was asked from. We never see or keep your card number.'],
           ['Why', 'To run your classes: bookings, check-in, passes, payments and receipts. To show what you agreed to. To help your teachers teach you, including knowing about an injury. To answer your messages. We need these to give you classes. We never sell your data.'],
-          ['Who else handles it', 'PaySolutions takes online payments. Resend sends our emails. Cloudinary stores photos. Google: teachers put class photos in Google Drive before they go to profiles, and Google Ads runs only if you tap OK on the cookie bar. Railway runs the server and database of this site. Neo4j stores orientation forms. LINE carries our LINE chats, and the daily class list we send to our staff group (first name and initial, classes and passes). Meta carries Instagram and Facebook messages. Anthropic (Claude) reads the messages you send us, to sort them and draft our replies. Telegram carries alerts to our staff, for example about a payment or a new message, with its text. Some of these services keep data outside Thailand.'],
+          ['Who else handles it', 'PaySolutions takes online payments. Resend sends our emails. Cloudinary stores photos. Google: teachers put class photos in Google Drive before they go to profiles, and Google Ads runs only if you tap OK on the cookie bar. Railway runs the server and database of this site. Neo4j stores orientation forms and practice journals. OpenRouter (DeepSeek) writes an AI summary of a practice journal when a teacher asks for one. LINE carries our LINE chats, and the daily class list we send to our staff group (first name and initial, classes and passes). Meta carries Instagram and Facebook messages. Anthropic (Claude) reads the messages you send us, to sort them and draft our replies. Telegram carries alerts to our staff, for example about a payment or a new message, with its text. Some of these services keep data outside Thailand.'],
           ['How long', 'The record of the agreement you signed: 10 years after your last class, because a claim can come that late. Payment records: 5 years, as tax law asks. Messages: 90 days. Everything else: kept while you practise with us. We review it once a year and delete what we no longer need, or sooner if you ask.'],
           ['Your rights', 'You can ask to see your data, get a copy, correct it or delete it. Write to {email} or message LINE @aybkk. You can remove your profile photo yourself in My account. We keep the agreement record and payment records for the times above even if you ask us to delete the rest. If you are not happy with how we handle your data, you can complain to the Personal Data Protection Committee of Thailand.'],
         ],
@@ -155,9 +155,9 @@ const CONSENT_TEXT = {
             'AYBKK ไม่ต้องรับผิดต่อความเสี่ยงตามปกติของการฝึกที่ไม่ได้เกิดจากความผิดของผู้ใด ข้อความในหน้านี้ไม่จำกัดสิทธิ์ใด ๆ ของคุณตามกฎหมายไทย',
           ]],
           ['ในชาลา', [
-            'จองทุกคลาสล่วงหน้าที่ aybkk.net และเช็กอินที่หน้าห้องก่อนฝึก คลาส Led เริ่มพร้อมกัน โปรดมาก่อนเวลาเริ่ม หากมาสาย ให้รอครูที่หน้าห้อง',
+            'จองทุกคลาสล่วงหน้าที่ aybkk.net และเช็กอินที่หน้าห้องก่อนฝึก ในคลาส Led ทุกคนเริ่มพร้อมกัน จึงขอให้มาก่อนเวลาเริ่มคลาส หากมาสาย ให้รอครูที่หน้าห้อง',
             'ยกเลิกล่วงหน้าอย่างน้อย 5 ชั่วโมงเพื่อไม่เสียสิทธิ์',
-            'ห้ามถ่ายรูปและถ่ายวิดีโอในชาลา ทีมงาน AYBKK อาจถ่ายรูปในคลาสเพื่อเก็บไว้ในโปรไฟล์ส่วนตัวของคุณ และจะขอความยินยอมจากคุณก่อนโพสต์รูปหรือวิดีโอที่มีคุณในที่สาธารณะ',
+            'ห้ามถ่ายรูปและถ่ายวิดีโอในชาลา บางครั้งทีมงาน AYBKK จะถ่ายรูปในคลาสเพื่อเก็บไว้ในโปรไฟล์ส่วนตัวของคุณ เราจะขอความยินยอมจากคุณก่อนเผยแพร่รูปหรือวิดีโอที่มีคุณต่อสาธารณะ',
             'ระหว่างการฝึก ห้ามใช้โทรศัพท์ งดพูดคุย และงดดื่มน้ำ หากจำเป็นต้องดื่มน้ำด้วยเหตุผลด้านสุขภาพ โปรดแจ้งครู',
             'เรามีผ้าเช็ดเหงื่อและผ้าเช็ดตัวสำหรับอาบน้ำให้ นำเสื่อโยคะมาเอง หรือติ๊ก "ต้องการเช่าเสื่อ" ตอนจอง แล้วเช่าที่ชาลา ฿200 ฝึกเสร็จแล้ว ทำความสะอาดเสื่อและพื้นรอบ ๆ ด้วยสเปรย์ที่เราเตรียมไว้',
             'AYBKK ปิดในวันพระจันทร์เต็มดวงและวันพระจันทร์ดับ (moon day) วันปิดอื่น ๆ เราจะแจ้งในตารางคลาสและทาง LINE @aybkk ล่วงหน้าอย่างน้อย 7 วันเมื่อทำได้',
@@ -186,9 +186,9 @@ const CONSENT_TEXT = {
         title: 'ประกาศความเป็นส่วนตัว',
         sections: [
           ['เราคือใคร', '{legal_name} เป็นผู้ดำเนินการ AYBKK (Ashtanga Yoga Center of Bangkok) {address} ติดต่อเราได้ที่ {email} หรือ LINE @aybkk'],
-          ['ข้อมูลที่เราเก็บ', 'ชื่อ อีเมล เบอร์โทร ภาษาที่คุณใช้ การจอง การเช็กอิน แพ็กเกจ และการชำระเงินของคุณ บันทึกข้อตกลงที่คุณลงชื่อไว้ ได้แก่ ฉบับ ชื่อและอีเมลที่คุณใส่ วันที่และเวลา และคุณอายุต่ำกว่า 20 ปีหรือไม่ (หากใช่ จะมีชื่อผู้ปกครองและวันที่ในเอกสารที่ผู้ปกครองลงชื่อด้วย) ข้อความที่คุณส่งถึงเราทาง LINE, Instagram หรือ Facebook สิ่งที่คุณเขียนในแบบฟอร์มปฐมนิเทศ (orientation) ซึ่งอาจมีอาการบาดเจ็บและผู้ติดต่อกรณีฉุกเฉิน และหากมี: บันทึกที่ครูเขียนเกี่ยวกับการฝึกของคุณ ตัวเลขการเช็ก 12 สัปดาห์ รูปในคลาสที่มีชื่อคุณ และรูปโปรไฟล์ของคุณ รวมถึงหมายเลขไอพี (IP) ที่ใช้ขอลิงก์เข้าสู่ระบบ เราไม่เห็นและไม่เก็บเลขบัตรของคุณ'],
+          ['ข้อมูลที่เราเก็บ', 'ชื่อ อีเมล เบอร์โทร ภาษาที่คุณใช้ การจอง การเช็กอิน แพ็กเกจ และการชำระเงินของคุณ บันทึกข้อตกลงที่คุณลงชื่อไว้ ได้แก่ ฉบับ ชื่อและอีเมลที่คุณใส่ วันที่และเวลา และคุณอายุต่ำกว่า 20 ปีหรือไม่ (หากใช่ จะมีชื่อผู้ปกครองและวันที่ในเอกสารที่ผู้ปกครองลงชื่อด้วย) ข้อความที่คุณส่งถึงเราทาง LINE, Instagram หรือ Facebook สิ่งที่คุณเขียนในแบบฟอร์มปฐมนิเทศ (orientation) ซึ่งอาจมีอาการบาดเจ็บและผู้ติดต่อกรณีฉุกเฉิน และหากมี: บันทึกการฝึกของคุณ (journal) บันทึกที่ครูเขียนเกี่ยวกับการฝึกของคุณ ตัวเลขการเช็ก 12 สัปดาห์ รูปในคลาสที่มีชื่อคุณ และรูปโปรไฟล์ของคุณ รวมถึงหมายเลขไอพี (IP) ที่ใช้ขอลิงก์เข้าสู่ระบบ เราไม่เห็นและไม่เก็บเลขบัตรของคุณ'],
           ['เก็บไว้เพื่ออะไร', 'เพื่อจัดการคลาสของคุณ ได้แก่ การจอง การเช็กอิน แพ็กเกจ การชำระเงิน และใบเสร็จ เพื่อเป็นหลักฐานว่าคุณยอมรับข้อใดไว้ เพื่อช่วยให้ครูสอนคุณได้ดี รวมถึงรู้เรื่องอาการบาดเจ็บ และเพื่อตอบข้อความของคุณ ข้อมูลเหล่านี้จำเป็นต่อการให้บริการคลาส เราไม่ขายข้อมูลของคุณ'],
-          ['ใครอีกบ้างที่ดูแลข้อมูล', 'PaySolutions รับชำระเงินออนไลน์ Resend ส่งอีเมลของเรา Cloudinary เก็บรูปภาพ Google: ครูเก็บรูปในคลาสไว้ใน Google Drive ก่อนนำขึ้นโปรไฟล์ และ Google Ads ทำงานเฉพาะเมื่อคุณกด "ตกลง" ที่แถบคุกกี้ Railway ดูแลเซิร์ฟเวอร์และฐานข้อมูลของเว็บไซต์นี้ Neo4j เก็บแบบฟอร์มปฐมนิเทศ LINE รับส่งแชต LINE ของเรา และรายชื่อคลาสประจำวันที่เราส่งเข้ากลุ่มทีมงาน (ชื่อและอักษรแรกของนามสกุล คลาส และแพ็กเกจ) Meta รับส่งข้อความ Instagram และ Facebook Anthropic (Claude) อ่านข้อความที่คุณส่งถึงเรา เพื่อจัดลำดับและร่างคำตอบ Telegram ส่งการแจ้งเตือนถึงทีมงาน เช่น เรื่องการชำระเงินหรือข้อความใหม่ พร้อมเนื้อความ บางบริการเก็บข้อมูลไว้นอกประเทศไทย'],
+          ['ใครอีกบ้างที่ดูแลข้อมูล', 'PaySolutions รับชำระเงินออนไลน์ Resend ส่งอีเมลของเรา Cloudinary เก็บรูปภาพ Google: ครูเก็บรูปในคลาสไว้ใน Google Drive ก่อนนำขึ้นโปรไฟล์ และ Google Ads ทำงานเฉพาะเมื่อคุณกด "ตกลง" ที่แถบคุกกี้ Railway ดูแลเซิร์ฟเวอร์และฐานข้อมูลของเว็บไซต์นี้ Neo4j เก็บแบบฟอร์มปฐมนิเทศและบันทึกการฝึก OpenRouter (DeepSeek) เขียนสรุปบันทึกการฝึกด้วย AI เมื่อครูขอ LINE รับส่งแชต LINE ของเรา และรายชื่อคลาสประจำวันที่เราส่งเข้ากลุ่มทีมงาน (ชื่อและอักษรแรกของนามสกุล คลาส และแพ็กเกจ) Meta รับส่งข้อความ Instagram และ Facebook Anthropic (Claude) อ่านข้อความที่คุณส่งถึงเรา เพื่อจัดลำดับและร่างคำตอบ Telegram ส่งการแจ้งเตือนถึงทีมงาน เช่น เรื่องการชำระเงินหรือข้อความใหม่ พร้อมเนื้อความ บางบริการเก็บข้อมูลไว้นอกประเทศไทย'],
           ['เก็บไว้นานเท่าใด', 'บันทึกข้อตกลงที่คุณลงชื่อ: 10 ปีหลังคลาสสุดท้ายของคุณ เพราะอาจมีการเรียกร้องสิทธิ์ได้นานถึงเท่านั้น บันทึกการชำระเงิน: 5 ปี ตามที่กฎหมายภาษีกำหนด ข้อความแชต: 90 วัน ข้อมูลอื่นทั้งหมด: เก็บไว้ตลอดช่วงที่คุณฝึกกับเรา เราตรวจทานปีละครั้งและลบข้อมูลที่ไม่จำเป็นแล้ว หรือลบเร็วกว่านั้นหากคุณขอ'],
           ['สิทธิ์ของคุณ', 'คุณขอดูข้อมูล ขอสำเนา ขอแก้ไข หรือขอลบข้อมูลได้ เขียนมาที่ {email} หรือทักมาที่ LINE @aybkk คุณลบรูปโปรไฟล์เองได้ในแท็บ "บัญชีของฉัน" เราเก็บบันทึกข้อตกลงและบันทึกการชำระเงินไว้ตามระยะเวลาข้างต้น แม้คุณขอให้ลบข้อมูลอื่น หากไม่พอใจวิธีที่เราดูแลข้อมูล คุณร้องเรียนต่อคณะกรรมการคุ้มครองข้อมูลส่วนบุคคลได้'],
         ],
@@ -244,9 +244,9 @@ const CONSENT_TEXT = {
         title: '隐私声明',
         sections: [
           ['我们是谁', '{legal_name} 经营 AYBKK（Ashtanga Yoga Center of Bangkok），地址：{address}。联系方式：{email} 或 LINE @aybkk。'],
-          ['我们保存什么', '你的姓名、邮箱和电话，你使用的语言，你的预约、签到、课程卡和付款记录。你签署的协议记录：版本、你填写的姓名和邮箱、日期和时间，以及你是否未满 20 岁（如果是，还有监护人的姓名和其书面同意上的日期）。你通过 LINE、Instagram 或 Facebook 发给我们的消息。你在入门表格（orientation）中填写的内容，其中可能包括伤病情况和紧急联系人。如果有的话，还包括：老师写下的关于你练习的笔记、你的 12 周检查数据、标记了你的课堂照片，以及你的头像照片。申请登录链接时使用的网络地址（IP）。我们看不到，也不保存你的银行卡号。'],
+          ['我们保存什么', '你的姓名、邮箱和电话，你使用的语言，你的预约、签到、课程卡和付款记录。你签署的协议记录：版本、你填写的姓名和邮箱、日期和时间，以及你是否未满 20 岁（如果是，还有监护人的姓名和其书面同意上的日期）。你通过 LINE、Instagram 或 Facebook 发给我们的消息。你在入门表格（orientation）中填写的内容，其中可能包括伤病情况和紧急联系人。如果有的话，还包括：你的练习日记、老师写下的关于你练习的笔记、你的 12 周检查数据、标记了你的课堂照片，以及你的头像照片。申请登录链接时使用的网络地址（IP）。我们看不到，也不保存你的银行卡号。'],
           ['为什么保存', '用于安排你的课程：预约、签到、课程卡、付款和收据；证明你同意了哪些内容；帮助老师更好地教你，包括了解你的伤病情况；回复你的消息。我们需要这些资料才能为你提供课程。我们绝不出售你的资料。'],
-          ['还有谁处理这些资料', 'PaySolutions 处理在线付款。Resend 发送我们的邮件。Cloudinary 保存照片。Google：老师先把课堂照片放在 Google Drive，再放到个人页面；只有当你在 Cookie 提示栏点击“好的”时，才会使用 Google Ads。Railway 运行本网站的服务器和数据库。Neo4j 保存入门表格。LINE 传送我们的 LINE 聊天，以及我们每天发到员工群的课程名单（名字和姓氏首字母、课程和课程卡）。Meta 传送 Instagram 和 Facebook 消息。Anthropic（Claude）会阅读你发给我们的消息，用于分类并起草我们的回复。Telegram 向我们的工作人员发送提醒，例如关于付款或新消息的提醒，并附上消息内容。其中一些服务会在泰国境外保存资料。'],
+          ['还有谁处理这些资料', 'PaySolutions 处理在线付款。Resend 发送我们的邮件。Cloudinary 保存照片。Google：老师先把课堂照片放在 Google Drive，再放到个人页面；只有当你在 Cookie 提示栏点击“好的”时，才会使用 Google Ads。Railway 运行本网站的服务器和数据库。Neo4j 保存入门表格和练习日记。老师要求时，OpenRouter（DeepSeek）会为练习日记写一份 AI 摘要。LINE 传送我们的 LINE 聊天，以及我们每天发到员工群的课程名单（名字和姓氏首字母、课程和课程卡）。Meta 传送 Instagram 和 Facebook 消息。Anthropic（Claude）会阅读你发给我们的消息，用于分类并起草我们的回复。Telegram 向我们的工作人员发送提醒，例如关于付款或新消息的提醒，并附上消息内容。其中一些服务会在泰国境外保存资料。'],
           ['保存多久', '你签署的协议记录：在你最后一节课后保存 10 年，因为索赔可能在这么久之后才提出。付款记录：按照税法要求保存 5 年。聊天消息：90 天。其他所有资料：在你和我们一起练习期间保存。我们每年检查一次，删除不再需要的资料；如果你提出要求，可以更早删除。'],
           ['你的权利', '你可以要求查看你的资料、获取副本、更正或删除。请发邮件到 {email}，或通过 LINE @aybkk 联系我们。你可以在“我的账户”中自行删除头像照片。即使你要求删除其他资料，我们也会按上述期限保存协议记录和付款记录。如果你对我们处理资料的方式不满意，可以向泰国个人数据保护委员会投诉。'],
         ],
@@ -271,9 +271,9 @@ const CONSENT_TEXT = {
             'AYBKK не отвечает за обычные риски практики, когда никто не виноват. Ничто здесь не ограничивает ваши права по законодательству Таиланда.',
           ]],
           ['В шале', [
-            'Записывайтесь на каждое занятие заранее на aybkk.net и отмечайтесь у входа перед практикой. Занятия Led все начинают вместе, поэтому приходите до начала. Если вы опоздали, подождите учителя у входа.',
+            'Записывайтесь на каждое занятие заранее на aybkk.net и отмечайтесь у входа перед практикой. На занятиях Led все начинают вместе, поэтому приходите до начала. Если вы опоздали, подождите учителя у входа.',
             'Отменяйте запись минимум за 5 часов до занятия, чтобы оно не списалось.',
-            'В шале нельзя фотографировать и снимать видео. Сотрудники AYBKK иногда фотографируют занятия для вашего закрытого профиля. Прежде чем публиковать ваше фото или видео в открытом доступе, мы спрашиваем вас.',
+            'В шале нельзя фотографировать и снимать видео. Сотрудники AYBKK иногда фотографируют занятия для вашего закрытого профиля. Прежде чем публиковать фото или видео с вами в открытом доступе, мы спрашиваем вас.',
             'Во время практики нельзя пользоваться телефоном, разговаривать и пить воду. Если вам нужна вода по состоянию здоровья, скажите учителю.',
             'Мы выдаём полотенце для пота и полотенце для душа. Приносите свой коврик или отметьте «Нужен коврик» при записи и возьмите коврик в аренду в шале за ฿200. После практики протрите коврик и пол вокруг него спреем, который мы даём.',
             'В дни полнолуния и новолуния шала закрыта. О других днях закрытия мы сообщаем в расписании и в LINE @aybkk, по возможности минимум за 7 дней.',
@@ -302,9 +302,9 @@ const CONSENT_TEXT = {
         title: 'Уведомление о конфиденциальности',
         sections: [
           ['Кто мы', '{legal_name} управляет AYBKK (Ashtanga Yoga Center of Bangkok), {address}. Связаться с нами: {email} или LINE @aybkk.'],
-          ['Что мы храним', 'Ваше имя, email и телефон, язык, которым вы пользуетесь, ваши записи, отметки о посещении, абонементы и платежи. Запись о подписанном вами соглашении: версия, указанные вами имя и email, дата и время, а также отметка, если вам меньше 20 лет (тогда ещё имя вашего родителя или опекуна и дата на его бумаге). Сообщения, которые вы пишете нам в LINE, Instagram или Facebook. То, что вы написали в анкете для новичков (orientation): там могут быть травмы и контакт на экстренный случай. Кроме того, если они есть: заметки учителей о вашей практике, ваши данные 12-недельной проверки, фото с занятий, где вы отмечены, и ваше фото профиля. IP-адрес, с которого запросили ссылку для входа. Номер вашей карты мы не видим и не храним.'],
+          ['Что мы храним', 'Ваше имя, email и телефон, язык, которым вы пользуетесь, ваши записи, отметки о посещении, абонементы и платежи. Запись о подписанном вами соглашении: версия, указанные вами имя и email, дата и время, а также отметка, если вам меньше 20 лет (тогда ещё имя вашего родителя или опекуна и дата на его бумаге). Сообщения, которые вы пишете нам в LINE, Instagram или Facebook. То, что вы написали в анкете для новичков (orientation): там могут быть травмы и контакт на экстренный случай. Кроме того, если они есть: ваш дневник практики, заметки учителей о вашей практике, ваши данные 12-недельной проверки, фото с занятий, где вы отмечены, и ваше фото профиля. IP-адрес, с которого запросили ссылку для входа. Номер вашей карты мы не видим и не храним.'],
           ['Зачем', 'Чтобы проводить ваши занятия: записи, отметки, абонементы, платежи и чеки. Чтобы подтверждать, с чем вы согласились. Чтобы учителям было легче вас учить, в том числе знать о травме. Чтобы отвечать на ваши сообщения. Без этих данных мы не можем проводить для вас занятия. Мы никогда не продаём ваши данные.'],
-          ['Кто ещё обрабатывает данные', 'PaySolutions принимает онлайн-платежи. Resend отправляет наши письма. Cloudinary хранит фотографии. Google: учителя кладут фото с занятий в Google Drive, прежде чем добавить их в профили, а Google Ads работает, только если вы нажмёте OK в панели cookie. Railway обеспечивает работу сервера и базы данных этого сайта. Neo4j хранит анкеты для новичков. LINE передаёт наши чаты в LINE и ежедневный список занятий, который мы отправляем в группу сотрудников (имя и первая буква фамилии, занятия и абонементы). Meta передаёт сообщения Instagram и Facebook. Anthropic (Claude) читает сообщения, которые вы нам пишете, чтобы сортировать их и готовить черновики наших ответов. Telegram доставляет нашим сотрудникам уведомления, например о платеже или новом сообщении, вместе с его текстом. Некоторые из этих сервисов хранят данные за пределами Таиланда.'],
+          ['Кто ещё обрабатывает данные', 'PaySolutions принимает онлайн-платежи. Resend отправляет наши письма. Cloudinary хранит фотографии. Google: учителя кладут фото с занятий в Google Drive, прежде чем добавить их в профили, а Google Ads работает, только если вы нажмёте OK в панели cookie. Railway обеспечивает работу сервера и базы данных этого сайта. Neo4j хранит анкеты для новичков и дневники практики. OpenRouter (DeepSeek) пишет ИИ-сводку дневника практики, когда об этом просит учитель. LINE передаёт наши чаты в LINE и ежедневный список занятий, который мы отправляем в группу сотрудников (имя и первая буква фамилии, занятия и абонементы). Meta передаёт сообщения Instagram и Facebook. Anthropic (Claude) читает сообщения, которые вы нам пишете, чтобы сортировать их и готовить черновики наших ответов. Telegram доставляет нашим сотрудникам уведомления, например о платеже или новом сообщении, вместе с его текстом. Некоторые из этих сервисов хранят данные за пределами Таиланда.'],
           ['Как долго', 'Запись о подписанном соглашении: 10 лет после вашего последнего занятия, потому что претензия может появиться так поздно. Платёжные записи: 5 лет, как требует налоговое законодательство. Сообщения в чатах: 90 дней. Всё остальное хранится, пока вы занимаетесь с нами. Раз в год мы проверяем эти данные и удаляем то, что больше не нужно, или раньше, если вы попросите.'],
           ['Ваши права', 'Вы можете попросить показать ваши данные, выдать их копию, исправить или удалить их. Напишите на {email} или в LINE @aybkk. Фото профиля можно удалить самостоятельно в разделе «Мой аккаунт». Запись о соглашении и платёжные записи мы храним указанные выше сроки, даже если вы попросите удалить остальное. Если вас не устраивает, как мы обращаемся с вашими данными, вы можете подать жалобу в Комитет по защите персональных данных Таиланда.'],
         ],
@@ -1197,8 +1197,16 @@ function mountBkk(app, opts = {}) {
   // payments and imports are never refused: an unsigned profile is flagged on staff screens.
   const CONSENT_MODES = ['off', 'ask', 'require'];
   const consentMode = async () => { const v = await getSetting('consent_mode', 'off'); return CONSENT_MODES.includes(v) ? v : 'off'; };
+  // For pages that only ask "is it on?" (the old /bkk form, /policy, /privacy): a database that
+  // accepts and never answers, or a pool with no free connection, reads as off after a moment,
+  // so the old form is served as before instead of hanging.
+  const CONSENT_MODE_WAIT_MS = 1500;
+  const consentModeSoon = () => new Promise(resolve => {
+    const t = setTimeout(resolve, CONSENT_MODE_WAIT_MS, 'off');
+    consentMode().then(resolve, () => resolve('off')).finally(() => clearTimeout(t));
+  });
   // server.js reads it ahead of its static files: the old /bkk orientation form goes to /book while on.
-  app.locals.bkkConsentMode = consentMode;
+  app.locals.bkkConsentMode = consentModeSoon;
   // The privacy notice names the business: three settings staff fill in, all public text.
   const PRIVACY_KEYS = { name: 'privacy_legal_name', address: 'privacy_address', email: 'privacy_email' };
   async function privacySettings() {
@@ -1319,8 +1327,8 @@ function mountBkk(app, opts = {}) {
   // /policy (the agreement, which holds the shala's rules) and /privacy open those sections of
   // the booking page, once the agreement is on.
   app.get(['/policy', '/privacy'], async (req, res, next) => {
-    try { if (await consentMode() === 'off') return next(); } catch (_) { return next(); }
-    res.redirect(302, '/book#' + req.path.slice(1));
+    if (await consentModeSoon() === 'off') return next();
+    res.redirect(302, '/book#' + (/^\/privacy/i.test(req.path) ? 'privacy' : 'policy'));
   });
 
   // ── public: catalogue + schedule ──────────────────────────────────────────
