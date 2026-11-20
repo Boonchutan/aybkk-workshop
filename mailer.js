@@ -95,7 +95,8 @@ const TEMPLATES = {
     // cls: the class a drop-in was bought for, { name, when, booked } in
     // Bangkok time. booked false: the class was cancelled or over by the time
     // the payment came through, so the student must not travel to it.
-    en: ({ name, product, amount, base, fee, vat, refno, link, cls }) => ({
+    // agreement: { version, link } once the student agreement is on and this profile signed it.
+    en: ({ name, product, amount, base, fee, vat, refno, link, cls, agreement }) => ({
       subject: `Your AYBKK pass — ${product}`,
       text: [
         `Hello ${name},`, '',
@@ -107,6 +108,8 @@ const TEMPLATES = {
         `Book your classes here: ${link}`,
         'That link signs you in once. If you ever lose your place, use',
         '"Email me a link" on the booking page and we will send a new one.', '',
+        ...(agreement ? [`You agreed to the AYBKK student agreement (${agreement.version}): ${agreement.link}`,
+          'If someone else bought this for you, please read it before class.', ''] : []),
         'See you in the shala.',
       ].join('\n'),
       html: shell(`
@@ -128,9 +131,41 @@ const TEMPLATES = {
           <a href="${esc(link)}" style="background:#5c2160;color:#fdf7fa;text-decoration:none;
              padding:12px 26px;border-radius:8px;display:inline-block;font-weight:600">Book a class</a></p>
         <p style="font-size:13px;color:#6b5d70">That button signs you in once, on any phone.
-        If you ever lose your place, use <b>Email me a link</b> on the booking page.</p>`),
+        If you ever lose your place, use <b>Email me a link</b> on the booking page.</p>
+        ${agreement ? `<p style="font-size:13px;color:#6b5d70">You agreed to the
+          <a href="${esc(agreement.link)}" style="color:#5c2160">AYBKK student agreement (${esc(agreement.version)})</a>.
+          If someone else bought this for you, please read it before class.</p>` : ''}`),
     }),
   },
+
+  // A copy of the student agreement, as signed. text: that version's agreement in this
+  // language (bkk-api.js CONSENT_TEXT), so the words are the ones that were on screen.
+  agreement: Object.fromEntries(Object.entries({
+    en: { subject: v => `Your copy: AYBKK student agreement (${v})`, hello: n => `Hello ${n},`,
+      intro: 'This is your copy of the AYBKK student agreement you agreed to.', more: 'The agreement and the Privacy notice online:' },
+    th: { subject: v => `สำเนาข้อตกลงนักเรียน AYBKK (${v})`, hello: n => `สวัสดี ${n}`,
+      intro: 'นี่คือสำเนาข้อตกลงนักเรียน AYBKK ที่คุณยอมรับไว้', more: 'อ่านข้อตกลงและประกาศความเป็นส่วนตัวออนไลน์:' },
+    zh: { subject: v => `您的副本：AYBKK 学生协议（${v}）`, hello: n => `${n}，您好：`,
+      intro: '这是您同意的 AYBKK 学生协议副本。', more: '在线查看协议和隐私声明：' },
+    ru: { subject: v => `Ваша копия: соглашение ученика AYBKK (${v})`, hello: n => `Здравствуйте, ${n}!`,
+      intro: 'Это ваша копия соглашения ученика AYBKK, с которым вы согласились.', more: 'Соглашение и уведомление о конфиденциальности онлайн:' },
+  }).map(([lang, w]) => [lang, ({ name, version, text, under20, date, since, link }) => {
+    const lines = text.groups.flatMap(g => g[1]).map(l => l.replace('{since}', since || '…'));
+    const signed = text.signed.replace('{name}', name).replace('{date}', date).replace('{version}', version);
+    const tick = under20 ? text.tickUnder20 : text.tick;
+    return {
+      subject: w.subject(version),
+      text: [w.hello(name), '', w.intro, '', `${text.title} · ${version}`, '', ...lines.map((l, i) => `${i + 1}. ${l}`), '',
+        `[x] ${tick}`, signed, '', `${w.more} ${link}`].join('\n'),
+      html: shell(`
+        <p>${esc(w.hello(name))}</p><p>${esc(w.intro)}</p>
+        <h3 style="margin:18px 0 8px">${esc(text.title)} · ${esc(version)}</h3>
+        <ol style="padding-left:20px;margin:0">${lines.map(l => `<li style="margin:0 0 8px">${esc(l)}</li>`).join('')}</ol>
+        <p style="margin:14px 0 4px">&#9745; ${esc(tick)}</p>
+        <p style="font-size:13px;color:#6b5d70;margin:0">${esc(signed)}</p>
+        <p style="font-size:13px;margin-top:18px">${esc(w.more)} <a href="${esc(link)}" style="color:#5c2160">${esc(link)}</a></p>`),
+    };
+  }])),
 
   classCancelled: {
     en: ({ name, className, date, time, reason }) => ({

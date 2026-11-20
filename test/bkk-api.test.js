@@ -8172,6 +8172,69 @@ const ok = (name, cond, extra = '') => {
     const bRef = st_('Ben Sample').ref;
     ok('a ref with a wrong signature opens nothing', (await getD('/api/bkk/teacher/student/' + bRef.slice(0, -1) + (bRef.endsWith('x') ? 'y' : 'x'), TH)).status === 404);
 
+    // The student agreement (20 Nov 2026), switched on to 'require': the door key sees nothing new
+    // and still checks anyone in, /teach gets two true/false and still adds and checks in, and
+    // Today and the class roster say signed or not. Off again, every one of those is as before.
+    {
+      const Hs = ipH();
+      const stA = await postD('/api/bkk/door/pair/start', {}, Hs);
+      await postD('/api/bkk/admin/door/pair', { code: stA.body.code, name: 'Agreement door' }, { ...ADMIN, ...ipH() });
+      const KA = { 'x-door-key': (await postD('/api/bkk/door/pair/claim', { secret: stA.body.secret }, Hs)).body.key, ...Hs };
+      cc = AT(D, '05:20:00');
+      const offNow = await getD('/api/bkk/door/now', KA);
+      cc = AT(D, '06:45:00');
+      const offTeach = await getD('/api/bkk/teacher/today', TH);
+      const offToday = await getD('/api/bkk/admin/today', ADMIN);
+      const on = await postD('/api/bkk/admin/settings', { privacyName: 'Example Yoga Co., Ltd.', privacyAddress: '1 Example Road, Bangkok',
+        privacyEmail: 'privacy@example.com', consentMode: 'require' }, ADMIN);
+      const sb = await postD(`/api/bkk/me/${people.BEN.code}/consent`, { agree: true, version: 'v1', lang: 'en', name: 'Ben Sample', under20: true });
+      const sc = await postD(`/api/bkk/me/${people.CAR.code}/consent`, { agree: true, version: 'v1', lang: 'th', name: 'Cara Ocean' });
+      ok('agreement on in require, two students sign on their own phones', on.status === 200 && on.body.consent.mode === 'require'
+         && sb.status === 200 && sc.status === 200 && sb.body.consent.under20 === true, JSON.stringify([on.body.consent, sb.body, sc.body]));
+      cc = AT(D, '05:20:00');
+      const onNow = await getD('/api/bkk/door/now', KA);
+      ok('the door tablet list is what it was with the agreement off: the same keys, each seat a handle, the name, in, at and its class time, no word about the agreement',
+         onNow.status === 200 && offNow.status === 200 && onNow.body.seats.length === offNow.body.seats.length && onNow.body.seats.length > 0
+           && Object.keys(onNow.body).sort().join() === Object.keys(offNow.body).sort().join()
+           && onNow.body.seats.every(x => Object.keys(x).sort().join() === 'at,c,in,n,t')
+           && !/consent|signed|under20|guardian|agree/i.test(onNow.raw), onNow.raw.slice(0, 200));
+      const anaT = onNow.body.seats.find(x => x.n === 'Ana Exa.');
+      const dci = await postD('/api/bkk/door/checkin', { t: anaT && anaT.t }, KA);
+      ok('...and a tap checks an unsigned student in, with no word about it either', dci.status === 200 && dci.body.ok === true
+         && !/consent|signed|under20|agree/i.test(dci.raw), dci.raw);
+      cc = AT(D, '06:45:00');
+      const tt = await getD('/api/bkk/teacher/today', TH);
+      const tOf = n => tt.body.students.find(x => x.name === n) || {};
+      ok('/teach today: each student has signed and under20 as true or false, and nothing else of the agreement',
+         tt.status === 200 && tt.body.students.every(x => typeof x.signed === 'boolean' && typeof x.under20 === 'boolean')
+           && tOf('Ben Sample').signed === true && tOf('Ben Sample').under20 === true && tOf('Cara (Nok) Ocean').signed === true
+           && tOf('Cara (Nok) Ocean').under20 === false && tOf('Ana Example').signed === false
+           && !/signedName|signedAt|signed_name|guardianName|"via"|"version"|Cara Ocean|consent/.test(tt.raw), tt.raw.slice(0, 200));
+      ok('...and with the agreement off, neither field is there', offTeach.status === 200
+         && offTeach.body.students.every(x => !('signed' in x) && !('under20' in x)));
+      const tv = await getD('/api/bkk/teacher/student/' + tOf('Ben Sample').ref, TH);
+      ok('/teach student: the agreement is two true/false only', tv.status === 200
+         && JSON.stringify(tv.body.consent) === JSON.stringify({ signed: true, under20: true }) && !/Ben Sample.*v1|signedAt|"via"/.test(tv.raw), JSON.stringify(tv.body.consent));
+      const dAdd = await postD('/api/bkk/teacher/add', { slotId: my730, ref: (await refOf('Mr Dan Sample')).ref }, TH);
+      const open_ = await one(`SELECT b.id FROM bkk_bookings b WHERE b.class_date=$1 AND b.slot_id=$2 AND b.status='booked'
+        AND b.checked_in_at IS NULL AND NOT EXISTS (SELECT 1 FROM bkk_consents c WHERE c.member_id=b.member_id) ORDER BY b.id LIMIT 1`, [D, my730]);
+      const tci = await postD(`/api/bkk/teacher/bookings/${open_.id}/checkin`, {}, TH);
+      ok('/teach adds and checks in students who have not signed, in require', dAdd.status === 200 && dAdd.body.success === true
+         && tci.status === 200 && tci.body.success === true, JSON.stringify([dAdd.body, tci.body]));
+      const at_ = await getD('/api/bkk/admin/today', ADMIN);
+      const cr = await getD(`/api/bkk/admin/class?slotId=${my530}&date=${D}`, ADMIN);
+      ok('Admin Today and the class roster say signed or not for each name', at_.status === 200 && at_.body.bookings.length > 0
+         && at_.body.bookings.every(b => typeof b.consent === 'boolean') && at_.body.bookings.find(b => b.code === people.CAR.code).consent === true
+         && at_.body.bookings.find(b => b.code === people.ANA.code).consent === false
+         && cr.body.roster.every(b => typeof b.consent === 'boolean') && cr.body.roster.find(b => b.code === people.BEN.code).consent === true,
+         JSON.stringify(cr.body.roster && cr.body.roster.map(b => [b.name, b.consent])));
+      ok('...and with it off, Today has no such field', offToday.body.bookings.every(b => !('consent' in b)));
+      await postD('/api/bkk/admin/settings', { consentMode: 'off' }, ADMIN);
+      ok('switched off again: Today, the roster and /teach are as before', (await getD('/api/bkk/admin/today', ADMIN)).body.bookings.every(b => !('consent' in b))
+         && (await getD(`/api/bkk/admin/class?slotId=${my530}&date=${D}`, ADMIN)).body.roster.every(b => !('consent' in b))
+         && (await getD('/api/bkk/teacher/today', TH)).body.students.every(x => !('signed' in x)));
+    }
+
     await pool.query(`DELETE FROM bkk_class_overrides WHERE slot_id = ANY($1::int[]) AND class_date=$2`, [[my730, cxl], D]);
     await pool.query(`UPDATE bkk_class_slots SET active=false WHERE id = ANY($1::int[])`, [[onl, cxl]]);
     await pool.query(`UPDATE bkk_class_slots SET active=true WHERE id = ANY($1::int[])`, [parked]);
@@ -8208,6 +8271,322 @@ const ok = (name, cond, extra = '') => {
        && !!v3.checked_in_at && v3.checkin_via === 'admin', JSON.stringify([v2, v3]));
     await pool.query('DELETE FROM bkk_bookings WHERE id=$1', [bid]);
   }
+  // ── the student agreement (20 Nov 2026) ──────────────────────────────────────
+  // Off by default and nothing changes (every test above ran with it off). Its text is pinned
+  // by hash. In 'ask' checkout asks; in 'require' a student's own booking asks too. Payments,
+  // staff, /teach, imports and check-ins are never refused.
+  console.log('\n— the student agreement —');
+  {
+    const { CONSENT_TEXT, CONSENT_VERSION, checkConsentText } = require('../bkk-api.js');
+    const one = async (sql, args = []) => (await pool.query(sql, args)).rows[0] || {};
+    const sha = x => crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex');
+    const SET = body => post('/api/bkk/admin/settings', body, ADMIN);
+    const rowsOf = async code => (await pool.query(`SELECT c.* FROM bkk_consents c JOIN bkk_members m ON m.id=c.member_id
+      WHERE m.code=$1 ORDER BY c.id`, [code])).rows;
+    const tick = (o = {}) => ({ agree: true, version: 'v1', lang: 'en', under20: false, ...o });
+    const grant = async (name, email, productCode = 'pack8') =>
+      (await post('/api/bkk/admin/passes', { name, email, productCode }, ADMIN)).body.member.code;
+    // The door block above switched it on and off: start from a shala that never had it.
+    await pool.query(`DELETE FROM bkk_settings WHERE key IN ('consent_mode','consent_since','privacy_legal_name','privacy_address','privacy_email')`);
+    const passOf = code => one(`SELECT p.valid_from, p.valid_until, p.credits_used FROM bkk_passes p JOIN bkk_members m ON m.id=p.member_id
+      WHERE m.code=$1 ORDER BY p.id DESC LIMIT 1`, [code]);
+
+    // The wording: pinned, and what a page is served is what is pinned.
+    const PINNED = {
+      en: ['a614250ae432d419f7ac3d112fb84f1163674a2db9a69f647f4aedf144ab4615', '3e6feddf4485c7e31440de5c77b6b0a257b76918fad30aaeb4e48126189d689b'],
+      th: ['a97fea893cb48001f563c8333b207c4475da30b4fc88e4e6e75ec5c4e95ebc10', '2030a7cb67e9394bc5bd3567d91b53cc69a8a9d6dc704bc0defa40ed9c3b73e1'],
+      zh: ['1951ccbfc2fe9b7b3fe654787470cfd315b5ecde6ec4cb4c8faa1c8194afae6b', '1329c31dcb16b5440ef00ae5330141772412c56d44782e0ee5844ba0c946b123'],
+      ru: ['37f0e6bd21211d9f690d5d50ca30337fdea27b47064beec8207439e1646d4f83', 'a4f41e58356bac6330a93530ddfbdfd782beba216b0a1377f3d9af29c48ae214'],
+    };
+    ok('v1 is the current version, in exactly these 4 languages', CONSENT_VERSION === 'v1' && Object.keys(CONSENT_TEXT.v1).join() === 'en,th,zh,ru');
+    for (const [l, [a, pv]] of Object.entries(PINNED)) {
+      const c = await J(`/api/bkk/consent?lang=${l}`);
+      ok(`v1 ${l.toUpperCase()}: the agreement and the privacy notice are the pinned text, and the page is served that text`,
+         sha(CONSENT_TEXT.v1[l].agreement) === a && sha(CONSENT_TEXT.v1[l].privacy) === pv && c.status === 200 && c.body.lang === l
+           && c.body.sha === a && sha(c.body.text.agreement) === a && sha(c.body.text.privacy) === pv, `${sha(CONSENT_TEXT.v1[l].agreement)} ${sha(CONSENT_TEXT.v1[l].privacy)}`);
+    }
+    ok('v1 has 18 lines in each language', ['en', 'th', 'zh', 'ru'].every(l => CONSENT_TEXT.v1[l].agreement.groups.flatMap(g => g[1]).length === 18));
+    const throwsWith = (fn, re) => { try { fn(); return false; } catch (e) { return re.test(e.message); } };
+    const noTh = { v1: { en: CONSENT_TEXT.v1.en } }, noEn = { v1: { th: CONSENT_TEXT.v1.th } };
+    ok('the server refuses to start when the current version has no English or no Thai', throwsWith(() => checkConsentText(noTh, 'v1'), /no TH text/)
+       && throwsWith(() => checkConsentText(noEn, 'v1'), /no EN text/) && throwsWith(() => checkConsentText(CONSENT_TEXT, 'v2'), /v2 has no text/)
+       && !throwsWith(() => checkConsentText(), /./));
+    const c0 = await J('/api/bkk/consent?lang=xx');
+    ok('the public text needs no key, says the switch is off, falls back to English and holds no personal data', c0.status === 200
+       && c0.body.mode === 'off' && c0.body.lang === 'en' && c0.body.langs.join() === 'en,th,zh,ru' && c0.body.since === null
+       && Object.keys(c0.body).sort().join() === 'current,lang,langs,mode,sha,since,text,version'
+       && !/"member|"code"|email_at|signed_name/.test(JSON.stringify(c0.body)), Object.keys(c0.body).join());
+
+    // The switch.
+    const s0 = (await J('/api/bkk/admin/settings', { headers: ADMIN })).body.consent;
+    ok('Settings show the switch off, v1, its 4 languages, and that the privacy notice is not filled in', s0 && s0.mode === 'off' && s0.version === 'v1'
+       && s0.langs.join() === 'en,th,zh,ru' && s0.privacyFilled === false && s0.canTurnOn === false
+       && s0.missing.join() === 'privacy name,privacy address,privacy email', JSON.stringify(s0));
+    ok('only the staff key changes it', (await post('/api/bkk/admin/settings', { consentMode: 'ask' })).status === 401
+       && (await post('/api/bkk/admin/settings', { consentMode: 'ask' }, { 'x-bkk-key': 'nope' })).status === 401);
+    const noPriv = await SET({ consentMode: 'ask' });
+    ok('it cannot leave off while the privacy notice lacks its name, address and email: 400, still off', noPriv.status === 400
+       && noPriv.body.missing.join() === 'privacy name,privacy address,privacy email'
+       && (await J('/api/bkk/consent')).body.mode === 'off', JSON.stringify(noPriv.body));
+    ok('a mode that is not off, ask or require, or a privacy email that is not one, is refused', (await SET({ consentMode: 'on' })).status === 400
+       && (await SET({ privacyEmail: 'not an email' })).status === 400 && (await SET({ privacyName: '<b>x</b>' })).status === 400);
+    const PRIV = { privacyName: 'Example Yoga Co., Ltd.', privacyAddress: '1 Example Road, Bangkok 10110', privacyEmail: 'privacy@example.com' };
+    const zh = CONSENT_TEXT.v1.zh;
+    delete CONSENT_TEXT.v1.zh;
+    const noZh = await SET({ ...PRIV, consentMode: 'require' });
+    CONSENT_TEXT.v1.zh = zh;
+    ok('...nor while a language is missing, even with the privacy notice filled: 400 and nothing saved', noZh.status === 400
+       && noZh.body.missing.join() === 'ZH text' && (await J('/api/bkk/admin/settings', { headers: ADMIN })).body.consent.privacyFilled === false,
+       JSON.stringify(noZh.body));
+    const offPolicy = await fetch(`${B}/policy`, { redirect: 'manual' });
+    const offMe = await post('/api/bkk/me/' + (await grant('Off Tester', 'off.tester@example.com')) + '/consent', tick({ name: 'Off Tester' }));
+    ok('while off, /policy is not there and nobody can sign', offPolicy.status === 404 && offMe.status === 409, `${offPolicy.status} ${offMe.status}`);
+    const toAsk = await SET({ ...PRIV, consentMode: 'ask' });
+    const today = new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10);
+    ok('with all 4 languages and the 3 facts, it goes to ask, and the agreement starts today', toAsk.status === 200 && toAsk.body.consent.mode === 'ask'
+       && toAsk.body.consent.canTurnOn === true && toAsk.body.consent.since === today, JSON.stringify(toAsk.body.consent));
+    ok('...and the privacy notice then names the business', (await J('/api/bkk/consent?lang=en')).body.text.privacy.sections[0][1]
+       === 'Example Yoga Co., Ltd. runs AYBKK (Ashtanga Yoga Center of Bangkok), 1 Example Road, Bangkok 10110. Contact us at privacy@example.com or on LINE @aybkk.');
+    ok('a privacy fact cannot be emptied while it is on', (await SET({ privacyEmail: '' })).status === 400);
+    const pol = await fetch(`${B}/policy`, { redirect: 'manual' }), prv = await fetch(`${B}/privacy`, { redirect: 'manual' });
+    ok('/policy and /privacy open those sections of the booking page', pol.status === 302 && pol.headers.get('location') === '/book#policy'
+       && prv.status === 302 && prv.headers.get('location') === '/book#privacy');
+
+    // Checkout asks, before anything is made.
+    const n0 = (await one('SELECT count(*)::int AS m, (SELECT count(*)::int FROM bkk_orders) AS o FROM bkk_members'));
+    const o1 = await post('/api/bkk/orders', { productCode: 'unlim1', name: 'Ada Agreement', email: 'ada.agree@example.com' });
+    const o1s = await post('/api/bkk/orders', { productCode: 'unlim1', name: 'Ada Agreement', email: 'ada.agree@example.com', consent: tick({ version: 'v0' }) });
+    const o1n = await post('/api/bkk/orders', { productCode: 'unlim1', name: 'Ada Agreement', email: 'ada.agree@example.com', consent: tick({ agree: false }) });
+    const o1x = await post('/api/bkk/orders', { productCode: 'unlim1', name: 'A', email: 'ada.agree@example.com', consent: tick() });
+    const n1 = (await one('SELECT count(*)::int AS m, (SELECT count(*)::int FROM bkk_orders) AS o FROM bkk_members'));
+    ok('checkout without the tick: 409 consent with the version, and no profile or order is made', o1.status === 409
+       && JSON.stringify(o1.body) === JSON.stringify({ error: 'consent', version: 'v1' }) && n1.m === n0.m && n1.o === n0.o, JSON.stringify(o1.body));
+    ok('...a stale version is 409 (the page reloads the text), no tick 409, a one-letter name 400, and still nothing made',
+       o1s.status === 409 && o1s.body.stale === true && o1n.status === 409 && o1x.status === 400 && n1.m === n0.m, JSON.stringify([o1s.body, o1x.body]));
+    const o2 = await post('/api/bkk/orders', { productCode: 'unlim1', name: 'Ada Agreement', email: 'ada.agree@example.com',
+      consent: tick({ name: 'Ada Agreement', lang: 'th' }) });
+    const adaRows = await rowsOf(o2.body.member && o2.body.member.code);
+    const o2row = await one('SELECT consent FROM bkk_orders WHERE id=$1', [o2.body.order && o2.body.order.id]);
+    ok('a new email with the tick: the order, and at once a checkout row with the version, language and the pinned text hash',
+       o2.status === 200 && !!o2.body.member.code && adaRows.length === 1 && adaRows[0].via === 'checkout' && adaRows[0].kind === 'agreement'
+         && adaRows[0].version === 'v1' && adaRows[0].lang === 'th' && adaRows[0].signed_name === 'Ada Agreement' && adaRows[0].given === true
+         && adaRows[0].under20 === false && adaRows[0].order_id === o2.body.order.id && adaRows[0].email_at === 'ada.agree@example.com'
+         && adaRows[0].text_sha === PINNED.th[0] && o2row.consent && Object.keys(o2row.consent).sort().join() === 'agree,lang,name,under20,version'
+         && o2row.consent.agree === true && o2row.consent.version === 'v1' && o2row.consent.lang === 'th' && o2row.consent.name === 'Ada Agreement'
+         && o2row.consent.under20 === false, JSON.stringify([o2.body, adaRows, o2row])); 
+    ok('...and the row holds no address, browser or health field', !Object.keys(adaRows[0]).some(k => /ip|agent|browser|health|note/.test(k)),
+       Object.keys(adaRows[0]).join());
+    const ADA = o2.body.member.code;
+    const o3 = await post('/api/bkk/orders', { productCode: 'pack8', name: 'Ada Agreement', email: 'ada.agree@example.com', memberCode: ADA });
+    ok('a browser holding that signed profile buys again with no tick, and nothing more is written', o3.status === 200
+       && o3.body.member.code === ADA && (await rowsOf(ADA)).length === 1, JSON.stringify(o3.body));
+    const o3b = await post('/api/bkk/orders', { productCode: 'pack8', name: 'Ada Agreement', email: 'someone.else@example.com', memberCode: ADA });
+    ok('...but the same browser typing another email must tick', o3b.status === 409 && o3b.body.error === 'consent');
+
+    // Someone else's email: the tick waits for the payment. Fake PaySolutions answers paid.
+    const stubApp = express(); stubApp.use(express.json());
+    let stubAns = null;
+    stubApp.post('/order/orderdetailpost', (req, res) => stubAns ? res.json([stubAns]) : res.send(''));
+    const stubSrv = stubApp.listen(0, '127.0.0.1');
+    await new Promise(r => stubSrv.once('listening', r));
+    const gwEnv = { PAYSO_MERCHANT_ID: '000000012345', PAYSO_SECRET_KEY: 'test-only', PAYSO_API_KEY: 'test-only',
+      PAYSO_INQUIRY_BASE: `http://127.0.0.1:${stubSrv.address().port}` };
+    Object.assign(process.env, gwEnv);
+    try {
+      const BEA = await grant('Bea Owner', 'bea.owner@example.com', 'unlim1');
+      const b1 = await post('/api/bkk/orders', { productCode: 'pack8', name: 'Bob Buyer', email: 'bea.owner@example.com',
+        consent: tick({ name: 'Bob Buyer' }) });
+      ok("an existing profile's email typed by someone else: the order is made, the profile is not marked yet", b1.status === 200
+         && b1.body.member.existing === true && (await rowsOf(BEA)).length === 0 && !!b1.body.pay, JSON.stringify(b1.body));
+      stubAns = { Status: 'CP', Total: b1.body.order.amount };
+      const paid = (await J('/api/bkk/pay/check/' + b1.body.order.refno)).body;
+      const beaRows = await rowsOf(BEA);
+      ok("...once paid, a 'checkout-email' row with the buyer's name, on that order", paid.status === 'paid' && beaRows.length === 1
+         && beaRows[0].via === 'checkout-email' && beaRows[0].signed_name === 'Bob Buyer' && beaRows[0].order_id === b1.body.order.id
+         && beaRows[0].email_at === 'bea.owner@example.com', JSON.stringify([paid, beaRows]));
+      const beaH = (await J(`/api/bkk/admin/members/${BEA}/history`, { headers: ADMIN })).body.consent;
+      ok('...and Admin shows it signed by another name, at an online checkout', beaH && beaH.signed === true && beaH.via === 'checkout-email'
+         && beaH.nameDiffers === true && beaH.signedName === 'Bob Buyer', JSON.stringify(beaH));
+      let rec = null;
+      for (let i = 0; i < 40 && !rec; i++) {
+        rec = require('../mailer.js').outbox.filter(m => m.to === 'bea.owner@example.com' && m.tag === 'receipt').pop();
+        if (!rec) await new Promise(r => setTimeout(r, 50));
+      }
+      ok('the receipt links the agreement and asks the owner to read it', rec && /You agreed to the AYBKK student agreement \(v1\): \S+\/book\?agreement=v1#agreement/.test(rec.text)
+         && rec.text.includes('If someone else bought this for you, please read it before class.'), rec && rec.text);
+
+      // A drop-in for a class: the seat and the consent row come with the one payment.
+      const cls = (await J('/api/bkk/schedule?days=10', { headers: ADMIN })).body.classes
+        .find(c => !c.isOnline && !c.started && c.seatsLeft > 3 && c.date > today);
+      const CAM = await grant('Cam Dropin', 'cam.dropin@example.com', 'unlim1');
+      const d1 = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Cam Dropin', email: 'cam.dropin@example.com',
+        slotId: cls.slotId, date: cls.date, consent: tick({ name: 'Cam Dropin' }) });
+      await SET({ consentMode: 'require' });
+      stubAns = { Status: 'CP', Total: d1.body.order.amount };
+      await post('/api/bkk/pay/postback', { refno: String(d1.body.order.refno) });
+      let dRow = {};
+      for (let i = 0; i < 40 && !dRow.status; i++) {
+        await new Promise(r => setTimeout(r, 50));
+        dRow = await one(`SELECT o.status, o.verified_at, c.created_at AS c_at, c.via, b.booked_at, b.source FROM bkk_orders o
+          LEFT JOIN bkk_consents c ON c.order_id=o.id LEFT JOIN bkk_bookings b ON b.member_id=o.member_id AND b.slot_id=o.slot_id
+            AND b.class_date=o.class_date AND b.status='booked'
+          WHERE o.id=$1 AND o.status='paid'`, [d1.body.order.id]);
+      }
+      ok("the postback in require mode: a paid drop-in's seat and its consent row are written in one transaction",
+         dRow.status === 'paid' && dRow.via === 'checkout-email' && dRow.source === 'order' && !!dRow.booked_at
+           && +new Date(dRow.booked_at) === +new Date(dRow.c_at) && +new Date(dRow.c_at) === +new Date(dRow.verified_at), JSON.stringify(dRow));
+      // An order made while off (no tick) and paid in require: never refused.
+      await SET({ consentMode: 'off' });
+      const DEE = await grant('Dee Offorder', 'dee.offorder@example.com', 'unlim1');
+      const e1 = await post('/api/bkk/orders', { productCode: 'pack8', name: 'Dee Offorder', email: 'dee.offorder@example.com' });
+      const e3 = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Dee Offorder', email: 'dee.offorder@example.com',
+        slotId: cls.slotId, date: cls.date });
+      await SET({ consentMode: 'require' });
+      stubAns = { Status: 'CP', Total: e1.body.order.amount };
+      const e1p = (await J('/api/bkk/pay/check/' + e1.body.order.refno)).body;
+      ok('an order made while off is paid in require: activated, a pass, and nobody marked', e1.status === 200 && e1p.status === 'paid'
+         && (await one(`SELECT count(*)::int AS n FROM bkk_passes WHERE order_id=$1`, [e1.body.order.id])).n === 1 && (await rowsOf(DEE)).length === 0);
+      const e2 = await post('/api/bkk/orders', { productCode: 'pack8', name: 'Dee Offorder', email: 'dee.offorder@example.com' });
+      const fa = await post(`/api/bkk/admin/orders/${e3.body.order.id}/force-activate`, { confirm: true }, ADMIN);
+      ok('...staff Activate on an unsigned drop-in books the seat in require, while a new checkout still asks (409)', e2.status === 409
+         && fa.status === 200 && fa.body.success === true && !!fa.body.booking, JSON.stringify([e2.body, fa.body]));
+    } finally {
+      for (const k of Object.keys(gwEnv)) delete process.env[k];
+      stubSrv.close();
+    }
+
+    // Booking in require.
+    const sched = (await J('/api/bkk/schedule?days=12', { headers: ADMIN })).body.classes
+      .filter(c => !c.isOnline && !c.started && c.seatsLeft > 5 && c.date > today);
+    const X = sched[0], Y = sched.find(c => c.date !== X.date) || sched[1];
+    const EVE = await grant('Eve Unsigned', 'eve.unsigned@example.com', 'pack8');
+    const p0 = await passOf(EVE);
+    const bk = await post('/api/bkk/bookings', { memberCode: EVE, slotId: X.slotId, date: X.date });
+    const p1 = await passOf(EVE);
+    const seatsEve = async () => (await one(`SELECT count(*)::int AS n FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
+      WHERE m.code=$1 AND b.status='booked'`, [EVE])).n;
+    ok('require: an unsigned student booking gets 409 consent, and no seat, no pass clock started, no class used',
+       bk.status === 409 && JSON.stringify(bk.body) === JSON.stringify({ error: 'consent', version: 'v1' }) && await seatsEve() === 0
+         && p0.valid_from === null && p1.valid_from === null && p1.valid_until === null && p1.credits_used === 0 && p0.credits_used === 0, JSON.stringify([bk.body, p1]));
+    const fullD = X.date;
+    await pool.query(`INSERT INTO bkk_class_overrides (slot_id,class_date,capacity) VALUES ($1,$2,0)
+      ON CONFLICT (slot_id,class_date) DO UPDATE SET capacity=0`, [X.slotId, fullD]);
+    const bFull = await post('/api/bkk/bookings', { memberCode: EVE, slotId: X.slotId, date: fullD });
+    await pool.query(`DELETE FROM bkk_class_overrides WHERE slot_id=$1 AND class_date=$2 AND capacity=0`, [X.slotId, fullD]);
+    let moon = today;
+    for (let i = 0; i < 40 && !moonDaysBetween(moon, moon).size; i++) moon = new Date(Date.parse(moon + 'T12:00:00Z') + 864e5).toISOString().slice(0, 10);
+    const moonSlot = (await one(`SELECT id FROM bkk_class_slots WHERE active AND NOT is_online AND weekday=$1 LIMIT 1`,
+      [new Date(moon + 'T12:00:00Z').getUTCDay()])).id;
+    const bMoon = await post('/api/bkk/bookings', { memberCode: EVE, slotId: moonSlot, date: moon });
+    ok('...a full class and a moon day get their own answer, not the agreement', bFull.status === 409 && bFull.body.error === 'class is full'
+       && bMoon.status === 409 && /moon day/.test(bMoon.body.error), JSON.stringify([bFull.body, bMoon.body]));
+    const bStaff = await post('/api/bkk/bookings', { memberCode: EVE, slotId: Y.slotId, date: Y.date }, ADMIN);
+    ok('a staff booking for the unsigned student goes through (x-bkk-key)', bStaff.status === 200 && bStaff.body.success === true, JSON.stringify(bStaff.body));
+    const mc = p => post(`/api/bkk/me/${EVE}/consent`, p);
+    const r404 = await post('/api/bkk/me/BNOBODY000000/consent', tick({ name: 'Nobody Here' }));
+    const rStale = await mc(tick({ name: 'Eve Unsigned', version: 'v0' })), rNoTick = await mc(tick({ name: 'Eve Unsigned', agree: false }));
+    const rShort = await mc(tick({ name: ' E ' })), rLang = await mc(tick({ name: 'Eve Unsigned', lang: 'fr' })), rKind = await mc(tick({ kind: 'photos_public', name: 'Eve Unsigned' }));
+    ok('/me/:code/consent: unknown code 404, stale version 409, no tick 400, a one-letter name 400, an unknown language 400, another kind 400, and nothing saved',
+       r404.status === 404 && rStale.status === 409 && rStale.body.error === 'consent' && rStale.body.version === 'v1' && rNoTick.status === 400
+         && rShort.status === 400 && rLang.status === 400 && rKind.status === 400 && (await rowsOf(EVE)).length === 0,
+       JSON.stringify([rStale.body, rNoTick.body, rShort.body]));
+    const out0 = require('../mailer.js').outbox.length;
+    const rOk = await mc(tick({ name: 'Eve Unsigned', lang: 'ru' })), rAgain = await mc(tick({ name: 'Eve Unsigned', lang: 'ru' }));
+    const eveRows = await rowsOf(EVE);
+    const copy = require('../mailer.js').outbox.slice(out0).filter(m => m.to === 'eve.unsigned@example.com' && m.tag === 'agreement');
+    ok("signing on the student's own phone: 'self', once, however often it is sent, and one copy by email in the language signed",
+       rOk.status === 200 && rOk.body.consent.signed === true && rOk.body.already === false && rAgain.status === 200 && rAgain.body.already === true
+         && eveRows.length === 1 && eveRows[0].via === 'self' && eveRows[0].lang === 'ru' && eveRows[0].text_sha === PINNED.ru[0]
+         && copy.length === 1 && /соглашение ученика AYBKK \(v1\)/.test(copy[0].subject)
+         && copy[0].text.includes(CONSENT_TEXT.v1.ru.agreement.groups[0][1][0]) && copy[0].text.includes('Eve Unsigned'), JSON.stringify([rOk.body, eveRows.length, copy.length]));
+    const bk2 = await post('/api/bkk/bookings', { memberCode: EVE, slotId: X.slotId, date: X.date });
+    ok('...then the same booking goes through', bk2.status === 200 && bk2.body.success === true, JSON.stringify(bk2.body));
+    const meEve = (await J('/api/bkk/me/' + EVE)).body;
+    ok('/me says where the student stands, and nothing more', JSON.stringify(Object.keys(meEve.consent).sort()) === JSON.stringify(['guardianSigned', 'mode', 'signed', 'signedAt', 'under20', 'version'])
+       && meEve.consent.mode === 'require' && meEve.consent.signed === true && meEve.consent.under20 === false && !!meEve.consent.signedAt, JSON.stringify(meEve.consent));
+
+    // ask: checkout asks, booking does not.
+    await SET({ consentMode: 'ask' });
+    const FAY = await grant('Fay Askmode', 'fay.askmode@example.com', 'unlim1');
+    const fb = await post('/api/bkk/bookings', { memberCode: FAY, slotId: Y.slotId, date: Y.date });
+    ok('ask: an unsigned student still books, and /me says not signed', fb.status === 200
+       && (await J('/api/bkk/me/' + FAY)).body.consent.signed === false, JSON.stringify(fb.body));
+
+    // Under 20: a guardian's paper, recorded at the desk.
+    const GIA = await grant('Gia Young', 'gia.young@example.com', 'unlim1');
+    await post(`/api/bkk/me/${GIA}/consent`, tick({ name: 'Gia Young', under20: true, lang: 'th' }));
+    const gH0 = (await J(`/api/bkk/admin/members/${GIA}/history`, { headers: ADMIN })).body.consent;
+    const gS0 = ((await J('/api/bkk/admin/members?q=gia.young', { headers: ADMIN })).body.members || [])[0];
+    const gNo = await post(`/api/bkk/admin/members/${GIA}/guardian`, { name: 'Pat Young', date: today });
+    const gBad = await post(`/api/bkk/admin/members/${GIA}/guardian`, { name: 'Pat Young', date: '2099-01-01' }, ADMIN);
+    const gShort = await post(`/api/bkk/admin/members/${GIA}/guardian`, { name: 'P', date: today }, ADMIN);
+    const gOk = await post(`/api/bkk/admin/members/${GIA}/guardian`, { name: 'Pat Young', date: today }, ADMIN);
+    const gRows = await rowsOf(GIA);
+    ok('under 20: signed, guardian not yet, on the profile and the search card', gH0.signed === true && gH0.under20 === true && gH0.guardianSigned === false
+       && gS0 && gS0.consent.signed === true && gS0.consent.guardianDue === true, JSON.stringify([gH0, gS0 && gS0.consent]));
+    ok("Record guardian needs the staff key, a name and a real day not in the future; then a 'desk' row with the paper's day",
+       gNo.status === 401 && gBad.status === 400 && gShort.status === 400 && gOk.status === 200 && gOk.body.consent.guardianSigned === true
+         && gOk.body.consent.guardianName === 'Pat Young' && gOk.body.consent.guardianOn === today
+         && gRows.length === 2 && gRows[1].kind === 'guardian' && gRows[1].via === 'desk' && gRows[1].guardian_name === 'Pat Young'
+         && ((await J('/api/bkk/admin/members?q=gia.young', { headers: ADMIN })).body.members[0].consent.guardianDue === false), JSON.stringify(gOk.body));
+
+    // The "Not signed" list: a live pass and no signature of this version.
+    const nsl = await J('/api/bkk/admin/members?consent=missing', { headers: ADMIN });
+    const codes = (nsl.body.members || []).map(m => m.code);
+    ok('Not signed: people with a live pass who have not signed, with no search term; never the signed ones', nsl.status === 200
+       && codes.length > 0 && !codes.includes(EVE) && !codes.includes(GIA) && !codes.includes(ADA)
+       && (nsl.body.members || []).every(m => m.consent && m.consent.signed === false), JSON.stringify(codes.length));
+    ok('...it needs the staff key', (await J('/api/bkk/admin/members?consent=missing')).status === 401);
+    ok('...and a search term narrows it', ((await J('/api/bkk/admin/members?consent=missing&q=fay.askmode', { headers: ADMIN })).body.members || [])
+      .map(m => m.code).join() === FAY);
+
+    // Never refused in require: a desk sale, a /teach add (in the door block), a Rezerv import with a seat to come.
+    await SET({ consentMode: 'require' });
+    const sale = await post('/api/bkk/admin/sales', { productCode: 'pack8', name: 'Hal Desksale', email: 'hal.desksale@example.com', method: 'cash' }, ADMIN);
+    ok('a desk sale for someone unsigned is never refused', sale.status === 200 && !!sale.body.order, JSON.stringify(sale.body).slice(0, 200));
+    const rzm = await post('/api/bkk/admin/import/members', { rows: [{ rezervId: 'AG-RZ-1', name: 'Ira Rezervimport', email: 'ira.rz@example.com' }], dryRun: false }, ADMIN);
+    const rzv = await post('/api/bkk/admin/import/visits', { rows: [{ rezervId: 'AG-V-1', memberRezervId: 'AG-RZ-1', date: X.date,
+      time: X.startAt.slice(11, 16), className: X.title, status: 'Booked' }], dryRun: false }, ADMIN);
+    const iraSeat = await one(`SELECT b.status, b.source FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
+      WHERE m.rezerv_id='AG-RZ-1' AND b.class_date=$1`, [X.date]);
+    ok('a Rezerv import with a booked class to come is never refused', rzm.status === 200 && rzv.status === 200 && rzv.body.added === 1
+       && iraSeat.status === 'booked' && iraSeat.source === 'rezerv', JSON.stringify([rzm.body, rzv.body, iraSeat]));
+
+    // A merge of two signed profiles, and its undo.
+    const KIM = await grant('Kim Twice', 'kim.one@example.com', 'unlim1'), KIM2 = await grant('Kim Twice', 'kim.two@example.com', 'unlim1');
+    await post(`/api/bkk/me/${KIM}/consent`, tick({ name: 'Kim Twice' }));
+    await post(`/api/bkk/me/${KIM2}/consent`, tick({ name: 'Kim Twice', lang: 'zh' }));
+    const kimId = (await one('SELECT id FROM bkk_members WHERE code=$1', [KIM])).id, kim2Id = (await one('SELECT id FROM bkk_members WHERE code=$1', [KIM2])).id;
+    const mg = await post(`/api/bkk/admin/members/${KIM}/merge`, { from: KIM2, sure: true }, ADMIN);
+    const onKeep = (await pool.query('SELECT member_id FROM bkk_consents WHERE member_id = ANY($1::int[])', [[kimId, kim2Id]])).rows;
+    ok('a merge of two signed profiles works, both signatures move to the kept one', mg.status === 200 && mg.body.moved.consents === 1
+       && onKeep.length === 2 && onKeep.every(r => r.member_id === kimId), JSON.stringify(mg.body.moved));
+    const um = await post(`/api/bkk/admin/members/${KIM2}/unmerge`, {}, ADMIN);
+    const back = (await pool.query('SELECT member_id, lang FROM bkk_consents WHERE member_id = ANY($1::int[]) ORDER BY id', [[kimId, kim2Id]])).rows;
+    ok('...and its undo puts each back where it was signed', um.status === 200 && back.length === 2 && back[0].member_id === kimId
+       && back[1].member_id === kim2Id && back[1].lang === 'zh', JSON.stringify(back));
+
+    // Counts only: the agreement screen shown and agreed.
+    const ev = await post('/api/bkk/start-event', { page: 'book', kind: 'consent-shown', src: 'buy', lang: 'en' });
+    const ev2 = await post('/api/bkk/start-event', { page: 'book', kind: 'consent-agreed', src: 'buy', lang: 'en' });
+    const evBad = await post('/api/bkk/start-event', { page: 'book', kind: 'view' });
+    const lw = (await J('/api/bkk/admin/landing-weeks', { headers: ADMIN })).body;
+    const bookW = (lw.pages || []).find(p => p.page === 'book');
+    ok('the agreement screen is counted, shown and agreed, in the weekly box for staff', ev.status === 200 && ev2.status === 200 && evBad.status === 400
+       && bookW && bookW.cols.join() === 'consent-shown,consent-agreed' && bookW.weeks[0].n['consent-shown'] >= 1 && bookW.weeks[0].n['consent-agreed'] >= 1,
+       JSON.stringify(bookW && bookW.weeks[0]));
+
+    // Off again: the routes are as before.
+    await SET({ consentMode: 'off' });
+    const offMe2 = (await J('/api/bkk/me/' + EVE)).body;
+    const offH = (await J(`/api/bkk/admin/members/${EVE}/history`, { headers: ADMIN })).body;
+    const offS = ((await J('/api/bkk/admin/members?q=eve.unsigned', { headers: ADMIN })).body.members || [])[0];
+    const offB = await post('/api/bkk/bookings', { memberCode: FAY, slotId: X.slotId, date: X.date });
+    ok('off again: no consent field on /me, the profile or the search card, ?consent=missing lists nobody, and booking is open',
+       !('consent' in offMe2) && !('consent' in offH) && offS && !('consent' in offS) && offB.status === 200
+         && ((await J('/api/bkk/admin/members?consent=missing', { headers: ADMIN })).body.members || []).length === 0, JSON.stringify(offB.body));
+  }
+
   console.log(`\n${PASS} passed, ${FAIL} failed`);
   srv.close(); await pool.end();
   process.exit(FAIL ? 1 : 0);
