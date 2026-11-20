@@ -125,7 +125,7 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
   Optional `ANTHROPIC_API_KEY` sorts each message on arrival and sends hot ones to Boonchu's
   Telegram (`INBOX_AI_MODEL`, default Opus 5.5; `INBOX_AI_DAILY_CAP`, default 150 calls).
   **Real fit** on an In-Depth application is worked out at save time by the one `REAL_FIT` rule in `inbox.js`
-  (now: Primary yes, Mysore and led classes yes, all 30 days on the Chinese list, 4+ mornings, 2+ years; not
+  (now: Primary Series experience yes, a Mysore class before yes, all 30 days on the Chinese list, 4+ mornings, 2+ years; not
   teaching, not the video). The weekly counts (Admin "Landing pages, by week", `/api/bkk/admin/landing-weeks`,
   rows in `bkk_start_events`) hold no personal data, outlive the 90-day purge and stay staff only. A `?src=` or
   `?for=` code names a channel, post or headline, never a person (no names, phones or IDs in a link).

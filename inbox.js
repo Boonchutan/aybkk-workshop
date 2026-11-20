@@ -166,7 +166,7 @@ const REAL_FIT = { primary: 'yes', rooms: 'yes', dates: 'yes', mornings: 4, year
 // sent and fit counts, so the weekly box can tell a week counted under an earlier rule.
 const REAL_FIT_ID = 'r' + crypto.createHash('sha256').update(JSON.stringify(Object.entries(REAL_FIT).sort())).digest('hex').slice(0, 8);
 // How the row text names each part of the rule.
-const FIT_SAY = { primary: 'Primary by heart', rooms: 'Mysore and led classes', dates: 'all 30 days',
+const FIT_SAY = { primary: 'Primary Series experience', rooms: 'Mysore class before', dates: 'all 30 days',
   mornings: 'mornings a week', years: 'years of Ashtanga' };
 // The landing page each list's form sits on, as bkk_start_events names it (bkk-api.js).
 const LIST_PAGE = { 'gen3-zh': { page: 'in-depth-zh', lang: 'zh' }, 'priority-en': { page: 'in-depth-en', lang: 'en' } };
@@ -369,8 +369,8 @@ function applicationText(a) {
     `Contact: ${a.contact}`,
     `Country: ${a.country}`,
     `Call in: ${SAY.call_lang[a.call_lang]}`,
-    `Primary Series by heart: ${SAY.primary[a.primary]}`,
-    `Practised in Mysore and led classes: ${SAY.rooms[a.rooms]}`,
+    `Primary Series experience: ${SAY.primary[a.primary]}`,
+    `Practised in a Mysore class before: ${SAY.rooms[a.rooms]}`,
     a.dates ? `All 30 days in person: ${SAY.dates[a.dates]}` : null,
     `Years of Ashtanga: ${a.years}`,
     `Mornings a week now: ${a.mornings}`,

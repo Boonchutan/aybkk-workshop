@@ -242,6 +242,10 @@ const alerts = [];
     /^In-Depth Mysore application, list gen3-zh \(Generation #3, the private Chinese page\)\n/.test(ap[0].text) &&
     /All 30 days in person: yes/.test(ap[0].text) && /Series now: Intermediate/.test(ap[0].text) && /Why this course, and why now:\nI want to understand/.test(ap[0].text) &&
     /Practice video:\nhttps:\/\/youtu.be\/abc123/.test(ap[0].text) && !/Pain or injury/.test(ap[0].text));
+  // The entry bar from 18 Nov 2026: experience with the full Primary Series, and a Mysore class before.
+  ok('the two entry answers are named in the bar\'s words, never "by heart" or led classes',
+    /\nPrimary Series experience: yes\nPractised in a Mysore class before: yes\n/.test(ap[0].text)
+    && !/by heart|led class/i.test(ap[0].text), ap[0].text.split('\n').slice(5, 9).join(' | '));
   ok('marked hot without an AI call, with the list stored', ap[0].triage && ap[0].triage.lane === 'hot' &&
     ap[0].triage.list === 'gen3-zh' && /list gen3-zh/.test(ap[0].triage.summary) && aiCalls.length === aiBefore);
   const ping = alerts[alerts.length - 1] || '';
@@ -298,8 +302,8 @@ const alerts = [];
   await fails(good({ mornings: '8' }), 400, 'mornings', '8 mornings a week → 400');
   await fails(good({ years: '61' }), 400, 'years', '61 years → 400');
   for (const k of ['contact', 'why', 'stuck']) await fails(good({ [k]: '  ' }), 400, k, `an empty ${k} → 400`);
-  await fails(good({ primary: 'not_yet' }), 422, 'primary', 'Primary not yet by heart → 422, below the bar');
-  await fails(good({ rooms: 'not_yet' }), 422, 'rooms', 'no Mysore or led classes yet → 422');
+  await fails(good({ primary: 'not_yet' }), 422, 'primary', 'no experience with the full Primary Series yet → 422, below the bar');
+  await fails(good({ rooms: 'not_yet' }), 422, 'rooms', 'not yet in a Mysore class → 422');
   await fails(good({ dates: 'no' }), 422, 'dates', 'cannot come all 30 days → 422');
   const noDates = good(); delete noDates.dates;
   await fails(noDates, 400, 'dates', 'Generation #3 without the dates answer → 400');
