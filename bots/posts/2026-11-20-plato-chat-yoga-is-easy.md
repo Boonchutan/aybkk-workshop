@@ -21,3 +21,16 @@ Script (v1, sent to Boonchu):
 0:30 "Come to AYBKK. Put your mat next to them... you will know how."
 0:33 close "So... who you practise next to?" แล้วเจอกันครับ
 Edits to his text: line 1 split into hook + double hook; lines 2-3 word for word; "Or" dropped (no first option); "Put your mat next to them" added so "how" means something; the secret is paid on camera (no fake loop).
+
+## v2 (Boonchu: "Something that teacher shape them to become") — the secret is the teacher's shaping, not "no secret"
+0:15 OL "There must be some secret!"  (1 s quiet)
+0:17 P "Yes. But not a trick."
+0:18 "Every morning, a teacher shape them."
+0:20 "For years."
+0:21 "Into what you see now."
+0:23 "Next to them, you learn just by watching."
+0:25 "Even how to stay."
+0:26 "Miss one day? Teacher notice."
+0:28 "Time, you cannot skip. The room... you can choose."
+0:31 "Come to AYBKK. Put your mat next to them... you will know how."
+0:34 close "So... who shape your practice now?" แล้วเจอกันครับ
