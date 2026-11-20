@@ -34,3 +34,15 @@ Edits to his text: line 1 split into hook + double hook; lines 2-3 word for word
 0:28 "Time, you cannot skip. The room... you can choose."
 0:31 "Come to AYBKK. Put your mat next to them... you will know how."
 0:34 close "So... who shape your practice now?" แล้วเจอกันครับ
+
+## v3 (Boonchu: "Your script is not a human talk.") — plain talk
+Yoga is easy.
+Really. The hard part is... you must spend time doing it.
+And nobody has time, right? So we all look for a shortcut.
+OK... there is one.
+Go where there's many good practitioners.
+You watch them, and you think... there must be some secret!
+Yes, there is.
+A teacher shaped them. Every morning, for years.
+They didn't get there alone.
+So come to AYBKK. You will know how.
