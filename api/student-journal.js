@@ -25,6 +25,17 @@ function siteOrigin(req) {
   return `${proto}://${host}`;
 }
 
+// A Bangkok journal (bkk-…) is named by its aybkk.net profile, which staff can
+// rename (Admin, Change name); the Neo4j node only kept the first name it got.
+async function liveBkkName(req, id) {
+  if (!req.pg || !/^bkk-/.test(String(id || ''))) return null;
+  try {
+    const r = await req.pg.query(`SELECT coalesce(k.name, m.name) AS name FROM bkk_members m
+      LEFT JOIN bkk_members k ON k.id = m.merged_into WHERE m.journal_id = $1 ORDER BY m.merged_into NULLS FIRST LIMIT 1`, [id]);
+    return (r.rows[0] && r.rows[0].name) || null;
+  } catch (_) { return null; }
+}
+
 // Debug: test route
 router.get('/_test', (req, res) => {
   res.json({ ok: true, routes: router.stack.map(l => l.route?.path).filter(Boolean) });
@@ -163,10 +174,14 @@ router.post('/checkin', async (req, res) => {
       checkedInAt: now
     });
 
+    const live = await liveBkkName(req, student.properties.id);
+    if (live && live !== student.properties.name) {
+      await session.run('MATCH (s:Student {id: $id}) SET s.name = $name', { id: student.properties.id, name: live });
+    }
     res.json({ 
       success: true, 
       checkinId,
-      studentName: student.properties.name,
+      studentName: live || student.properties.name,
       checkedInAt: now
     });
   } catch (error) {
@@ -366,7 +381,7 @@ router.get('/student/:id', async (req, res) => {
 
     res.json({
       id: s.id,
-      name: s.name,
+      name: (await liveBkkName(req, s.id)) || s.name,
       lineId: s.lineId,
       wechatId: s.wechatId,
       photoUrl: s.photoUrl || null,
