@@ -8378,10 +8378,10 @@ const ok = (name, cond, extra = '') => {
 
     // The wording: pinned, and what a page is served is what is pinned.
     const PINNED = {
-      en: ['a614250ae432d419f7ac3d112fb84f1163674a2db9a69f647f4aedf144ab4615', 'f43f7c1cd0033236d4915f1d335be90e8b2f437b2f3975b51bd9d3a8ab940ce9'],
-      th: ['a97fea893cb48001f563c8333b207c4475da30b4fc88e4e6e75ec5c4e95ebc10', 'a77ce2e588c4df1d6cdd60152f5b0f8c466a134e040de31c55b1d0fed7052dd0'],
-      zh: ['418f17a9feadc0e3dfa8f07ac9e4859535846cf4b6c3733b172bce916f8e51bb', '33078effeda9943573a1b4a071e9f4a461efcd920c9ebdec08e4a388bfe325fb'],
-      ru: ['beedd55f21b815dfad2fc49ace2ee016350bf20b6aebc4b064bea2d39710b7e6', '62f01e664e62f8e366e133d95b2545c6c1bf6fdfc419af1e68c7becbe827e233'],
+      en: ['f5e5e04d53f70d5ca11548b68fe95389b57fb43e3ef3147b488009968f9919cb', '2ecd21d65cf15328969e5d36340ab649a9022bece07df4a344c5344069f30016'],
+      th: ['fa6ee2d1b3144e0229ef6410d6539d745473c86d6498150859efc3968fb7a6d2', 'cb1621b669d7e7e7178019a0585cc40c3e38c131762c233a22f4851c24b825c0'],
+      zh: ['4634fa6fe518961986cbf6a9caf1459e8bb0f2b3ed98dce6ec9ff40048b97b6b', '2f6e8618cd17bf35b8bacfa44d3408e07d7d51d8833e7b3a30e9b5dedcb4e0a5'],
+      ru: ['32ba4875bcecd36c8db1cd81b36b2fcc0835ed09406d2a458660a04b2f2ac7de', '2e7a8bce0b0259e32b290eb66054e8ed3ff082574d7bf54d8eff5fe563d8ce34'],
     };
     ok('v1 is the current version, in exactly these 4 languages', CONSENT_VERSION === 'v1' && Object.keys(CONSENT_TEXT.v1).join() === 'en,th,zh,ru');
     for (const [l, [a, pv]] of Object.entries(PINNED)) {
@@ -8401,12 +8401,23 @@ const ok = (name, cond, extra = '') => {
         const ls = CONSENT_TEXT.v1[l].agreement.groups[2][1], p = pol[l];
         return ls[1] === p['2a'] + p['2b'] && ls[2] === p['4a'] + p['4b'] && ls[3] === p['3a'] + p['3b'];
       }), JSON.stringify(pol.zh));
+      // Line 11's towels (draft 3, 20 Nov 2026) open the page's "Your first class" line too, and no longer say bring one.
+      const f3 = [...html.matchAll(/\bf3: '([^']*)'/g)].map(m => m[1]);
+      const fallback = (/<li[^>]*id="fst3"[^>]*>([^<]*)<\/li>/.exec(html) || [])[1];
+      const towels = { en: /^[^.]*\. /, th: /^\S+ /, zh: /^[^。]*。/, ru: /^[^.]*\. / };
+      ok("line 11's towel sentence opens the first-class line (f3), in all 4 languages and the page's own English",
+        f3.length === 4 && ['en', 'th', 'zh', 'ru'].every((l, i) => {
+          const first = (towels[l].exec(CONSENT_TEXT.v1[l].agreement.groups[1][1][4]) || [''])[0];
+          return first.length > 8 && f3[i].startsWith(first) && !/a towel|และผ้าเช็ดตัวมาเอง|和毛巾|и полотенце или/.test(f3[i]);
+        }) && fallback === f3[0], JSON.stringify(f3.map(x => x.slice(0, 50))));
     }
     // The privacy notice names every service the code hands personal data to (inbox.js, team-brief.js,
-    // server.js included), and the messages and orientation answers kept.
-    ok('the privacy notice names every service that handles the data, in every language', ['en', 'th', 'zh', 'ru'].every(l => {
+    // server.js included: Neo4j keeps orientation forms and journals, OpenRouter writes the staff AI summary
+    // of a journal), and the messages, orientation answers and practice journal kept.
+    ok('the privacy notice names every service that handles the data, and the practice journal, in every language', ['en', 'th', 'zh', 'ru'].every(l => {
       const txt = CONSENT_TEXT.v1[l].privacy.sections.map(x => x[1]).join(' ');
-      return ['PaySolutions', 'Resend', 'Cloudinary', 'Google', 'Railway', 'Telegram', 'LINE', 'Meta', 'Instagram', 'Facebook', 'Anthropic', 'Neo4j', 'IP', '90']
+      return ['PaySolutions', 'Resend', 'Cloudinary', 'Google', 'Railway', 'Telegram', 'LINE', 'Meta', 'Instagram', 'Facebook', 'Anthropic', 'Neo4j',
+        'OpenRouter', 'DeepSeek', 'IP', '90', { en: 'practice journal', th: 'บันทึกการฝึก', zh: '练习日记', ru: 'дневник практики' }[l]]
         .every(w => txt.includes(w));
     }));
     const throwsWith = (fn, re) => { try { fn(); return false; } catch (e) { return re.test(e.message); } };

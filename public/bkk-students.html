@@ -250,7 +250,7 @@
   <div class="subtitle">Daily journal links — existing Reserv students + new walk-ins</div>
   <div class="row">
     <button class="refresh-btn" onclick="loadStudents()">↻ Refresh</button>
-    <a class="new-btn" href="/orientation-bkk.html" target="_blank">+ New student orientation</a>
+    <a class="new-btn" id="newStudent" href="/orientation-bkk.html" target="_blank">+ New student orientation</a>
   </div>
   <div class="row">
     <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All</button>
@@ -385,6 +385,13 @@
     }
 
     loadStudents();
+    // While the student agreement is on, /orientation-bkk.html goes to /book: a new student is added in Admin.
+    fetch('/api/bkk/consent').then(r => (r.ok ? r.json() : null)).then(c => {
+      if (!c || typeof c.mode !== 'string' || c.mode === 'off') return;
+      const a = document.getElementById('newStudent');
+      a.href = '/bkk-admin.html';
+      a.textContent = '+ New student: add in Admin, then Show QR';
+    }).catch(() => {});
   </script>
 </body>
 </html>

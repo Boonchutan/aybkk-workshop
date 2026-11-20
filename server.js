@@ -132,6 +132,20 @@ const jsonBody = express.json({ limit: '10mb', verify: (req, res, buf) => {
 app.use((req, res, next) => APPLY_PATH_RE.test(req.path) || LEAD_PATH_RE.test(req.path)
   ? next() : jsonBody(req, res, next));
 app.use(staffFiles);
+// The old Bangkok orientation form (/bkk) and its "not liable" waiver give way to the student
+// agreement: while it is on (bkk-api.js consent_mode ask or require), new students start on /book,
+// with no query string carried over. Before the static files, read as express.static reads the
+// path, so /orientation-bkk.html goes the same way. Off, no Bangkok database, or one that does not
+// answer within 1.5 s (bkk-api.js consentModeSoon): the form as before.
+const OLD_BKK_FORM = /^\/(bkk\/?|orientation-bkk\.html)$/i;
+app.use((req, res, next) => {
+  const mode = req.app.locals.bkkConsentMode;
+  if ((req.method !== 'GET' && req.method !== 'HEAD') || typeof mode !== 'function') return next();
+  let p;
+  try { p = path.posix.normalize(decodeURIComponent(req.path)); } catch { return next(); }
+  if (!OLD_BKK_FORM.test(p)) return next();
+  mode().then(m => (m === 'off' ? next() : res.redirect(302, '/book')), () => next());
+});
 // The door tablet (/tablet, 17 Nov 2026) talks to this site only: names on it come
 // from public order forms, so nothing it shows may load or send anything elsewhere.
 // no-cache: the page asks for its own headers to see a newer copy.
@@ -246,7 +260,7 @@ const ORIENTATION_SHORTCUTS = {
   oct: 'october-tour.html',
   aybkkoct26tour: 'october-tour.html',
 };
-// Bangkok shala: timetable, packages, booking. ('/bkk' is the orientation form.)
+// Bangkok shala: timetable, packages, booking. ('/bkk' is the orientation form, sent to /book while the agreement is on.)
 const PAGE_SHORTCUTS = { book: 'bkk.html', shala: 'bkk.html', booking: 'bkk.html',
   door: 'bkk-door.html', teach: 'bkk-teacher.html', photos: 'bkk-photos.html', start: 'start.html', partner: 'partner.html',
   tablet: TABLET_FILE };
