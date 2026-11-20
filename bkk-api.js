@@ -5585,6 +5585,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     return crypto.timingSafeEqual(Buffer.from(knownSig(sec, m[1], m[2])), Buffer.from(m[3])) ? Number(m[1]) : null;
   };
   app.use('/api/bkk/teacher', async (req, res, next) => {
+    res.set('Cache-Control', 'private, no-store');
     const key = req.headers['x-teacher-key'];
     if (!key) return next();
     let t = null;
@@ -5639,7 +5640,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       // Opened from today's list (a ref): the member code stays off the answer.
       res.json({
         member: { ...(byRef ? {} : { code: m.code }), ref: memberRef(await serverSecret(), m.id),
-          name: m.name, email: m.email, phone: m.phone, journalId: await journalId(m) },
+          name: m.name, email: m.email, phone: m.phone, photo: faceSmall(m.photo_id, m.code), journalId: await journalId(m) },
         passes: passes.rows, notes: notes.rows, recent: recent.rows,
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
@@ -5672,13 +5673,14 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // this member is live today (PASS_LIVE_ON over all of them, so a pause that has
   // ended or a Rezerv twin that came back is not flagged); a Rezerv seat says
   // Rezerv instead. added: put on by /teach today, so /teach can take it off.
+  // photo: the small signed face link, or null.
   app.get('/api/bkk/teacher/today', async (req, res) => {
     const t = await teacherFrom(req);
     if (!t) return res.status(401).json({ error: 'bad passcode' });
     try {
       const today = bkkToday();
       const [r, sec, classes] = await Promise.all([q(
-        `SELECT b.id AS booking_id, b.member_id, m.name, s.title, s.id AS slot_id, s.is_online, b.start_at, b.checked_in_at,
+        `SELECT b.id AS booking_id, b.member_id, m.name, m.code, m.photo_id, s.title, s.id AS slot_id, s.is_online, b.start_at, b.checked_in_at,
            b.cover, b.checkin_via, b.checkin_by,
            coalesce(b.source = 'teacher' AND (b.booked_at AT TIME ZONE 'Asia/Bangkok')::date = $1::date, false) AS added,
            (b.cover IS DISTINCT FROM 'rezerv' AND NOT EXISTS (SELECT 1 FROM bkk_passes p
@@ -5701,8 +5703,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       for (const b of r.rows) times.set(b.member_id, [...(times.get(b.member_id) || []), [b.booking_id, bkkHm(new Date(b.start_at).getTime())]]);
       res.json({
         date: today, classes,
-        students: r.rows.map(({ member_id, booking_id, slot_id, is_online, checkin_via, checkin_by, check_pass, ...s }) => ({
-          ...s, ref: memberRef(sec, member_id), bookingId: booking_id, slotId: slot_id, isOnline: is_online,
+        students: r.rows.map(({ member_id, booking_id, slot_id, is_online, checkin_via, checkin_by, check_pass, code, photo_id, ...s }) => ({
+          ...s, photo: faceSmall(photo_id, code), ref: memberRef(sec, member_id), bookingId: booking_id, slotId: slot_id, isOnline: is_online,
           checkinVia: checkin_via, checkinBy: checkin_by, rezerv: s.cover === 'rezerv', checkPass: check_pass,
           alsoAt: times.get(member_id).filter(x => x[0] !== booking_id).map(x => x[1]) })),
       });
@@ -6288,7 +6290,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // and works for 6 to 12 hours, the same link all the while so browsers cache it.
   // The member code is signed in as well (it is not in the link), so when staff
   // sign a profile out everywhere, the new code stops every link given out before.
-  // Only /me (the member code) and the staff lists (admin key) hand links out.
+  // /me (the member code) and the staff lists (admin key) hand links out, and so
+  // do the check-in screens: Boonchu asked students to add a photo for check-in,
+  // so a photo in a profile is shown there (20 Nov 2026). /teach (teacher
+  // passcode) gets the small link for any student it opens (today's list, the
+  // search, a typed code). The door tablet (door key) gets, for today's open
+  // seats only, a link of its own (d): it names the tablet and ends with the
+  // class, so it stops when the class ends and at once when the tablet is unpaired.
   const FACE_FOLDER = 'aybkk-profile';
   const FACE_MAX_BYTES = 6 * 1024 * 1024;
   const FACE_PER_DAY = 10;
@@ -6296,19 +6304,23 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   const FACE_SIZES = {
     s: { width: 160, height: 160, crop: 'fill', gravity: 'face', quality: 'auto', fetch_format: 'jpg' },
     l: { width: 600, height: 600, crop: 'fill', gravity: 'face', quality: 'auto', fetch_format: 'jpg' },
+    // The door's: sharp in the 150 px "Is this you?" circle on the tablet's 2x screen.
+    d: { width: 320, height: 320, crop: 'fill', gravity: 'face', quality: 'auto', fetch_format: 'jpg' },
   };
   const FACE_STEP = 6 * 3600;
   const FACE_KEY = crypto.createHash('sha256').update('aybkk-face:' + (process.env.CLOUDINARY_API_SECRET
     || ADMIN_KEY || crypto.randomBytes(32).toString('hex'))).digest();
   const faceSig = s => crypto.createHmac('sha256', FACE_KEY).update(s).digest('base64url').slice(0, 22);
   const faceRef = photoId => String(photoId).split('/').pop();
-  const faceUrl = (photoId, code, size) => {
-    const s = `${faceRef(photoId)}.${size}.${(Math.floor(nowMs() / 1000 / FACE_STEP) + 2) * FACE_STEP}`;
+  const faceSign = (photoId, kind, exp, code) => {
+    const s = `${faceRef(photoId)}.${kind}.${exp}`;
     return `/api/bkk/face/${s}.${faceSig(`${s}.${code}`)}`;
   };
+  const faceUrl = (photoId, code, size) => faceSign(photoId, size, (Math.floor(nowMs() / 1000 / FACE_STEP) + 2) * FACE_STEP, code);
   const faceLinks = (photoId, code) => photoId && cloudinary
     ? { small: faceUrl(photoId, code, 's'), large: faceUrl(photoId, code, 'l') } : null;
   const faceSmall = (photoId, code) => photoId && cloudinary ? faceUrl(photoId, code, 's') : null;
+  const doorFace = (photoId, code, dev, endMs) => photoId && cloudinary ? faceSign(photoId, `d${dev}`, Math.ceil(endMs / 1000), code) : null;
   const destroyFace = async id => {
     try {
       if (!cloudinary) throw new Error('photo storage not configured');
@@ -6403,22 +6415,27 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
 
   // The link itself is the key: an <img> sends no header. A removed or
   // replaced photo stops at once, whatever its links say, and so does every
-  // link from before the member code changed.
+  // link from before the member code changed. A door link (d<tablet>) ends on
+  // the class clock, and stops once that tablet is unpaired.
   app.get('/api/bkk/face/:t', async (req, res) => {
-    const m = /^([0-9a-f]{24})\.([sl])\.(\d{9,11})\.([\w-]{22})$/.exec(req.params.t);
+    const m = /^([0-9a-f]{24})\.([sl]|d[1-9]\d{0,8})\.(\d{9,11})\.([\w-]{22})$/.exec(req.params.t);
     if (!m) return res.status(404).json({ error: 'not found' });
-    const [, ref, size, exp, sig] = m;
+    const [, ref, kind, exp, sig] = m;
+    const door = kind[0] === 'd';
     if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
     try {
       const row = (await q('SELECT photo_id, code FROM bkk_members WHERE photo_id = ANY($1::text[]) LIMIT 1',
         [[`${FACE_FOLDER}/${ref}`, ref]])).rows[0];
       if (!row) return res.status(404).json({ error: 'not found' });
-      const want = Buffer.from(faceSig(`${ref}.${size}.${exp}.${row.code}`)), got = Buffer.from(sig);
+      const want = Buffer.from(faceSig(`${ref}.${kind}.${exp}.${row.code}`)), got = Buffer.from(sig);
       if (want.length !== got.length || !crypto.timingSafeEqual(want, got)) return res.status(403).json({ error: 'bad link' });
-      const left = Number(exp) - Math.floor(nowMs() / 1000);
+      const left = Number(exp) - Math.floor((door ? bkkNow().getTime() : nowMs()) / 1000);
       if (left <= 0 || left > 2 * FACE_STEP) return res.status(410).json({ error: 'link expired' });
+      if (door && !(await q('SELECT 1 FROM bkk_door_devices WHERE id=$1 AND revoked_at IS NULL', [Number(kind.slice(1))])).rows.length) {
+        return res.status(410).json({ error: 'link expired' });
+      }
       const r = await httpFetch(cloudinary.url(row.photo_id, { type: 'authenticated', sign_url: true, secure: true,
-        transformation: [FACE_SIZES[size]] }), { signal: AbortSignal.timeout(15000) });
+        transformation: [FACE_SIZES[kind[0]]] }), { signal: AbortSignal.timeout(15000) });
       const buf = r.ok ? Buffer.from(await r.arrayBuffer()) : null;
       const type = buf && sniff(buf);
       if (!type) return res.status(r.status === 404 ? 404 : 502).json({ error: 'photo not available' });
@@ -6791,7 +6808,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // and those routes take nothing else. What it sees: "Name L." for the seats of
   // today's in-person classes whose window is open (start minus DOOR_EARLY_MIN
   // until the class ends), each with a signed handle for that seat and device,
-  // and whether it is checked in. No code, email, phone, pass or price.
+  // and whether it is checked in. A student with a profile photo also gets a
+  // face link (f) for that tablet that ends with the class (doorFace). No code,
+  // email, phone, pass or price.
   const DOOR_EARLY_MIN = 60;
   const DOOR_PAIR_MIN = 10;
   const DOOR_ALPHABET = 'ACDEFHJKMNPRTVWXY34679';   // no O/0, I/1/L, S/5, Z/2, B/8, G/6, U/V
@@ -6898,7 +6917,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     let next = null;
     for (let i = 0; i <= 7 && !next; i++) next = on(addDay(today, i)).find(c => c.opens > nowMs) || null;
     const seats = live.length ? (await db.query(
-      `SELECT b.id, b.member_id, b.slot_id, b.checked_in_at, m.name FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
+      `SELECT b.id, b.member_id, b.slot_id, b.checked_in_at, m.name, m.code, m.photo_id FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
        WHERE b.class_date=$1::date AND b.status='booked' AND b.slot_id = ANY($2::int[])`, [today, live.map(c => c.slot.id)])).rows : [];
     return { nowMs, today, moon: moons.has(today), live, seats, next };
   }
@@ -7036,10 +7055,11 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (!st.live.length) return res.json(out);
       const [k, names] = [await doorKeys(), doorNames(st.seats)];
       const cls = new Map(st.live.map(c => [c.slot.id, c]));
-      const seats = st.seats.map(s => ({ id: s.id, ...names.get(s.id), c: cls.get(s.slot_id), at: s.checked_in_at }))
+      const seats = st.seats.map(s => ({ id: s.id, ...names.get(s.id), c: cls.get(s.slot_id), at: s.checked_in_at,
+        f: doorFace(s.photo_id, s.code, dev.id, cls.get(s.slot_id).end) }))
         .sort((a, b) => a.n.localeCompare(b.n, 'en') || a.id - b.id)
         .map(s => ({ t: sealSeat(k, s.id, dev.id, s.c.end), n: s.n, in: !!s.at, at: s.at ? bkkHm(new Date(s.at).getTime()) : null, c: bkkHm(s.c.start),
-          ...(s.same ? { same: true } : {}) }));
+          ...(s.f ? { f: s.f } : {}), ...(s.same ? { same: true } : {}) }));
       res.json({ classes: st.live.map(c => ({ title: c.slot.title, start: bkkHm(c.start), end: bkkHm(c.end) })), seats, ...out });
     } catch (e) {
       console.error('[bkk door] now failed:', e.message);

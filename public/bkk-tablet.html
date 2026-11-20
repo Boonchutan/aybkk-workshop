@@ -70,8 +70,13 @@
   .tile{position:relative;min-height:176px;min-width:0;border-radius:18px;border:1px solid var(--line);background:var(--paper);
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:18px 10px;cursor:pointer;text-align:center}
   .tile:active{background:var(--paper2)}
-  .ini{width:84px;height:84px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-    font-family:'Work Sans',sans-serif;font-weight:700;font-size:32px;color:#17121a;flex:none}
+  .ini{position:relative;overflow:hidden;width:84px;height:84px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-family:'Work Sans',sans-serif;font-weight:700;font-size:32px;color:#17121a;flex:none;background:var(--tone)}
+  /* The student's photo over the initials, drawn only once it has loaded. Once
+     it has faded in, the tone goes (lit), or its edge shows as a thin ring. */
+  .ini img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border-radius:50%;opacity:0;transition:opacity .2s}
+  .ini img.on{opacity:1}
+  .ini.lit{background:none}
   .tile .nm{font-size:23px;font-weight:600;line-height:1.2;max-width:100%;overflow-wrap:anywhere}
   .tile .at{position:absolute;top:10px;left:12px;font-size:14px;color:var(--soft)}
   .tile.in{border-color:rgba(61,220,151,.45);background:#18131c}
@@ -357,7 +362,8 @@
   // ── pairing: this tablet shows a code, staff type it in Admin ─────────────
   function unpaired() {
     KEY = ''; store.del(KEY_NAME);
-    DATA = null; PENDING = null; DONE = {}; closeOverlays();
+    DATA = null; PENDING = null; DONE = {}; FACES = {}; closeOverlays();
+    $('#grid').textContent = ''; $('#cIni').textContent = ''; $('#cWho').textContent = '';
     clearTimeout(timers.load);
     setOffline(false);
     setLang(null);
@@ -442,6 +448,9 @@
   var busy = function () { return !!OPEN || Date.now() - lastTouch < 5000; };
   function take(d) {
     if (!d.classes) DONE = {};
+    var keep = {};
+    (d.seats || []).forEach(function (s) { if (s.f) keep[faceKey(s.f)] = true; });
+    Object.keys(FACES).forEach(function (k) { if (!keep[k]) delete FACES[k]; });
     (d.seats || []).forEach(function (s) { if (!s.in && DONE[s.t]) { s.in = true; s.at = DONE[s.t]; } });
     DATA = d; PENDING = null; render();
   }
@@ -474,6 +483,59 @@
     var first = function (w) { var c = Array.from(w.replace(/^[เ-ไ]+/, '')); return c.length ? c[0] : ''; };
     return ((ws[0] ? first(ws[0]) : '') + (ws.length > 1 ? first(ws[1]) : '')).toUpperCase();
   }
+  // A student's profile photo (f) over their initials, in the tile and on "Is
+  // this you?" (Boonchu, 20 Nov 2026). Each <img> is kept and moved into the
+  // new tile on every repaint, so a photo never blinks and stays on screen with
+  // no internet. One that fails to load is taken out (the initials show) and
+  // that link is tried again a minute later. Kept by the photo's id, the first
+  // part of the link: the link ends with its class, so a student on two classes
+  // has two, and the photo on screen stays until a new link has loaded. slot:
+  // one <img> per tile of that student, and 'c' for "Is this you?".
+  var FACES = {};
+  var faceKey = function (src) { return String(src).split('/').pop().split('.')[0]; };
+  function nextFace(f, slot, old, src) {
+    if (!old.className) { old.src = src; return; }
+    if (old.nextSrc === src) return;
+    old.nextSrc = src;
+    var img = document.createElement('img');
+    img.alt = '';
+    img.onload = function () {
+      img.className = 'on';
+      if (f.imgs[slot] !== old) return;
+      f.imgs[slot] = img;
+      if (old.parentNode) old.parentNode.replaceChild(img, old);
+    };
+    img.src = src;
+  }
+  function faceImg(src, slot) {
+    var k = faceKey(src);
+    var f = FACES[k] || (FACES[k] = { imgs: {}, bad: {} });
+    if (f.bad[src] && Date.now() - f.bad[src] < 60000) return null;
+    var img = f.imgs[slot];
+    if (img) { if (img.getAttribute('src') !== src) nextFace(f, slot, img, src); return img; }
+    img = document.createElement('img');
+    img.alt = '';
+    img.onload = function () {
+      img.className = 'on';
+      setTimeout(function () { if (img.parentNode && img.className === 'on') img.parentNode.classList.add('lit'); }, 250);
+    };
+    img.onerror = function () {
+      f.bad[img.getAttribute('src')] = Date.now();
+      if (f.imgs[slot] === img) delete f.imgs[slot];
+      if (img.parentNode) { img.parentNode.classList.remove('lit'); img.parentNode.removeChild(img); }
+    };
+    img.src = src;
+    if (img.complete && img.naturalWidth) img.className = 'on';
+    f.imgs[slot] = img;
+    return img;
+  }
+  function paintIni(box, s, slot) {
+    box.textContent = initials(s.n);
+    box.style.setProperty('--tone', tone(s.n));
+    var img = s.f ? faceImg(s.f, slot) : null;
+    box.classList.toggle('lit', !!img && img.className === 'on');
+    if (img) box.appendChild(img);
+  }
   function paintList() {
     if (!DATA || !DATA.classes) return;
     var head = $('#classes');
@@ -497,12 +559,14 @@
       grid.appendChild(p);
       return;
     }
+    var used = {};
     DATA.seats.forEach(function (s) {
       var b = el('button', 'tile' + (s.in ? ' in' : ''));
       b.type = 'button';
       b.setAttribute('data-t', s.t);
-      var ini = el('span', 'ini', initials(s.n));
-      ini.style.background = tone(s.n);
+      var ini = el('span', 'ini'), k = s.f ? faceKey(s.f) : '';
+      if (k) used[k] = (used[k] || 0) + 1;
+      paintIni(ini, s, 'g' + (k ? used[k] : 0));
       ini.setAttribute('aria-hidden', 'true');
       b.appendChild(ini);
       b.appendChild(el('span', 'nm', s.n));
@@ -548,8 +612,7 @@
   }
   function paintConfirm() {
     var s = OPEN.seat, q = w('q');
-    $('#cIni').textContent = initials(s.n);
-    $('#cIni').style.background = tone(s.n);
+    paintIni($('#cIni'), s, 'c');
     $('#cQ').textContent = q[0];
     $('#cQ2').textContent = q[1] || '';
     $('#cWho').textContent = s.n;
