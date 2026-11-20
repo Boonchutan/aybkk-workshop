@@ -7789,6 +7789,107 @@ const ok = (name, cond, extra = '') => {
       await pool.query(`UPDATE bkk_door_devices SET revoked_at=now() WHERE name='Names' AND revoked_at IS NULL`);
     }
 
+    // ── faces on the tablet and on /teach (Boonchu, 20 Nov 2026) ──
+    // A second door server with photo storage; each face it fetches answers with
+    // its own Cloudinary link inside a JPEG, so a test can see whose face it is.
+    {
+      const appF = express();
+      appF.use(express.json());
+      const faceFetch = async url => String(url).startsWith('signed://')
+        ? new Response(Buffer.concat([Buffer.from([0xFF, 0xD8, 0xFF, 0xE0]), Buffer.from(String(url))]), { status: 200 }) : fakeFetch(url);
+      await mountBkk(appF, { pgPool: pool, now, clock: () => cc, cloudinary: fakeCloud, fetch: faceFetch });
+      const srvF = appF.listen(0);
+      const BF = `http://127.0.0.1:${srvF.address().port}`;
+      const JF = async (path, o = {}) => {
+        const r = await fetch(BF + path, o);
+        const buf = Buffer.from(await r.arrayBuffer()), raw = buf.toString('latin1');
+        let body = {};
+        try { body = JSON.parse(buf.toString('utf8')); } catch (_) {}
+        return { status: r.status, body, raw: buf.toString('utf8'), bytes: raw, type: r.headers.get('content-type') };
+      };
+      const getF = (p, h = {}) => JF(p, { headers: h });
+      const LINK = /^\/api\/bkk\/face\/([0-9a-f]{24})\.([sl])\.(\d+)\.([\w-]{22})$/;
+      let D3 = plus(D, 14);
+      while (moonDaysBetween(D3, D3).size) D3 = plus(D3, 7);
+      const stF = await postD('/api/bkk/door/pair/start', {}, ipA);
+      await postD('/api/bkk/admin/door/pair', { code: stF.body.code, name: 'Faces' }, { ...ADMIN, ...ipH() });
+      const HF = { 'x-door-key': (await postD('/api/bkk/door/pair/claim', { secret: stF.body.secret }, ipA)).body.key, ...ipA };
+      const faceOf = {};
+      const fs_ = {};
+      for (const [k, n, photo] of [['FA1', 'Faye Photoone', true], ['FA2', 'Finn Phototwo', true], ['FNO', 'Fran Nophoto', false],
+        ['FT1', 'Tess Twinface', true], ['FT2', 'Tess Twinface', true]]) {
+        await mk(k, n);
+        if (photo) {
+          faceOf[k] = crypto.randomBytes(12).toString('hex');
+          await pool.query('UPDATE bkk_members SET photo_id=$2 WHERE id=$1', [people[k].id, 'aybkk-profile/' + faceOf[k]]);
+        }
+        fs_[k] = await seat(people[k], my530, D3);
+      }
+      fs_.FA1b = await seat(people.FA1, my730, D3);
+      cc = AT(D3, '06:45:00');
+      const fn = await getF('/api/bkk/door/now', HF);
+      const by = n => (fn.body.seats || []).filter(x => x.n === n);
+      const fa1 = by('Faye P.'), fa2 = by('Finn P.')[0] || {}, fno = by('Fran N.')[0] || {}, twinsF = by('Tess T.');
+      ok('the tablet: a seat whose student has a photo gets one small signed face link (f), one with none gets no f',
+         fn.status === 200 && fa1.length === 2 && fa1.every(x => LINK.test(x.f || '') && LINK.exec(x.f)[2] === 's' && LINK.exec(x.f)[1] === faceOf.FA1)
+           && LINK.test(fa2.f || '') && LINK.exec(fa2.f)[1] === faceOf.FA2 && fno.n === 'Fran N.' && !('f' in fno),
+         JSON.stringify(fn.body.seats));
+      ok('...the same link on both seats of one student, and nothing else new: each seat is t, n, in, at, c, f when there is a photo, same for twins',
+         fa1[0].f === fa1[1].f && fn.body.seats.every(x => Object.keys(x).sort().join() === ['at', 'c', 'in', 'n', 't', ...('f' in x ? ['f'] : []), ...(x.same ? ['same'] : [])].sort().join())
+           && Object.keys(fno).sort().join() === 'at,c,in,n,t', JSON.stringify(fn.body.seats.map(x => Object.keys(x))));
+      ok('...same-name twins show their own faces, and a tap on one is still "see the teacher"', twinsF.length === 2 && twinsF.every(x => x.same === true)
+         && LINK.test(twinsF[0].f || '') && LINK.test(twinsF[1].f || '') && twinsF[0].f !== twinsF[1].f
+         && [faceOf.FT1, faceOf.FT2].sort().join() === twinsF.map(x => LINK.exec(x.f)[1]).sort().join()
+         && (await postD('/api/bkk/door/checkin', { t: twinsF[0].t }, HF)).status === 409
+         && !(await one('SELECT checked_in_at FROM bkk_bookings WHERE id=$1', [fs_.FT1])).checked_in_at);
+      const fCodes = ['FA1', 'FA2', 'FNO', 'FT1', 'FT2'].map(k => people[k].code);
+      ok('...the door answer, links and all, has no member code, email, phone or storage folder',
+         !fCodes.some(c => fn.raw.includes(c)) && !/@|example\.com|0899\d|aybkk-profile|photo_id|"code"|"email"|"phone"/.test(fn.raw), fn.raw.slice(0, 300));
+      const img = await getF((fa1[0] || {}).f || '/api/bkk/face/none');
+      ok("the link opens that student's face, 160 px, with no key at all", img.status === 200 && img.type === 'image/jpeg'
+         && img.bytes.includes(`signed://authenticated/aybkk-profile/${faceOf.FA1}/160`) && !img.bytes.includes(faceOf.FA2), img.bytes.slice(0, 120));
+      const [, , , exp1, sig1] = LINK.exec((fa1[0] || {}).f || '') || [], [, , , exp2] = LINK.exec(fa2.f || '') || [];
+      const swapped = [`/api/bkk/face/${faceOf.FA2}.s.${exp1}.${sig1}`, `/api/bkk/face/${faceOf.FNO || faceOf.FT1}.s.${exp1}.${sig1}`,
+        String((fa1[0] || {}).f).replace('.s.', '.l.'), `/api/bkk/face/${faceOf.FA1}.s.${Number(exp1) + 21600}.${sig1}`];
+      const tries = await Promise.all(swapped.map(p => getF(p)));
+      ok("...and cannot be edited into another student's face, the large size or a later expiry (403)", exp1 === exp2
+         && tries.every(r => r.status === 403 && !r.bytes.includes('signed://')), tries.map(r => r.status).join());
+      ok('...the door server with no photo storage gives no f, even for a student with a photo',
+         (await getD('/api/bkk/door/now', HF)).body.seats.every(x => !('f' in x)));
+      const TF = { ...TEACH, 'cf-connecting-ip': '192.0.2.61' };
+      const tdF = await getF('/api/bkk/teacher/today', TF);
+      const rowsF = (tdF.body.students || []).filter(x => /^(Faye Photoone|Finn Phototwo|Fran Nophoto|Tess Twinface)$/.test(x.name));
+      const tFaye = rowsF.filter(x => x.name === 'Faye Photoone'), tFran = rowsF.find(x => x.name === 'Fran Nophoto') || {};
+      ok("/teach today: each seat carries the same small face link as the tablet, null with no photo", tdF.status === 200 && rowsF.length === 6
+         && tFaye.length === 2 && tFaye.every(x => x.photo === fa1[0].f) && rowsF.find(x => x.name === 'Finn Phototwo').photo === fa2.f
+         && tFran.photo === null && 'photo' in tFran, JSON.stringify(rowsF.map(x => [x.name, x.photo])));
+      ok('...and still no member code, email, phone or photo id in it', !fCodes.some(c => tdF.raw.includes(c))
+         && !/@|example\.com|0899\d|aybkk-profile|photo_id|"code"|"email"|"phone"/.test(tdF.raw), tdF.raw.slice(0, 300));
+      ok("...its link opens the face too", (await getF((tFaye[0] || {}).photo || '/api/bkk/face/none')).bytes.includes(`/aybkk-profile/${faceOf.FA1}/160`));
+      const vF = await getF('/api/bkk/teacher/student/' + encodeURIComponent((tFaye[0] || {}).ref || 'none'), TF);
+      const vN = await getF('/api/bkk/teacher/student/' + encodeURIComponent(tFran.ref), TF);
+      const vC = await getF('/api/bkk/teacher/student/' + encodeURIComponent(people.FA2.code), TF);
+      ok('the student view on /teach carries the small face link, by ref (no code) or by a typed code, null with no photo',
+         vF.status === 200 && vF.body.member.photo === fa1[0].f && !('code' in vF.body.member) && !vF.raw.includes(people.FA1.code)
+           && (vN.body.member || {}).photo === null && (vC.body.member || {}).photo === fa2.f && (vC.body.member || {}).code === people.FA2.code,
+         JSON.stringify([vF.body.member, vN.body.member && vN.body.member.photo, vC.body.member && vC.body.member.photo]));
+      ok('...and the teacher routes still take no door key', (await getF('/api/bkk/teacher/today', HF)).status === 401
+         && (await getF('/api/bkk/teacher/student/' + encodeURIComponent((tFaye[0] || {}).ref || 'none'), HF)).status === 401);
+      await pool.query('UPDATE bkk_members SET photo_id=NULL WHERE id=$1', [people.FA2.id]);
+      const gone = await getF(fa2.f || '/api/bkk/face/none');
+      ok('a photo removed: its link stops at once and the next list has no f for that seat', gone.status === 404
+         && !('f' in ((await getF('/api/bkk/door/now', HF)).body.seats.find(x => x.n === 'Finn P.') || { f: 1 })), String(gone.status));
+      await pool.query('DELETE FROM bkk_bookings WHERE id = ANY($1::int[])', [Object.values(fs_)]);
+      await pool.query('UPDATE bkk_members SET photo_id=NULL WHERE id = ANY($1::int[])', [['FA1', 'FT1', 'FT2'].map(k => people[k].id)]);
+      await pool.query(`UPDATE bkk_door_devices SET revoked_at=now() WHERE name='Faces' AND revoked_at IS NULL`);
+      srvF.close();
+      const page = require('fs').readFileSync(require('path').join(__dirname, '..', 'public', 'bkk.html'), 'utf8');
+      const who = [...page.matchAll(/faceWho: '([^']*)'/g)].map(m => m[1]);
+      ok('the upload card says in all 4 languages that the photo is shown at check-in, never "only you and your teachers"', who.length === 4
+         && /check-in screen/.test(who[0]) && /เช็กอิน/.test(who[1]) && /签到/.test(who[2]) && /отметки/.test(who[3])
+         && !/only you and your teachers|เฉพาะคุณและครู|只有你和老师|только вы и ваши учителя/i.test(page) && who.every(s => !s.includes('\u2014')), JSON.stringify(who));
+    }
+
     // ── /teach: the lock-out first ──
     const ipT = { 'cf-connecting-ip': '192.0.2.44' };
     const markRes = await getD('/api/bkk/teacher/me', { ...TEACH, ...ipT });

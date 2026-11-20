@@ -5590,7 +5590,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       // Opened from today's list (a ref): the member code stays off the answer.
       res.json({
         member: { ...(byRef ? {} : { code: m.code }), ref: memberRef(await serverSecret(), m.id),
-          name: m.name, email: m.email, phone: m.phone, journalId: await journalId(m) },
+          name: m.name, email: m.email, phone: m.phone, photo: faceSmall(m.photo_id, m.code), journalId: await journalId(m) },
         passes: passes.rows, notes: notes.rows, recent: recent.rows,
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
@@ -5623,13 +5623,14 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // this member is live today (PASS_LIVE_ON over all of them, so a pause that has
   // ended or a Rezerv twin that came back is not flagged); a Rezerv seat says
   // Rezerv instead. added: put on by /teach today, so /teach can take it off.
+  // photo: the small signed face link, or null.
   app.get('/api/bkk/teacher/today', async (req, res) => {
     const t = await teacherFrom(req);
     if (!t) return res.status(401).json({ error: 'bad passcode' });
     try {
       const today = bkkToday();
       const [r, sec, classes] = await Promise.all([q(
-        `SELECT b.id AS booking_id, b.member_id, m.name, s.title, s.id AS slot_id, s.is_online, b.start_at, b.checked_in_at,
+        `SELECT b.id AS booking_id, b.member_id, m.name, m.code, m.photo_id, s.title, s.id AS slot_id, s.is_online, b.start_at, b.checked_in_at,
            b.cover, b.checkin_via, b.checkin_by,
            coalesce(b.source = 'teacher' AND (b.booked_at AT TIME ZONE 'Asia/Bangkok')::date = $1::date, false) AS added,
            (b.cover IS DISTINCT FROM 'rezerv' AND NOT EXISTS (SELECT 1 FROM bkk_passes p
@@ -5652,8 +5653,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       for (const b of r.rows) times.set(b.member_id, [...(times.get(b.member_id) || []), [b.booking_id, bkkHm(new Date(b.start_at).getTime())]]);
       res.json({
         date: today, classes,
-        students: r.rows.map(({ member_id, booking_id, slot_id, is_online, checkin_via, checkin_by, check_pass, ...s }) => ({
-          ...s, ref: memberRef(sec, member_id), bookingId: booking_id, slotId: slot_id, isOnline: is_online,
+        students: r.rows.map(({ member_id, booking_id, slot_id, is_online, checkin_via, checkin_by, check_pass, code, photo_id, ...s }) => ({
+          ...s, photo: faceSmall(photo_id, code), ref: memberRef(sec, member_id), bookingId: booking_id, slotId: slot_id, isOnline: is_online,
           checkinVia: checkin_via, checkinBy: checkin_by, rezerv: s.cover === 'rezerv', checkPass: check_pass,
           alsoAt: times.get(member_id).filter(x => x[0] !== booking_id).map(x => x[1]) })),
       });
@@ -6238,7 +6239,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // and works for 6 to 12 hours, the same link all the while so browsers cache it.
   // The member code is signed in as well (it is not in the link), so when staff
   // sign a profile out everywhere, the new code stops every link given out before.
-  // Only /me (the member code) and the staff lists (admin key) hand links out.
+  // /me (the member code) and the staff lists (admin key) hand links out, and so,
+  // for today's seats only, do the door tablet (door key) and /teach (teacher
+  // passcode): Boonchu asked students to add a photo for check-in, so a photo in
+  // a profile is shown there (20 Nov 2026). Those two get the small size only.
   const FACE_FOLDER = 'aybkk-profile';
   const FACE_MAX_BYTES = 6 * 1024 * 1024;
   const FACE_PER_DAY = 10;
@@ -6741,7 +6745,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // and those routes take nothing else. What it sees: "Name L." for the seats of
   // today's in-person classes whose window is open (start minus DOOR_EARLY_MIN
   // until the class ends), each with a signed handle for that seat and device,
-  // and whether it is checked in. No code, email, phone, pass or price.
+  // and whether it is checked in. A student with a profile photo also gets its
+  // small signed face link (f). No code, email, phone, pass or price.
   const DOOR_EARLY_MIN = 60;
   const DOOR_PAIR_MIN = 10;
   const DOOR_ALPHABET = 'ACDEFHJKMNPRTVWXY34679';   // no O/0, I/1/L, S/5, Z/2, B/8, G/6, U/V
@@ -6848,7 +6853,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     let next = null;
     for (let i = 0; i <= 7 && !next; i++) next = on(addDay(today, i)).find(c => c.opens > nowMs) || null;
     const seats = live.length ? (await db.query(
-      `SELECT b.id, b.member_id, b.slot_id, b.checked_in_at, m.name FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
+      `SELECT b.id, b.member_id, b.slot_id, b.checked_in_at, m.name, m.code, m.photo_id FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
        WHERE b.class_date=$1::date AND b.status='booked' AND b.slot_id = ANY($2::int[])`, [today, live.map(c => c.slot.id)])).rows : [];
     return { nowMs, today, moon: moons.has(today), live, seats, next };
   }
@@ -6986,10 +6991,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (!st.live.length) return res.json(out);
       const [k, names] = [await doorKeys(), doorNames(st.seats)];
       const cls = new Map(st.live.map(c => [c.slot.id, c]));
-      const seats = st.seats.map(s => ({ id: s.id, ...names.get(s.id), c: cls.get(s.slot_id), at: s.checked_in_at }))
+      const seats = st.seats.map(s => ({ id: s.id, ...names.get(s.id), c: cls.get(s.slot_id), at: s.checked_in_at, f: faceSmall(s.photo_id, s.code) }))
         .sort((a, b) => a.n.localeCompare(b.n, 'en') || a.id - b.id)
         .map(s => ({ t: sealSeat(k, s.id, dev.id, s.c.end), n: s.n, in: !!s.at, at: s.at ? bkkHm(new Date(s.at).getTime()) : null, c: bkkHm(s.c.start),
-          ...(s.same ? { same: true } : {}) }));
+          ...(s.f ? { f: s.f } : {}), ...(s.same ? { same: true } : {}) }));
       res.json({ classes: st.live.map(c => ({ title: c.slot.title, start: bkkHm(c.start), end: bkkHm(c.end) })), seats, ...out });
     } catch (e) {
       console.error('[bkk door] now failed:', e.message);

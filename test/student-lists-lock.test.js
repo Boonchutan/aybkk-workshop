@@ -258,8 +258,9 @@ fs.writeFileSync(path.join(PRIVATE, 'rosters', 'hefei.json'), JSON.stringify({ w
   for (const p of ['/tablet', '/bkk-tablet.html']) {
     const r = await request('GET', p);
     const csp = r.headers['content-security-policy'] || '';
-    ok(`${p} is served with a Content-Security-Policy for this site only, and never loads the staff key`, r.status === 200
+    ok(`${p} is served with a Content-Security-Policy for this site only (faces from this site too), and never loads the staff key`, r.status === 200
       && /default-src 'none'/.test(csp) && /connect-src 'self'/.test(csp) && /script-src 'self'/.test(csp) && !/https?:/.test(csp)
+      && /img-src 'self' data:;/.test(csp)
       && r.headers['cache-control'] === 'no-cache' && !/staff-key\.js/.test(r.text), `${r.status} ${csp}`);
   }
   // Express routes ignore case and a trailing slash, and the static files decode

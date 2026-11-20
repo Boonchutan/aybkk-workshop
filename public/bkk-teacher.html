@@ -35,6 +35,13 @@
     border:none;border-top:1px solid var(--line);padding:13px 0;font:inherit;color:var(--ink);cursor:pointer}
   .row .nm{flex:1}.row .nm b{font-family:inherit;font-weight:600;font-size:15.5px}
   .in{color:#187a43;font-weight:600;font-size:12.5px}
+  /* The student's face, or their initials, so a teacher knows who is who (20 Nov 2026). */
+  .av{flex:none;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;overflow:hidden;
+    background:var(--blush);color:var(--plum);font-family:'Work Sans',sans-serif;font-weight:700;font-size:15px;letter-spacing:.02em}
+  .av img{display:block;width:100%;height:100%;object-fit:cover}
+  .av.big{width:64px;height:64px;font-size:21px}
+  .me{display:flex;align-items:center;gap:14px}
+  .me > div{min-width:0}
   .note{border-top:1px solid var(--line);padding:11px 0}
   .note .work{background:var(--blush);color:var(--plum);border-radius:7px;padding:9px 11px;margin-top:5px}
   .private{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#a33}
@@ -97,6 +104,18 @@
   const time = iso => new Date(iso).toLocaleTimeString('en-GB',
     { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' });
   const dateOnly = s => String(s || '').slice(0, 10);
+  // As on /door: first and last word's first letter, a title, a bracket and a Thai leading vowel skipped.
+  const TITLE = /^(mr|mrs|ms|miss|mx|dr|นาย|นาง|นางสาว|น\.ส\.|ด\.ช\.|ด\.ญ\.)\.?$/i;
+  const initials = name => {
+    const s = String(name || '');
+    let ws = (s.replace(/[(（[][^)）\]]*[)）\]]/g, ' ').trim() || s).split(/\s+/).filter(Boolean);
+    if (ws.length > 1 && TITLE.test(ws[0])) ws = ws.slice(1);
+    ws = ws.map(w => (w.replace(/[\u0E40-\u0E44]/g, '').match(/\p{L}/u) || [''])[0]).filter(Boolean);
+    return (ws.length > 1 ? ws[0] + ws[ws.length - 1] : ws[0] || '').toUpperCase();
+  };
+  const face = (name, photo, big) => `<span class="av${big ? ' big' : ''}" aria-hidden="true">${photo
+    ? `<img src="${esc(photo)}" alt="" width="${big ? 64 : 44}" height="${big ? 64 : 44}" data-ini="${esc(initials(name))}">` : esc(initials(name))}</span>`;
+  const faceFallback = () => $('#view').querySelectorAll('.av img').forEach(i => { i.onerror = () => { i.parentNode.textContent = i.dataset.ini; }; });
 
   window.unlock = async () => {
     KEY = $('#key').value.trim();
@@ -137,7 +156,7 @@
         + ((s.alsoAt || []).length ? `<span class="flag two">also booked ${esc(s.alsoAt.join(', '))}</span>` : '');
       const who = s.checkinVia ? ` · ${esc(s.checkinVia === 'tablet' ? 'tablet' : s.checkinBy || s.checkinVia)}` : '';
       return `<div class="seat" data-b="${Number(s.bookingId)}">
-        <div class="top"><button class="row" onclick="open_('${esc(s.ref)}')"><span class="nm"><b>${esc(s.name)}</b>${tags}<br>
+        <div class="top"><button class="row" onclick="open_('${esc(s.ref)}')">${face(s.name, s.photo)}<span class="nm"><b>${esc(s.name)}</b>${tags}<br>
           <span class="muted">${s.notes ? `${s.notes} note${s.notes > 1 ? 's' : ''}` : 'no notes yet'}</span></span></button>
           ${s.checked_in_at ? `<span class="in">✓ in ${time(s.checked_in_at)}${who}</span>` : `<span class="muted">not yet${s.checkinVia === 'teacher' ? ' (undone)' : ''}</span>`}</div>
         ${fix ? `<div class="acts">${s.checked_in_at
@@ -168,6 +187,7 @@
       <input id="code" placeholder="member code, e.g. B…">
       <p style="margin-top:10px"><button class="btn ghost" onclick="open_($('#code').value.trim())">Open</button></p>
     </div>`;
+    faceFallback();
   }
   const say = (id, text, kind) => { const e = $('#' + id); if (e) { e.className = 'say ' + (kind || ''); e.textContent = text; } };
   window.fixSeat = async (id, undo) => {
@@ -223,8 +243,8 @@
     const pass = (d.passes || []).find(p => p.status === 'active');
     $('#view').innerHTML = `<p><button class="btn ghost" onclick="today()">← Today</button></p>
       <div class="box">
-        <b>${esc(d.member.name)}</b>
-        <p class="muted">${esc([d.member.code, d.member.email].filter(Boolean).join(' · '))}</p>
+        <div class="me">${face(d.member.name, d.member.photo, true)}<div><b>${esc(d.member.name)}</b>
+        <p class="muted" style="margin:0">${esc([d.member.code, d.member.email].filter(Boolean).join(' · '))}</p></div></div>
         <p class="muted">${pass
           ? esc(pass.name_en) + (pass.kind === 'unlimited' ? ''
               : ': ' + (pass.credits_total - pass.credits_used) + ' classes left')
@@ -265,6 +285,7 @@
             ${n.body ? `<div style="margin-top:5px">${esc(n.body)}</div>` : ''}
           </div>`).join('') : '<p class="muted">No notes yet.</p>'}
       </div>`;
+    faceFallback();
     loadJournal(d.member.journalId);
   };
 
