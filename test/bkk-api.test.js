@@ -8378,10 +8378,10 @@ const ok = (name, cond, extra = '') => {
 
     // The wording: pinned, and what a page is served is what is pinned.
     const PINNED = {
-      en: ['a614250ae432d419f7ac3d112fb84f1163674a2db9a69f647f4aedf144ab4615', 'f43f7c1cd0033236d4915f1d335be90e8b2f437b2f3975b51bd9d3a8ab940ce9'],
-      th: ['a97fea893cb48001f563c8333b207c4475da30b4fc88e4e6e75ec5c4e95ebc10', 'a77ce2e588c4df1d6cdd60152f5b0f8c466a134e040de31c55b1d0fed7052dd0'],
-      zh: ['418f17a9feadc0e3dfa8f07ac9e4859535846cf4b6c3733b172bce916f8e51bb', '33078effeda9943573a1b4a071e9f4a461efcd920c9ebdec08e4a388bfe325fb'],
-      ru: ['beedd55f21b815dfad2fc49ace2ee016350bf20b6aebc4b064bea2d39710b7e6', '62f01e664e62f8e366e133d95b2545c6c1bf6fdfc419af1e68c7becbe827e233'],
+      en: ['f5e5e04d53f70d5ca11548b68fe95389b57fb43e3ef3147b488009968f9919cb', '96d28dab4e7141cd39365fe28e37582b967e5984587bd2b3d0c76247998812ee'],
+      th: ['90eded927c1f3c4f2ccf49cc72d38e49b8990791574f74f2e60ae0aa3e09c675', '602c9efa5c07d55388a4fa017d04d04b0d776ba0436396387ad44435727be19e'],
+      zh: ['b0e33dda125e662ec5327f2367dacc447aaf9e60a29b3073c64615d995ee06ab', '26855ecd743827851d2f8fa17fc83f2c22a35b1b3d2925a4f6e9ab163b1a4faa'],
+      ru: ['b1f390e78688fdf92a984f3454b9e62a018389f0de30a974fc71e5a8b2f8ce48', 'b1fee99f061d907f23f8a1dc0952321083373ce7802e9d18d87d0cae65a4686e'],
     };
     ok('v1 is the current version, in exactly these 4 languages', CONSENT_VERSION === 'v1' && Object.keys(CONSENT_TEXT.v1).join() === 'en,th,zh,ru');
     for (const [l, [a, pv]] of Object.entries(PINNED)) {
@@ -8401,6 +8401,15 @@ const ok = (name, cond, extra = '') => {
         const ls = CONSENT_TEXT.v1[l].agreement.groups[2][1], p = pol[l];
         return ls[1] === p['2a'] + p['2b'] && ls[2] === p['4a'] + p['4b'] && ls[3] === p['3a'] + p['3b'];
       }), JSON.stringify(pol.zh));
+      // Line 11's towels (draft 3, 20 Nov 2026) open the page's "Your first class" line too, and no longer say bring one.
+      const f3 = [...html.matchAll(/\bf3: '([^']*)'/g)].map(m => m[1]);
+      const fallback = (/<li[^>]*id="fst3"[^>]*>([^<]*)<\/li>/.exec(html) || [])[1];
+      const towels = { en: /^[^.]*\. /, th: /^\S+ /, zh: /^[^。]*。/, ru: /^[^.]*\. / };
+      ok("line 11's towel sentence opens the first-class line (f3), in all 4 languages and the page's own English",
+        f3.length === 4 && ['en', 'th', 'zh', 'ru'].every((l, i) => {
+          const first = (towels[l].exec(CONSENT_TEXT.v1[l].agreement.groups[1][1][4]) || [''])[0];
+          return first.length > 8 && f3[i].startsWith(first) && !/a towel|และผ้าเช็ดตัวมาเอง|和毛巾|и полотенце или/.test(f3[i]);
+        }) && fallback === f3[0], JSON.stringify(f3.map(x => x.slice(0, 50))));
     }
     // The privacy notice names every service the code hands personal data to (inbox.js, team-brief.js,
     // server.js included), and the messages and orientation answers kept.

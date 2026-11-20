@@ -421,6 +421,39 @@ fs.writeFileSync(path.join(PRIVATE, 'rosters', 'hefei.json'), JSON.stringify({ w
     && bk.text.includes('<section id="policy" class="sec sgrid terms" hidden></section>') && bk.text.includes('<section id="privacy" class="sec sgrid terms" hidden></section>'),
     `${pol.status} ${prv.status} ${bk.status}`);
 
+  // Decision 16 (20 Nov 2026): while the agreement is on, the old Bangkok orientation form and its
+  // waiver send people to /book (no query string carried over); off, it is served as before. The form's
+  // save and the staff list keep working in every mode. Neo4j is the empty stand-in here, so the save
+  // shows the route still answers, not that a form was stored.
+  const OLD_FORM = ['/bkk', '/bkk/', '/orientation-bkk.html', '/BKK', '/%6frientation-bkk.html', '/bkk?code=LOCK0001'];
+  const isForm = r => r.status === 200 && /orientation-bkk\.html/.test(r.text) && /id="waiverBox"/.test(r.text);
+  const formSave = () => request('POST', '/api/orientations/bkk', {}, { name: 'Locktest Walkin', language: 'en', waiverConsent: 'yes' });
+  for (const p of OLD_FORM) ok(`off: GET ${p} is the old orientation form, as before`, isForm(await request('GET', p)), shape(await request('GET', p)));
+  const sw = async mode => (await request('POST', '/api/bkk/admin/settings', STAFF, { consentMode: mode,
+    privacyName: 'Example Yoga Co., Ltd.', privacyAddress: '1 Example Road, Bangkok 10110', privacyEmail: 'privacy@example.com' })).status;
+  for (const mode of ['ask', 'require']) {
+    ok(`the switch goes to ${mode} with the staff key`, await sw(mode) === 200 && (await request('GET', '/api/bkk/consent')).json.mode === mode);
+    for (const p of OLD_FORM) {
+      const r = await request('GET', p);
+      ok(`${mode}: GET ${p} → 302 /book, nothing carried over`, r.status === 302 && r.headers.location === '/book', `${r.status} ${r.headers.location}`);
+    }
+    const hd = await request('HEAD', '/bkk');
+    ok(`${mode}: HEAD /bkk → 302 /book too`, hd.status === 302 && hd.headers.location === '/book', `${hd.status}`);
+    const others = await Promise.all(['/book', '/orientation-ru.html', '/bkk-students.html', '/policy'].map(p => request('GET', p)));
+    ok(`${mode}: /book, the other orientation forms and the staff page are untouched; /policy opens /book#policy`,
+      others[0].status === 200 && others[1].status === 200 && others[2].status === 200 && others[3].status === 302 && others[3].headers.location === '/book#policy',
+      others.map(r => r.status).join());
+    const saved = await formSave();
+    ok(`${mode}: POST /api/orientations/bkk still answers`, saved.status === 200 && saved.json && saved.json.success === true, shape(saved));
+    const list = await request('GET', '/api/orientations/bkk', STAFF);
+    ok(`${mode}: the staff GET /api/orientations/bkk still answers, and still needs the key`, list.status === 200 && Array.isArray(list.json.students)
+      && (await request('GET', '/api/orientations/bkk')).status === 401, shape(list));
+  }
+  ok('the switch goes back off', await sw('off') === 200 && (await request('GET', '/api/bkk/consent')).json.mode === 'off');
+  for (const p of ['/bkk', '/orientation-bkk.html']) ok(`off again: GET ${p} is the form`, isForm(await request('GET', p)));
+  ok('off again: /policy is not there', (await request('GET', '/policy')).status === 404);
+  ok('off: POST /api/orientations/bkk answers', (await formSave()).status === 200);
+
   console.log('\n-- the server outlives a database connection the database ends --');
   await request('GET', '/api/bkk/schedule?days=3');
   const cut = (await pool.query(`SELECT count(pg_terminate_backend(pid))::int AS n FROM pg_stat_activity
