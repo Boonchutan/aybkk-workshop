@@ -131,36 +131,52 @@ const TEMPLATES = {
           <a href="${esc(link)}" style="background:#5c2160;color:#fdf7fa;text-decoration:none;
              padding:12px 26px;border-radius:8px;display:inline-block;font-weight:600">Book a class</a></p>
         <p style="font-size:13px;color:#6b5d70">That button signs you in once, on any phone.
-        If you ever lose your place, use <b>Email me a link</b> on the booking page.</p>
-        ${agreement ? `<p style="font-size:13px;color:#6b5d70">You agreed to the
+        If you ever lose your place, use <b>Email me a link</b> on the booking page.</p>${agreement ? `
+        <p style="font-size:13px;color:#6b5d70">You agreed to the
           <a href="${esc(agreement.link)}" style="color:#5c2160">AYBKK student agreement (${esc(agreement.version)})</a>.
           If someone else bought this for you, please read it before class.</p>` : ''}`),
     }),
   },
 
   // A copy of the student agreement, as signed. text: that version's agreement in this
-  // language (bkk-api.js CONSENT_TEXT), so the words are the ones that were on screen.
+  // language (bkk-api.js CONSENT_TEXT), so the words are the ones that were on screen, in their
+  // groups. other: ticked at checkout by someone with this profile's email ('checkout-email').
   agreement: Object.fromEntries(Object.entries({
     en: { subject: v => `Your copy: AYBKK student agreement (${v})`, hello: n => `Hello ${n},`,
-      intro: 'This is your copy of the AYBKK student agreement you agreed to.', more: 'The agreement and the Privacy notice online:' },
+      intro: 'This is your copy of the AYBKK student agreement you agreed to.',
+      other: 'Someone bought an AYBKK pass with this email and agreed to the student agreement at checkout. This is the copy. If someone else bought this for you, please read it before class.',
+      more: 'The agreement and the Privacy notice online:' },
     th: { subject: v => `สำเนาข้อตกลงนักเรียน AYBKK (${v})`, hello: n => `สวัสดี ${n}`,
-      intro: 'นี่คือสำเนาข้อตกลงนักเรียน AYBKK ที่คุณยอมรับไว้', more: 'อ่านข้อตกลงและประกาศความเป็นส่วนตัวออนไลน์:' },
-    zh: { subject: v => `您的副本：AYBKK 学生协议（${v}）`, hello: n => `${n}，您好：`,
-      intro: '这是您同意的 AYBKK 学生协议副本。', more: '在线查看协议和隐私声明：' },
+      intro: 'นี่คือสำเนาข้อตกลงนักเรียน AYBKK ที่คุณยอมรับไว้',
+      other: 'มีผู้ซื้อแพ็กเกจ AYBKK ด้วยอีเมลนี้ และยอมรับข้อตกลงนักเรียนตอนชำระเงิน นี่คือสำเนา หากมีคนอื่นซื้อให้คุณ กรุณาอ่านก่อนเข้าคลาส',
+      more: 'อ่านข้อตกลงและประกาศความเป็นส่วนตัวออนไลน์:' },
+    zh: { subject: v => `你的副本：AYBKK 学生协议（${v}）`, hello: n => `${n}，你好：`,
+      intro: '这是你同意的 AYBKK 学生协议副本。',
+      other: '有人用这个邮箱购买了 AYBKK 课程卡，并在付款时同意了学生协议。这是副本。如果是别人替你购买的，请在上课前阅读。',
+      more: '在线查看协议和隐私声明：' },
     ru: { subject: v => `Ваша копия: соглашение ученика AYBKK (${v})`, hello: n => `Здравствуйте, ${n}!`,
-      intro: 'Это ваша копия соглашения ученика AYBKK, с которым вы согласились.', more: 'Соглашение и уведомление о конфиденциальности онлайн:' },
-  }).map(([lang, w]) => [lang, ({ name, version, text, under20, date, since, link }) => {
-    const lines = text.groups.flatMap(g => g[1]).map(l => l.replace('{since}', since || '…'));
-    const signed = text.signed.replace('{name}', name).replace('{date}', date).replace('{version}', version);
+      intro: 'Это ваша копия соглашения ученика AYBKK, с которым вы согласились.',
+      other: 'Кто-то купил абонемент AYBKK с этим email и при оплате согласился с соглашением ученика. Это копия. Если абонемент купили для вас, пожалуйста, прочитайте его до занятия.',
+      more: 'Соглашение и уведомление о конфиденциальности онлайн:' },
+  }).map(([lang, w]) => [lang, ({ name, signedName, other, version, text, under20, date, since, link }) => {
+    const fill = (s, o) => String(s).replace(/\{(\w+)\}/g, (all, k) => (o[k] != null ? String(o[k]) : all));
+    let n = 0;
+    const groups = text.groups.map(([h, ls]) => [h, ls.map(l => [++n, fill(l, { since: since || '…' })])]);
+    // "Signed as ... · v1" without the screen's "We email you a copy": this is that copy.
+    const signed = fill(text.signed.slice(0, text.signed.indexOf('{version}') + '{version}'.length),
+      { name: signedName || name, date, version });
     const tick = under20 ? text.tickUnder20 : text.tick;
+    const intro = other ? w.other : w.intro;
     return {
       subject: w.subject(version),
-      text: [w.hello(name), '', w.intro, '', `${text.title} · ${version}`, '', ...lines.map((l, i) => `${i + 1}. ${l}`), '',
+      text: [w.hello(name), '', intro, '', `${text.title} · ${version}`,
+        ...groups.flatMap(([h, ls]) => ['', h, ...ls.map(([i, l]) => `${i}. ${l}`)]), '',
         `[x] ${tick}`, signed, '', `${w.more} ${link}`].join('\n'),
       html: shell(`
-        <p>${esc(w.hello(name))}</p><p>${esc(w.intro)}</p>
+        <p>${esc(w.hello(name))}</p><p>${esc(intro)}</p>
         <h3 style="margin:18px 0 8px">${esc(text.title)} · ${esc(version)}</h3>
-        <ol style="padding-left:20px;margin:0">${lines.map(l => `<li style="margin:0 0 8px">${esc(l)}</li>`).join('')}</ol>
+        ${groups.map(([h, ls]) => `<p style="margin:14px 0 4px;font-weight:700">${esc(h)}</p>
+        <ol start="${ls[0][0]}" style="padding-left:20px;margin:0">${ls.map(([, l]) => `<li style="margin:0 0 8px">${esc(l)}</li>`).join('')}</ol>`).join('')}
         <p style="margin:14px 0 4px">&#9745; ${esc(tick)}</p>
         <p style="font-size:13px;color:#6b5d70;margin:0">${esc(signed)}</p>
         <p style="font-size:13px;margin-top:18px">${esc(w.more)} <a href="${esc(link)}" style="color:#5c2160">${esc(link)}</a></p>`),

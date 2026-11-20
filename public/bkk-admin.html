@@ -2423,11 +2423,10 @@
         <span class="muted" style="display:block">${T('bookedIn', list.length, inCount)}${mats ? ` · ${esc(T('tMats'))} ${mats}` : ''}</span></div>
         <button class="btn sm" id="open-${g.slotId}" onclick="todayOpen(${g.slotId},'${esc(g.date)}',this.id)">${T('openClass')}</button></div>
         ${list.length ? `<table class="tdl">${list.map(b => `<tr>
-          <td class="nm">${whoBtn(b.code, b.name, `who-t-${g.slotId}-${b.code}`)}${b.need_mat ? ` <span class="pill mat">${esc(T('matPill'))}</span>` : ''}</td>
+          <td class="nm">${whoBtn(b.code, b.name, `who-t-${g.slotId}-${b.code}`)}${b.need_mat ? ` <span class="pill mat">${esc(T('matPill'))}</span>` : ''}${
+            b.consent === false ? `<br><span class="agno">${esc(T('agNot'))}</span>` : ''}</td>
           <td class="muted">${esc(b.code)}</td>
           <td>${b.checked_in_at ? `<span class="in">${T('checkedIn')}</span>` : `<span class="muted">${T('notYet')}</span>`}</td>
-          ${b.consent === undefined ? '' : `<td class="agc">${b.consent ? `<span class="muted">${esc(T('agCol'))} ${esc(T('agYes'))}</span>`
-            : `<span class="agno">${esc(T('agCol'))} ${esc(T('agNo'))}</span>`}</td>`}
         </tr>`).join('')}</table>` : `<p class="muted">${T('rosterNone')}</p>`}</div>`;
     }).join('');
     $('#view').innerHTML = prog + moneyBox

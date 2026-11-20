@@ -8293,10 +8293,10 @@ const ok = (name, cond, extra = '') => {
 
     // The wording: pinned, and what a page is served is what is pinned.
     const PINNED = {
-      en: ['a614250ae432d419f7ac3d112fb84f1163674a2db9a69f647f4aedf144ab4615', '3e6feddf4485c7e31440de5c77b6b0a257b76918fad30aaeb4e48126189d689b'],
-      th: ['a97fea893cb48001f563c8333b207c4475da30b4fc88e4e6e75ec5c4e95ebc10', '2030a7cb67e9394bc5bd3567d91b53cc69a8a9d6dc704bc0defa40ed9c3b73e1'],
-      zh: ['1951ccbfc2fe9b7b3fe654787470cfd315b5ecde6ec4cb4c8faa1c8194afae6b', '1329c31dcb16b5440ef00ae5330141772412c56d44782e0ee5844ba0c946b123'],
-      ru: ['37f0e6bd21211d9f690d5d50ca30337fdea27b47064beec8207439e1646d4f83', 'a4f41e58356bac6330a93530ddfbdfd782beba216b0a1377f3d9af29c48ae214'],
+      en: ['a614250ae432d419f7ac3d112fb84f1163674a2db9a69f647f4aedf144ab4615', 'f43f7c1cd0033236d4915f1d335be90e8b2f437b2f3975b51bd9d3a8ab940ce9'],
+      th: ['a97fea893cb48001f563c8333b207c4475da30b4fc88e4e6e75ec5c4e95ebc10', 'a77ce2e588c4df1d6cdd60152f5b0f8c466a134e040de31c55b1d0fed7052dd0'],
+      zh: ['418f17a9feadc0e3dfa8f07ac9e4859535846cf4b6c3733b172bce916f8e51bb', '33078effeda9943573a1b4a071e9f4a461efcd920c9ebdec08e4a388bfe325fb'],
+      ru: ['beedd55f21b815dfad2fc49ace2ee016350bf20b6aebc4b064bea2d39710b7e6', '62f01e664e62f8e366e133d95b2545c6c1bf6fdfc419af1e68c7becbe827e233'],
     };
     ok('v1 is the current version, in exactly these 4 languages', CONSENT_VERSION === 'v1' && Object.keys(CONSENT_TEXT.v1).join() === 'en,th,zh,ru');
     for (const [l, [a, pv]] of Object.entries(PINNED)) {
@@ -8306,6 +8306,24 @@ const ok = (name, cond, extra = '') => {
            && c.body.sha === a && sha(c.body.text.agreement) === a && sha(c.body.text.privacy) === pv, `${sha(CONSENT_TEXT.v1[l].agreement)} ${sha(CONSENT_TEXT.v1[l].privacy)}`);
     }
     ok('v1 has 18 lines in each language', ['en', 'th', 'zh', 'ru'].every(l => CONSENT_TEXT.v1[l].agreement.groups.flatMap(g => g[1]).length === 18));
+    // Lines 14 to 16 are the booking page's own Member notes, in every language (the Chinese one once
+    // said "a new student who just came" for "someone new to AYBKK").
+    {
+      const html = require('fs').readFileSync(require('path').join(__dirname, '..', 'public', 'bkk.html'), 'utf8');
+      const notes = [...html.matchAll(/pol([1-4][ab]): '([^']*)'/g)];
+      const pol = Object.fromEntries(['en', 'th', 'zh', 'ru'].map((l, i) => [l, Object.fromEntries(notes.slice(i * 8, i * 8 + 8).map(m => [m[1], m[2]]))]));
+      ok("lines 14 to 16 say what the page's Member notes say, in all 4 languages", notes.length === 32 && ['en', 'th', 'zh', 'ru'].every(l => {
+        const ls = CONSENT_TEXT.v1[l].agreement.groups[2][1], p = pol[l];
+        return ls[1] === p['2a'] + p['2b'] && ls[2] === p['4a'] + p['4b'] && ls[3] === p['3a'] + p['3b'];
+      }), JSON.stringify(pol.zh));
+    }
+    // The privacy notice names every service the code hands personal data to (inbox.js, team-brief.js,
+    // server.js included), and the messages and orientation answers kept.
+    ok('the privacy notice names every service that handles the data, in every language', ['en', 'th', 'zh', 'ru'].every(l => {
+      const txt = CONSENT_TEXT.v1[l].privacy.sections.map(x => x[1]).join(' ');
+      return ['PaySolutions', 'Resend', 'Cloudinary', 'Google', 'Railway', 'Telegram', 'LINE', 'Meta', 'Instagram', 'Facebook', 'Anthropic', 'Neo4j', 'IP', '90']
+        .every(w => txt.includes(w));
+    }));
     const throwsWith = (fn, re) => { try { fn(); return false; } catch (e) { return re.test(e.message); } };
     const noTh = { v1: { en: CONSENT_TEXT.v1.en } }, noEn = { v1: { th: CONSENT_TEXT.v1.th } };
     ok('the server refuses to start when the current version has no English or no Thai', throwsWith(() => checkConsentText(noTh, 'v1'), /no TH text/)
@@ -8340,7 +8358,9 @@ const ok = (name, cond, extra = '') => {
        JSON.stringify(noZh.body));
     const offPolicy = await fetch(`${B}/policy`, { redirect: 'manual' });
     const offMe = await post('/api/bkk/me/' + (await grant('Off Tester', 'off.tester@example.com')) + '/consent', tick({ name: 'Off Tester' }));
-    ok('while off, /policy is not there and nobody can sign', offPolicy.status === 404 && offMe.status === 409, `${offPolicy.status} ${offMe.status}`);
+    const offEv = await post('/api/bkk/start-event', { page: 'book', kind: 'consent-shown', src: 'buy', lang: 'en' });
+    ok('while off, /policy is not there, nobody can sign (409 off, which the page reads as "go on") and the screen is not counted',
+       offPolicy.status === 404 && offMe.status === 409 && offMe.body.off === true && offEv.status === 400, `${offPolicy.status} ${offMe.status} ${offEv.status}`);
     const toAsk = await SET({ ...PRIV, consentMode: 'ask' });
     const today = new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10);
     ok('with all 4 languages and the 3 facts, it goes to ask, and the agreement starts today', toAsk.status === 200 && toAsk.body.consent.mode === 'ask'
@@ -8382,6 +8402,16 @@ const ok = (name, cond, extra = '') => {
        && o3.body.member.code === ADA && (await rowsOf(ADA)).length === 1, JSON.stringify(o3.body));
     const o3b = await post('/api/bkk/orders', { productCode: 'pack8', name: 'Ada Agreement', email: 'someone.else@example.com', memberCode: ADA });
     ok('...but the same browser typing another email must tick', o3b.status === 409 && o3b.body.error === 'consent');
+    // A failure writing the checkout row takes the new profile and the order with it.
+    await pool.query(`ALTER TABLE bkk_consents ADD CONSTRAINT t_no_checkout CHECK (via <> 'checkout') NOT VALID`);
+    let oFail;
+    try {
+      oFail = await post('/api/bkk/orders', { productCode: 'unlim1', name: 'Ola Orphan', email: 'ola.orphan@example.com', consent: tick({ name: 'Ola Orphan' }) });
+    } finally { await pool.query(`ALTER TABLE bkk_consents DROP CONSTRAINT t_no_checkout`); }
+    ok('a failure writing the checkout row leaves no profile and no order behind', oFail.status === 500
+       && (await one(`SELECT count(*)::int AS n FROM bkk_members WHERE email='ola.orphan@example.com'`)).n === 0, JSON.stringify(oFail.body));
+    const copiesTo = to => require('../mailer.js').outbox.filter(m => m.to === to && m.tag === 'agreement');
+    ok('a checkout tick on an unpaid order emails nobody yet', copiesTo('ada.agree@example.com').length === 0);
 
     // Someone else's email: the tick waits for the payment. Fake PaySolutions answers paid.
     const stubApp = express(); stubApp.use(express.json());
@@ -8414,6 +8444,20 @@ const ok = (name, cond, extra = '') => {
       }
       ok('the receipt links the agreement and asks the owner to read it', rec && /You agreed to the AYBKK student agreement \(v1\): \S+\/book\?agreement=v1#agreement/.test(rec.text)
          && rec.text.includes('If someone else bought this for you, please read it before class.'), rec && rec.text);
+      // "We email you a copy": once paid, the copy goes to the email at signing, in the language signed.
+      const waitCopy = async to => { for (let i = 0; i < 40 && !copiesTo(to).length; i++) await new Promise(r => setTimeout(r, 50)); return copiesTo(to); };
+      const beaCopy = await waitCopy('bea.owner@example.com');
+      ok("...and a copy of the agreement: to the owner, saying someone bought with this email, signed as the buyer, in its groups",
+         beaCopy.length === 1 && beaCopy[0].text.startsWith('Hello Bea Owner,') && beaCopy[0].text.includes('Someone bought an AYBKK pass with this email')
+           && beaCopy[0].text.includes('Signed as: Bob Buyer · ') && !beaCopy[0].text.includes('We email you a copy')
+           && beaCopy[0].text.includes('\nIn the shala\n7. Book every class'), beaCopy[0] && beaCopy[0].text.slice(0, 400));
+      const adaO = await one('SELECT refno, amount_thb FROM bkk_orders WHERE id=$1', [o2.body.order.id]);
+      stubAns = { Status: 'CP', Total: adaO.amount_thb };
+      const adaPaid = (await J('/api/bkk/pay/check/' + adaO.refno)).body;
+      const adaCopy = await waitCopy('ada.agree@example.com');
+      ok("a new student's checkout tick: the copy comes with the payment, in Thai, to the email typed", adaPaid.status === 'paid'
+         && adaCopy.length === 1 && adaCopy[0].subject === 'สำเนาข้อตกลงนักเรียน AYBKK (v1)' && adaCopy[0].text.startsWith('สวัสดี Ada Agreement')
+         && adaCopy[0].text.includes(CONSENT_TEXT.v1.th.agreement.groups[0][1][0]), JSON.stringify([adaPaid, adaCopy.length]));
 
       // A drop-in for a class: the seat and the consent row come with the one payment.
       const cls = (await J('/api/bkk/schedule?days=10', { headers: ADMIN })).body.classes
@@ -8450,6 +8494,25 @@ const ok = (name, cond, extra = '') => {
       const fa = await post(`/api/bkk/admin/orders/${e3.body.order.id}/force-activate`, { confirm: true }, ADMIN);
       ok('...staff Activate on an unsigned drop-in books the seat in require, while a new checkout still asks (409)', e2.status === 409
          && fa.status === 200 && fa.body.success === true && !!fa.body.booking, JSON.stringify([e2.body, fa.body]));
+
+      // An order typed with a profile's email, pending when that profile is merged in and paid after:
+      // the undo takes its tick back with the order, so the kept profile is not left signed.
+      const KIT = await grant('Kit Kept', 'kit.kept@example.com', 'unlim1'), FEN = await grant('Fen Folded', 'fen.folded@example.com', 'unlim1');
+      const g1 = await post('/api/bkk/orders', { productCode: 'pack8', name: 'Gus Giver', email: 'fen.folded@example.com', consent: tick({ name: 'Gus Giver' }) });
+      const mgF = await post(`/api/bkk/admin/members/${KIT}/merge`, { from: FEN, sure: true }, ADMIN);
+      stubAns = { Status: 'CP', Total: g1.body.order.amount };
+      const g1p = (await J('/api/bkk/pay/check/' + g1.body.order.refno)).body;
+      const whoHas = async () => one(`SELECT (SELECT code FROM bkk_members WHERE id=o.member_id) AS o,
+        (SELECT m.code FROM bkk_passes p JOIN bkk_members m ON m.id=p.member_id WHERE p.order_id=o.id) AS p,
+        (SELECT m.code FROM bkk_consents c JOIN bkk_members m ON m.id=c.member_id WHERE c.order_id=o.id) AS c FROM bkk_orders o WHERE o.id=$1`, [g1.body.order.id]);
+      const during = await whoHas();
+      const umF = await post(`/api/bkk/admin/members/${FEN}/unmerge`, {}, ADMIN);
+      const after = await whoHas();
+      const kitBook = await post('/api/bkk/bookings', { memberCode: KIT, slotId: cls.slotId, date: cls.date });
+      ok("a tick paid after a merge goes back with its order on the undo, and the kept profile is unsigned again",
+         g1.status === 200 && mgF.status === 200 && g1p.status === 'paid' && during.o === KIT && during.c === KIT && umF.status === 200
+           && after.o === FEN && after.p === FEN && after.c === FEN && kitBook.status === 409 && kitBook.body.error === 'consent',
+         JSON.stringify([during, after, umF.body.since || umF.body, kitBook.body]));
     } finally {
       for (const k of Object.keys(gwEnv)) delete process.env[k];
       stubSrv.close();

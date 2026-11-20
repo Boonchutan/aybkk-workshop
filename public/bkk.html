@@ -951,7 +951,7 @@
   .agree .cu20 .linkbtn{font-size:var(--fs-s);text-decoration:underline;text-underline-offset:.18em}
   .agree #cSig{margin:2px 0 0}
   .agree .cdata{margin:14px 0 0}
-  .linkbtn.inl{display:inline;min-height:0;padding:0;font:inherit;color:var(--plum);text-decoration:underline;text-underline-offset:.18em}
+  .agree a.inl{color:var(--plum);text-decoration:underline;text-underline-offset:.18em}
   .agree .cpriv{margin:6px 0 0;padding:4px 14px 10px;background:var(--wall)}
   .agree .cpriv p,.tbody p{margin:0 0 8px;font-size:15px;line-height:1.5}
   .agreebar{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;margin:0 0 14px;padding:10px 14px;background:var(--blush);color:var(--plum);font-size:15px;line-height:1.4}
@@ -1983,20 +1983,20 @@
     cSigned: (v, d) => `ข้อตกลงนักเรียน ${v} ยอมรับเมื่อ ${d}`, cReadIt: 'อ่าน',
     cGuardian: 'อายุต่ำกว่า 20 ปี: ผู้ปกครองยังต้องมาที่ชาลาพร้อมคุณก่อนคลาสแรก เพื่อลงชื่อให้ความยินยอม',
     cBanner: 'โปรดอ่านข้อตกลงนักเรียนสักครั้ง ใช้เวลาประมาณ 2 นาที', cBannerBtn: 'อ่านเลย' });
-  Object.assign(STR.zh, { cBack: '返回', cNeedTick: '请先勾选同意。', cNeedName: '请填写您的姓名（至少 2 个字）。',
-    cNameL: '您的姓名（作为签名）', cOver20: '已满 20 岁？', cChanged: '协议刚刚更新，请再读一遍。',
-    cFail: '暂时没有成功，请再试一次。', cThanks: '谢谢，您的同意已保存。',
-    cCopy: '副本已发往您的邮箱。', cClose: '关闭', cCardH: '学生协议',
+  Object.assign(STR.zh, { cBack: '返回', cNeedTick: '请先勾选同意。', cNeedName: '请填写你的姓名（至少 2 个字）。',
+    cNameL: '你的姓名（作为签名）', cOver20: '已满 20 岁？', cChanged: '协议刚刚更新，请再读一遍。',
+    cFail: '暂时没有成功，请再试一次。', cThanks: '谢谢，你的同意已保存。',
+    cCopy: '副本已发往你的邮箱。', cClose: '关闭', cCardH: '学生协议',
     cCardP: '下次上课前，请阅读并同意一次，大约需要 2 分钟。', cCardBtn: '阅读并同意',
     cSigned: (v, d) => `学生协议 ${v}，于 ${d} 同意。`, cReadIt: '查看',
-    cGuardian: '未满 20 岁：第一次上课前，您的父母或监护人还需要陪您来道场表示同意。',
+    cGuardian: '未满 20 岁：第一次上课前，你的父母或监护人还需要陪你来道场表示同意。',
     cBanner: '请阅读一次学生协议，大约需要 2 分钟。', cBannerBtn: '阅读' });
   Object.assign(STR.ru, { cBack: 'Назад', cNeedTick: 'Пожалуйста, поставьте галочку, чтобы согласиться.', cNeedName: 'Пожалуйста, введите имя (минимум 2 буквы).',
     cNameL: 'Ваше имя (как подпись)', cOver20: 'Вам 20 или больше?', cChanged: 'Соглашение только что обновилось. Пожалуйста, прочитайте его ещё раз.',
     cFail: 'Сейчас не получилось. Пожалуйста, попробуйте ещё раз.', cThanks: 'Спасибо. Ваше согласие сохранено.',
     cCopy: 'Копия уже отправлена вам на email.', cClose: 'Закрыть', cCardH: 'Соглашение ученика',
     cCardP: 'Пожалуйста, прочитайте его и согласитесь один раз до следующего занятия. Это займёт около 2 минут.', cCardBtn: 'Прочитать и согласиться',
-    cSigned: (v, d) => `Соглашение ученика ${v}, согласие от ${d}.`, cReadIt: 'Прочитать',
+    cSigned: (v, d) => `Соглашение ученика ${v}, согласие от ${String(d).replace(/\.$/, '')}.`, cReadIt: 'Прочитать',
     cGuardian: 'Вам меньше 20: перед первым занятием ваш родитель или опекун должен прийти с вами в шалу и дать согласие.',
     cBanner: 'Пожалуйста, прочитайте соглашение ученика один раз. Это займёт около 2 минут.', cBannerBtn: 'Прочитать' });
 
@@ -2311,12 +2311,16 @@
       POSTERS = m && typeof m === 'object' ? m : {};
       if (LOADED && current === 'schedule' && !OPEN) { renderSchedule(); toHash(); }
     });
+    // The agreement's text starts with the rest, so the first timetable already knows about the
+    // ask bar; it never waits more than a moment for it.
+    const consentP = loadConsent();
     try {
       const [s, p] = await Promise.all([
         getSchedule(),
         getJSON('/api/bkk/products'),
         loadMine(),
       ]);
+      await Promise.race([consentP, new Promise(r => setTimeout(r, 300))]);
       takeSchedule(s);
       LOADED_AT = LOAD_TRY = Date.now();
       PRODUCTS = p.products || [];
@@ -2328,14 +2332,15 @@
       tab(current);
       if (HERO_BUY && current === 'packages') heroBuy();
       HERO_BUY = false;
-      // The agreement's text, off the timetable's path. /book?consent=1 (the message at the switch) opens it.
-      loadConsent().then(() => {
+      // /book?consent=1 (the message at the switch) opens the agreement; a slow text adds the bar late.
+      const barNow = current === 'schedule' && consentOn() && CONSENT.mode === 'ask' && consentDue();
+      consentP.then(() => {
         const qs = new URLSearchParams(location.search);
         if (qs.get('consent') === '1') {
           qs.delete('consent');
           history.replaceState(null, '', location.pathname + (qs.toString() ? '?' + qs : '') + location.hash);
           if (consentOn()) { tab('me'); openAgreement('me'); }
-        } else if (current === 'schedule' && !OPEN && consentOn() && CONSENT.mode === 'ask' && consentDue()) renderSchedule();
+        } else if (!barNow && current === 'schedule' && !OPEN && consentOn() && CONSENT.mode === 'ask' && consentDue()) renderSchedule();
       });
     } catch (e) {
       $('#view').removeAttribute('aria-busy');
@@ -3687,12 +3692,14 @@
   }
   const privacyHtml = c => c.text.privacy.sections.map(([h, p]) => `<h4 class="cgh">${esc(h)}</h4><p>${esc(p)}</p>`).join('');
   // The agreement and the privacy notice as sections of the page (/policy, /privacy). A link
-  // from a receipt (?agreement=v1) shows the version it was signed under.
+  // from a receipt or a copy (?agreement=v1) shows the version it was signed under, even once
+  // the switch is off again: what someone agreed to stays readable.
   const TERMS_V = (/^v\d{1,3}$/.exec(new URLSearchParams(location.search).get('agreement') || '') || [])[0];
   async function drawTerms() {
     const pol = $('#policy'), prv = $('#privacy');
-    pol.hidden = prv.hidden = !consentOn();
-    if (!consentOn()) return;
+    const show = consentOn() || (!!TERMS_V && !!CONSENT && !!CONSENT.text);
+    pol.hidden = prv.hidden = !show;
+    if (!show) return;
     let c = CONSENT;
     if (TERMS_V && TERMS_V !== c.version) {
       if (!TERMS || TERMS.lang !== CONSENT.lang || TERMS.version !== TERMS_V)
@@ -3711,8 +3718,9 @@
   function agreementForm(where, { name = '', total = 0, practised = false } = {}) {
     const c = CONSENT, a = c.text.agreement;
     const go = where === 'buy' ? fillC(a.agreePay, { total: baht(total) }) : where === 'book' ? a.agreeBook : a.agree;
+    // A link, not a button: it wraps with the words around it (RU and TH put quotes and words beside it).
     const data = esc(a.data).replace('{privacy}',
-      `<button type="button" class="linkbtn inl" id="cPriv" aria-expanded="false" aria-controls="cPrivBox">${esc(a.privacyLink)}</button>`);
+      `<a href="#cPrivBox" role="button" class="inl" id="cPriv" aria-expanded="false" aria-controls="cPrivBox">${esc(a.privacyLink)}</a>`);
     return `<div class="agree">
       ${practised ? `<h3 id="cHead" tabindex="-1">${esc(a.confirmTitle)}</h3><p class="note">${esc(a.confirmLead)}</p>`
         : `<h3 id="cHead" tabindex="-1">${esc(a.title)} · ${esc(c.version)}</h3><p class="note">${esc(a.lead)}</p>`}
@@ -3738,8 +3746,9 @@
     requestAnimationFrame(() => { $('#dlg').scrollTop = 0; });
   };
   // Wires the form drawn in root; returns read(), which gives the tick for the server or
-  // null (with the reason shown).
-  function wireAgreement(root, where, getName) {
+  // null (with the reason shown). count: false when the same opening draws it again (Back, a
+  // newer version); 'agreed' is counted by the caller once the server took the tick.
+  function wireAgreement(root, where, getName, count = true) {
     const a = CONSENT.text.agreement, q = s => root.querySelector(s);
     let u20 = false;
     const sig = () => { q('#cSig').textContent = fillC(a.signed, { name: getName().trim() || '…', date: dayLong(bkkToday()), version: CONSENT.version }); };
@@ -3751,27 +3760,30 @@
       e.currentTarget.textContent = u20 ? t('cOver20') : a.under20;
       q('#cTick').checked = false;
     };
-    q('#cPriv').onclick = () => {
+    q('#cPriv').onclick = e => {
+      e.preventDefault();
       const box = q('#cPrivBox');
       box.hidden = !box.hidden;
       q('#cPriv').setAttribute('aria-expanded', String(!box.hidden));
     };
-    cEvent('shown', where);
+    if (count) cEvent('shown', where);
     return () => {
       const name = getName().replace(/\s+/g, ' ').trim(), say = k => { q('#cMsg').innerHTML = `<div class="msg bad">${esc(t(k))}</div>`; return null; };
       if (!q('#cTick').checked) return say('cNeedTick');
       if (name.length < 2) return say('cNeedName');
       q('#cMsg').innerHTML = '';
-      cEvent('agreed', where);
       return { agree: true, version: CONSENT.version, lang: CONSENT.lang, name, under20: u20 };
     };
   }
   // A signed-in student signs on their own phone: a booking the server held back for it (after:
   // the same booking again), the My account card, the ask-mode bar, or /book?consent=1.
-  async function openAgreement(where, after) {
-    await loadConsent();
+  // force: the server asked for it, so the text is loaded again (the page may have opened while
+  // the switch was off). again: the same opening, drawn again for a newer version.
+  async function openAgreement(where, after, { force = false, again = false } = {}) {
+    await loadConsent(force);
     const code = myCode();
-    if (!consentOn() || !code) return;
+    if (!code) return;
+    if (!consentOn()) { if (force) alert(t('cFail')); return; }
     let me = MINE.code === code ? MINE.me : null;
     if (!me) { try { me = await getJSON('/api/bkk/me/' + encodeURIComponent(code)); setMine(code, me); } catch (_) {} }
     if (code !== myCode() || (where === 'me' && me && me.consent && me.consent.signed)) return;
@@ -3779,7 +3791,7 @@
       practised: !!(me && me.history && me.history.practised > 0) });
     if (!$('#dlg').open) $('#dlg').showModal();
     toTop();
-    const read = wireAgreement($('#dlgIn'), where, () => $('#cName').value);
+    const read = wireAgreement($('#dlgIn'), where, () => $('#cName').value, !again);
     $('#cCancel').onclick = () => $('#dlg').close();
     $('#cGo').onclick = async () => {
       const body = read();
@@ -3792,18 +3804,28 @@
         // A page left open across a new version: the new text, said so.
         if (r.status === 409 && j.error === 'consent') {
           await loadConsent(true);
-          await openAgreement(where, after);
+          await openAgreement(where, after, { again: true });
           if ($('#cMsg')) $('#cMsg').innerHTML = `<div class="msg bad">${esc(t('cChanged'))}</div>`;
           return;
         }
+        // The switch went off while this was open: nothing to sign, so the booking simply goes on.
+        if (r.status === 409 && j.off) {
+          await loadConsent(true);
+          if (MINE.code === code && MINE.me) delete MINE.me.consent;
+          $('#dlg').close();
+          if (after) return after();
+          if (current === 'me') renderMe(); else if (current === 'schedule') renderSchedule();
+          return;
+        }
         if (!r.ok || !j.consent) throw new Error(t('cFail'));
+        if (!j.already) cEvent('agreed', where);
         if (MINE.code === code && MINE.me) MINE.me.consent = j.consent;
         if (after) { $('#dlg').close(); return after(); }
         $('#dlgIn').innerHTML = `<h3>${esc(t('cThanks'))}</h3>${j.emailed ? `<p class="note">${esc(t('cCopy'))}</p>` : ''}
           <p class="dacts"><button class="btn pink" onclick="document.getElementById('dlg').close()">${esc(t('cClose'))}</button></p>`;
         if (current === 'me') renderMe(); else if (current === 'schedule') renderSchedule();
-      } catch (e) {
-        if ($('#cMsg')) $('#cMsg').innerHTML = `<div class="msg bad">${esc(e.message || t('cFail'))}</div>`;
+      } catch (_) {
+        if ($('#cMsg')) $('#cMsg').innerHTML = `<div class="msg bad">${esc(t('cFail'))}</div>`;
         if ($('#cGo')) $('#cGo').disabled = false;
       }
     };
@@ -3870,12 +3892,14 @@
       const me = MINE.code && MINE.code === myCode() ? MINE.me : null;
       return me && me.member && String(me.member.email || '').toLowerCase() === email.toLowerCase() ? me : null;
     };
+    let shown = false;   // counted once per opening of this dialog, however often Back and Pay go round
     const step2 = note => {
       const email = $('#be').value.trim(), me = held(email);
       $('#bs1').hidden = true;
       $('#bs2').hidden = false;
       $('#bs2').innerHTML = agreementForm('buy', { total: p.total_thb, practised: !!(me && me.history && me.history.practised > 0) });
-      const read = wireAgreement($('#bs2'), 'buy', () => $('#bn').value);
+      const read = wireAgreement($('#bs2'), 'buy', () => $('#bn').value, !shown);
+      shown = true;
       if (note) $('#cMsg').innerHTML = `<div class="msg bad">${esc(note)}</div>`;
       $('#cBack').onclick = () => { toStep1(); busy(false); $('#bgo').focus(); };
       $('#cGo').onclick = () => { const c = read(); if (c) send(c); };
@@ -3903,12 +3927,15 @@
         const j = await r.json();
         if (!r.ok && CLOSED_RE.test(j.error || '')) { busy(false); return shut(); }
         // The agreement the server asks for (or a newer version of it): step 2, with the text as it is now.
+        // A page opened while the switch was off loads the text now; if it cannot, it says so plainly.
         if (r.status === 409 && j.error === 'consent') {
-          await loadConsent(!!consent);
+          await loadConsent(true);
           busy(false);
           if (consentOn()) return step2(consent ? t('cChanged') : '');
+          return say(`<div class="msg bad">${esc(t('cFail'))}</div>`);
         }
         if (!r.ok) throw new Error(j.error || 'could not create order');
+        if (consent) cEvent('agreed', 'buy');
         // An email that already has a profile: its code is not handed to this
         // browser (anyone can type an email). The receipt email signs them in.
         // A phone signed in as someone else must not stay on that profile: the
@@ -3960,9 +3987,8 @@
       if (!name || !email) { $('#bmsg').innerHTML = '<div class="msg bad">Name and email are required.</div>'; return; }
       $('#bmsg').innerHTML = '';
       // The agreement always comes before the gateway: on the way back the page knows the order only from this browser.
-      busy(true);
-      await loadConsent();
-      busy(false);
+      // Known text is used as it is; a switch changed since is the server's 409, which loads it again.
+      if (!CONSENT) { busy(true); await loadConsent(); busy(false); }
       const me = held(email);
       if (consentOn() && !(me && me.consent && me.consent.signed)) return step2();
       send(null);
@@ -4017,7 +4043,7 @@
       if (!r.ok) {
         // In 'require' the server holds a student's own booking for the agreement: sign, then the
         // same booking goes through in the same tap.
-        if (j.error === 'consent') { BUSY = false; openAgreement('book', () => book(slotId, date)); return; }
+        if (j.error === 'consent') { BUSY = false; openAgreement('book', () => book(slotId, date), { force: true }); return; }
         // A drop-in they hold is for a class up to 2 weeks ahead.
         if (j.dropinUntil) return alert(t('dropUse', fmtDay(addDays(date, 1 - DROP_DAYS) + 'T12:00:00+07:00')));
         // A pass that starts later (its first class booked further on) says so.

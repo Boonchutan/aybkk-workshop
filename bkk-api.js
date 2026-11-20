@@ -77,7 +77,8 @@ const MANUAL_NOTE = 'MANUAL ACTIVATION by admin';
 // as written for Boonchu (20 Nov 2026), not approved yet; line 13's last phrase ("or where Thai
 // law gives you a right to a refund") waits for his yes and the lawyer's read. {since} in line 17
 // is the day the switch first left off; the privacy notice's {legal_name}, {address} and {email}
-// come from Admin, Settings.
+// come from Admin, Settings. The notice names every service personal data goes to (inbox.js:
+// LINE, Meta, Anthropic, Telegram; team-brief.js: LINE; server.js: Neo4j): a new one is a new version.
 const CONSENT_VERSION = 'v1';
 const CONSENT_LANGS = ['en', 'th', 'zh', 'ru'];
 const CONSENT_TEXT = {
@@ -129,10 +130,10 @@ const CONSENT_TEXT = {
         title: 'Privacy notice',
         sections: [
           ['Who we are', '{legal_name} runs AYBKK (Ashtanga Yoga Center of Bangkok), {address}. Contact us at {email} or on LINE @aybkk.'],
-          ['What we keep', 'Your name, email and phone, the language you use, your bookings, check-ins, passes and payments, and the record of the agreement you signed (its version, the name you gave, the date and time). Also, if there are any: notes your teachers write about your practice, your 12-week check numbers, class photos you are tagged in, and your profile photo. We never see or keep your card number.'],
-          ['Why', 'To run your classes: bookings, check-in, passes, payments and receipts. To show what you agreed to. To help your teachers teach you. We need these to give you classes. We never sell your data.'],
-          ['Who else handles it', 'PaySolutions takes online payments. Resend sends our emails. Cloudinary stores photos. Google: teachers put class photos in Google Drive before they go to profiles, and Google Ads runs only if you tap OK on the cookie bar. Railway runs the server and database of this site. Telegram carries short alerts to our staff, for example about a payment. Some of these services keep data outside Thailand.'],
-          ['How long', 'The record of the agreement you signed: 10 years after your last class, because a claim can come that late. Payment records: 5 years, as tax law asks. Everything else: deleted 2 years after your last class, or sooner if you ask.'],
+          ['What we keep', 'Your name, email and phone, the language you use, your bookings, check-ins, passes and payments. The record of the agreement you signed: its version, the name and email you gave, the date and time, and whether you are under 20 (then also your guardian’s name and the day on their paper). Messages you send us on LINE, Instagram or Facebook. What you wrote in an orientation form, which can include injuries and an emergency contact. If there are any: notes your teachers write about your practice, your 12-week check numbers, class photos you are tagged in, and your profile photo. The internet address (IP) a sign-in link was asked from. We never see or keep your card number.'],
+          ['Why', 'To run your classes: bookings, check-in, passes, payments and receipts. To show what you agreed to. To help your teachers teach you, including knowing about an injury. To answer your messages. We need these to give you classes. We never sell your data.'],
+          ['Who else handles it', 'PaySolutions takes online payments. Resend sends our emails. Cloudinary stores photos. Google: teachers put class photos in Google Drive before they go to profiles, and Google Ads runs only if you tap OK on the cookie bar. Railway runs the server and database of this site. Neo4j stores orientation forms. LINE carries our LINE chats, and the daily class list we send to our staff group (first name and initial, classes and passes). Meta carries Instagram and Facebook messages. Anthropic (Claude) reads the messages you send us, to sort them and draft our replies. Telegram carries alerts to our staff, for example about a payment or a new message, with its text. Some of these services keep data outside Thailand.'],
+          ['How long', 'The record of the agreement you signed: 10 years after your last class, because a claim can come that late. Payment records: 5 years, as tax law asks. Messages: 90 days. Everything else: deleted 2 years after your last class, or sooner if you ask.'],
           ['Your rights', 'You can ask to see your data, get a copy, correct it or delete it. Write to {email} or message LINE @aybkk. You can remove your profile photo yourself in My account. We keep the agreement record and payment records for the times above even if you ask us to delete the rest. If you are not happy with how we handle your data, you can complain to the Personal Data Protection Committee of Thailand.'],
         ],
       },
@@ -184,56 +185,57 @@ const CONSENT_TEXT = {
         title: 'ประกาศความเป็นส่วนตัว',
         sections: [
           ['เราคือใคร', '{legal_name} เป็นผู้ดำเนินการ AYBKK (Ashtanga Yoga Center of Bangkok) {address} ติดต่อเราได้ที่ {email} หรือ LINE @aybkk'],
-          ['ข้อมูลที่เราเก็บ', 'ชื่อ อีเมล เบอร์โทร ภาษาที่คุณใช้ การจอง การเช็กอิน แพ็กเกจ การชำระเงิน และบันทึกข้อตกลงที่คุณลงชื่อไว้ (ฉบับ ชื่อที่คุณใส่ วันที่และเวลา) และหากมี: บันทึกที่ครูเขียนเกี่ยวกับการฝึกของคุณ ตัวเลขการเช็ก 12 สัปดาห์ รูปในคลาสที่มีชื่อคุณ และรูปโปรไฟล์ของคุณ เราไม่เห็นและไม่เก็บเลขบัตรของคุณ'],
-          ['เก็บไว้เพื่ออะไร', 'เพื่อจัดการคลาสของคุณ ได้แก่ การจอง การเช็กอิน แพ็กเกจ การชำระเงิน และใบเสร็จ เพื่อเป็นหลักฐานว่าคุณยอมรับข้อใดไว้ และเพื่อช่วยให้ครูสอนคุณได้ดี ข้อมูลเหล่านี้จำเป็นต่อการให้บริการคลาส เราไม่ขายข้อมูลของคุณ'],
-          ['ใครอีกบ้างที่ดูแลข้อมูล', 'PaySolutions รับชำระเงินออนไลน์ Resend ส่งอีเมลของเรา Cloudinary เก็บรูปภาพ Google: ครูเก็บรูปในคลาสไว้ใน Google Drive ก่อนนำขึ้นโปรไฟล์ และ Google Ads ทำงานเฉพาะเมื่อคุณกด "ตกลง" ที่แถบคุกกี้ Railway ดูแลเซิร์ฟเวอร์และฐานข้อมูลของเว็บไซต์นี้ Telegram ส่งการแจ้งเตือนสั้น ๆ ถึงทีมงาน เช่น เรื่องการชำระเงิน บางบริการเก็บข้อมูลไว้นอกประเทศไทย'],
-          ['เก็บไว้นานเท่าใด', 'บันทึกข้อตกลงที่คุณลงชื่อ: 10 ปีหลังคลาสสุดท้ายของคุณ เพราะอาจมีการเรียกร้องสิทธิ์ได้นานถึงเท่านั้น บันทึกการชำระเงิน: 5 ปี ตามที่กฎหมายภาษีกำหนด ข้อมูลอื่นทั้งหมด: ลบภายใน 2 ปีหลังคลาสสุดท้ายของคุณ หรือเร็วกว่านั้นหากคุณขอ'],
+          ['ข้อมูลที่เราเก็บ', 'ชื่อ อีเมล เบอร์โทร ภาษาที่คุณใช้ การจอง การเช็กอิน แพ็กเกจ และการชำระเงินของคุณ บันทึกข้อตกลงที่คุณลงชื่อไว้ ได้แก่ ฉบับ ชื่อและอีเมลที่คุณใส่ วันที่และเวลา และคุณอายุต่ำกว่า 20 ปีหรือไม่ (หากใช่ จะมีชื่อผู้ปกครองและวันที่ในเอกสารที่ผู้ปกครองลงชื่อด้วย) ข้อความที่คุณส่งถึงเราทาง LINE, Instagram หรือ Facebook สิ่งที่คุณเขียนในแบบฟอร์มปฐมนิเทศ (orientation) ซึ่งอาจมีอาการบาดเจ็บและผู้ติดต่อกรณีฉุกเฉิน และหากมี: บันทึกที่ครูเขียนเกี่ยวกับการฝึกของคุณ ตัวเลขการเช็ก 12 สัปดาห์ รูปในคลาสที่มีชื่อคุณ และรูปโปรไฟล์ของคุณ รวมถึงหมายเลขไอพี (IP) ที่ใช้ขอลิงก์เข้าสู่ระบบ เราไม่เห็นและไม่เก็บเลขบัตรของคุณ'],
+          ['เก็บไว้เพื่ออะไร', 'เพื่อจัดการคลาสของคุณ ได้แก่ การจอง การเช็กอิน แพ็กเกจ การชำระเงิน และใบเสร็จ เพื่อเป็นหลักฐานว่าคุณยอมรับข้อใดไว้ เพื่อช่วยให้ครูสอนคุณได้ดี รวมถึงรู้เรื่องอาการบาดเจ็บ และเพื่อตอบข้อความของคุณ ข้อมูลเหล่านี้จำเป็นต่อการให้บริการคลาส เราไม่ขายข้อมูลของคุณ'],
+          ['ใครอีกบ้างที่ดูแลข้อมูล', 'PaySolutions รับชำระเงินออนไลน์ Resend ส่งอีเมลของเรา Cloudinary เก็บรูปภาพ Google: ครูเก็บรูปในคลาสไว้ใน Google Drive ก่อนนำขึ้นโปรไฟล์ และ Google Ads ทำงานเฉพาะเมื่อคุณกด "ตกลง" ที่แถบคุกกี้ Railway ดูแลเซิร์ฟเวอร์และฐานข้อมูลของเว็บไซต์นี้ Neo4j เก็บแบบฟอร์มปฐมนิเทศ LINE รับส่งแชต LINE ของเรา และรายชื่อคลาสประจำวันที่เราส่งเข้ากลุ่มทีมงาน (ชื่อและอักษรแรกของนามสกุล คลาส และแพ็กเกจ) Meta รับส่งข้อความ Instagram และ Facebook Anthropic (Claude) อ่านข้อความที่คุณส่งถึงเรา เพื่อจัดลำดับและร่างคำตอบ Telegram ส่งการแจ้งเตือนถึงทีมงาน เช่น เรื่องการชำระเงินหรือข้อความใหม่ พร้อมเนื้อความ บางบริการเก็บข้อมูลไว้นอกประเทศไทย'],
+          ['เก็บไว้นานเท่าใด', 'บันทึกข้อตกลงที่คุณลงชื่อ: 10 ปีหลังคลาสสุดท้ายของคุณ เพราะอาจมีการเรียกร้องสิทธิ์ได้นานถึงเท่านั้น บันทึกการชำระเงิน: 5 ปี ตามที่กฎหมายภาษีกำหนด ข้อความแชต: 90 วัน ข้อมูลอื่นทั้งหมด: ลบภายใน 2 ปีหลังคลาสสุดท้ายของคุณ หรือเร็วกว่านั้นหากคุณขอ'],
           ['สิทธิ์ของคุณ', 'คุณขอดูข้อมูล ขอสำเนา ขอแก้ไข หรือขอลบข้อมูลได้ เขียนมาที่ {email} หรือทักมาที่ LINE @aybkk คุณลบรูปโปรไฟล์เองได้ในแท็บ "บัญชีของฉัน" เราเก็บบันทึกข้อตกลงและบันทึกการชำระเงินไว้ตามระยะเวลาข้างต้น แม้คุณขอให้ลบข้อมูลอื่น หากไม่พอใจวิธีที่เราดูแลข้อมูล คุณร้องเรียนต่อคณะกรรมการคุ้มครองข้อมูลส่วนบุคคลได้'],
         ],
       },
     },
     // NEEDS A NATIVE CHECK: Chinese, translated from the English by Claude (20 Nov 2026), not yet
-    // read by a native speaker. Keep the switch off until one has.
+    // read by a native speaker. Keep the switch off until one has. Lines 13 to 16 are the site's own
+    // Member notes (bkk.html pol1a..pol4b, 你 and 课程卡), as the English and Thai quote aybkk.net.
     zh: {
       agreement: {
         title: '第一次上课之前',
         lead: '请完整阅读一次，大约需要 2 分钟。',
         confirmTitle: '只需确认一次。',
-        confirmLead: '感谢您一直和我们一起练习。现在我们为每一位学生存档这份简短的协议。请阅读一次。您的课程套餐和预约都保持不变。',
+        confirmLead: '感谢你一直和我们一起练习。现在我们为每一位学生存档这份简短的协议。请阅读一次。你的课程卡和预约都保持不变。',
         groups: [
-          ['您的练习', [
+          ['你的练习', [
             '阿斯汤加是一种身体练习。和任何运动一样，它可能造成受伤。',
-            '第二天或之后几天，您可能会感到酸痛或疲倦，刚开始练习时尤其如此。这很常见。但刺痛，或一直不缓解的疼痛就不一样了：请告诉老师，并去看医生。',
-            '在自己的能力范围内练习。您可以随时停下来休息。如果感到疼痛、头晕或身体不适，请停下并告诉老师。',
-            '上课前，请当面告诉老师您的任何伤病、健康状况、手术或怀孕情况。如果不确定自己是否适合练习，请先咨询医生。',
-            '老师可能会用手为您调整体式。您可以在课前或课中随时拒绝。',
-            '如果您因 AYBKK、其老师或工作人员的故意或过失行为而受伤，AYBKK 仍须依照泰国法律承担责任。对于无人过错时的正常练习风险，AYBKK 不承担责任。本页任何内容均不限制您依照泰国法律享有的权利。',
+            '第二天或之后几天，你可能会感到酸痛或疲倦，刚开始练习时尤其如此。这很常见。但刺痛，或一直不缓解的疼痛就不一样了：请告诉老师，并去看医生。',
+            '在自己的能力范围内练习。你可以随时停下来休息。如果感到疼痛、头晕或身体不适，请停下并告诉老师。',
+            '上课前，请当面告诉老师你的任何伤病、健康状况、手术或怀孕情况。如果不确定自己是否适合练习，请先咨询医生。',
+            '老师可能会用手为你调整体式。你可以在课前或课中随时拒绝。',
+            '如果你因 AYBKK、其老师或工作人员的故意或过失行为而受伤，AYBKK 仍须依照泰国法律承担责任。对于无人过错时的正常练习风险，AYBKK 不承担责任。本页任何内容均不限制你依照泰国法律享有的权利。',
           ]],
           ['在道场', [
             '每节课都请提前在 aybkk.net 预约，并在练习前到门口签到。',
             '请至少在上课前 5 小时取消，以保留课次。',
             '道场内禁止拍照和录像。',
             '练习期间禁止使用手机、禁止交谈、禁止喝水。如果因健康原因需要喝水，请告诉老师。',
-            '请自带瑜伽垫和毛巾，或在预约时勾选“需要租瑜伽垫”，在道场以 ฿200 租用。练习后，请用我们提供的喷雾清洁您的垫子和周围的地面。',
+            '请自带瑜伽垫和毛巾，或在预约时勾选“需要租瑜伽垫”，在道场以 ฿200 租用。练习后，请用我们提供的喷雾清洁你的垫子和周围的地面。',
             '每逢满月和新月，道场休息。',
           ]],
-          ['您的套餐', [
-            '所有课程套餐一经购买概不退款，除非我们无法提供您已付费的课程（例如我们关闭或搬迁），或泰国法律赋予您退款的权利。',
-            '您的套餐仅限本人使用，不能与他人共用。',
-            '因骨折、眼部问题、手术或怀孕及分娩，可暂停套餐最多 30 天（或依医生证明，最多 2 个月）。其他情况请与我们商量。请在暂停开始前通过 LINE @aybkk 告诉我们。',
-            '要搬走，或者医生让您停止练习？如果暂停套餐不适合您，3、6 或 12 个月的会员资格可以转让一次给一位刚来 AYBKK 的新学员。到期日不变。手续费 ฿1,500。请先通过 LINE @aybkk 联系我们。',
-            '在 {since} 之前购买的套餐，保留购买时的条款。',
+          ['你的课程卡', [
+            '课程卡一经购买，不予退款，除非我们无法提供你已付费的课程（道场关闭或搬迁），或泰国法律规定你有权退款。',
+            '课程卡仅限本人使用，不能与他人共用。',
+            '可暂停最多30天（或按医生证明，最多2个月），适用于骨折、眼睛问题、手术、怀孕和生产。其他情况可以和我们商量。请在暂停开始前，通过 LINE @aybkk 告诉我们。',
+            '要离开曼谷，或医生让你停练？如果暂停不合适，3个月、6个月或12个月会员可转让一次，给从未在 AYBKK 办过卡的新学员。到期日不变，手续费 ฿1,500。请先在 LINE @aybkk 联系我们。',
+            '在 {since} 之前购买的课程卡，保留购买时的条款。',
           ]],
-          ['您的照片', [
-            '是否添加头像照片由您决定。如果添加，照片会显示在门口签到 iPad 上您的名字格里，其他学生可以看到；也会出现在老师和工作人员的名单中。您可以随时在“我的账户”中删除。',
+          ['你的照片', [
+            '是否添加头像照片由你决定。如果添加，照片会显示在门口签到 iPad 上你的名字格里，其他学生可以看到；也会出现在老师和工作人员的名单中。你可以随时在“我的账户”中删除。',
           ]],
         ],
         tick: '我已阅读并同意。我已年满 20 岁。',
         under20: '未满 20 岁？',
         tickUnder20: '我已阅读并同意。我未满 20 岁。在第一次上课前，我的父母或监护人会陪我到道场表示同意。',
-        signed: '签名：{name} · {date} · {version}。我们会把副本发到您的邮箱。',
-        dataH: '您的资料：',
-        data: 'AYBKK 保存您的姓名、联系方式、预约、签到、付款记录以及这份协议，用于安排您的课程。{privacy}说明了还有谁会处理这些资料、我们保存多久，以及如何查看、更正或删除。',
+        signed: '签名：{name} · {date} · {version}。我们会把副本发到你的邮箱。',
+        dataH: '你的资料：',
+        data: 'AYBKK 保存你的姓名、联系方式、预约、签到、付款记录以及这份协议，用于安排你的课程。{privacy}说明了还有谁会处理这些资料、我们保存多久，以及如何查看、更正或删除。',
         privacyLink: '隐私声明',
         agreePay: '同意并支付 {total}', agreeBook: '同意并预约', agree: '同意',
       },
@@ -241,21 +243,22 @@ const CONSENT_TEXT = {
         title: '隐私声明',
         sections: [
           ['我们是谁', '{legal_name} 经营 AYBKK（Ashtanga Yoga Center of Bangkok），地址：{address}。联系方式：{email} 或 LINE @aybkk。'],
-          ['我们保存什么', '您的姓名、邮箱和电话，您使用的语言，您的预约、签到、课程套餐和付款记录，以及您签署的协议记录（版本、您填写的姓名、日期和时间）。如果有的话，还包括：老师写下的关于您练习的笔记、您的 12 周检查数据、标记了您的课堂照片，以及您的头像照片。我们看不到，也不保存您的银行卡号。'],
-          ['为什么保存', '用于安排您的课程：预约、签到、课程套餐、付款和收据；证明您同意了哪些内容；帮助老师更好地教您。我们需要这些资料才能为您提供课程。我们绝不出售您的资料。'],
-          ['还有谁处理这些资料', 'PaySolutions 处理在线付款。Resend 发送我们的邮件。Cloudinary 保存照片。Google：老师先把课堂照片放在 Google Drive，再放到个人页面；只有当您在 Cookie 提示栏点击“好的”时，才会使用 Google Ads。Railway 运行本网站的服务器和数据库。Telegram 向我们的工作人员发送简短提醒，例如关于付款的提醒。其中一些服务会在泰国境外保存资料。'],
-          ['保存多久', '您签署的协议记录：在您最后一节课后保存 10 年，因为索赔可能在这么久之后才提出。付款记录：按照税法要求保存 5 年。其他所有资料：在您最后一节课后 2 年内删除；如果您提出要求，可以更早删除。'],
-          ['您的权利', '您可以要求查看您的资料、获取副本、更正或删除。请发邮件到 {email}，或通过 LINE @aybkk 联系我们。您可以在“我的账户”中自行删除头像照片。即使您要求删除其他资料，我们也会按上述期限保存协议记录和付款记录。如果您对我们处理资料的方式不满意，可以向泰国个人数据保护委员会投诉。'],
+          ['我们保存什么', '你的姓名、邮箱和电话，你使用的语言，你的预约、签到、课程卡和付款记录。你签署的协议记录：版本、你填写的姓名和邮箱、日期和时间，以及你是否未满 20 岁（如果是，还有监护人的姓名和其书面同意上的日期）。你通过 LINE、Instagram 或 Facebook 发给我们的消息。你在入门表格（orientation）中填写的内容，其中可能包括伤病情况和紧急联系人。如果有的话，还包括：老师写下的关于你练习的笔记、你的 12 周检查数据、标记了你的课堂照片，以及你的头像照片。申请登录链接时使用的网络地址（IP）。我们看不到，也不保存你的银行卡号。'],
+          ['为什么保存', '用于安排你的课程：预约、签到、课程卡、付款和收据；证明你同意了哪些内容；帮助老师更好地教你，包括了解你的伤病情况；回复你的消息。我们需要这些资料才能为你提供课程。我们绝不出售你的资料。'],
+          ['还有谁处理这些资料', 'PaySolutions 处理在线付款。Resend 发送我们的邮件。Cloudinary 保存照片。Google：老师先把课堂照片放在 Google Drive，再放到个人页面；只有当你在 Cookie 提示栏点击“好的”时，才会使用 Google Ads。Railway 运行本网站的服务器和数据库。Neo4j 保存入门表格。LINE 传送我们的 LINE 聊天，以及我们每天发到员工群的课程名单（名字和姓氏首字母、课程和课程卡）。Meta 传送 Instagram 和 Facebook 消息。Anthropic（Claude）会阅读你发给我们的消息，用于分类并起草我们的回复。Telegram 向我们的工作人员发送提醒，例如关于付款或新消息的提醒，并附上消息内容。其中一些服务会在泰国境外保存资料。'],
+          ['保存多久', '你签署的协议记录：在你最后一节课后保存 10 年，因为索赔可能在这么久之后才提出。付款记录：按照税法要求保存 5 年。聊天消息：90 天。其他所有资料：在你最后一节课后 2 年内删除；如果你提出要求，可以更早删除。'],
+          ['你的权利', '你可以要求查看你的资料、获取副本、更正或删除。请发邮件到 {email}，或通过 LINE @aybkk 联系我们。你可以在“我的账户”中自行删除头像照片。即使你要求删除其他资料，我们也会按上述期限保存协议记录和付款记录。如果你对我们处理资料的方式不满意，可以向泰国个人数据保护委员会投诉。'],
         ],
       },
     },
     // NEEDS A NATIVE CHECK: Russian, translated from the English by Claude (20 Nov 2026), not yet
-    // read by a native speaker. Keep the switch off until one has.
+    // read by a native speaker. Keep the switch off until one has. Lines 13 to 16 are the site's own
+    // Member notes (bkk.html pol1a..pol4b).
     ru: {
       agreement: {
         title: 'Перед первым занятием',
         lead: 'Пожалуйста, прочитайте это один раз. Это займёт около 2 минут.',
-        confirmTitle: 'Подтверждение один раз.',
+        confirmTitle: 'Подтвердите один раз.',
         confirmLead: 'Спасибо, что практикуете с нами. Теперь мы храним это короткое соглашение для каждого ученика. Прочитайте его один раз. Ваш абонемент и записи остаются как есть.',
         groups: [
           ['Ваша практика', [
@@ -263,7 +266,7 @@ const CONSENT_TEXT = {
             'На следующий день или несколько дней вы можете чувствовать боль в мышцах или усталость, особенно в начале. Это обычное дело. С острой болью или болью, которая не проходит, всё иначе: скажите учителю и обратитесь к врачу.',
             'Практикуйте в пределах своих возможностей. Вы можете остановиться и отдохнуть в любой момент. Если вы чувствуете боль, головокружение или недомогание, остановитесь и скажите учителю.',
             'Перед занятием лично сообщите учителю о любой травме, проблеме со здоровьем, операции или беременности. Если вы не уверены, что вам можно практиковать, сначала посоветуйтесь с врачом.',
-            'Учителя могут делать мануальные корректировки (adjustments). Вы можете отказаться в любой момент, до или во время занятия.',
+            'Учителя могут делать корректировки руками (ассисты). Вы можете отказаться в любой момент, до или во время занятия.',
             'Если вы получите травму из-за умышленных или неосторожных действий AYBKK, его учителей или сотрудников, AYBKK несёт ответственность по законодательству Таиланда. AYBKK не отвечает за обычные риски практики, когда никто не виноват. Ничто здесь не ограничивает ваши права по законодательству Таиланда.',
           ]],
           ['В шале', [
@@ -275,10 +278,10 @@ const CONSENT_TEXT = {
             'В дни полнолуния и новолуния шала закрыта.',
           ]],
           ['Ваш абонемент', [
-            'Все абонементы после покупки не возвращаются, кроме случаев, когда мы не можем провести оплаченные занятия (если мы закрываемся или переезжаем), или когда законодательство Таиланда даёт вам право на возврат.',
-            'Абонемент только для вас, передавать его другим нельзя.',
-            'Заморозка до 30 дней (или по справке врача, до 2 месяцев) при переломе, проблемах с глазами, операции, беременности и родах. В других случаях поговорите с нами. Пожалуйста, сообщите нам в LINE @aybkk до начала заморозки.',
-            'Переезжаете или врач велит прекратить практику? Если заморозка не подходит, абонемент на 3, 6 или 12 месяцев можно один раз передать человеку, который ещё не занимался в AYBKK. Дата окончания та же. Сбор ฿1,500. Сначала напишите нам в LINE @aybkk.',
+            'Оплаченный абонемент не возвращается, кроме случаев, когда мы не можем провести оплаченные занятия (если шала закроется или переедет) или когда законодательство Таиланда даёт вам право на возврат.',
+            'Абонемент только для вас, делиться им нельзя.',
+            'Заморозка до 30 дней (или по справке врача, до 2 месяцев): перелом, проблемы с глазами, операция, беременность и роды. Другие случаи обсудим. Напишите нам в LINE @aybkk до начала заморозки.',
+            'Уезжаете или врач велит сделать перерыв? Если заморозка не подходит, абонемент на 3, 6 или 12 месяцев можно один раз передать человеку, который ещё не занимался в AYBKK. Дата окончания та же. Сбор ฿1,500. Сначала напишите нам в LINE @aybkk.',
             'Абонемент, купленный до {since}, сохраняет условия, на которых он был продан.',
           ]],
           ['Ваше фото', [
@@ -298,10 +301,10 @@ const CONSENT_TEXT = {
         title: 'Уведомление о конфиденциальности',
         sections: [
           ['Кто мы', '{legal_name} управляет AYBKK (Ashtanga Yoga Center of Bangkok), {address}. Связаться с нами: {email} или LINE @aybkk.'],
-          ['Что мы храним', 'Ваше имя, email и телефон, язык, которым вы пользуетесь, ваши записи, отметки о посещении, абонементы и платежи, а также запись о подписанном вами соглашении (версия, указанное вами имя, дата и время). Кроме того, если они есть: заметки учителей о вашей практике, ваши данные 12-недельной проверки, фото с занятий, где вы отмечены, и ваше фото профиля. Номер вашей карты мы не видим и не храним.'],
-          ['Зачем', 'Чтобы проводить ваши занятия: записи, отметки, абонементы, платежи и чеки. Чтобы подтверждать, с чем вы согласились. Чтобы учителям было легче вас учить. Без этих данных мы не можем проводить для вас занятия. Мы никогда не продаём ваши данные.'],
-          ['Кто ещё обрабатывает данные', 'PaySolutions принимает онлайн-платежи. Resend отправляет наши письма. Cloudinary хранит фотографии. Google: учителя кладут фото с занятий в Google Drive, прежде чем добавить их в профили, а Google Ads работает, только если вы нажмёте OK в панели cookie. Railway обеспечивает работу сервера и базы данных этого сайта. Telegram доставляет нашим сотрудникам короткие уведомления, например о платеже. Некоторые из этих сервисов хранят данные за пределами Таиланда.'],
-          ['Как долго', 'Запись о подписанном соглашении: 10 лет после вашего последнего занятия, потому что претензия может появиться так поздно. Платёжные записи: 5 лет, как требует налоговое законодательство. Всё остальное удаляется через 2 года после вашего последнего занятия или раньше, если вы попросите.'],
+          ['Что мы храним', 'Ваше имя, email и телефон, язык, которым вы пользуетесь, ваши записи, отметки о посещении, абонементы и платежи. Запись о подписанном вами соглашении: версия, указанные вами имя и email, дата и время, а также отметка, если вам меньше 20 лет (тогда ещё имя вашего родителя или опекуна и дата на его бумаге). Сообщения, которые вы пишете нам в LINE, Instagram или Facebook. То, что вы написали в анкете для новичков (orientation): там могут быть травмы и контакт на экстренный случай. Кроме того, если они есть: заметки учителей о вашей практике, ваши данные 12-недельной проверки, фото с занятий, где вы отмечены, и ваше фото профиля. IP-адрес, с которого запросили ссылку для входа. Номер вашей карты мы не видим и не храним.'],
+          ['Зачем', 'Чтобы проводить ваши занятия: записи, отметки, абонементы, платежи и чеки. Чтобы подтверждать, с чем вы согласились. Чтобы учителям было легче вас учить, в том числе знать о травме. Чтобы отвечать на ваши сообщения. Без этих данных мы не можем проводить для вас занятия. Мы никогда не продаём ваши данные.'],
+          ['Кто ещё обрабатывает данные', 'PaySolutions принимает онлайн-платежи. Resend отправляет наши письма. Cloudinary хранит фотографии. Google: учителя кладут фото с занятий в Google Drive, прежде чем добавить их в профили, а Google Ads работает, только если вы нажмёте OK в панели cookie. Railway обеспечивает работу сервера и базы данных этого сайта. Neo4j хранит анкеты для новичков. LINE передаёт наши чаты в LINE и ежедневный список занятий, который мы отправляем в группу сотрудников (имя и первая буква фамилии, занятия и абонементы). Meta передаёт сообщения Instagram и Facebook. Anthropic (Claude) читает сообщения, которые вы нам пишете, чтобы сортировать их и готовить черновики наших ответов. Telegram доставляет нашим сотрудникам уведомления, например о платеже или новом сообщении, вместе с его текстом. Некоторые из этих сервисов хранят данные за пределами Таиланда.'],
+          ['Как долго', 'Запись о подписанном соглашении: 10 лет после вашего последнего занятия, потому что претензия может появиться так поздно. Платёжные записи: 5 лет, как требует налоговое законодательство. Сообщения в чатах: 90 дней. Всё остальное удаляется через 2 года после вашего последнего занятия или раньше, если вы попросите.'],
           ['Ваши права', 'Вы можете попросить показать ваши данные, выдать их копию, исправить или удалить их. Напишите на {email} или в LINE @aybkk. Фото профиля можно удалить самостоятельно в разделе «Мой аккаунт». Запись о соглашении и платёжные записи мы храним указанные выше сроки, даже если вы попросите удалить остальное. Если вас не устраивает, как мы обращаемся с вашими данными, вы можете подать жалобу в Комитет по защите персональных данных Таиланда.'],
         ],
       },
@@ -1172,16 +1175,16 @@ function mountBkk(app, opts = {}) {
     liveMember(db, (await db.query('SELECT * FROM bkk_members WHERE code=$1', [String(code || '')])).rows[0]);
 
   // The profile checkout would sell to for this email, or null for a new one.
-  async function memberByEmail(email) {
+  async function memberByEmail(email, db = pool) {
     const em = (email || '').trim().toLowerCase();
     if (!em) return null;
-    return liveMember(pool, (await q('SELECT * FROM bkk_members WHERE lower(email) = $1 LIMIT 1', [em])).rows[0]);
+    return liveMember(db, (await db.query('SELECT * FROM bkk_members WHERE lower(email) = $1 LIMIT 1', [em])).rows[0]);
   }
-  async function findOrCreateMember({ name, email, phone }) {
+  async function findOrCreateMember({ name, email, phone }, db = pool) {
     const em = (email || '').trim().toLowerCase();
-    const m = await memberByEmail(em);
+    const m = await memberByEmail(em, db);
     if (m) return m;
-    const r = await q(
+    const r = await db.query(
       `INSERT INTO bkk_members (code,name,email,phone) VALUES ($1,$2,$3,$4) RETURNING *`,
       [memberCode(), (name || '').trim() || 'Student', em || null, (phone || '').trim() || null]);
     return r.rows[0];
@@ -1244,14 +1247,26 @@ function mountBkk(app, opts = {}) {
     [memberId, kind, version, name, under20 === true, guardianName, signedOn, lang, via, orderId, email,
       lang && CONSENT_TEXT[version] && CONSENT_TEXT[version][lang] ? consentSha(version, lang) : null]).then(r => r.rows[0]);
   // The copy the agreement promises ("We email you a copy"), in the language it was signed in.
-  async function emailAgreement(m, row) {
-    if (!m.email) return;
+  // to: the email at signing. A tick typed at checkout by someone with an existing profile's email
+  // ('checkout-email') greets the profile's owner and says someone else may have bought it.
+  async function emailAgreement(to, row, owner) {
+    if (!to || !CONSENT_TEXT[row.version] || !CONSENT_TEXT[row.version][row.lang || 'en']) return;
     const lang = row.lang || 'en', x = CONSENT_TEXT[row.version][lang].agreement;
     const since = await getSetting('consent_since', null);
-    const t = render('agreement', lang, { name: row.signed_name, version: row.version, text: x, under20: row.under20,
+    const other = row.via === 'checkout-email';
+    const t = render('agreement', lang, { name: other && owner ? owner : row.signed_name, signedName: row.signed_name, other,
+      version: row.version, text: x, under20: row.under20,
       date: dayIn(lang, row.created_at), since: typeof since === 'string' ? dayIn(lang, `${since}T12:00:00${TZ_OFFSET}`) : null,
       link: `${baseUrl()}/book?agreement=${row.version}#policy` });
-    await sendMail({ to: m.email, subject: t.subject, html: t.html, text: t.text, tag: 'agreement' });
+    await sendMail({ to, subject: t.subject, html: t.html, text: t.text, tag: 'agreement' });
+  }
+  // A checkout's tick is emailed once the order is paid, never before: an unpaid order with a
+  // typed email sends nothing to that address, as the receipt.
+  async function emailOrderAgreement(order) {
+    const row = (await q(`SELECT * FROM bkk_consents WHERE order_id=$1 AND kind='agreement' ORDER BY id LIMIT 1`, [order.id])).rows[0];
+    if (!row) return;
+    const m = (await q('SELECT name FROM bkk_members WHERE id=$1', [row.member_id])).rows[0];
+    await emailAgreement(row.email_at, row, m && m.name);
   }
   const DAY_LOCALE = { en: 'en-GB', th: 'th-TH', zh: 'zh-CN', ru: 'ru-RU' };
   const dayIn = (lang, at) => new Date(at).toLocaleDateString(DAY_LOCALE[lang] || 'en-GB',
@@ -1467,18 +1482,19 @@ function mountBkk(app, opts = {}) {
           consent = c.value;
         }
       }
-      const member = await findOrCreateMember({ name, email, phone });
-      const showCode = !before || (!!holder && holder.id === member.id);
       const pct = await surcharge();
       const { fee, vat, total } = breakdown(pr.price_thb, pct);
 
       // refno is unique-indexed and partly random, so a clash is possible if two
       // orders land in the same millisecond. Retry rather than 500 at a student.
-      // The order and its consent row (the buyer holds the profile) go in together.
-      let o = null;
+      // A new profile, the order and its consent row (the buyer holds the profile) go in
+      // together, so a failure leaves no profile without its order.
+      let o = null, member = null, showCode = false;
       const client = await pool.connect();
       try {
         await client.query('BEGIN');
+        member = await findOrCreateMember({ name, email, phone }, client);
+        showCode = !before || (!!holder && holder.id === member.id);
         for (let attempt = 0; attempt < 5 && !o; attempt++) {
           await client.query('SAVEPOINT o');
           try {
@@ -1940,6 +1956,7 @@ function mountBkk(app, opts = {}) {
     // After COMMIT, and awaited only so failures are logged. The pass already
     // exists; a mail server having a bad day must not undo a paid order.
     emailReceipt(order, pr, cls && { ...cls, booked }).catch(e => console.error('[bkk] receipt failed:', e.message));
+    emailOrderAgreement(order).catch(e => console.error('[bkk] agreement copy failed:', e.message));
     return {
       booking: booked ? { title: cls.name, startAt: seat.startAt, overCapacity: seat.overCapacity, already: seat.already } : null,
       bookingError: cls && seat.error ? seat.error : null,
@@ -2428,9 +2445,10 @@ function mountBkk(app, opts = {}) {
       since.passes = await client.query(`UPDATE bkk_passes SET member_id=$1 WHERE member_id=$2
         AND (order_id = ANY($3::int[]) OR (source='rezerv' AND via_member = ANY($4::int[]))) RETURNING id`,
         [F, K, [...(L.rows.bkk_orders || []), ...since.orders], fam]).then(ids);
-      // A checkout's tick made with the folded email since goes back with its order.
+      // A checkout's tick goes back with its order: one made with the folded email since, or one
+      // paid since on an order the merge moved (activateOrder writes it on whoever holds the order).
       since.consents = await client.query(`UPDATE bkk_consents SET member_id=$1 WHERE member_id=$2 AND order_id = ANY($3::int[])
-        RETURNING id`, [F, K, since.orders]).then(ids);
+        RETURNING id`, [F, K, [...(L.rows.bkk_orders || []), ...since.orders]]).then(ids);
       since.visits = await client.query(`UPDATE bkk_bookings b SET member_id=$1 WHERE b.member_id=$2 AND b.source='rezerv'
         AND b.via_member = ANY($3::int[]) AND NOT (b.status='booked' AND EXISTS (SELECT 1 FROM bkk_bookings o WHERE o.member_id=$1
           AND o.slot_id=b.slot_id AND o.class_date=b.class_date AND o.status='booked')) RETURNING b.id`, [F, K, fam]).then(ids);
@@ -2973,12 +2991,15 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   app.post('/api/bkk/me/:code/consent', async (req, res) => {
     const b = req.body || {};
     if ((b.kind || 'agreement') !== 'agreement') return res.status(400).json({ error: 'kind must be agreement' });
+    // Read before the transaction holds a client; every query after BEGIN goes through it.
+    const mode = await consentMode();
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
       const m0 = await memberByCode(req.params.code, client);
       if (!m0) { await client.query('ROLLBACK'); return res.status(404).json({ error: 'not found' }); }
-      if (await consentMode() === 'off') { await client.query('ROLLBACK'); return res.status(409).json({ error: 'the agreement is not on' }); }
+      // off: the page opened it while the switch was on; it closes the screen and goes on.
+      if (mode === 'off') { await client.query('ROLLBACK'); return res.status(409).json({ error: 'the agreement is not on', off: true }); }
       const c = readConsent(b, { noTick: 400 });
       if (!c.value) { await client.query('ROLLBACK'); return res.status(c.status).json(c.body); }
       // One at a time per profile, so two taps never sign twice.
@@ -2987,10 +3008,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (!(await consentOk(client, m.id))) row = await insertConsent(client, { memberId: m.id, name: c.value.name,
         under20: c.value.under20, lang: c.value.lang, via: 'self', email: m.email ? String(m.email).toLowerCase() : null });
       await client.query('COMMIT');
-      if (row) emailAgreement(m, row).catch(e => console.error('[bkk] agreement copy failed:', e.message));
-      const st = await consentOf(pool, m);
+      if (row) emailAgreement(row.email_at, row).catch(e => console.error('[bkk] agreement copy failed:', e.message));
+      const st = await consentOf(client, m);
       res.json({ success: true, already: !row, emailed: !!(row && m.email),
-        consent: { mode: await consentMode(), version: st.version, signed: st.signed, signedAt: st.signedAt,
+        consent: { mode, version: st.version, signed: st.signed, signedAt: st.signedAt,
           under20: st.under20, guardianSigned: st.guardianSigned } });
     } catch (e) {
       await client.query('ROLLBACK').catch(() => {});
@@ -3185,18 +3206,20 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   app.post('/api/bkk/bookings', async (req, res) => {
     const { memberCode: mcode, slotId, date } = req.body || {};
     if (!mcode || !slotId || !date) return res.status(400).json({ error: 'memberCode, slotId and date required' });
+    const staff = isAdmin(req);
+    // Read before the transaction: a query on the pool while this one holds a client can wait forever.
+    const ask = !staff && await consentMode() === 'require';
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
       const m = await memberByCode(mcode, client);
       if (!m) throw new Error('member not found');
-      const staff = isAdmin(req);
       const { booking: b } = await takeSeat(client, { member: m, slotId, date, staff,
         cover: 'pass', source: staff ? 'staff' : 'student', needMat: req.body.needMat === true });
       // In 'require', a student's own booking that would go through waits for the agreement:
       // after takeSeat, so a full class or a moon day keeps its own answer, and before COMMIT,
       // so the rollback leaves no seat, no pass clock started and no class used. Staff never wait.
-      if (!staff && await consentMode() === 'require' && !(await consentOk(client, m.id)))
+      if (ask && !(await consentOk(client, m.id)))
         throw Object.assign(new Error('consent'), { consent: true });
       await client.query('COMMIT');
       res.json({ success: true, booking: b });
@@ -4084,6 +4107,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     // No page is /start, as every caller before the In-Depth pages.
     const page = b.page == null ? 'start' : typeof b.page === 'string' ? b.page : '';
     if (!Object.hasOwn(LANDING_KINDS, page)) return res.status(400).json({ error: 'page' });
+    // The agreement's counts exist only while it is on.
+    if (page === 'book' && await consentMode() === 'off') return res.status(400).json({ error: 'page' });
     // Every page names its kind; a body with none (or one that is not JSON) is not a visit.
     if (b.kind == null || b.kind === '') return res.status(400).json({ error: 'kind' });
     // 'step': the first-step ladder (q1..q3 answered, done-<channel> at the end).
