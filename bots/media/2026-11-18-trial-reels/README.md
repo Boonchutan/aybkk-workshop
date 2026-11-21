@@ -3,7 +3,7 @@ Boonchu via Alex (his assistant bot): repost the most-shared Reels as Instagram 
 - Alex answers TRIAL comments and DMs (hourly check). Plato does not.
 - 2026-11-18 (Boonchu via Alex): every reply to a TRIAL comment or DM links https://aybkk.net/start/trial (Admin, Start page box counts it as 'trial'). No price in the DM: the page shows prices. Example EN: 'Thanks for writing! Here is how to start with us in Bangkok: https://aybkk.net/start/trial . Tap the button there and we will book your first morning.' Example TH: 'ขอบคุณที่ทักมา เริ่มฝึกกับเราที่กรุงเทพฯ ได้ที่นี่ https://aybkk.net/start/trial กดปุ่มในหน้านั้น แล้วเราจะจองเช้าแรกให้'
 - #4 Sharathji tribute (DPLr5ZYE3kz) is OUT of the run (no sales CTA on tribute content).
-- Music: a pop/copyrighted song is swapped: mute it in the file (silent AAC track) and attach a track from Instagram's library with Postiz settings.audio {id,title,artist,audio_volume 100,video_volume 0} (find ids with triggerTool audioSearch). Voice or room sound stays.
+- Music (OLD, replaced 20 Nov by Boonchu: NEVER change his original music, keep the original audio exactly; see plato.md): a pop/copyrighted song was swapped: mute it in the file (silent AAC track) and attach a track from Instagram's library with Postiz settings.audio {id,title,artist,audio_volume 100,video_volume 0} (find ids with triggerTool audioSearch). Voice or room sound stays.
 - Postiz: settings post_type post, is_trial_reel true, graduation_strategy MANUAL (followers already saw these). Hook burned on screen in Boonchu's title style (black Liberation Sans Bold on white 50%), clear of burned-in text.
 Slots (updated 17 Nov: #4 tribute out; #2 and #8 are the SAME clip, posted once in #2's slot using #8's sharper 1440x2560 file and #8's caption; #8 dropped):
 | Day | 07:00 | 12:30 | 19:30 |
@@ -25,3 +25,5 @@ Tools: scratchpad trial/fri/tools/mkhook.py (hook box) and sheet.py (frame sheet
 
 HELD (rendered, not scheduled, files in scratchpad trial/out/r21 and r25; re-render if the scratchpad is gone): #16 DZP6P7PJqTD birthday tribute (out, no CTA allowed), #21 DLIGtnSTQmX Huberman voice, #25 DEZYfwITC8_ New Year content. Waiting on Boonchu.
 QA report for 15-28: qa_15_28.json (independent checker per reel). Schedule note: all of Sun-Wed was queued on 18 Nov; any change = Boonchu deletes in the Postiz app.
+
+20-21 Nov MUSIC REVERT (Boonchu: never change original music): #14 (trial14.mp4), #18 (trial18.mp4) swapped in place to ORIGINAL audio, library track removed; #13 re-made (trial13.mp4, picture frozen 29.4-32.9 s so his music runs to its end) but it PUBLISHED at 12:30 on 21 Nov before the swap (session restart), so #13 went out with Mesmer. #28: the download has no sound at all; library track removed, posts silent unless Boonchu sends the original. Already published with a library track: #1 Colors, #3 Good Vibes, #7 Primavera, #11 Breathe In Go Slow, #13 Mesmer.
