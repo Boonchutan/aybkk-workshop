@@ -1,0 +1,528 @@
+{
+ "src": "clean/ch5.mp4",
+ "out": "out/wechat v2 channel5.mp4",
+ "defaults": {
+  "font": "body",
+  "size": 0.06,
+  "stroke": 0.06,
+  "shadow": {
+   "dx": 0,
+   "dy": 0.03,
+   "blur": 0.04,
+   "alpha": 0.5
+  },
+  "line_gap": 1.14
+ },
+ "blocks": [
+  {
+   "id": "b01",
+   "layout": "做后弯时\n我们帮每个人的方式",
+   "en": "Backbend we don't\nhelp everybody the",
+   "bt": "When doing backbends / the way we help each person",
+   "states": [
+    {
+     "f0": 5,
+     "f1": 66,
+     "text": "做后弯时\n我们帮每个人的方式"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b02",
+   "layout": "都不一样",
+   "en": "same",
+   "bt": "is not the same for anyone (literally: all not the same)",
+   "states": [
+    {
+     "f0": 67,
+     "f1": 76,
+     "text": "都不一样"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b03",
+   "layout": "我带的这位学生\n他需要练的",
+   "en": "The student with me\nhe need work on his",
+   "bt": "This student I am leading / what he needs to train",
+   "states": [
+    {
+     "f0": 88,
+     "f1": 166,
+     "text": "我带的这位学生\n他需要练的"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b04",
+   "layout": "是腿",
+   "en": "legs",
+   "bt": "is legs",
+   "states": [
+    {
+     "f0": 169,
+     "f1": 195,
+     "text": "是腿"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b05",
+   "layout": "后面M带的那位\n他需要的",
+   "en": "Student with M\nbehind, he needs",
+   "bt": "The one M is leading behind / what he needs",
+   "states": [
+    {
+     "f0": 199,
+     "f1": 262,
+     "text": "后面M带的那位\n他需要的"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b06",
+   "layout": "是控制",
+   "en": "control.",
+   "bt": "is control",
+   "states": [
+    {
+     "f0": 263,
+     "f1": 287,
+     "text": "是控制"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b07",
+   "layout": "不同的问题\n不同的帮法",
+   "en": "A different problem,\ndifferent help.",
+   "bt": "Different problem / different way of helping",
+   "states": [
+    {
+     "f0": 294,
+     "f1": 356,
+     "text": "不同的问题\n不同的帮法"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b08",
+   "layout": "这一位，他需要\n感觉到自己的腿",
+   "en": "For this one, he\nneed to feel his",
+   "bt": "This one, he needs / to feel his own legs",
+   "states": [
+    {
+     "f0": 372,
+     "f1": 424,
+     "text": "这一位，他需要\n感觉到自己的腿"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b09",
+   "layout": "所以我把他\n放在这样的位置",
+   "en": "legs, so I put him\nin the position",
+   "bt": "So I put him / in a position like this",
+   "states": [
+    {
+     "f0": 427,
+     "f1": 497,
+     "text": "所以我把他\n放在这样的位置"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b10",
+   "layout": "让他不得不",
+   "en": "where he must use\nhis",
+   "bt": "so that he has no choice but to",
+   "states": [
+    {
+     "f0": 500,
+     "f1": 539,
+     "text": "让他不得不"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b11",
+   "layout": "把腿",
+   "en": "legs.",
+   "bt": "(take) his legs",
+   "states": [
+    {
+     "f0": 543,
+     "f1": 559,
+     "text": "把腿"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b12",
+   "layout": "用到极限",
+   "en": "To the maximum",
+   "bt": "use them to the limit",
+   "states": [
+    {
+     "f0": 561,
+     "f1": 582,
+     "text": "用到极限"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b13",
+   "layout": "身体的其他部分\n我来托住",
+   "en": "I support the rest\nof the body",
+   "bt": "The other parts of the body / I hold up",
+   "states": [
+    {
+     "f0": 594,
+     "f1": 646,
+     "text": "身体的其他部分\n我来托住"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b14",
+   "layout": "在我后面\nM在帮的是",
+   "en": "And behind me him\nhelp the more",
+   "bt": "Behind me / the one M is helping is",
+   "states": [
+    {
+     "f0": 666,
+     "f1": 726,
+     "text": "在我后面\nM在帮的是"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b15",
+   "layout": "更有经验的那位",
+   "en": "experienced one",
+   "bt": "the more experienced one",
+   "states": [
+    {
+     "f0": 728,
+     "f1": 761,
+     "text": "更有经验的那位"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b16",
+   "layout": "他在做手倒立\nVrischikasana",
+   "en": "He's doing handstand\nrichikas in a",
+   "bt": "He is doing handstand / Vrischikasana",
+   "states": [
+    {
+     "f0": 769,
+     "f1": 833,
+     "text": "他在做手倒立\nVrischikasana"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b17",
+   "layout": "这套练习",
+   "en": "routine",
+   "bt": "this set of practice (this routine)",
+   "states": [
+    {
+     "f0": 836,
+     "f1": 850,
+     "text": "这套练习"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b18",
+   "layout": "他已经弯得下去了",
+   "en": "He can already bend",
+   "bt": "He can already bend down",
+   "states": [
+    {
+     "f0": 858,
+     "f1": 890,
+     "text": "他已经弯得下去了"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b19",
+   "layout": "所以M让他\n弯得更深",
+   "en": "Jadi M buatnya benda\nlebih",
+   "bt": "So M has him / bend deeper",
+   "states": [
+    {
+     "f0": 903,
+     "f1": 950,
+     "text": "所以M让他\n弯得更深"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b20",
+   "layout": "但要有控制",
+   "en": "But beat control",
+   "bt": "but there must be control",
+   "states": [
+    {
+     "f0": 963,
+     "f1": 988,
+     "text": "但要有控制"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b21",
+   "layout": "用核心、髋部",
+   "en": "With the core, hip,",
+   "bt": "using the core, the hips",
+   "states": [
+    {
+     "f0": 1000,
+     "f1": 1033,
+     "text": "用核心、髋部"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b22",
+   "layout": "腹斜肌",
+   "en": "Obliques",
+   "bt": "the obliques",
+   "states": [
+    {
+     "f0": 1042,
+     "f1": 1060,
+     "text": "腹斜肌"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b23",
+   "layout": "双腿往里夹紧",
+   "en": "Legs squeeze in",
+   "bt": "both legs squeezing inward, tight",
+   "states": [
+    {
+     "f0": 1067,
+     "f1": 1100,
+     "text": "双腿往里夹紧"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b24",
+   "layout": "更简单，但更精细",
+   "en": "More simple but\ndefined",
+   "bt": "Simpler, but more refined",
+   "states": [
+    {
+     "f0": 1108,
+     "f1": 1164,
+     "text": "更简单，但更精细"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b25",
+   "layout": "后来，我这位学生\n我让他去体会",
+   "en": "Later my student, I\nmake him understand",
+   "bt": "Later, this student of mine / I have him come to understand (by feeling it)",
+   "states": [
+    {
+     "f0": 1164,
+     "f1": 1246,
+     "text": "后来，我这位学生\n我让他去体会"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b26",
+   "layout": "自己的肩膀\n体重压在",
+   "en": "his shoulders the\nbody weight on two",
+   "bt": "his own shoulders / the body weight pressing on",
+   "states": [
+    {
+     "f0": 1248,
+     "f1": 1317,
+     "text": "自己的肩膀\n体重压在"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b27",
+   "layout": "两只手臂上",
+   "en": "arms",
+   "bt": "two arms",
+   "states": [
+    {
+     "f0": 1318,
+     "f1": 1329,
+     "text": "两只手臂上"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b28",
+   "layout": "这个基础的\nTick-tock动作",
+   "en": "The basic tiktok\nmovement",
+   "bt": "This basic / tick-tock movement",
+   "states": [
+    {
+     "f0": 1345,
+     "f1": 1399,
+     "text": "这个基础的\nTick-tock动作"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b29",
+   "layout": "让肩膀和手臂\n准备好",
+   "en": "To get the shoulders\nand i'm ready for",
+   "bt": "gets the shoulders and arms / ready",
+   "states": [
+    {
+     "f0": 1406,
+     "f1": 1459,
+     "text": "让肩膀和手臂\n准备好"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b30",
+   "layout": "迎接以后的练习",
+   "en": "the future practice",
+   "bt": "to meet the practice that comes later",
+   "states": [
+    {
+     "f0": 1459,
+     "f1": 1503,
+     "text": "迎接以后的练习"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b31",
+   "layout": "同一个后弯\n但不同的身体需要",
+   "en": "Same back bend but\ndifferent body need",
+   "bt": "The same backbend / but a different body needs",
+   "states": [
+    {
+     "f0": 1510,
+     "f1": 1581,
+     "text": "同一个后弯\n但不同的身体需要"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b32",
+   "layout": "不同的东西",
+   "en": "different thing",
+   "bt": "a different thing",
+   "states": [
+    {
+     "f0": 1582,
+     "f1": 1610,
+     "text": "不同的东西"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b33",
+   "layout": "你的下一步\n需要有人帮一把",
+   "en": "You need some help\nfor your next step",
+   "bt": "Your next step / needs someone to give a hand",
+   "states": [
+    {
+     "f0": 1615,
+     "f1": 1654,
+     "text": "你的下一步\n需要有人帮一把"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  },
+  {
+   "id": "b34",
+   "layout": "就来AYBKK",
+   "en": "Come AYBKK",
+   "bt": "then come to AYBKK",
+   "states": [
+    {
+     "f0": 1655,
+     "f1": 1672,
+     "text": "就来AYBKK"
+    }
+   ],
+   "cy": 0.502,
+   "cx": 0.5
+  }
+ ]
+}

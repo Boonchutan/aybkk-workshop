@@ -1,0 +1,108 @@
+{
+ "src": "clean/ch1.mp4",
+ "out": "out/wechat v2 channel1.mp4",
+ "defaults": {
+  "font": "body",
+  "size": 0.05,
+  "stroke": 0.045,
+  "shadow": {
+   "dx": 0,
+   "dy": 0.03,
+   "blur": 0.05,
+   "alpha": 0.55
+  },
+  "line_gap": 1.16
+ },
+ "blocks": [
+  {
+   "id": "b01",
+   "layout": "你的一周，从邮件开始\n练阿斯汤加的人，从这个开始",
+   "en": "Your week starts with emails.\nAshtanga students start with this.",
+   "bt": "Your week, starts from emails / People who practise Ashtanga, start from this",
+   "states": [
+    {
+     "f0": 0,
+     "f1": 180,
+     "text": "你的一周，从邮件开始\n练阿斯汤加的人，从这个开始"
+    }
+   ],
+   "cy": 0.2278,
+   "cx": 0.537
+  },
+  {
+   "id": "b02",
+   "layout": "90分钟\n跟着同一个呼吸，一起动",
+   "en": "90 minutes,\nmoving on the same breath.",
+   "bt": "90 minutes / Following the same breath, moving together",
+   "states": [
+    {
+     "f0": 180,
+     "f1": 562,
+     "text": "90分钟\n跟着同一个呼吸，一起动"
+    }
+   ],
+   "cy": 0.2078,
+   "cx": 0.537
+  },
+  {
+   "id": "b03",
+   "layout": "僵硬的后背，松了\n转个不停的脑子，静了",
+   "en": "Stiff backs open up,\nand the busy head gets calm.",
+   "bt": "The stiff back, loosened / The head that will not stop spinning, gone quiet",
+   "states": [
+    {
+     "f0": 562,
+     "f1": 759,
+     "text": "僵硬的后背，松了\n转个不停的脑子，静了"
+    }
+   ],
+   "cy": 0.2342,
+   "cx": 0.537
+  },
+  {
+   "id": "b04",
+   "layout": "早上8点\n这周最难的事已经做完了",
+   "en": "By 8am,\nthe hardest thing of the week already done",
+   "bt": "8 in the morning / The hardest thing of this week is already done",
+   "states": [
+    {
+     "f0": 759,
+     "f1": 1086,
+     "text": "早上8点\n这周最难的事已经做完了"
+    }
+   ],
+   "cy": 0.1845,
+   "cx": 0.537
+  },
+  {
+   "id": "b05",
+   "layout": "你的一周，从这里开始",
+   "en": "Start your week here.",
+   "bt": "Your week, starts from here",
+   "states": [
+    {
+     "f0": 1086,
+     "f1": 1255,
+     "text": "你的一周，从这里开始"
+    }
+   ],
+   "cy": 0.3888,
+   "cx": 0.5
+  },
+  {
+   "id": "b06",
+   "layout": "评论区留言“体验”\n我们把详情发给你",
+   "en": "Comment TRIAL\nand we'll send you the details.",
+   "bt": "In the comment section leave the comment \"体验\" (trial) / We will send the details to you",
+   "states": [
+    {
+     "f0": 1086,
+     "f1": 1255,
+     "text": "评论区留言“体验”\n我们把详情发给你"
+    }
+   ],
+   "cy": 0.7617,
+   "cx": 0.5
+  }
+ ]
+}

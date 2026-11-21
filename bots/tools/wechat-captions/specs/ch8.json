@@ -1,0 +1,750 @@
+{
+ "src": "clean/ch8.mp4",
+ "out": "out/wechat v2 channel8.mp4",
+ "defaults": {
+  "font": "serif",
+  "size": 0.075,
+  "stroke": 0.03,
+  "shadow": {
+   "dx": 0.055,
+   "dy": 0.055,
+   "blur": 0,
+   "alpha": 1.0
+  },
+  "line_gap": 1.08
+ },
+ "blocks": [
+  {
+   "id": "b01",
+   "layout": "超级\n{y}柔软{/}的\n{y}女生{/}\n和超级",
+   "en": "Super\nflexible\ngirls and\nSuper",
+   "bt": "Super / flexible / girls / and super",
+   "states": [
+    {
+     "f0": 7,
+     "f1": 24,
+     "text": "超级"
+    },
+    {
+     "f0": 24,
+     "f1": 42,
+     "text": "超级\n{y}柔软{/}的"
+    },
+    {
+     "f0": 42,
+     "f1": 54,
+     "text": "超级\n{y}柔软{/}的\n{y}女生{/}"
+    },
+    {
+     "f0": 54,
+     "f1": 63,
+     "text": "超级\n{y}柔软{/}的\n{y}女生{/}\n和"
+    },
+    {
+     "f0": 63,
+     "f1": 68,
+     "text": "超级\n{y}柔软{/}的\n{y}女生{/}\n和超级"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b02",
+   "layout": "{y}强壮{/}的\n{y}男生{/}\n会{y}讨厌{/}\n这两个",
+   "en": "strong\nboys will\nhate one\nof these",
+   "bt": "strong / boys / will hate / these two",
+   "states": [
+    {
+     "f0": 74,
+     "f1": 88,
+     "text": "{y}强壮{/}的"
+    },
+    {
+     "f0": 88,
+     "f1": 100,
+     "text": "{y}强壮{/}的\n{y}男生{/}"
+    },
+    {
+     "f0": 100,
+     "f1": 108,
+     "text": "{y}强壮{/}的\n{y}男生{/}\n会"
+    },
+    {
+     "f0": 108,
+     "f1": 119,
+     "text": "{y}强壮{/}的\n{y}男生{/}\n会{y}讨厌{/}"
+    },
+    {
+     "f0": 119,
+     "f1": 132,
+     "text": "{y}强壮{/}的\n{y}男生{/}\n会{y}讨厌{/}\n这两个"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b03",
+   "layout": "体式的\n其中一个\n{y}绝对！{/}",
+   "en": "two\nasanas..\nfor sure!",
+   "bt": "asanas' / one of them / Absolutely!",
+   "states": [
+    {
+     "f0": 139,
+     "f1": 158,
+     "text": "体式的"
+    },
+    {
+     "f0": 158,
+     "f1": 162,
+     "text": "体式的\n其中一个"
+    },
+    {
+     "f0": 162,
+     "f1": 202,
+     "text": "体式的\n其中一个\n{y}绝对！{/}"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b04",
+   "layout": "{y}Parsva{/}\n{y}Dhanurasana{/}\n和 {y}Laghu{/}\n{y}Vajrasana{/}",
+   "en": "Parshva\ndhanurasana\nand Laghu\nVajrasana.",
+   "bt": "Parsva / Dhanurasana / and Laghu / Vajrasana",
+   "states": [
+    {
+     "f0": 207,
+     "f1": 225,
+     "text": "{y}Parsva{/}"
+    },
+    {
+     "f0": 225,
+     "f1": 257,
+     "text": "{y}Parsva{/}\n{y}Dhanurasana{/}"
+    },
+    {
+     "f0": 257,
+     "f1": 265,
+     "text": "{y}Parsva{/}\n{y}Dhanurasana{/}\n和"
+    },
+    {
+     "f0": 265,
+     "f1": 277,
+     "text": "{y}Parsva{/}\n{y}Dhanurasana{/}\n和 {y}Laghu{/}"
+    },
+    {
+     "f0": 277,
+     "f1": 325,
+     "text": "{y}Parsva{/}\n{y}Dhanurasana{/}\n和 {y}Laghu{/}\n{y}Vajrasana{/}"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b05",
+   "layout": "说来{y}好笑{/}\n它们{y}看起来{/}\n那么{y}简单{/}",
+   "en": "It's\nfunny cuz\nthey look\nso easy,",
+   "bt": "Funny to say / they look / so simple",
+   "states": [
+    {
+     "f0": 330,
+     "f1": 339,
+     "text": "说来"
+    },
+    {
+     "f0": 339,
+     "f1": 358,
+     "text": "说来{y}好笑{/}"
+    },
+    {
+     "f0": 358,
+     "f1": 364,
+     "text": "说来{y}好笑{/}\n它们"
+    },
+    {
+     "f0": 364,
+     "f1": 374,
+     "text": "说来{y}好笑{/}\n它们{y}看起来{/}"
+    },
+    {
+     "f0": 374,
+     "f1": 383,
+     "text": "说来{y}好笑{/}\n它们{y}看起来{/}\n那么"
+    },
+    {
+     "f0": 383,
+     "f1": 399,
+     "text": "说来{y}好笑{/}\n它们{y}看起来{/}\n那么{y}简单{/}"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b06",
+   "layout": "可是\n几乎\n{y}没人{/}\n{y}喜欢{/}",
+   "en": "but\nalmost\nnobody\nloves",
+   "bt": "but / almost / nobody / likes",
+   "states": [
+    {
+     "f0": 407,
+     "f1": 415,
+     "text": "可是"
+    },
+    {
+     "f0": 415,
+     "f1": 425,
+     "text": "可是\n几乎"
+    },
+    {
+     "f0": 425,
+     "f1": 439,
+     "text": "可是\n几乎\n{y}没人{/}"
+    },
+    {
+     "f0": 439,
+     "f1": 450,
+     "text": "可是\n几乎\n{y}没人{/}\n{y}喜欢{/}"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b07",
+   "layout": "停留在\n{y}里面{/}",
+   "en": "stay in\nthem.",
+   "bt": "to stay / inside",
+   "states": [
+    {
+     "f0": 458,
+     "f1": 465,
+     "text": "停留"
+    },
+    {
+     "f0": 465,
+     "f1": 470,
+     "text": "停留在"
+    },
+    {
+     "f0": 470,
+     "f1": 505,
+     "text": "停留在\n{y}里面{/}"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b08",
+   "layout": "{y}Parsva{/}\n{y}Dhanurasana{/}\n{y}拉伸{/}\n{y}身体{/}的",
+   "en": "Pashva\nDhanurasana\nstretches\nthe front",
+   "bt": "Parsva / Dhanurasana / stretches / the body's",
+   "states": [
+    {
+     "f0": 510,
+     "f1": 528,
+     "text": "{y}Parsva{/}"
+    },
+    {
+     "f0": 528,
+     "f1": 552,
+     "text": "{y}Parsva{/}\n{y}Dhanurasana{/}"
+    },
+    {
+     "f0": 552,
+     "f1": 567,
+     "text": "{y}Parsva{/}\n{y}Dhanurasana{/}\n{y}拉伸{/}"
+    },
+    {
+     "f0": 567,
+     "f1": 574,
+     "text": "{y}Parsva{/}\n{y}Dhanurasana{/}\n{y}拉伸{/}\n{y}身体{/}"
+    },
+    {
+     "f0": 574,
+     "f1": 583,
+     "text": "{y}Parsva{/}\n{y}Dhanurasana{/}\n{y}拉伸{/}\n{y}身体{/}的"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b09",
+   "layout": "{y}前侧{/}",
+   "en": "of the\nbody.",
+   "bt": "front side",
+   "states": [
+    {
+     "f0": 589,
+     "f1": 632,
+     "text": "{y}前侧{/}"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b10",
+   "layout": "脚跟\n并拢",
+   "en": "Heels\nclose.",
+   "bt": "Heels / together",
+   "states": [
+    {
+     "f0": 638,
+     "f1": 650,
+     "text": "脚跟"
+    },
+    {
+     "f0": 650,
+     "f1": 680,
+     "text": "脚跟\n并拢"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b11",
+   "layout": "{y}强壮{/}的\n{y}男生{/}\n会{y}满头{/}{y}大汗{/}",
+   "en": "Strong\nmen would\nbe\nsweating",
+   "bt": "Strong / boys / will be dripping with sweat",
+   "states": [
+    {
+     "f0": 684,
+     "f1": 698,
+     "text": "{y}强壮{/}的"
+    },
+    {
+     "f0": 698,
+     "f1": 707,
+     "text": "{y}强壮{/}的\n{y}男生{/}"
+    },
+    {
+     "f0": 707,
+     "f1": 712,
+     "text": "{y}强壮{/}的\n{y}男生{/}\n会"
+    },
+    {
+     "f0": 712,
+     "f1": 719,
+     "text": "{y}强壮{/}的\n{y}男生{/}\n会{y}满头{/}"
+    },
+    {
+     "f0": 719,
+     "f1": 729,
+     "text": "{y}强壮{/}的\n{y}男生{/}\n会{y}满头{/}{y}大汗{/}"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b12",
+   "layout": "还{y}抖{/}得\n像一台",
+   "en": "and\nshaking\nlike a\nmassage",
+   "bt": "and also shake / like a",
+   "states": [
+    {
+     "f0": 733,
+     "f1": 740,
+     "text": "还"
+    },
+    {
+     "f0": 740,
+     "f1": 753,
+     "text": "还{y}抖{/}得"
+    },
+    {
+     "f0": 753,
+     "f1": 755,
+     "text": "还{y}抖{/}得\n像"
+    },
+    {
+     "f0": 755,
+     "f1": 767,
+     "text": "还{y}抖{/}得\n像一台"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b13",
+   "layout": "{y}按摩椅{/}",
+   "en": "chair.",
+   "bt": "massage chair",
+   "states": [
+    {
+     "f0": 770,
+     "f1": 810,
+     "text": "{y}按摩椅{/}"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b14",
+   "layout": "{y}Laghu{/}\n{y}Vajrasana{/}\n练的是",
+   "en": "Laghu\nvajrasana\nworks the\nleg",
+   "bt": "Laghu / Vajrasana / what it trains is",
+   "states": [
+    {
+     "f0": 814,
+     "f1": 829,
+     "text": "{y}Laghu{/}"
+    },
+    {
+     "f0": 829,
+     "f1": 849,
+     "text": "{y}Laghu{/}\n{y}Vajrasana{/}"
+    },
+    {
+     "f0": 849,
+     "f1": 863,
+     "text": "{y}Laghu{/}\n{y}Vajrasana{/}\n练的是"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b15",
+   "layout": "{y}腿部力量{/}",
+   "en": "strength.",
+   "bt": "leg strength",
+   "states": [
+    {
+     "f0": 868,
+     "f1": 892,
+     "text": "{y}腿部力量{/}"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b16",
+   "layout": "{y}柔软{/}的\n{y}女生{/}说\n{y}着火{/}的",
+   "en": "Flexible\ngirl said\nit's a\nfire on",
+   "bt": "The flexible / girl says / what's on fire",
+   "states": [
+    {
+     "f0": 897,
+     "f1": 910,
+     "text": "{y}柔软{/}的"
+    },
+    {
+     "f0": 910,
+     "f1": 929,
+     "text": "{y}柔软{/}的\n{y}女生{/}"
+    },
+    {
+     "f0": 929,
+     "f1": 942,
+     "text": "{y}柔软{/}的\n{y}女生{/}说"
+    },
+    {
+     "f0": 942,
+     "f1": 959,
+     "text": "{y}柔软{/}的\n{y}女生{/}说\n{y}着火{/}的"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b17",
+   "layout": "是{y}大腿{/}\n{y}痛的{/}{y}是{/}\n{y}屁股{/}",
+   "en": "the thigh\nand pain\nin the\nbutt",
+   "bt": "is the thigh / what hurts is / the butt",
+   "states": [
+    {
+     "f0": 962,
+     "f1": 968,
+     "text": "是"
+    },
+    {
+     "f0": 968,
+     "f1": 989,
+     "text": "是{y}大腿{/}"
+    },
+    {
+     "f0": 989,
+     "f1": 1000,
+     "text": "是{y}大腿{/}\n{y}痛的{/}"
+    },
+    {
+     "f0": 1000,
+     "f1": 1010,
+     "text": "是{y}大腿{/}\n{y}痛的{/}{y}是{/}"
+    },
+    {
+     "f0": 1010,
+     "f1": 1033,
+     "text": "是{y}大腿{/}\n{y}痛的{/}{y}是{/}\n{y}屁股{/}"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b18",
+   "layout": "{y}两个{/}都是\n{y}铺垫{/}\n为了\n传说中的",
+   "en": "Both are\nthe prep\nfor the\nmighty",
+   "bt": "Both are / groundwork / for / the legendary",
+   "states": [
+    {
+     "f0": 1038,
+     "f1": 1045,
+     "text": "{y}两个{/}"
+    },
+    {
+     "f0": 1045,
+     "f1": 1055,
+     "text": "{y}两个{/}都是"
+    },
+    {
+     "f0": 1055,
+     "f1": 1063,
+     "text": "{y}两个{/}都是\n{y}铺垫{/}"
+    },
+    {
+     "f0": 1063,
+     "f1": 1065,
+     "text": "{y}两个{/}都是\n{y}铺垫{/}\n为了"
+    },
+    {
+     "f0": 1065,
+     "f1": 1078,
+     "text": "{y}两个{/}都是\n{y}铺垫{/}\n为了\n传说中的"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b19",
+   "layout": "{y}Kapotasana{/}",
+   "en": "Kapotasana.",
+   "bt": "Kapotasana",
+   "states": [
+    {
+     "f0": 1084,
+     "f1": 1133,
+     "text": "{y}Kapotasana{/}"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b20",
+   "layout": "所以\n{y}你{/}{y}讨厌{/}的\n那个\n就是",
+   "en": "So the\none you\nhate is\nthe one",
+   "bt": "So / the one you hate / that one / is exactly",
+   "states": [
+    {
+     "f0": 1137,
+     "f1": 1150,
+     "text": "所以"
+    },
+    {
+     "f0": 1150,
+     "f1": 1158,
+     "text": "所以\n{y}你{/}"
+    },
+    {
+     "f0": 1158,
+     "f1": 1169,
+     "text": "所以\n{y}你{/}{y}讨厌{/}的"
+    },
+    {
+     "f0": 1169,
+     "f1": 1175,
+     "text": "所以\n{y}你{/}{y}讨厌{/}的\n那个"
+    },
+    {
+     "f0": 1175,
+     "f1": 1188,
+     "text": "所以\n{y}你{/}{y}讨厌{/}的\n那个\n就是"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b21",
+   "layout": "你的\n{y}Kapotasana{/}\n{y}需要{/}的",
+   "en": "your\nKapotasana\nneeds.",
+   "bt": "your / Kapotasana / needs",
+   "states": [
+    {
+     "f0": 1192,
+     "f1": 1198,
+     "text": "你的"
+    },
+    {
+     "f0": 1198,
+     "f1": 1220,
+     "text": "你的\n{y}Kapotasana{/}"
+    },
+    {
+     "f0": 1220,
+     "f1": 1245,
+     "text": "你的\n{y}Kapotasana{/}\n{y}需要{/}的"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b22",
+   "layout": "{y}哪一个{/}\n{y}感觉{/}\n像过了\n{y}一个世纪？{/}",
+   "en": "Which one\nfeels\nlike\nforever?",
+   "bt": "Which one / feels / like you have been through / a century?",
+   "states": [
+    {
+     "f0": 1249,
+     "f1": 1264,
+     "text": "{y}哪一个{/}"
+    },
+    {
+     "f0": 1264,
+     "f1": 1274,
+     "text": "{y}哪一个{/}\n{y}感觉{/}"
+    },
+    {
+     "f0": 1274,
+     "f1": 1282,
+     "text": "{y}哪一个{/}\n{y}感觉{/}\n像过了"
+    },
+    {
+     "f0": 1282,
+     "f1": 1304,
+     "text": "{y}哪一个{/}\n{y}感觉{/}\n像过了\n{y}一个世纪？{/}"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b23",
+   "layout": "评论区\n告诉我们",
+   "en": "Tell us\nin the\ncomments",
+   "bt": "In the comments / tell us",
+   "states": [
+    {
+     "f0": 1309,
+     "f1": 1319,
+     "text": "评论区"
+    },
+    {
+     "f0": 1319,
+     "f1": 1329,
+     "text": "评论区\n告诉"
+    },
+    {
+     "f0": 1329,
+     "f1": 1362,
+     "text": "评论区\n告诉我们"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b24",
+   "layout": "它们{y}看起来{/}\n那么{y}简单{/}\n{y}对吧？{/}",
+   "en": "They look\nso easy\nright",
+   "bt": "They look / so simple / right?",
+   "states": [
+    {
+     "f0": 1364,
+     "f1": 1370,
+     "text": "它们"
+    },
+    {
+     "f0": 1370,
+     "f1": 1377,
+     "text": "它们{y}看起来{/}"
+    },
+    {
+     "f0": 1377,
+     "f1": 1384,
+     "text": "它们{y}看起来{/}\n那么"
+    },
+    {
+     "f0": 1384,
+     "f1": 1395,
+     "text": "它们{y}看起来{/}\n那么{y}简单{/}"
+    },
+    {
+     "f0": 1395,
+     "f1": 1407,
+     "text": "它们{y}看起来{/}\n那么{y}简单{/}\n{y}对吧？{/}"
+    }
+   ],
+   "cy": 0.5,
+   "align": "left"
+  }
+ ],
+ "groups": [
+  [
+   "b01",
+   "b02",
+   "b03"
+  ],
+  [
+   "b04"
+  ],
+  [
+   "b05",
+   "b06",
+   "b07"
+  ],
+  [
+   "b08",
+   "b09"
+  ],
+  [
+   "b10"
+  ],
+  [
+   "b11",
+   "b12",
+   "b13"
+  ],
+  [
+   "b14",
+   "b15"
+  ],
+  [
+   "b16",
+   "b17"
+  ],
+  [
+   "b18",
+   "b19"
+  ],
+  [
+   "b20",
+   "b21"
+  ],
+  [
+   "b22"
+  ],
+  [
+   "b23"
+  ],
+  [
+   "b24"
+  ]
+ ]
+}

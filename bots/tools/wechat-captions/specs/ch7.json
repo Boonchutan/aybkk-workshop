@@ -1,0 +1,445 @@
+{
+ "src": "clean/ch7.mp4",
+ "out": "out/wechat v2 channel7.mp4",
+ "defaults": {
+  "font": "body",
+  "size": 0.066,
+  "stroke": 0.055,
+  "line_gap": 1.1
+ },
+ "blocks": [
+  {
+   "id": "b01",
+   "layout": "5，Astau\n吸气，撑起来",
+   "en": "Five..ashtau\ninhale..lift\nup",
+   "bt": "5, Astau / inhale, press up",
+   "states": [
+    {
+     "f0": 15,
+     "f1": 33,
+     "text": "5，Astau"
+    },
+    {
+     "f0": 33,
+     "f1": 77,
+     "text": "5，Astau\n吸气，撑"
+    },
+    {
+     "f0": 77,
+     "f1": 100,
+     "text": "5，Astau\n吸气，撑起来"
+    }
+   ],
+   "cy": 0.577,
+   "cx": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b02",
+   "layout": "呼气，下来",
+   "en": "Exhale\ndown",
+   "bt": "Exhale, come down",
+   "states": [
+    {
+     "f0": 106,
+     "f1": 166,
+     "text": "呼气"
+    },
+    {
+     "f0": 166,
+     "f1": 198,
+     "text": "呼气，下来"
+    }
+   ],
+   "cy": 0.577,
+   "cx": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b03",
+   "layout": "Sapta",
+   "en": "Sapta",
+   "bt": "Sapta (the count seven, kept in Sanskrit)",
+   "states": [
+    {
+     "f0": 203,
+     "f1": 239,
+     "text": "Sapta"
+    }
+   ],
+   "cy": 0.577,
+   "cx": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b04",
+   "layout": "1",
+   "en": "One",
+   "bt": "1",
+   "states": [
+    {
+     "f0": 345,
+     "f1": 367,
+     "text": "1"
+    }
+   ],
+   "cy": 0.577,
+   "cx": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b05",
+   "layout": "5",
+   "en": "Five",
+   "bt": "5",
+   "states": [
+    {
+     "f0": 450,
+     "f1": 475,
+     "text": "5"
+    }
+   ],
+   "cy": 0.577,
+   "cx": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b06",
+   "layout": "Astau\n吸气，撑起来",
+   "en": "Ashtau..inhale..lift\nup",
+   "bt": "Astau / inhale, press up",
+   "states": [
+    {
+     "f0": 505,
+     "f1": 512,
+     "text": "Astau\n吸气，撑"
+    },
+    {
+     "f0": 512,
+     "f1": 550,
+     "text": "Astau\n吸气，撑起来"
+    }
+   ],
+   "cy": 0.577,
+   "cx": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b07",
+   "layout": "呼气，下来\nSapta，再来",
+   "en": "exhale\ndown\nSupta\nagain",
+   "bt": "Exhale, come down / Sapta, again",
+   "states": [
+    {
+     "f0": 585,
+     "f1": 601,
+     "text": "呼气"
+    },
+    {
+     "f0": 601,
+     "f1": 614,
+     "text": "呼气，下来"
+    },
+    {
+     "f0": 614,
+     "f1": 634,
+     "text": "呼气，下来\nSapta"
+    },
+    {
+     "f0": 634,
+     "f1": 650,
+     "text": "呼气，下来\nSapta，再来"
+    }
+   ],
+   "cy": 0.577,
+   "cx": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b08",
+   "layout": "4",
+   "en": "Four",
+   "bt": "4",
+   "states": [
+    {
+     "f0": 776,
+     "f1": 798,
+     "text": "4"
+    }
+   ],
+   "cy": 0.577,
+   "cx": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b09",
+   "layout": "5，Astau",
+   "en": "Five..ashtau",
+   "bt": "5, Astau",
+   "states": [
+    {
+     "f0": 815,
+     "f1": 838,
+     "text": "5，Astau"
+    }
+   ],
+   "cy": 0.577,
+   "cx": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b10",
+   "layout": "吸气，撑起来",
+   "en": "inhale\nlift up",
+   "bt": "Inhale, press up",
+   "states": [
+    {
+     "f0": 869,
+     "f1": 898,
+     "text": "吸气"
+    },
+    {
+     "f0": 898,
+     "f1": 905,
+     "text": "吸气，撑"
+    },
+    {
+     "f0": 905,
+     "f1": 932,
+     "text": "吸气，撑起来"
+    }
+   ],
+   "cy": 0.577,
+   "cx": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b11",
+   "layout": "呼气，下来\n再来两次",
+   "en": "Exhale\ndown Two\nmore\ntimes",
+   "bt": "Exhale, come down / again, two times (two more times)",
+   "states": [
+    {
+     "f0": 987,
+     "f1": 1021,
+     "text": "呼气"
+    },
+    {
+     "f0": 1021,
+     "f1": 1031,
+     "text": "呼气，下来"
+    },
+    {
+     "f0": 1031,
+     "f1": 1036,
+     "text": "呼气，下来\n再来"
+    },
+    {
+     "f0": 1036,
+     "f1": 1046,
+     "text": "呼气，下来\n再来两次"
+    }
+   ],
+   "cy": 0.577,
+   "cx": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b12",
+   "layout": "Sapta",
+   "en": "Supta.",
+   "bt": "Sapta",
+   "states": [
+    {
+     "f0": 1052,
+     "f1": 1137,
+     "text": "Sapta"
+    }
+   ],
+   "cy": 0.577,
+   "cx": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b13",
+   "layout": "1",
+   "en": "One",
+   "bt": "1",
+   "states": [
+    {
+     "f0": 1193,
+     "f1": 1212,
+     "text": "1"
+    }
+   ],
+   "cy": 0.577,
+   "cx": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b14",
+   "layout": "5，Astau\n吸气，撑起来",
+   "en": "Five..ashtau..inhale..lift\nup..",
+   "bt": "5, Astau / inhale, press up",
+   "states": [
+    {
+     "f0": 1262,
+     "f1": 1292,
+     "text": "5，Astau\n吸气，撑"
+    },
+    {
+     "f0": 1292,
+     "f1": 1357,
+     "text": "5，Astau\n吸气，撑起来"
+    }
+   ],
+   "cy": 0.577,
+   "cx": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b15",
+   "layout": "呼气，下来\n最后一次，Sapta",
+   "en": "Exhale\ndown..Last\none..Supta",
+   "bt": "Exhale, come down / last time, Sapta",
+   "states": [
+    {
+     "f0": 1391,
+     "f1": 1393,
+     "text": "呼气"
+    },
+    {
+     "f0": 1393,
+     "f1": 1401,
+     "text": "呼气，下来\n最后"
+    },
+    {
+     "f0": 1401,
+     "f1": 1491,
+     "text": "呼气，下来\n最后一次，Sapta"
+    }
+   ],
+   "cy": 0.577,
+   "cx": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b16",
+   "layout": "4",
+   "en": "Four..",
+   "bt": "4",
+   "states": [
+    {
+     "f0": 1644,
+     "f1": 1691,
+     "text": "4"
+    }
+   ],
+   "cy": 0.577,
+   "cx": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b17",
+   "layout": "5，Astau\n撑起来，Nava\nCatvari，跳回去",
+   "en": "five..ashtau\nup..Nava..catvari..jump\nback.",
+   "bt": "5, Astau / press up, Nava / Catvari, jump back",
+   "states": [
+    {
+     "f0": 1819,
+     "f1": 1847,
+     "text": "5，Astau"
+    },
+    {
+     "f0": 1847,
+     "f1": 1946,
+     "text": "5，Astau\n撑起来，Nava\nCatvari，跳"
+    },
+    {
+     "f0": 1946,
+     "f1": 1994,
+     "text": "5，Astau\n撑起来，Nava\nCatvari，跳回去"
+    }
+   ],
+   "cy": 0.577,
+   "cx": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b18",
+   "layout": "Dasa\n吸气，伸展",
+   "en": "Dasha\ninhale\nstretch.",
+   "bt": "Dasa / inhale, stretch",
+   "states": [
+    {
+     "f0": 2030,
+     "f1": 2053,
+     "text": "Dasa"
+    },
+    {
+     "f0": 2053,
+     "f1": 2069,
+     "text": "Dasa\n吸气"
+    },
+    {
+     "f0": 2069,
+     "f1": 2077,
+     "text": "Dasa\n吸气，伸展"
+    }
+   ],
+   "cy": 0.577,
+   "cx": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b19",
+   "layout": "你停在这里",
+   "en": "You stay\nhere.",
+   "bt": "You stay (hold) here",
+   "states": [
+    {
+     "f0": 2128,
+     "f1": 2134,
+     "text": "你"
+    },
+    {
+     "f0": 2134,
+     "f1": 2155,
+     "text": "你停在"
+    },
+    {
+     "f0": 2155,
+     "f1": 2170,
+     "text": "你停在这里"
+    }
+   ],
+   "cy": 0.577,
+   "cx": 0.5,
+   "align": "left"
+  },
+  {
+   "id": "b20",
+   "layout": "Ekadasa\n呼气",
+   "en": "Ekadasha\nexhale.",
+   "bt": "Ekadasa / exhale",
+   "states": [
+    {
+     "f0": 2181,
+     "f1": 2218,
+     "text": "Ekadasa"
+    },
+    {
+     "f0": 2218,
+     "f1": 2236,
+     "text": "Ekadasa\n呼气"
+    }
+   ],
+   "cy": 0.577,
+   "cx": 0.5,
+   "align": "left"
+  }
+ ],
+ "audio": {
+  "file": "out/ch7_mix.wav"
+ }
+}
