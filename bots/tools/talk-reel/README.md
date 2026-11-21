@@ -5,3 +5,8 @@ Students-talk Reel: the talking clip is the main track, practice footage or phot
 - gsheet.py: contact sheets for checking.
 Lessons: whisper large-v3 on long Chinese windows makes up YouTube outro text, so use windows under 12 s. Word ends get clipped at cut points (AYBK-, Edis-), so pad each cut and check every name by ear or ASR. Two independent QA passes found about 50 real issues, so keep doing them.
 Delivery: the Drive connector takes about 3 MB per upload (downloads up to 10 MB), so send the full video in chat. The footage folder is link-shared, so download big files with curl from drive.usercontent.google.com/download?id=...&export=download&confirm=t.
+
+## Inserts (21 Nov, v1.2)
+- Plan key `inserts`: a short beat placed after the kept segment nearest `after_src`, with its own room-tone audio (`audio`: file, t0, gain_db), a B-roll and a caption. Use it when a new caption needs its own moment.
+- Room tone: check it with speech-to-text first. A "quiet" class clip can hold a teacher's voice.
+- Don't trust Whisper word times at a cut point. Look at the 10 ms sound levels and cut in the silence. A cut 30 ms into a word leaves a half-word.

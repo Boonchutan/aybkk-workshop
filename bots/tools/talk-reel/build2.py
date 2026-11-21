@@ -22,6 +22,15 @@ for a, b in P.get('cut', []):
 keep = [k for k in norm(keep) if fr(k[1]) - fr(k[0]) >= 3]
 pre = P.get('pre', [])
 segs = [(fr(s), fr(e)) for s, e in pre] + [(fr(s), fr(e)) for s, e in keep]
+kind = ['pre'] * len(pre) + ['main'] * len(keep)
+for ins in P.get('inserts', []):
+    target = fr(ins['after_src']); best = None
+    for i in range(len(pre), len(segs)):
+        if kind[i] != 'main': continue
+        d = abs(segs[i][1] - target)
+        if best is None or d < best[0]: best = (d, i)
+    i = best[1]; a, b = segs[i]
+    segs.insert(i + 1, (max(0, b - ins['frames']), max(0, b - ins['frames']) + ins['frames'])); kind.insert(i + 1, ins)
 PRE_N = sum(b - a for a, b in segs[:len(pre)])
 cum = []; n = 0
 for a, b in segs: cum.append(n); n += b - a
@@ -30,6 +39,7 @@ def s2n(x):  # source time -> output frame (main part)
     off = len(pre)
     best = None
     for i in range(off, len(segs)):
+        if kind[i] != 'main': continue
         a, b = segs[i]; c = cum[i]; fx = x / FD
         if a - 0.5 <= fx <= b + 0.5: return int(round(c + min(max(fx - a, 0), b - a)))
         for sx, ox in ((a, c), (b, c + b - a)):
@@ -54,7 +64,14 @@ for s, e, db in P.get('gains', []):
     env = np.ones(i1 - i0) * g; env[:R] = np.linspace(1, g, R); env[-R:] = np.linspace(g, 1, R)
     A[i0:i1] *= env[:, None]
 F = int(0.006 * SR); parts = []
-for a, b in segs:
+for (a, b), kd in zip(segs, kind):
+    if isinstance(kd, dict):
+        au_ = kd['audio']; n_ = int(round((b - a) * FD * SR))
+        r_ = subprocess.run(['ffmpeg', '-v', 'error', '-ss', f"{au_['t0']:.3f}", '-i', os.path.join(SRC, au_['file']), '-t', f'{(b - a) * FD + 0.1:.3f}', '-vn', '-ac', '2', '-ar', str(SR), '-f', 's16le', '-'], capture_output=True).stdout
+        seg = np.frombuffer(r_, np.int16).reshape(-1, 2).astype(np.float32)[:n_].copy() * 10 ** (au_.get('gain_db', 0) / 20)
+        if len(seg) < n_: seg = np.concatenate([seg, np.zeros((n_ - len(seg), 2), np.float32)])
+        R_ = int(0.08 * SR); seg[:R_] *= np.linspace(0, 1, R_)[:, None]; seg[-R_:] *= np.linspace(1, 0, R_)[:, None]
+        parts.append(seg); continue
     seg = A[int(round(a * FD * SR)):int(round(b * FD * SR))].copy()
     if len(seg) > 2 * F:
         r = np.linspace(0, 1, F)[:, None]; seg[:F] *= r; seg[-F:] *= r[::-1]
@@ -71,6 +88,8 @@ for b in P.get('broll', []):
     if 'out_n' in b: n0, n1 = b['out_n']
     else: n0, n1 = s2n(b['src_at']), s2n(b['src_end'])
     if n1 - n0 >= 6: br.append((n0, n1, b))
+for i, kd in enumerate(kind):
+    if isinstance(kd, dict) and kd.get('broll'): br.append((cum[i], cum[i] + segs[i][1] - segs[i][0], kd['broll']))
 covered = lambda a, b: any(n0 <= a and b <= n1 for n0, n1, _ in br)
 shots = []
 for i, (a, b) in enumerate(segs):
@@ -123,6 +142,8 @@ for c in P['captions']:
     if 'out_n' in c: n0, n1 = c['out_n']
     else: n0, n1 = s2n(c['src0']), s2n(c['src1'])
     caps.append([n0 * FD, n1 * FD, c])
+for i, kd in enumerate(kind):
+    if isinstance(kd, dict) and kd.get('caption'): caps.append([cum[i] * FD, (cum[i] + segs[i][1] - segs[i][0]) * FD, kd['caption']])
 caps.sort(key=lambda z: z[0])
 for i in range(len(caps)):
     nxt = caps[i + 1][0] if i + 1 < len(caps) else TOTAL
