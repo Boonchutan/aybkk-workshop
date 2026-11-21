@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-11-21T00:10:03.710Z
+Inbox last read: 2026-11-21T06:09:44.038Z
 
 ## Standing orders from Boonchu
 - 2026-11-08 BRAND COLOURS CHANGED (Boonchu picked "L1 Grande Galerie", the Louvre palette, for aybkk.net; PR on branch claude/louvre-palette, Neo): Louvre red #7E262E (hero band, headings), oxblood #5F1C23 (deep sections), honey parquet #D6A35C (buttons, offer bars; same hue as the new maple floor), limestone #F4EDE2 (page), soft brass #84621F (prices, gilt), pyramid steel blue #2F507F (links only). The old aubergine #3E1442 + mustard #F2C94C + pink is retired on the website. Posters, carousels, the timetable poster and the review QR card still use aubergine and gold: move them to the Louvre palette only after Boonchu says go for each piece. Small text rule from the same day: nothing under 15 px on the site; keep the grid.

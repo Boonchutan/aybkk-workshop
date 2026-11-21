@@ -8,3 +8,5 @@
 - Reel: Plato's daily run is paused (expected). Carne posted: 0 new leads, 2 open, serious lead last note drafted (A send or B close).
 - Score: wins this week (from Mon 16 Nov): none reported. Last win 6 Nov. 180K new leads: 0.
 - Inbox 07:08: 0 new, 0 hot.
+
+13:08 check-in: course prices still waiting (1 day, Sun 22 Nov 19:00). Serious lead A/B still open. Inbox: 0 new, 0 hot.
