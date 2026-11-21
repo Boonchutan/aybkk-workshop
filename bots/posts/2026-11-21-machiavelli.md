@@ -10,3 +10,5 @@
 - Inbox 07:08: 0 new, 0 hot.
 
 13:08 check-in: course prices still waiting (1 day, Sun 22 Nov 19:00). Serious lead A/B still open. Inbox: 0 new, 0 hot.
+
+19:08 check-in: course prices not repeated (2 nudges today; next choice Sun 22 Nov 19:00, 1 day). No reminders due. No win reported. Inbox: 0 new, 0 hot.
