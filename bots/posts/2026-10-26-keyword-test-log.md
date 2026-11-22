@@ -28,3 +28,5 @@ Staff page start stats on Sun 22 Nov (30 days): ig-aybkk views = , line-aybkk vi
 | 4 | | | | | IG = R, XHS = P |
 
 Carne, Mon 16 Nov: no weekly score for week 3. The log has no Reel plays, word comments or LINE counts yet (inbox 16 Nov: 0 chats with start/ig-aybkk or start/line-aybkk). Without plays there is nothing to divide. Readout Wed 25 Nov needs the per-Reel rows filled first.
+
+Carne, Mon 23 Nov: test window ended 22 Nov. No weekly score for week 4: still no Reel plays or word comments in the log. Inbox: 0 LINE chats with start/ig-aybkk or start/line-aybkk in week 4 (and none seen in weeks 1 to 3). Staff page start stats for 22 Nov not filled. Readout Wed 25 Nov can only run if the per-Reel rows and start stats come in first.
