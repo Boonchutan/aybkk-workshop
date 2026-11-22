@@ -87,10 +87,11 @@
    "f0": 737,
    "f1": 810,
    "cy": 0.7886,
-   "size": 0.054,
-   "font": "cta",
+   "size": 0.045,
+   "font": "body",
    "fill": "white",
-   "stroke": 0.085
+   "stroke": 0.09,
+   "line_gap": 1.2
   }
  ],
  "audio": {

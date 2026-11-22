@@ -50,17 +50,22 @@ class Block:
             pos = []
             for kind, v, _ in items_of(ln, self.base):
                 if kind == 't':
+                    if b.get('font', 'body') in ('body', 'body800') and v in W1.SUB:
+                        g = W1.SUB[v]
+                        pos.append((x + em * 0.02, self.f, 0, g))
+                        x += self.f.getlength(g) + em * (0.30 if v in '，：；' else 0.03)
+                        continue
                     ff = self.fp if v in W1.PUNCT else self.f
                     w = ff.getlength(v)
                     if v in W1.PUNCT_TIGHT and b.get('font', 'body') != 'serif':
                         w *= 0.62
                     if v == ' ':
                         w = em * 0.28
-                    pos.append((x, ff, w))
+                    pos.append((x, ff, w, v))
                     x += w
                 else:
                     e = W1.emoji_img(v, int(round(em * 1.02)))
-                    pos.append((x + em * 0.06, e, e.width))
+                    pos.append((x + em * 0.06, e, e.width, None))
                     x += e.width + em * 0.10
             self.lines.append((pos, x))
             maxw = max(maxw, x)
@@ -84,12 +89,12 @@ class Block:
             x0 = self.pad + ((self.maxw - w) / 2 if b.get('align', 'center') == 'center' else 0)
             y0 = self.pad + i * self.lh
             for k, (kind, v, c) in enumerate(items_of(ln, self.base)):
-                x, ff, _ = pos[k]
+                x, ff, _, g = pos[k]
                 if kind == 't':
                     if v == ' ':
                         continue
-                    do.text((x0 + x, y0), v, font=ff, fill=255, stroke_width=self.sw, stroke_fill=255)
-                    df.text((x0 + x, y0), v, font=ff, fill=c + (255,))
+                    do.text((x0 + x, y0), g, font=ff, fill=255, stroke_width=self.sw, stroke_fill=255)
+                    df.text((x0 + x, y0), g, font=ff, fill=c + (255,))
                 else:
                     emo.append((ff, int(x0 + x), int(y0 + self.asc - ff.height * 0.86)))
         layer = Image.new('RGBA', (self.LW, self.LH), (0, 0, 0, 0))

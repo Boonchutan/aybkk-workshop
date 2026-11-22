@@ -22,6 +22,7 @@ COL = {'white': (255, 255, 255), 'w': (255, 255, 255), 'cream': (253, 251, 193),
        'yellow': (244, 221, 42), 'y': (244, 221, 42), 'black': (16, 16, 16)}
 RAQM = features.check('raqm')
 EMO_RE = re.compile('([\U0001F000-\U0001FAFF☀-➿⌚-⏿][️\U0001F3FB-\U0001F3FF]?)')
+SUB = {'，': ',', '：': ':', '；': ';', '！': '!', '？': '?'}
 PUNCT = set('，。、；：')
 PUNCT_TIGHT = set('，。、；：')   # trailing mainland punctuation sits bottom-left; trim its empty right half
 _fc = {}
@@ -94,6 +95,11 @@ def render_event(ev, W, H, SS=2):
         for kind, s, c in parse_runs(ln, base):
             if kind == 't':
                 for chx in s:
+                    if fkey in ('body', 'body800') and chx in SUB:
+                        g = SUB[chx]
+                        items.append(('t', g, c, x + em * 0.02, f))
+                        x += f.getlength(g) + em * (0.30 if chx in '，：；' else 0.03) + track
+                        continue
                     ff = fp if chx in PUNCT else f
                     w = ff.getlength(chx)
                     if chx in PUNCT_TIGHT: w *= 0.62
@@ -152,9 +158,9 @@ def place(layer, ev, W, H, SS=2, scale=1.0, rot=0.0):
 
 
 # "phone ringing" entrance copied from the reference (frames relative to f0): (scale, rotation deg) or None = hidden
-RING = ([(0.45, 0), (0.75, 0), (0.95, 0), (1.12, 0), (1.3, -6), (1.3, -2), (1.3, -4), (1.3, -7), (1.3, -5), (1.3, 8), (1.3, -4), (1.3, -6), (1.3, -5), (1.3, -3), None,
-         (0.45, 0), (0.75, 0), (0.92, 0), (1.08, 0), (1.25, -6), (1.3, -3), (1.3, -6), None,
-         (0.45, 0), (0.75, 0), (0.92, 0), (1.08, 0), (1.25, -6), (1.3, -5), (1.3, -3), (1.3, -6), (1.3, -5), (1.3, 8), (1.3, -4), (1.3, -6), (1.3, -5), (1.25, -3), (1.15, -5), (1.05, 0)])
+RING = ([(0.50, 0), (0.90, 0), (1.10, 0), (1.225, 0), (1.38, 7), (1.38, 2), (1.38, 5), (1.38, 9), (1.38, 6), (1.38, -8), (1.38, 5), (1.38, 9), (1.38, 6), (1.38, 3), None,
+         (0.50, 0), (0.90, 0), (1.10, 0), (1.225, 0), (1.38, 7), (1.38, 3), (1.38, 7), None,
+         (0.50, 0), (0.90, 0), (1.10, 0), (1.225, 0), (1.38, 7), (1.38, 6), (1.38, 3), (1.38, 7), (1.38, 6), (1.38, -8), (1.38, 5), (1.38, 7), (1.38, 6), (1.38, 3), (1.38, 5), (1.25, 0), (1.125, 0)])
 
 
 def state(ev, n):

@@ -28,3 +28,13 @@ Job from Boonchu, 21 Nov 2026: take his clean (no-caption) Reel exports and burn
 - For a 24 fps reference, lock caption times to seconds, not to the picture: clean frame = ceil(1.25 x reference frame).
 - channel7 "had no music": in fact the posted version was the room sound 19.3 dB louder plus a music bed at 120.0 BPM in F minor. `bed120.py` synthesises an original bed with that tempo, key and tone balance; it is mixed 2 dB under the boosted room sound.
 - Watch the disk: helper agents left 2 GB of frames in out/agents and an encode died with "no space left". Clear old scratch folders before encoding.
+
+## Part 3 (22 Nov): what the independent check caught, and the Drive limit
+- Run an independent checker on every finished file before sending. It caught four things my own checks missed:
+  1. The "ring" shake tilted the opposite way to the English (Pillow rotates counter-clockwise for a positive angle).
+  2. Full-width ！ and ？ in the rounded TC font sit in the middle of their cell and leave a gap. Fix: draw the font's own Latin `! ? , : ;` in their place (`SUB` in wxcap.py).
+  3. A comma on line 1 of a two-line block hung into line 2. Fix: the Latin comma plus line_gap 1.20 to 1.28.
+  4. In ZCOOL QingKe HuangYou, 入 looks like 几. The CTA lines now use the rounded body font.
+- Fix every reel that shares a flaw, not only the ones the checker reached.
+- Drive connector: uploads over about 3.1 MB per call are refused (4.2 MB request cap), even though the first error message says 10 MB. No video of this job fits. Full-quality files go to Boonchu in chat with SendUserFile. Small docs (the caption check list) upload fine.
+- The plan's weekly limit can stop a workflow part-way. Re-run only the checkers that did not finish (pass the channel list as `args`).

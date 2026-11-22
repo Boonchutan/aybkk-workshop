@@ -82,11 +82,11 @@
    "f0": 602,
    "f1": 704,
    "cy": 0.7963,
-   "size": 0.06,
-   "font": "cta",
+   "size": 0.05,
+   "font": "body",
    "fill": "yellow",
-   "stroke": 0.085,
-   "line_gap": 1.18
+   "stroke": 0.09,
+   "line_gap": 1.2
   }
  ]
 }
