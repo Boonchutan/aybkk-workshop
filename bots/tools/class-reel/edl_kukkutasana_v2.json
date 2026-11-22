@@ -1,0 +1,628 @@
+{
+ "fps": 24,
+ "W": 1440,
+ "H": 2560,
+ "vo": "src/vo.wav",
+ "vo_offset": 0.0,
+ "room_db": -22,
+ "lufs": -14,
+ "crf": 16,
+ "fade_out": 0.5,
+ "cap": {
+  "font": "body",
+  "size": 0.058,
+  "stroke": 0.1,
+  "fill": "white",
+  "line_gap": 1.1,
+  "shadow": {
+   "dx": 0.0,
+   "dy": 0.06,
+   "blur": 0.1,
+   "alpha": 0.55
+  },
+  "cy": 0.72
+ },
+ "chip": {
+  "font": "body",
+  "size": 0.036,
+  "stroke": 0.0,
+  "fill": [
+   16,
+   16,
+   16
+  ],
+  "box": {
+   "pad_x": 0.55,
+   "pad_y": 0.32,
+   "radius": 0.4,
+   "fill": [
+    255,
+    255,
+    255
+   ],
+   "alpha": 0.94
+  },
+  "cy": 0.145
+ },
+ "shots": [
+  {
+   "id": "h1",
+   "clip": "D3",
+   "t0": 74.45,
+   "dur": 1.8,
+   "crop": [
+    2100,
+    260,
+    920,
+    1636
+   ],
+   "note": "hook: M1 arm balance, self lift, punch",
+   "punch": {
+    "at": 0.75,
+    "z": 1.3,
+    "px": 2450,
+    "py": 950
+   }
+  },
+  {
+   "id": "h2",
+   "clip": "D3",
+   "t0": 76.25,
+   "dur": 1.5,
+   "crop": [
+    2090,
+    120,
+    1012,
+    1800
+   ],
+   "note": "hook: rising, pull out",
+   "crop2": [
+    2118,
+    0,
+    1124,
+    2000
+   ]
+  },
+  {
+   "id": "h3",
+   "clip": "D3",
+   "t0": 77.75,
+   "dur": 1.3,
+   "crop": [
+    2118,
+    0,
+    1124,
+    2000
+   ],
+   "note": "hook: top, push in",
+   "crop2": [
+    2150,
+    0,
+    1040,
+    1849
+   ]
+  },
+  {
+   "id": "a1",
+   "clip": "D2",
+   "t0": 20.45,
+   "dur": 2.0,
+   "crop": [
+    2100,
+    0,
+    1124,
+    2000
+   ],
+   "note": "A headstand, lotus fold",
+   "chip": "Urdhva Kukkutasana A",
+   "room_db": -40
+  },
+  {
+   "id": "a2",
+   "clip": "D2",
+   "t0": 25.0,
+   "dur": 1.2,
+   "crop": [
+    1500,
+    400,
+    720,
+    1280
+   ],
+   "note": "A W1 lowering",
+   "chip": "Urdhva Kukkutasana A",
+   "room_db": -60
+  },
+  {
+   "id": "a3",
+   "clip": "D1",
+   "t0": 22.4,
+   "dur": 1.1,
+   "crop": [
+    1120,
+    200,
+    900,
+    1600
+   ],
+   "note": "A M2 lowering (wide cam)",
+   "chip": "Urdhva Kukkutasana A",
+   "room_db": -36
+  },
+  {
+   "id": "a4",
+   "clip": "D2",
+   "t0": 28.0,
+   "dur": 1.4,
+   "crop": [
+    2200,
+    420,
+    720,
+    1280
+   ],
+   "note": "A M1 head lift, punch",
+   "chip": "Urdhva Kukkutasana A",
+   "punch": {
+    "at": 0.55,
+    "z": 1.22,
+    "px": 2524,
+    "py": 996
+   },
+   "room_db": -36
+  },
+  {
+   "id": "a5",
+   "clip": "D2",
+   "t0": 43.05,
+   "dur": 1.0,
+   "crop": [
+    1310,
+    250,
+    900,
+    1600
+   ],
+   "note": "A W1 goes back up",
+   "chip": "Urdhva Kukkutasana A",
+   "room_db": -36
+  },
+  {
+   "id": "b1",
+   "clip": "D2",
+   "t0": 63.95,
+   "dur": 1.4,
+   "crop": [
+    2150,
+    0,
+    1012,
+    1800
+   ],
+   "note": "B M1 jump through tuck, punch",
+   "chip": "Urdhva Kukkutasana B",
+   "punch": {
+    "at": 0.6,
+    "z": 1.25,
+    "px": 2656,
+    "py": 810
+   }
+  },
+  {
+   "id": "b2",
+   "clip": "D1",
+   "t0": 61.95,
+   "dur": 0.75,
+   "crop": [
+    460,
+    656,
+    846,
+    1504
+   ],
+   "note": "B W2 jump through landing",
+   "chip": "Urdhva Kukkutasana B",
+   "punch": {
+    "at": 0.13,
+    "z": 1.15,
+    "px": 883,
+    "py": 1333
+   },
+   "room_db": -30
+  },
+  {
+   "id": "bp",
+   "clip": "D3",
+   "t0": 4.0,
+   "dur": 1.15,
+   "crop": [
+    1460,
+    380,
+    810,
+    1440
+   ],
+   "note": "B W1 padmasana no hands",
+   "chip": "Urdhva Kukkutasana B"
+  },
+  {
+   "id": "b3",
+   "clip": "D1",
+   "t0": 88.85,
+   "dur": 1.6,
+   "crop": [
+    1300,
+    560,
+    810,
+    1440
+   ],
+   "note": "B M2 swing lift one move, punch",
+   "chip": "Urdhva Kukkutasana B",
+   "punch": {
+    "at": 0.25,
+    "z": 1.12,
+    "px": 1948,
+    "py": 1280
+   },
+   "room_db": -30
+  },
+  {
+   "id": "b4",
+   "clip": "D1",
+   "t0": 91.0,
+   "dur": 1.6,
+   "crop": [
+    460,
+    656,
+    846,
+    1504
+   ],
+   "note": "B W2 back round",
+   "chip": "Urdhva Kukkutasana B",
+   "room_db": -30
+  },
+  {
+   "id": "b5",
+   "clip": "D1",
+   "t0": 98.0,
+   "dur": 1.8,
+   "crop": [
+    2040,
+    330,
+    1000,
+    1778
+   ],
+   "note": "OUT B two hold",
+   "chip": "Urdhva Kukkutasana B",
+   "room_db": -30
+  },
+  {
+   "id": "b6",
+   "clip": "D1",
+   "t0": 91.2,
+   "dur": 1.8,
+   "crop": [
+    1370,
+    880,
+    720,
+    1280
+   ],
+   "note": "B M2 hold tight",
+   "chip": "Urdhva Kukkutasana B",
+   "room_db": -30
+  },
+  {
+   "id": "c1",
+   "clip": "D3",
+   "t0": 11.6,
+   "dur": 1.6,
+   "crop": [
+    2270,
+    380,
+    810,
+    1440
+   ],
+   "note": "C M1 swing lotus back",
+   "chip": "Urdhva Kukkutasana C"
+  },
+  {
+   "id": "c2",
+   "clip": "D1",
+   "t0": 133.0,
+   "dur": 1.7,
+   "crop": [
+    400,
+    382,
+    1000,
+    1778
+   ],
+   "note": "C W2 swing back, looser",
+   "chip": "Urdhva Kukkutasana C",
+   "room_db": -30
+  },
+  {
+   "id": "c3",
+   "clip": "D3",
+   "t0": 18.4,
+   "dur": 1.5,
+   "crop": [
+    2250,
+    300,
+    810,
+    1440
+   ],
+   "note": "C M1 slide knees up, punch",
+   "chip": "Urdhva Kukkutasana C",
+   "punch": {
+    "at": 0.85,
+    "z": 1.3,
+    "px": 2614,
+    "py": 948
+   }
+  },
+  {
+   "id": "c4",
+   "clip": "D1",
+   "t0": 143.7,
+   "dur": 1.6,
+   "crop": [
+    1092,
+    0,
+    1216,
+    2160
+   ],
+   "note": "OUT C M2 slide up wide",
+   "chip": "Urdhva Kukkutasana C",
+   "room_db": -30
+  },
+  {
+   "id": "xj",
+   "clip": "D1",
+   "t0": 180.0,
+   "dur": 0.75,
+   "crop": [
+    1120,
+    0,
+    1012,
+    1800
+   ],
+   "note": "H M2 jump up to handstand",
+   "chip": "Handstand variation",
+   "room_db": -30
+  },
+  {
+   "id": "x1",
+   "clip": "D1",
+   "t0": 187.4,
+   "dur": 1.3,
+   "crop": [
+    1120,
+    0,
+    1012,
+    1800
+   ],
+   "note": "H M2 padmasana in the air, punch",
+   "chip": "Handstand variation",
+   "punch": {
+    "at": 0.75,
+    "z": 1.15,
+    "px": 1626,
+    "py": 1750
+   },
+   "room_db": -30
+  },
+  {
+   "id": "x2",
+   "clip": "D3",
+   "t0": 68.9,
+   "dur": 1.2,
+   "crop": [
+    880,
+    200,
+    846,
+    1504
+   ],
+   "note": "H teacher helps M2 (front 1)",
+   "chip": "Handstand variation"
+  },
+  {
+   "id": "x3",
+   "clip": "D1",
+   "t0": 261.5,
+   "dur": 2.2,
+   "crop": [
+    1790,
+    150,
+    900,
+    1600
+   ],
+   "note": "H teacher helps W1 (front 2), punch",
+   "chip": "Handstand variation",
+   "punch": {
+    "at": 1.6,
+    "z": 1.2,
+    "px": 2230,
+    "py": 870
+   },
+   "room_db": -30
+  },
+  {
+   "id": "x4",
+   "clip": "D3",
+   "t0": 67.8,
+   "dur": 2.25,
+   "crop": [
+    2150,
+    0,
+    1124,
+    2000
+   ],
+   "note": "H M1 slow lowering (so easy)",
+   "crop2": [
+    2230,
+    150,
+    960,
+    1706
+   ],
+   "chip": "Handstand variation"
+  },
+  {
+   "id": "xg",
+   "clip": "D1",
+   "t0": 206.45,
+   "dur": 1.7,
+   "crop": [
+    190,
+    150,
+    720,
+    1280
+   ],
+   "note": "H girl left line lifts up by herself, punch",
+   "chip": "Handstand variation",
+   "punch": {
+    "at": 0.6,
+    "z": 1.2,
+    "px": 540,
+    "py": 760
+   },
+   "room_db": -30
+  },
+  {
+   "id": "x6",
+   "clip": "D1",
+   "t0": 200.45,
+   "dur": 1.5,
+   "crop": [
+    900,
+    0,
+    1216,
+    2160
+   ],
+   "note": "OUT H M2 jump back",
+   "chip": "Handstand variation",
+   "room_db": -30
+  },
+  {
+   "id": "e1",
+   "clip": "D3",
+   "t0": 21.0,
+   "dur": 2.0,
+   "crop": [
+    2110,
+    280,
+    956,
+    1700
+   ],
+   "note": "M1 C hold calm",
+   "crop2": [
+    2200,
+    420,
+    810,
+    1440
+   ],
+   "room_db": -40
+  },
+  {
+   "id": "e2",
+   "clip": "D1",
+   "t0": 30.0,
+   "dur": 2.4,
+   "crop": [
+    1250,
+    0,
+    1216,
+    2160
+   ],
+   "note": "OUT room, pan to teacher",
+   "crop2": [
+    1500,
+    0,
+    1216,
+    2160
+   ],
+   "room_db": -45
+  }
+ ],
+ "phrases": [
+  {
+   "text": "Whoever says this\nis not difficult"
+  },
+  {
+   "text": "is either lying...\nor a great yogi."
+  },
+  {
+   "text": "It takes three things."
+  },
+  {
+   "text": "One.\nYears of practice."
+  },
+  {
+   "text": "Two.\nProper technique."
+  },
+  {
+   "text": "Tuck your thighs\nto your chest"
+  },
+  {
+   "text": "when you jump."
+  },
+  {
+   "text": "Hold your core\nand push the floor away."
+  },
+  {
+   "text": "Back round."
+  },
+  {
+   "text": "Control your breath."
+  },
+  {
+   "text": "Keep the body stable."
+  },
+  {
+   "text": "And three."
+  },
+  {
+   "text": "The technique\nmust fit your body."
+  },
+  {
+   "text": "Everybody is missing\na different piece."
+  },
+  {
+   "text": "Find what your body\nis missing, and fix it."
+  },
+  {
+   "text": "Then one day someone\nsees you and says,"
+  },
+  {
+   "text": "“You make it look\nso easy.”"
+  },
+  {
+   "text": "You just smile."
+  },
+  {
+   "text": "You know what it took."
+  },
+  {
+   "text": "Come practice\nat AYBKK.",
+   "cy": 0.68
+  }
+ ],
+ "extra": [
+  {
+   "id": "url",
+   "text": "aybkk.net",
+   "from": 39.1,
+   "style": {
+    "font": "body",
+    "size": 0.046,
+    "stroke": 0.1,
+    "fill": "yellow",
+    "shadow": {
+     "dx": 0.0,
+     "dy": 0.06,
+     "blur": 0.1,
+     "alpha": 0.55
+    },
+    "cy": 0.765
+   }
+  }
+ ],
+ "out": "out/Urdhva_Kukkutasana_v2.mp4",
+ "words": "work/vo_words_v2.json",
+ "vo_fade": [
+  41.05,
+  41.25
+ ]
+}
