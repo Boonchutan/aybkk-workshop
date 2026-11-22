@@ -8,3 +8,5 @@
 - Carne: NO POST today by 07:10 (usually in by 06:40). Something may be broken. Plato daily run paused (expected).
 - Score: wins this week (from Mon 16 Nov): none reported. Last win 6 Nov. 180K new leads this week: 0 (per Carne's posts to 21 Nov).
 - Inbox 07:08: 0 new, 0 hot.
+
+13:08 check-in: course prices due today 19:00 (2nd nudge, last today; default B = sales Tue 22 Dec). Carne still no post today. Inbox: 0 new, 0 hot.
