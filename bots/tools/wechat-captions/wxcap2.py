@@ -67,6 +67,9 @@ class Block:
                     e = W1.emoji_img(v, int(round(em * 1.02)))
                     pos.append((x + em * 0.06, e, e.width, None))
                     x += e.width + em * 0.10
+            if pos and ln and ln[-1] in '？！' and pos[-1][3] in ('？', '！'):
+                lx, lf, lw, lg = pos[-1]
+                x = lx + lf.getbbox(lg)[2] + em * 0.02
             self.lines.append((pos, x))
             maxw = max(maxw, x)
         self.maxw = maxw
@@ -122,15 +125,19 @@ class Block:
         return self.cache[text]
 
 
-# sRGB graphics -> HLG BT.2020 signal with white at HDR reference white (75% HLG)
+HDR_LIN = 1.0
+# sRGB graphics -> HLG BT.2020 signal
 def to_hlg(rgba):
     a = rgba.astype(np.float32)
     c = a[..., :3] / 255.0
     lin = np.where(c <= 0.04045, c / 12.92, ((c + 0.055) / 1.055) ** 2.4)
     M = np.array([[0.6274, 0.3293, 0.0433], [0.0691, 0.9195, 0.0114], [0.0164, 0.0880, 0.8956]], np.float32)
-    lin = np.clip(lin @ M.T, 0, 1) * 0.2646          # scene-linear value whose HLG signal is 0.75
+    lin = np.clip(lin @ M.T, 0, 1) * HDR_LIN        # 1.0 = same white as the master's own burned-in graphics; 0.2646 = HDR reference white (75%)
     A, B, C = 0.17883277, 0.28466892, 0.55991073
     sig = np.where(lin <= 1 / 12, np.sqrt(3 * lin), A * np.log(np.maximum(12 * lin - B, 1e-6)) + C)
+    if HDR_LIN >= 0.99:   # overlay is converted full-range so white lands on the master's graphics white (10-bit ~1020); pull chroma in so colours keep their limited-range saturation
+        Y = (sig * np.array([0.2627, 0.6780, 0.0593], np.float32)).sum(-1, keepdims=True)
+        sig = Y + 0.876 * (sig - Y)
     out = a.copy()
     out[..., :3] = np.clip(sig, 0, 1) * 255.0
     return out.round().astype(np.uint8)
@@ -198,7 +205,7 @@ def main():
     if au and au.get('file'):
         inputs += ['-i', os.path.join(base, au['file'])]
     if hdr:
-        fc = "[1:v]scale=out_color_matrix=bt2020:out_range=limited,format=yuva420p10le[ov];[0:v][ov]overlay=0:0:format=yuv420p10:eof_action=pass,format=yuv420p10le[v]"
+        fc = "[1:v]scale=out_color_matrix=bt2020:out_range=full,format=yuva420p10le[ov];[0:v][ov]overlay=0:0:format=yuv420p10:eof_action=pass,format=yuv420p10le[v]"
         VID = ['-c:v', 'libx265', '-preset', 'medium', '-crf', str(spec.get('crf', 16)), '-pix_fmt', 'yuv420p10le', '-tag:v', 'hvc1',
                '-x265-params', 'colorprim=bt2020:transfer=arib-std-b67:colormatrix=bt2020nc:range=limited:log-level=error',
                '-color_primaries', 'bt2020', '-color_trc', 'arib-std-b67', '-colorspace', 'bt2020nc', '-color_range', 'tv']

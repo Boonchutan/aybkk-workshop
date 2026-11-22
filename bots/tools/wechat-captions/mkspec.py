@@ -48,7 +48,7 @@ def build(ch):
         'ch1': dict(font='body', size=0.050, stroke=0.045, shadow=dict(dx=0, dy=0.03, blur=0.05, alpha=0.55), line_gap=1.28),
         'ch5': dict(font='body', size=0.060, stroke=0.06, shadow=dict(dx=0, dy=0.03, blur=0.04, alpha=0.5), line_gap=1.20),
         'ch7': dict(font='body', size=0.066, stroke=0.055, line_gap=1.20),
-        'ch2': dict(font='serif', size=0.058, stroke=0.0, shadow=dict(dx=-0.07, dy=0.07, blur=0, alpha=1.0), line_gap=1.22),
+        'ch2': dict(font='serif', size=0.058, stroke=0.024, shadow=dict(dx=-0.07, dy=0.07, blur=0, alpha=1.0), line_gap=1.22),
         'ch8': dict(font='serif', size=0.075, stroke=0.03, shadow=dict(dx=0.055, dy=0.055, blur=0, alpha=1.0), line_gap=1.08),
     }[ch]
     spec = {'src': f'clean/{ch}.mp4', 'out': f'out/wechat v2 channel{ch[2:]}.mp4', 'defaults': DEF, 'blocks': blocks}

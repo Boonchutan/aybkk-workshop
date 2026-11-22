@@ -38,3 +38,11 @@ Job from Boonchu, 21 Nov 2026: take his clean (no-caption) Reel exports and burn
 - Fix every reel that shares a flaw, not only the ones the checker reached.
 - Drive connector: uploads over about 3.1 MB per call are refused (4.2 MB request cap), even though the first error message says 10 MB. No video of this job fits. Full-quality files go to Boonchu in chat with SendUserFile. Small docs (the caption check list) upload fine.
 - The plan's weekly limit can stop a workflow part-way. Re-run only the checkers that did not finish (pass the channel list as `args`).
+
+## Part 4 (22 Nov): final set and what the last checks changed
+- All 7 files passed an independent check (text equals plan, timing within one frame of the English, no drawing defects).
+- HDR masters: Boonchu's own burned-in white graphics sit at 10-bit code about 1020, far above HDR reference white. Captions drawn at reference white (75%) look dull beside his title chip. `wxcap2.py` now converts the overlay full-range with `HDR_LIN = 1.0`, so caption white lands on the same level as the chip.
+- channel2 (serif, shadow only): white words go faint on pale floor, as in the English. A hairline edge (stroke 0.024) keeps the thinner Chinese strokes readable.
+- Lines ending in a full-width ？ or ！ are centred on their ink.
+- Known, accepted differences from the English (told to Boonchu): English words fade or pop in over about 4 frames, Chinese words cut in on the middle frame of that fade; Sanskrit counts use the count-sheet spelling (Sapta, Astau, Dasa, Ekadasa).
+- Final files delivered in chat: channels 4 and 6 (22 Nov morning), 5 and 7 (22 Nov), 1, 2 and 8 (22 Nov, last set). Posting plan from Alex: channel4 Mon 23 Nov, channel6 Tue 24 Nov.
