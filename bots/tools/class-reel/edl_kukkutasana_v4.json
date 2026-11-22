@@ -105,7 +105,7 @@
   {
    "id": "a1",
    "clip": "D2",
-   "t0": 20.45,
+   "t0": 20.75,
    "dur": 2.0,
    "crop": [
     2100,
@@ -124,7 +124,7 @@
    "dur": 1.2,
    "crop": [
     1500,
-    400,
+    330,
     720,
     1280
    ],
@@ -174,75 +174,70 @@
    "t0": 43.05,
    "dur": 1.0,
    "crop": [
-    1310,
-    250,
-    900,
-    1600
+    1500,
+    330,
+    720,
+    1280
    ],
    "note": "A W1 goes back up",
    "chip": "Urdhva Kukkutasana A",
    "room_db": -36
   },
   {
+   "id": "b2",
+   "clip": "D1",
+   "t0": 61.5,
+   "dur": 1.65,
+   "crop": [
+    400,
+    382,
+    1000,
+    1778
+   ],
+   "note": "B W2 jump through, the tuck, punch",
+   "chip": "Urdhva Kukkutasana B",
+   "punch": {
+    "at": 0.6,
+    "z": 1.12,
+    "px": 850,
+    "py": 1271
+   },
+   "room_db": -30
+  },
+  {
    "id": "b1",
    "clip": "D2",
-   "t0": 63.95,
-   "dur": 1.4,
+   "t0": 63.85,
+   "dur": 0.75,
    "crop": [
     2150,
     0,
     1012,
     1800
    ],
-   "note": "B M1 jump through tuck, punch",
-   "chip": "Urdhva Kukkutasana B",
-   "punch": {
-    "at": 0.6,
-    "z": 1.25,
-    "px": 2656,
-    "py": 810
-   }
-  },
-  {
-   "id": "b2",
-   "clip": "D1",
-   "t0": 61.95,
-   "dur": 0.75,
-   "crop": [
-    460,
-    656,
-    846,
-    1504
-   ],
-   "note": "B W2 jump through landing",
-   "chip": "Urdhva Kukkutasana B",
-   "punch": {
-    "at": 0.13,
-    "z": 1.15,
-    "px": 883,
-    "py": 1333
-   },
-   "room_db": -30
+   "note": "B M1 jump (when you jump)",
+   "chip": "Urdhva Kukkutasana B"
   },
   {
    "id": "bp",
    "clip": "D3",
-   "t0": 4.0,
-   "dur": 1.15,
+   "t0": 2.05,
+   "dur": 1.0,
    "crop": [
-    1460,
-    380,
-    810,
-    1440
+    1120,
+    250,
+    648,
+    1152
    ],
-   "note": "B W1 padmasana no hands",
-   "chip": "Urdhva Kukkutasana B"
+   "note": "B M2 padmasana without hands (hands stay on floor)",
+   "chip": "Urdhva Kukkutasana B",
+   "room_db": -40
   },
   {
    "id": "b3",
    "clip": "D1",
-   "t0": 88.85,
-   "dur": 1.6,
+   "t0": 88.95,
+   "dur": 1.5,
    "crop": [
     1300,
     560,
@@ -252,7 +247,7 @@
    "note": "B M2 swing lift one move, punch",
    "chip": "Urdhva Kukkutasana B",
    "punch": {
-    "at": 0.25,
+    "at": 0.15,
     "z": 1.12,
     "px": 1948,
     "py": 1280
@@ -265,10 +260,10 @@
    "t0": 91.0,
    "dur": 1.6,
    "crop": [
-    460,
-    656,
-    846,
-    1504
+    380,
+    382,
+    1000,
+    1778
    ],
    "note": "B W2 back round",
    "chip": "Urdhva Kukkutasana B",
@@ -280,14 +275,15 @@
    "t0": 98.0,
    "dur": 1.8,
    "crop": [
-    2040,
+    2120,
     330,
-    1000,
-    1778
+    900,
+    1600
    ],
    "note": "OUT B two hold",
    "chip": "Urdhva Kukkutasana B",
-   "room_db": -30
+   "room_db": -30,
+   "grade": "eq=gamma=0.86"
   },
   {
    "id": "b6",
@@ -296,7 +292,7 @@
    "dur": 1.8,
    "crop": [
     1370,
-    880,
+    700,
     720,
     1280
    ],
@@ -359,14 +355,15 @@
    "t0": 143.7,
    "dur": 1.6,
    "crop": [
-    1092,
-    0,
-    1216,
-    2160
+    1295,
+    720,
+    810,
+    1440
    ],
    "note": "OUT C M2 slide up wide",
    "chip": "Urdhva Kukkutasana C",
-   "room_db": -30
+   "room_db": -30,
+   "grade": "eq=gamma=0.88"
   },
   {
    "id": "xj",
@@ -389,10 +386,10 @@
    "t0": 187.4,
    "dur": 1.3,
    "crop": [
-    1120,
-    0,
-    1012,
-    1800
+    1200,
+    100,
+    900,
+    1600
    ],
    "note": "H M2 padmasana in the air, punch",
    "chip": "Handstand variation",
@@ -411,39 +408,34 @@
    "dur": 1.2,
    "crop": [
     880,
-    200,
+    50,
     846,
     1504
    ],
    "note": "H teacher helps M2 (front 1)",
-   "chip": "Handstand variation"
+   "chip": "Handstand variation",
+   "grade": "eq=gamma=0.86"
   },
   {
    "id": "x3",
    "clip": "D1",
-   "t0": 261.5,
-   "dur": 2.2,
+   "t0": 262.0,
+   "dur": 1.95,
    "crop": [
-    1790,
-    150,
+    1640,
+    90,
     900,
     1600
    ],
    "note": "H teacher helps W1 (front 2), punch",
    "chip": "Handstand variation",
-   "punch": {
-    "at": 1.6,
-    "z": 1.2,
-    "px": 2230,
-    "py": 870
-   },
    "room_db": -30
   },
   {
    "id": "x4",
    "clip": "D3",
-   "t0": 67.8,
-   "dur": 2.25,
+   "t0": 67.55,
+   "dur": 3.1,
    "crop": [
     2150,
     0,
@@ -461,30 +453,30 @@
   },
   {
    "id": "xg",
-   "clip": "D1",
-   "t0": 206.45,
-   "dur": 1.7,
+   "clip": "D3",
+   "t0": 78.0,
+   "dur": 1.3,
    "crop": [
-    190,
-    150,
-    720,
-    1280
+    1700,
+    420,
+    608,
+    1080
    ],
-   "note": "H girl left line lifts up by herself, punch",
+   "crop2": [
+    1730,
+    460,
+    576,
+    1024
+   ],
    "chip": "Handstand variation",
-   "punch": {
-    "at": 0.6,
-    "z": 1.2,
-    "px": 540,
-    "py": 760
-   },
-   "room_db": -30
+   "room_db": -40,
+   "note": "H girl (left line) holds padmasana in the air by herself, leopard-print student laughing in front (You just smile)"
   },
   {
    "id": "x6",
    "clip": "D1",
    "t0": 200.45,
-   "dur": 1.5,
+   "dur": 1.3,
    "crop": [
     900,
     0,
@@ -533,7 +525,8 @@
     1216,
     2160
    ],
-   "room_db": -45
+   "room_db": -45,
+   "grade": "eq=gamma=0.88"
   }
  ],
  "phrases": [
@@ -603,7 +596,7 @@
   {
    "id": "url",
    "text": "aybkk.net",
-   "from": 39.1,
+   "from": 39.52,
    "style": {
     "font": "body",
     "size": 0.046,
@@ -619,7 +612,7 @@
    }
   }
  ],
- "out": "out/Urdhva_Kukkutasana_v2.mp4",
+ "out": "out/Urdhva_Kukkutasana_v4.mp4",
  "words": "work/vo_words_v2.json",
  "vo_fade": [
   41.05,

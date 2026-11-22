@@ -15,8 +15,8 @@ SRC = {'D1': f'{K}/src/D1.mov', 'D2': f'{K}/src/D2.mp4', 'D3': f'{K}/src/D3.mp4'
 WD = f'{K}/work/build'; os.makedirs(WD, exist_ok=True)
 SR = 48000
 TM = ('zscale=tin=arib-std-b67:min=bt2020nc:pin=bt2020:t=linear:npl=100,format=gbrpf32le,'
-      'zscale=p=bt709,tonemap=mobius:param=0.3:desat=2,zscale=t=bt709:m=bt709:r=tv,format=gbrp,'
-      'colorchannelmixer=rr=1.015:gg=0.957:bb=0.935,eq=gamma=0.88:contrast=1.06,format=yuv420p')   # D1 is HLG HDR: tone-map, then warm it to match the phone clips
+      'zscale=p=bt709,tonemap=mobius:param=0.15:desat=2,zscale=t=bt709:m=bt709:r=tv,format=gbrp,'
+      'colorchannelmixer=rr=1.03:gg=0.96:bb=0.91,eq=gamma=0.94,format=yuv420p')   # D1 is HLG HDR: tone-map, then warm it to match the phone clips
 
 # ---- shot frame plan
 shots = E['shots']
@@ -42,7 +42,9 @@ def crop_at(s, k):
         z = 1 + (p['z'] - 1) * (1 - (1 - v) ** 3)
         if z > 1:
             px, py = p.get('px', c[0] + c[2] / 2), p.get('py', c[1] + c[3] / 2)
-            c = [px - (px - c[0]) / z, py - (py - c[1]) / z, c[2] / z, c[3] / z]
+            n = [px - (px - c[0]) / z, py - (py - c[1]) / z, c[2] / z, c[3] / z]
+            n[0] = min(max(n[0], c[0]), c[0] + c[2] - n[2]); n[1] = min(max(n[1], c[1]), c[1] + c[3] - n[3])   # stay inside the shot's own frame
+            c = n
     return c
 
 
@@ -56,7 +58,7 @@ def union(s):
 def decode_args(s, t0, nframes):
     ux, uy, uw, uh = union(s)
     sp = s.get('speed', 1.0)
-    vf = ([TM] if s['clip'] == 'D1' else []) + [f'crop={uw}:{uh}:{ux}:{uy}']
+    vf = ([TM] if s['clip'] == 'D1' else []) + ([s['grade']] if s.get('grade') else []) + [f'crop={uw}:{uh}:{ux}:{uy}']
     if sp != 1.0: vf.append(f'setpts=PTS/{sp}')
     vf += ['setpts=PTS-STARTPTS', f'fps={FPS}', 'scale=in_color_matrix=bt709:in_range=tv:flags=lanczos', 'format=rgb24']
     return ['ffmpeg', '-v', 'error', '-ss', f'{t0:.3f}', '-i', SRC[s['clip']], '-vf', ','.join(vf), '-frames:v', str(nframes), '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], (ux, uy, uw, uh)
@@ -71,7 +73,7 @@ def frame_out(buf, s, k, U, size):
 
 
 def shot_key(s):
-    return json.dumps({k: s.get(k) for k in ('clip', 't0', 'n', 'crop', 'crop2', 'punch', 'speed')} | {'tm': TM if s['clip'] == 'D1' else '', 'W': W, 'H': H, 'v': 3}, sort_keys=True)
+    return json.dumps({k: s.get(k) for k in ('clip', 't0', 'n', 'crop', 'crop2', 'punch', 'speed', 'grade')} | {'tm': TM if s['clip'] == 'D1' else '', 'W': W, 'H': H, 'v': 3}, sort_keys=True)
 
 
 def render_shot(i, s):

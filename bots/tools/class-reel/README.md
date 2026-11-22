@@ -6,7 +6,7 @@ with karaoke captions (newest word yellow) and a white chip that names the part.
 ## Files
 - `build.py edl.json` builds the whole thing. Flags: `--plan out.jpg [id,id]` (3 frames per shot at the real crop, fast), `--shots-only`, `--no-caps`.
 - `wxcap2.py`, `wxcap.py`: caption engine (copied from wechat-captions, plus a `box` option for the chip). Fonts: `fonts/` next to `tools/` (Chiron GoRound TC 900 etc., see wechat-captions README).
-- `edl_kukkutasana_v2.json`: the real edit list. `vo_words_kukkutasana_v2.json`: re-timed VO words.
+- `edl_kukkutasana_v4.json`: the edit list of the version sent 22 Nov (v4, 28 shots). `vo_words_kukkutasana_v2.json`: re-timed VO words.
 - Layout expected: `kuk/src/{D1.mov,D2.mp4,D3.mp4,vo.wav}`, `kuk/tools/`, `kuk/fonts/`, `kuk/work/`, `kuk/out/`.
 
 ## Shot options (edl.json)
@@ -22,4 +22,6 @@ with karaoke captions (newest word yellow) and a white chip that names the part.
 4. **D1 (DJI HLG) colour:** tone-map mobius with desat=2, then warm mixer and `eq=gamma=0.88:contrast=1.06`. desat=0 left the blacks grey and the windows cyan.
 5. **Audio:** student voices in the room sound mask VO words; the VO file had clicks after the last word (fade VO alone at 41.05 to 41.25 s). Limiter at 0.84 keeps true peak under -1 dBTP.
 6. **Brief check:** a separate checker asked to list every brief item shown, partly shown or missing caught the missing jump back, padmasana without hands and jump up to handstand.
-7. **Ask Boonchu, he knows his students.** The scouts missed the second self-lifter. Boonchu said "the girl on the most left also lift up by herself": black top, left line in D1, lifts back up alone at D1 206.9 to 207.6 s (W2 in front of her).
+7. **Ask Boonchu, he knows his students.** The scouts missed a girl he named ("the girl on the most left also lift up by herself", "you can see better on the right side camera"). Black top, left line. In the footage she jumps up and holds padmasana in the air by herself (D3 77.0 to 80.5, clean against the wood wall; D1 203 to 208), comes down, and the teacher helps her lift back up (D3 86.5 to 91, D1 212 to 217). v4 shows her holding padmasana by herself under "You just smile" while the leopard-print student in front laughs (D3 78.0). Question sent to Boonchu with a 2-frame picture; his answer is pending.
+8. **More QA lessons (rounds 2 and 3):** never put a punch-in on a student's hips; check the shot that should show "without hands" frame by frame; end a shot before a student drops out of an asana; never leave half a person at a frame edge; in ffmpeg eq, gamma below 1 darkens; a punch pivot outside the crop must be clamped (build.py does it now).
+9. **Settings that passed:** D1 tone-map mobius param 0.15 desat 2, mixer rr 1.03 gg 0.96 bb 0.91, eq gamma 0.94. Phone copy for chat: H.264 9 Mbps, about 50 MB, gets a save button.
