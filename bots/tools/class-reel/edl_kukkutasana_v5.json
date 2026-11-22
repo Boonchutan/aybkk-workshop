@@ -62,7 +62,8 @@
     "z": 1.3,
     "px": 2450,
     "py": 950
-   }
+   },
+   "room_off_db": -4
   },
   {
    "id": "h2",
@@ -115,7 +116,8 @@
    ],
    "note": "A headstand, lotus fold",
    "chip": "Urdhva Kukkutasana A",
-   "room_db": -40
+   "room_db": -40,
+   "room_off_db": -5
   },
   {
    "id": "a2",
@@ -130,7 +132,8 @@
    ],
    "note": "A W1 lowering",
    "chip": "Urdhva Kukkutasana A",
-   "room_db": -60
+   "room_db": -60,
+   "room_off_db": -5
   },
   {
    "id": "a3",
@@ -181,7 +184,8 @@
    ],
    "note": "A W1 goes back up",
    "chip": "Urdhva Kukkutasana A",
-   "room_db": -36
+   "room_db": -36,
+   "room_off_db": -5
   },
   {
    "id": "b2",
@@ -526,7 +530,8 @@
     2160
    ],
    "room_db": -45,
-   "grade": "eq=gamma=0.88"
+   "grade": "eq=gamma=0.88",
+   "room_off_db": -6
   }
  ],
  "phrases": [
@@ -612,10 +617,21 @@
    }
   }
  ],
- "out": "out/Urdhva_Kukkutasana_v4.mp4",
+ "out": "out/Urdhva_Kukkutasana_v5.mp4",
  "words": "work/vo_words_v2.json",
  "vo_fade": [
   41.05,
   41.25
- ]
+ ],
+ "room_bed": {
+  "floor_db": -14,
+  "cap_db": -6,
+  "ratio": 6,
+  "duck_db": 14,
+  "filter": {
+   "D1": "highpass=f=100",
+   "D2": "highpass=f=80",
+   "D3": "highpass=f=80"
+  }
+ }
 }

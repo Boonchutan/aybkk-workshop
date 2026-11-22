@@ -147,19 +147,67 @@ def load(path, t0=0.0, dur=None, ch=2):
 
 N = int(round(TOTALN / FPS * SR))
 mix = np.zeros((N, 2), np.float32)
-F = int(0.06 * SR)
-for s in shots:
-    g = 10 ** (s.get('room_db', E.get('room_db', -22)) / 20)
-    if g <= 0.0005: continue
-    sp = s.get('speed', 1.0)
-    seg = load(SRC[s['clip']], s['t0'], s['n'] / FPS * sp + 0.2)
-    if sp != 1.0:   # slow-motion: stretch room sound by resampling (pitch drops; it is low anyway)
-        idx = np.arange(0, len(seg) - 1, sp); seg = np.stack([np.interp(idx, np.arange(len(seg)), seg[:, c]) for c in (0, 1)], 1)
-    a = int(round(s['f0'] / FPS * SR)); n = min(int(round(s['n'] / FPS * SR)), len(seg), N - a)
-    seg = seg[:n] * g
-    r = min(F, n // 2); seg[:r] *= np.linspace(0, 1, r)[:, None]; seg[-r:] *= np.linspace(1, 0, r)[:, None]
-    mix[a:a + n] += seg
 vo = load(f"{K}/{E['vo']}", 0, None, 1)[:, 0]
+HOP = 480   # 10 ms
+def env_db(x):   # 10 ms RMS envelope in dBFS of a mono signal
+    k = len(x) // HOP
+    return 20 * np.log10(np.sqrt((x[:k * HOP].reshape(k, HOP) ** 2).mean(1) + 1e-12))
+def to_samples(g, n):   # per-10ms gain -> per-sample gain
+    return np.interp(np.arange(n), np.arange(len(g)) * HOP + HOP / 2, g).astype(np.float32)
+RB = E.get('room_bed')
+if RB:
+    # class sound as a real bed: same floor level for every camera, D1 hiss cleaned, loud events capped, ducked under the voice
+    ve = env_db(vo); vo_rms = float(np.median(ve[ve > -45]))
+    PRE = 0.06
+    segs = []
+    for s in shots:
+        sp = s.get('speed', 1.0)
+        t0 = max(0.0, s['t0'] - PRE); lead = s['t0'] - t0
+        flt = RB.get('filter', {}).get(s['clip'])
+        cmd = ['ffmpeg', '-v', 'error', '-ss', f'{t0:.3f}', '-i', SRC[s['clip']], '-t', f'{s["n"] / FPS * sp + lead + PRE:.3f}', '-vn', '-ac', '2', '-ar', str(SR)] + (['-af', flt] if flt else []) + ['-f', 'f32le', '-']
+        seg = np.frombuffer(subprocess.run(cmd, capture_output=True).stdout, np.float32).reshape(-1, 2).copy()
+        segs.append((s, seg, lead))
+    floor = {}
+    for clip in set(s['clip'] for s in shots):
+        e = np.concatenate([env_db(seg.mean(1)) for s, seg, _ in segs if s['clip'] == clip])
+        floor[clip] = float(np.median(e))
+    target = vo_rms + RB.get('floor_db', -22)
+    bed = np.zeros((N, 2), np.float32)
+    for s, seg, lead in segs:
+        g_db = max(-12, min(12, target - floor[s['clip']])) + s.get('room_off_db', 0)
+        a = int(round((s['f0'] / FPS - lead) * SR)); n = len(seg)
+        if a < 0: seg = seg[-a:]; n = len(seg); a = 0
+        n = min(n, N - a); seg = seg[:n] * 10 ** (g_db / 20)
+        r = min(int(2 * PRE * SR), n // 2); seg[:r] *= np.linspace(0, 1, r)[:, None]; seg[-r:] *= np.linspace(1, 0, r)[:, None]
+        bed[a:a + n] += seg
+    # cap loud room events (bangs, a voice right at the mic)
+    be = env_db(bed.mean(1)); cap = vo_rms + RB.get('cap_db', -6)
+    gr = np.minimum(0, (cap - be) * (1 - 1 / RB.get('ratio', 4)))
+    for i in range(1, len(gr)): gr[i] = min(gr[i], gr[i - 1] + 0.6)   # release about 0.6 dB per 10 ms
+    # duck under the voice: full depth while he speaks, back up over about 0.3 s
+    sp_ = np.zeros(len(be)); m = min(len(ve), len(be)); sp_[:m] = (ve[:m] > -45).astype(float)
+    d = np.zeros_like(sp_)
+    for i in range(len(sp_)): d[i] = 1.0 if sp_[i] else max(0.0, d[i - 1] - 1 / 30) if i else 0.0
+    for i in range(len(d) - 2, -1, -1): d[i] = max(d[i], d[i + 1] - 1 / 5)   # duck starts 50 ms before a word
+    gain_db = gr - RB.get('duck_db', 12) * d
+    bed *= to_samples(10 ** (gain_db / 20), N)[:, None]
+    mix += bed
+    np.save(f'{WD}/bed.npy', bed)
+    print('room bed: vo speech rms %.1f dBFS, floors %s, target floor %.1f' % (vo_rms, {k: round(v, 1) for k, v in floor.items()}, target))
+else:
+    F = int(0.06 * SR)
+    for s in shots:
+        g = 10 ** (s.get('room_db', E.get('room_db', -22)) / 20)
+        if g <= 0.0005: continue
+        sp = s.get('speed', 1.0)
+        seg = load(SRC[s['clip']], s['t0'], s['n'] / FPS * sp + 0.2)
+        if sp != 1.0:
+            idx = np.arange(0, len(seg) - 1, sp); seg = np.stack([np.interp(idx, np.arange(len(seg)), seg[:, c]) for c in (0, 1)], 1)
+        a = int(round(s['f0'] / FPS * SR)); n = min(int(round(s['n'] / FPS * SR)), len(seg), N - a)
+        seg = seg[:n] * g
+        r = min(F, n // 2); seg[:r] *= np.linspace(0, 1, r)[:, None]; seg[-r:] *= np.linspace(1, 0, r)[:, None]
+        mix[a:a + n] += seg
+vo = vo.copy()
 vo *= 10 ** (E.get('vo_db', 0) / 20)
 if E.get('vo_fade'):   # fade the VO alone (clicks after the last word)
     f0_, f1_ = (int(x * SR) for x in E['vo_fade']); vo[f0_:f1_] *= np.linspace(1, 0, f1_ - f0_); vo[f1_:] = 0
@@ -180,6 +228,10 @@ MIX = f'{WD}/mix.wav'
 subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', WAV, '-af', f'volume={gain:.2f}dB,alimiter=limit=0.84:level=false:attack=5:release=60', '-ar', str(SR), '-c:a', 'pcm_s16le', MIX], check=True)
 print(f'audio: measured {I:.1f} LUFS, gain {gain:+.1f} dB')
 
+if '--audio-only' in sys.argv:   # video unchanged: put the new mix on the given finished file
+    src_v = f"{K}/{sys.argv[sys.argv.index('--audio-only') + 1]}"
+    subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', src_v, '-i', MIX, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '256k', '-shortest', '-movflags', '+faststart', f"{K}/{E['out']}"], check=True)
+    print('remuxed', E['out']); sys.exit(0)
 # ---- captions (karaoke, newest word yellow) + chip + extras -> wxcap2 spec
 W_ = json.load(open(f"{K}/{E.get('words', 'work/vo_words.json')}"))
 norm = lambda s: re.sub(r'[^a-z0-9]', '', s.lower())
