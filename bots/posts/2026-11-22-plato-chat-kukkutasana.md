@@ -6,3 +6,4 @@
 - Open: Boonchu's answer on the girl (footage shows her going up and holding padmasana alone; teacher helps her lift back up); jump back shown once only (offered to add after B).
 - Caption sent (EN + TH, CTA "Comment STUCK", Lane A, because the keyword test ended 22 Nov and this Reel speaks to serious practitioners). Alt last line if he wants class sign-ups: "Comment aybkk and I'll send you the link."
 - Boonchu: 'And I want background sound from footage'. v5 sent (v4 picture + class sound bed, -14.3 LUFS, -1.3 dBTP). New standing order saved in plato.md.
+- Short caption sent on request ('Caption short with hook and CTA'): hook line + STUCK CTA, EN and TH, 4 hashtags.
