@@ -10,3 +10,5 @@
 - Inbox 07:08: 0 new, 0 hot.
 
 13:08 check-in: course prices due today 19:00 (2nd nudge, last today; default B = sales Tue 22 Dec). Carne still no post today. Inbox: 0 new, 0 hot.
+
+19:08 check-in: course prices no answer by 19:00, default B applied (sales Tue 22 Dec, start Tue 29 Dec; next choice Sun 29 Nov 19:00). Carne no post all day. Keyword test: week's Reel screenshots + start stats asked once. Inbox: 0 new, 0 hot.
