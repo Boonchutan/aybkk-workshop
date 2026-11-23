@@ -10,3 +10,4 @@
 - Score: wins this week (from Mon 23 Nov): none reported. Last win 6 Nov. 180K new leads last week: 0.
 - Inbox 07:08: 0 new, 0 hot.
 - 13:08 check-in: keyword readout Wed 25 Nov (2 days), screenshots still missing. Course prices still waiting (6 days). Inbox: 1 new, 1 hot.
+- 19:08 check-in: course prices and keyword readout not repeated (2 nudges today). No win reported; next step: confirm the 16 Nov 12-month slip in the bank. Inbox: 0 new, 0 hot.

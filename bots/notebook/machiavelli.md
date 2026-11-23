@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-11-23T06:10:49.347Z
+Inbox last read: 2026-11-23T12:10:48.512Z
 
 ## Standing orders from Boonchu
 - 2026-11-08 BRAND COLOURS CHANGED (Boonchu picked "L1 Grande Galerie", the Louvre palette, for aybkk.net; PR on branch claude/louvre-palette, Neo): Louvre red #7E262E (hero band, headings), oxblood #5F1C23 (deep sections), honey parquet #D6A35C (buttons, offer bars; same hue as the new maple floor), limestone #F4EDE2 (page), soft brass #84621F (prices, gilt), pyramid steel blue #2F507F (links only). The old aubergine #3E1442 + mustard #F2C94C + pink is retired on the website. Posters, carousels, the timetable poster and the review QR card still use aubergine and gold: move them to the Louvre palette only after Boonchu says go for each piece. Small text rule from the same day: nothing under 15 px on the site; keep the grid.
@@ -141,6 +141,7 @@ Inbox last read: 2026-11-23T06:10:49.347Z
 - 2026-11-04 19:08: Inbox 19:08: 1 new in 1 LINE thread, 1 hot (class booking question for Tue 10 Nov, may be answered). Course prices (Sun 8 Nov) and serious lead (Sat 7 Nov) not repeated (2 nudges today). No reminders due since 13:08, no wins. Next step given: close the DUO PACK LINE lead (promo ends 11 Nov) and answer the 10 Nov booking.
 
 ## Log
+- 2026-11-23 19:08: Inbox 19:08: 0 new, 0 hot. Course prices (Sun 29 Nov, 6 days) and keyword readout (Wed 25 Nov, 2 days) not repeated: 2 nudges today. No reminders due since 13:08. No win; next step given: confirm the 16 Nov 12-month LINE slip in the bank.
 - 2026-11-22 13:08: Inbox 13:08: 0 new, 0 hot. Course prices (19:00 today) reminded, 2nd nudge today: do not repeat at 19:08, only apply default B (sales Tue 22 Dec, start Tue 29 Dec). Carne still no post today (checked 13:08). No reminders due since 07:08, no wins.
 - 2026-11-20 07:08: Carne posted (0 new leads, 2 open; 1 follow-up due; serious lead 34 days silent); Plato paused (expected). No @Machi requests. Money: 16 Nov 12-month LINE slip still unconfirmed. Course prices next choice Sun 22 Nov (2 days, 1st nudge today). Reminders: Mysore trip flights/hotel (daily), Rezerv import (daily). Site up (200). Inbox 07:08: 0 new, 0 hot. No wins this week. Board rebuilt.
 - 2026-11-19 19:08: Site up (aybkk.net, my.aybkk.com 200). Inbox 19:08: 0 new, 0 hot. Course prices not repeated (nagged twice today; Sun 22 Nov 19:00, 3 days). No reminders due since 13:08. No win; next step given: confirm the 16 Nov 12-month LINE slip in the bank.
