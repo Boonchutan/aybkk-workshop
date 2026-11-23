@@ -9,3 +9,4 @@
 - Carne posted (covers 22 and 23 Nov). Plato daily run paused (expected); Plato chat made the Kukkutasana Reel (v5) on 22 Nov, not posted.
 - Score: wins this week (from Mon 23 Nov): none reported. Last win 6 Nov. 180K new leads last week: 0.
 - Inbox 07:08: 0 new, 0 hot.
+- 13:08 check-in: keyword readout Wed 25 Nov (2 days), screenshots still missing. Course prices still waiting (6 days). Inbox: 1 new, 1 hot.
