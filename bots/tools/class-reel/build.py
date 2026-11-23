@@ -14,9 +14,9 @@ FPS, W, H = E.get('fps', 24), E.get('W', 1440), E.get('H', 2560)
 SRC = {'D1': f'{K}/src/D1.mov', 'D2': f'{K}/src/D2.mp4', 'D3': f'{K}/src/D3.mp4'}
 WD = f"{K}/{E.get('workdir', 'work/build')}"; os.makedirs(WD, exist_ok=True)
 SR = 48000
-TM = ('zscale=tin=arib-std-b67:min=bt2020nc:pin=bt2020:t=linear:npl=100,format=gbrpf32le,'
+TM = ('zscale=tin=arib-std-b67:min=bt2020nc:pin=bt2020:t=linear:npl=100,format=gbrpf32le,exposure=exposure=-1.3,'
       'zscale=p=bt709,tonemap=mobius:param=0.15:desat=2,zscale=t=bt709:m=bt709:r=tv,format=gbrp,'
-      'colorchannelmixer=rr=1.03:gg=0.96:bb=0.91,eq=gamma=0.94,format=yuv420p')   # D1 is HLG HDR: tone-map, then warm it to match the phone clips
+      "colorchannelmixer=rr=1.03:gg=0.96:bb=0.91,curves=master='0/0 0.1/0.13 0.5/0.54 0.8/0.8 1/0.9',format=yuv420p")   # D1 HLG: 1.3 stops down (his pick), roll off highlights (Boonchu 23 Nov: balanced, not bright)
 
 # ---- shot frame plan
 shots = E['shots']
@@ -61,6 +61,8 @@ def decode_args(s, t0, nframes):
     vf = ([TM] if s['clip'] == 'D1' else []) + ([s['grade']] if s.get('grade') else []) + [f'crop={uw}:{uh}:{ux}:{uy}']
     if sp != 1.0: vf.append(f'setpts=PTS/{sp}')
     vf += ['setpts=PTS-STARTPTS', f'fps={FPS}', 'scale=in_color_matrix=bt709:in_range=tv:flags=lanczos', 'format=rgb24']
+    cg = E.get('grade_clip', {}).get(s['clip'])
+    if cg: vf.append(cg)   # per-camera grade on RGB (after the exact bt709 conversion)
     return ['ffmpeg', '-v', 'error', '-ss', f'{t0:.3f}', '-i', SRC[s['clip']], '-vf', ','.join(vf), '-frames:v', str(nframes), '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], (ux, uy, uw, uh)
 
 
@@ -73,7 +75,7 @@ def frame_out(buf, s, k, U, size):
 
 
 def shot_key(s):
-    return json.dumps({k: s.get(k) for k in ('clip', 't0', 'n', 'crop', 'crop2', 'punch', 'speed', 'grade')} | {'tm': TM if s['clip'] == 'D1' else '', 'W': W, 'H': H, 'v': 3}, sort_keys=True)
+    return json.dumps({k: s.get(k) for k in ('clip', 't0', 'n', 'crop', 'crop2', 'punch', 'speed', 'grade')} | {'tm': TM if s['clip'] == 'D1' else '', 'cg': E.get('grade_clip', {}).get(s['clip']), 'W': W, 'H': H, 'v': 4}, sort_keys=True)
 
 
 def render_shot(i, s):
