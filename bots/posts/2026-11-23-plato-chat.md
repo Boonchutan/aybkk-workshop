@@ -18,3 +18,4 @@
 - Posted type now 12:04 UTC to AYBKK IG cmnmyjqex06mrqi0yeynj0y3f, post_type post, is_trial_reel true, graduation_strategy SS_PERFORMANCE. Postiz post cmwt7wl0b00q0mp07mifsm6ci. Caption exactly as Alex sent.
 - Quote check: "Two planets one place, very dangerous" is on the Jois Yoga archive (archive.joisyoga.com/practice/moon-days): "Guruji was fond of saying". Second-hand, no recording.
 - Note: another trial reel (Galavasana, cmwl18nex07i0qe07h7t9sg23, MANUAL) is queued for 12:30 UTC the same evening.
+- RESULT: PUBLISHED as a trial reel (Postiz state PUBLISHED, no error), checked 12:10 UTC.
