@@ -19,3 +19,4 @@
 - Quote check: "Two planets one place, very dangerous" is on the Jois Yoga archive (archive.joisyoga.com/practice/moon-days): "Guruji was fond of saying". Second-hand, no recording.
 - Note: another trial reel (Galavasana, cmwl18nex07i0qe07h7t9sg23, MANUAL) is queued for 12:30 UTC the same evening.
 - RESULT: PUBLISHED as a trial reel (Postiz state PUBLISHED, no error), checked 12:10 UTC.
+- 19:1x BKK (Boonchu via Alex): Galavasana trial reel #22 moved 19:30 -> 23:00 BKK. New Postiz post cmwt8c5tf00twmp078aymx5yw, 16:00 UTC, same caption, trial reel MANUAL, video re-uploaded from bots/media/2026-11-18-trial-reels/trial22.mp4 (md5 5e42381c, QA-passed file) as uploads.postiz.com/gA94DDaA9Z.mp4. Old post cmwl18nex07i0qe07h7t9sg23 deleted with deletePostTool after the new one was confirmed in QUEUE.
