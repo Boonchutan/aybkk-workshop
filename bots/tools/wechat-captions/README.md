@@ -46,3 +46,9 @@ Job from Boonchu, 21 Nov 2026: take his clean (no-caption) Reel exports and burn
 - Lines ending in a full-width ？ or ！ are centred on their ink.
 - Known, accepted differences from the English (told to Boonchu): English words fade or pop in over about 4 frames, Chinese words cut in on the middle frame of that fade; Sanskrit counts use the count-sheet spelling (Sapta, Astau, Dasa, Ekadasa).
 - Final files delivered in chat: channels 4 and 6 (22 Nov morning), 5 and 7 (22 Nov), 1, 2 and 8 (22 Nov, last set). Posting plan from Alex: channel4 Mon 23 Nov, channel6 Tue 24 Nov.
+
+## Part 5 (23 Nov): Urdhva Kukkutasana version B for WeChat (made from our own edit, not from a posted Reel)
+- build.py (bots/tools/class-reel) now takes `zh_blocks` (Chinese whole-line blocks on the English phrase timing, ids may merge), `zh_style` (size 0.0655 = 1.13 x English, line_gap 1.22), `chip_map` and `workdir`.
+- Translation ran as 2 translators + 1 strict reviewer. Lessons: 大师 often reads ironic in mainland China (fake gurus), use 高手; 功夫 reads as kung fu; 推地 is the cue for 'push the floor away'; 后背拱起来 for 'back round'; 来AYBKK练习吧 with no spaces; line-end …… dropped too.
+- Asana names stay in Sanskrit (house style); 上公鸡式 for Urdhva Kukkutasana is unconfirmed. 手倒立变体 = handstand variation.
+- FACT: Urdhva Kukkutasana A/B/C is in Advanced A (third series), not Intermediate. Never write 二级 or 中级序列 about it.
