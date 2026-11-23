@@ -2290,3 +2290,5 @@ Inbox 07:08: 13 LINE threads with news, 8 need a reply, 5 hot.
 - Serious: 1, silent 24 days, next check Sat 14 Nov. Last note still on hold.
 - Boonchu: send the short reply to the new teacher-training ask on LINE OA (draft in my session). It asks one question: how long they practice.
 
+
+- 2026-11-23 Plato: Google photo posts for Wed 25 and Fri 27 Nov waiting for Boonchu's go in the Plato chat (no clean Sunday photo this week). Last week's 3 Google posts (18, 20, 22 Nov) all PUBLISHED.
