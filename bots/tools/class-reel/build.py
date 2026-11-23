@@ -12,7 +12,7 @@ K = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 E = json.load(open(sys.argv[1]))
 FPS, W, H = E.get('fps', 24), E.get('W', 1440), E.get('H', 2560)
 SRC = {'D1': f'{K}/src/D1.mov', 'D2': f'{K}/src/D2.mp4', 'D3': f'{K}/src/D3.mp4'}
-WD = f'{K}/work/build'; os.makedirs(WD, exist_ok=True)
+WD = f"{K}/{E.get('workdir', 'work/build')}"; os.makedirs(WD, exist_ok=True)
 SR = 48000
 TM = ('zscale=tin=arib-std-b67:min=bt2020nc:pin=bt2020:t=linear:npl=100,format=gbrpf32le,'
       'zscale=p=bt709,tonemap=mobius:param=0.15:desat=2,zscale=t=bt709:m=bt709:r=tv,format=gbrp,'
@@ -276,13 +276,25 @@ for k in range(len(blocks) - 1):
     last = blocks[k]['states'][-1]; nf0 = blocks[k + 1]['states'][0]['f0']
     last['f1'] = nf0 if nf0 - last['f1'] < 6 else min(last['f1'], nf0)
     assert all(st['f1'] > st['f0'] for st in blocks[k]['states']), blocks[k]['id']
+# Chinese (or other) caption version: whole-line blocks on the English phrase timing, ids may merge
+if E.get('zh_blocks'):
+    byid = {b['id']: b for b in blocks}
+    zb = []
+    for z in E['zh_blocks']:
+        bs = [byid[i] for i in z['ids']]
+        zb.append({**cap, **E.get('zh_style', {}), 'id': 'z' + z['ids'][0], 'layout': z['zh'], 'cy': bs[0]['cy'],
+                   'states': [{'f0': bs[0]['states'][0]['f0'], 'f1': bs[-1]['states'][-1]['f1'], 'text': z['zh']}]})
+    ids = [i for z in E['zh_blocks'] for i in z['ids']]
+    assert sorted(ids) == sorted(byid), ('zh ids must cover every phrase once', ids)
+    blocks = zb
+CM = E.get('chip_map', {})
 # chips: consecutive shots with the same chip text form one block
 ch = E.get('chip', {})
 run = None
 for s in shots + [{'chip': None, 'f0': TOTALN, 'n': 0}]:
     t = s.get('chip')
     if run and t != run['text']:
-        blocks.append({**ch, 'id': f"chip{len(blocks)}", 'layout': run['text'], 'states': [{'f0': run['a'], 'f1': s['f0'], 'text': run['text']}]}); run = None
+        blocks.append({**ch, 'id': f"chip{len(blocks)}", 'layout': CM.get(run['text'], run['text']), 'states': [{'f0': run['a'], 'f1': s['f0'], 'text': CM.get(run['text'], run['text'])}]}); run = None
     if t and not run: run = {'text': t, 'a': s['f0']}
 for x in E.get('extra', []):
     blocks.append({**x.get('style', {}), 'id': x['id'], 'layout': x['text'], 'states': [{'f0': int(round(x['from'] * FPS)), 'f1': int(round(x['to'] * FPS)) if x.get('to') else TOTALN, 'text': x['text']}]})
