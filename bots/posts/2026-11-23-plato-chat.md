@@ -12,3 +12,9 @@
 - Boonchu: sunny scenes overexposed. Re-grade: D1 1 stop down + highlight roll-off; phones: sun patches rolled off. Rebuilding v6 (A), B-EN v2, B-WeChat v2. New standing order BALANCED EXPOSURE saved.
 - Boonchu picked the darker grade ('the most right one is well balance': D1 1.3 stops down + roll-off). v6 built: no pixel above 235 in any shot, D1 means 81-119. Sent 'Kukkutasana B WeChat 中文 v2' (new exposure, master + phone). English kits (v6 A full + v6 hook B) building; told Boonchu A in Edits must also get the new exposure for a fair hook test.
 - Sent 2 Edits kits (new exposure): 'Kukkutasana v6 Edits kit' (28 clips, same sound/captions as v5) and 'Kukkutasana v6 hook B kit' (3 hook clips 26/57/27 frames + sound B). Verified: B-EN differs from A-v6 only in frames 0-109 (rest diff 0.000). Edits plan: duplicate v5 -> v6 (swap 28 clips), duplicate v6 -> v6 - hook B (swap clips 01-03 + sound); delete old 'v5 - hook B' if made.
+
+## Moon-day trial reel (Alex for Boonchu, 23 Nov 19:00 BKK)
+- Video: Drive moonday_jamsai_IG_trial_2026-11-23.mp4 was VP9; re-encoded to H.264 1080x1920 CRF 18, AAC 128k (bots/media/2026-11-23-moonday/, md5 7e5aa9b4). Postiz upload uploads.postiz.com/T54DThxNda.mp4 (md5 match).
+- Posted type now 12:04 UTC to AYBKK IG cmnmyjqex06mrqi0yeynj0y3f, post_type post, is_trial_reel true, graduation_strategy SS_PERFORMANCE. Postiz post cmwt7wl0b00q0mp07mifsm6ci. Caption exactly as Alex sent.
+- Quote check: "Two planets one place, very dangerous" is on the Jois Yoga archive (archive.joisyoga.com/practice/moon-days): "Guruji was fond of saying". Second-hand, no recording.
+- Note: another trial reel (Galavasana, cmwl18nex07i0qe07h7t9sg23, MANUAL) is queued for 12:30 UTC the same evening.
