@@ -1,0 +1,744 @@
+# Dali Ashtanga shala model, version 2: output tables
+
+Run on Mon 23 Nov 2026. CNY unless marked. 1 CNY = 5.066 THB. Every figure below is printed by dali-shala-model-v2.py.
+
+## SUMMARY IN NUMBERS (all computed below)
+
+Answer in numbers. No size of rented room pays in any demand case. Of the three sizes asked for, small loses least at base demand. The base case is 2.4 month members; a small room in the cheapest real space needs 19.4 to pay its teacher 6,000 a month and can serve 16. The only form that leaves its teacher anything is a bare home room of about 6 mats (18 m2 of practice floor, 32 m2 in all). Area: none is proven; A2 scores 50, C 39, B 46 of 75.
+
+### S1. Three demand cases, a year, the room alone (no workshop, no month course)
+
+| Demand | Month members (average) | Income, CNY | Income, THB | Small room in a rented house: result after the owner-teacher's pay of 6,000 a month | That in THB | In 180K seats | Small rented room: owner's take a month (pay + result) | Bare home room of 6 mats: what the teacher keeps a year | That a month | A month, THB |
+|---|---|---|---|---|---|---|---|---|---|---|
+| low | 0.3 | 6,744 | 34,166 | -209,095 | -1,059,278 | -5.88 | -11,425 | -3,944 | -329 | -1,665 |
+| base | 2.4 | 35,590 | 180,300 | -180,423 | -914,021 | -5.08 | -9,035 | 24,729 | 2,061 | 10,440 |
+| high | 8.1 | 128,593 | 651,451 | -87,978 | -445,697 | -2.48 | -1,332 | 114,641 | 9,553 | 48,398 |
+
+### S2. Result a year by size and demand in a rented house, the room alone, CNY
+
+| Size | Mats | Practice room m2 | Total m2 | Month members it can serve | Low | Base | High | Cash needed to open (base) | Break-even month members |
+|---|---|---|---|---|---|---|---|---|---|
+| micro | 6 | 18 | 32 | 9 | -192,325 | -163,652 | -71,653 | 173,280 | 17.9 |
+| small | 10 | 30 | 53 | 16 | -209,095 | -180,423 | -87,978 | 196,351 | 19.4 |
+| medium | 20 | 60 | 105 | 32 | -267,654 | -238,981 | -146,536 | 262,344 | 24.6 |
+| large | 36 | 108 | 189 | 57 | -373,899 | -345,226 | -252,781 | 389,041 | 34.2 |
+
+### S3. What AYBKK itself earns in a year by ownership case, CNY (EXAMPLE 70/30 workshop split; the licence counts as 0 because it is blocked)
+
+| Case | Low | Base | High | Base: of which from the room on days he does not teach | Base, in 180K seats |
+|---|---|---|---|---|---|
+| (d) No shala. The same days and cash go to what already pays | 0 | 0 | 0 | 0 | 0.00 |
+| (f) No second room: a workshop in a hired hall or a host studio (the listed teacher's welcome first) | 11,358 | 16,377 | 80,724 | 0 | 0.46 |
+| (c) A graduate owns a small room, no formal tie; AYBKK teaches a workshop in it | 11,358 | 16,377 | 52,554 | 0 | 0.46 |
+| (e) A partner: mornings inside a licensed studio that is already there (the files' partner-location pattern) | 11,358 | 16,377 | 80,724 | 0 | 0.46 |
+| (b) A graduate owns it with an AYBKK licence and the habit system | 11,358 | 16,377 | 52,554 | 0 | 0.46 |
+| (a) Boonchu owns it through a foreign-owned company and hires a teacher | -263,809 | -230,117 | -101,496 | -246,494 | -6.48 |
+
+Cash needed to open a small rented room: 196,351 CNY (994,714 THB, 5.5 seats of the 180K course). By month 24, when the first home lease ends, the owner has put in 396,037 CNY at base demand. It is not earned back in any case.
+
+## WHAT MOVED SINCE VERSION 1
+
+### M1. Version 1 against version 2 (version 1 figures are copied from its output file)
+
+| Line | Version 1 | Version 2 |
+|---|---|---|
+| Month members, base case | 6.0 | 2.4 |
+| Small room, result a year, low | -74,575 | -209,095 |
+| Small room, result a year, base | 21,838 | -180,423 |
+| Small room, result a year, high | 250,194 | -87,978 |
+| Medium room, base | -22,538 | -238,981 |
+| Large room, base | -104,867 | -345,226 |
+| Break-even on month members alone, small | 9.5 | 19.4 |
+| Cash needed to open, small | 137,213 | 196,351 |
+| AYBKK a year, case (c), base (example split) | 50,462 | 16,377 |
+| AYBKK a year, case (b), base | 60,395 | 0 from the licence (blocked); 16,377 from a workshop |
+| AYBKK a year, case (a), base | 51,248 | -230,117 |
+| AYBKK net per day away, case (c), base | 3,604 | 2,340 |
+| Top area | B (Xiaoyuanzi strip), 53 of 75 | none proven; A2 scores highest (50), C is the only one with a space that can hold a licence (39), B has 46 |
+
+### M2. Small room, base case: version 2 gives -180,423 a year. What each group of changes is worth, put back one at a time
+
+| If only this were as in version 1 | The result would be | So this change moved the answer by |
+|---|---|---|
+| Heads as in version 1 (4 settled members paying all year, 2 long-stayers) | -141,277 | -39,146 |
+| Prices as in version 1 (1,250 settled, 1,500 list) | -176,734 | -3,688 |
+| Week cards and drop-ins as in version 1 (3 and 6 a month) | -166,207 | -14,215 |
+| Season and weeks as in version 1 (5 busy months, 48 open weeks) | -175,028 | -5,395 |
+| Space as in version 1 (a 53 m2 unit at 48.1 per m2 that nobody offers, 5-year lease, no rent rise, no rent before opening, no agent, no hand-back cost) | -117,565 | -62,858 |
+| Left-out costs as in version 1 (no social insurance for the owner, no refunds) | -165,732 | -14,690 |
+| Events as in version 1 (2 workshops of 10 at 4,100 with no host cost, and a month course worth 24,000) | -132,459 | -47,964 |
+| All seven together | 25,259 | -205,682 |
+
+All seven together give 25,259; version 1 printed 21,838. The 3,421 between them is the personal allowance of 60,000 CNY, which version 1 did not take off before income tax. So version 2 holds version 1 inside it, and the seven groups explain the whole move. The groups overlap, so they do not add up line by line.
+
+## STEP 0. WHY DALI FIRST? The same demand chain run on the cities he already teaches in
+
+Chain per resident (base shares, local factor 1.0, no long-stayers): 0.00248 x 0.02 x 0.15 = 0.00000744, or 7.44 month payers per 1 million urban residents. Every share in it is a guess, so read the ORDER of the cities, not the numbers.
+
+### 0a. One row per city (N = a count nobody has made; the name in brackets can count it)
+
+| City | Graduates with a running room | 2026 workshop heads | In-Depth seats sent from that city | Urban residents, 2020 census | Month payers by the same chain | Cash to open a room, CNY | Note |
+|---|---|---|---|---|---|---|---|
+| Hefei | N (Carne) | N | N (Carne) | 5,055,978 | 37.6 | 0 (a host's room exists) | 2026 stop with a host room |
+| Suzhou | N (Carne) | N | N (Carne) | 5,892,892 | 43.8 | 0 (a host's room exists) | 2026 stop with a host room |
+| Chengdu | N (Carne) | N | N (Carne) | 13,568,357 | 100.9 | N | 2026 stop; a partner-location proposal exists in the files, state unknown |
+| Xichang | N (Carne) | N | N (Carne) | N (Neo) | N | 0 (a host's room exists) | 2026 stop with a host room; not in the census table read |
+| Maoming | N (Carne) | N | N (Carne) | 1,307,802 | 9.7 | 0 (a host's room exists) | 2026 stop with a host room |
+| Zhuhai | N (Carne) | N | N (Carne) | 2,207,090 | 16.4 | 0 (a host's room exists) | 2026 stop with a host room |
+| Guangzhou | N (Carne) | N | N (Carne) | 16,096,724 | 119.8 | 0 (a host's room exists) | 2026 stop with a host room |
+| Huizhou | N (Carne) | 43 | N (Carne) | 2,900,113 | 21.6 | 0 (a host's room exists) | 2026 stop with a host room |
+| Kunming | N (Carne) | no stop | N (Carne) | 5,273,144 | 39.2 | N | No stop yet. Yesterday's report: if Yunnan at all, Kunming first |
+| Dali (Dali Town) | 0 known | no stop | N (Carne) | 95,442 | 0.7 | 196,351 | No graduate or host is known there (yesterday's report) |
+
+People a city needs for the chain to give 19.4 month payers (the small room's break-even on month members alone): 2,605,241. Dali Town has 95,442. Dali is not the first city by any count we hold. The model is for Dali because that was the ask. Urban residents are from citypopulation.de (2020 census, fetched 23 Nov 2026); the private counts are not in any file I may print.
+
+## STEP 1. DEMAND: who would pay by the month for a daily Mysore room in Dali City
+
+Long-stayers in Dali City on an average day (ESTIMATE): 250,500 x 77.26 days / 273 days = 70,892.
+
+Local factor (ESTIMATE): the map area holds about 147,344 people (Dali Town + Yinqiao + 35% of long-stayers). China has 1 yoga venue per 33,294 people. With the 6 real studios the ratio is 1.36; with all 10 map entries it is 2.26. Dali rooms hold 2 to 10 people, so a venue count overstates. The model uses 0.5, 1.0 and 2.0.
+
+### 1a. Top-down (people x yoga share x daily-practice share x price share)
+
+| Line | Low | Base | High | Kind |
+|---|---|---|---|---|
+| Residents near | 95,442 | 95,442 | 162,036 | FACT (2020 census) + guess on who is 'near' |
+| Long-stayers near, on an average day | 7,089 | 14,178 | 24,812 | ESTIMATE x guess |
+| Share who practise yoga steadily (national rate x local factor) | 0.11% | 0.25% | 0.92% | VENDOR CLAIM x guess |
+| = steady yoga people: residents | 102 | 237 | 1,494 |  |
+| = steady yoga people: long-stayers | 8 | 35 | 229 |  |
+| Share who would do a daily traditional practice | 1.0% | 2.0% | 5.0% | guess |
+| Share who would pay about 1,300 a month: residents | 5.0% | 15.0% | 35.0% | guess, no source |
+| Share who would pay about 1,300 a month: long-stayers | 5.0% | 10.0% | 30.0% | guess, no source |
+| = residents who would pay by the month | 0.05 | 0.71 | 26.14 |  |
+| = long-stayers who would pay by the month | 0.00 | 0.07 | 3.43 |  |
+| **Top-down pool, whole town** | **0.1** | **0.8** | **29.6** | five uncertain shares multiplied |
+
+Reading: the top-down chain cannot be checked. High is 542 times low. Its base (0.8) is too low, because a room has stayed open for five years. So it shows only how wide the guess is. The bottom-up count is the only anchor.
+
+### 1b. Bottom-up (what the rooms in Dali show)
+
+| Line | Low | Base | High | Kind |
+|---|---|---|---|---|
+| Listed Mysore room (open since Oct 2021; Mysore-only month 1,300) | 3 | 5 | 10 | guess: class size is not published |
+| Lakeside courtyard (week card 600; lives on courses) | 0 | 1 | 3 | guess |
+| Third yard (a 'Mysore of ten' in 2022; no trace since May 2024) | 0 | 0 | 0 | guess |
+| **Bottom-up pool: month members in the rooms that exist** | **3** | **6** | **13** |  |
+| Income this gives the listed room at 1,100 a month average | 3,300 | 5,500 | 11,000 | ESTIMATE, CNY a month |
+| Unserved by the sums: top-down pool less bottom-up pool (not below 0) | 0.0 | 0.0 | 16.6 | printed, not used |
+
+Signs that the town has no spare demand (FACT): three Ashtanga rooms have tried Dali since 2020 and one still shows a daily class in 2026. That room cut its teaching window from 3 hours (2024) to 1 hour 45 (2026), moved its start from 6:30 to 9:00, cut its week card from 900 to 600 and its single class from 200 to 150, kept its month price flat for three years, and prints a term of 26 weeks.
+
+Cross-marks (FACT unless said): visiting Ashtanga events in Dali offered 12 places, limits of 15 and 16, caps of 20 to 25 (offers, not head counts). One Mysore class elsewhere in China capped year cards at 30 as its room limit (2021). Kunming's one-month course was limited to 6.
+
+### 1c. Settled members of the new room, each with a source (month 25 onward; all guess)
+
+| Case | Taken from the rooms that exist (switch share x bottom-up pool) | Newly made month payers | Won from the unserved pool | Places held | New people to find each year (yearly loss 50.0%) | Paying on average (a place stays empty 3 months) | Taken from the listed teacher | Her loss a month, CNY (share of her guessed income) |
+|---|---|---|---|---|---|---|---|---|
+| low | 0.1 x 3 = 0.3 | 0.0 | 0.0 | **0.3** | 0.2 | 0.26 | 0.3 of 3 | 330 of 3,300 (10.0%) |
+| base | 0.2 x 6 = 1.2 | 1.0 | 0.0 | **2.2** | 1.1 | 1.93 | 1.0 of 5 | 1,100 of 5,500 (20.0%) |
+| high | 0.4 x 13 = 5.2 | 2.0 | 0.0 | **7.2** | 3.6 | 6.30 | 4.0 of 10 | 4,400 of 11,000 (40.0%) |
+
+### 1d. The three cases the model uses (all guess)
+
+| Case | Settled members, paying | Long-stayers on a pass, middle month | Long-stayers, yearly average | Month members, yearly average | Week cards, middle month | Drop-ins, middle month | Long-stay sign-ups needed a year | Paying long-stay arrivals a year in the whole town (top-down chain) | Test | New room as share of the bottom-up pool |
+|---|---|---|---|---|---|---|---|---|---|---|
+| low | 0.26 | 0 | 0.00 | **0.3** | 0.5 | 1 | 0 | 0.0 | none assumed | 8.8% |
+| base | 1.93 | 0.5 | 0.44 | **2.4** | 1 | 3 | 4 | 0.3 | 12.0 times the town's flow: NOT SUPPORTED by the chain | 39.4% |
+| high | 6.30 | 2 | 1.76 | **8.1** | 4 | 10 | 16 | 16.2 | 1.0 times the town's flow: NOT SUPPORTED by the chain | 62.0% |
+
+Season: 3 busy months at x 1.42 and 9 quiet months at x 0.7 give a yearly average of x 0.88 for long-stayers and visitors. Settled members stay flat.
+
+Reading: the base case is 2.4 month members. Of its 2.2 settled places, 1.2 are taken from a room that exists and 1.0 is a beginner not yet made. The long-stayer line fails its own test wherever it is used, so it rests on nothing but the guess. One count would replace most of these guesses: the mats in use in the listed room on a few mornings. Nobody has it. Yesterday's plan asks that teacher by Sun 29 Nov 2026; her number should replace the 3 / 5 / 10 above.
+
+## STEP 2. SIZE: three rooms, and one smaller
+
+Members one mat place supports: window 2.5 h / 1.5 h on the mat = 1.67 turns; / 0.83 (a member comes 5 days of 6) x 0.8 (do not sell the last places) = 1.61 members per mat. Range: 1.29 with a 2-hour window to 2.41 with a 3-hour window sold full.
+
+### 2a. Floor, members and the real space each size would have to rent
+
+| Size | Mats (range) | Practice room m2 at 3.0 m2 a mat (range at 2.5 to 3.0) | Total m2 with entrance, changing space, toilet (practice / 0.57) | Month members it can serve (range) | Times the base-case members | Times the high-case members | Cheapest real listing that is big enough, CNY a month | Rent per m2 of that listing | Rent per m2 the room uses |
+|---|---|---|---|---|---|---|---|---|---|
+| micro | 6 (5 to 8) | 18 (12 to 24) | 32 | 9 (6 to 19) | 3.8 | 1.1 | 180 m2 at 5,500 | 30.6 | 174.2 |
+| small | 10 (8 to 12) | 30 (20 to 36) | 53 | 16 (10 to 28) | 6.8 | 2.0 | 180 m2 at 5,500 | 30.6 | 104.5 |
+| medium | 20 (16 to 24) | 60 (40 to 72) | 105 | 32 (20 to 57) | 13.5 | 4.0 | 180 m2 at 5,500 | 30.6 | 52.2 |
+| large | 36 (30 to 40) | 108 (75 to 120) | 189 | 57 (38 to 96) | 24.1 | 7.1 | 257 m2 at 7,200 | 28.0 | 38.0 |
+
+Space per mat: 2.5 to 3 m2 for dynamic yoga, Ashtanga named (bsport, vendor); 27 sq ft = 2.5 m2 (Virtuagym, vendor). Practice room = 57% of the floor (Mysore House Madrid, 170 of 300 m2; one shala).
+
+### 2b. The five real whole spaces found in the foothill estates (asking rents; no small ground-floor unit was found)
+
+| m2 | Rent a month, CNY | CNY per m2 | Where and what | Source |
+|---|---|---|---|---|
+| 180 | 5,500 | 30.6 | Shanshuijian estate (area A2), ground floor of 3, a home with 3 bedrooms | Fang.com, updated 3 Oct 2026 |
+| 208 | 10,000 | 48.1 | Shanshuijian estate (area A2), ground floor of 3, a home with 4 bedrooms | Fang.com, updated 19 Oct 2026 |
+| 257 | 7,200 | 28.0 | Dali University villa estate (foothill), a home with 7 rooms | Fang.com, about Apr 2026 |
+| 270 | 7,300 | 27.0 | Shanshuijian phase 1 east gate (area A2), one floor, offered for business use, rent includes property fee, water, power, internet; the advert does not say if it is a shop unit | 0872.com, 21 Jul 2026 |
+| 324 | 13,000 | 40.1 | Xiaoyuanzi south (area B), a villa with 7 rooms | Fang.com, about Dec 2024, old |
+
+None of these adverts shows one open room of the size a medium or large shala needs, and a wall may not be taken down in a rented home. The small flats in these estates (54 to 55 m2 at 45.5 to 55.7 per m2) are on a middle floor with neighbours below.
+
+### 2c. Set-up cost in a rented house, CNY (fit-out 800 per m2 is a guess between a 500 template and 1,500 from old founder claims)
+
+| Size | Fit-out | Props | Heating kit | Papers (Chinese owner, home address) | Opening week | Rent during the fit-out (1.5 months) | Agent fee (1 month) | Set-up cost | Set-up per m2 used | Deposit (1 month, comes back) | Rent paid up front (12 months) | Cost at the end to hand the house back (10% of fit-out) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| micro | 25,263 | 1,800 | 3,150 | 2,000 | 3,000 | 8,250 | 5,500 | **48,963** | 1,550 | 5,500 | 66,000 | 2,526 |
+| small | 42,105 | 3,000 | 5,250 | 2,000 | 3,000 | 8,250 | 5,500 | **69,105** | 1,313 | 5,500 | 66,000 | 4,211 |
+| medium | 84,211 | 6,000 | 10,500 | 2,000 | 3,000 | 8,250 | 5,500 | **119,461** | 1,135 | 5,500 | 66,000 | 8,421 |
+| large | 151,579 | 10,800 | 18,900 | 2,000 | 3,000 | 10,800 | 7,200 | **204,279** | 1,078 | 7,200 | 86,400 | 15,158 |
+
+### 2d. Set-up cost range if every guess is low or every guess is high, CNY
+
+| Size | All low | Model | All high |
+|---|---|---|---|
+| micro | 25,489 | 48,963 | 90,768 |
+| small | 37,816 | 69,105 | 127,947 |
+| medium | 68,632 | 119,461 | 220,895 |
+| large | 119,637 | 204,279 | 376,411 |
+
+## STEP 3. AREA: every candidate area scored 1 (worst) to 5 (best)
+
+Weights: people x4, reach x2, rules x2, lease x2, distance x2, rent x1, lodging x1, heat_noise x1. Top score possible: 75. Hard gates: at least 3 on people, 2 on rules, and a space that can hold a business licence at a known rent. Order: areas that pass every gate, then areas with the right people but no proven space, then the rest.
+
+What the columns mean. people: target people who live or stay close. reach: getting there at 6 am. rules: heritage, lake zone, fire, home-as-business. lease: lease risk. distance: how far from the existing Mysore room and other Ashtanga classes (5 = far). rent: 5 = cheap. lodging: rooms near for visitors. heat_noise: heating and noise.
+
+The welcome gate. Has the teacher of the existing Mysore room said a second room is welcome? NOT ASKED. Every area on the Old Town side draws on her small base, so this gate sits above the table: until she has been asked and says yes, the answer for every area is 'no'. Kilometres do not settle it. Yesterday's plan asks her by Sun 29 Nov 2026.
+
+### 3a. Scores and rank
+
+| Rank | Key | Area | people | reach | rules | lease | distance | rent | lodging | heat_noise | Score | Space that can hold a licence, at a known rent | Gates |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | C | Old Town inside the walls (Renmin Road, Boai Road, Hongwu Road and back streets) | 3 | 2 | 2 | 2 | 3 | 2 | 5 | 2 | 39 | found | passes every gate |
+| 2 | A2 | Foothill belt next to the Old Town: Shanshuijian (山水间) gates, Hongsheng Road, Gantong | 5 | 4 | 2 | 2 | 2 | 4 | 4 | 2 | 50 | not found | right people; space NOT PROVEN |
+| 3 | E | Villages at the Old Town's west and north edge: Congyuan, Dazhifang, Sanwenbi, Shang and Xia Jiyi | 4 | 3 | 2 | 2 | 4 | 3 | 4 | 3 | 48 | not found | right people; space NOT PROVEN |
+| 4 | A1 | Shanshuijian phase 3 / Dali Art Garden (大理艺术家园): the existing room's own estate | 5 | 4 | 2 | 2 | 1 | 4 | 4 | 2 | 48 | not found | right people; space NOT PROVEN |
+| 5 | D | Bedsheet Factory art district (床单厂艺术区), 56 Cangping Street, inside the Old Town | 4 | 2 | 2 | 3 | 3 | 3 | 5 | 3 | 47 | not found | right people; space NOT PROVEN |
+| 6 | B | Foothill south: Xiaoyuanzi (大理的小院子) and Canghai Yishu (苍海一墅) strip, west of the G214 road | 4 | 4 | 2 | 2 | 3 | 3 | 3 | 2 | 46 | not found | right people; space NOT PROVEN |
+| 7 | K | Xiaguan city (下关): Tai'an Road, Xingsheng Road, Manjiang, north district | 2 | 4 | 4 | 4 | 5 | 4 | 3 | 3 | 52 | found | FAILS people |
+| 8 | J | Fengyangyi and Taihe village (between the Old Town and Xiaguan) | 2 | 3 | 3 | 3 | 4 | 4 | 3 | 3 | 44 | not found | FAILS people |
+| 9 | O | Fengyi (凤仪), east of Xiaguan by the airport | 1 | 2 | 4 | 4 | 5 | 3 | 2 | 3 | 42 | not found | FAILS people |
+| 10 | G | Yinqiao (银桥): Panxi, Majiuyi, Heyang, Shangyin villages | 2 | 2 | 2 | 3 | 4 | 5 | 3 | 4 | 42 | not found | FAILS people |
+| 11 | I | Xizhou (喜洲) | 2 | 1 | 2 | 3 | 5 | 3 | 4 | 3 | 40 | not found | FAILS people |
+| 12 | F | Lakeside villages east of the Old Town: Caicun, Longkan, Shengjiu | 4 | 2 | 1 | 1 | 3 | 3 | 4 | 3 | 40 | not found | FAILS rules |
+| 13 | L | North Xiaguan lakeside villages: Daguanyi, Xiaoguanyi, Erbin | 1 | 3 | 2 | 3 | 5 | 4 | 2 | 3 | 39 | found | FAILS people |
+| 14 | H | Wanqiao (湾桥) | 1 | 1 | 2 | 3 | 5 | 5 | 2 | 4 | 37 | not found | FAILS people |
+| 15 | M | Haidong and Lixiangbang (海东, 理想邦), east shore | 1 | 1 | 3 | 3 | 5 | 2 | 3 | 3 | 36 | found | FAILS people |
+| 16 | N | Shuanglang and Wase (双廊, 挖色), north-east shore | 1 | 1 | 1 | 1 | 5 | 1 | 4 | 3 | 28 | found | FAILS people, rules |
+
+### 3b. Rent, space, who is near, for and against
+
+| Rank | Key | Rent seen (asking prices) | Space that can hold a licence | Who is near | For | Against |
+|---|---|---|---|---|---|---|
+| 1 | C | 33 to 264 CNY per m2 a month (four adverts, Jul to Sep 2026): Renmin Road 182 to 264; Boai Road 83; the Boai gate building 33 | Found: shop units at asking rents. Boai gate whole building, about 200 m2 on 4 floors, 80,000 a year (6,667 a month); Boai Road 30 m2 at 2,500 a month; Renmin Road 69 to 110 m2 at 15,000 to 29,000 a month | Tourists first (over 22 million visits Jan to Jul 2026), shopkeepers, some long-stayers; 95,442 residents in Dali Town (2020) | The only area with some target people AND shop units at known rents; most lodging for visitors, from 50 to 300 CNY a night; walkable for people who live inside | Dearest rent per m2; transfer fees of 90,000 to 580,000 and deposits of 50,000 to 100,000 on main streets; heritage rules on fronts and signs; street clean-up drives in 2024 and Aug 2026; no bus before 6:30; old buildings, night noise; no large single room shown |
+| 2 | A2 | 27 to 48 CNY per m2 a month for whole spaces of 180 to 270 m2 (Fang.com and 0872.com, Apr to Oct 2026). The model uses the cheapest: 180 m2 at 5,500 a month (30.6 per m2 of the house) | Not proven. The four cheap whole houses (5,500 to 10,000 a month) are homes. One 270 m2 space is offered for business use at 7,300 all-in, but the advert is four months old and does not say if it is a shop unit | The densest cluster found: the existing Mysore room, 2 more yoga studios, 4 gyms and a dance studio; settled newcomers in estates built from 2014 | The target people live here; every cheap real listing is here; 2 km from the south gate by one advert; bus stops for lines 4 and 19; parking | The same belt as the only listed Mysore room, so it rests on that teacher's welcome. The spaces are homes: business use needs the consent of the affected neighbours (Civil Code Art. 279), a home is let year by year, and the pre-opening fire step cannot be done in a dwelling |
+| 3 | E | No per-m2 rent. Rooms 500 to 2,000 a month (Feb 2024) | Not found. One priced yard (9 rooms, 238,000 a year, two years up front) is a guesthouse lease; a village house needs a legal change of use | Digital nomads and young long-stayers: a co-living house at Congyuan, co-working sites at Dazhifang and Sanwenbi; an Iyengar centre and a gym branch nearby | The target people walk or ride from here; about 10 minutes on foot from the west gate (Congyuan); a courtyard has no shared walls | Small budgets (rooms from 500 a month); one seller says a house with no yard cannot be licensed; a takeover needs the owner's written consent (Civil Code Art. 716); lanes with scarce parking |
+| 4 | A1 | Homes in Shanshuijian ask 2,500 to 48,000 a month, middle value 7,100 (32 listings on one page) | Not found. Unit rents inside the Art Garden were not found | The existing Mysore room and 2 more yoga studios are in this estate | Where the practice base already lives | Next door to the teacher who is already there: it splits one small base. Homes only |
+| 5 | D | Unit rents not found (one year of rent subsidy for chosen makers) | Not found: one operator holds the whole site and sets rents case by case. A proper tenant site, so a licence address is likely; the rent must be asked | 103 creative brands, 150+ craftspeople, 65% of workers are long-stayers, about 500,000 visits in 2025; no yoga tenant found | A proper tenant site with a named operator; long-stayers work here every day; guesthouses all around | Heritage rules apply; rent unknown; a sub-lease from the operator; parking is scarce inside the walls; daytime crowds |
+| 6 | B | 40.1 CNY per m2 a month (324 m2 at 13,000, Fang.com, about Dec 2024, old). Nothing small is priced | Not found. The only priced listing is a 324 m2 villa at 13,000 a month (a home, two years old). A listed studio sits on a second floor in the lane 大理的小巷子 (Xiaoyuanzi phase 5); unit type and rent not found | Settled newcomers in gated estates; 2 yoga studios here, one lists Ashtanga and has hosted a visiting teacher's Mysore week and 5-day Ashtanga workshops; a school with Mysore in its name 0.7 km away (what it teaches was not confirmed) | About 3 km from the existing Mysore room; parking inside estates; outside the heritage core | Not free of Ashtanga supply (see who is near), so the 3 km is not real distance. Homes: neighbours' consent and a licence address are open. Title: a 2020 press report says 55 villas of a 'Canghai' golf resort at the foot of Cangshan were taken and pulled down for lack of approvals; whether that is this estate was not confirmed. Long-stayers on small budgets live 5 to 8 km away |
+| 7 | K | 18 to 71 CNY per m2 a month for ordinary street shops; hospital-front shops ask 196 to 400 and sit unlet | Found: ordinary street shops at 18 to 71 CNY per m2 a month; an upstairs 417 m2 shell at 43 | About 395,000 residents (2020), offices, hospitals, schools; 3 yoga or Pilates places; old gym prices of about 133 a month | Proper shop units, clear licence address, ordinary leases with small deposits, parking, 13 km from the existing room | Not a newcomer area, local wallets, 'no Dali feel'. A room here would be a lower-priced local room, a different business |
+| 8 | J | Rooms 600 to 900 a month in Taihe village; homes 3,500 to 6,500 in Fengyangyi (a guesthouse's own guide) | Not found: no business listing | Named for digital nomads by a guesthouse that sits there; no studio found | On bus lines 4 and 8; cheap rooms | Weak services, 6 km from the Old Town, demand rests on one marketing page |
+| 9 | O | Rent not stated | Not found: one upstairs shop of 150+ m2, rent not stated | 67,766 residents (2020); a local market town; no yoga or newcomer venue found | Ordinary town rules | No target people found |
+| 10 | G | Whole houses 28,000 to 60,000 CNY a year (2,300 to 5,000 a month), plus transfer fees of 15,000 to 420,000 | Not found: whole village houses, no per-m2 rent; one seller says a house with no yard cannot be licensed | 27,090 residents (2020); settled newcomers in rented courtyards; two yoga guesthouses | Cheapest whole houses near the Old Town; leases with 12 to 16 years left; quiet | A car is needed, no dawn bus. Fits a live-in house, which falls under the guesthouse law; the lakeside part is in the Erhai zones |
+| 11 | I | Homes 4,000 to 8,000 a month, doubling in peak season | Not found: street shops of 55 to 400 m2 with no rent stated | 54,779 residents (2020); families with school-age children, two-city workers, tourists | A real town with its own visitors | Far from the Old Town; under the heritage law |
+| 12 | F | Rooms 1,200 to 1,800 a month in the quiet season; homes 2,800 to 4,500 (a guesthouse's guide) | Not found: no business listing | The most-chosen villages for long-stayers; one guide calls Caicun a 'yoga community'; a nomad community by Shengjiu | The target people live here | Erhai Level 1 within 100 m of the water and Level 2 behind it allow no new building or extension; in 2017 more than 2,000 lakeside businesses were stopped |
+| 13 | L | 25 CNY per m2 a month (one building); an 8-room yard at 68,000 a year | Found: a 400 m2 three-floor restaurant building with full licences at 10,000 a month (25 per m2) | Locals and day visitors at the corridor entrance; no yoga or newcomer venue found | Large cheap buildings | No target people found; lake-zone status not confirmed |
+| 14 | H | No per-m2 rent | Not found: one 12-room courtyard at 50,000 CNY a year, a village house | 21,130 residents (2020); few newcomer venues | Lowest cost per room found | Far, by car only |
+| 15 | M | 140 CNY per m2 a month for one square shop (weak source) | Found (weak source): one square shop of 100 m2 at 168,000 a year | 32,411 residents (2020); resort visitors | Resort lodging | Across the lake from where long-stayers live |
+| 16 | N | 556 CNY per m2 a month for a pier shop (weak source) | Found (weak source): a 30 m2 pier shop at 200,000 a year | 17,899 and 16,431 residents (2020); day tourists | Tourist lodging | Heritage town plus lake zone; only 15 of 628 food and lodging businesses had reopened by mid-2018 |
+
+### 3c. If she says yes: the same scores with the distance column left out (areas with the right people only)
+
+| Rank | Key | Area | Score without distance | Space that can hold a licence |
+|---|---|---|---|---|
+| 1 | A2 | Foothill belt next to the Old Town: Shanshuijian (山水间) gates, Hongsheng Road, Gantong | 46 | not found |
+| 2 | A1 | Shanshuijian phase 3 / Dali Art Garden (大理艺术家园): the existing room's own estate | 46 | not found |
+| 3 | D | Bedsheet Factory art district (床单厂艺术区), 56 Cangping Street, inside the Old Town | 41 | not found |
+| 4 | E | Villages at the Old Town's west and north edge: Congyuan, Dazhifang, Sanwenbi, Shang and Xia Jiyi | 40 | not found |
+| 5 | B | Foothill south: Xiaoyuanzi (大理的小院子) and Canghai Yishu (苍海一墅) strip, west of the G214 road | 40 | not found |
+| 6 | C | Old Town inside the walls (Renmin Road, Boai Road, Hongwu Road and back streets) | 33 | found |
+
+Reading. No area is proven. Only one area with the right people has a space that can hold a licence at a known rent: C, the Old Town inside the walls (score 39 of 75, the lowest of the 6 areas with the right people). The areas that score best on people (A2 50, E 48, A1 48, D 47, B 46) offer homes, village houses or a site with no stated rent. Xiaguan (K) has the shop units and not the people. Version 1's pick, B, falls to 46: its only priced space is a villa at 13,000 a month, it has its own Ashtanga classes, and the home-as-business rule applies.
+
+First step for any area, before a score matters: one written rent and the property certificate for one shop unit. Start with the lane 大理的小巷子 in Xiaoyuanzi phase 5 (a listed studio sits on a second floor there), the Bedsheet Factory operator, and the 270 m2 space at the Shanshuijian east gate. Asking is a message to a landlord, so it needs Boonchu's go.
+
+## STEP 4. INCOME: each size x each demand case, in the cheapest real space near the target people. CNY.
+
+The teacher is taken to be the owner, a Chinese citizen with an individual business (the lightest route). The owner's pay of 6,000 a month is counted as a cost. 'Result' is what is left after that pay and after tax; 'the owner's take' is pay plus result. The room is judged ALONE first: month members, week cards, drop-ins, room hire. A visiting teacher's workshop is a separate line (4e), because it is his days, not the room's. No month-long course is counted (4k).
+
+### 4a. Income by line, the room alone (yearly average a month; open 44 weeks)
+
+| Size | Demand | Month members (average) | Room can serve | Month members | Week cards and drop-ins | Refunds (3%) | Room hire | Income a month | Income a year | Income a year, THB |
+|---|---|---|---|---|---|---|---|---|---|---|
+| micro | low | 0.3 | 9 | 244 | 335 | -17 | 0 | **562** | 6,744 | 34,166 |
+| micro | base | 2.4 | 9 | 2,276 | 782 | -92 | 0 | **2,966** | 35,590 | 180,300 |
+| micro | high | 8.0 | 9 | 7,761 | 2,904 | -320 | 333 | **10,679** | 128,145 | 649,181 |
+| small | low | 0.3 | 16 | 244 | 335 | -17 | 0 | **562** | 6,744 | 34,166 |
+| small | base | 2.4 | 16 | 2,276 | 782 | -92 | 0 | **2,966** | 35,590 | 180,300 |
+| small | high | 8.1 | 16 | 7,800 | 2,904 | -321 | 333 | **10,716** | 128,593 | 651,451 |
+| medium | low | 0.3 | 32 | 244 | 335 | -17 | 0 | **562** | 6,744 | 34,166 |
+| medium | base | 2.4 | 32 | 2,276 | 782 | -92 | 0 | **2,966** | 35,590 | 180,300 |
+| medium | high | 8.1 | 32 | 7,800 | 2,904 | -321 | 333 | **10,716** | 128,593 | 651,451 |
+| large | low | 0.3 | 57 | 244 | 335 | -17 | 0 | **562** | 6,744 | 34,166 |
+| large | base | 2.4 | 57 | 2,276 | 782 | -92 | 0 | **2,966** | 35,590 | 180,300 |
+| large | high | 8.1 | 57 | 7,800 | 2,904 | -321 | 333 | **10,716** | 128,593 | 651,451 |
+
+### 4b. Cost a month by line (a rented house on a 2-year home lease; rent rises 5% a year)
+
+| Size | Demand | Rent and property fee | Power, heating, water, internet | The owner-teacher's pay | The owner's own social insurance | Helper and assistant | Cleaning | Marketing | Payment fees | Tax (income tax + VAT) | Wear of the set-up over the 2-year lease | Insurance and bookkeeping | Cost a month |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| micro | low | 5,701 | 354 | 6,000 | 1,133 | 0 | 336 | 500 | 3 | 0 | 2,145 | 417 | **16,589** |
+| micro | base | 5,701 | 354 | 6,000 | 1,133 | 0 | 336 | 500 | 18 | 0 | 2,145 | 417 | **16,604** |
+| micro | high | 5,701 | 354 | 6,000 | 1,133 | 0 | 336 | 500 | 64 | 0 | 2,145 | 417 | **16,650** |
+| small | low | 5,743 | 590 | 6,000 | 1,133 | 0 | 546 | 500 | 3 | 0 | 3,055 | 417 | **17,987** |
+| small | base | 5,743 | 590 | 6,000 | 1,133 | 0 | 546 | 500 | 18 | 0 | 3,055 | 417 | **18,001** |
+| small | high | 5,743 | 590 | 6,000 | 1,133 | 0 | 546 | 500 | 64 | 0 | 3,055 | 417 | **18,048** |
+| medium | low | 5,848 | 1,180 | 6,000 | 1,133 | 1,638 | 819 | 500 | 3 | 0 | 5,328 | 417 | **22,866** |
+| medium | base | 5,848 | 1,180 | 6,000 | 1,133 | 1,638 | 819 | 500 | 18 | 0 | 5,328 | 417 | **22,881** |
+| medium | high | 5,848 | 1,180 | 6,000 | 1,133 | 1,638 | 819 | 500 | 64 | 0 | 5,328 | 417 | **22,927** |
+| large | low | 7,759 | 2,124 | 6,000 | 1,133 | 3,276 | 1,365 | 500 | 3 | 0 | 9,143 | 417 | **31,720** |
+| large | base | 7,759 | 2,124 | 6,000 | 1,133 | 3,276 | 1,365 | 500 | 18 | 0 | 9,143 | 417 | **31,735** |
+| large | high | 7,759 | 2,124 | 6,000 | 1,133 | 3,276 | 1,365 | 500 | 64 | 0 | 9,143 | 417 | **31,781** |
+
+### 4c. Result, break-even, cash and pay-back, the room alone
+
+| Size | Demand | Result a month | Result a year | Result a year, THB | In 180K seats | The owner-teacher's take a month (pay + result) | Break-even: month members needed, on month members alone | Month members needed to cover costs with NO pay at all | Room can serve | Cash needed to open | Cash put in by month 24, when the first lease ends (the owner's pay included) | Cash put in by month 60 if it kept going | Months to earn it back |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| micro | low | **-16,027** | **-192,325** | -974,318 | -5.41 | -10,027 | 17.9 | 11.4 | 9 | 173,280 | 394,048 | 920,230 | not within 60 months |
+| micro | base | **-13,638** | **-163,652** | -829,061 | -4.61 | -7,638 | 17.9 | 11.4 | 9 | 173,280 | 364,180 | 804,344 | not within 60 months |
+| micro | high | **-5,971** | **-71,653** | -362,994 | -2.02 | 29 | 17.9 | 11.4 | 9 | 173,280 | 268,348 | 432,514 | not within 60 months |
+| small | low | **-17,425** | **-209,095** | -1,059,278 | -5.88 | -11,425 | 19.4 | 12.9 | 16 | 196,351 | 425,905 | 969,659 | not within 60 months |
+| small | base | **-15,035** | **-180,423** | -914,021 | -5.08 | -9,035 | 19.4 | 12.9 | 16 | 196,351 | 396,037 | 853,773 | not within 60 months |
+| small | high | **-7,332** | **-87,978** | -445,697 | -2.48 | -1,332 | 19.4 | 12.9 | 16 | 196,351 | 299,741 | 480,143 | not within 60 months |
+| medium | low | **-22,304** | **-267,654** | -1,355,934 | -7.53 | -16,304 | 24.6 | 18.2 | 32 | 262,344 | 538,811 | 1,176,391 | not within 60 months |
+| medium | base | **-19,915** | **-238,981** | -1,210,677 | -6.73 | -13,915 | 24.6 | 18.2 | 32 | 262,344 | 508,943 | 1,060,505 | not within 60 months |
+| medium | high | **-12,211** | **-146,536** | -742,353 | -4.12 | -6,211 | 24.6 | 18.2 | 32 | 262,344 | 412,647 | 686,875 | not within 60 months |
+| large | low | **-31,158** | **-373,899** | -1,894,171 | -10.52 | -25,158 | 34.2 | 27.7 | 57 | 389,041 | 746,264 | 1,573,419 | not within 60 months |
+| large | base | **-28,769** | **-345,226** | -1,748,914 | -9.72 | -22,769 | 34.2 | 27.7 | 57 | 389,041 | 716,396 | 1,457,533 | not within 60 months |
+| large | high | **-21,065** | **-252,781** | -1,280,590 | -7.11 | -15,065 | 34.2 | 27.7 | 57 | 389,041 | 620,100 | 1,083,903 | not within 60 months |
+
+Break-even sum, small room: fixed cost a year 215,799 / (average price 1,137 x 12 x 44/52 x 97% after refunds x 99.4% after payment fees = 11,133 a member a year) = 19.4 month members. The room can serve 16. The listed room, open five years, is guessed at 5 (3 to 10). With week cards and drop-ins as in the base case the break-even is 18.6.
+
+Cash needed to open, small room = set-up 69,105 + deposit 5,500 + 12 months of rent up front 66,000 + 6 months of other running cost 55,746 = 196,351 CNY (994,714 THB, 5.5 seats). Cash path: it starts at minus (set-up + deposit); rent is paid a year ahead in months 1, 13, 25, 37 and 49 and rises 5% a year; members build up in a straight line over 24 months. Year 1 in words (base): the room takes in 9,639 and pays out 246,597, the owner's pay of 72,000 included. At month 24, when the home lease ends, the owner has put in 396,037, of which 144,000 is the owner's own pay.
+
+If the owner asks for two years of rent up front (two adverts do): cash needed to open 265,651.
+
+### 4d. Quiet season and busy season, small room, a month when the room is open all month, no event money spread in (guess)
+
+| Demand | Month members, quiet month | Month members, busy month | Result, quiet month | Result, busy month | What one hosted workshop adds for the host (30% share less the host's cost) | Result, a busy month with a workshop | Months |
+|---|---|---|---|---|---|---|---|
+| low | 0.3 | 0.3 | -17,401 | -17,087 | -2,750 | -19,837 | 9 quiet, 3 busy |
+| base | 2.3 | 2.6 | -14,793 | -13,606 | -272 | -13,878 | 9 quiet, 3 busy |
+| high | 7.7 | 9.1 | -6,912 | -2,372 | 4,840 | 2,468 | 9 quiet, 3 busy |
+
+### 4e. A visiting teacher's workshop held in the small room: what it does for the room's owner (EXAMPLE split 70/30; the host pays travel, lodging, meals, translator)
+
+| Demand | Workshops a year | Students who would pay | Students the room holds (10 mats) | Price | Gross per workshop | Host keeps 30% | Host's cost per workshop (guess) | Host's gain per workshop | Heads the host needs to cover the cost | Room's result a year without workshops | With workshops | Difference a year |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| low | 1 | 5 | 5 | 3,500 | 17,500 | 5,250 | 8,000 | -2,750 | 7.6 | -209,095 | -211,950 | -2,855 |
+| base | 1 | 7 | 7 | 3,680 | 25,760 | 7,728 | 8,000 | -272 | 7.2 | -180,423 | -180,849 | -427 |
+| high | 2 | 16 | 10 | 4,280 | 42,800 | 12,840 | 8,000 | 4,840 | 6.2 | -87,978 | -78,812 | 9,166 |
+
+Reading: at the base head count the host does not earn from the workshop. So a workshop does not rescue the room; it only moves cost onto the host. The workshop students and the month members also use the same mats on the same mornings; the base 7 includes the room's own members.
+
+### 4f. Which space: the small room (10 mats) in seven kinds of space, a year, the room alone
+
+| Space | Rent a month, year 1 | Lease years used | Result, low | Result, base | Result, high | Owner's take a month, base | Owner's take a month, high | Break-even month members (pay counted) | Cash needed to open |
+|---|---|---|---|---|---|---|---|---|---|
+| Whole ground-floor house, the cheapest real listing that is big enough (a home, foothill belt A2) | 5,500 | 2 | -209,095 | -180,423 | -87,978 | -9,035 | -1,332 | 19.4 | 196,351 |
+| The teacher lives in that house and charges the room half the rent (home as business) | 2,750 | 2 | -171,833 | -143,160 | -50,716 | -5,930 | 1,774 | 16.0 | 153,726 |
+| Bare home room, as the existing room is: the teacher's own home, no rent charged, no hired help, no social insurance, no licence costs | 0 | 2 | -79,376 | -50,704 | 39,804 | 1,775 | 9,317 | 7.7 | 16,540 |
+| Old Town shop building at the Boai gate, about 200 m2 on 4 floors at 80,000 a year: the only priced unit found that can hold a licence | 6,667 | 3 | -216,270 | -187,597 | -95,152 | -9,633 | -1,929 | 20.0 | 220,439 |
+| A ground-floor shop unit of the exact size at 48.1 per m2 in the foothill belt (version 1's space; NONE FOUND) | 2,532 | 3 | -160,676 | -132,003 | -39,558 | -5,000 | 2,703 | 15.0 | 156,340 |
+| Area B's only priced listing: a 324 m2 villa at 13,000 a month (a home; Dec 2024, old) | 13,000 | 2 | -310,720 | -282,048 | -189,603 | -17,504 | -9,800 | 28.5 | 312,601 |
+| Mornings inside a partner's licensed studio: no rent, no fit-out; the studio keeps a share of daily sales (example 40%) | 0 | 2 | -95,590 | -78,455 | -21,612 | -538 | 4,199 | 14.9 | 54,298 |
+
+### 4g. The bare home room (the form the existing room has): what the teacher keeps, with no fixed pay counted
+
+| Size | Demand | Month members (average) | Income a year | Costs and tax a year | The teacher keeps, a year | The teacher keeps, a month | A month, THB | A year, in 180K seats | Cash needed to open |
+|---|---|---|---|---|---|---|---|---|---|
+| micro | low | 0.3 | 6,744 | 10,689 | **-3,944** | **-329** | -1,665 | -0.11 | 13,924 |
+| micro | base | 2.4 | 35,590 | 10,862 | **24,729** | **2,061** | 10,440 | 0.70 | 13,924 |
+| micro | high | 8.0 | 128,145 | 13,503 | **114,641** | **9,553** | 48,398 | 3.23 | 13,924 |
+| small | low | 0.3 | 6,744 | 14,121 | **-7,376** | **-615** | -3,114 | -0.21 | 16,540 |
+| small | base | 2.4 | 35,590 | 14,294 | **21,296** | **1,775** | 8,991 | 0.60 | 16,540 |
+| small | high | 8.1 | 128,593 | 16,789 | **111,804** | **9,317** | 47,200 | 3.15 | 16,540 |
+
+Month members a bare home room of 6 mats needs: 1.0 to cover its costs, 3.2 for the teacher to keep the minimum wage (2,120 a month), 7.4 for the teacher to keep 6,000 a month. It can serve 9. The base case is 2.4; the high case is 8.0.
+
+For scale: the legal minimum wage in Dali City is 2,120 CNY a month. A bare home room has no business address that is sure to hold a licence, cannot do the pre-opening fire step, and needs the consent of the affected neighbours. It cannot be used by a foreign-owned company, and AYBKK's name should not sit on it.
+
+### 4h. Hired hours in a studio that is already there: rent per hour = N (not found; a Dali studio can quote it)
+
+| Demand | Income a year, the room alone | Open hours a year (2.5 h x 26 days x 12 x 44/52) | ALL the income per open hour, CNY |
+|---|---|---|---|
+| low | 6,744 | 660 | 10 |
+| base | 35,590 | 660 | 54 |
+| high | 128,145 | 660 | 194 |
+
+Reading: the hour must cost well under the last column for the teacher to keep anything.
+
+### 4i. Stress test, workshops in the room included. Rented house: result a year after the owner's pay. Bare home room: what the teacher keeps a year. 'Members down 30%' cuts every head count, workshop heads too; 'price down 20%' cuts every price
+
+| Size | Demand | Space | as modelled | price down 20% | members down 30% | rent up 30% | all three |
+|---|---|---|---|---|---|---|---|
+| small | base | rented house | -180,849 | -189,439 | -193,734 | -201,144 | -220,042 |
+| small | high | rented house | -78,812 | -108,614 | -123,515 | -99,107 | -164,672 |
+| medium | high | rented house | -122,270 | -155,092 | -171,503 | -142,565 | -214,774 |
+| large | high | rented house | -228,515 | -261,337 | -277,748 | -255,083 | -327,292 |
+| small | base | bare home room | 20,870 | 12,280 | 7,985 | 20,870 | 1,972 |
+| small | high | bare home room | 120,512 | 92,200 | 77,749 | 120,512 | 57,342 |
+
+### 4j. Which inputs move the answer most: small room in a rented house, base demand, result a year (model: -180,423) when one input goes to its low or its high
+
+| Input | Low | Model | High | Kind | Result at low | Result at high | Swing |
+|---|---|---|---|---|---|---|---|
+| teacher_pay | 4000 | 6000 | 9000 | guess | -156,423 | -216,423 | 60,000 |
+| lease_years_home | 1 | 2 | 5 | guess | -215,430 | -163,716 | 51,714 |
+| fitout_per_m2 | 500 | 800 | 1500 | guess | -171,738 | -200,686 | 28,947 |
+| long_stayers (0 to 2) | low set | model | high set | guess | -186,023 | -163,623 | 22,400 |
+| open_weeks | 26 | 44 | 48 | guess | -194,895 | -177,207 | 17,688 |
+| switch_share (0.1 to 0.4 of the existing rooms' members) | low set | model | high set | guess | -186,076 | -169,115 | 16,961 |
+| marketing_month | 200 | 500 | 1500 | guess | -176,823 | -192,423 | 15,600 |
+| existing_room_listed (3 to 10) | low set | model | high set | guess | -184,192 | -171,000 | 13,192 |
+| owner_si_month | 871 | 1133 | 1560 | guess | -177,279 | -185,547 | 8,268 |
+| season, moved together (busy 1.2 with quiet 0.5; busy 2.0 with quiet 0.85) | low set | model | high set | guess | -183,834 | -176,137 | 7,697 |
+| m2_per_mat | 2.5 | 3.0 | 3.0 | vendor_claim | -174,735 | -180,423 | 5,688 |
+| utilities_per_m2 | 6.0 | 10.0 | 15.0 | vendor_claim | -177,896 | -183,580 | 5,684 |
+| price_resident_month | 1000 | 1100 | 1300 | estimate | -182,307 | -176,653 | 5,654 |
+| rent_rise_year | 0.0 | 0.05 | 0.1 | guess | -178,773 | -182,073 | 3,300 |
+| refund_share | 0.01 | 0.03 | 0.08 | guess | -179,693 | -182,246 | 2,553 |
+| resident_yearly_loss | 0.336 | 0.5 | 0.7 | guess | -179,451 | -181,607 | 2,156 |
+| price_month_list | 1000 | 1300 | 1500 | fact | -181,715 | -179,561 | 2,154 |
+
+Open weeks: 44 gives -180,423; 40 gives -183,639; 26 (the existing room's printed term) gives -194,895. No cover teacher exists: when the teacher is away the room is shut.
+
+### 4k. Two what-ifs, CNY a year
+
+| What if | Model | With the change | Difference |
+|---|---|---|---|
+| A month-long course of 4 at 6,000 CNY (it copies the In-Depth format at 16.9% of one seat; NOT counted) | -180,423 | -156,567 | 23,856 |
+| Tax reliefs end on 31 Dec 2027 (income tax no longer halved; VAT 3%): bare home room, high demand, the teacher keeps | 111,804 | 109,867 | -1,937 |
+
+Tax: in every rented-space case the result is a loss, so income tax is 0 and the end of the reliefs changes nothing. No month reaches the 100,000 CNY VAT line.
+
+### 4l. Ceiling: if every place were sold (70% settled members, 30% long-stayers; visitors as in the high case). Not a forecast
+
+| Size | Month members | Times the base-case members | Times the whole town's guessed pool | Assistants needed | Income a month | Cost a month | Result a year | Result a year, THB | In 180K seats |
+|---|---|---|---|---|---|---|---|---|---|
+| micro | 9 | 3.8 | 1.5 | 0 | 11,719 | 16,656 | -59,244 | -300,130 | -1.7 |
+| small | 16 | 6.8 | 2.7 | 0 | 18,384 | 18,126 | 3,094 | 15,676 | 0.1 |
+| medium | 32 | 13.5 | 5.3 | 1 | 33,617 | 27,981 | 67,633 | 342,626 | 1.9 |
+| large | 57 | 24.1 | 9.5 | 1 | 57,419 | 38,429 | 227,883 | 1,154,455 | 6.4 |
+
+## STEP 5. OWNERSHIP: six cases, small room
+
+### 5a. One 5-day workshop, the visiting teacher's side. EXAMPLE at the published 70/30 norm; the real figure is gross x [AYBKK share]
+
+| Demand | Where | Students | Gross | Teacher's side at 70% | Chinese tax withheld (income tax + 1% VAT) | Net per workshop | Net per day away (7 days) | Net if VAT is 6 parts in 106, not 1% | Net if AYBKK, not the host, pays the 8,000 of travel and lodging | That per day away | Host's gain (30% less the host's cost) | The pair: AYBKK + host |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| low | in the 10-mat room | 5 | 17,500 | 12,250 | 892 | **11,358** | **1,622** | 10,787 | 3,358 | 480 | -2,750 | 8,608 |
+| low | in a hall or a host studio | 5 | 17,500 | 12,250 | 892 | **11,358** | **1,622** | 10,787 | 3,358 | 480 | -2,750 | 8,608 |
+| base | in the 10-mat room | 7 | 25,760 | 18,032 | 1,655 | **16,377** | **2,340** | 15,536 | 8,377 | 1,197 | -272 | 16,105 |
+| base | in a hall or a host studio | 7 | 25,760 | 18,032 | 1,655 | **16,377** | **2,340** | 15,536 | 8,377 | 1,197 | -272 | 16,105 |
+| high | in the 10-mat room | 10 | 42,800 | 29,960 | 3,683 | **26,277** | **3,754** | 24,881 | 18,277 | 2,611 | 4,840 | 31,117 |
+| high | in a hall or a host studio | 16 | 68,480 | 47,936 | 7,574 | **40,362** | **5,766** | 38,128 | 32,362 | 4,623 | 12,544 | 52,906 |
+
+### 5b. Every use of one China day, ranked (price 3,680 CNY, EXAMPLE split; visa-free days are capped at 90 in any 180)
+
+| Use of the day | Gross per workshop | Net per workshop | Net per day of his time, CNY | THB | Share of a cohort day |
+|---|---|---|---|---|---|
+| A 10-mat room, base (7 students) | 25,760 | 16,377 | **2,340** | 11,852 | 16.5% |
+| A hall with 16 students | 58,880 | 35,221 | **5,032** | 25,490 | 35.4% |
+| A hall with 25 students | 92,000 | 52,710 | **7,530** | 38,147 | 53.0% |
+| 43 students (the Huizhou 2026 head count, at the same price and example split) | 158,240 | 84,944 | **12,135** | 61,475 | 85.4% |
+| One cohort teaching day (gross, before cohort costs; for scale) |  |  | **14,212** | 72,000 | 100.0% |
+
+His normal stop is the number that matters here and it is missing: [net per workshop day], after the host's share, tax and travel days. Only Boonchu or the money notes can supply it.
+
+### 5c. Case (a): the room under a foreign-owned company in the one priced unit that can hold a licence (Old Town building), CNY a year
+
+| Demand | Same room owned by a graduate (result after the owner's pay) | Company result before tax (hired teacher at 8,000, social insurance on the wage, company bookkeeping and audit, company papers) | Reaches the owner as a person (5% company tax, 10% kept as reserve, 20% on dividends); a loss is the owner's to fund | Reaches a Thai holding company (5%, reserve, then 10%) | What the hired teacher earns under (a) | What the same person would take as the owner |
+|---|---|---|---|---|---|---|
+| low | -216,270 | -275,167 | -275,167 | -275,167 | 96,000 | -144,270 |
+| base | -187,597 | -246,494 | -246,494 | -246,494 | 96,000 | -115,597 |
+| high | -95,152 | -154,049 | -154,049 | -154,049 | 96,000 | -23,152 |
+
+Cash to open under (a): 283,221 CNY (1,434,800 THB, 8.0 seats). Cost to get out after the lease: about 43,211 CNY (closing the company, about one month of pay per year worked, handing the unit back; guess). Return on that cash at base demand: a loss of 246,494 a year. Workshop pay from his own Chinese company needs a work permit and a work-type residence permit (the usual line: a degree, 2 years of related work, age up to 60, with room to relax).
+
+### 5d. Case (b), FOR SCALE ONLY (it is blocked by law today): licence income = sales x [licence fee] x 84.91%. EXAMPLE with a published 7% and 9%
+
+| Demand | The room's sales a year | Example: 7% of sales, net of Chinese tax | Example: 9%, net | 7% example in THB | 7% example in 180K seats | Owner's result before any fee | Owner's result after a 7% fee | Yearly retention of settled members the habit system must reach for the owner to come out level on 7% |
+|---|---|---|---|---|---|---|---|---|
+| low | 6,744 | 401 | 515 | 2,031 | 0.01 | -209,095 | -209,568 | from 50.0% to 57.0% |
+| base | 35,590 | 2,115 | 2,720 | 10,716 | 0.06 | -180,423 | -182,914 | from 50.0% to 55.5% |
+| high | 128,593 | 7,643 | 9,827 | 38,720 | 0.22 | -87,978 | -96,980 | from 50.0% to 56.0% |
+
+Why (b) is 0 today. The franchise rule asks for a company with 2 directly run shops, each open over 1 year, and a filing within 15 days of the first contract. AYBKK has 1 directly run shala. Foreign papers are accepted with legalisation (filing measures, opened by the checker), so the missing piece is a second room, which is case (a): if only mainland shops count, that is 2 x 283,221 = 566,443 CNY (15.9 seats) and 42 set-up days, for rooms that lose money at base demand. The lowest fine (100,000 CNY) is 47.3 years of this room's 7% fee.
+
+Scale. One room at base pays 2,115 CNY a year at the 7% example. [graduates with a running room] is N (Carne counts; two full cohorts are at most 24 people). If all 24 ran a room like this: 24 x 2,115 = 50,769 CNY = 1.43 seats = 11.9% of one cohort. For licences to equal one cohort (426,372 CNY) the licensed rooms must sell 7,173,510 CNY a year between them. Not counted: [China build cost] of the habit software (it is built for Bangkok: Thai payments, LINE), a Chinese company to hold health data and a mini-program, and a trademark.
+
+### 5e. Case (e): a morning Mysore room inside a partner's licensed studio. The operator's result a year, with a teacher paid 6,000 a month
+
+| Demand | Studio keeps 30% of daily sales | Studio keeps 40% | Studio keeps 50% | If the teacher draws no fixed pay (studio keeps 40%): what is left | Daily sales a year |
+|---|---|---|---|---|---|
+| low | -94,915 | -95,590 | -96,264 | -23,590 | 6,744 |
+| base | -74,896 | -78,455 | -82,014 | -6,455 | 35,590 |
+| high | -9,224 | -21,612 | -34,071 | 50,388 | 124,593 |
+
+Cash at risk in (e): 54,298 CNY (props, opening week, 6 months of the teacher's pay and running cost). No lease, no fit-out, no licence address to find, and it can be closed in a month. AYBKK's part = the operator's result x [AYBKK share] x 84.91% if paid to a Thai company; with a loss at low and base demand that part is 0. The 30% to 50% is a published range used as an example; any real split is private: [partner share]. Real data for this case may exist: was the first partner location signed, and what did it earn? Only Boonchu knows.
+
+### 5f. What AYBKK itself earns in a year, CNY, by case (sorted from least of his time to most). Workshop lines use the EXAMPLE 70/30 split, not AYBKK terms
+
+| Case | Lawful today? | Low demand | Base demand | High demand | Base: from the room itself (dividend or licence) | Base: from the workshop he teaches there | Base, THB | Base, in 180K seats | Boonchu's days a year (base) | AYBKK income per day of his time (base) | What is left after his days | It beats his next-best China day | Cash AYBKK puts in |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| (d) No shala. The same days and cash go to what already pays | yes | 0 | **0** | 0 | 0 | 0 | 0 | 0.00 | 0 | n/a | 0 | n/a: these days stay with what already pays | 0 |
+| (f) No second room: a workshop in a hired hall or a host studio (the listed teacher's welcome first) | not settled | 11,358 | **16,377** | 80,724 | 0 | 16,377 | 82,964 | 0.46 | 7 (1 trip of 7 days) | 2,340 | 16,377 - 7 x [net per workshop day] | only if [net per workshop day] is under 2,340 CNY (11,852 THB) | 0 |
+| (c) A graduate owns a small room, no formal tie; AYBKK teaches a workshop in it | not settled | 11,358 | **16,377** | 52,554 | 0 | 16,377 | 82,964 | 0.46 | 7 (1 trip of 7 days) | 2,340 | 16,377 - 7 x [net per workshop day] | only if [net per workshop day] is under 2,340 CNY (11,852 THB) | 0 |
+| (e) A partner: mornings inside a licensed studio that is already there (the files' partner-location pattern) | not settled | 11,358 | **16,377** | 80,724 | 0 | 16,377 | 82,964 | 0.46 | 12 (7 teaching + 5 support) | 1,365 | 16,377 - 12 x [net per workshop day] | only if [net per workshop day] is under 1,365 CNY (6,914 THB) | 0 |
+| (b) A graduate owns it with an AYBKK licence and the habit system | NO | 11,358 | **16,377** | 52,554 | 0 | 16,377 | 82,964 | 0.46 | 12 (7 teaching + 5 support) | 1,365 | 16,377 - 12 x [net per workshop day] | only if [net per workshop day] is under 1,365 CNY (6,914 THB) | 0 |
+| (a) Boonchu owns it through a foreign-owned company and hires a teacher | yes for the company; the teaching needs a work permit | -263,809 | **-230,117** | -101,496 | -246,494 | 16,377 | -1,165,775 | -6.48 | 38 in year 1 (21 set-up + 10 managing + 7 teaching); 17 a year after | -6,056 | -230,117 - 38 x [net per workshop day] | never: it is a loss before his days are counted | 283,221 |
+
+The host's side of that workshop: at low demand the host loses 2,750 CNY and at base 272 CNY (30% share less a cost of 8,000; table 5a). A host who loses money will not pass yesterday's gate (a room, papers and paid deposits), and then the workshop lines above are 0.
+
+### 5g. The same six cases in words
+
+| Case | Lawful today? | Does the room last? | Legal position | What could kill it |
+|---|---|---|---|---|
+| (d) No shala. The same days and cash go to what already pays | yes | n/a | None. | A graduate in Yunnan asks to host and gets no answer; 'not now' turns into 'never look'. |
+| (f) No second room: a workshop in a hired hall or a host studio (the listed teacher's welcome first) | not settled | n/a: no room to keep alive | The same position as every China stop, and it is not safe: a 2014 rule on short-term work lists work done for a Chinese partner (a law firm's list, opened by the checker, not by me), and visa-free entry does not cover work. The teacher risks 5,000 to 20,000 CNY and a ban of 1 to 5 years if sent home; the host risks 10,000 CNY and the gains. LAWYER before any Dali date. | Small heads (the host does not cover the cost under about 7); work rules (a ban ends every China stop); the listed teacher's welcome, which nobody has asked for; no host known in Dali. |
+| (c) A graduate owns a small room, no formal tie; AYBKK teaches a workshop in it | not settled | NO: the owner's take is -108,423 a year at base, under the minimum wage (25,440). The room closes; after that this case is (f) | As (f), plus a fixed room that sells the same foreign teacher's workshop is a repeated public record at one address. Without an invoice for the teacher's fee the host is taxed on the whole workshop. The owner, a Chinese citizen with an individual business, pays no VAT under 100,000 CNY a month and halved income tax to 31 Dec 2027. | The room itself: it loses money in every demand case, so it closes in public after he has taught in it. Members taken from the listed teacher. Any hint of authorization. |
+| (e) A partner: mornings inside a licensed studio that is already there (the files' partner-location pattern) | not settled | Only while the studio and the teacher both accept a loss | A joint company with any foreign share carries all of (a). A room under the AYBKK name inside the partner's business, with a split, is a licence again and meets the 2-shops rule. AYBKK cannot directly run a room in China without its own Chinese company. LAWYER: does a split without the name (a teaching service contract) stay outside the franchise rule? | The operator loses money at base demand with a paid teacher; the studio must want it; the same welcome question; whose name is on the door. |
+| (b) A graduate owns it with an AYBKK licence and the habit system | NO | As (c): the room closes | BLOCKED. Name + method + fees is a franchise. The franchisor must be a company with 2 directly run shops open over 1 year; AYBKK has 1. Fine 100,000 to 500,000 CNY; a deal signed by a person can be void (Supreme People's Court, Aug 2026). The course gives a certificate of completion only, so no room may say or hint that it gives authorization; in Chinese contracts write 商标许可. | The law. An owner with a loss cannot pay a fee. The habit software needs a China build. Quality in a room he does not see. |
+| (a) Boonchu owns it through a foreign-owned company and hires a teacher | yes for the company; the teaching needs a work permit | Only while he funds the loss | Must be a company: a foreigner cannot hold an individual business (negative list 2024, note 2). Yoga is not on the negative list. A company cannot sit in a home: it needs a unit that can hold a licence and pass the fire step. Teaching in it needs a work permit. Profit leaves as dividends with audited accounts. Not legal or tax advice. | Base demand does not pay a hired teacher (and nobody in Dali is known who could be hired); a company cannot use the cheap homes; a hired worker is owed about one month of pay per year worked when the company closes; money out of China (a host transfer was blocked in July 2026); who runs Bangkok. |
+
+What a room adds over a hall. Base: 0 CNY (7 students fit on 10 mats). High: 52,554 in the room against 80,724 in a hall, so the 10-mat room costs AYBKK 28,170 CNY a year (10 students against 16). A graduate's room adds nothing to AYBKK's income and takes heads away when demand is good.
+
+What a ban would cost: [yearly net of all China stops] x 1 to 5 years. Only Boonchu has that number. It is the price tag on the 'not settled' rows above.
+
+Seats sent. The one way a graduate's room could matter is by sending students to the In-Depth course: seats sent a year x 35,531 CNY, 0 days of his time. [seats sent per room a year] is N (Carne can count the source city and room of every seat in cohorts 1 to 3). A room that sends 0.06 seat a year already equals the 7% licence example; 1 seat a year is 16.8 times that. Judge any graduate's room by seats sent and workshop heads, not by a fee.
+
+The name. In every case, 'no shala' included, the name is not protected in China: nobody has searched whether AYBKK or Ashtanga Yoga Bangkok is filed in class 41. Search and file: 270 CNY official fee online plus an agent's fee N; examination took 4 months on average in 2025. A paper step that needs Boonchu's go.
+
+Day count (ESTIMATE): 2026 had 33 teaching days in China over 8 stops; with a travel day each side that is about 49 days. One Dali trip adds 7: about 56 of the 90 visa-free days in any 180, if all fell in one window. A daily room taught by Boonchu himself needs about 264 teaching days a year, which visa-free entry cannot cover. No dates are set in this model, so the rolling count, the count at entry and the family school calendar were not run on dates.
+
+## STEP 6. COMPARE with one seat of the 180K course and with the yearly goal
+
+One seat = 180,000 THB = 35,531 CNY. One full cohort = 12 seats = 426,372 CNY. Goal = 33,000,000 THB = 6,514,015 CNY a year (the files mark the goal as a guess).
+
+### 6a. To the owner of a small room, a year, the room alone
+
+| Form | Demand | Result (rented house: after pay; bare room: what the teacher keeps), CNY | THB | In 180K seats | Share of the 33M goal | The owner's whole take (pay + result), CNY | Whole take in seats |
+|---|---|---|---|---|---|---|---|
+| Rented house, owner paid 6,000 a month | low | -209,095 | -1,059,278 | -5.88 | -3.21% | -137,095 | -3.86 |
+| Rented house, owner paid 6,000 a month | base | -180,423 | -914,021 | -5.08 | -2.77% | -108,423 | -3.05 |
+| Rented house, owner paid 6,000 a month | high | -87,978 | -445,697 | -2.48 | -1.35% | -15,978 | -0.45 |
+| Bare home room, no fixed pay | low | -7,376 | -37,369 | -0.21 | -0.11% | -7,376 | -0.21 |
+| Bare home room, no fixed pay | base | 21,296 | 107,888 | 0.60 | 0.33% | 21,296 | 0.60 |
+| Bare home room, no fixed pay | high | 111,804 | 566,399 | 3.15 | 1.72% | 111,804 | 3.15 |
+
+### 6b. To AYBKK, base demand, a year (the workshop he teaches included; EXAMPLE split)
+
+| Case | CNY | THB | In 180K seats | Share of the 33M goal | Of which on days he does not teach (the room itself) | That in seats | Years of this to equal one seat | Years to equal one full cohort | Rooms or trips like this to equal the goal | His days a year at that many |
+|---|---|---|---|---|---|---|---|---|---|---|
+| (d) No shala. The same days and cash go to what already pays | 0 | 0 | 0.00 | 0.00% | 0 | 0.00 | never (zero or a loss) | never (zero or a loss) | never (zero or a loss) | never (zero or a loss) |
+| (f) No second room: a workshop in a hired hall or a host studio (the listed teacher's welcome first) | 16,377 | 82,964 | 0.46 | 0.25% | 0 | 0.00 | 2.2 | 26 | 398 | 2,784 |
+| (c) A graduate owns a small room, no formal tie; AYBKK teaches a workshop in it | 16,377 | 82,964 | 0.46 | 0.25% | 0 | 0.00 | 2.2 | 26 | 398 | 2,784 |
+| (e) A partner: mornings inside a licensed studio that is already there (the files' partner-location pattern) | 16,377 | 82,964 | 0.46 | 0.25% | 0 | 0.00 | 2.2 | 26 | 398 | 4,773 |
+| (b) A graduate owns it with an AYBKK licence and the habit system | 16,377 | 82,964 | 0.46 | 0.25% | 0 | 0.00 | 2.2 | 26 | 398 | 4,773 |
+| (a) Boonchu owns it through a foreign-owned company and hires a teacher | -230,117 | -1,165,775 | -6.48 | -3.53% | -246,494 | -6.94 | never (zero or a loss) | never (zero or a loss) | never (zero or a loss) | never (zero or a loss) |
+
+Time wall. 30 days in a cohort = 12 seats (gross). 30 days of Dali trips at the base case = 4.29 trips x 16,377 CNY = 70,185 CNY = 1.98 seats. No case moves toward 33 million THB: the best case that is not blocked is 0.25% of the goal with his days, and every case is 0 or a loss on days he does not teach.
+
+Stakes in AYBKK's own pocket: one more paid seat in cohort 3 (35,531 CNY, 0 extra days) equals 2.2 of his 7-day Dali trips at the base case. To the room's owner: the rented small room loses 180,423 CNY a year at base demand, which is 5.1 seats of the course, every year.
+
+For scale: the Bangkok 1-month pass is 9,600 THB before VAT = 1,895 CNY (the same in both price lists in the files, which otherwise conflict). A Dali Mysore month at 1,300 CNY is 68.6% of it. Bangkok's own members, cost and net are not in the files: [Bangkok members], [Bangkok monthly cost], [Bangkok net], [Bangkok class capacity]. Only Boonchu can supply them.
+
+## TWO ROWS WORKED BY HAND (so a reader can follow the sums line by line)
+Row 1: small room, base demand, rented house, the room alone.
+  places = 0.2 x 6 + 1 = 2.20; paying = 2.20 x (1 - 0.5 x 3/12) = 1.93
+  busy month, members = 1.93 x 1,100 + 0.5 x 1.42 x 1,300 = 3,040.50; quiet month = 1.93 x 1,100 + 0.5 x 0.7 x 1,300 = 2,572.50
+  members a year = (3 x 3,040.50 + 9 x 2,572.50) x 44/52 = 27,309
+  busy month, visitors = 1 x 1.42 x 600 + 3 x 1.42 x 150 = 1,491.00; quiet = 735.00; a year = (3 x 1,491.00 + 9 x 735.00) x 44/52 = 9,382
+  refunds = 3% x (27,309 + 9,382) = 1,101; income = 35,590
+  floor = 10 x 3.0 = 30 m2 practice / 0.57 = 52.6 m2
+  rent = 5,500 x (1 + 1.05) / 2 = 5,637.5; property fee 105.3; water, light, internet 526.3; heating 63.7; own social insurance 1,133; cleaning 26 h x 21 = 546; marketing 500; insurance 166.7; bookkeeping 250
+  set-up = fit-out 42,105 + props 3,000 + heating kit 5,250 + papers 2,000 + opening 3,000 + rent before opening 8,250 + agent 5,500 = 69,105
+  wear = (69,105 + hand-back 4,211) / 24 months = 3,054.8 a month
+  cost a month before the owner's pay = 11,983.3; payment fees a year = 214
+  result = 35,590 - 12 x 11,983.3 - 214 - 12 x 6,000 = -180,423
+  The model's table says: income 35,590, result -180,423. Difference: 0.00.
+
+Row 2: one workshop in the 10-mat room, base demand, the visiting teacher's side (table 5a).
+  students = the smaller of 7 who would pay and 10 mats = 7; gross = 7 x 3,680 = 25,760
+  teacher's side at the example 70% = 18,032; taxed part = 80% = 14,425.6, which sits in the 20% band (12,000 to 25,000): tax = 14,425.6 x 20% - 1,410 = 1,475.12
+  VAT 1% = 180.32; net = 18,032 - 1,475.12 - 180.32 = 16,376.56; per day away = 16,376.56 / 7 = 2,339.51
+  host: 25,760 x 30% = 7,728 less the host's cost 8,000 = -272
+  The model's table says: net 16,377, per day 2,340, host's gain -272. Difference in net: 0.00.
+
+## WHAT ONLY A CHINESE LAWYER OR TAX ADVISER CAN SETTLE (this model is not legal or tax advice)
+- Does a paid 5-day workshop at a host studio need short-term work papers, and which visa? Can a Thai company invoice the host instead? Who is the organiser on paper? (Before any Dali date; it covers every China stop.)
+- Does Dali's market office register a business licence at a home address, and on what consent of the neighbours?
+- Title and planning status of the Canghai Yishu and Xiaoyuanzi estates, and the official Erhai zone of any exact plot.
+- Does a paid yoga room of about 50 m2 need the pre-opening fire safety step in Dali, and a hygiene licence if there is no shower?
+- Does a name-free software or teaching deal, or a split inside a partner's studio, stay outside the franchise rule? Can the In-Depth course fee itself be read as a franchise fee? Do shops outside China count toward the two shops?
+- A work permit for an owner who teaches in his own company (degree, 2 years of related work, the age line of 60).
+- Pass and course terms under the 2025 prepaid rules; a lease clause on who owns the fit-out and a fixed rent path; the owner's written consent before any transfer fee is paid.
+- VAT rate on a visiting foreign teacher's fee (1% or 6 parts in 106); tax on dividends to a foreign person (20% is the checker's reading); how money may leave China after the transfer that was blocked in July 2026.
+- Health data (resting heart rate, sleep) of students in China on a server abroad, and a WeChat mini-program, for the habit system.
+
+## WHAT THE MODEL DOES NOT COUNT
+- The owner's own home rent (in the bare home room the room pays none of it).
+- Any transfer fee for taking over a lease (the Old Town building's fee is 'very low', amount not stated; main streets ask 90,000 to 580,000).
+- Hall hire for a workshop (no Dali price found): [hall hire]. The host pays it.
+- The cost of making the habit software work in China: [China build cost].
+- What Boonchu's days away cost the Bangkok shala: [Bangkok net per day]. The cohort teaching-day rate is gross and shown for scale only; cohort costs are in no file.
+- Students the Dali room might send on to Bangkok or to the In-Depth course: [seats sent per room a year] = N.
+- The answer of the teacher of the existing Mysore room. Nobody has asked. It changes the area table and the demand table.
+- A housing fund for hired staff, and a higher social insurance base if the Yunnan notice for 2026 to 2027 raised it.
+- A month-long course in the Dali room (it copies the In-Depth format; shown as a what-if in 4k).
+
+## ASSUMPTIONS (every input, with its kind)
+
+### Demand inputs (low, base and high are the three cases)
+
+| Input | Low | Base | High | Unit | Kind | Basis |
+|---|---|---|---|---|---|---|
+| yinqiao_counted | 0 | 0 | 1 | 0 or 1 | guess | Only the high case adds Yinqiao: the area table itself fails Yinqiao on people (a car is needed, no dawn bus) |
+| xiaguan_reach_share | 0.0 | 0.0 | 0.1 | share | guess | Share of Xiaguan-side residents who would drive 13 km (20 to 27 min, rough sum) for a dawn class |
+| longstay_near_share | 0.1 | 0.2 | 0.35 | share | guess | No source counts long-stayers by area. Small-budget long-stayers live at the Old Town's edge and in the lake villages, 5 to 8 km from the foothill |
+| yoga_rate | 0.00213 | 0.00248 | 0.00461 | share of people | vendor_claim | iResearch 2021 (old): 3.0 to 3.5 million core studio users, plus about 3 million steady via gyms and online, over 1.41 billion people |
+| local_factor | 0.5 | 1.0 | 2.0 | times the national rate | guess | The map ratio is 1.36 with the 6 real studios and 2.26 with all 10 entries (the script prints both). 65.8% of China's yoga users are in first- and second-tier cities (2018), so a county-level city starts below the national rate |
+| daily_traditional_share | 0.01 | 0.02 | 0.05 | share of steady yoga people | guess | No survey gives an Ashtanga share; 2018 survey: 39.0% no strict style, 20.1% Hatha; 32 listed teachers against 300,000+ yoga teachers on the mainland |
+| pay_share_residents | 0.05 | 0.15 | 0.35 | share | guess | No source. For scale only: 1,500 CNY is 35% of Dali City urban income per person a month (4,250), 43% for all residents (3,528), 71% of the 2,120 minimum wage. That is a price-to-income ratio, not a share of people |
+| pay_share_longstay | 0.05 | 0.1 | 0.3 | share | guess | No source. 1,500 is 37% of a 'comfortable' long-stay budget of 4,100 a month and 68% of a thrifty 2,200 (compiled article, weak); a community founder says healing brings mostly passers-by |
+| existing_room_listed | 3 | 5 | 10 | month members | guess | Class size is not published. The only Dali head count is 2 to 10 in a class at another yard (2022), and a class count includes week-card visitors. The room cut its teaching window from 3 h (2024) to 1 h 45 (2026) and its week and single prices |
+| existing_room_courtyard | 0 | 1 | 3 | month members | guess | Lakeside courtyard: daily Mysore notice seen once (26 Mar 2024), week card only; it lives on courses and retreats |
+| existing_room_third | 0 | 0 | 0 | month members | guess | Shengjiu village yard: 'a Mysore of ten' in 2022; no trace since 14 May 2024 (30 months) |
+| switch_share | 0.1 | 0.2 | 0.4 | share of the existing rooms' month members who move to the new room | guess | No evidence. Every one of them is taken from a teacher who is already there |
+| new_practitioners | 0 | 1 | 2 | month members newly made by month 24 | guess | Beginners who become month payers. The step is steep: Dali trial classes cost 19.9 to 62.5 CNY and a free Sunday class ran for 15 months |
+| unserved_capture | 0.0 | 0.0 | 0.0 | share of (top-down pool less bottom-up pool) the new room wins | guess | Set to 0: the top-down chain cannot be checked, so the model does not draw members from it. The unserved number is printed for the reader |
+| long_stayers | 0 | 0.5 | 2 | on a month pass in a middle month | guess | 0.5 = one long-stayer on a pass for half the year. Visitors find a room through the Sharath Yoga Centre list (one Dali entry) and the local events guide; both point to the listed room |
+| visitor_weeks_per_month | 0.5 | 1 | 4 | week cards in a middle month | guess | No week-card count exists. The listed room cut its week card from 900 to 600 while long-stay numbers rose 24.89%; a retreat in Dali was offered with 12 places (an offer, not a sale) |
+| drop_ins_per_month | 1 | 3 | 10 | single classes in a middle month | guess | No count exists; drop-in is for visitors who know the sequence. The listed room cut its single class from 200 to 150 |
+| workshops_per_year | 1 | 1 | 2 | 5-day workshops | guess | The 2026 China stops ran once per city (8 stops, 8 cities) |
+| workshop_heads_wanted | 5 | 7 | 16 | students who would pay, before any room limit | guess | No head count exists for any Dali workshop. Offers seen: 12 places, limits of 15 and 16, caps of 20 to 25. Base 7 includes the room's own members; high 16 is a limit seen in Dali |
+| workshop_price | 3500 | 3680 | 4280 | CNY per student, 5 days | fact | 3,500 group and 3,680 early price for a listed visiting teacher in Kunming (Jun 2024); 4,280 early price for the first 10 at a Dali workshop (Jun 2022). Small groups all fall inside the early price |
+| room_hire_per_year | 0 | 0 | 4000 | CNY a year | guess | A Dali studio is billed as a 'classroom venue fee' in a visiting group's trip (Mar 2026); the amount is not shown |
+
+### Other inputs (the model uses Base; Low and High show how unsure it is)
+
+| Input | Low | Base | High | Unit | Kind | Basis |
+|---|---|---|---|---|---|---|
+| dali_town_residents | 95442 | 95442 | 95442 | people | fact | 2020 census (old), Dali Town: Old Town and foothill estates |
+| yinqiao_residents | 27090 | 27090 | 27090 | people | fact | 2020 census (old) |
+| xiaguan_side_residents | 395041 | 395041 | 395041 | people | fact | 2020 census (old): Xiaguan 146,517 + Taihe 145,226 + Manjiang 103,298 |
+| longstay_city_period | 200000 | 250500 | 250500 | people in Jan to Sep 2026 | estimate | 333,700 in the prefecture x 75.07% Dali City share; a second source says nearly 200,000 for the first half of 2026 |
+| longstay_avg_days | 77.26 | 77.26 | 77.26 | days | fact | Average long stay, prefecture, Jan to Sep 2026 (Xinhua). A mean of a skewed spread: the usual stay is shorter |
+| longstay_period_days | 273 | 273 | 273 | days | fact | Days from 1 Jan to 30 Sep |
+| national_yoga_venues | 42350 | 42350 | 42350 | venues | vendor_claim | iResearch 2021 (old) |
+| china_population | 1410000000 | 1410000000 | 1410000000 | people | estimate | Rounded, as in the evidence file |
+| oldtown_side_studios | 6 | 6 | 10 | venues | estimate | 360 map, read 23 Nov 2026: 10 yoga or Pilates entries on the Old Town side; 2 are lodging businesses and 2 are teacher-training schools, so 6 local studios. None is proven open |
+| price_month_list | 1000 | 1300 | 1500 | CNY a month | fact | The listed Dali room's Mysore-only month price is 1,300 (1,500 includes a daily pranayama class by a Level 2 teacher). A room that is not on the list cannot charge more for the same class |
+| price_resident_month | 1000 | 1100 | 1300 | CNY a month, average paid by settled members | estimate | The listed room charges 1,000 after ten months. At a 33.6% yearly loss 71% of settled members are past ten months: 0.71 x 1,000 + 0.29 x 1,300 = 1,087. Low 1,000 = every settled member on the long-stay price |
+| price_week | 500 | 600 | 900 | CNY a week | fact | Both Dali rooms: 600 a week (2024, 2026) |
+| price_drop_in | 120 | 150 | 200 | CNY a class | fact | Listed Dali room 150 (2026); courtyard 120 (2024) |
+| course_income_year | 0 | 0 | 24000 | CNY a year | guess | NOT counted. A month-long course of 4 at 6,000 CNY would add 24,000, but it copies the In-Depth format at 16.9% of one seat and nothing shows that Dali courses fill |
+| workshop_host_share | 0.3 | 0.3 | 0.5 | share of workshop gross kept by the host | vendor_claim | Yoga Australia article (27 May 2025): 70/30 called usual, 60/40 and 50/50 also seen. Anecdotes, not China. Example only; AYBKK's own split is private: [AYBKK share], [host share] |
+| ws_host_cost | 5000 | 8000 | 12000 | CNY the host pays per workshop | guess | AYBKK's written policy says the host pays travel, lodging, meals, venue, ads and translator. My guess for Dali: a flight via Kunming, 7 nights, meals, a translator. The real figure is in AYBKK's own stop ledgers: [host cost per stop] |
+| busy_months | 2.6 | 3 | 5 | months a year | guess | Peak season is about 80 days a year (2.6 months, trade article): Spring Festival, summer holiday, National Day; no studio season series exists |
+| busy_factor | 1.2 | 1.42 | 2.0 | times a middle month | guess | For long-stayers and visitors only; residents stay flat |
+| quiet_factor | 0.5 | 0.7 | 0.85 | times a middle month | guess | A self-media article (weak, labelled AI-made) says occupancy near 30% in March and November |
+| open_weeks | 26 | 44 | 48 | weeks a year | guess | One teacher and no cover teacher: when the teacher is away the room is shut. The existing room printed a term of 4 Jan to 3 Jul 2026 only (26 weeks) |
+| longstay_months_on_pass | 1.0 | 1.5 | 2.54 | months | guess | 77.26 days is 2.54 months; they do not find the room on the first day and the usual stay is shorter than the mean |
+| resident_yearly_loss | 0.336 | 0.5 | 0.7 | share of settled members who leave in a year | guess | Global gyms lose 33.6% a year (HFA 2024, not yoga, not China). Dali newcomers move on more than gym members do |
+| replace_gap_months | 1 | 3 | 6 | months a place stays empty before a new member is found | guess | No evidence |
+| refund_share | 0.01 | 0.03 | 0.08 | share of pass sales paid back | guess | Supreme People's Court rules on prepaid passes (in force 1 May 2025; opened by the checker, not by me): money back within 7 days (Art. 14); the buyer may cancel if an 'unlimited' service is not given normally (Art. 13); used classes then count at the discounted price (Art. 18) |
+| m2_per_mat | 2.5 | 3.0 | 3.0 | m2 | vendor_claim | bsport: 2.5 to 3 m2 for dynamic yoga, names Ashtanga; Virtuagym: 27 sq ft = 2.5 m2 |
+| practice_share_of_floor | 0.5 | 0.57 | 0.77 | share | fact | Mysore House Madrid: 170 m2 practice room in 300 m2 total. One shala |
+| window_hours | 2.0 | 2.5 | 3.0 | hours | guess | Dali rooms: 2 hours (9:00 to 11:00) and 3 hours (7:00 to 10:00) |
+| mat_hours | 1.25 | 1.5 | 1.75 | hours on the mat | guess | Assumption in the benchmark sum from the evidence |
+| attend_share | 0.6 | 0.83 | 0.9 | share of practice days a member comes | guess | 5 days of 6; US essay says 5 to 6 days a week |
+| comfort_fill | 0.7 | 0.8 | 1.0 | share of mat turns sold | guess | Do not sell the last places; people cluster at the same hour |
+| students_per_teacher | 15 | 25 | 30 | students across one morning | vendor_claim | US essay (2013): a Mysore programme brings about 25 students in a three-hour window |
+| fitout_per_m2 | 500 | 800 | 1500 | CNY per m2 of floor the room uses | guess | 500 is a franchise-leads template for a county-level city (undated vendor claim); 1,500 is the low end of founders' all-in figures from 2016 to 2017. No Dali figure found |
+| bare_room_fitout | 3000 | 10000 | 20000 | CNY | guess | A home room as it is: a floor covering, a heater, a sign. No evidence |
+| props_per_mat | 150 | 300 | 500 | CNY per mat place | guess | Spare mats, rugs, shelves, a door tablet; students bring their own mat |
+| heating_kit_per_m2 | 100 | 175 | 300 | CNY per m2 of practice room | guess | One heat-pump unit of about 3,500 CNY per 20 m2; January average low is 3.1 C |
+| papers_home_cny | 500 | 2000 | 5000 | CNY | guess | Licence for a Chinese owner's individual business, plus an agent. In a home the pre-opening fire step cannot be done, so the room would run without it. Whether Dali registers a licence at a home address was not found |
+| papers_shop_cny | 2000 | 8000 | 20000 | CNY | guess | Shop unit: licence, agent, extinguishers, exit lights, signs, a test report if asked. A paid yoga room may count as a 'commercial fitness and leisure place' (police ministry Order 39); opening without the fire step costs 30,000 to 300,000 |
+| papers_wfoe_cny | 20000 | 40000 | 80000 | CNY | guess | Foreign-owned company: agent, legalised papers, bank; steps and fees for Dali not found |
+| opening_marketing | 1000 | 3000 | 8000 | CNY | guess | Photos, print, opening week |
+| prelaunch_rent_months | 1.0 | 1.5 | 3.0 | months of rent paid during the fit-out | guess | No evidence |
+| agent_fee_months | 0.0 | 1.0 | 1.0 | months of rent | guess | Usual agent fee; most foothill listings are agent posts |
+| restore_share | 0.0 | 0.1 | 0.2 | share of the fit-out cost, paid at the end to hand the space back as it was | guess | No evidence |
+| deposit_months | 1 | 1 | 3 | months of rent | fact | One Xiaguan home listing: one month deposit, three months paid at a time; shop deposits 2,000 to 3,000 in Xiaguan, 50,000 to 100,000 on Renmin Road |
+| advance_rent_months | 3 | 12 | 24 | months | fact | Business and courtyard adverts: rent paid once a year, some two years at a time |
+| lease_years_home | 1 | 2 | 5 | years | guess | A home in an estate is let by the year; the owner can end it or raise the rent after the tenant has laid the floor |
+| lease_years_shop | 3 | 3 | 5 | years | fact | Renmin Road shop advert asks a 3-year minimum term |
+| rent_rise_year | 0.0 | 0.05 | 0.1 | share a year | guess | Two adverts sell 'no rise' as a plus, so rises are usual; no percentage found |
+| reserve_months | 3 | 6 | 12 | months of running cost without rent | guess | Cash to carry the first year while members build up |
+| ramp_months | 12 | 24 | 36 | months to reach steady numbers | guess | The listed room has had five years to reach its guessed level; a new Mysore programme may start with five people (Portland teacher, 2011) |
+| oldtown_building_rent | 6667 | 6667 | 6667 | CNY a month | fact | Boai gate, first building inside the Old Town: whole building, floors 1 to 4, about 200 m2, 80,000 a year (0872.com, 5 Aug 2026). Transfer fee 'very low', amount not stated. No single large room is shown |
+| shop_unit_rent_per_m2 | 27.0 | 48.1 | 55.7 | CNY per m2 a month | estimate | Version 1's rate (a 208 m2 house at 10,000). No ground-floor shop unit of about 53 m2 was found in the foothill belt |
+| b_listing_rent | 13000 | 13000 | 13000 | CNY a month | fact | Xiaoyuanzi south villa, 324 m2 (Fang.com, about Dec 2024, old): the only priced listing inside area B |
+| property_fee_per_m2 | 0.0 | 2.0 | 2.0 | CNY per m2 a month | fact | 2 and 1.5 on two Xiaguan commercial listings; not stated for the foothill estates |
+| utilities_per_m2 | 6.0 | 10.0 | 15.0 | CNY per m2 a month | vendor_claim | Franchise-leads template: 1,500 a month for 150 m2 in a county-level city (undated). Water, light, internet |
+| kwh_price | 0.45 | 0.7 | 0.85 | CNY per kWh | guess | Yunnan small-business price not found; other provinces show about 0.70 to 0.75 in search summaries (unverified) |
+| heat_kw_per_m2 | 0.06 | 0.1 | 0.15 | kW per m2 of practice room | guess | Rule of thumb for an uninsulated room |
+| heat_hours_per_day | 2.5 | 3.5 | 5.0 | hours | guess | One hour before class plus the 2.5-hour window |
+| heat_months | 3 | 4 | 5 | months | guess | December to March; mean daily low 3.1 C in January and 3.5 C in December (fact) |
+| practice_days_per_month | 24 | 26 | 26 | days | estimate | Six days a week, less moon days |
+| teacher_pay | 4000 | 6000 | 9000 | CNY a month the owner-teacher draws | guess | Adverts: yoga and Pilates teacher 3,000 to 6,000 at normal effort (Xiaguan, 2022); yoga coach 2,000 to 10,000 (Feb 2026, employer not shown). No paid wage found |
+| hired_teacher_pay | 6000 | 8000 | 10000 | CNY a month for a hired teacher who runs the room alone (case a) | guess | A teacher who opens alone six mornings a week, sells, cleans up and posts is not the 6,000 class-teacher job; gym coach adverts run 5,000 to 10,000, often with food and a bed. Nobody in Dali is known who could be hired |
+| assistant_pay | 3000 | 3500 | 6000 | CNY a month | guess | Low end of the same adverts, mornings only |
+| hourly_wage | 21 | 21 | 30 | CNY an hour | fact | Yunnan minimum wage, class 2 areas, from 1 Sep 2026; Dali City is class 2 by the rule's wording |
+| min_wage_month | 2120 | 2120 | 2120 | CNY a month | fact | Yunnan minimum wage, class 2 areas, from 1 Sep 2026 |
+| si_rate | 0.2 | 0.26 | 0.35 | employer's social insurance as a share of the wage | guess | Employer rates for Yunnan were not found |
+| si_base_floor | 4357 | 4357 | 4357 | CNY a month | vendor_claim | Lowest wage on which contributions are charged (one self-media article, low confidence). A wage above it is charged on the wage itself |
+| owner_si_month | 871 | 1133 | 1560 | CNY a month for the owner-teacher's own pension and medical | guess | 871 = 20% pension on the 4,357 floor; 1,133 = 26% on the floor; 1,560 = 26% on 6,000 |
+| marketing_month | 200 | 500 | 1500 | CNY a month | guess | WeChat and Xiaohongshu posts cost time, not cash; no paid ads (house rule) |
+| payment_fee | 0.0038 | 0.006 | 0.01 | share of takings | fact | WeChat Pay merchant fee 0.6% to 1%; micro merchants 0.38% to 0.6% |
+| insurance_year | 1000 | 2000 | 5000 | CNY a year | guess | No premium found for a yoga studio in China |
+| bookkeeping_month | 170 | 250 | 300 | CNY a month | vendor_claim | Unverified: agents' adverts in a search summary: 200 to 300 a month for a small-scale taxpayer (Nanning). Not Dali |
+| bookkeeping_company_month | 400 | 600 | 800 | CNY a month | guess | A company files more than an individual business |
+| wfoe_audit_year | 3000 | 6000 | 10000 | CNY a year | guess | Dividends leave only with audited accounts and tax proof |
+| wfoe_exit_fixed | 10000 | 15000 | 30000 | CNY to close a foreign-owned company | guess | Tax clearance and deregistration; no Dali figure |
+| vat_threshold_month | 100000 | 100000 | 100000 | CNY of sales a month | fact | MOF and STA Announcement 2026 No. 10: no VAT under 100,000 a month, to 31 Dec 2027; reaching it puts VAT on the whole month |
+| vat_rate | 0.01 | 0.01 | 0.03 | share | fact | 1% for small-scale taxpayers to 31 Dec 2027 |
+| vat_rate_after_2027 | 0.01 | 0.03 | 0.03 | share | fact | 3% is the normal small-scale rate if the relief is not renewed |
+| iit_allowance | 0 | 60000 | 60000 | CNY a year | guess | Personal allowance an owner with no other income deducts. From the checker's memory, NOT opened; ask the bookkeeper |
+| iit_business_halved | 0.5 | 0.5 | 1.0 | factor | fact | Individual business income tax (5% to 35% bands) is halved on the first 2 million CNY, to 31 Dec 2027 |
+| company_tax_rate | 0.05 | 0.05 | 0.25 | share of profit | fact | Small low-profit company: 25% counted x 20%, to 31 Dec 2027 |
+| company_reserve_share | 0.0 | 0.1 | 0.1 | share of profit after tax kept in the company | guess | Company Law reserve before a dividend (from the checker's memory, not opened) |
+| dividend_tax_person | 0.1 | 0.2 | 0.2 | share | estimate | 20% for a foreign person who holds the shares (the checker's reading of the income tax law; a tax adviser must confirm); 10% if a Thai company holds them (PwC) |
+| licence_fee_net_share | 0.8491 | 0.8491 | 0.8491 | share that arrives | estimate | 100 / 1.06 x 6% VAT = 5.66; 10% withholding on 94.34 = 9.43; 100 - 5.66 - 9.43 = 84.91. Fee paid to a Thai company |
+| example_royalty | 0.07 | 0.07 | 0.09 | share of the shala's sales | vendor_claim | YogaSix (US franchise): 7% royalty plus 2% brand fund. Example only; AYBKK has no licence terms: [licence fee] |
+| example_teacher_share | 0.5 | 0.7 | 0.7 | share of workshop gross to the visiting teacher | vendor_claim | Yoga Australia 70/30 norm. Example only for [AYBKK share] |
+| example_studio_share | 0.3 | 0.4 | 0.5 | share of daily sales a host studio keeps for the room | vendor_claim | Same Yoga Australia article: 30%, 40% and 50% all occur. Example only; any real split is private: [partner share] |
+| workshop_trip_days | 7 | 7 | 8 | days away per workshop | estimate | 5 teaching days plus one travel day each way (yesterday's report) |
+| wfoe_setup_days | 14 | 21 | 40 | days in year 1 | guess | Three trips of 7 days for papers, lease and fit-out |
+| wfoe_manage_days | 5 | 10 | 20 | days a year | guess | A company in another country does not run itself: teacher, landlord, bank, tax |
+| licence_support_days | 2 | 5 | 10 | days a year | guess | Teaching the owner the room rules and the habit system; part can be remote |
+| china_days_2026 | 33 | 33 | 33 | teaching days | fact | 2026 China workshop pages, April to August (yesterday's report) |
+| china_stops_2026 | 8 | 8 | 8 | stops | fact | Eight city pages in the repo |
+| visa_free_days | 90 | 90 | 90 | days in any 180 | fact | Thai passports: 30 days a stay, 90 in any 180; does not cover work |
+
+### Money
+
+| Input | Low | Base | High | Unit | Kind | Basis |
+|---|---|---|---|---|---|---|
+| thb_per_cny | 5.066 | 5.066 | 5.066 | THB per CNY | fact | Rate fetched 22 Nov 2026, used in yesterday's Dali report |
+| seat_thb | 180000 | 180000 | 180000 | THB | fact | One seat of the In-Depth course, before 7% VAT (AYBKK files) |
+| goal_thb | 33000000 | 33000000 | 34000000 | THB a year, net | guess | Planning files put the yearly goal at about 33M THB net and mark it GUESS; the 20 Nov report says about 34M |
+| cohort_day_thb | 72000 | 72000 | 72000 | THB per teaching day, gross | estimate | 2,160,000 THB for a full cohort / 30 days, before cohort costs (AYBKK files). Gross, shown for scale only |
+
+### Sizes (helper and cleaning hours a month are guesses: a micro or small room is run by the teacher alone)
+
+| Size | Mats (range) | Helper hours a month (guess) | Cleaning hours a month (guess) |
+|---|---|---|---|
+| micro | 6 (5 to 8) | 0 | 16 |
+| small | 10 (8 to 12) | 0 | 26 |
+| medium | 20 (16 to 24) | 78 | 39 |
+| large | 36 (30 to 40) | 156 | 65 |
+
+Count of inputs by kind: estimate 10, fact 29, guess 68, vendor_claim 11.
