@@ -136,8 +136,9 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
   member, pass or the class agreement; its own notice `TEE_NOTICE` (EN, ZH needs a native check). Stock is worked out
   from the order lines under a drop lock, never counted down; an unpaid order holds its tees for `hold_min`, can be
   paid from its link while held and let go by it ("Change my order"). Telegram lines carry the ref and tee count,
-  never the buyer. Contact details go `purge_days` after hand-over (7 after a cancel or a lapsed hold); a problem
-  note or a wrong-amount payment keeps them. Finish waits for live holds; a payment after Finish is oversold (refund).
+  never the buyer. Contact details go `purge_days` after hand-over (7 after a cancel or a lapsed hold), never early
+  while the money could still turn paid; a problem note or a wrong-amount payment keeps them at most 60 days longer
+  (the notice says so). Finish waits for live holds; a payment after Finish is oversold (refund).
 - **Rezerv import from the command line:** `scripts/rezerv-import.js` (`check`, `write --expect`, `plan`, `run-all`) is the admin page's "Move everything from Rezerv" box without the uploads. It runs the page's own parsing code, taken out of `public/bkk-admin.html` by name, so renaming one of those functions stops the tool until it is brought in line.
   It prints counts and reason codes only (names go to `--details`, mode 0600) and sends `x-bkk-key` only when `BKK_ADMIN_KEY` is set. Test: `test/rezerv-import-cli.test.js`.
   Rows go only to `https://aybkk.net`, `https://my.aybkk.com` or a test server on this machine. `run-all <dir>` only looks; `run-all <dir> --save` saves, and stops at the first file a person must see. Rezerv exports and details files name students and this repo is public: keep them outside the repo (or in the git-ignored `rezerv-export/`); the tool refuses a path git would take.

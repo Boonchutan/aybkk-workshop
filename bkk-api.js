@@ -4929,7 +4929,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   });
 
   // The buyer's own view, by the token in their link. A money row still waiting is asked about
-  // (at most once a minute per order) before it answers. Never the whole email, WeChat ID or mobile;
+  // (at most once a minute per order) before it answers. Never the whole email, WeChat ID or mobile, except
+  // the email inside a held order's pay form, which PaySolutions needs (only while the hold runs);
   // once the contact details are deleted, only where the order stands, its tees and the pickup point.
   const maskEmail = e => { const [u, dom] = String(e || '').split('@'); return dom ? `${u.slice(0, 1)}***@${dom}` : null; };
   const maskWechat = w => w ? (w.length > 3 ? `${w.slice(0, 2)}***${w.slice(-1)}` : `${w.slice(0, 1)}***`) : null;
