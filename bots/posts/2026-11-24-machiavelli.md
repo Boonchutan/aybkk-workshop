@@ -9,3 +9,5 @@
 - Carne posted. Plato daily run paused (expected); Kukkutasana v6 kits wait in Edits, not posted.
 - Score: wins this week: none reported. Last win 6 Nov. 180K new leads this week: 0.
 - Inbox 07:08: 1 thread with news, 1 hot.
+
+13:08 check-in: old-price ask and teacher-training ask still waiting (due 19:00 today). Keyword readout tomorrow. Inbox: 3 new, 3 hot.
