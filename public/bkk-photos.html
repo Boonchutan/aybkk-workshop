@@ -319,6 +319,14 @@
     const el = $('#meter');
     if (!m) { el.hidden = true; return; }
     const pct = typeof m.percent === 'number' ? m.percent : null;
+    // New photos go to R2: nothing to limit; Cloudinary's use is for faces and older photos.
+    if (m.store === 'r2') {
+      el.textContent = `New photos go to Cloudflare R2, no daily limit · Today: ${m.today} new photo${m.today === 1 ? '' : 's'}`
+        + (pct == null ? '' : ` · Cloudinary (faces, older photos): ${Math.round(pct)}% used`);
+      el.className = 'meter';
+      el.hidden = false;
+      return;
+    }
     const day = m.capOn ? `Today: ${m.today} of ${m.cap} new photos${m.today >= m.cap ? ', limit reached' : ''}`
       : `Today: ${m.today} new photo${m.today === 1 ? '' : 's'}` + (!m.cap ? ', no daily limit' : pct != null && pct < 90 ? ` (limit of ${m.cap} from 90%)` : '');
     el.textContent = (pct == null ? 'Cloudinary free plan: use not known yet' : `Cloudinary free plan: ${Math.round(pct)}% used`) + ' · ' + day;

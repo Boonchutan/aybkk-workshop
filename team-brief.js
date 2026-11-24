@@ -38,6 +38,7 @@
 const crypto = require('crypto');
 const { moonDaysBetween, rotationTeacher } = require('./bkk-api');
 const { telegram } = require('./inbox');
+const { phPath } = require('./lib/r2');
 
 const LINE_API = 'https://api.line.me/v2/bot';
 const PUSH_MAX = 5;                  // message objects per push
@@ -578,7 +579,16 @@ function mountTeam(app, opts = {}) {
 
   // Signed like the student page's photos (they are private Cloudinary assets),
   // as JPEG: LINE takes JPEG or PNG only, at most 10 MB, preview at most 1 MB.
-  function lineImage(publicId) {
+  // A photo in R2: this site's own links (lib/r2.js), made whole on the address
+  // the sign-in links use, as LINE fetches them itself: v.jpg (2560 px, about
+  // 1 MB) and p.jpg, the tile as JPEG (about 100 KB).
+  function lineImage(p) {
+    if (p.store === 'r2') {
+      const base = (process.env.PUBLIC_BASE_URL || 'https://cn.aybkk.net').replace(/\/$/, '');
+      const img = { type: 'image', originalContentUrl: base + phPath(p.id, p.r2_key, 'v'), previewImageUrl: base + phPath(p.id, p.r2_key, 'p') };
+      return httpsUrl(img.originalContentUrl) && httpsUrl(img.previewImageUrl) ? img : null;
+    }
+    const publicId = p.public_id;
     if (!cloudinary || typeof cloudinary.url !== 'function') return null;
     try {
       const at = t => cloudinary.url(publicId, { type: 'authenticated', sign_url: true, secure: true, transformation: [t] });
@@ -657,7 +667,7 @@ function mountTeam(app, opts = {}) {
       classesOn(tomorrow),
       all(`SELECT slot_id, count(*)::int AS n, count(*) FILTER (WHERE need_mat)::int AS mats FROM bkk_bookings
            WHERE class_date=$1::date AND status='booked' GROUP BY slot_id`, [tomorrow]),
-      all(`SELECT p.id, p.public_id, EXISTS (SELECT 1 FROM bkk_photo_members pm WHERE pm.photo_id=p.id) AS tagged
+      all(`SELECT p.id, p.public_id, p.store, p.r2_key, EXISTS (SELECT 1 FROM bkk_photo_members pm WHERE pm.photo_id=p.id) AS tagged
            FROM bkk_photos p WHERE p.created_at >= $1 AND p.created_at < $2 ORDER BY p.id`),
       one(`SELECT count(DISTINCT pm.member_id)::int AS n FROM bkk_photo_members pm JOIN bkk_photos p ON p.id=pm.photo_id
            WHERE p.created_at >= $1 AND p.created_at < $2`),
@@ -754,7 +764,7 @@ function mountTeam(app, opts = {}) {
     const images = [];
     for (const p of [...photos].sort((a, b) => (b.tagged - a.tagged) || (b.id - a.id))) {
       if (images.length >= 4) break;
-      const img = lineImage(p.public_id);
+      const img = lineImage(p);
       if (img) images.push(img);
     }
 

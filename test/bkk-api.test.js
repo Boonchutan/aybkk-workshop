@@ -1567,6 +1567,364 @@ const ok = (name, cond, extra = '') => {
     await pool.query('DELETE FROM bkk_photos WHERE id = ANY($1::int[])', [[...filler, ...made]]);
   }
 
+  console.log('\n— class photos in R2 —');
+  {
+    const http = require('http');
+    const { createCanvas, loadImage } = require('@napi-rs/canvas');
+    const { AwsV4Signer } = require('aws4fetch');
+    const r2lib = require('../lib/r2');
+    const sha = b => crypto.createHash('sha256').update(b).digest('hex');
+    const hmac = (k, s) => crypto.createHmac('sha256', k).update(s).digest();
+    const vec = new AwsV4Signer({ url: 'https://examplebucket.s3.amazonaws.com/test.txt', method: 'GET',
+      headers: { Range: 'bytes=0-9', 'x-amz-content-sha256': sha('') }, allHeaders: true,
+      accessKeyId: 'AKIAIOSFODNN7EXAMPLE', secretAccessKey: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY',
+      service: 's3', region: 'us-east-1', datetime: '20130524T000000Z' });
+    ok("the SigV4 signer gives the signature of AWS's published S3 example (GET Object)",
+       (await vec.signature()) === 'f0e8bdb87c964420e857bd35b5d6ed310bd44f0170aba48dd91039c6036bdb41');
+
+    // Off: R2 is never set in this suite's main server, so /ph is not a route there.
+    const annOld = await post('/api/bkk/teacher/photos', { date: '2026-10-04', image: IMG, tags: [{ code: ann.code, role: 'main' }] }, PKEY);
+    const offPh = await fetch(`${B}/ph/1.${'A'.repeat(22)}/t.webp`);
+    ok('R2 off: /ph is not a route (the default 404), and every photo is on Cloudinary',
+       offPh.status === 404 && /Cannot GET \/ph\//.test(await offPh.text())
+         && (await pool.query(`SELECT count(*) FILTER (WHERE store <> 'cloudinary' OR r2_key IS NOT NULL)::int AS n FROM bkk_photos`)).rows[0].n === 0);
+    const offStore = await J('/api/bkk/admin/photo-store', { headers: ADMIN });
+    ok('R2 off: Admin sees it off, with photo counts; the test says what is missing; Start is refused',
+       offStore.status === 200 && offStore.body.r2 === false && offStore.body.photos.r2 === 0 && offStore.body.photos.cloudinary > 0
+         && (await post('/api/bkk/admin/photo-store/test', {}, ADMIN)).body.error === 'R2 is not set up: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET are needed in Railway.'
+         && (await post('/api/bkk/admin/photo-store/move', { on: true }, ADMIN)).status === 400, JSON.stringify(offStore.body));
+    ok('...and the photo storage routes are staff only',
+       (await J('/api/bkk/admin/photo-store')).status === 401 && (await J('/api/bkk/admin/photo-store', { headers: PKEY })).status === 401
+         && (await post('/api/bkk/admin/photo-store/test', {}, PKEY)).status === 401 && (await post('/api/bkk/admin/photo-store/move', { on: false }, {})).status === 401);
+
+    // A fake R2: the S3 API on this machine. It checks each request's SigV4 signature
+    // with its own code (not the library's) and keeps objects in memory.
+    const R2ENV = { R2_ACCOUNT_ID: 'acct0000test', R2_ACCESS_KEY_ID: 'akid-test-r2', R2_SECRET_ACCESS_KEY: 'secret-test-r2-not-real', R2_BUCKET: 'aybkk-test' };
+    const store = new Map(), r2Log = [];
+    let r2Fail = null;                   // (method, key) => status to answer instead
+    let badEtag = false;
+    const xmlErr = (res, status, code) => { res.writeHead(status, { 'Content-Type': 'application/xml' }); res.end(`<?xml version="1.0"?><Error><Code>${code}</Code><Message>no</Message></Error>`); };
+    const signedOk = (req, body) => {
+      const m = /^AWS4-HMAC-SHA256 Credential=([^/]+)\/(\d{8})\/auto\/s3\/aws4_request, SignedHeaders=([a-z0-9;-]+), Signature=([0-9a-f]{64})$/.exec(req.headers.authorization || '');
+      if (!m || m[1] !== R2ENV.R2_ACCESS_KEY_ID) return false;
+      const amz = req.headers['x-amz-date'] || '', hash = req.headers['x-amz-content-sha256'] || '';
+      if (amz.slice(0, 8) !== m[2] || (hash !== 'UNSIGNED-PAYLOAD' && hash !== sha(body))) return false;
+      const signed = m[3].split(';');
+      if (!signed.includes('host') || !signed.includes('x-amz-date')) return false;
+      const [path, query = ''] = req.url.split('?');
+      const canon = [req.method, path, query, signed.map(h => `${h}:${String(req.headers[h] || '').trim()}`).join('\n') + '\n', m[3], hash].join('\n');
+      const scope = `${m[2]}/auto/s3/aws4_request`;
+      let k = hmac('AWS4' + R2ENV.R2_SECRET_ACCESS_KEY, m[2]);
+      for (const part of ['auto', 's3', 'aws4_request']) k = hmac(k, part);
+      return crypto.createHmac('sha256', k).update(['AWS4-HMAC-SHA256', amz, scope, sha(canon)].join('\n')).digest('hex') === m[4];
+    };
+    const fakeR2 = http.createServer((req, res) => {
+      const chunks = [];
+      req.on('data', c => chunks.push(c));
+      req.on('end', () => {
+        const body = Buffer.concat(chunks);
+        const pre = `/${R2ENV.R2_BUCKET}/`;
+        const key = req.url.startsWith(pre) ? decodeURIComponent(req.url.slice(pre.length)) : null;
+        r2Log.push({ method: req.method, key, signed: !!req.headers.authorization });
+        if (!signedOk(req, body)) return xmlErr(res, 403, 'SignatureDoesNotMatch');
+        if (!key) return xmlErr(res, 404, 'NoSuchBucket');
+        const failWith = r2Fail && r2Fail(req.method, key);
+        if (failWith) return xmlErr(res, failWith, failWith === 403 ? 'AccessDenied' : 'InternalError');
+        const o = store.get(key);
+        const md5 = b => crypto.createHash('md5').update(b).digest('hex');
+        if (req.method === 'PUT') { store.set(key, { body, type: req.headers['content-type'] }); res.writeHead(200, { ETag: `"${md5(body)}"` }); return res.end(); }
+        if (req.method === 'DELETE') { store.delete(key); res.writeHead(204); return res.end(); }
+        if (!o) return xmlErr(res, 404, 'NoSuchKey');
+        res.writeHead(200, { 'Content-Type': o.type, 'Content-Length': o.body.length, ETag: `"${badEtag ? 'f'.repeat(32) : md5(o.body)}"` });
+        res.end(req.method === 'HEAD' ? undefined : o.body);
+      });
+    });
+    await new Promise(r => fakeR2.listen(0, '127.0.0.1', r));
+    const R2_URL = `http://127.0.0.1:${fakeR2.address().port}`;
+
+    // Photos made here: a camera original (3000x2000, stored sideways with EXIF
+    // orientation 6 and a GPS position), Drive's 2048 px copy, a phone upload.
+    const quad = async (w, h, q = 92) => {
+      const c = createCanvas(w, h), x = c.getContext('2d');
+      x.fillStyle = '#0000ff'; x.fillRect(0, 0, w, h);
+      x.fillStyle = '#ff0000'; x.fillRect(0, 0, w / 4, h / 4);      // red: the stored top-left corner
+      x.fillStyle = '#ffffff'; for (let i = 0; i < w; i += 7) x.fillRect(i, h / 2, 2, h / 4);
+      return c.encode('jpeg', q);
+    };
+    const withExif = (jpg, orientation) => {
+      const be = (n, b) => { const x = Buffer.alloc(b); b === 2 ? x.writeUInt16BE(n) : x.writeUInt32BE(n); return x; };
+      const ent = (tag, type, count, val) => Buffer.concat([be(tag, 2), be(type, 2), be(count, 4), val]);
+      const rat = (a, b) => Buffer.concat([be(a, 4), be(b, 4)]);
+      const gpsAt = 8 + 30, dataAt = gpsAt + 54;
+      const ifd0 = Buffer.concat([be(2, 2), ent(0x0112, 3, 1, Buffer.concat([be(orientation, 2), Buffer.alloc(2)])), ent(0x8825, 4, 1, be(gpsAt, 4)), be(0, 4)]);
+      const ascii = s => Buffer.from(s.padEnd(4, '\0'), 'latin1');
+      const gps = Buffer.concat([be(4, 2), ent(1, 2, 2, ascii('N')), ent(2, 5, 3, be(dataAt, 4)), ent(3, 2, 2, ascii('E')), ent(4, 5, 3, be(dataAt + 24, 4)), be(0, 4)]);
+      const tiff = Buffer.concat([Buffer.from('MM'), be(42, 2), be(8, 4), ifd0, gps, rat(13, 1), rat(44, 1), rat(1234, 100), rat(100, 1), rat(30, 1), rat(4321, 100)]);
+      const app1 = Buffer.concat([Buffer.from('Exif\0\0', 'latin1'), tiff]);
+      return Buffer.concat([jpg.subarray(0, 2), Buffer.from([0xFF, 0xE1]), be(app1.length + 2, 2), app1, jpg.subarray(2)]);
+    };
+    const original = withExif(await quad(3000, 2000), 6);
+    const exifr = require('exifr');
+    const gpsIn = await exifr.gps(original);
+    ok('the made-up camera original carries orientation 6 and a GPS position (read by exifr)',
+       (await exifr.orientation(original)) === 6 && Math.abs(gpsIn.latitude - 13.7368) < 0.001, JSON.stringify(gpsIn));
+    const driveCopy = await quad(2048, 1365, 80);
+    const heic = Buffer.concat([Buffer.from([0, 0, 0, 24]), Buffer.from('ftypheic', 'latin1'), Buffer.alloc(64)]);
+    const huge = Buffer.from(original);                                 // its header says 10000x6000: 60 MP
+    { const at = huge.indexOf(Buffer.from([0xFF, 0xC0])); huge.writeUInt16BE(6000, at + 5); huge.writeUInt16BE(10000, at + 7); }
+    const R2_HTML = { ROOTF: DRIVE_HTML.ROOTF, DAY5aaaaaaaaaaaaaaaaaaaaa: entry('R2ORIGaaaaaaaaaaaaaaaaaaa', 'r2-orig.jpg')
+      + entry('R2HEICaaaaaaaaaaaaaaaaaaa', 'r2-phone.HEIC') + entry('R2HUGEaaaaaaaaaaaaaaaaaaa', 'r2-huge.jpg') };
+    const DRIVE_ORIG = { R2ORIGaaaaaaaaaaaaaaaaaaa: original, R2HEICaaaaaaaaaaaaaaaaaaa: heic, R2HUGEaaaaaaaaaaaaaaaaaaa: huge, MIGDRIVEaaaaaaaaaaaaaaaaa: original };
+    const r2Fetches = [];
+    let cloudBytes = await quad(2048, 1365, 85), cloudDown = false;
+    const fetchR = async url => {
+      url = String(url);
+      r2Fetches.push(url);
+      if (url.startsWith('signed://')) return cloudDown ? new Response('gone', { status: 404 }) : new Response(cloudBytes, { status: 200 });
+      const id = new URL(url).searchParams.get('id');
+      if (url.includes('embeddedfolderview')) return new Response(R2_HTML[id] || '', { status: 200 });
+      if (url.includes('uc?export=download')) return DRIVE_ORIG[id] ? new Response(DRIVE_ORIG[id], { status: 200 }) : new Response('<html>no</html>', { status: 200 });
+      return new Response(driveCopy, { status: 200 });                  // Drive's 2048 px thumbnail
+    };
+    const destroyedR = [];
+    const cloudR = { ...fakeCloud, uploader: { ...fakeCloud.uploader, destroy: async (id, o) => { destroyedR.push({ id, ...o }); return { result: 'ok' }; } },
+      api: { usage: async () => ({ credits: { usage: 35.3, limit: 25, used_percent: 141.2 } }) } };
+    const envWas = Object.fromEntries(Object.keys(R2ENV).map(k => [k, process.env[k]]));
+    const mountR = async () => {
+      Object.assign(process.env, R2ENV);
+      const a = express();
+      a.use(express.json({ limit: '10mb' }));
+      const api = await mountBkk(a, { pgPool: pool, now, cloudinary: cloudR, fetch: fetchR, r2Endpoint: R2_URL });
+      for (const [k, v] of Object.entries(envWas)) { if (v === undefined) delete process.env[k]; else process.env[k] = v; }
+      const s = a.listen(0);
+      return { api, s, base: `http://127.0.0.1:${s.address().port}` };
+    };
+    const R = await mountR();
+    const BR = R.base;
+    const JR = async (path, o = {}) => { const r = await fetch(BR + path, o); return { status: r.status, body: await r.json().catch(() => ({})) }; };
+    const postR = (path, body, h = PKEY) => JR(path, { method: 'POST', headers: { 'Content-Type': 'application/json', ...h }, body: JSON.stringify(body) });
+    const rawR = async (path, method = 'GET', base = BR) => { const r = await fetch(base + path, { method }); return { status: r.status, h: r.headers, buf: Buffer.from(await r.arrayBuffer()) }; };
+    const keysOf = (id) => pool.query(`SELECT store, r2_key, public_id, width, height, to_char(class_date,'YYYY-MM-DD') AS day FROM bkk_photos WHERE id=$1`, [id]).then(r => r.rows[0]);
+    const objs = row => ['v', 't'].map(k => store.get(r2lib.objectKey(row.day, row.r2_key, k)));
+    const size = async b => { const i = await loadImage(b); return `${i.width}x${i.height}`; };
+    const pixel = async (b, fx, fy) => {
+      const i = await loadImage(b), c = createCanvas(i.width, i.height), x = c.getContext('2d');
+      x.drawImage(i, 0, 0);
+      const d = x.getImageData(Math.floor(fx * (i.width - 1)), Math.floor(fy * (i.height - 1)), 1, 1).data;
+      return d[0] > 180 && d[2] < 90 ? 'red' : d[2] > 180 && d[0] < 90 ? 'blue' : 'other';
+    };
+    const noMeta = b => !b.includes(Buffer.from('Exif')) && !b.includes(Buffer.from('ICC_PROFILE')) && !b.includes(Buffer.from('http://ns.adobe.com/xap'))
+      && !b.includes(Buffer.from('ICCP')) && !b.includes(Buffer.from('EXIF')) && !b.includes(Buffer.from('XMP '));
+    const jpegApp1 = b => { for (let i = 2; i + 4 < b.length && b[i] === 0xFF && b[i + 1] !== 0xDA; i += 2 + b.readUInt16BE(i + 2)) if (b[i + 1] >= 0xE1 && b[i + 1] <= 0xEF) return true; return false; };
+
+    // Drive import, R2 on: the camera original, made upright, nothing but pixels kept.
+    const uploadsBefore = uploads.length;
+    await pool.query(`INSERT INTO bkk_settings (key,value) VALUES ('photos_daily_cap','1') ON CONFLICT (key) DO UPDATE SET value='1'`);
+    const DRV = { date: '2026-10-05', folder: 'DAY5aaaaaaaaaaaaaaaaaaaaa' };
+    r2Fetches.length = 0;
+    const d1 = await postR('/api/bkk/teacher/photos/from-drive', { ...DRV, driveId: 'R2ORIGaaaaaaaaaaaaaaaaaaa', tags: [{ code: ann.code, role: 'main' }] });
+    const row1 = d1.body.photo && await keysOf(d1.body.photo.id);
+    const [v1, t1] = row1 ? objs(row1) : [];
+    ok('Drive import with R2 on: the Drive original is taken (not the 2048 px copy), stored as v.jpg and t.webp under cls/<date>/<r2_key>/',
+       d1.status === 200 && row1.store === 'r2' && /^[0-9a-f]{24}$/.test(row1.r2_key) && row1.public_id === `r2/2026-10-05/${row1.r2_key}`
+         && !!v1 && !!t1 && v1.type === 'image/jpeg' && t1.type === 'image/webp'
+         && r2Fetches.filter(u => u.includes('drive.google.com/uc?export=download&id=R2ORIG')).length === 1 && !r2Fetches.some(u => u.includes('thumbnail?id=R2ORIG'))
+         && uploads.length === uploadsBefore && r2Log.every(l => l.signed), JSON.stringify([d1.status, d1.body, row1]).slice(0, 300));
+    ok('...upright by its EXIF orientation: the 3000x2000 sideways original is a 1707x2560 portrait, its stored top-left now top-right',
+       await size(v1.body) === '1707x2560' && row1.width === 1707 && row1.height === 2560
+         && await pixel(v1.body, 0.98, 0.02) === 'red' && await pixel(v1.body, 0.02, 0.02) === 'blue', await size(v1.body));
+    ok('...the tile in the same 600 px box as before (400x600 WebP), upright too',
+       await size(t1.body) === '400x600' && t1.body.toString('latin1', 0, 4) === 'RIFF' && t1.body.toString('latin1', 8, 15) === 'WEBPVP8'
+         && await pixel(t1.body, 0.98, 0.02) === 'red', await size(t1.body));
+    ok('...and no metadata in either: no EXIF (so no GPS), XMP or colour profile, no APP1 to APP15 segment',
+       noMeta(v1.body) && noMeta(t1.body) && !jpegApp1(v1.body) && !(await exifr.parse(v1.body).catch(() => null)) && v1.body.length < 3e6,
+       JSON.stringify([v1.body.length, t1.body.length]));
+    const meterR = await JR('/api/bkk/teacher/photos/meter', { headers: PKEY });
+    ok('no daily cap with R2 on, even at 141% of Cloudinary and a cap of 1: the meter says R2, the percent kept for information',
+       d1.status === 200 && meterR.body.store === 'r2' && meterR.body.capOn === false && meterR.body.percent === 141.2 && meterR.body.cap === 1, JSON.stringify(meterR.body));
+    const dH = await postR('/api/bkk/teacher/photos/from-drive', { ...DRV, driveId: 'R2HEICaaaaaaaaaaaaaaaaaaa', tags: [] });
+    const dG = await postR('/api/bkk/teacher/photos/from-drive', { ...DRV, driveId: 'R2HUGEaaaaaaaaaaaaaaaaaaa', tags: [] });
+    const rowH = dH.body.photo && await keysOf(dH.body.photo.id), rowG = dG.body.photo && await keysOf(dG.body.photo.id);
+    ok("a HEIC original, and one over 50 MP, fall back to Drive's 2048 px copy",
+       dH.status === 200 && dG.status === 200 && rowH.width === 2048 && rowG.width === 2048
+         && r2Fetches.some(u => u.includes('thumbnail?id=R2HEIC')) && r2Fetches.some(u => u.includes('thumbnail?id=R2HUGE')), JSON.stringify([dH.body.error, dG.body.error]));
+    const tooBig = await r2lib.photoVariants(huge).then(() => null, e => e);
+    ok('...a photo over 50 MP is refused before it is decoded, with a plain reason',
+       tooBig && tooBig.status === 400 && tooBig.message === 'The photo is too large to resize here (60 megapixels, at most 50).', tooBig && tooBig.message);
+    const capAfter = await postR('/api/bkk/teacher/photos', { date: '2026-10-05', image: 'data:image/jpeg;base64,' + driveCopy.toString('base64'), tags: [{ code: ann.code, role: 'main' }] });
+    const rowP = capAfter.body.photo && await keysOf(capAfter.body.photo.id);
+    const [vP, tP] = rowP ? objs(rowP) : [];
+    ok('a phone upload (2048 px JPEG) is stored as it is, re-encoded and stripped, plus a tile; nothing goes to Cloudinary, cap or not',
+       capAfter.status === 200 && rowP.store === 'r2' && await size(vP.body) === '2048x1365' && await size(tP.body) === '600x400'
+         && noMeta(vP.body) && uploads.length === uploadsBefore, JSON.stringify(capAfter.body).slice(0, 200));
+    const badUp = await postR('/api/bkk/teacher/photos', { date: '2026-10-05', image: 'data:image/jpeg;base64,/9j/4AAQSkZJRg==', tags: [] });
+    ok('...a file that is not a photo is refused with a reason, nothing stored',
+       badUp.status === 400 && /could not be read/.test(badUp.body.error), JSON.stringify(badUp.body));
+    await pool.query(`DELETE FROM bkk_settings WHERE key='photos_daily_cap'`);
+
+    // A student with an old Cloudinary photo and new R2 ones: the same fields, the same shape.
+    const annDays = (await JR(`/api/bkk/me/${ann.code}/photos`)).body.days || [];
+    const annItems = annDays.flatMap(d => d.items);
+    const r2Item = annItems.find(i => i.id === d1.body.photo.id), oldItem = annItems.find(i => /^signed:\/\//.test(i.thumb));
+    ok("a student's photos: R2 ones as /ph links on this site, older ones still Cloudinary's, same fields (full, id, save, thumb)",
+       !!r2Item && !!oldItem && annItems.every(i => Object.keys(i).sort().join() === 'full,id,save,thumb')
+         && new RegExp(`^/ph/${r2Item.id}\\.[\\w-]{22}/t\\.webp$`).test(r2Item.thumb) && new RegExp(`^/ph/${r2Item.id}\\.[\\w-]{22}/v\\.jpg$`).test(r2Item.full)
+         && new RegExp(`^/api/bkk/photo/${r2Item.id}\\.[\\w-]{22}/AYBKK-photo\\.jpg$`).test(r2Item.save)
+         && !JSON.stringify(annDays).includes(row1.r2_key), JSON.stringify(annItems).slice(0, 400));
+    const dayR = (await JR('/api/bkk/teacher/photos?date=2026-10-05', { headers: PKEY })).body.photos.find(p => p.id === d1.body.photo.id);
+    const profR = (await JR(`/api/bkk/teacher/members/${ann.code}/photos`, { headers: PKEY })).body.photos.find(p => p.id === d1.body.photo.id);
+    ok('...and on /photos: the day view (with its Drive id) and one student\'s photos',
+       dayR.thumb === r2Item.thumb && dayR.full === r2Item.full && dayR.drive === 'R2ORIGaaaaaaaaaaaaaaaaaaa' && profR.thumb === r2Item.thumb, JSON.stringify([dayR, profR]));
+
+    // /ph: signed, cacheable at the edge for a day, no cookie, errors never kept.
+    const g = await rawR(r2Item.thumb), gv = await rawR(r2Item.full);
+    ok('/ph serves the tile and the photo: right type, nosniff, public for a day in browsers and at the edge, no cookie, the stored bytes',
+       g.status === 200 && g.h.get('content-type') === 'image/webp' && gv.h.get('content-type') === 'image/jpeg'
+         && g.h.get('cache-control') === 'public, max-age=86400, s-maxage=86400' && g.h.get('x-content-type-options') === 'nosniff'
+         && !g.h.get('set-cookie') && g.buf.equals(t1.body) && gv.buf.equals(v1.body) && Number(gv.h.get('content-length')) === v1.body.length,
+       JSON.stringify([g.status, [...g.h.entries()]]));
+    const [, phId, phSig] = /^\/ph\/(\d+)\.([\w-]{22})\//.exec(r2Item.thumb);
+    const flipped = phSig.slice(0, -1) + (phSig.endsWith('A') ? 'B' : 'A');
+    const bads = [await rawR(`/ph/${phId}.${flipped}/t.webp`), await rawR(`/ph/${phId}.${phSig}/v.jpg`), await rawR(`/ph/99999999.${phSig}/t.webp`),
+      await rawR(`/ph/${oldItem.id}.${phSig}/t.webp`)];
+    ok('a bad signature, the tile\'s signature on the photo, an unknown id and a Cloudinary photo are all 403, kept by nobody',
+       bads.every(r => r.status === 403 && r.h.get('cache-control') === 'no-store'), JSON.stringify(bads.map(r => r.status)));
+    ok('...a malformed link or another file name is 404',
+       (await rawR(`/ph/${phId}/t.webp`)).status === 404 && (await rawR(`/ph/${phId}.${phSig}/x.png`)).status === 404);
+    const logAt = r2Log.length;
+    const hd = await rawR(r2Item.full, 'HEAD');
+    ok('a HEAD gets the headers and the size from R2 (a HEAD there too), no body',
+       hd.status === 200 && hd.h.get('content-type') === 'image/jpeg' && Number(hd.h.get('content-length')) === v1.body.length && hd.buf.length === 0
+         && r2Log.slice(logAt).map(l => l.method).join() === 'HEAD', JSON.stringify(r2Log.slice(logAt)));
+    const vKey = r2lib.objectKey(row1.day, row1.r2_key, 'v'), vWas = store.get(vKey);
+    store.delete(vKey);
+    const miss = await rawR(r2Item.full), missHead = await rawR(r2Item.full, 'HEAD');
+    store.set(vKey, vWas);
+    r2Fail = (m, k) => k === vKey && 500;
+    const broke = await rawR(r2Item.full);
+    r2Fail = null;
+    ok('an object missing in R2 is 404, an R2 error 502, neither kept',
+       miss.status === 404 && missHead.status === 404 && broke.status === 502 && miss.h.get('cache-control') === 'no-store' && broke.h.get('cache-control') === 'no-store',
+       JSON.stringify([miss.status, missHead.status, broke.status]));
+
+    // The download link: the same path and name, sending v.jpg.
+    const dl = await rawR(r2Item.save);
+    const logAt2 = r2Log.length;
+    const dlHead = await rawR(r2Item.save, 'HEAD');
+    ok('Save photo on an R2 photo: the same link shape, AYBKK-photo.jpg as an attachment, v.jpg itself; a HEAD does not ask R2',
+       dl.status === 200 && dl.h.get('content-type') === 'image/jpeg' && dl.h.get('content-disposition') === 'attachment; filename="AYBKK-photo.jpg"'
+         && dl.h.get('cache-control') === 'private, max-age=86400' && dl.buf.equals(v1.body)
+         && dlHead.status === 200 && dlHead.buf.length === 0 && r2Log.length === logAt2, JSON.stringify([dl.status, [...dl.h.entries()]]));
+
+    // LINE: the photo (JPEG under 10 MB) and a JPEG preview of the tile (under 1 MB).
+    const pv = await rawR(`/ph/${phId}.${r2lib.phSig(phId, row1.r2_key, 'p')}/p.jpg`);
+    ok('p.jpg, the preview the team brief sends LINE: a JPEG of the tile, well under 1 MB, cacheable like the rest; v.jpg under 10 MB',
+       pv.status === 200 && pv.h.get('content-type') === 'image/jpeg' && pv.buf[0] === 0xFF && pv.buf[1] === 0xD8 && pv.buf.length < 1024 * 1024
+         && await size(pv.buf) === '400x600' && noMeta(pv.buf) && pv.h.get('cache-control') === 'public, max-age=86400, s-maxage=86400'
+         && v1.body.length < 10 * 1024 * 1024, JSON.stringify([pv.status, pv.buf.length]));
+
+    // Admin: the test button and the counts.
+    const tOk = await postR('/api/bkk/admin/photo-store/test', {}, ADMIN);
+    const testKeys = r2Log.filter(l => /^test\//.test(l.key || ''));
+    r2Fail = m => m === 'PUT' && 403;
+    const tNo = await postR('/api/bkk/admin/photo-store/test', {}, ADMIN);
+    r2Fail = null;
+    ok('Test R2: PUT, GET and DELETE of one small object under test/, then OK; nothing left behind',
+       tOk.status === 200 && tOk.body.ok === true && testKeys.map(l => l.method).join() === 'PUT,GET,DELETE' && ![...store.keys()].some(k => k.startsWith('test/')), JSON.stringify(tOk.body));
+    ok("...or R2's refusal, without a key: 403 AccessDenied",
+       tNo.body.ok === false && tNo.body.error === 'R2 PUT refused (403 AccessDenied)' && !JSON.stringify(tNo.body).includes(R2ENV.R2_SECRET_ACCESS_KEY)
+         && !JSON.stringify(tNo.body).includes(R2ENV.R2_ACCESS_KEY_ID), JSON.stringify(tNo.body));
+    const cnt = (await JR('/api/bkk/admin/photo-store', { headers: ADMIN })).body;
+    const dbCnt = (await pool.query(`SELECT count(*) FILTER (WHERE store='r2')::int AS r2, count(*) FILTER (WHERE store='cloudinary')::int AS c FROM bkk_photos`)).rows[0];
+    ok('Admin counts the photos on each', cnt.r2 === true && cnt.photos.r2 === dbCnt.r2 && cnt.photos.cloudinary === dbCnt.c && dbCnt.r2 === 4, JSON.stringify(cnt));
+
+    // Delete: both objects and the row.
+    const delRow = await keysOf(capAfter.body.photo.id);
+    const delR = await postR(`/api/bkk/teacher/photos/${capAfter.body.photo.id}/delete`, {});
+    ok('deleting an R2 photo removes its two objects and its row; Cloudinary is not asked',
+       delR.status === 200 && objs(delRow).every(o => !o) && !(await keysOf(capAfter.body.photo.id)) && !destroyedR.length
+         && (await rawR(capAfter.body.photo.thumb)).status === 403, JSON.stringify(delR.body));
+
+    // Moving the Cloudinary photos: one from Drive, one only on Cloudinary, one that fails.
+    const mk = async (pid, driveId, tag) => {
+      const id = (await pool.query(`INSERT INTO bkk_photos (public_id,class_date,drive_id) VALUES ($1,'2026-09-20',$2) RETURNING id`, [pid, driveId])).rows[0].id;
+      if (tag) await pool.query(`INSERT INTO bkk_photo_members (photo_id,member_id,role) VALUES ($1,(SELECT id FROM bkk_members WHERE code=$2),'main')`, [id, tag]);
+      return id;
+    };
+    await pool.query(`UPDATE bkk_photos SET store='r2', r2_key='aa' WHERE store='cloudinary'`);   // the older test photos, out of the way
+    const parked = (await pool.query(`SELECT id FROM bkk_photos WHERE r2_key='aa'`)).rows.map(r => r.id);
+    const m1 = await mk('aybkk/profile/2026-09-20/mig1', 'MIGDRIVEaaaaaaaaaaaaaaaaa', bob.code);
+    const m2 = await mk('aybkk/profile/2026-09-20/mig2', null, bob.code);
+    const m3 = await mk('aybkk/profile/2026-09-20/mig3', null, null);
+    const step = () => R.api.photoMove();
+    const st0 = await step();
+    ok('the move is off until an admin starts it: a step does nothing', st0.on === false && (await keysOf(m1)).store === 'cloudinary');
+    ok('...Start needs the admin key and a true or false', (await postR('/api/bkk/admin/photo-store/move', { on: true }, PKEY)).status === 401
+       && (await postR('/api/bkk/admin/photo-store/move', { on: 'yes' }, ADMIN)).status === 400);
+    const started = await postR('/api/bkk/admin/photo-store/move', { on: true }, ADMIN);
+    const tagsBefore = (await pool.query('SELECT photo_id, member_id, role FROM bkk_photo_members WHERE photo_id = ANY($1::int[]) ORDER BY 1', [[m1, m2]])).rows;
+    r2Fetches.length = 0;
+    const s1 = await step();
+    const k1 = await keysOf(m1);
+    const [mv1, mt1] = objs(k1);
+    ok('step 1: the Drive photo moves from the Drive original (upright, 2560 px), checked, switched, then destroyed on Cloudinary',
+       started.status === 200 && started.body.move.on === true && s1.moved === 1 && s1.after === m1 && k1.store === 'r2' && /^[0-9a-f]{24}$/.test(k1.r2_key)
+         && k1.public_id === 'aybkk/profile/2026-09-20/mig1' && await size(mv1.body) === '1707x2560' && !!mt1
+         && r2Fetches[0].includes('uc?export=download&id=MIGDRIVE') && !r2Fetches.some(u => u.startsWith('signed://'))
+         && JSON.stringify(destroyedR) === JSON.stringify([{ id: 'aybkk/profile/2026-09-20/mig1', type: 'authenticated', invalidate: true }]),
+       JSON.stringify([s1, k1, destroyedR, r2Fetches]));
+    const heads = r2Log.filter(l => l.method === 'HEAD' && l.key && l.key.includes(k1.r2_key));
+    ok('...both copies checked with a HEAD before the switch', heads.length === 2, JSON.stringify(heads));
+    // A restart: a new server on the same database carries on from where it was.
+    await postR('/api/bkk/admin/photo-store/move', { on: false }, ADMIN);
+    const sStop = await step();
+    ok('Stop: a step does nothing, the place is kept', sStop.on === false && sStop.after === m1 && (await keysOf(m2)).store === 'cloudinary');
+    await postR('/api/bkk/admin/photo-store/move', { on: true }, ADMIN);
+    R.s.close();
+    const R2b = await mountR();
+    const s2 = await R2b.api.photoMove();
+    const k2 = await keysOf(m2);
+    ok('after a restart it goes on from the next photo: one only on Cloudinary moves from its stored JPEG (no transformation)',
+       s2.moved === 2 && s2.after === m2 && k2.store === 'r2' && await size(objs(k2)[0].body) === '2048x1365'
+         && urlCalls.some(c => c.id === 'aybkk/profile/2026-09-20/mig2' && !c.o.transformation && c.o.format === 'jpg')
+         && destroyedR.length === 2, JSON.stringify([s2, k2]));
+    cloudDown = true;
+    const before3 = store.size;
+    const s3 = await R2b.api.photoMove();
+    cloudDown = false;
+    const k3 = await keysOf(m3);
+    ok('a photo no source sends stays on Cloudinary untouched, listed with its reason; nothing left in R2, nothing destroyed',
+       k3.store === 'cloudinary' && !k3.r2_key && s3.failedN === 1 && s3.failed[0].id === m3 && /Neither Drive nor Cloudinary sent the photo/.test(s3.failed[0].why)
+         && store.size === before3 && destroyedR.length === 2 && s3.on === true, JSON.stringify(s3));
+    const s4 = await R2b.api.photoMove();
+    ok('the end of the pass switches it off, done', s4.on === false && s4.done === true && s4.moved === 2, JSON.stringify(s4));
+    const tagsAfter = (await pool.query('SELECT photo_id, member_id, role FROM bkk_photo_members WHERE photo_id = ANY($1::int[]) ORDER BY 1', [[m1, m2]])).rows;
+    ok('...same photo ids, so who is on them is unchanged', JSON.stringify(tagsAfter) === JSON.stringify(tagsBefore) && tagsAfter.length === 2);
+    // Start again: a new pass tries the failed one; a copy R2 does not hold as sent fails it again, cleanly.
+    const BR2 = R2b.base;
+    const again = await fetch(BR2 + '/api/bkk/admin/photo-store/move', { method: 'POST', headers: { 'Content-Type': 'application/json', ...ADMIN }, body: JSON.stringify({ on: true }) }).then(r => r.json());
+    badEtag = true;
+    const s5 = await R2b.api.photoMove();
+    badEtag = false;
+    ok('a new pass after the end tries the failed photo again; a copy R2 does not hold as sent leaves it on Cloudinary, its R2 copies removed',
+       again.move.after === 0 && again.move.failedN === 0 && s5.failedN === 1 && /R2 does not hold the photo as it was sent/.test(s5.failed[0].why)
+         && (await keysOf(m3)).store === 'cloudinary' && store.size === before3 && destroyedR.length === 2, JSON.stringify(s5));
+    const s6 = await R2b.api.photoMove();
+    await fetch(BR2 + '/api/bkk/admin/photo-store/move', { method: 'POST', headers: { 'Content-Type': 'application/json', ...ADMIN }, body: JSON.stringify({ on: true }) });
+    const s7 = await R2b.api.photoMove();
+    ok('...that pass ends; the next Start moves it', s6.done === true && s6.on === false && (await keysOf(m3)).store === 'r2' && s7.moved === 3 && destroyedR.length === 3,
+       JSON.stringify([s6, s7]));
+    const bobNow = (await (await fetch(`${BR2}/api/bkk/me/${bob.code}/photos`)).json()).days.flatMap(d => d.items).find(i => i.id === m1);
+    const migrated = await fetch(BR2 + bobNow.thumb);
+    ok('a moved photo shows to its student from R2 at once', /^\/ph\//.test(bobNow.thumb) && migrated.status === 200
+       && migrated.headers.get('content-type') === 'image/webp', JSON.stringify(bobNow));
+    R2b.s.close();
+    await pool.query(`UPDATE bkk_photos SET store='cloudinary', r2_key=NULL WHERE id = ANY($1::int[])`, [parked]);
+    await pool.query(`DELETE FROM bkk_photos WHERE id = ANY($1::int[])`, [[m1, m2, m3, d1.body.photo.id, dH.body.photo.id, dG.body.photo.id, annOld.body.photo.id]]);
+    await pool.query(`DELETE FROM bkk_settings WHERE key='photo_r2_move'`);
+    fakeR2.close();
+  }
+
   console.log('\n— Rezerv import —');
   const imp1 = await post('/api/bkk/admin/import', { rows: [
     { name: 'Imp One (renewed)', plan: '12 months', until: '26 Oct 2026' },

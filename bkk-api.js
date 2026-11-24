@@ -12,9 +12,11 @@
 
 const crypto = require('crypto');
 const net = require('net');
+const { pipeline, Readable } = require('stream');
 const QRCode = require('qrcode');
 const { sendMail, render } = require('./mailer');
 const { REAL_FIT, REAL_FIT_ID, LANDING_TAGS, landingCode } = require('./inbox');
+const r2lib = require('./lib/r2');
 
 const TZ_OFFSET = '+07:00';                    // Asia/Bangkok, no DST
 const SIGNIN_TTL_MIN = 30;                     // a sign-in link is short-lived
@@ -602,6 +604,8 @@ function mountBkk(app, opts = {}) {
   const pool = opts.pgPool;
   const cloudinary = opts.cloudinary || null;
   const httpFetch = opts.fetch || fetch;
+  // New class photos go to Cloudflare R2 when its four variables are set (lib/r2.js).
+  const r2 = r2lib.makeR2({ endpoint: opts.r2Endpoint });
   // Tests move the clock the 12 Nov price switch and the face links read.
   const nowMs = typeof opts.now === 'function' ? opts.now : Date.now;
   // No key set means no admin at all: the repo is public, so a default key
@@ -732,6 +736,9 @@ function mountBkk(app, opts = {}) {
     // second pass over the same folder skips what is already in.
     await q(`ALTER TABLE bkk_photos ADD COLUMN IF NOT EXISTS drive_id TEXT`);
     await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_photos_drive ON bkk_photos (drive_id) WHERE drive_id IS NOT NULL`);
+    // Where the photo is kept. 'r2': cls/<class date>/<r2_key>/v.jpg and t.webp in R2, r2_key random hex.
+    await q(`ALTER TABLE bkk_photos ADD COLUMN IF NOT EXISTS store TEXT NOT NULL DEFAULT 'cloudinary'`);
+    await q(`ALTER TABLE bkk_photos ADD COLUMN IF NOT EXISTS r2_key TEXT`);
 
     // The 12-week proof check (habit #1, Track): numbers the student already
     // has on their watch or phone, at week 0, 6 and 12. One row per day.
@@ -7574,6 +7581,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     || ADMIN_KEY || crypto.randomBytes(32).toString('hex'))).digest();
   const saveSig = (id, publicId) => crypto.createHmac('sha256', SAVE_KEY).update(`save.${id}.${publicId}`).digest('base64url').slice(0, 22);
   const photoSave = (id, publicId) => `/api/bkk/photo/${id}.${saveSig(id, publicId)}/AYBKK-photo.jpg`;
+  // A photo in R2 is served by this site (/ph, below); one on Cloudinary as before.
+  const photoLink = (p, kind) => p.store === 'r2' ? r2lib.phPath(p.id, p.r2_key, kind === 'thumb' ? 't' : 'v') : photoUrl(p.public_id, kind);
   const isDate = d => /^\d{4}-\d{2}-\d{2}$/.test(String(d || ''));
   // Who is in a photo, and how: 'main' (the photo is about them) or 'other'
   // (in the frame). Sent as tags: [{ code, role }]; the old memberCodes still
@@ -7648,7 +7657,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
        WHERE ${where} GROUP BY p.id ORDER BY p.id`, args)).rows;
     const sec = await serverSecret();
     return rows.map(p => ({ id: p.id, date: p.day, members: p.members.map(({ id, ...m }) => ({ ...m, ref: memberRef(sec, id) })),
-      thumb: photoUrl(p.public_id, 'thumb'), full: photoUrl(p.public_id, 'full'), save: photoSave(p.id, p.public_id),
+      thumb: photoLink(p, 'thumb'), full: photoLink(p, 'full'), save: photoSave(p.id, p.public_id),
       ...(staff && p.drive_id ? { drive: p.drive_id } : {}) }));
   }
 
@@ -7688,8 +7697,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   };
   async function photoMeter() {
     const [u, cap, today] = await Promise.all([cloudUsage(), photosCap(), photosToday()]);
+    // With R2 on, new photos never go to Cloudinary: no limit, and the percent is for faces and older photos.
     return { percent: u ? u.percent : null, used: u ? u.used : null, limit: u ? u.limit : null,
-      cap, today, capOn: !!u && u.percent >= PHOTO_CAP_AT && cap > 0 };
+      cap, today, capOn: !r2 && !!u && u.percent >= PHOTO_CAP_AT && cap > 0, ...(r2 ? { store: 'r2' } : {}) };
   }
   // While Cloudinary is nearly full: at most photos_daily_cap NEW photos a day
   // (0: no limit). Changing who is on a photo already in never counts.
@@ -7775,8 +7785,12 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (!/^data:image\/(jpeg|png|webp);base64,/.test(String(image || ''))) {
         return res.status(400).json({ error: 'image must be a JPEG, PNG or WebP data URL' });
       }
-      if (typeof cloudinary.config === 'function' && !cloudinary.config().api_secret) {
+      if (!r2 && typeof cloudinary.config === 'function' && !cloudinary.config().api_secret) {
         return res.status(503).json({ error: 'Photo storage key is missing in Railway. Nothing was saved: tell Boonchu.' });
+      }
+      if (r2) {
+        const buf = Buffer.from(image.slice(image.indexOf(',') + 1), 'base64');
+        return res.json({ success: true, photo: await storeR2(t, date, [async () => buf], await tagsFrom(req.body), null) });
       }
       const full = await photoCapHit();
       if (full) return res.status(429).json({ error: full, cap: true });
@@ -7811,6 +7825,44 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       `INSERT INTO bkk_photos (public_id,class_date,width,height,uploaded_by,drive_id)
        VALUES ($1,$2,$3,$4,$5,$6) RETURNING id`,
       [up.public_id, date, up.width || null, up.height || null, t.id, driveId])).rows[0];
+    await addTags([photo.id], tags);
+    return (await photosWithTags('p.id = $1', [photo.id], true))[0];
+  }
+
+  // ── class photos in R2 (lib/r2.js) ────────────────────────────────────────
+  // sources: functions that fetch the photo, best first; the first one that can
+  // be read is kept. The row goes in only once both copies are stored.
+  async function r2Made(sources, none) {
+    let why = null;
+    for (const src of sources) {
+      const buf = await src().catch(() => null);
+      if (!buf) continue;
+      try { return await r2lib.photoVariants(buf); } catch (e) { why = e; }
+    }
+    throw Object.assign(new Error(why ? why.message : none), { status: why ? why.status || 502 : 502 });
+  }
+  async function r2Put(day, key, made) {
+    await r2.put(r2lib.objectKey(day, key, 'v'), made.v, 'image/jpeg');
+    await r2.put(r2lib.objectKey(day, key, 't'), made.t, 'image/webp');
+  }
+  // Best effort: a copy left behind is never shown (no row signs a link to it), only stored.
+  async function r2Drop(day, key) {
+    if (!r2) return console.warn('[bkk photos] R2 is off: a photo\'s copies stay in R2');
+    for (const kind of ['v', 't']) {
+      await r2.del(r2lib.objectKey(day, key, kind)).catch(e => console.warn('[bkk photos] R2 copy not removed:', e.message));
+    }
+  }
+  async function storeR2(t, date, sources, tags, driveId, none = 'The photo could not be read.') {
+    const made = await r2Made(sources, none);
+    const key = crypto.randomBytes(12).toString('hex');
+    await r2Put(date, key, made);
+    let photo;
+    try {
+      photo = (await q(
+        `INSERT INTO bkk_photos (public_id,class_date,width,height,uploaded_by,drive_id,store,r2_key)
+         VALUES ($1,$2,$3,$4,$5,$6,'r2',$7) RETURNING id`,
+        [`r2/${date}/${key}`, date, made.width, made.height, t.id, driveId, key])).rows[0];
+    } catch (e) { await r2Drop(date, key); throw e; }
     await addTags([photo.id], tags);
     return (await photosWithTags('p.id = $1', [photo.id], true))[0];
   }
@@ -7898,6 +7950,19 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     } catch (e) { res.status(e.status || 502).json({ error: e.message }); }
   });
 
+  const grab = async (url, maxBytes) => {
+    const r = await httpFetch(url, { signal: AbortSignal.timeout(60000) });
+    if (maxBytes && Number(r.headers.get('content-length')) > maxBytes) { r.body?.cancel().catch(() => {}); return null; }
+    const b = Buffer.from(await r.arrayBuffer());
+    return r.ok && sniff(b) && !(maxBytes && b.length > maxBytes) ? b : null;
+  };
+  const DRIVE_ORIGINAL_MAX = 60 * 1024 * 1024;
+  const driveSources = driveId => {
+    const id = encodeURIComponent(driveId);
+    return [() => grab(`https://drive.google.com/uc?export=download&id=${id}`, DRIVE_ORIGINAL_MAX),
+      () => grab(`https://drive.google.com/thumbnail?id=${id}&sz=s2048`)];
+  };
+
   app.post('/api/bkk/teacher/photos/from-drive', async (req, res) => {
     const t = await teacherFrom(req);
     if (!t) return res.status(401).json({ error: 'bad passcode' });
@@ -7914,6 +7979,12 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         await (add ? addTags([had.id], tags) : setTags(had.id, tags, !tags.given));
         return res.json({ success: true, photo: (await photosWithTags('p.id = $1', [had.id], true))[0] });
       }
+      if (r2) {
+        // The camera original makes the sharp 2560 px copy; Drive's 2048 px JPEG when the
+        // original cannot be had or read here (a HEIC, too big). No daily limit: not Cloudinary.
+        return res.json({ success: true, photo: await storeR2(t, date, driveSources(driveId), tags, driveId,
+          'Drive did not send a photo. Is the folder still shared by link?') });
+      }
       if (typeof cloudinary.config === 'function' && !cloudinary.config().api_secret) {
         return res.status(503).json({ error: 'Photo storage key is missing in Railway. Nothing was saved: tell Boonchu.' });
       }
@@ -7921,11 +7992,6 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (full) return res.status(429).json({ error: full, cap: true });
       // Ask Drive for a 2048px copy (about 0.5 MB, the size we keep anyway) rather
       // than the 5 MB camera original: smaller to send and store. Original if that fails.
-      const grab = async url => {
-        const r = await httpFetch(url, { signal: AbortSignal.timeout(60000) });
-        const b = Buffer.from(await r.arrayBuffer());
-        return r.ok && sniff(b) ? b : null;
-      };
       const id = encodeURIComponent(driveId);
       const buf = await grab(`https://drive.google.com/thumbnail?id=${id}&sz=s2048`)
         || await grab(`https://drive.google.com/uc?export=download&id=${id}`);
@@ -7975,9 +8041,11 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (!t) return res.status(401).json({ error: 'bad passcode' });
     if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
     try {
-      const p = (await q('DELETE FROM bkk_photos WHERE id=$1 RETURNING public_id', [req.params.id])).rows[0];
+      const p = (await q(`DELETE FROM bkk_photos WHERE id=$1 RETURNING public_id, store, r2_key, to_char(class_date,'YYYY-MM-DD') AS day`,
+        [req.params.id])).rows[0];
       if (!p) return res.status(404).json({ error: 'photo not found' });
-      await cloudinary.uploader.destroy(p.public_id, { type: 'authenticated', invalidate: true }).catch(() => {});
+      if (p.store === 'r2') await r2Drop(p.day, p.r2_key);
+      else await cloudinary.uploader.destroy(p.public_id, { type: 'authenticated', invalidate: true }).catch(() => {});
       res.json({ success: true });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
@@ -8004,12 +8072,12 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
              (now() AT TIME ZONE 'Asia/Bangkok')::date - max(p.class_date) ${MAIN} AS "lastMainDays" ${TAGS}`, [m.id]),
         q(`SELECT to_char(p.class_date,'YYYY-MM') AS month, count(*) ${MAIN}::int AS main,
              count(*) FILTER (WHERE pm.role <> 'main')::int AS other ${TAGS} GROUP BY 1 ORDER BY 1 DESC`, [m.id]),
-        q(`SELECT p.id, p.public_id, p.drive_id, to_char(p.class_date,'YYYY-MM-DD') AS date, pm.role ${TAGS}
+        q(`SELECT p.id, p.public_id, p.store, p.r2_key, p.drive_id, to_char(p.class_date,'YYYY-MM-DD') AS date, pm.role ${TAGS}
            ORDER BY p.class_date DESC, (pm.role <> 'main'), p.id DESC LIMIT $2 OFFSET $3`, [m.id, limit, offset]),
       ]);
       res.json({ member: { ...(byRef ? { ref: req.params.code } : { code: m.code }), name: m.name, hint: emailHint(m.email) },
         totals: totals.rows[0], months: months.rows, limit, offset,
-        photos: photos.rows.map(p => ({ id: p.id, date: p.date, role: p.role, thumb: photoUrl(p.public_id, 'thumb'),
+        photos: photos.rows.map(p => ({ id: p.id, date: p.date, role: p.role, thumb: photoLink(p, 'thumb'),
           ...(p.drive_id ? { drive: p.drive_id } : {}) })) });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
@@ -8049,17 +8117,177 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const file = { 'Content-Disposition': 'attachment; filename="AYBKK-photo.jpg"',
       'Cache-Control': 'private, max-age=86400', 'X-Content-Type-Options': 'nosniff' };
     try {
-      const row = (await q('SELECT public_id FROM bkk_photos WHERE id=$1', [Number(m[1])])).rows[0];
+      const row = (await q(`SELECT public_id, store, r2_key, to_char(class_date,'YYYY-MM-DD') AS day FROM bkk_photos WHERE id=$1`,
+        [Number(m[1])])).rows[0];
       const want = Buffer.from(saveSig(m[1], row ? row.public_id : '')), got = Buffer.from(m[2]);
       if (!row || want.length !== got.length || !crypto.timingSafeEqual(want, got)) return res.status(403).json({ error: 'bad link' });
       // A HEAD (a link check) gets the headers without pulling the photo from Cloudinary.
       if (req.method === 'HEAD') return res.set({ ...file, 'Content-Type': 'image/jpeg' }).end();
+      // In R2: its v.jpg, the same link and file name, so a page open from before a move still saves.
+      if (row.store === 'r2') {
+        if (!r2) return res.status(503).json({ error: 'photo storage not configured' });
+        const r = await r2.get(r2lib.objectKey(row.day, row.r2_key, 'v'));
+        if (!r) return res.status(404).json({ error: 'photo not available' });
+        return res.set({ ...file, 'Content-Type': 'image/jpeg' }).send(Buffer.from(await r.arrayBuffer()));
+      }
       const r = await httpFetch(photoUrl(row.public_id, 'full'), { signal: AbortSignal.timeout(30000) });
       const buf = r.ok ? Buffer.from(await r.arrayBuffer()) : null;
       const type = buf && sniff(buf);
       if (!type) return res.status(r.status === 404 ? 404 : 502).json({ error: 'photo not available' });
       res.set({ ...file, 'Content-Type': type }).send(buf);
     } catch (e) { res.status(502).json({ error: 'photo not available' }); }
+  });
+
+  // ── /ph: class photos in R2, served by this site ──────────────────────────
+  // Not under /api, and cacheable: the link is the key (signed, never ending, as the
+  // Cloudinary links were), so Cloudflare's edge in front of aybkk.net may keep the
+  // bytes. One day at most, in browsers and at the edge alike: a deleted photo must
+  // stop being served within a day, and nothing here empties Cloudflare's cache.
+  // No cookie is set on these answers (Cloudflare would not keep them), and an
+  // error is never kept. An unknown id is 403 like a bad signature. Only while R2
+  // is on: with it off, /ph is not a route here, as before.
+  const PH_FILES = { 't.webp': ['t', 'image/webp'], 'v.jpg': ['v', 'image/jpeg'], 'p.jpg': ['p', 'image/jpeg'] };
+  if (r2) app.get('/ph/:t/:f', async (req, res) => {
+    const no = (status, error) => res.status(status).set('Cache-Control', 'no-store').json({ error });
+    const m = /^([1-9]\d{0,9})\.([\w-]{22})$/.exec(req.params.t), f = PH_FILES[req.params.f];
+    if (!m || !f) return no(404, 'not found');
+    const [kind, type] = f;
+    try {
+      const row = (await q(`SELECT r2_key, to_char(class_date,'YYYY-MM-DD') AS day FROM bkk_photos WHERE id=$1 AND store='r2'`,
+        [Number(m[1])])).rows[0];
+      const want = Buffer.from(r2lib.phSig(m[1], row ? row.r2_key : '', kind)), got = Buffer.from(m[2]);
+      if (!row || want.length !== got.length || !crypto.timingSafeEqual(want, got)) return no(403, 'bad link');
+      const key = r2lib.objectKey(row.day, row.r2_key, kind);       // p.jpg is made from t.webp
+      const head = { 'Content-Type': type, 'Cache-Control': 'public, max-age=86400, s-maxage=86400', 'X-Content-Type-Options': 'nosniff' };
+      if (req.method === 'HEAD') {
+        const h = await r2.head(key);
+        if (!h) return no(404, 'photo not available');
+        return res.set(kind === 'p' ? head : { ...head, 'Content-Length': String(h.size) }).end();
+      }
+      const r = await r2.get(key);
+      if (!r) return no(404, 'photo not available');
+      if (kind === 'p') return res.set(head).send(await r2lib.tileJpeg(Buffer.from(await r.arrayBuffer())));
+      const size = r.headers.get('content-length');
+      res.set(size ? { ...head, 'Content-Length': size } : head);
+      pipeline(Readable.fromWeb(r.body), res, () => {});
+    } catch (e) {
+      console.warn('[bkk photos] /ph not served:', e.message);
+      if (!res.headersSent) no(502, 'photo not available');
+    }
+  });
+
+  // ── Admin, Settings, "Photo storage" ──────────────────────────────────────
+  // Photo counts only, for staff. The test writes, reads back and deletes one
+  // small object under test/ and says OK or R2's refusal; never a key.
+  app.get('/api/bkk/admin/photo-store', async (req, res) => {
+    if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
+    res.set('Cache-Control', 'private, no-store');
+    try {
+      const c = (await q(`SELECT count(*) FILTER (WHERE store = 'r2')::int AS r2,
+          count(*) FILTER (WHERE store = 'cloudinary')::int AS cloudinary FROM bkk_photos`)).rows[0];
+      res.json({ r2: !!r2, photos: { cloudinary: c.cloudinary, r2: c.r2 }, move: await moveState() });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+  app.post('/api/bkk/admin/photo-store/test', async (req, res) => {
+    if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
+    if (!r2) return res.json({ ok: false, error: `R2 is not set up: ${r2lib.R2_VARS.join(', ')} are needed in Railway.` });
+    const t0 = Date.now(), key = `test/${crypto.randomBytes(8).toString('hex')}.txt`;
+    const body = Buffer.from(`AYBKK R2 test ${new Date().toISOString()}`);
+    try {
+      await r2.put(key, body, 'text/plain');
+      let back = null;
+      try {
+        const r = await r2.get(key);
+        back = r ? Buffer.from(await r.arrayBuffer()) : null;
+      } finally { await r2.del(key); }
+      if (!back || !back.equals(body)) throw new Error('R2 sent back something other than what was stored');
+      res.json({ ok: true, ms: Date.now() - t0 });
+    } catch (e) { res.json({ ok: false, error: e.message }); }
+  });
+
+  // ── moving the Cloudinary class photos to R2 (off until Start) ────────────
+  // One photo at a time, 3 a minute: the Drive original when the photo came from
+  // Drive (else Drive's 2048 px copy), else the JPEG stored on Cloudinary, which
+  // makes no new copy there. Both R2 copies are checked (size, and MD5 when R2
+  // gives one) before the row switches in one update, and only then is the
+  // Cloudinary asset destroyed. A failure leaves the photo on Cloudinary as it
+  // was and is listed with its reason; the next Start after the end of a pass
+  // tries those again. Same photo id, so who is on it does not change.
+  // The place reached is kept in bkk_settings: it never starts by itself, but
+  // once started it goes on after a restart, until done or Stop.
+  const MOVE_KEY = 'photo_r2_move', MOVE_EVERY_MS = 20000;
+  const moveState = async () => ({ on: false, after: 0, moved: 0, failedN: 0, failed: [], cloudLeft: 0,
+    ...((await getSetting(MOVE_KEY, null)) || {}) });
+  // A step can switch it off (done) but not back on: Stop pressed while a photo was moving holds.
+  const saveMove = (s, plain) => q(`INSERT INTO bkk_settings (key,value,updated_at) VALUES ($1,$2::jsonb,now())
+    ON CONFLICT (key) DO UPDATE SET updated_at=now(), value = EXCLUDED.value${plain ? ''
+      : ` || jsonb_build_object('on', (EXCLUDED.value->>'on')::boolean AND coalesce((bkk_settings.value->>'on')::boolean, false))`}`,
+  [MOVE_KEY, JSON.stringify(s)]);
+  const errText = e => String((e && (e.message || (e.error && e.error.message))) || e).slice(0, 200);
+  async function moveOne() {
+    const s = await moveState();
+    if (!s.on || !r2 || !cloudinary) return { ...s, on: false };
+    const at = new Date(nowMs()).toISOString();
+    const p = (await q(`SELECT id, public_id, drive_id, to_char(class_date,'YYYY-MM-DD') AS day FROM bkk_photos
+      WHERE store = 'cloudinary' AND id > $1 ORDER BY id LIMIT 1`, [s.after])).rows[0];
+    if (!p) { Object.assign(s, { on: false, done: true, at }); await saveMove(s); return s; }
+    const key = crypto.randomBytes(12).toString('hex');
+    let sent = false;
+    try {
+      const made = await r2Made([...(p.drive_id ? driveSources(p.drive_id) : []), () => grab(photoUrl(p.public_id, 'full'))],
+        'Neither Drive nor Cloudinary sent the photo.');
+      sent = true;
+      await r2Put(p.day, key, made);
+      for (const kind of ['v', 't']) {
+        const h = await r2.head(r2lib.objectKey(p.day, key, kind)), b = made[kind];
+        if (!h || h.size !== b.length || (/^[0-9a-f]{32}$/.test(h.etag) && h.etag !== crypto.createHash('md5').update(b).digest('hex'))) {
+          throw new Error(`R2 does not hold the ${kind === 'v' ? 'photo' : 'tile'} as it was sent`);
+        }
+      }
+      const moved = (await q(`UPDATE bkk_photos SET store='r2', r2_key=$2, width=$3, height=$4
+        WHERE id=$1 AND store='cloudinary' RETURNING id`, [p.id, key, made.width, made.height])).rows[0];
+      if (!moved) await r2Drop(p.day, key);              // deleted meanwhile
+      else {
+        s.moved++;
+        try {
+          const d = await cloudinary.uploader.destroy(p.public_id, { type: 'authenticated', invalidate: true });
+          if (!d || !['ok', 'not found'].includes(d.result)) throw new Error(`Cloudinary answered ${d && d.result}`);
+        } catch (e) { s.cloudLeft++; s.cloudWhy = `#${p.id}: ${errText(e)}`; }
+      }
+    } catch (e) {
+      if (sent) await r2Drop(p.day, key);
+      s.failedN++;
+      s.failed = [{ id: p.id, why: errText(e), at }, ...s.failed].slice(0, 20);
+    }
+    Object.assign(s, { after: p.id, at });
+    await saveMove(s);
+    return s;
+  }
+  let moving = null, moveTimer = null;
+  const moveStep = () => moving || (moving = moveOne().finally(() => { moving = null; }));
+  function moveSoon(ms = MOVE_EVERY_MS) {
+    clearTimeout(moveTimer);
+    if (!timers) return;                 // a test steps by hand
+    moveTimer = setTimeout(() => moveStep().then(s => { if (s.on) moveSoon(); },
+      e => { console.error('[bkk photos] move step failed:', e.message); moveSoon(); }), ms);
+    moveTimer.unref();
+  }
+  app.post('/api/bkk/admin/photo-store/move', async (req, res) => {
+    if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
+    const on = (req.body || {}).on;
+    if (typeof on !== 'boolean') return res.status(400).json({ error: 'on must be true or false' });
+    if (on && (!r2 || !cloudinary)) return res.status(400).json({ error: r2 ? 'Cloudinary is not set up: nothing to move.' : 'R2 is not set up.' });
+    try {
+      const s = await moveState();
+      if (on && !s.on) {
+        // After a finished pass, a new one: the photos that failed are tried again.
+        if (s.done || !s.startedAt) Object.assign(s, { after: 0, failed: [], failedN: 0, done: false, startedAt: new Date(nowMs()).toISOString() });
+        s.on = true;
+      } else if (!on) s.on = false;
+      await saveMove(s, true);
+      if (s.on) moveSoon(1000); else clearTimeout(moveTimer);
+      res.json({ move: s });
+    } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
   // ── the student's own face (Boonchu, 9 Nov 2026) ──────────────────────────
@@ -8906,10 +9134,12 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     .then(() => {
       console.log('✓ bkk-api mounted (/api/bkk/*)'); letterPurge(); sweepFaces();
       if (timers) { startPayWatch(); teePurgeTick(); setInterval(teePurgeTick, 24 * 3600 * 1000).unref(); }
+      // A move of photos to R2 that staff started and did not stop goes on, a minute after a restart.
+      if (timers && r2) moveState().then(s => { if (s.on) moveSoon(60000); }).catch(() => {});
       return switchPrices().catch(e => console.error('✗ bkk: price switch failed:', e.message));
     })
     .catch(e => console.error('✗ bkk-api schema init failed:', e.message))
-    .then(() => ({ paySweep, moneyTick, moneyLine, resendAlerts, teePurge, findOrCreateMember, staffSigninLink }));
+    .then(() => ({ paySweep, moneyTick, moneyLine, resendAlerts, teePurge, findOrCreateMember, staffSigninLink, photoMove: moveStep }));
 }
 
 // PaySolutions posts application/x-www-form-urlencoded; make sure that body is

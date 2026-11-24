@@ -13,3 +13,5 @@ console.log(`${has('BKK_ADMIN_KEY') || has('SHOP_ADMIN_KEY') ? '✓' : '✗'} BK
 // Optional: the main AYBKK LINE OA (its webhook, messages to students, and the team briefs, team-brief.js).
 line('LINE_CHANNEL_SECRET', '(optional)');
 line('LINE_CHANNEL_ACCESS_TOKEN', '(optional)');
+// Optional: class photos in Cloudflare R2 (lib/r2.js), on only with all four. Without them new photos go to Cloudinary.
+for (const k of ['R2_ACCOUNT_ID', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY', 'R2_BUCKET']) line(k, '(optional)');

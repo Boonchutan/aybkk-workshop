@@ -135,6 +135,15 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
   list under Assignments & notes). `start_date` is per student (alumni start 2027-01-24, day 14, session #13); `terms_arranged` opens the course
   without the sign flow. The staff note (`cohort_note`) never reaches the student. The roster, calendar text and links
   are entered in Admin, never in git.
+- **Class photos:** new ones go to Cloudflare R2 when `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`
+  and `R2_BUCKET` are all set (`lib/r2.js`); with any one missing, everything stays on Cloudinary as before.
+  `bkk_photos.store` says where a photo is; in R2 it is `cls/<class date>/<r2_key>/v.jpg` (long side 2560 px, upright,
+  no metadata) and `t.webp` (the 600 px tile). Students get `/ph/<id>.<sig>/t.webp` and `v.jpg` (signed, never
+  ending, relative so cn.aybkk.net works too), sent `public, max-age=86400, s-maxage=86400` so Cloudflare's edge keeps
+  them: a deleted photo can still show for up to a day. Admin, Settings, "Photo storage": Test R2, photo counts, and
+  Start/Stop for moving the older Cloudinary photos (about 3 a minute, each checked in R2 before it switches, then
+  destroyed on Cloudinary; state in `bkk_settings` `photo_r2_move`). With R2 on, `photos_daily_cap` does not apply.
+  Faces (`aybkk-profile`) stay on Cloudinary, and the `PHOTO_SIZES`/`FACE_SIZES` strings never change (a new one re-bills every photo).
 - **Inbox:** `inbox.js` keeps 1:1 chats from the LINE Official Account (`/line/webhook`) and
   Instagram/Facebook DMs and comments (`/meta/webhook`) in `aybkk_inbox` for 90 days.
   Machi reads `GET /api/inbox` (header `x-inbox-key`). Env: `INBOX_KEY`; `LINE_CHANNEL_SECRET`
