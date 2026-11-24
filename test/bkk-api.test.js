@@ -8762,9 +8762,13 @@ const ok = (name, cond, extra = '') => {
     await add(ymd(4), ymd(34), 'void');
     const me = (await J('/api/bkk/me/' + code)).body;
     const ps = (me.passes || []).map(p => [String(p.validUntil).slice(0, 10), p.status, p.ended]);
-    ok('/me: a void pass is never listed; live passes first (a pass ending today and a frozen one are live), then the ended ones, each saying so',
-       JSON.stringify(ps) === JSON.stringify([[ymd(-10), 'frozen', false], [ymd(0), 'active', false], [ymd(3), 'active', false],
-         [ymd(-31), 'active', true], [ymd(-370), 'active', true]]) && [longAgo, current, lastMonth, endsToday, paused].length === 5, JSON.stringify(ps));
+    ok('/me: a void pass is never listed; live passes first (one ending today is live), then the ended ones, each saying so: a frozen pass whose end has passed too',
+       JSON.stringify(ps) === JSON.stringify([[ymd(0), 'active', false], [ymd(3), 'active', false],
+         [ymd(-10), 'frozen', true], [ymd(-31), 'active', true], [ymd(-370), 'active', true]]) && [longAgo, current, lastMonth, endsToday, paused].length === 5, JSON.stringify(ps));
+    const pausing = await add(ymd(-20), ymd(17), 'frozen');
+    const me2 = (await J('/api/bkk/me/' + code)).body;
+    ok('...a pause still running (its end moved out past today) stays live', (me2.passes || []).some(p => String(p.validUntil).slice(0, 10) === ymd(17)
+       && p.status === 'frozen' && p.ended === false) && !!pausing, JSON.stringify(me2.passes));
   }
 
   console.log('\n— the desk note on a student (24 Nov 2026) —');
@@ -8784,9 +8788,12 @@ const ok = (name, cond, extra = '') => {
     const stale = await N('BDESKNOTE901', { note: 'Overwrite from an old page', at: null });
     const s2 = await N('BDESKNOTE901', { note: 'Paid in full.', at: s1.body.at });
     const tooLong = await N('BDESKNOTE901', { note: 'x'.repeat(2001), at: s2.body.at });
+    const pasted = await N('BDESKNOTE902', { note: 'Paid 500 cash\u000bowes 300\u0007' });
+    await N('BDESKNOTE902', { note: '' });
     ok('...a save from a page that saw an older note is 409 with what is saved now; the right one goes through; over 2000 characters is 400',
        stale.status === 409 && stale.body.changed === true && stale.body.note === s1.body.note && s2.status === 200 && s2.body.note === 'Paid in full.'
-       && tooLong.status === 400 && (await one(`SELECT desk_note FROM bkk_members WHERE code='BDESKNOTE901'`)).desk_note === 'Paid in full.',
+       && tooLong.status === 400 && (await one(`SELECT desk_note FROM bkk_members WHERE code='BDESKNOTE901'`)).desk_note === 'Paid in full.'
+       && pasted.status === 200 && pasted.body.note === 'Paid 500 cash\nowes 300',
        JSON.stringify([stale.status, stale.body.note, s2.body.note, tooLong.status]));
     await N('BDESKNOTE902', { note: 'Twin profile: same person, old email.' });
     const mg = await post('/api/bkk/admin/members/BDESKNOTE901/merge', { from: 'BDESKNOTE902', sure: true }, ADMIN);

@@ -2357,8 +2357,10 @@ function mountBkk(app, opts = {}) {
   app.post('/api/bkk/admin/members/:code/note', async (req, res) => {
     if (adminOnly(req, res)) return;
     const b = req.body || {};
-    const note = String(b.note ?? '').replace(/\r\n?/g, '\n').trim();
-    if (note.length > DESK_NOTE_MAX || /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(note))
+    // Pasted from Word or PowerPoint: their soft breaks become line breaks, other invisible characters go.
+    const note = String(b.note ?? '').replace(/\r\n?/g, '\n').replace(/[\u000b\u000c]/g, '\n')
+      .replace(/[\u0000-\u0008\u000e-\u001f\u007f]/g, '').trim();
+    if (note.length > DESK_NOTE_MAX)
       return res.status(400).json({ error: `a note is up to ${DESK_NOTE_MAX} characters` });
     const client = await pool.connect();
     try {
@@ -3091,7 +3093,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (!m) return res.status(404).json({ error: 'not found' });
       const passes = (await q(
         `SELECT p.*, pr.name_en, pr.name_th, pr.code AS product_code,
-           p.status <> 'frozen' AND p.valid_until IS NOT NULL AND p.valid_until < $2::date AS ended
+           p.valid_until IS NOT NULL AND p.valid_until < $2::date AS ended
          FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
          WHERE p.member_id=$1 ORDER BY p.id DESC`, [m.id, bkkToday()])).rows;
       // For the review ask in My account: study passes beyond the first. A single
