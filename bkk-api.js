@@ -328,6 +328,53 @@ const consentLangs = (version = CONSENT_VERSION) => CONSENT_LANGS.filter(l => CO
 const consentSha = (version, lang) => crypto.createHash('sha256').update(JSON.stringify(CONSENT_TEXT[version][lang].agreement)).digest('hex');
 const privacySha = (version, lang) => crypto.createHash('sha256').update(JSON.stringify(CONSENT_TEXT[version][lang].privacy)).digest('hex');
 
+// The tee pre-order's own privacy notice (24 Nov 2026), shown at the tee checkout instead of the
+// class agreement: a tee buyer in China never signs the shala's agreement. Pinned by its sha256 in
+// test/bkk-api.test.js like CONSENT_TEXT: changed words are a new version. {legal_name}, {address}
+// and {email} are the class notice's Settings; {purge_days} is the drop's own. ZH NEEDS A NATIVE CHECK:
+// translated from the English by Claude, not yet read by a native speaker.
+const TEE_NOTICE_VERSION = 't1';
+const TEE_NOTICE = {
+  t1: {
+    en: {
+      title: 'Tee pre-order: privacy notice',
+      sections: [
+        ['Who we are', '{legal_name} runs AYBKK (Ashtanga Yoga Center of Bangkok), {address}. Contact us at {email} or on LINE @aybkk.'],
+        ['What we keep', 'Your name, WeChat ID, mobile number if you give one, email, the tees you order, your pickup point, and the payment record (amount, date, reference). We never see or keep your card or wallet details: PaySolutions handles the payment.'],
+        ['Why', 'To hand this order to you at the pickup point you chose, to send your receipt, and to answer your questions about this order. We never sell your data.'],
+        ['Who else sees it', 'PaySolutions takes the payment and receives your email. Resend sends our emails. Railway runs the server and database of this site. Cloudflare carries this site’s traffic to and from cn.aybkk.net. The AYBKK team member at your pickup point sees your name, WeChat ID and the tees you ordered, to hand them to you. Alerts to our staff on Telegram carry the order reference and how many tees, never your name or contact details.'],
+        ['Thailand and China', 'AYBKK is in Thailand. Your details are kept on servers outside China, and travel between Thailand and China so that a team member can hand your order to you in China.'],
+        ['How long', 'Your name, WeChat ID, mobile number and email are deleted {purge_days} days after you collect your order, or 7 days after an order is cancelled or left unpaid. If a problem with your order is still open (a swap, a refund, a wrong amount), we keep them until it is settled, at most 60 days longer. The payment record is kept for 5 years, as Thai tax law asks.'],
+        ['Your rights', 'You can ask to see your data, get a copy, correct it or delete it. Write to {email} or message LINE @aybkk. We keep the payment record for the time above even if you ask us to delete the rest. If you are not happy with how we handle your data, you can complain to the Personal Data Protection Committee of Thailand.'],
+      ],
+      tick: 'I have read the privacy notice for this order.',
+    },
+    zh: {
+      title: 'T恤预订：隐私声明',
+      sections: [
+        ['我们是谁', '{legal_name} 经营 AYBKK（Ashtanga Yoga Center of Bangkok），地址：{address}。联系方式：{email} 或 LINE @aybkk。'],
+        ['我们保存什么', '你的姓名、微信号、手机号（如果你填写）、邮箱、你订购的T恤、你选择的领取点，以及付款记录（金额、日期、订单号）。我们看不到，也不保存你的银行卡或钱包信息：付款由 PaySolutions 处理。'],
+        ['为什么保存', '用于在你选择的领取点把这份订单交给你、发送收据，以及回答你关于这份订单的问题。我们绝不出售你的资料。'],
+        ['还有谁会看到', 'PaySolutions 处理付款，并会收到你的邮箱。Resend 发送我们的邮件。Railway 运行本网站的服务器和数据库。Cloudflare 为 cn.aybkk.net 传送本网站的数据。你所选领取点的 AYBKK 成员会看到你的姓名、微信号和你订购的T恤，以便把T恤交给你。通过 Telegram 发给工作人员的提醒只包含订单号和T恤数量，绝不包含你的姓名或联系方式。'],
+        ['泰国和中国', 'AYBKK 位于泰国。你的资料保存在中国境外的服务器上，并会在泰国和中国之间传送，以便 AYBKK 成员在中国把订单交给你。'],
+        ['保存多久', '你的姓名、微信号、手机号和邮箱会在你领取订单 {purge_days} 天后删除；订单取消或未付款的，7 天后删除。如果订单还有未解决的问题（换货、退款、金额不符），我们会保留到问题解决为止，最多再保留 60 天。付款记录按照泰国税法要求保存 5 年。'],
+        ['你的权利', '你可以要求查看你的资料、获取副本、更正或删除。请发邮件到 {email}，或通过 LINE @aybkk 联系我们。即使你要求删除其他资料，我们也会按上述期限保存付款记录。如果你对我们处理资料的方式不满意，可以向泰国个人数据保护委员会投诉。'],
+      ],
+      tick: '我已阅读这份订单的隐私声明。',
+    },
+  },
+};
+const teeNoticeSha = (version, lang) => crypto.createHash('sha256').update(JSON.stringify(TEE_NOTICE[version][lang])).digest('hex');
+const TEE_SIZES = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'];
+const TEE_LANGS = ['en', 'zh', 'th', 'ru'];          // what a buyer's page may say it is; mail and notice are zh or en
+const TEE_FEW = 3;                                  // "a few left" at this many or fewer, never the number
+const TEE_HOLDS_PER_EMAIL = 2;                      // live unpaid holds per drop per email
+const TEE_ORDERS_PER_IP_HOUR = 20;                  // a script holding the whole drop, from one address
+const TEE_UNPAID_PURGE_DAYS = 7;                    // contact details after a cancel or a lapsed unpaid hold
+const TEE_HELD_DAYS = 60;                           // at most this much longer while a problem note or a wrong amount is open
+const TEE_GATEWAY_KEEP = ['ReferenceNo', 'OrderNo', 'Status', 'StatusName', 'Total', 'CardType', 'CurrencyCode', 'OrderDateTime'];
+const TEE_ORIGIN = 'https://cn.aybkk.net';          // the status link in the receipt: buyers are in China
+
 // ── seed data (from aybkk.com, captured 2026-08-05) ─────────────────────────
 // price_thb is the BASE price. The online surcharge is a setting, applied at
 // checkout, so it can be changed without touching the catalogue.
@@ -907,6 +954,55 @@ function mountBkk(app, opts = {}) {
     // What the checkout's tick said, {agree, version, lang, name, under20}: activateOrder writes
     // the row from it when the buyer did not hold the profile.
     await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS consent JSONB`);
+
+    // The tee pre-order (24 Nov 2026). Its money row is a bkk_orders row of kind 'tee' (no package,
+    // no member), so the postback, pay/check, the payment watch, Payments, VAT and the books keep
+    // working; it never makes a pass, a booking, a consent row, a login token or a member.
+    await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS kind TEXT NOT NULL DEFAULT 'pass'`);
+    await q(`DO $$ BEGIN
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'bkk_orders_kind_check') THEN
+        ALTER TABLE bkk_orders ADD CONSTRAINT bkk_orders_kind_check CHECK (kind IN ('pass','tee'));
+      END IF;
+    EXCEPTION WHEN duplicate_object THEN NULL; END $$`);
+    // A drop: one 7-day pre-order. cap is all its tees together. Pickup points [{key, label}] are
+    // typed in Admin and live only here (a label names a city and a team member).
+    await q(`CREATE TABLE IF NOT EXISTS bkk_tee_drops (
+      id SERIAL PRIMARY KEY, code TEXT UNIQUE NOT NULL CHECK (code ~ '^[a-z0-9-]{3,24}$'),
+      title JSONB NOT NULL DEFAULT '{}', opens_at TIMESTAMPTZ NOT NULL, closes_at TIMESTAMPTZ NOT NULL,
+      published BOOLEAN NOT NULL DEFAULT false, cap INTEGER NOT NULL CHECK (cap BETWEEN 1 AND 500),
+      max_per_order INTEGER NOT NULL DEFAULT 5 CHECK (max_per_order BETWEEN 1 AND 10),
+      hold_min INTEGER NOT NULL DEFAULT 30 CHECK (hold_min BETWEEN 5 AND 1440),
+      purge_days INTEGER NOT NULL DEFAULT 30 CHECK (purge_days BETWEEN 1 AND 365),
+      rmb_rate NUMERIC CHECK (rmb_rate IS NULL OR (rmb_rate > 0 AND rmb_rate < 10)),
+      pickups JSONB NOT NULL DEFAULT '[]', costs JSONB, report JSONB, done_at TIMESTAMPTZ,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(), CHECK (closes_at > opens_at))`);
+    await q(`CREATE TABLE IF NOT EXISTS bkk_tee_stock (
+      id SERIAL PRIMARY KEY, drop_id INTEGER NOT NULL REFERENCES bkk_tee_drops(id),
+      design TEXT NOT NULL, design_name JSONB NOT NULL DEFAULT '{}', colour TEXT NOT NULL, colour_name JSONB NOT NULL DEFAULT '{}',
+      size TEXT NOT NULL CHECK (size IN (${TEE_SIZES.map(s => `'${s}'`).join(',')})),
+      price_thb INTEGER NOT NULL CHECK (price_thb > 0),
+      photo TEXT CHECK (photo IS NULL OR photo ~ '^/img/[\\w./-]+$'),
+      cap INTEGER NOT NULL DEFAULT 0 CHECK (cap >= 0), sort INTEGER NOT NULL DEFAULT 0,
+      UNIQUE (drop_id, design, colour, size))`);
+    // Stock is never counted down: what is taken is read from the lines (teeTaken).
+    await q(`CREATE TABLE IF NOT EXISTS bkk_tee_orders (
+      order_id INTEGER PRIMARY KEY REFERENCES bkk_orders(id), drop_id INTEGER NOT NULL REFERENCES bkk_tee_drops(id),
+      token TEXT UNIQUE NOT NULL, hold_until TIMESTAMPTZ NOT NULL,
+      status TEXT NOT NULL DEFAULT 'new' CHECK (status IN ('new','paid','oversold','handed','cancelled')),
+      problem TEXT, lang TEXT, pickup TEXT,
+      name TEXT CHECK (name IS NULL OR char_length(name) BETWEEN 2 AND 30),
+      wechat TEXT CHECK (wechat IS NULL OR char_length(wechat) BETWEEN 1 AND 40),
+      mobile TEXT CHECK (mobile IS NULL OR mobile ~ '^1[3-9][0-9]{9}$'), email TEXT,
+      notice_version TEXT, notice_sha TEXT, notice_lang TEXT,
+      paid_at TIMESTAMPTZ, handed_at TIMESTAMPTZ, cancelled_at TIMESTAMPTZ, purged_at TIMESTAMPTZ,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now())`);
+    await q(`CREATE INDEX IF NOT EXISTS bkk_tee_orders_drop ON bkk_tee_orders (drop_id, status)`);
+    await q(`CREATE INDEX IF NOT EXISTS bkk_tee_orders_email ON bkk_tee_orders (drop_id, lower(email))`);
+    await q(`CREATE TABLE IF NOT EXISTS bkk_tee_lines (
+      order_id INTEGER NOT NULL REFERENCES bkk_tee_orders(order_id), stock_id INTEGER NOT NULL REFERENCES bkk_tee_stock(id),
+      qty INTEGER NOT NULL CHECK (qty BETWEEN 1 AND 10), unit_thb INTEGER NOT NULL,
+      PRIMARY KEY (order_id, stock_id))`);
+    await q(`CREATE INDEX IF NOT EXISTS bkk_tee_lines_stock ON bkk_tee_lines (stock_id)`);
 
     // Catalogue: a package added to SEED_PRODUCTS reaches a running shala on the
     // next boot. ON CONFLICT leaves existing rows alone, so a price changed or a
@@ -1644,9 +1740,17 @@ function mountBkk(app, opts = {}) {
 
   // now: the payment watch's clock (paySweep passes its own); out.verdict: what
   // PaySolutions answered, for the sweep.
-  async function verifyAndActivate(refno, { now = nowMs(), out = {} } = {}) {
+  // kind: 'pass' or 'tee'; a tee order also says where its tee order stands ({ tee: { status } }).
+  async function verifyAndActivate(refno, opts = {}) {
     const o = (await q('SELECT * FROM bkk_orders WHERE refno = $1', [refno])).rows[0];
     if (!o) return { status: 'unknown' };
+    const r = await verifyOrder(o, refno, opts);
+    if (o.kind !== 'tee') return { ...r, kind: 'pass' };
+    const t = (await q(`SELECT t.status, t.hold_until, o.status AS money FROM bkk_tee_orders t JOIN bkk_orders o ON o.id=t.order_id
+      WHERE t.order_id=$1`, [o.id])).rows[0];
+    return { ...r, kind: 'tee', tee: t ? { status: teeView(t, t.money, nowMs()) } : null };
+  }
+  async function verifyOrder(o, refno, { now = nowMs(), out = {} } = {}) {
     if (o.status === 'paid') return { status: 'paid', already: true, ...await orderBooking(o) };
     // A Rezerv payment is history: it never goes near the gateway or a pass.
     if (o.source === 'rezerv') return { status: o.status };
@@ -1682,7 +1786,7 @@ function mountBkk(app, opts = {}) {
       if (!upd.rows.length) return alreadyPaid();
       console.warn(`[bkk pay] AMOUNT MISMATCH refno=${refno} gateway=${verdict.amount} expected=${o.amount_thb}`);
       alertSoon(o, 'mismatch', `⚠ Wrong amount: PaySolutions says ${verdict.amount == null ? 'no amount'
-        : '฿' + thb(Math.round(Number(verdict.amount)))}, the order is ฿${thb(o.amount_thb)}. No pass was made.`,
+        : '฿' + thb(Math.round(Number(verdict.amount)))}, the order is ฿${thb(o.amount_thb)}. ${o.kind === 'tee' ? 'Nothing was sold.' : 'No pass was made.'}`,
         'Look in PaySolutions before you do anything.');
       return { status: 'mismatch' };
     }
@@ -1701,10 +1805,13 @@ function mountBkk(app, opts = {}) {
   const gwText = s => String(s || '').replace(/\S*@\S*/g, ' ').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 40);
   // "Sun 15 Nov 21:05", Bangkok time.
   const bkkClock = ms => { const t = new Date(ms + 7 * 3600000).toISOString(); return `${classWhen(t.slice(0, 10), '').slice(0, -7)} ${t.slice(11, 16)}`; };
+  // A tee order names no buyer at all: no name, WeChat ID, mobile or email in Telegram.
   async function orderLine(o) {
-    const r = (await q(`SELECT m.name, m.code, pr.name_en FROM bkk_orders o
-      LEFT JOIN bkk_members m ON m.id=o.member_id LEFT JOIN bkk_products pr ON pr.id=o.product_id
+    const r = (await q(`SELECT m.name, m.code, pr.name_en, o.kind, o.item_name,
+        (SELECT sum(l.qty)::int FROM bkk_tee_lines l WHERE l.order_id=o.id) AS tees
+      FROM bkk_orders o LEFT JOIN bkk_members m ON m.id=o.member_id LEFT JOIN bkk_products pr ON pr.id=o.product_id
       WHERE o.id=$1`, [o.id])).rows[0] || {};
+    if (r.kind === 'tee') return `Tee order · ${r.item_name || 'AYBKK tee pre-order'} ×${r.tees || 0} · ฿${thb(o.amount_thb)} · ref ${o.refno}`;
     return `${pingName(r.name)} (${r.code || 'no member code'}) · ${r.name_en || 'no package'} · ฿${thb(o.amount_thb)} · ref ${o.refno}`;
   }
   // Claimed before it is sent, so a restart or a second server never sends it
@@ -1883,6 +1990,7 @@ function mountBkk(app, opts = {}) {
   // { unsold, seat } when the door's sale was not needed after all (seat: what
   // takeSeat found), or null when the order was already paid.
   async function activateOrder(order, verdict = {}, opts = {}) {
+    if (order.kind === 'tee') return activateTee(order, verdict, opts);
     const pr = (await q('SELECT * FROM bkk_products WHERE id = $1', [order.product_id])).rows[0];
     const client = await pool.connect();
     let seat = null, cls = null;
@@ -1911,6 +2019,8 @@ function mountBkk(app, opts = {}) {
           console.error(`[bkk] consent for order ${order.id} not saved:`, e.message);
         }
       }
+      // A pass order with no package makes no broken pass: it fails here and stays as it was.
+      if (!pr) throw new Error('order has no package');
       const pass = (await client.query(
         `INSERT INTO bkk_passes (member_id,product_id,order_id,kind,credits_total,daily_cap,valid_days)
          VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
@@ -3419,6 +3529,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         `SELECT o.*, coalesce(pr.name_en, o.item_name) AS name_en, pr.name_th, pr.code AS product_code,
            coalesce(pr.name_en, o.item_name) AS item, m.name AS member_name, m.email, m.code AS member_code,
            cs.title AS class_title, to_char(o.class_date,'YYYY-MM-DD') AS class_day, tw.refno::text AS twin_refno,
+           td.code AS tee_drop, tt.name AS tee_name, tt.status AS tee_status, tt.pickup AS tee_pickup,
            CASE WHEN o.source IS NULL AND o.status='paid' THEN EXISTS (SELECT 1 FROM bkk_passes rp
              WHERE rp.member_id=o.member_id AND rp.source='rezerv' AND rp.status IN ('active','frozen')
                AND (rp.valid_until IS NULL OR rp.valid_until >= $${t}::date) AND rp.valid_from IS NOT NULL
@@ -3429,6 +3540,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
          LEFT JOIN bkk_members m ON m.id=o.member_id
          LEFT JOIN bkk_class_slots cs ON cs.id=o.slot_id
          LEFT JOIN bkk_orders tw ON tw.id=o.twin_of
+         LEFT JOIN bkk_tee_orders tt ON tt.order_id=o.id LEFT JOIN bkk_tee_drops td ON td.id=tt.drop_id
          ${cond}
          ORDER BY o.created_at DESC, o.id DESC LIMIT ${limit}`, [...args, bkkToday()]),
         q(`SELECT count(*)::int AS n FROM bkk_orders o ${cond}`, args)]);
@@ -3694,7 +3806,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         error: `This student already paid for this (ref ${paid.refno}). Send confirm to activate anyway.`,
         paidAlready: { refno: String(paid.refno), at: paid.at, method: paid.method } });
       const act = await activateOrder(o, { note: MANUAL_NOTE + (paid ? `, paid already as ref ${paid.refno}` : '') }, { byHand: true });
-      res.json({ success: true, booking: act && act.booking || undefined, bookingError: act && act.bookingError || undefined });
+      res.json({ success: true, booking: act && act.booking || undefined, bookingError: act && act.bookingError || undefined,
+        tee: act && act.tee || undefined });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -3931,11 +4044,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (passes.some(p => p.status !== 'void' && (p.booked || p.credits_used > p.carried))) return await stop(409, { classUsed: true,
         error: 'A class is booked or used on this pass. Cancel that booking first, or keep this sale.' });
       const said = `Void: ${reason} (by staff, ${bkkToday()})`;
-      const gone = (await client.query(`UPDATE bkk_passes SET status='void', note = coalesce(note || ' | ', '') || $2
-        WHERE order_id=$1 AND status <> 'void' RETURNING id`, [o.id, `voided: order ${o.refno} void`])).rows.map(p => p.id);
-      const back = await twinPassBack(client, gone, `aybkk.net order ${o.refno} was made void on ${bkkToday()}`);
-      await client.query(`UPDATE bkk_orders SET status='void', gateway_note = $2 || coalesce(' | ' || gateway_note, '') WHERE id=$1`,
-        [o.id, said]);
+      const { gone, back } = await voidMoney(client, o, said);
       await client.query('COMMIT');
       res.json({ success: true, refno: String(o.refno), note: said, passesVoided: gone.length, rezervPassBack: back });
     } catch (e) {
@@ -3943,6 +4052,18 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       res.status(500).json({ error: e.message });
     } finally { client.release(); }
   });
+  // A paid order made void, inside the caller's transaction: its passes go (and a Rezerv twin comes
+  // back), the row says "Void:" and why, and a tee order's tees are cancelled, which frees them.
+  async function voidMoney(db, o, said, now = nowMs()) {
+    const gone = (await db.query(`UPDATE bkk_passes SET status='void', note = coalesce(note || ' | ', '') || $2
+      WHERE order_id=$1 AND status <> 'void' RETURNING id`, [o.id, `voided: order ${o.refno} void`])).rows.map(p => p.id);
+    const back = await twinPassBack(db, gone, `aybkk.net order ${o.refno} was made void on ${bkkToday()}`);
+    await db.query(`UPDATE bkk_orders SET status='void', gateway_note = $2 || coalesce(' | ' || gateway_note, '') WHERE id=$1`,
+      [o.id, said]);
+    if (o.kind === 'tee') await db.query(`UPDATE bkk_tee_orders SET status='cancelled', cancelled_at=coalesce(cancelled_at, $2)
+      WHERE order_id=$1 AND status <> 'cancelled'`, [o.id, new Date(now)]);
+    return { gone, back };
+  }
 
   // ── one sale shown twice, already in the data (15 Nov 2026) ───────────────
   // GET lists what looks like one sale recorded twice, and changes nothing.
@@ -4606,6 +4727,912 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
                    VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`, vals);
       if (!r.rows.length) return res.status(404).json({ error: 'tee not found' });
       res.json({ success: true, tee: teeOut(r.rows[0]) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // ── the tee pre-order (24 Nov 2026) ───────────────────────────────────────
+  // A drop of tees sold for about 7 days to students in China, paid through PaySolutions and
+  // collected from an AYBKK team member in the buyer's city: no shipping, no postal address.
+  // Stock is never counted down: teeTaken reads it from the lines. Every order made and every
+  // payment turned on first locks the drop's row, so a cap is exact; a lapsed hold, a void or a
+  // cancel frees its tees with no sweep. Times are the money clock (nowMs).
+  const at = ms => new Date(ms);
+  const isoBkk = v => new Date(new Date(v).getTime() + 7 * 3600000).toISOString().slice(0, 19) + TZ_OFFSET;
+  const bkkMinute = v => isoBkk(v).slice(0, 16).replace('T', ' ');
+  const parseBkkMinute = s => {
+    const m = /^(\d{4}-\d{2}-\d{2})[ T]([01]\d|2[0-3]):([0-5]\d)$/.exec(String(s ?? '').trim());
+    return m && realYmd(m[1]) ? Date.parse(`${m[1]}T${m[2]}:${m[3]}:00${TZ_OFFSET}`) : null;
+  };
+  const teeOpen = (d, now) => !!d && d.published && !d.done_at && new Date(d.opens_at).getTime() <= now && now < new Date(d.closes_at).getTime();
+  const teeState = (d, now) => now < new Date(d.opens_at).getTime() ? 'soon' : teeOpen(d, now) ? 'open' : 'closed';
+  const teeLang = l => l === 'zh' ? 'zh' : 'en';
+  const pickLang = (j, l) => (j && typeof j === 'object' && (j[l] || j.en || j.zh)) || '';
+  const pickupsOf = d => Array.isArray(d.pickups) ? d.pickups : [];
+  const qtyOf = lines => lines.reduce((n, l) => n + l.qty, 0);
+  // The buyer's page and the staff list say the same thing: the tee order's own state once it is
+  // paid or ended, else the money row's (a void), else whether the hold still runs. A wrong amount comes first:
+  // money came in, even on an order that was let go or cancelled, and staff must refund it.
+  const TEE_VIEW = n => `CASE WHEN o.status = 'mismatch' THEN 'mismatch' WHEN t.status <> 'new' THEN t.status
+    WHEN o.status = 'paid' THEN 'paid' WHEN o.status IN ('void','twin') THEN 'cancelled'
+    WHEN t.hold_until > ${n} THEN 'waiting' ELSE 'expired' END`;
+  function teeView(t, money, now) {
+    if (money === 'mismatch') return 'mismatch';
+    if (t.status !== 'new') return t.status;
+    if (money === 'paid') return 'paid';
+    if (money === 'void' || money === 'twin') return 'cancelled';
+    return new Date(t.hold_until).getTime() > now ? 'waiting' : 'expired';
+  }
+  // Taken: lines of paid and handed orders, and of holds still live on an unpaid money row.
+  // except: one order left out (its own payment being turned on, or its size being swapped).
+  async function teeTaken(db, dropId, now, except = null) {
+    const r = await db.query(`SELECT l.stock_id,
+        coalesce(sum(l.qty) FILTER (WHERE t.status IN ('paid','handed')), 0)::int AS sold,
+        coalesce(sum(l.qty) FILTER (WHERE t.status = 'new' AND t.hold_until > $2 AND o.status = 'pending'), 0)::int AS held
+      FROM bkk_tee_lines l JOIN bkk_tee_orders t ON t.order_id = l.order_id JOIN bkk_orders o ON o.id = t.order_id
+      WHERE t.drop_id = $1 AND ($3::int IS NULL OR t.order_id <> $3) GROUP BY l.stock_id`, [dropId, at(now), except]);
+    return new Map(r.rows.map(x => [x.stock_id, { sold: x.sold, held: x.held }]));
+  }
+  const takenOf = (m, id) => { const x = m.get(id); return x ? x.sold + x.held : 0; };
+  const takenAll = m => [...m.values()].reduce((n, x) => n + x.sold + x.held, 0);
+  // The lines that do not fit: each tee's own cap, then the drop's cap for all its tees together.
+  function teeShort(drop, stock, taken, lines) {
+    const byId = new Map(stock.map(s => [s.id, s]));
+    const short = lines.filter(l => { const s = byId.get(l.stockId); return !s || s.cap - takenOf(taken, l.stockId) < l.qty; })
+      .map(l => l.stockId);
+    const dropFull = drop.cap - takenAll(taken) < qtyOf(lines);
+    return { short, dropFull, soldOut: short.length ? short : dropFull ? lines.map(l => l.stockId) : [] };
+  }
+  const teeStockRows = (db, dropId) => db.query('SELECT * FROM bkk_tee_stock WHERE drop_id=$1 ORDER BY sort, id', [dropId]).then(r => r.rows);
+  // The tee notice for a page, filled in; ready once the three privacy facts are in Settings.
+  async function teeNotice(lang, purgeDays) {
+    const v = TEE_NOTICE_VERSION, l = TEE_NOTICE[v][lang] ? lang : 'en', x = TEE_NOTICE[v][l];
+    const priv = await privacySettings();
+    const fill = s => s.replace(/\{(legal_name|address|email|purge_days)\}/g, (all, k) =>
+      k === 'purge_days' ? String(purgeDays) : priv[k === 'legal_name' ? 'name' : k] || all);
+    const missing = Object.keys(PRIVACY_KEYS).filter(k => !priv[k]);
+    return { version: v, lang: l, sha: teeNoticeSha(v, l), ready: !missing.length, missing,
+      text: { title: x.title, sections: x.sections.map(([h, p]) => [h, fill(p)]), tick: x.tick } };
+  }
+  // The pick list for the page: one card per design, its colours and sizes, and only
+  // 'ok' / 'few' / 'out' per size: never a stock number.
+  function teeDesigns(drop, stock, taken, lang) {
+    const L = teeLang(lang), dropLeft = drop.cap - takenAll(taken), designs = [];
+    for (const s of stock) {
+      let d = designs.find(x => x.design === s.design);
+      if (!d) designs.push(d = { design: s.design, name: pickLang(s.design_name, L), photo: null, priceThb: s.price_thb, colours: [] });
+      d.priceThb = Math.min(d.priceThb, s.price_thb);
+      if (!d.photo && s.photo) d.photo = s.photo;
+      let c = d.colours.find(x => x.colour === s.colour);
+      if (!c) d.colours.push(c = { colour: s.colour, name: pickLang(s.colour_name, L), photo: null, sizes: [] });
+      if (!c.photo && s.photo) c.photo = s.photo;
+      const left = Math.min(s.cap - takenOf(taken, s.id), dropLeft);
+      c.sizes.push({ stockId: s.id, size: s.size, priceThb: s.price_thb, state: left <= 0 ? 'out' : left <= TEE_FEW ? 'few' : 'ok' });
+    }
+    for (const d of designs) for (const c of d.colours) c.sizes.sort((a, b) => TEE_SIZES.indexOf(a.size) - TEE_SIZES.indexOf(b.size));
+    return designs;
+  }
+  // The items of one order or of a whole drop (orderIds), names in the buyer's language.
+  async function teeItems(db, orderIds, lang) {
+    const L = teeLang(lang);
+    const rows = (await db.query(`SELECT l.order_id, l.stock_id, l.qty, l.unit_thb, s.design, s.design_name, s.colour,
+        s.colour_name, s.size, s.photo FROM bkk_tee_lines l JOIN bkk_tee_stock s ON s.id = l.stock_id
+      WHERE l.order_id = ANY($1::int[]) ORDER BY s.sort, s.id`, [orderIds])).rows;
+    const by = new Map(orderIds.map(id => [id, []]));
+    for (const r of rows) by.get(r.order_id).push({ stockId: r.stock_id, design: r.design, designName: pickLang(r.design_name, L),
+      colour: r.colour, colourName: pickLang(r.colour_name, L), size: r.size, qty: r.qty, unitThb: r.unit_thb, photo: r.photo });
+    return by;
+  }
+  const TEE_TEXT_BAD = /[<>"'&\u0000-\u001f\u007f]/;
+  function readTeeLines(raw, max) {
+    if (!Array.isArray(raw) || !raw.length || raw.length > 20) return { error: 'choose at least one tee' };
+    const out = [];
+    for (const l of raw) {
+      const stockId = Number(l && l.stockId), qty = Number(l && l.qty);
+      if (!Number.isInteger(stockId) || stockId <= 0 || !Number.isInteger(qty) || qty < 1 || qty > 10)
+        return { error: 'each tee needs a stockId and a quantity from 1 to 10' };
+      if (out.some(x => x.stockId === stockId)) return { error: 'the same tee is in the order twice' };
+      out.push({ stockId, qty });
+    }
+    if (qtyOf(out) > max) return { error: `at most ${max} tees in one order`, max };
+    return { value: out };
+  }
+  // The name the team member will know the buyer by, a WeChat ID (how they find each other), an
+  // optional mainland mobile, and the email the receipt and PaySolutions get.
+  function readTeeBuyer(b) {
+    const name = String(b.name ?? '').replace(/\s+/g, ' ').trim();
+    if (name.length < 2 || name.length > 30 || TEE_TEXT_BAD.test(name))
+      return { error: 'name: 2 to 30 characters, the name the AYBKK team member will know you by', field: 'name' };
+    const wechat = String(b.wechat ?? '').trim();
+    if (!/^[^\s<>"'&]{1,40}$/.test(wechat)) return { error: 'wechat: your WeChat ID, up to 40 characters, no spaces', field: 'wechat' };
+    const email = String(b.email ?? '').trim().toLowerCase();
+    if (email.length > 100 || !/^[^\s@<>"'&]+@[^\s@<>"'&]+\.[^\s@<>"'&]+$/.test(email))
+      return { error: 'email: the email address for your receipt', field: 'email' };
+    let mobile = String(b.mobile ?? '').replace(/[\s\-()]/g, '');
+    if (mobile) {
+      mobile = mobile.replace(/^(?:\+|00)?86(?=1\d{10}$)/, '');
+      if (!/^1[3-9]\d{9}$/.test(mobile)) return { error: 'mobile: a mainland China mobile number (11 digits), or leave it empty', field: 'mobile' };
+    }
+    return { name, wechat, email, mobile: mobile || null };
+  }
+  const teeLiveHolds = async (db, dropId, email, now) => (await db.query(`SELECT count(*)::int AS n
+    FROM bkk_tee_orders t JOIN bkk_orders o ON o.id = t.order_id
+    WHERE t.drop_id = $1 AND lower(t.email) = $2 AND t.status = 'new' AND t.hold_until > $3 AND o.status = 'pending'`,
+    [dropId, email, at(now)])).rows[0].n;
+  const TEE_HOLDS_ERROR = `This email already has ${TEE_HOLDS_PER_EMAIL} unpaid tee orders waiting. Pay one, or wait until it lapses.`;
+  // Orders made from one address in the last hour, in memory only.
+  const teeIpHits = new Map();
+  const teeIpCount = (ip, now) => {
+    if (teeIpHits.size > 10000) for (const [k, ts] of teeIpHits) if (!ts.some(t => t > now - 3600000)) teeIpHits.delete(k);
+    const xs = (teeIpHits.get(ip) || []).filter(t => t > now - 3600000);
+    if (xs.length) teeIpHits.set(ip, xs); else teeIpHits.delete(ip);
+    return xs.length;
+  };
+
+  // The open drop, else the next one to open, else one closed in the last 14 days, else none.
+  app.get('/api/bkk/tee-drop', async (req, res) => {
+    res.set('Cache-Control', 'no-store');
+    try {
+      const now = nowMs(), lang = TEE_LANGS.includes(req.query.lang) ? req.query.lang : 'en';
+      const d = (await q(`SELECT * FROM bkk_tee_drops WHERE published AND done_at IS NULL
+          AND closes_at > $1::timestamptz - interval '14 days'
+        ORDER BY CASE WHEN opens_at <= $1 AND closes_at > $1 THEN 0 WHEN opens_at > $1 THEN 1 ELSE 2 END,
+          CASE WHEN opens_at > $1 THEN opens_at END, closes_at DESC LIMIT 1`, [at(now)])).rows[0];
+      if (!d) return res.json({ drop: null });
+      const [stock, taken, pct, notice] = await Promise.all([teeStockRows(pool, d.id), teeTaken(pool, d.id, now), surcharge(),
+        teeNotice(teeLang(lang), d.purge_days)]);
+      res.json({ drop: { code: d.code, title: pickLang(d.title, teeLang(lang)), opensAt: isoBkk(d.opens_at), closesAt: isoBkk(d.closes_at),
+        now: isoBkk(now), state: teeState(d, now), maxPerOrder: d.max_per_order, holdMin: d.hold_min, surchargePct: pct, vatPct: VAT_PCT,
+        rmbRate: d.rmb_rate == null ? null : Number(d.rmb_rate), canPay: !!paysoConfig() && notice.ready,
+        pickups: pickupsOf(d).map(p => ({ key: p.key, label: p.label })), designs: teeDesigns(d, stock, taken, lang), notice } });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // A tee order: checked in the order the page shows its errors, then one transaction that locks
+  // the drop, checks what is left and writes the money row, the tee order and its lines. Never the
+  // class agreement, whatever consent_mode says, and never pay.sn (a link cannot be verified).
+  app.post('/api/bkk/tee-orders', async (req, res) => {
+    res.set('Cache-Control', 'no-store');
+    try {
+      const b = req.body || {}, now = nowMs();
+      const d = (await q('SELECT * FROM bkk_tee_drops WHERE code=$1 AND published', [String(b.drop || '')])).rows[0];
+      if (!d) return res.status(404).json({ error: 'no such tee pre-order' });
+      const closedBody = dd => { const s = teeState(dd, now); return { error: s === 'soon' ? 'not open yet' : 'closed', state: s }; };
+      if (!teeOpen(d, now)) return res.status(409).json(closedBody(d));
+      const lines = readTeeLines(b.lines, d.max_per_order);
+      if (lines.error) return res.status(400).json({ error: lines.error, field: 'lines', ...(lines.max ? { max: lines.max } : {}) });
+      const stock = await teeStockRows(pool, d.id);
+      if (lines.value.some(l => !stock.some(s => s.id === l.stockId)))
+        return res.status(400).json({ error: 'a tee in this order is not in this pre-order', field: 'lines' });
+      const pickup = pickupsOf(d).find(p => p.key === b.pickup);
+      if (!pickup) return res.status(400).json({ error: 'choose a pickup point', field: 'pickup' });
+      const who = readTeeBuyer(b);
+      if (who.error) return res.status(400).json(who);
+      const lang = TEE_LANGS.includes(b.lang) ? b.lang : 'en';
+      const n = b.notice;
+      if (!n || typeof n !== 'object' || n.version !== TEE_NOTICE_VERSION)
+        return res.status(409).json({ error: 'notice', version: TEE_NOTICE_VERSION, ...(n && n.version ? { stale: true } : {}) });
+      if (n.agree !== true) return res.status(409).json({ error: 'notice', version: TEE_NOTICE_VERSION });
+      const notice = await teeNotice(teeLang(lang), d.purge_days);
+      if (!notice.ready) return res.status(503).json({ error: 'The privacy notice is not filled in yet, so tee orders are closed until it is.',
+        notReady: true, missing: notice.missing });
+      if (await teeLiveHolds(pool, d.id, who.email, now) >= TEE_HOLDS_PER_EMAIL) return res.status(429).json({ error: TEE_HOLDS_ERROR, holds: true });
+      const ip = guessIp(req);
+      if (teeIpCount(ip, now) >= TEE_ORDERS_PER_IP_HOUR) return res.status(429).json({ error: 'Too many orders from here. Try again in an hour.' });
+      const cfg = paysoConfig();
+      if (!cfg) return res.status(503).json({ error: 'Online payment is not set up yet.', payUnavailable: true });
+
+      const pct = await surcharge();
+      const client = await pool.connect();
+      let o = null, token = null, holdUntil = null;
+      try {
+        await client.query('BEGIN');
+        const stop = async (code, body) => { await client.query('ROLLBACK'); res.status(code).json(body); return true; };
+        const dl = (await client.query('SELECT * FROM bkk_tee_drops WHERE id=$1 FOR UPDATE', [d.id])).rows[0];
+        if (!teeOpen(dl, now)) return await stop(409, closedBody(dl));
+        if (await teeLiveHolds(client, d.id, who.email, now) >= TEE_HOLDS_PER_EMAIL) return await stop(429, { error: TEE_HOLDS_ERROR, holds: true });
+        const st = await teeStockRows(client, d.id);
+        const fit = teeShort(dl, st, await teeTaken(client, d.id, now), lines.value);
+        if (fit.soldOut.length) return await stop(409, { error: 'sold out', soldOut: fit.soldOut });
+        const price = new Map(st.map(s => [s.id, s.price_thb]));
+        const base = lines.value.reduce((s, l) => s + l.qty * price.get(l.stockId), 0);
+        const { fee, vat, total } = breakdown(base, pct);
+        // The same refno retry as a package order: a clash in one millisecond is possible.
+        for (let attempt = 0; attempt < 5 && !o; attempt++) {
+          await client.query('SAVEPOINT o');
+          try {
+            o = (await client.query(`INSERT INTO bkk_orders (refno,kind,base_thb,fee_thb,vat_thb,amount_thb,method,item_name)
+              VALUES ($1,'tee',$2,$3,$4,$5,'online',$6) RETURNING *`,
+              [newRefno(), base, fee, vat, total, `AYBKK tee pre-order ${dl.code}`])).rows[0];
+            await client.query('RELEASE SAVEPOINT o');
+          } catch (e) {
+            await client.query('ROLLBACK TO SAVEPOINT o');
+            if (!/duplicate key/.test(e.message) || attempt === 4) throw e;
+          }
+        }
+        token = crypto.randomBytes(16).toString('hex');
+        holdUntil = now + dl.hold_min * 60000;
+        await client.query(`INSERT INTO bkk_tee_orders (order_id,drop_id,token,hold_until,lang,pickup,name,wechat,mobile,email,
+            notice_version,notice_sha,notice_lang) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
+          [o.id, d.id, token, at(holdUntil), lang, pickup.key, who.name, who.wechat, who.mobile, who.email,
+           notice.version, notice.sha, notice.lang]);
+        for (const l of lines.value) await client.query(`INSERT INTO bkk_tee_lines (order_id,stock_id,qty,unit_thb) VALUES ($1,$2,$3,$4)`,
+          [o.id, l.stockId, l.qty, price.get(l.stockId)]);
+        await client.query('COMMIT');
+      } catch (e) {
+        await client.query('ROLLBACK').catch(() => {});
+        throw e;
+      } finally { client.release(); }
+      if (!o) return;
+      teeIpHits.set(ip, [...(teeIpHits.get(ip) || []), now]);
+      res.json({ order: { refno: String(o.refno), amount: o.amount_thb, base: o.base_thb, fee: o.fee_thb, vat: o.vat_thb, holdUntil: isoBkk(holdUntil) },
+        token, link: `${TEE_ORIGIN}/book#tee=${token}`,
+        pay: buildPayForm(cfg, o, { name_en: `Tee ${d.code} x${qtyOf(lines.value)}` }, { email: who.email }) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // The buyer's own view, by the token in their link. A money row still waiting is asked about
+  // (at most once a minute per order) before it answers. Never the whole email, WeChat ID or mobile, except
+  // the email inside a held order's pay form, which PaySolutions needs (only while the hold runs);
+  // once the contact details are deleted, only where the order stands, its tees and the pickup point.
+  const maskEmail = e => { const [u, dom] = String(e || '').split('@'); return dom ? `${u.slice(0, 1)}***@${dom}` : null; };
+  const maskWechat = w => w ? (w.length > 3 ? `${w.slice(0, 2)}***${w.slice(-1)}` : `${w.slice(0, 1)}***`) : null;
+  const maskMobile = m => m ? `${m.slice(0, 3)}****${m.slice(-4)}` : null;
+  const TEE_ORDER_SQL = `SELECT t.*, o.refno, o.status AS money, o.checked_at, o.amount_thb, o.base_thb, o.fee_thb, o.vat_thb,
+      o.gateway_note, d.code AS drop_code, d.title AS drop_title, d.pickups
+    FROM bkk_tee_orders t JOIN bkk_orders o ON o.id = t.order_id JOIN bkk_tee_drops d ON d.id = t.drop_id`;
+  app.get('/api/bkk/tee-orders/:token', async (req, res) => {
+    res.set('Cache-Control', 'no-store');
+    try {
+      const token = String(req.params.token || '');
+      if (!/^[0-9a-f]{32}$/.test(token)) return res.status(404).json({ error: 'not found' });
+      const load = async () => (await q(`${TEE_ORDER_SQL} WHERE t.token = $1`, [token])).rows[0];
+      let t = await load();
+      if (!t) return res.status(404).json({ error: 'not found' });
+      const now = nowMs();
+      if (t.money === 'pending') {
+        const mine = await q(`UPDATE bkk_orders SET checked_at = $2 WHERE id = $1 AND status = 'pending'
+          AND (checked_at IS NULL OR checked_at <= $2::timestamptz - interval '60 seconds') RETURNING id`, [t.order_id, at(now)]);
+        if (mine.rows.length) {
+          await verifyAndActivate(Number(t.refno)).catch(e => console.error('[bkk tee] status check failed:', e.message));
+          t = await load();
+        }
+      }
+      const L = TEE_LANGS.includes(req.query.lang) ? req.query.lang : t.lang;
+      const p = pickupsOf(t).find(x => x.key === t.pickup);
+      const status = teeView(t, t.money, now), pickup = { key: t.pickup, label: p ? p.label : null };
+      const items = (await teeItems(pool, [t.order_id], L)).get(t.order_id);
+      if (t.purged_at) return res.json({ status, kind: 'tee', refno: refno12(t.refno), items, pickup, purged: true });
+      const when = v => v ? isoBkk(v) : null;
+      // A hold still running can be paid from its link too: a lost tab, "Open in Browser" in WeChat
+      // or a wallet that came back unpaid loses nothing. checking: past its hold, but the money row
+      // is still open, so a payment that is on its way may yet land.
+      const cfg = status === 'waiting' && paysoConfig();
+      res.json({ status, kind: 'tee', refno: refno12(t.refno), drop: { code: t.drop_code, title: pickLang(t.drop_title, teeLang(L)) },
+        items, qty: qtyOf(items), money: { base: t.base_thb, fee: t.fee_thb, vat: t.vat_thb, amount: t.amount_thb }, pickup,
+        holdUntil: when(t.hold_until), createdAt: when(t.created_at), paidAt: when(t.paid_at), handedAt: when(t.handed_at),
+        cancelledAt: when(t.cancelled_at), lang: t.lang, checking: status === 'expired' && t.money === 'pending',
+        ...(cfg ? { pay: buildPayForm(cfg, { refno: t.refno, amount_thb: t.amount_thb },
+          { name_en: `Tee ${t.drop_code} x${qtyOf(items)}` }, { email: t.email }) } : {}),
+        buyer: { name: t.name, wechat: maskWechat(t.wechat), mobile: maskMobile(t.mobile), email: maskEmail(t.email) } });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // The buyer lets go of an unpaid order ("Change my order"), so its tees are free for the next
+  // one at once. Only while it is still new on an open money row; a payment that lands later
+  // still turns it on (activateTee puts a cancelled order back and tells staff).
+  app.post('/api/bkk/tee-orders/:token/release', async (req, res) => {
+    res.set('Cache-Control', 'no-store');
+    const token = String(req.params.token || '');
+    if (!/^[0-9a-f]{32}$/.test(token)) return res.status(404).json({ error: 'not found' });
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const t0 = (await client.query('SELECT order_id, drop_id FROM bkk_tee_orders WHERE token=$1', [token])).rows[0];
+      if (!t0) { await client.query('ROLLBACK'); return res.status(404).json({ error: 'not found' }); }
+      await client.query('SELECT id FROM bkk_tee_drops WHERE id=$1 FOR UPDATE', [t0.drop_id]);
+      const r = await client.query(`UPDATE bkk_tee_orders t SET status='cancelled', cancelled_at=$2 FROM bkk_orders o
+        WHERE t.order_id=$1 AND o.id=t.order_id AND t.status='new' AND o.status IN ('pending','failed') RETURNING t.order_id`,
+        [t0.order_id, at(nowMs())]);
+      await client.query('COMMIT');
+      res.json({ released: r.rowCount === 1 });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      res.status(500).json({ error: e.message });
+    } finally { client.release(); }
+  });
+
+  // A tee payment confirmed (any path: postback, pay/check, the watch, the status page, Admin's
+  // Activate): the money row's guarded UPDATE as for a pass, so a second path is a no-op. Its tees
+  // are counted WITHOUT its own hold: a hold that lapsed gets tees if any are left, else 'oversold'.
+  async function activateTee(order, verdict = {}, opts = {}) {
+    const now = nowMs();
+    const client = await pool.connect();
+    let status = null, was = null, n = 0, late = false;
+    try {
+      await client.query('BEGIN');
+      const t0 = (await client.query('SELECT drop_id FROM bkk_tee_orders WHERE order_id=$1', [order.id])).rows[0];
+      if (!t0) throw new Error('tee order has no tees');
+      const drop = (await client.query('SELECT * FROM bkk_tee_drops WHERE id=$1 FOR UPDATE', [t0.drop_id])).rows[0];
+      // Only the fields that say what was paid: the inquiry answer also repeats the buyer's email
+      // ("CustomerEmal"), which must go with the contact purge, and this row is kept for years.
+      const raw = verdict.raw && typeof verdict.raw === 'object'
+        ? JSON.stringify(Object.fromEntries(TEE_GATEWAY_KEEP.filter(k => k in verdict.raw).map(k => [k, verdict.raw[k]]))).slice(0, 400) : null;
+      const upd = await client.query(
+        `UPDATE bkk_orders SET status='paid', verified_at=now(), gateway_ref=$2, gateway_note=$3
+         WHERE id=$1 AND status IN ('pending','failed','mismatch') RETURNING id`,
+        [order.id, raw, verdict.note || null]);
+      if (!upd.rows.length) { await client.query('ROLLBACK'); return null; }
+      const t = (await client.query('SELECT status FROM bkk_tee_orders WHERE order_id=$1 FOR UPDATE', [order.id])).rows[0];
+      was = t.status;
+      const lines = (await client.query('SELECT stock_id AS "stockId", qty FROM bkk_tee_lines WHERE order_id=$1', [order.id])).rows;
+      n = qtyOf(lines);
+      if (was === 'new' || was === 'cancelled') {
+        // A finished drop has its report frozen and its tees counted out: a payment that lands
+        // after that is a refund for staff, never a sale.
+        const fit = teeShort(drop, await teeStockRows(client, drop.id), await teeTaken(client, drop.id, now, order.id), lines);
+        late = !!drop.done_at;
+        status = late || fit.soldOut.length ? 'oversold' : 'paid';
+        await client.query(`UPDATE bkk_tee_orders SET status=$2, paid_at=$3, cancelled_at=NULL WHERE order_id=$1`, [order.id, status, at(now)]);
+      } else {
+        status = was;
+        await client.query(`UPDATE bkk_tee_orders SET paid_at=coalesce(paid_at, $2) WHERE order_id=$1`, [order.id, at(now)]);
+      }
+      await client.query('COMMIT');
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      throw e;
+    } finally { client.release(); }
+    console.log(`✓ bkk: tee order ${order.id} paid (${status})`);
+    (async () => {
+      if (late) await alertOnce(order, 'oversold', '⚠ Tee order paid after its pre-order was finished.',
+        'Refund it in PaySolutions, then cancel it as refunded: Admin, Tees.');
+      else if (status === 'oversold') await alertOnce(order, 'oversold', '⚠ Tee order paid, but its tees are sold out.',
+        'Swap a size or refund within 3 days: Admin, Tees.');
+      if (was === 'cancelled') await alertOnce(order, 'paid-cancelled', '⚠ A cancelled tee order was paid, so it is back on.',
+        'Ask the buyer. If they do not want it, refund it in PaySolutions, then cancel it as refunded.');
+      if (!opts.byHand && await getSetting('ping_each_sale', 'off') === 'on')
+        await notify([`💳 AYBKK tee order (${order.method || 'online'})`, `${order.item_name} ×${n} · ฿${order.amount_thb}`, `refno ${order.refno}`].join('\n'));
+    })().catch(e => console.error('[bkk tee] ping failed:', e.message));
+    emailTeeReceipt(order.id).catch(e => console.error('[bkk tee] receipt failed:', e.message));
+    return { tee: { status } };
+  }
+  async function emailTeeReceipt(orderId) {
+    const t = (await q(`${TEE_ORDER_SQL} WHERE t.order_id = $1`, [orderId])).rows[0];
+    if (!t || !t.email) return;
+    const L = teeLang(t.lang), p = pickupsOf(t).find(x => x.key === t.pickup);
+    const m = render('teeReceipt', L, { name: t.name, title: pickLang(t.drop_title, L), items: (await teeItems(pool, [orderId], L)).get(orderId),
+      base: t.base_thb, fee: t.fee_thb, vat: t.vat_thb, amount: t.amount_thb, refno: refno12(t.refno),
+      pickup: p ? p.label : t.pickup, link: `${TEE_ORIGIN}/book#tee=${t.token}`, oversold: t.status === 'oversold' });
+    await sendMail({ to: t.email, subject: m.subject, html: m.html, text: m.text, tag: 'teeReceipt' });
+  }
+
+  // Contact details go: purge_days after hand-over, 7 days after a cancel or after an unpaid hold
+  // lapsed. While a problem note or a wrong-amount payment is open they wait, at most TEE_HELD_DAYS
+  // longer (the notice says so), and the note goes with them. A row whose money can still turn paid
+  // (pending, failed) is never taken early: a late payment must still find its buyer. The tees, the
+  // money, the ref, the pickup point and the dates stay. all: the drop's own Delete now (handed
+  // orders and settled cancels); done: a finished drop, everything that is settled.
+  async function teePurge({ now = nowMs(), dropId = null, all = false, done = false } = {}) {
+    const r = await q(`UPDATE bkk_tee_orders t SET name=NULL, wechat=NULL, mobile=NULL, email=NULL, problem=NULL, purged_at=$1
+      FROM bkk_orders o, bkk_tee_drops d
+      WHERE o.id = t.order_id AND d.id = t.drop_id AND t.purged_at IS NULL
+        AND ($2::int IS NULL OR t.drop_id = $2)
+        AND ((CASE WHEN t.status = 'handed' THEN t.handed_at + make_interval(days => d.purge_days)
+                   WHEN t.status = 'cancelled' THEN t.cancelled_at + make_interval(days => $3)
+                   WHEN t.status = 'new' AND o.status IN ('pending','failed','mismatch') THEN t.hold_until + make_interval(days => $3) END)
+              + CASE WHEN t.problem IS NOT NULL OR o.status = 'mismatch' THEN make_interval(days => $6) ELSE interval '0' END <= $1::timestamptz
+          OR (t.problem IS NULL AND o.status NOT IN ('mismatch','pending','failed')
+            AND ($5::boolean OR ($4::boolean AND t.status IN ('handed','cancelled')))))
+      RETURNING t.order_id`, [at(now), dropId, TEE_UNPAID_PURGE_DAYS, all, done, TEE_HELD_DAYS]);
+    return { purged: r.rowCount };
+  }
+  const teePurgeTick = () => teePurge().then(r => { if (r.purged) console.log(`✓ bkk tee: contact details deleted on ${r.purged} order(s)`); })
+    .catch(e => console.error('[bkk tee] purge failed:', e.message));
+
+  // ── tee pre-order, staff (Admin, Tees) ────────────────────────────────────
+  const teeStaff = (req, res) => {
+    res.set('Cache-Control', 'private, no-store');
+    if (isAdmin(req)) return false;
+    res.status(401).json({ error: 'bad key' });
+    return true;
+  };
+  const teeId = v => /^\d{1,9}$/.test(String(v)) ? Number(v) : null;
+  function teeDropOut(d, now) {
+    const t = d.title && typeof d.title === 'object' ? d.title : {};
+    return { id: d.id, code: d.code, title: { en: t.en || '', zh: t.zh || '' }, opensAt: isoBkk(d.opens_at), closesAt: isoBkk(d.closes_at),
+      opensAtBkk: bkkMinute(d.opens_at), closesAtBkk: bkkMinute(d.closes_at), published: d.published,
+      state: d.done_at ? 'done' : !d.published ? 'draft' : teeState(d, now), cap: d.cap, maxPerOrder: d.max_per_order,
+      holdMin: d.hold_min, purgeDays: d.purge_days, rmbRate: d.rmb_rate == null ? null : Number(d.rmb_rate),
+      pickups: pickupsOf(d), costs: d.costs || null, doneAt: d.done_at ? isoBkk(d.done_at) : null };
+  }
+  const teeStockOut = (s, taken, lines) => {
+    const x = taken.get(s.id) || { sold: 0, held: 0 };
+    return { id: s.id, design: s.design, designName: { en: (s.design_name || {}).en || '', zh: (s.design_name || {}).zh || '' },
+      colour: s.colour, colourName: { en: (s.colour_name || {}).en || '', zh: (s.colour_name || {}).zh || '' }, size: s.size,
+      priceThb: s.price_thb, photo: s.photo, cap: s.cap, sort: s.sort, sold: x.sold, held: x.held, left: s.cap - x.sold - x.held,
+      hasOrders: lines.has(s.id) };
+  };
+  // Staff totals for one drop: each tee's cap, sold, held and left; orders by where they stand; money.
+  // One query after another: db may be a client inside a transaction (Finish).
+  async function teeTotals(db, d, now) {
+    const stock = await teeStockRows(db, d.id), taken = await teeTaken(db, d.id, now);
+    const lined = await db.query(`SELECT DISTINCT l.stock_id FROM bkk_tee_lines l JOIN bkk_tee_stock s ON s.id = l.stock_id WHERE s.drop_id = $1`, [d.id]);
+    const byView = await db.query(`SELECT ${TEE_VIEW('$2')} AS view, count(*)::int AS n FROM bkk_tee_orders t JOIN bkk_orders o ON o.id = t.order_id
+        WHERE t.drop_id = $1 GROUP BY 1`, [d.id, at(now)]);
+    const money = await db.query(`SELECT count(*) FILTER (WHERE o.status = 'paid')::int AS n,
+          coalesce(sum(o.amount_thb) FILTER (WHERE o.status = 'paid'), 0)::int AS amount,
+          coalesce(sum(o.base_thb) FILTER (WHERE o.status = 'paid'), 0)::int AS base,
+          coalesce(sum(o.fee_thb) FILTER (WHERE o.status = 'paid'), 0)::int AS fee,
+          coalesce(sum(o.vat_thb) FILTER (WHERE o.status = 'paid'), 0)::int AS vat,
+          count(*) FILTER (WHERE o.status = 'void')::int AS refunds,
+          coalesce(sum(o.amount_thb) FILTER (WHERE o.status = 'void'), 0)::int AS refunded
+        FROM bkk_tee_orders t JOIN bkk_orders o ON o.id = t.order_id WHERE t.drop_id = $1`, [d.id]);
+    const lines = new Set(lined.rows.map(r => r.stock_id));
+    const rows = stock.map(s => teeStockOut(s, taken, lines));
+    const sold = rows.reduce((n, s) => n + s.sold, 0), held = rows.reduce((n, s) => n + s.held, 0);
+    const orders = Object.fromEntries(['waiting', 'expired', 'mismatch', 'paid', 'oversold', 'handed', 'cancelled'].map(k => [k, 0]));
+    for (const r of byView.rows) orders[r.view] = r.n;
+    const m = money.rows[0];
+    return { stock: rows, tees: { cap: d.cap, stockCaps: rows.reduce((n, s) => n + s.cap, 0), sold, held, left: d.cap - sold - held },
+      orders, money: { n: m.n, amount: m.amount, base: m.base, fee: m.fee, vat: m.vat }, refunds: { n: m.refunds, amount: m.refunded } };
+  }
+  // A drop as typed in the editor. Times are Bangkok 'YYYY-MM-DD HH:MM'; close defaults to 7 days on.
+  // was: the drop being edited, whose values stand for any field not sent.
+  function readTeeDrop(b, was = null) {
+    const has = k => b[k] !== undefined;
+    const code = String(has('code') ? b.code : was ? was.code : '').trim();
+    if (!/^[a-z0-9-]{3,24}$/.test(code)) return { error: 'code: 3 to 24 lowercase letters, digits or dashes', field: 'code' };
+    const t0 = was && was.title && typeof was.title === 'object' ? was.title : {};
+    const title = has('title') ? (b.title && typeof b.title === 'object' ? b.title : {}) : t0;
+    const ten = String(title.en ?? '').replace(/\s+/g, ' ').trim(), tzh = String(title.zh ?? '').replace(/\s+/g, ' ').trim();
+    if (!ten || !tzh || ten.length > 80 || tzh.length > 80 || /[<>]/.test(ten + tzh)) return { error: 'title: English and Chinese, up to 80 characters each', field: 'title' };
+    const opens = has('opensAt') ? parseBkkMinute(b.opensAt) : was ? new Date(was.opens_at).getTime() : null;
+    if (opens == null) return { error: 'opensAt: a Bangkok date and time, YYYY-MM-DD HH:MM', field: 'opensAt' };
+    const closes = has('closesAt') && b.closesAt !== null && b.closesAt !== '' ? parseBkkMinute(b.closesAt)
+      : was && !has('opensAt') ? new Date(was.closes_at).getTime() : opens + 7 * 86400000;
+    if (closes == null || closes <= opens) return { error: 'closesAt: a Bangkok date and time after it opens', field: 'closesAt' };
+    const int = (k, dflt, lo, hi) => { const v = has(k) ? Number(b[k]) : dflt; return Number.isInteger(v) && v >= lo && v <= hi ? v : null; };
+    const cap = int('cap', was ? was.cap : null, 1, 500);
+    if (cap == null) return { error: 'cap: all the tees of this pre-order together, 1 to 500', field: 'cap' };
+    const maxPerOrder = int('maxPerOrder', was ? was.max_per_order : 5, 1, 10);
+    if (maxPerOrder == null) return { error: 'maxPerOrder: 1 to 10', field: 'maxPerOrder' };
+    const holdMin = int('holdMin', was ? was.hold_min : 30, 5, 1440);
+    if (holdMin == null) return { error: 'holdMin: 5 to 1440 minutes', field: 'holdMin' };
+    const purgeDays = int('purgeDays', was ? was.purge_days : 30, 1, 365);
+    if (purgeDays == null) return { error: 'purgeDays: 1 to 365', field: 'purgeDays' };
+    const rr = has('rmbRate') ? b.rmbRate : was ? was.rmb_rate : null;
+    const rmbRate = rr === null || rr === '' || rr === undefined ? null : Number(rr);
+    if (rmbRate !== null && !(rmbRate > 0 && rmbRate < 10)) return { error: 'rmbRate: yuan for 1 baht (about 0.2), or empty', field: 'rmbRate' };
+    const pk = has('pickups') ? b.pickups : was ? pickupsOf(was) : [];
+    if (!Array.isArray(pk) || pk.length > 6) return { error: 'pickups: up to 6 points', field: 'pickups' };
+    const pickups = [];
+    for (const p of pk) {
+      const key = String(p && p.key || ''), label = String(p && p.label || '').replace(/\s+/g, ' ').trim();
+      if (!/^[A-F]$/.test(key) || pickups.some(x => x.key === key)) return { error: 'pickups: each key is one of A to F, once', field: 'pickups' };
+      if (!label || label.length > 60 || /[<>]/.test(label)) return { error: 'pickups: a label of up to 60 characters (city · name)', field: 'pickups' };
+      pickups.push({ key, label });
+    }
+    const published = has('published') ? b.published === true : was ? was.published : false;
+    return { value: { code, title: { en: ten, zh: tzh }, opens, closes, cap, maxPerOrder, holdMin, purgeDays, rmbRate, pickups, published } };
+  }
+
+  app.get('/api/bkk/admin/tee/drops', async (req, res) => {
+    if (teeStaff(req, res)) return;
+    try {
+      const now = nowMs(), drops = (await q('SELECT * FROM bkk_tee_drops ORDER BY opens_at DESC, id DESC')).rows;
+      res.json({ drops: await Promise.all(drops.map(async d => ({ ...teeDropOut(d, now), totals: await teeTotals(pool, d, now) }))),
+        notice: { version: TEE_NOTICE_VERSION, ready: (await teeNotice('en', 30)).ready }, payment: { mode: paymentStatus().mode } });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Create, or with an id edit. A finished drop never changes; once it has an order its code and
+  // the pickup points its orders name stay, and its cap never drops below what is taken.
+  app.post('/api/bkk/admin/tee/drops', async (req, res) => {
+    if (teeStaff(req, res)) return;
+    const b = req.body || {}, now = nowMs();
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const stop = async (code, body) => { await client.query('ROLLBACK'); res.status(code).json(body); };
+      let was = null;
+      if (b.id != null) {
+        const id = teeId(b.id);
+        was = id && (await client.query('SELECT * FROM bkk_tee_drops WHERE id=$1 FOR UPDATE', [id])).rows[0];
+        if (!was) return await stop(404, { error: 'no such tee pre-order' });
+        if (was.done_at) return await stop(409, { error: 'This pre-order is finished: it cannot change.' });
+      }
+      const v = readTeeDrop(b, was);
+      if (v.error) return await stop(400, v);
+      const d = v.value;
+      if (was) {
+        const used = (await client.query('SELECT DISTINCT pickup FROM bkk_tee_orders WHERE drop_id=$1', [was.id])).rows.map(r => r.pickup);
+        if (used.length && d.code !== was.code) return await stop(409, { error: 'The code cannot change once there is an order.', field: 'code' });
+        const gone = used.find(k => k && !d.pickups.some(p => p.key === k));
+        if (gone) return await stop(409, { error: `Pickup point ${gone} has orders: keep it (its label can change).`, field: 'pickups', pickup: gone });
+        const taken = takenAll(await teeTaken(client, was.id, now));
+        if (d.cap < taken) return await stop(409, { error: `The cap cannot go below the tees already sold or held (${taken}).`, field: 'cap', taken });
+      }
+      if (d.published) {
+        if (!d.pickups.length) return await stop(400, { error: 'Add a pickup point before publishing.', field: 'pickups' });
+        const st = was ? (await client.query('SELECT count(*)::int AS n FROM bkk_tee_stock WHERE drop_id=$1 AND cap > 0', [was.id])).rows[0].n : 0;
+        if (!st) return await stop(409, { error: 'Save the tees (with a cap) before publishing.', field: 'published' });
+      }
+      const vals = [d.code, JSON.stringify(d.title), at(d.opens), at(d.closes), d.published, d.cap, d.maxPerOrder, d.holdMin, d.purgeDays,
+        d.rmbRate, JSON.stringify(d.pickups)];
+      let row;
+      await client.query('SAVEPOINT w');
+      try {
+        row = was
+          ? (await client.query(`UPDATE bkk_tee_drops SET code=$1, title=$2, opens_at=$3, closes_at=$4, published=$5, cap=$6,
+              max_per_order=$7, hold_min=$8, purge_days=$9, rmb_rate=$10, pickups=$11 WHERE id=$12 RETURNING *`, [...vals, was.id])).rows[0]
+          : (await client.query(`INSERT INTO bkk_tee_drops (code,title,opens_at,closes_at,published,cap,max_per_order,hold_min,purge_days,rmb_rate,pickups)
+              VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`, vals)).rows[0];
+      } catch (e) {
+        await client.query('ROLLBACK TO SAVEPOINT w');
+        if (e.code === '23505') return await stop(409, { error: `The code ${d.code} is taken.`, field: 'code' });
+        throw e;
+      }
+      await client.query('COMMIT');
+      res.json({ success: true, drop: { ...teeDropOut(row, now), totals: await teeTotals(pool, row, now) } });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      res.status(500).json({ error: e.message });
+    } finally { client.release(); }
+  });
+
+  // The whole grid at once. A tee with orders keeps its design, colour, size and price, is never
+  // removed, and its cap never goes below what is taken.
+  app.put('/api/bkk/admin/tee/drops/:id/stock', async (req, res) => {
+    if (teeStaff(req, res)) return;
+    const id = teeId(req.params.id), raw = (req.body || {}).stock, now = nowMs();
+    if (!id) return res.status(404).json({ error: 'no such tee pre-order' });
+    if (!Array.isArray(raw) || raw.length > 200) return res.status(400).json({ error: 'stock: a list of up to 200 tees' });
+    const name2 = (j, en) => { const o = j && typeof j === 'object' ? j : {};
+      const e = String(o.en ?? '').replace(/\s+/g, ' ').trim(), z = String(o.zh ?? '').replace(/\s+/g, ' ').trim();
+      return e && e.length <= 60 && z.length <= 60 && !/[<>]/.test(e + z) ? { en: e, zh: z || e } : null; };
+    const rows = [];
+    for (const [i, s] of raw.entries()) {
+      const bad = (field, error) => res.status(400).json({ error: `row ${i + 1}: ${error}`, row: i, field });
+      const r = { id: s && s.id != null ? teeId(s.id) : null, design: String(s && s.design || '').trim(), colour: String(s && s.colour || '').trim(),
+        designName: name2(s && s.designName), colourName: name2(s && s.colourName), size: String(s && s.size || '').trim().toUpperCase(),
+        priceThb: Number(s && s.priceThb), photo: String(s && s.photo || '').trim() || null, cap: Number(s && s.cap),
+        sort: s && s.sort != null && s.sort !== '' ? Number(s.sort) : i * 10 };
+      if (s && s.id != null && !r.id) return bad('id', 'unknown id');
+      if (!/^[a-z0-9-]{1,24}$/.test(r.design)) return bad('design', 'design: a short key, lowercase letters, digits or dashes');
+      if (!/^[a-z0-9-]{1,24}$/.test(r.colour)) return bad('colour', 'colour: a short key, lowercase letters, digits or dashes');
+      if (!r.designName) return bad('designName', 'design name: English (and Chinese), up to 60 characters');
+      if (!r.colourName) return bad('colourName', 'colour name: English (and Chinese), up to 60 characters');
+      if (!TEE_SIZES.includes(r.size)) return bad('size', `size: one of ${TEE_SIZES.join(', ')}`);
+      if (!Number.isInteger(r.priceThb) || r.priceThb < 1 || r.priceThb > 100000) return bad('priceThb', 'price: whole baht, before the fee and VAT');
+      if (r.photo && (!/^\/img\/[\w./-]+$/.test(r.photo) || r.photo.includes('..'))) return bad('photo', 'photo: a site path under /img/');
+      if (!Number.isInteger(r.cap) || r.cap < 0 || r.cap > 500) return bad('cap', 'cap: 0 to 500');
+      if (!Number.isInteger(r.sort) || Math.abs(r.sort) > 1e6) return bad('sort', 'sort: a whole number');
+      if (rows.some(x => x.design === r.design && x.colour === r.colour && x.size === r.size)) return bad('size', 'this design, colour and size is in the grid twice');
+      if (r.id && rows.some(x => x.id === r.id)) return bad('id', 'the same tee is in the grid twice');
+      rows.push(r);
+    }
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const stop = async (code, body) => { await client.query('ROLLBACK'); res.status(code).json(body); };
+      const d = (await client.query('SELECT * FROM bkk_tee_drops WHERE id=$1 FOR UPDATE', [id])).rows[0];
+      if (!d) return await stop(404, { error: 'no such tee pre-order' });
+      if (d.done_at) return await stop(409, { error: 'This pre-order is finished: it cannot change.' });
+      const old = (await client.query(`SELECT s.*, EXISTS (SELECT 1 FROM bkk_tee_lines l WHERE l.stock_id = s.id) AS lined
+        FROM bkk_tee_stock s WHERE s.drop_id=$1`, [id])).rows;
+      const taken = await teeTaken(client, id, now);
+      for (const r of rows) if (r.id && !old.some(x => x.id === r.id)) return await stop(400, { error: `tee ${r.id} is not in this pre-order`, stockId: r.id });
+      for (const x of old) {
+        const r = rows.find(y => y.id === x.id);
+        if (!r) {
+          if (x.lined) return await stop(409, { error: `${x.design} ${x.colour} ${x.size} has orders: it cannot be removed (set its cap instead).`, stockId: x.id });
+          continue;
+        }
+        if (x.lined && (r.design !== x.design || r.colour !== x.colour || r.size !== x.size))
+          return await stop(409, { error: `${x.design} ${x.colour} ${x.size} has orders: its design, colour and size stay.`, stockId: x.id });
+        if (x.lined && r.priceThb !== x.price_thb)
+          return await stop(409, { error: `${x.design} ${x.colour} ${x.size} has orders: its price is locked.`, stockId: x.id });
+        if (r.cap < takenOf(taken, x.id))
+          return await stop(409, { error: `${x.design} ${x.colour} ${x.size}: the cap cannot go below the ${takenOf(taken, x.id)} sold or held.`, stockId: x.id, taken: takenOf(taken, x.id) });
+      }
+      await client.query('SAVEPOINT g');
+      try {
+        const keep = rows.filter(r => r.id).map(r => r.id);
+        await client.query('DELETE FROM bkk_tee_stock WHERE drop_id=$1 AND NOT (id = ANY($2::int[]))', [id, keep]);
+        for (const r of rows) {
+          const vals = [r.design, JSON.stringify(r.designName), r.colour, JSON.stringify(r.colourName), r.size, r.priceThb, r.photo, r.cap, r.sort];
+          if (r.id) await client.query(`UPDATE bkk_tee_stock SET design=$1, design_name=$2, colour=$3, colour_name=$4, size=$5, price_thb=$6,
+            photo=$7, cap=$8, sort=$9 WHERE id=$10`, [...vals, r.id]);
+          else await client.query(`INSERT INTO bkk_tee_stock (design,design_name,colour,colour_name,size,price_thb,photo,cap,sort,drop_id)
+            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`, [...vals, id]);
+        }
+      } catch (e) {
+        await client.query('ROLLBACK TO SAVEPOINT g');
+        if (e.code === '23505') return await stop(409, { error: 'Two tees in the grid have the same design, colour and size.' });
+        throw e;
+      }
+      await client.query('COMMIT');
+      res.json({ success: true, totals: await teeTotals(pool, d, now) });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      res.status(500).json({ error: e.message });
+    } finally { client.release(); }
+  });
+
+  // Close now: the close time comes forward to now. One not open yet is unpublished instead.
+  app.post('/api/bkk/admin/tee/drops/:id/close', async (req, res) => {
+    if (teeStaff(req, res)) return;
+    try {
+      const id = teeId(req.params.id), now = nowMs();
+      const r = id && (await q(`UPDATE bkk_tee_drops SET
+          published = published AND opens_at < $2,
+          closes_at = CASE WHEN opens_at < $2 THEN least(closes_at, $2) ELSE closes_at END
+        WHERE id=$1 AND done_at IS NULL RETURNING *`, [id, at(now)])).rows[0];
+      if (!r) return res.status(404).json({ error: 'no such open tee pre-order' });
+      res.json({ success: true, drop: teeDropOut(r, now) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Every order of a drop, with contact details (staff only), ?status= (a tee status or a view:
+  // waiting, expired, mismatch) and ?pickup=, and the drop's totals.
+  async function teeOrderRows(db, d, now, { pickup = null } = {}) {
+    const rows = (await db.query(`${TEE_ORDER_SQL} WHERE t.drop_id = $1 AND ($2::text IS NULL OR t.pickup = $2)
+      ORDER BY t.created_at DESC, t.order_id DESC`, [d.id, pickup])).rows;
+    const items = await teeItems(db, rows.map(r => r.order_id), 'en');
+    const label = k => (pickupsOf(d).find(p => p.key === k) || {}).label || null;
+    const when = v => v ? isoBkk(v) : null;
+    return rows.map(r => {
+      const it = items.get(r.order_id);
+      return { orderId: r.order_id, refno: refno12(r.refno), status: r.status, view: teeView(r, r.money, now), money: r.money,
+        name: r.name, wechat: r.wechat, mobile: r.mobile, email: r.email, lang: r.lang, pickup: r.pickup, pickupLabel: label(r.pickup),
+        problem: r.problem, items: it, qty: qtyOf(it), amount: r.amount_thb, base: r.base_thb, fee: r.fee_thb, vat: r.vat_thb,
+        holdUntil: when(r.hold_until), createdAt: when(r.created_at), paidAt: when(r.paid_at), handedAt: when(r.handed_at),
+        cancelledAt: when(r.cancelled_at), purgedAt: when(r.purged_at), note: r.gateway_note };
+    });
+  }
+  const teeDropById = async (db, id, lock = false) => id
+    ? (await db.query(`SELECT * FROM bkk_tee_drops WHERE id=$1${lock ? ' FOR UPDATE' : ''}`, [id])).rows[0] : null;
+  app.get('/api/bkk/admin/tee/drops/:id/orders', async (req, res) => {
+    if (teeStaff(req, res)) return;
+    try {
+      const now = nowMs(), d = await teeDropById(pool, teeId(req.params.id));
+      if (!d) return res.status(404).json({ error: 'no such tee pre-order' });
+      const pickup = req.query.pickup ? String(req.query.pickup) : null, want = req.query.status ? String(req.query.status) : null;
+      const orders = (await teeOrderRows(pool, d, now, { pickup })).filter(o => !want || o.status === want || o.view === want);
+      res.json({ drop: teeDropOut(d, now), orders, totals: await teeTotals(pool, d, now) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // One order: {pickup?, problem?, swapStockId? (+ fromStockId when it has more than one tee), handed?},
+  // applied in that order, all or nothing.
+  app.post('/api/bkk/admin/tee/orders/:orderId', async (req, res) => {
+    if (teeStaff(req, res)) return;
+    const oid = teeId(req.params.orderId), b = req.body || {}, now = nowMs();
+    if (!oid) return res.status(404).json({ error: 'not found' });
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const stop = async (code, body) => { await client.query('ROLLBACK'); res.status(code).json(body); };
+      const t0 = (await client.query('SELECT drop_id FROM bkk_tee_orders WHERE order_id=$1', [oid])).rows[0];
+      if (!t0) return await stop(404, { error: 'not found' });
+      const d = await teeDropById(client, t0.drop_id, true);
+      const t = (await client.query('SELECT * FROM bkk_tee_orders WHERE order_id=$1 FOR UPDATE', [oid])).rows[0];
+      let status = t.status;
+      if (b.pickup !== undefined) {
+        if (!pickupsOf(d).some(p => p.key === b.pickup)) return await stop(400, { error: 'no such pickup point', field: 'pickup' });
+        await client.query('UPDATE bkk_tee_orders SET pickup=$2 WHERE order_id=$1', [oid, b.pickup]);
+      }
+      if (b.problem !== undefined) {
+        const note = b.problem === null ? '' : String(b.problem).replace(/\s+/g, ' ').trim().slice(0, 300);
+        await client.query('UPDATE bkk_tee_orders SET problem=$2 WHERE order_id=$1', [oid, note || null]);
+      }
+      if (b.swapStockId !== undefined) {
+        if (!['paid', 'oversold'].includes(status)) return await stop(409, { error: 'Only a paid or oversold order can change size.' });
+        const st = await teeStockRows(client, d.id);
+        const to = Number(b.swapStockId);
+        if (!st.some(s => s.id === to)) return await stop(400, { error: 'no such tee in this pre-order', field: 'swapStockId' });
+        const lines = (await client.query('SELECT stock_id AS "stockId", qty, unit_thb AS "unitThb" FROM bkk_tee_lines WHERE order_id=$1', [oid])).rows;
+        const from = b.fromStockId != null ? Number(b.fromStockId) : lines.length === 1 ? lines[0].stockId : null;
+        const line = lines.find(l => l.stockId === from);
+        if (!line) return await stop(400, { error: 'say which tee to swap (fromStockId)', field: 'fromStockId' });
+        if (to !== from && lines.some(l => l.stockId === to)) return await stop(409, { error: 'That tee is already in this order.' });
+        const next = lines.map(l => l === line ? { ...l, stockId: to } : l);
+        const fit = teeShort(d, st, await teeTaken(client, d.id, now, oid), next);
+        if (fit.soldOut.length) return await stop(409, { error: 'sold out', soldOut: fit.soldOut });
+        await client.query('UPDATE bkk_tee_lines SET stock_id=$3 WHERE order_id=$1 AND stock_id=$2', [oid, from, to]);
+        status = 'paid';
+        await client.query(`UPDATE bkk_tee_orders SET status='paid' WHERE order_id=$1`, [oid]);
+      }
+      if (b.handed === true) {
+        if (status !== 'paid' && status !== 'handed') return await stop(409, { error: 'Only a paid order can be handed over.' });
+        if (status === 'paid') await client.query(`UPDATE bkk_tee_orders SET status='handed', handed_at=$2 WHERE order_id=$1`, [oid, at(now)]);
+      } else if (b.handed === false && status === 'handed') {
+        await client.query(`UPDATE bkk_tee_orders SET status='paid', handed_at=NULL WHERE order_id=$1`, [oid]);
+      }
+      await client.query('COMMIT');
+      const row = (await teeOrderRows(pool, d, now)).find(o => o.orderId === oid);
+      res.json({ success: true, order: row });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      res.status(500).json({ error: e.message });
+    } finally { client.release(); }
+  });
+
+  // Cancel: an unpaid order is simply cancelled. A paid one only once the refund is done in the
+  // PaySolutions panel (refunded: true): its money row goes void, as Void does. Handed over: also confirm.
+  app.post('/api/bkk/admin/tee/orders/:orderId/cancel', async (req, res) => {
+    if (teeStaff(req, res)) return;
+    const oid = teeId(req.params.orderId), b = req.body || {}, now = nowMs();
+    if (!oid) return res.status(404).json({ error: 'not found' });
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const stop = async (code, body) => { await client.query('ROLLBACK'); res.status(code).json(body); };
+      const t0 = (await client.query('SELECT drop_id FROM bkk_tee_orders WHERE order_id=$1', [oid])).rows[0];
+      if (!t0) return await stop(404, { error: 'not found' });
+      await teeDropById(client, t0.drop_id, true);
+      const o = (await client.query('SELECT * FROM bkk_orders WHERE id=$1 FOR UPDATE', [oid])).rows[0];
+      const t = (await client.query('SELECT * FROM bkk_tee_orders WHERE order_id=$1 FOR UPDATE', [oid])).rows[0];
+      if (t.status === 'cancelled' && o.status !== 'mismatch') return await stop(200, { success: true, already: true, refno: String(o.refno) });
+      let note = null;
+      // A wrong amount is money received too: it is refunded like a paid order, never just dropped.
+      if (o.status === 'paid' || o.status === 'mismatch') {
+        if (b.refunded !== true) return await stop(409, { needs: 'refunded',
+          error: o.status === 'paid' ? 'This order is paid: refund it in the PaySolutions panel first, then cancel it as refunded.'
+            : 'PaySolutions took money for this order (the wrong amount): refund it in the PaySolutions panel first, then cancel it as refunded.' });
+        if (t.status === 'handed' && b.confirm !== true) return await stop(409, { needs: 'confirm',
+          error: 'These tees were handed over already. Send confirm to cancel and void it anyway.' });
+        const reason = String(b.reason || '').replace(/\s+/g, ' ').trim().slice(0, 160);
+        note = `Void: tee refund${o.status === 'mismatch' ? ' (wrong amount)' : ''}${reason ? ': ' + reason : ''} (by staff, ${bkkToday()})`;
+        await voidMoney(client, o, note, now);
+      } else {
+        await client.query(`UPDATE bkk_tee_orders SET status='cancelled', cancelled_at=$2 WHERE order_id=$1`, [oid, at(now)]);
+      }
+      await client.query('COMMIT');
+      res.json({ success: true, refno: String(o.refno), voided: !!note, note });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      res.status(500).json({ error: e.message });
+    } finally { client.release(); }
+  });
+
+  // The printable pickup list: what to take per design, colour and size (paid and handed), then
+  // the buyers by name with their WeChat ID, tees and a box to tick.
+  app.get('/api/bkk/admin/tee/drops/:id/pickup', async (req, res) => {
+    if (teeStaff(req, res)) return;
+    try {
+      const now = nowMs(), d = await teeDropById(pool, teeId(req.params.id));
+      if (!d) return res.status(404).json({ error: 'no such tee pre-order' });
+      const key = req.query.pickup ? String(req.query.pickup) : null;
+      const pk = key ? pickupsOf(d).find(p => p.key === key) : null;
+      if (key && !pk) return res.status(404).json({ error: 'no such pickup point' });
+      const orders = (await teeOrderRows(pool, d, now, { pickup: key })).filter(o => ['paid', 'handed', 'oversold'].includes(o.status));
+      const totals = [];
+      for (const o of orders.filter(x => x.status !== 'oversold')) for (const it of o.items) {
+        const t = totals.find(x => x.stockId === it.stockId);
+        if (t) t.qty += it.qty;
+        else totals.push({ stockId: it.stockId, design: it.design, designName: it.designName, colour: it.colour, colourName: it.colourName, size: it.size, qty: it.qty });
+      }
+      totals.sort((a, b) => a.design.localeCompare(b.design) || a.colour.localeCompare(b.colour) || TEE_SIZES.indexOf(a.size) - TEE_SIZES.indexOf(b.size));
+      const buyers = orders.map(o => ({ orderId: o.orderId, refno: o.refno, name: o.name, wechat: o.wechat, pickup: o.pickup, status: o.status,
+        handed: o.status === 'handed', problem: o.problem,
+        items: o.items.map(it => ({ designName: it.designName, colourName: it.colourName, size: it.size, qty: it.qty })), qty: o.qty }))
+        .sort((a, b) => String(a.name ?? '￿').localeCompare(String(b.name ?? '￿')) || a.refno.localeCompare(b.refno));
+      res.json({ drop: { id: d.id, code: d.code, title: pickLang(d.title, 'en') }, pickup: pk || null, totals,
+        total: qtyOf(totals), buyers, oversold: orders.filter(o => o.status === 'oversold').length });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // The paper a carrier declares the tees with at China customs (red channel): design × colour, how
+  // many, and the unit price in baht. Paid and handed orders, ?pickup= for one carrier's bag.
+  app.get('/api/bkk/admin/tee/drops/:id/declaration', async (req, res) => {
+    if (teeStaff(req, res)) return;
+    try {
+      const d = await teeDropById(pool, teeId(req.params.id));
+      if (!d) return res.status(404).json({ error: 'no such tee pre-order' });
+      const key = req.query.pickup ? String(req.query.pickup) : null;
+      if (key && !pickupsOf(d).some(p => p.key === key)) return res.status(404).json({ error: 'no such pickup point' });
+      const rows = (await q(`SELECT s.design, s.design_name, s.colour, s.colour_name, l.unit_thb, sum(l.qty)::int AS qty
+        FROM bkk_tee_lines l JOIN bkk_tee_orders t ON t.order_id = l.order_id JOIN bkk_tee_stock s ON s.id = l.stock_id
+        WHERE t.drop_id = $1 AND t.status IN ('paid','handed') AND ($2::text IS NULL OR t.pickup = $2)
+        GROUP BY s.design, s.design_name, s.colour, s.colour_name, l.unit_thb ORDER BY s.design, s.colour, l.unit_thb`, [d.id, key])).rows;
+      const lines = rows.map(r => ({ design: r.design, designName: pickLang(r.design_name, 'en'), designNameZh: pickLang(r.design_name, 'zh'),
+        colour: r.colour, colourName: pickLang(r.colour_name, 'en'), colourNameZh: pickLang(r.colour_name, 'zh'),
+        qty: r.qty, unitThb: r.unit_thb, totalThb: r.qty * r.unit_thb }));
+      res.json({ drop: { id: d.id, code: d.code, title: pickLang(d.title, 'en') }, pickup: key ? pickupsOf(d).find(p => p.key === key) : null, lines,
+        total: { qty: lines.reduce((n, l) => n + l.qty, 0), thb: lines.reduce((n, l) => n + l.totalThb, 0) } });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Finish: the books of the drop, frozen with its costs. Refused while a paid order is not handed
+  // over (paid or oversold), unless confirm.
+  async function teeReport(db, d, costs, now) {
+    const tot = await teeTotals(db, d, now);
+    const handed = (await db.query(`SELECT l.stock_id, sum(l.qty)::int AS n FROM bkk_tee_lines l
+      JOIN bkk_tee_orders t ON t.order_id = l.order_id WHERE t.drop_id = $1 AND t.status = 'handed' GROUP BY 1`, [d.id])).rows;
+    const paidAt = (await db.query(`SELECT l.stock_id, sum(l.qty * l.unit_thb)::int AS thb FROM bkk_tee_lines l
+      JOIN bkk_tee_orders t ON t.order_id = l.order_id WHERE t.drop_id = $1 AND t.status IN ('paid','handed') GROUP BY 1`, [d.id])).rows;
+    const costTotal = Object.values(costs || {}).reduce((n, v) => n + v, 0);
+    return { frozenAt: isoBkk(now), drop: { code: d.code, title: pickLang(d.title, 'en'), opensAt: isoBkk(d.opens_at), closesAt: isoBkk(d.closes_at), cap: d.cap },
+      stock: tot.stock.map(s => ({ stockId: s.id, design: s.design, designName: s.designName.en, colour: s.colour, colourName: s.colourName.en,
+        size: s.size, priceThb: s.priceThb, cap: s.cap, sold: s.sold, thb: (paidAt.find(x => x.stock_id === s.id) || {}).thb || 0,
+        handed: (handed.find(h => h.stock_id === s.id) || {}).n || 0 })),
+      tees: { sold: tot.tees.sold, handed: handed.reduce((n, h) => n + h.n, 0) }, orders: tot.orders, money: tot.money, refunds: tot.refunds,
+      costs: costs || {}, costTotal, baseLessCosts: tot.money.base - costTotal };
+  }
+  function readCosts(c) {
+    if (c == null) return { value: {} };
+    if (typeof c !== 'object' || Array.isArray(c) || Object.keys(c).length > 20) return { error: 'costs: up to 20 lines, {label: baht}' };
+    const out = {};
+    for (const [k, v] of Object.entries(c)) {
+      const label = k.replace(/\s+/g, ' ').trim(), n = Number(v);
+      if (!label || label.length > 40 || /[<>]/.test(label) || !Number.isInteger(n) || n < 0 || n > 10000000) return { error: `costs: "${label.slice(0, 40)}" needs whole baht` };
+      out[label] = n;
+    }
+    return { value: out };
+  }
+  app.post('/api/bkk/admin/tee/drops/:id/finish', async (req, res) => {
+    if (teeStaff(req, res)) return;
+    const id = teeId(req.params.id), b = req.body || {}, now = nowMs();
+    const c = readCosts(b.costs);
+    if (c.error) return res.status(400).json({ error: c.error, field: 'costs' });
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const stop = async (code, body) => { await client.query('ROLLBACK'); res.status(code).json(body); };
+      const d = await teeDropById(client, id, true);
+      if (!d) return await stop(404, { error: 'no such tee pre-order' });
+      if (d.done_at) return await stop(409, { error: 'This pre-order is finished already.', report: d.report });
+      if (now < new Date(d.closes_at).getTime() && d.published) return await stop(409, { error: 'Close the pre-order first.' });
+      // A buyer still inside their hold may pay yet: finish once the last hold has run out.
+      const live = (await client.query(`SELECT count(*)::int AS n, max(t.hold_until) AS until FROM bkk_tee_orders t
+        JOIN bkk_orders o ON o.id = t.order_id
+        WHERE t.drop_id=$1 AND t.status='new' AND o.status IN ('pending','failed') AND t.hold_until > $2`, [d.id, at(now)])).rows[0];
+      if (live.n) return await stop(409, { error: `${live.n} unpaid order(s) can still be paid until ${bkkMinute(live.until)} Bangkok time. Finish after that.`,
+        holds: live.n, until: isoBkk(live.until) });
+      const open =(await client.query(`SELECT count(*)::int AS n FROM bkk_tee_orders WHERE drop_id=$1 AND status IN ('paid','oversold')`, [d.id])).rows[0].n;
+      if (open && b.confirm !== true) return await stop(409, { error: `${open} paid order(s) not handed over yet. Send confirm to finish anyway.`, notHanded: open });
+      const report = await teeReport(client, d, c.value, now);
+      const row = (await client.query(`UPDATE bkk_tee_drops SET costs=$2, report=$3, done_at=$4 WHERE id=$1 RETURNING *`,
+        [d.id, JSON.stringify(c.value), JSON.stringify(report), at(now)])).rows[0];
+      await client.query('COMMIT');
+      res.json({ success: true, drop: teeDropOut(row, now), report });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      res.status(500).json({ error: e.message });
+    } finally { client.release(); }
+  });
+  // The frozen report once finished; before that, the same report live, with the costs saved so far.
+  app.get(['/api/bkk/admin/tee/drops/:id/report', '/api/bkk/admin/tee/drops/:id/report.csv'], async (req, res) => {
+    if (teeStaff(req, res)) return;
+    try {
+      const now = nowMs(), d = await teeDropById(pool, teeId(req.params.id));
+      if (!d) return res.status(404).json({ error: 'no such tee pre-order' });
+      const r = d.report ? { ...d.report, live: false } : { ...await teeReport(pool, d, d.costs || {}, now), live: true };
+      if (!req.path.endsWith('.csv')) return res.json({ report: r });
+      const rows = [['section', 'item', 'qty', 'thb'],
+        ...r.stock.map(s => ['tees', `${s.designName} · ${s.colourName} · ${s.size}`, s.sold, s.thb]),
+        ['money', 'paid orders', r.money.n, r.money.amount], ['money', 'price (before fee and VAT)', '', r.money.base],
+        ['money', 'online fee', '', r.money.fee], ['money', 'VAT 7%', '', r.money.vat],
+        ['money', 'refunded orders', r.refunds.n, r.refunds.amount],
+        ...Object.entries(r.costs || {}).map(([k, v]) => ['cost', k, '', v]),
+        ['result', 'price less costs', '', r.baseLessCosts]];
+      res.set('Content-Type', 'text/csv; charset=utf-8')
+        .set('Content-Disposition', `attachment; filename="aybkk-tees-${d.code}-report.csv"`);
+      res.send('﻿' + rows.map(x => x.map(csvCell).join(',')).join('\r\n') + '\r\n');
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+  // Delete contact details now (confirm): handed, cancelled and lapsed unpaid orders of this drop;
+  // on a finished drop every order. A problem note still keeps its order.
+  app.post('/api/bkk/admin/tee/drops/:id/purge', async (req, res) => {
+    if (teeStaff(req, res)) return;
+    try {
+      const d = await teeDropById(pool, teeId(req.params.id));
+      if (!d) return res.status(404).json({ error: 'no such tee pre-order' });
+      if ((req.body || {}).confirm !== true) return res.status(409).json({ error: 'Send confirm to delete the contact details.', needs: 'confirm' });
+      const r = await teePurge({ dropId: d.id, all: true, done: !!d.done_at });
+      const left = (await q(`SELECT count(*)::int AS n FROM bkk_tee_orders WHERE drop_id=$1 AND purged_at IS NULL`, [d.id])).rows[0].n;
+      res.json({ success: true, purged: r.purged, kept: left });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -5857,12 +6884,12 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
             ORDER BY b.class_date, b.start_at, m.name, b.id`,
     },
     payments: {
-      head: ['date', 'time', 'student', 'code', 'email', 'item', 'amount', 'base', 'fee', 'vat', 'method', 'status', 'source', 'refno', 'note', 'rezerv_ref'],
+      head: ['date', 'time', 'student', 'code', 'email', 'item', 'amount', 'base', 'fee', 'vat', 'method', 'status', 'source', 'refno', 'note', 'rezerv_ref', 'kind'],
       sql: `SELECT to_char(${PAY_AT} AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS date,
               to_char(${PAY_AT} AT TIME ZONE 'Asia/Bangkok','HH24:MI') AS time, m.name AS student, m.code, m.email,
               coalesce(pr.name_en, o.item_name) AS item, o.amount_thb AS amount, o.base_thb AS base, o.fee_thb AS fee,
               o.vat_thb AS vat, o.method, o.status, coalesce(o.source,'aybkk') AS source, o.refno::text AS refno,
-              o.gateway_note AS note, CASE WHEN o.source='rezerv' THEN o.source_ref END AS rezerv_ref
+              o.gateway_note AS note, CASE WHEN o.source='rezerv' THEN o.source_ref END AS rezerv_ref, o.kind
             FROM bkk_orders o LEFT JOIN bkk_members m ON m.id=o.member_id LEFT JOIN bkk_products pr ON pr.id=o.product_id
             WHERE ($1::date IS NULL OR ${PAY_DAY} BETWEEN $1::date AND $2::date) AND ($3::int IS NULL OR o.member_id=$3)
             ORDER BY ${PAY_AT}, o.id`,
@@ -7761,11 +8788,11 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   return booted
     .then(() => {
       console.log('✓ bkk-api mounted (/api/bkk/*)'); letterPurge(); sweepFaces();
-      if (timers) startPayWatch();
+      if (timers) { startPayWatch(); teePurgeTick(); setInterval(teePurgeTick, 24 * 3600 * 1000).unref(); }
       return switchPrices().catch(e => console.error('✗ bkk: price switch failed:', e.message));
     })
     .catch(e => console.error('✗ bkk-api schema init failed:', e.message))
-    .then(() => ({ paySweep, moneyTick, moneyLine, resendAlerts }));
+    .then(() => ({ paySweep, moneyTick, moneyLine, resendAlerts, teePurge }));
 }
 
 // PaySolutions posts application/x-www-form-urlencoded; make sure that body is
@@ -7774,4 +8801,4 @@ const express = require('express');
 const express_urlencoded_safe = express.urlencoded({ extended: false });
 
 module.exports = { mountBkk, CANCEL_CUTOFF_HOURS, SEED_PRODUCTS, SEED_SLOTS, moonDaysBetween, rotationTeacher, parseWhen,
-  CONSENT_VERSION, CONSENT_TEXT, checkConsentText };
+  CONSENT_VERSION, CONSENT_TEXT, checkConsentText, TEE_NOTICE_VERSION, TEE_NOTICE };
