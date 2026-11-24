@@ -448,6 +448,106 @@
   @media (min-width:700px){ .tees{grid-template-columns:repeat(4,minmax(0,1fr))} }
   @media (max-width:1099px){ .tee .btn{font-size:var(--fs-s)} }
   @media (min-width:1100px){ #tees .tees{grid-column:c 1/c-end} }
+  /* ── #tees, the pre-order (24 Nov 2026): a card per design, then my order, my details, check and pay, and one
+     order's status. Square like the rest of the page; chips and steppers are 44px or more to tap. */
+  .tw{margin:0 0 14px;font-weight:700;font-variant-numeric:tabular-nums}
+  #teeDrop > .note{margin:0 0 14px;max-width:62ch}
+  .twx{margin:0 0 var(--bl);padding:10px 14px;background:var(--blush);color:var(--plum);font-size:var(--fs-s);line-height:22px}
+  .tds{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--g);margin-top:var(--bl)}
+  @media (min-width:700px){ .tds{grid-template-columns:repeat(2,minmax(0,1fr))} }
+  .td{min-width:0;padding:16px;background:var(--paper)}
+  .tdh{display:grid;grid-template-columns:104px minmax(0,1fr);gap:0 16px;align-items:start}
+  .tdh img,.tdh .tph{display:block;width:104px;height:104px;object-fit:cover;object-position:50% 45%;background:var(--wall)}
+  .td h3{margin:0 0 4px;font:700 var(--fs-l)/1.25 var(--f-text);overflow-wrap:anywhere}
+  .td .tp{margin:0;font-weight:700;color:var(--plum);font-variant-numeric:tabular-nums}
+  .td .tp small{display:block;font-weight:400;font-size:var(--fs-s);line-height:20px;color:var(--soft)}
+  .tlab{margin:16px 0 6px;font:600 var(--fs-s)/20px var(--f-text)}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chips button{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-width:48px;min-height:48px;
+    padding:4px 12px;border:2px solid var(--blush-line);border-radius:0;background:var(--wall);color:var(--ink);
+    font:600 var(--fs-b)/1.1 var(--f-text);cursor:pointer}
+  .chips button small{margin-top:2px;font:600 12px/1.2 var(--f-text);color:var(--plum)}
+  .chips button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--wall)}
+  .chips button[aria-pressed="true"] small{color:inherit}
+  .chips button:disabled{background:transparent;border-style:dashed;color:var(--soft);cursor:not-allowed}
+  .chips button:disabled > span{text-decoration:line-through}
+  .chips button:disabled small{color:var(--soft)}
+  .td .tsz{margin:16px 0 0;font-size:var(--fs-s);line-height:20px;color:var(--soft)}
+  .tadd{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:16px}
+  .tadd .btn{flex:1 1 150px;padding-inline:12px}
+  .tstep{display:inline-flex;align-items:center;flex:none;border:2px solid var(--ink)}
+  .tstep button{width:44px;height:44px;padding:0;border:0;border-radius:0;background:none;color:var(--ink);font:700 22px/1 var(--f-text);cursor:pointer}
+  .tstep button:disabled{opacity:.3;cursor:default}
+  .tstep output{min-width:32px;text-align:center;font:700 var(--fs-b)/1 var(--f-text);font-variant-numeric:tabular-nums}
+  .tnote{margin:10px 0 0;font-size:var(--fs-s);line-height:20px;font-weight:600;color:var(--plum)}
+  .tnote:empty{display:none}
+  .tnote .linkbtn{min-height:32px;margin-left:8px;font-size:var(--fs-s);color:var(--plum)}
+  .tcart,.tform,.tconf,.tstat,.tmine{margin-top:var(--grp);padding-top:14px;border-top:2px solid var(--ink)}
+  #teeDrop > :first-child{margin-top:0}
+  #teeDrop h3{margin:0 0 14px;font:700 var(--fs-l)/1.3 var(--f-text)}
+  #teeList:not([hidden]) ~ #teeDrop{margin-top:calc(2 * var(--bl))}
+  #teeDrop h3:focus{outline:none}
+  #teeDrop h4{margin:var(--bl) 0 6px;font:700 var(--fs-b)/28px var(--f-text)}
+  .tlines{list-style:none;margin:0;padding:0}
+  .tlines li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:center;padding:12px 0;border-top:2px solid var(--line)}
+  .tlines li:first-child{border-top:0;padding-top:0}
+  .tlines .tn{min-width:0;font-weight:600;overflow-wrap:anywhere}
+  .tlines .tn small{display:block;font-weight:400;font-size:var(--fs-s);line-height:20px;color:var(--soft)}
+  .tlines .tn small.bad{font-weight:600;color:var(--plum)}
+  .tlines .tv{text-align:right;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .tlines .tc{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px}
+  .tlines .tc .linkbtn{font-size:var(--fs-s)}
+  .tlines li.short .tstep{border-color:var(--plum)}
+  .tmine .tlines .btn{min-height:44px;padding:6px 16px}
+  .tmoney{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 0;margin:14px 0 0;font-variant-numeric:tabular-nums}
+  .tmoney dt{padding-right:16px;color:var(--soft)}
+  .tmoney dd{margin:0;text-align:right;white-space:nowrap}
+  .tmoney .tt{margin-top:6px;padding-top:8px;border-top:2px solid var(--ink);font:700 var(--fs-l)/1.3 var(--f-text);color:var(--ink)}
+  .tmoney + .note{margin:6px 0 0;text-align:right}
+  .tform .thint{margin:-2px 0 6px}
+  .tform input[aria-invalid="true"],.tform select[aria-invalid="true"]{border-color:var(--plum);border-width:3px}
+  .ferr{margin:6px 0 0;font-size:var(--fs-s);line-height:20px;font-weight:600;color:var(--plum)}
+  .tform .tnl{margin:var(--bl) 0 0}
+  .tform .tnl .linkbtn{text-align:left;color:var(--plum)}
+  label.tok{display:flex;gap:12px;align-items:flex-start;margin:6px 0 0;font:600 var(--fs-b)/1.45 var(--f-text);cursor:pointer}
+  label.tok input{flex:none;width:24px;height:24px;min-height:0;margin:2px 0 0;padding:0;accent-color:var(--plum);cursor:pointer}
+  .tform .dacts .btn,.tconf .act .btn{min-height:56px}
+  @media (max-width:699px){ .tform .dacts .btn,.tcart .act .btn{width:100%} }
+  .tpick{margin:14px 0}
+  .tib{display:inline-block}
+  .tlink{margin:8px 0 0}
+  .tlink span{min-width:0;font:500 15px/22px var(--f-text);overflow-wrap:anywhere}
+  .thow{margin:0;padding-left:24px}
+  .thow li{margin:0 0 8px;line-height:1.5}
+  .thow li.hot{font-weight:700;color:var(--plum)}
+  .tconf .act{margin-top:var(--bl)}
+  .tconf .tchg{margin:14px 0 0}
+  .tconf .tchg + .note{margin:0}
+  .tsteps{display:flex;list-style:none;margin:0 0 var(--bl);padding:0}
+  .tsteps li{position:relative;flex:1;min-width:0;padding-top:26px;font-weight:700;color:var(--soft)}
+  .tsteps li::before{content:"";position:absolute;top:0;left:0;width:18px;height:18px;border:3px solid currentColor;border-radius:50%;
+    background:var(--wall);box-sizing:border-box}
+  .tsteps li::after{content:"";position:absolute;top:8px;left:24px;right:8px;height:2px;background:var(--line)}
+  .tsteps li:last-child::after{display:none}
+  .tsteps li.done{color:var(--plum)}
+  .tsteps li.done::before{background:currentColor}
+  .tsteps li small{display:block;font-weight:400;font-size:var(--fs-s);line-height:20px;color:var(--soft)}
+  .tst{margin:0 0 var(--bl);padding:14px 16px;background:var(--paper);border-left:4px solid var(--soft)}
+  .tst p{margin:0}
+  .tst p + p{margin-top:6px}
+  .tst .big{font:700 var(--fs-l)/1.3 var(--f-text)}
+  .tst.ok{border-left-color:var(--promo);background:var(--promo-soft)}
+  .tst.ok .big{color:var(--promo-deep)}
+  .tst.bad{border-left-color:var(--plum);background:var(--blush)}
+  .tst.bad .big{color:var(--plum)}
+  .tbuyer{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 16px;margin:14px 0 0}
+  .tbuyer dt{color:var(--soft)}
+  .tbuyer dd{margin:0;overflow-wrap:anywhere}
+  .tstat .dacts{margin-top:var(--bl)}
+  .tnotice h4{margin:16px 0 4px;font:700 var(--fs-s)/20px var(--f-text);color:var(--plum)}
+  .tnotice p{margin:0 0 8px;font-size:15px;line-height:1.5}
+  .tnotice h3:focus{outline:none}
+  :lang(th) .td h3,:lang(th) .tw,:lang(th) #teeDrop h3,:lang(th) #teeDrop h4,:lang(th) .tsteps li,:lang(th) .tst .big{font-weight:500;font-synthesis:none}
 
   /* ── #letter */
   .nlq{margin:0 0 14px;font-weight:600}
@@ -1161,12 +1261,14 @@
     </div>
   </section>
 
-  <!-- Bangkok tees: public/bkk-tees.json (Boonchu edits it). Hidden while no tee is shown. -->
+  <!-- Tees: the pre-order from /api/bkk/tee-drop when there is one (every host), else the Bangkok tees of
+       public/bkk-tees.json (Boonchu edits it), ordered on LINE (not on cn). Hidden while there is nothing to show. -->
   <section id="tees" class="sec sgrid" hidden>
     <h2 data-i18n="teeH">AYBKK tees</h2>
     <p class="lead" data-i18n="teeLead">Order on LINE, then pick up your tee at the shala.</p>
     <div class="tees" id="teeList"></div>
     <p class="act" hidden><button type="button" class="btn ghost" id="teeAll" data-i18n="teeAll">Show all tees</button></p>
+    <div id="teeDrop" hidden></div>
   </section>
 
   <section id="letter" class="sec sgrid">
@@ -1255,6 +1357,17 @@
   const TEES_MQ = matchMedia('(min-width:700px)'), teesFirst = () => TEES_MQ.matches ? 4 : 2;
   // cn.aybkk.net serves this page too: China has its own tee shop in RMB, and LINE is blocked there.
   const CN_HOST = /^cn\./.test(location.hostname);
+  // The tee pre-order's state (renderTees): declared up here because the first applyLang() draws the section.
+  // view: 'pick' → 'details' → 'confirm' (the order exists, its link shown) → PaySolutions; 'status' for one order.
+  const TEE = { p: null, lang: '', drop: null, view: 'pick', sel: {}, cart: [], form: {}, err: {}, msg: null,
+    made: null, busy: false, token: '', st: null, stErr: '', poll: null, pollEnd: 0, land: false };
+  // A tee order's status link (/book#tee=<token>): the token is read, then taken out of the address bar at
+  // once, before the ads tag or a copied address can see it.
+  const TEE_AT = (() => {
+    const m = /^#tee=([0-9a-f]{32})$/i.exec(location.hash);
+    if (m) try { history.replaceState(null, '', location.pathname + location.search); } catch (_) {}
+    return m ? m[1].toLowerCase() : '';
+  })();
   // Facebook does not open in China either: there the Facebook line keeps its words, without the link.
   if (CN_HOST) { const a = $('#tFb a'); a.parentNode.replaceChild(a.firstChild, a); }
   const list = v => (Array.isArray(v) ? v : String(v ?? '').split(/[,\s/]+/)).map(x => String(x).trim()).filter(Boolean);
@@ -1823,6 +1936,140 @@
     teeMsg: (name, sizes, colours) => `Здравствуйте, AYBKK! Я хочу футболку: ${name}.${colours ? ` Цвет: [${colours}].` : ''} Размер: [${sizes}]. Заберу в шале.`,
     themeSrc: 'Источник',
   });
+  // The tee pre-order (24 Nov 2026): bought here, collected from an AYBKK team member in China. Chinese and
+  // English; Thai and Russian readers get the English. Prices are + fee + VAT, never "VAT included".
+  Object.assign(STR.en, {
+    teeCollect: 'Pre-order. Collect from an AYBKK team member in China.',
+    teeCloses: (b, c) => `Orders close ${b} Bangkok time · ${c} Beijing time`,
+    teeOpens: (b, c) => `Orders open ${b} Bangkok time · ${c} Beijing time`,
+    teeClosed: (b, c) => `This pre-order closed ${b} Bangkok time · ${c} Beijing time.`,
+    teeSoon: 'Have a look now; you can order once it opens.',
+    teeWxTip: 'In WeChat? To pay with Alipay, open this page in your phone’s browser before you start: tap ··· at the top right, then Open in Browser.',
+    teeFrom: p => `from ${p}`, teePlus: (f, v) => `+ ${f}% online fee + ${v}% VAT`,
+    teeYuan: y => `about ¥${y.toLocaleString('en-US')}, the payment page sets the rate`,
+    teeColour: 'Colour', teeSize: 'Size', teeOut: 'sold out', teeFew: 'a few left', teeAllOut: 'Every tee is sold out.',
+    teeLess: 'One fewer', teeMoreA: 'One more', teeAdd: 'Add to my order',
+    teeAdded: n => `Added. Your order: ${n}.`, teeSeeCart: 'See my order', teePickSize: 'Choose a size first.',
+    teeMax: n => `At most ${n} tees in one order.`,
+    teeCartH: 'My order', teeCartEmpty: 'Choose a colour and a size, then add it to your order.',
+    teeN: n => n === 1 ? '1 tee' : `${n} tees`, teeRemove: 'Remove',
+    teeShort: 'Not enough left. Take fewer or remove it.', teeNext: 'Continue',
+    teeSub: 'Tees', teeFee: n => n == null ? 'Online fee' : `Online fee ${n}%`, teeVat: n => `VAT ${n}%`, teeTotal: 'Total',
+    teeDetailsH: 'Your details', teeWho: 'The AYBKK team member at your pickup point sees your name, WeChat ID and tees, to hand them to you.',
+    teePickup: 'Pickup point', teePickupPick: 'Choose a pickup point',
+    teeName: 'Your name', teeNameHint: 'The name the AYBKK team member will know you by.',
+    teeWx: 'WeChat ID', teeMobile: 'Mobile in China (optional)', teeEmail: 'Email, for your receipt', teeMobileS: 'Mobile', teeEmailS: 'Email',
+    teeNoticeLink: 'Read the privacy notice for this order', teeNoticeOk: 'Close',
+    teeGoPay: 'Continue to payment', teeBack: 'Back',
+    teeErrPickup: 'Choose a pickup point.', teeErrName: 'Write your name: 2 to 30 characters, with no symbols such as < or &.',
+    teeErrWx: 'Write your WeChat ID, up to 40 characters, with no spaces.', teeErrEmail: 'Check your email address.',
+    teeErrMobile: 'A mainland China mobile number has 11 digits and starts with 1. Or leave it empty.',
+    teeErrNotice: 'Tick the box to say you have read the privacy notice.',
+    teeErrNoticeNew: 'The privacy notice has changed. Please read it and tick the box again.',
+    teeErrSold: 'Sorry: some tees sold out while you were choosing. They are marked in your order below.',
+    teeErrLines: 'Something in your order is no longer on sale. Please check it.',
+    teeErrClosed: 'This pre-order is closed now.', teeErrSoon: 'This pre-order is not open yet.',
+    teeErrHolds: m => `This email already has 2 unpaid tee orders waiting. Open one in My tee orders below to pay it, or wait ${m} minutes until it lapses.`,
+    teeErrMany: 'Too many orders from this connection. Please try again in an hour.',
+    teeErrPay: 'Online payment for the tees is not open yet. Please try again later, or message us on WeChat: aybkkwechat.',
+    teeErrNet: 'We could not reach the shala. Check your connection and try again.',
+    teeConfH: 'Check, then pay', teeRef: r => `Order ${r}`,
+    teeHeld: (b, c, m) => `Your tees are held for you for ${m} minutes: until ${b} Bangkok time · ${c} Beijing time.`,
+    teeLinkH: 'Your order link',
+    teeLinkNote: 'Keep it (copy it, or take a screenshot). It shows where your order stands, even if this page closes.',
+    teeHowH: 'How to pay',
+    teeHow1: 'Next is the PaySolutions payment page. It is in English.',
+    teeHow2: 'Choose Alipay, WeChat Pay, UnionPay, Visa or Mastercard.',
+    teeHow3: 'Inside WeChat, Alipay does not open. Pay with WeChat Pay here, or copy the order link above and open it in your phone’s browser to pay with Alipay.',
+    teeHow4: 'WeChat Pay shows a QR code. Save it (or take a screenshot), then in WeChat scan it from your album.',
+    teeHow5: 'A UnionPay card may need overseas online payment switched on in your bank’s app first.',
+    teePay: a => `Pay ${a}`, teeChange: 'Change my order',
+    teeChangeNote: 'This order is not paid: changing it lets these tees go at once. Your new order gets a new link.',
+    teeStH: 'My tee order', teeStepPaid: 'Paid', teeStepGot: 'Collected',
+    teeWord: s => ({ waiting: 'Waiting for your payment', paid: 'Paid', oversold: 'Paid · a size to swap', handed: 'Collected',
+      cancelled: 'Cancelled', mismatch: 'Payment problem', expired: 'Not paid in time', late: 'Payment not received yet' })[s] || s,
+    teeStWaiting: 'If you have paid, this page checks again by itself every 30 seconds. It can take a few minutes.',
+    teeStUntil: (b, c) => `Not paid yet? This order is held until ${b} Bangkok time · ${c} Beijing time.`,
+    teeStPaid: 'Paid 🙏 Collect your tees from the AYBKK team member at your pickup point. Your receipt is in your email.',
+    teeStOversold: 'Paid, but a tee in your order sold out just before your payment came through. We will swap the size or refund you within 3 days.',
+    teeStHanded: 'Collected. Enjoy your tee 🙏',
+    teeStCancelled: 'This order was cancelled.',
+    teeStMismatch: 'The amount received does not match this order, so nothing was sold. Please message us on WeChat: aybkkwechat.',
+    teeStExpired: 'This order was not paid in time, so its tees went back on sale. You can order again while the pre-order is open.',
+    teeStLate: 'The hold on these tees has ended and no payment has reached us yet. If you have paid, this page checks again by itself and your receipt email confirms it. If you have not paid, you can order again while the pre-order is open.',
+    teeStPurged: 'The contact details of this order have been deleted.',
+    teeStGone: 'We could not find this order. Check the link in your receipt email.',
+    teeAsk: 'Questions about your order: WeChat aybkkwechat.',
+    teeCheck: 'Check again', teeBackDrop: 'Back to the tees', teeTryAgain: 'Try again',
+    teeMineH: 'My tee orders', teeOpen: 'Open', teeRefShort: r => `Ref ${r}`,
+    teeRetMail: 'Payment received 🙏 Open the link in your receipt email to see your tee order.',
+  });
+  Object.assign(STR.zh, {
+    teeCollect: '预订。在中国向 AYBKK 成员领取。',
+    teeCloses: (b, c) => `截止时间：曼谷时间 ${b} · 北京时间 ${c}`,
+    teeOpens: (b, c) => `开始时间：曼谷时间 ${b} · 北京时间 ${c}`,
+    teeClosed: (b, c) => `本次预订已于曼谷时间 ${b}（北京时间 ${c}）截止。`,
+    teeSoon: '现在可以先看看，开始后即可下单。',
+    teeWxTip: '正在微信里浏览？如要用支付宝付款，请在下单前点右上角「···」，选择「在浏览器打开」。',
+    teeFrom: p => `${p} 起`, teePlus: (f, v) => `+ ${f}% 在线支付手续费 + ${v}% 增值税`,
+    teeYuan: y => `约 ¥${y.toLocaleString('en-US')}，实际汇率以付款页面为准`,
+    teeColour: '颜色', teeSize: '尺码', teeOut: '已售完', teeFew: '仅剩少量', teeAllOut: '全部T恤已售完。',
+    teeLess: '减少一件', teeMoreA: '增加一件', teeAdd: '加入订单',
+    teeAdded: n => `已加入。你的订单：${n}。`, teeSeeCart: '查看订单', teePickSize: '请先选择尺码。',
+    teeMax: n => `每个订单最多 ${n} 件。`,
+    teeCartH: '我的订单', teeCartEmpty: '选择颜色和尺码，然后加入订单。',
+    teeN: n => `${n} 件`, teeRemove: '删除',
+    teeShort: '库存不足，请减少数量或删除。', teeNext: '下一步',
+    teeSub: 'T恤', teeFee: n => n == null ? '在线支付手续费' : `在线支付手续费 ${n}%`, teeVat: n => `增值税 ${n}%`, teeTotal: '合计',
+    teeDetailsH: '你的信息', teeWho: '领取点的 AYBKK 成员会看到你的姓名、微信号和T恤，以便把T恤交给你。',
+    teePickup: '领取点', teePickupPick: '请选择领取点',
+    teeName: '姓名', teeNameHint: '领取时 AYBKK 成员能认出你的名字。',
+    teeWx: '微信号', teeMobile: '中国手机号（选填）', teeEmail: '邮箱（用于接收收据）', teeMobileS: '手机', teeEmailS: '邮箱',
+    teeNoticeLink: '阅读这份订单的隐私声明', teeNoticeOk: '关闭',
+    teeGoPay: '去付款', teeBack: '返回',
+    teeErrPickup: '请选择领取点。', teeErrName: '请填写姓名：2 到 30 个字符，不要用 < 或 & 等符号。',
+    teeErrWx: '请填写微信号：最多 40 个字符，不要有空格。', teeErrEmail: '请检查邮箱地址。',
+    teeErrMobile: '中国大陆手机号为 11 位数字，以 1 开头。也可以不填。',
+    teeErrNotice: '请勾选，确认你已阅读隐私声明。',
+    teeErrNoticeNew: '隐私声明已更新，请阅读后再次勾选。',
+    teeErrSold: '抱歉，你选择时有部分T恤已售完，已在下方订单中标出。',
+    teeErrLines: '订单中有商品已不再销售，请检查订单。',
+    teeErrClosed: '本次预订已截止。', teeErrSoon: '本次预订还未开始。',
+    teeErrHolds: m => `这个邮箱已有 2 个未付款的T恤订单。请在下面「我的T恤订单」中打开其中一个付款，或等 ${m} 分钟订单自动失效后再下单。`,
+    teeErrMany: '此网络的下单次数过多，请一小时后再试。',
+    teeErrPay: 'T恤的在线付款暂未开通。请稍后再试，或添加微信 aybkkwechat 联系我们。',
+    teeErrNet: '无法连接，请检查网络后重试。',
+    teeConfH: '确认后付款', teeRef: r => `订单号 ${r}`,
+    teeHeld: (b, c, m) => `你的T恤为你保留 ${m} 分钟：至曼谷时间 ${b} · 北京时间 ${c}。`,
+    teeLinkH: '你的订单链接',
+    teeLinkNote: '请保存（复制或截图）。即使关闭本页，也可以用它查看订单状态。',
+    teeHowH: '付款方法',
+    teeHow1: '下一步是 PaySolutions 付款页面，页面为英文。',
+    teeHow2: '可选择支付宝（Alipay）、微信支付（WeChat Pay）、银联（UnionPay）、Visa 或 Mastercard。',
+    teeHow3: '在微信里无法打开支付宝：可以直接用微信支付；如要用支付宝，请复制上面的订单链接，在手机浏览器中打开后付款。',
+    teeHow4: '选择微信支付时会显示二维码：请保存或截图，然后在微信「扫一扫」中从相册选取。',
+    teeHow5: '银联卡可能需要先在银行 App 中开通「境外在线支付」。',
+    teePay: a => `付款 ${a}`, teeChange: '修改订单',
+    teeChangeNote: '这个订单还未付款：修改后，这些T恤会立即释放。新订单会有新的链接。',
+    teeStH: '我的T恤订单', teeStepPaid: '已付款', teeStepGot: '已领取',
+    teeWord: s => ({ waiting: '等待付款', paid: '已付款', oversold: '已付款 · 需更换尺码', handed: '已领取',
+      cancelled: '已取消', mismatch: '付款异常', expired: '未按时付款', late: '尚未收到付款' })[s] || s,
+    teeStWaiting: '如果你已付款，本页每 30 秒会自动再查一次，可能需要几分钟。',
+    teeStUntil: (b, c) => `还没付款？订单保留至曼谷时间 ${b} · 北京时间 ${c}。`,
+    teeStPaid: '付款成功 🙏 请到你选择的领取点向 AYBKK 成员领取T恤。收据已发到你的邮箱。',
+    teeStOversold: '已付款，但在付款确认之前，订单中有T恤已售完。我们会在 3 天内为你更换尺码或退款。',
+    teeStHanded: '已领取。祝你穿着愉快 🙏',
+    teeStCancelled: '此订单已取消。',
+    teeStMismatch: '收到的金额与订单不符，因此订单未成立。请添加微信 aybkkwechat 联系我们。',
+    teeStExpired: '此订单未在保留时间内付款，T恤已重新开放购买。预订期间可以重新下单。',
+    teeStLate: '这些T恤的保留时间已过，我们还没收到付款。如果你已付款，本页会自动再查，收据邮件会确认；如果还没付款，预订期间可以重新下单。',
+    teeStPurged: '此订单的联系信息已删除。',
+    teeStGone: '找不到这个订单，请检查收据邮件里的链接。',
+    teeAsk: '订单问题请添加微信 aybkkwechat。',
+    teeCheck: '再查一次', teeBackDrop: '返回T恤', teeTryAgain: '重试',
+    teeMineH: '我的T恤订单', teeOpen: '查看', teeRefShort: r => `订单号 ${r}`,
+    teeRetMail: '已收到付款 🙏 打开收据邮件里的链接即可查看你的T恤订单。',
+  });
   // My account keeps the habit proof: every class they came to, the ones moved over
   // from Rezerv included (28 Oct 2026).
   Object.assign(STR.en, {
@@ -2238,6 +2485,8 @@
   const toHash = () => {
     let id = '';
     try { id = decodeURIComponent(location.hash.slice(1)); } catch (_) {}
+    // /tees, a tee order's status link, or back from paying for tees: the tee section.
+    if (!id && (TEE.land || /^\/tees\/?$/.test(location.pathname))) id = 'tees';
     // Landing on My account (a sign-in link, a payment coming back): it sits under the hero, a screen down.
     if (!id && current === 'me') id = 'book';
     const el = id && !moved && (id === 'book' ? $('.bookhead') : document.getElementById(id));
@@ -3490,16 +3739,538 @@
     </details>`;
   }
 
+  // ── The tee pre-order (24 Nov 2026) ───────────────────────────────────────
+  // One drop at a time from /api/bkk/tee-drop: a week of pre-orders, paid through PaySolutions and collected
+  // from an AYBKK team member in China. Drawn on every host, cn.aybkk.net too. The page never learns a stock
+  // number: a size is ok, few or out. The cart and the form live in TEE (top of the script), so a language
+  // change draws the same step again in the new language. The hand-off posts the gateway form itself, never
+  // through window.aybkkBook (that counts a Google Ads "new student").
+  const TEE_WX = /MicroMessenger/i.test(navigator.userAgent);
+  const TEE_WD = { en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], zh: ['周日', '周一', '周二', '周三', '周四', '周五', '周六'] };
+  const TEE_FIELDS = ['pickup', 'name', 'wechat', 'mobile', 'email', 'agree'];
+  const TEE_ERR = { pickup: 'teeErrPickup', name: 'teeErrName', wechat: 'teeErrWx', mobile: 'teeErrMobile', email: 'teeErrEmail', agree: 'teeErrNotice' };
+  // The drop in this language (its names are picked by the server), fetched again on a language change.
+  function teeLoad(force) {
+    if (force || !TEE.p || TEE.lang !== LANG) {
+      const c = new AbortController(), timer = setTimeout(() => c.abort(), 15000);
+      TEE.lang = LANG;
+      TEE.p = fetch('/api/bkk/tee-drop?lang=' + LANG, { signal: c.signal, cache: 'no-store' }).then(r => r.ok ? r.json() : null)
+        .then(j => (j && j.drop) || null, () => null).finally(() => clearTimeout(timer));
+    }
+    return TEE.p.then(d => { TEE.drop = d; return d; });
+  }
+  // This phone's tee orders (newest first): { token, refno, at, qty, st }. Storage can be blocked.
+  function teeMine() {
+    try {
+      const a = JSON.parse(localStorage.getItem('aybkk_tee_orders') || '[]');
+      return Array.isArray(a) ? a.filter(x => x && /^[0-9a-f]{32}$/.test(x.token)) : [];
+    } catch (_) { return []; }
+  }
+  function teeKeep(x) {
+    const a = teeMine(), was = a.find(y => y.token === x.token) || {};
+    try { localStorage.setItem('aybkk_tee_orders', JSON.stringify([{ ...was, ...x }, ...a.filter(y => y.token !== x.token)].slice(0, 20))); } catch (_) {}
+  }
+  function teeForget(token) {
+    try { localStorage.setItem('aybkk_tee_orders', JSON.stringify(teeMine().filter(y => y.token !== token))); } catch (_) {}
+  }
+  // stockId → { d: design, c: colour, s: size } for the drop as last read.
+  function teeStock(d) {
+    const m = new Map();
+    if (d) for (const x of d.designs) for (const c of x.colours) for (const s of c.sizes) m.set(s.stockId, { d: x, c, s });
+    return m;
+  }
+  const teeQty = lines => lines.reduce((n, l) => n + l.qty, 0);
+  // The server's own sums (breakdown in bkk-api.js): the fee on the tees, VAT on both, each rounded to the baht.
+  function teeMoney(base, d) {
+    const fee = Math.round(base * d.surchargePct / 100), vat = Math.round((base + fee) * d.vatPct / 100);
+    return { base, fee, vat, amount: base + fee + vat };
+  }
+  const teeYuan = (thb, d) => d && d.rmbRate ? Math.round(thb * d.rmbRate) : null;
+  // A time in Bangkok and in Beijing (always an hour ahead: neither has summer time), by hand so an old
+  // in-app browser without time zones still says it right. Beijing names its own day when it is another one.
+  function teeWhen(iso) {
+    const ms = Date.parse(iso), a = new Date(ms + 7 * 3600e3), b = new Date(ms + 8 * 3600e3), zh = LANG === 'zh';
+    const hm = x => String(x.getUTCHours()).padStart(2, '0') + ':' + String(x.getUTCMinutes()).padStart(2, '0');
+    const day = x => zh ? `${x.getUTCMonth() + 1}月${x.getUTCDate()}日${TEE_WD.zh[x.getUTCDay()]}`
+      : `${TEE_WD.en[x.getUTCDay()]} ${x.getUTCDate()} ${MON3[x.getUTCMonth()]}`;
+    const at = x => day(x) + (zh ? ' ' : ', ') + hm(x);
+    return { bkk: at(a), bj: a.getUTCDate() === b.getUTCDate() ? hm(b) : at(b), hm: hm(a), bjHm: hm(b) };
+  }
+  const teeItem = (design, colour, size) => `${design} · ${colour} · ${size}`;
+  // "+ 3% online fee" and "+ 7% VAT", or the Bangkok and the Beijing time, each stay whole on a narrow phone.
+  const teeWhole = (s, re) => s.split(re).map(x => `<span class="tib">${esc(x)}</span>`).join(' ');
+  function teeMoneyHtml(m, fee, vat, d) {
+    const y = teeYuan(m.amount, d);
+    return `<dl class="tmoney"><dt>${esc(t('teeSub'))}</dt><dd>${baht(m.base)}</dd>
+      <dt>${esc(t('teeFee', fee))}</dt><dd>${baht(m.fee)}</dd><dt>${esc(t('teeVat', vat))}</dt><dd>${baht(m.vat)}</dd>
+      <dt class="tt">${esc(t('teeTotal'))}</dt><dd class="tt">${baht(m.amount)}</dd></dl>${y != null ? `<p class="note">${esc(t('teeYuan', y))}</p>` : ''}`;
+  }
+  const teeMsgHtml = () => TEE.msg ? `<div class="msg bad" role="alert">${esc(t(...TEE.msg))}</div>` : '';
+
+  // Step 1: a card per design, then my order.
+  function teePickHtml(d, stock) {
+    const w = teeWhen(d.state === 'soon' ? d.opensAt : d.closesAt);
+    let html = `<p class="tw">${teeWhole(t(d.state === 'soon' ? 'teeOpens' : d.state === 'open' ? 'teeCloses' : 'teeClosed', w.bkk, w.bj), / (?=· )/)}</p>`;
+    if (d.state !== 'open') html += teeMsgHtml();
+    if (d.state === 'closed') return html;
+    if (d.state === 'soon') html += `<p class="note">${esc(t('teeSoon'))}</p>`;
+    if (TEE_WX && d.state === 'open') html += `<p class="twx">${esc(t('teeWxTip'))}</p>`;
+    const open = d.state === 'open', room = d.maxPerOrder - teeQty(TEE.cart);
+    if (open && d.designs.every(x => x.colours.every(c => c.sizes.every(z => z.state === 'out')))) html += `<p class="note">${esc(t('teeAllOut'))}</p>`;
+    html += `<div class="tds">${d.designs.map(x => {
+      const s = TEE.sel[x.design] || (TEE.sel[x.design] = { colour: (x.colours.find(c => c.sizes.some(z => z.state !== 'out')) || x.colours[0]).colour, stockId: 0, qty: 1 });
+      const c = x.colours.find(k => k.colour === s.colour) || x.colours[0];
+      const z = c.sizes.find(k => k.stockId === s.stockId && k.state !== 'out');
+      if (!z) s.stockId = 0;
+      s.qty = Math.max(1, Math.min(s.qty, room));
+      const prices = c.sizes.map(k => k.priceThb), price = z ? z.priceThb : Math.min(...prices);
+      const y = teeYuan(teeMoney(price, d).amount, d), photo = /^\/img\/[\w./-]+$/.test(c.photo || x.photo || '') ? c.photo || x.photo : '';
+      const id = 'td-' + x.design;
+      return `<article class="td" data-design="${esc(x.design)}">
+        <div class="tdh">${photo ? `<img src="${esc(photo)}" width="104" height="104" alt="${esc(x.name + ' · ' + c.name)}" loading="lazy" decoding="async">` : '<span class="tph"></span>'}
+          <div><h3>${esc(x.name)}</h3><p class="tp">${esc(!z && new Set(prices).size > 1 ? t('teeFrom', baht(price)) : baht(price))}
+            <small>${teeWhole(t('teePlus', d.surchargePct, d.vatPct), / (?=\+ )/)}</small>${y != null ? `<small>${esc(t('teeYuan', y))}</small>` : ''}</p></div></div>
+        <p class="tlab" id="${id}-c">${esc(t('teeColour'))}</p>
+        <div class="chips" role="group" aria-labelledby="${id}-c">${x.colours.map(k => `<button type="button" data-act="colour" data-v="${esc(k.colour)}"
+          aria-pressed="${k.colour === c.colour}">${esc(k.name)}</button>`).join('')}</div>
+        ${open ? `<p class="tlab" id="${id}-s">${esc(t('teeSize'))}</p>
+        <div class="chips" role="group" aria-labelledby="${id}-s">${c.sizes.map(k => `<button type="button" data-act="size" data-v="${k.stockId}"
+          aria-pressed="${k.stockId === s.stockId}"${k.state === 'out' ? ' disabled' : ''}><span>${esc(k.size)}</span>${
+          k.state === 'out' ? `<small>${esc(t('teeOut'))}</small>` : k.state === 'few' ? `<small>${esc(t('teeFew'))}</small>` : ''}</button>`).join('')}</div>
+        <div class="tadd"><span class="tstep"><button type="button" data-act="less" aria-label="${esc(t('teeLess'))}"${s.qty <= 1 ? ' disabled' : ''}>−</button>
+          <output aria-live="polite">${s.qty}</output><button type="button" data-act="more" aria-label="${esc(t('teeMoreA'))}"${s.qty >= room ? ' disabled' : ''}>+</button></span>
+          <button type="button" class="btn pink" data-act="add"${room < 1 ? ' disabled' : ''}>${esc(t('teeAdd'))}</button></div>
+        <p class="tnote" role="status">${room < 1 ? esc(t('teeMax', d.maxPerOrder)) : ''}</p>`
+        : `<p class="tsz">${esc(t('teeSizes'))}${LANG === 'zh' ? '：' : ': '}${esc(c.sizes.map(k => k.size).join(', '))}</p>`}
+      </article>`;
+    }).join('')}</div>`;
+    return open ? html + teeCartHtml(d, stock, true) : html;
+  }
+  // My order: editable under the cards, read-only above the details.
+  function teeCartHtml(d, stock, edit) {
+    const lines = TEE.cart.filter(l => stock.has(l.stockId)), n = teeQty(lines);
+    if (!lines.length) return edit ? `<div class="tcart" id="teeCart"><h3 tabindex="-1">${esc(t('teeCartH'))}</h3>${teeMsgHtml()}
+      <p class="note">${esc(t('teeCartEmpty'))}</p></div>` : '';
+    const m = teeMoney(lines.reduce((s, l) => s + l.qty * stock.get(l.stockId).s.priceThb, 0), d), room = d.maxPerOrder - n;
+    return `<div class="tcart" id="teeCart"><h3 tabindex="-1">${esc(t('teeCartH'))} · ${esc(t('teeN', n))}</h3>${edit ? teeMsgHtml() : ''}
+      <ul class="tlines">${lines.map(l => {
+        const k = stock.get(l.stockId), short = edit && l.short;
+        return `<li data-stock="${l.stockId}"${short ? ' class="short"' : ''}><span class="tn">${esc(teeItem(k.d.name, k.c.name, k.s.size))}<small${short ? ' class="bad"' : ''}>${
+          esc(short ? t('teeShort') : `${baht(k.s.priceThb)} × ${l.qty}`)}</small></span><span class="tv">${baht(l.qty * k.s.priceThb)}</span>
+          ${edit ? `<span class="tc"><span class="tstep"><button type="button" data-act="cless" data-v="${l.stockId}" aria-label="${esc(t('teeLess'))}"${l.qty <= 1 ? ' disabled' : ''}>−</button>
+            <output aria-live="polite">${l.qty}</output><button type="button" data-act="cmore" data-v="${l.stockId}" aria-label="${esc(t('teeMoreA'))}"${room < 1 || l.qty >= 10 ? ' disabled' : ''}>+</button></span>
+            <button type="button" class="linkbtn" data-act="rm" data-v="${l.stockId}">${esc(t('teeRemove'))}</button></span>` : ''}</li>`;
+      }).join('')}</ul>
+      ${teeMoneyHtml(m, d.surchargePct, d.vatPct, d)}
+      ${edit ? `<p class="act"><button type="button" class="btn pink" data-act="next"${d.canPay ? '' : ' disabled'}>${esc(t('teeNext'))}</button></p>
+        ${d.canPay ? '' : `<p class="note">${esc(t('teeErrPay'))}</p>`}` : ''}</div>`;
+  }
+  // Step 2: my details and the notice tick. Checked here first, then by the server (the same rules).
+  function teeFormHtml(d, stock) {
+    const f = TEE.form, e = TEE.err, n = d.notice || {};
+    const bad = (k, id) => e[k] ? ` aria-invalid="true" aria-describedby="${id}E"` : '';
+    const err = (k, id) => e[k] ? `<p class="ferr" id="${id}E">${esc(t(e[k]))}</p>` : '';
+    const fld = (id, k, label, attrs, hint) => `<label for="${id}">${esc(label)}</label>${hint ? `<p class="note thint" id="${id}H">${esc(hint)}</p>` : ''}
+      <input id="${id}" data-f="${k}" value="${esc(f[k] || '')}" ${attrs}${e[k] ? bad(k, id) : hint ? ` aria-describedby="${id}H"` : ''}>${err(k, id)}`;
+    return `${teeCartHtml(d, stock, false)}
+      <form class="tform" id="teeForm" novalidate><h3 id="teeFormH" tabindex="-1">${esc(t('teeDetailsH'))}</h3>
+      <p class="note">${esc(t('teeWho'))}</p>
+      <label for="tPick">${esc(t('teePickup'))}</label>
+      <select id="tPick" data-f="pickup"${bad('pickup', 'tPick')}><option value="">${esc(t('teePickupPick'))}</option>${
+        d.pickups.map(p => `<option value="${esc(p.key)}"${f.pickup === p.key ? ' selected' : ''}>${esc(p.label)}</option>`).join('')}</select>${err('pickup', 'tPick')}
+      ${fld('tName', 'name', t('teeName'), 'autocomplete="name" maxlength="30" enterkeyhint="next"', t('teeNameHint'))}
+      ${fld('tWx', 'wechat', t('teeWx'), 'autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="40" enterkeyhint="next"')}
+      ${fld('tMob', 'mobile', t('teeMobile'), 'type="tel" inputmode="tel" autocomplete="tel" maxlength="20" enterkeyhint="next"')}
+      ${fld('tEm', 'email', t('teeEmail'), 'type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="100" enterkeyhint="done"')}
+      <p class="tnl"><button type="button" class="linkbtn" data-act="notice">${esc(t('teeNoticeLink'))}</button></p>
+      <label class="tok"><input type="checkbox" id="tOk" data-f="agree"${f.agree ? ' checked' : ''}${bad('agree', 'tOk')}><span>${esc(n.text ? n.text.tick : '')}</span></label>${err('agree', 'tOk')}
+      ${teeMsgHtml()}
+      <p class="dacts"><button type="submit" class="btn pink" data-act="go"${TEE.busy ? ' disabled' : ''}>${esc(t('teeGoPay'))}</button>
+        <button type="button" class="btn ghost" data-act="back">${esc(t('teeBack'))}</button></p></form>`;
+  }
+  function teeCheck(f) {
+    const e = {}, name = String(f.name || '').replace(/\s+/g, ' ').trim(), em = String(f.email || '').trim();
+    const mob = String(f.mobile || '').replace(/[\s\-()]/g, '').replace(/^(?:\+|00)?86(?=1\d{10}$)/, '');
+    if (!f.pickup) e.pickup = TEE_ERR.pickup;
+    if (name.length < 2 || name.length > 30 || /[<>"'&]/.test(name)) e.name = TEE_ERR.name;
+    if (!/^[^\s<>"'&]{1,40}$/.test(String(f.wechat || '').trim())) e.wechat = TEE_ERR.wechat;
+    if (mob && !/^1[3-9]\d{9}$/.test(mob)) e.mobile = TEE_ERR.mobile;
+    if (em.length > 100 || !/^[^\s@<>"'&]+@[^\s@<>"'&]+\.[^\s@<>"'&]+$/.test(em)) e.email = TEE_ERR.email;
+    if (!f.agree) e.agree = TEE_ERR.agree;
+    return e;
+  }
+  // Step 3: the order exists (held), its link shown before paying, then the PaySolutions page.
+  function teeConfirmHtml(d, stock) {
+    const j = TEE.made, o = j.order, w = teeWhen(o.holdUntil), p = d.pickups.find(x => x.key === TEE.form.pickup);
+    return `<div class="tconf"><h3 id="teeConfH" tabindex="-1">${esc(t('teeConfH'))}</h3>
+      <p class="note">${esc(t('teeRef', j.pay.refno))}</p>
+      <ul class="tlines">${j.lines.map(l => { const k = stock.get(l.stockId);
+        return k ? `<li><span class="tn">${esc(teeItem(k.d.name, k.c.name, k.s.size))}<small>${baht(k.s.priceThb)} × ${l.qty}</small></span><span class="tv">${baht(k.s.priceThb * l.qty)}</span></li>` : ''; }).join('')}</ul>
+      ${teeMoneyHtml(o, d.surchargePct, d.vatPct, d)}
+      <p class="tpick"><b>${esc(t('teePickup'))}${LANG === 'zh' ? '：' : ': '}</b>${esc(p ? p.label : TEE.form.pickup)}</p>
+      <p class="note">${esc(t('teeHeld', w.hm, w.bjHm, d.holdMin))}</p>
+      <h4>${esc(t('teeLinkH'))}</h4><p class="note">${esc(t('teeLinkNote'))}</p>
+      <div class="wechat tlink"><span id="teeLink">${esc(j.link.replace(/^https?:\/\//, ''))}</span>
+        <button type="button" class="btn ghost" data-act="copy">${esc(t('copy'))}</button></div>
+      <h4>${esc(t('teeHowH'))}</h4>
+      <ol class="thow"><li>${esc(t('teeHow1'))}</li><li>${esc(t('teeHow2'))}</li><li${TEE_WX ? ' class="hot"' : ''}>${esc(t('teeHow3'))}</li>
+        <li>${esc(t('teeHow4'))}</li><li>${esc(t('teeHow5'))}</li></ol>
+      <p class="act"><button type="button" class="btn buy" data-act="pay">${esc(t('teePay', baht(o.amount)))}</button></p>
+      <p class="tchg"><button type="button" class="linkbtn" data-act="change">${esc(t('teeChange'))}</button></p>
+      <p class="note">${esc(t('teeChangeNote'))}</p></div>`;
+  }
+  // The order's own link on this host (cn.aybkk.net for buyers in China), to carry it to another browser.
+  function teeLinkOf(tok) { return `${location.origin}/book#tee=${tok}`; }
+  // One order, by its token: where it stands, its tees, the money and the pickup point.
+  function teeStatusHtml() {
+    const s = TEE.st;
+    if (!s) return `<div class="tstat"><h3 id="teeStH" tabindex="-1">${esc(t('teeStH'))}</h3>${TEE.stErr === 'gone'
+      ? `<div class="tst bad" role="alert"><p>${esc(t('teeStGone'))}</p></div>`
+      : TEE.stErr ? `<div class="msg bad" role="alert"><p>${esc(t('teeErrNet'))}</p></div><p class="dacts"><button type="button" class="btn" data-act="check">${esc(t('teeTryAgain'))}</button></p>`
+      : `<div class="skel" role="status"><span class="sr">${esc(t('loading'))}</span><i style="width:60%"></i><i></i><i style="width:40%"></i></div>`}
+      ${TEE.drop ? `<p class="dacts"><button type="button" class="btn ghost" data-act="tees">${esc(t('teeBackDrop'))}</button></p>` : ''}</div>`;
+    const st = s.status, paid = ['paid', 'oversold', 'handed'].includes(st), w = s.holdUntil ? teeWhen(s.holdUntil) : null;
+    const late = st === 'expired' && s.checking, word = late ? 'late' : st;
+    const text = { waiting: 'teeStWaiting', paid: 'teeStPaid', oversold: 'teeStOversold', handed: 'teeStHanded', cancelled: 'teeStCancelled',
+      mismatch: 'teeStMismatch', expired: 'teeStExpired', late: 'teeStLate' }[word];
+    const tone = st === 'paid' || st === 'handed' ? 'ok' : st === 'waiting' ? '' : 'bad';
+    const when = iso => iso ? `<small>${esc(teeWhen(iso).bkk)}</small>` : '';
+    const b = s.buyer;
+    return `<div class="tstat"><h3 id="teeStH" tabindex="-1">${esc(t('teeStH'))}${s.refno ? ' · ' + esc(s.refno) : ''}</h3>
+      ${s.drop ? `<p class="note">${esc(s.drop.title)}</p>` : ''}
+      ${['cancelled', 'mismatch', 'expired'].includes(st) ? '' : `<ol class="tsteps"><li${paid ? ' class="done"' : ''}>${esc(t('teeStepPaid'))}${paid ? when(s.paidAt) : ''}</li>
+        <li${st === 'handed' ? ' class="done"' : ''}>${esc(t('teeStepGot'))}${st === 'handed' ? when(s.handedAt) : ''}</li></ol>`}
+      <div class="tst ${tone}" role="status"><p class="big">${esc(t('teeWord', word))}</p>${text ? `<p>${esc(t(text))}</p>` : ''}
+        ${st === 'waiting' && w ? `<p class="note">${esc(t('teeStUntil', w.hm, w.bjHm))}</p>` : ''}</div>
+      ${s.pickup ? `<p class="tpick"><b>${esc(t('teePickup'))}${LANG === 'zh' ? '：' : ': '}</b>${esc(s.pickup.label || s.pickup.key)}</p>` : ''}
+      <ul class="tlines">${(s.items || []).map(i => `<li><span class="tn">${esc(teeItem(i.designName, i.colourName, i.size))}<small>${baht(i.unitThb)} × ${i.qty}</small></span>
+        <span class="tv">${baht(i.unitThb * i.qty)}</span></li>`).join('')}</ul>
+      ${s.money ? teeMoneyHtml(s.money, null, 7, null) : ''}
+      ${b ? `<dl class="tbuyer"><dt>${esc(t('teeName'))}</dt><dd>${esc(b.name)}</dd><dt>${esc(t('teeWx'))}</dt><dd>${esc(b.wechat)}</dd>
+        ${b.mobile ? `<dt>${esc(t('teeMobileS'))}</dt><dd>${esc(b.mobile)}</dd>` : ''}<dt>${esc(t('teeEmailS'))}</dt><dd>${esc(b.email)}</dd></dl>` : ''}
+      ${s.purged ? `<p class="note">${esc(t('teeStPurged'))}</p>` : ''}
+      ${st === 'waiting' && s.pay ? `<h4>${esc(t('teeLinkH'))}</h4>
+        <div class="wechat tlink"><span id="teeLink">${esc(teeLinkOf(TEE.token).replace(/^https?:\/\//, ''))}</span>
+          <button type="button" class="btn ghost" data-act="copy">${esc(t('copy'))}</button></div>
+        ${TEE_WX ? `<p class="twx">${esc(t('teeHow3'))}</p>` : ''}
+        <p class="act"><button type="button" class="btn buy" data-act="spay">${esc(t('teePay', baht(s.money.amount)))}</button></p>` : ''}
+      <p class="note">${esc(t('teeAsk'))}</p>
+      <p class="dacts">${st === 'waiting' || late ? `<button type="button" class="btn ghost" data-act="check">${esc(t('teeCheck'))}</button>` : ''}
+        ${TEE.drop ? `<button type="button" class="btn ghost" data-act="tees">${esc(t('teeBackDrop'))}</button>` : ''}</p></div>`;
+  }
+  // My tee orders: the ones this phone started, each opened by its token.
+  function teeMineHtml(skip) {
+    const a = teeMine().filter(x => x.token !== skip);
+    if (!a.length) return '';
+    return `<div class="tmine"><h3>${esc(t('teeMineH'))}</h3><ul class="tlines">${a.slice(0, 10).map(x => `<li>
+      <span class="tn">${esc(t('teeRefShort', x.refno || '…'))}<small>${esc([x.at ? teeWhen(new Date(x.at).toISOString()).bkk : '',
+        x.qty ? t('teeN', x.qty) : '', x.st ? t('teeWord', x.st) : ''].filter(Boolean).join(' · '))}</small></span>
+      <button type="button" class="btn ghost" data-act="open" data-v="${esc(x.token)}">${esc(t('teeOpen'))}</button></li>`).join('')}</ul></div>`;
+  }
+
+  // The section: the pre-order when there is a drop or one order's status is open; else the LINE list
+  // (not on cn), with this phone's tee orders under it.
+  async function renderTees() {
+    const d0 = await teeLoad(), d = d0 && (CN_HOST || d0.state !== 'closed') ? d0 : null;
+    const sec = $('#tees'), box = $('#teeDrop'), h = sec.querySelector('h2'), lead = sec.querySelector('.lead');
+    if (d || TEE.view === 'status') {
+      const line = !CN_HOST && TEE.view !== 'status' ? await renderLineTees() : 0;
+      TEE.lineToo = !!line;
+      $('#teeList').hidden = !line;
+      if (!line) $('#teeAll').parentElement.hidden = true;
+      h.textContent = line ? t('teeH') : d && TEE.view !== 'status' ? d.title : t('teeH');
+      lead.textContent = t(line ? 'teeLead' : 'teeCollect');
+      box.hidden = sec.hidden = false;
+      teeDraw();
+      // The order's title and tee names come from the server in one language: ask again on a switch.
+      if (TEE.view === 'status' && TEE.token && TEE.st && TEE.stLang && TEE.stLang !== LANG) teeFetch();
+      return;
+    }
+    TEE.view = 'pick';
+    TEE.lineToo = false;
+    box.innerHTML = teeMineHtml('');
+    box.hidden = !box.innerHTML;
+    const line = CN_HOST ? 0 : await renderLineTees();
+    $('#teeList').hidden = !line;
+    h.textContent = t('teeH');
+    lead.textContent = t(line ? 'teeLead' : 'teeCollect');
+    sec.hidden = !line && box.hidden;
+  }
+  // Draws the step in view; focus stays on the control that was tapped (or its card's Add button).
+  function teeDraw() {
+    const box = $('#teeDrop'), d = TEE.drop, ae = document.activeElement;
+    const was = box.contains(ae) ? { act: ae.dataset.act, v: ae.dataset.v, f: ae.dataset.f, design: (ae.closest('[data-design]') || { dataset: {} }).dataset.design } : null;
+    let html;
+    if (TEE.view === 'status') html = teeStatusHtml() + teeMineHtml(TEE.token);
+    else if (!d) html = teeMineHtml('');
+    else {
+      const stock = teeStock(d);
+      TEE.cart = TEE.cart.filter(l => stock.has(l.stockId));
+      if (TEE.view === 'confirm' && TEE.made) html = teeConfirmHtml(d, stock);
+      else if (TEE.view === 'details' && TEE.cart.length && d.state === 'open') html = teeFormHtml(d, stock);
+      else { TEE.view = 'pick'; html = teePickHtml(d, stock) + teeMineHtml(''); }
+      // Under the shala's LINE list (aybkk.net), the China pre-order says what it is.
+      if (TEE.lineToo) html = `<h3 class="tdrop">${esc(d.title)}</h3><p class="note">${esc(t('teeCollect'))}</p>` + html;
+    }
+    box.innerHTML = html;
+    if (!was) return;
+    const scope = was.design ? box.querySelector(`[data-design="${was.design}"]`) : box;
+    const pick = sel => scope && scope.querySelector(sel);
+    const el = (was.f && pick(`[data-f="${was.f}"]`)) || (was.act && pick(`[data-act="${was.act}"]${was.v ? `[data-v="${was.v}"]` : ''}`));
+    const to = el && !el.disabled ? el : pick('[data-act="add"]:not([disabled])') || pick('[data-act="next"]:not([disabled])');
+    if (to) to.focus({ preventScroll: true });
+  }
+  // A new step starts at its own top, its heading focused for a screen reader.
+  function teeTop(sel, noFocus) {
+    const el = (sel && $(sel)) || $('#teeDrop');
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    if (r.top < 0 || r.top > innerHeight * .6) el.scrollIntoView({ block: 'start' });
+    const h = !noFocus && (el.matches('h3[tabindex]') ? el : el.querySelector('h3[tabindex]'));
+    if (h) h.focus({ preventScroll: true });
+  }
+  async function teeSend() {
+    const d = TEE.drop;
+    if (!d || TEE.busy) return;
+    TEE.err = teeCheck(TEE.form);
+    TEE.msg = null;
+    const first = TEE_FIELDS.find(k => TEE.err[k]);
+    if (first) { teeDraw(); const el = $(`#teeForm [data-f="${first}"]`); if (el) el.focus(); return; }
+    TEE.busy = true;
+    teeDraw();
+    const f = TEE.form, lines = TEE.cart.map(l => ({ stockId: l.stockId, qty: l.qty }));
+    let r = null, j = {};
+    try {
+      r = await fetch('/api/bkk/tee-orders', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ drop: d.code, lines, pickup: f.pickup, name: String(f.name).replace(/\s+/g, ' ').trim(), wechat: String(f.wechat).trim(),
+          mobile: String(f.mobile || '').trim(), email: String(f.email).trim(), lang: LANG, notice: { agree: true, version: d.notice.version } }) });
+      j = await r.json().catch(() => ({}));
+    } catch (_) { r = null; }
+    TEE.busy = false;
+    if (r && r.ok && j.token && j.pay) {
+      TEE.made = { ...j, lines };
+      teeKeep({ token: j.token, refno: j.pay.refno, at: Date.now(), qty: teeQty(lines), st: 'waiting' });
+      TEE.view = 'confirm';
+      teeDraw();
+      teeTop('#teeDrop');
+      return;
+    }
+    const again = async (view, msg) => { await teeLoad(true); TEE.view = view; TEE.msg = msg; await renderTees(); };
+    if (!r) TEE.msg = ['teeErrNet'];
+    else if (TEE_ERR[j.field] && j.field !== 'agree') { TEE.err = { [j.field]: TEE_ERR[j.field] }; teeDraw(); const el = $(`#teeForm [data-f="${j.field}"]`); if (el) el.focus(); return; }
+    else if (j.error === 'notice') { await teeLoad(true); TEE.form.agree = false; TEE.err = { agree: j.stale ? 'teeErrNoticeNew' : 'teeErrNotice' }; renderTees(); return; }
+    else if (Array.isArray(j.soldOut)) {
+      for (const l of TEE.cart) l.short = j.soldOut.includes(l.stockId);
+      await again('pick', ['teeErrSold']);
+      return teeTop('#teeCart');
+    } else if (j.state === 'closed' || j.state === 'soon' || r.status === 404) {
+      await again('pick', [j.state === 'soon' ? 'teeErrSoon' : 'teeErrClosed']);
+      return teeTop('#teeDrop', true);
+    } else if (j.field === 'lines') {
+      await again('pick', j.max ? ['teeMax', j.max] : ['teeErrLines']);
+      return teeTop('#teeCart');
+    }
+    else if (j.holds) TEE.msg = ['teeErrHolds', d.holdMin];
+    else if (r.status === 429) TEE.msg = ['teeErrMany'];
+    else if (j.notReady || j.payUnavailable) TEE.msg = ['teeErrPay'];
+    else TEE.msg = ['teeErrNet'];
+    teeDraw();
+  }
+  // The same hand-off as a package (the form PaySolutions takes), posted at once. The page knows which order
+  // comes back only from aybkk_pending: the gateway adds nothing to the return address.
+  function teePay(pay, token) {
+    if (!pay || !token) return;
+    try { localStorage.setItem('aybkk_pending', JSON.stringify({ refno: pay.refno, at: Date.now(), kind: 'tee', token })); } catch (_) {}
+    const f = document.createElement('form');
+    f.method = 'POST';
+    f.action = pay.action;
+    for (const [k, v] of Object.entries(pay.fields)) {
+      const i = document.createElement('input');
+      i.type = 'hidden'; i.name = k; i.value = v; f.appendChild(i);
+    }
+    document.body.appendChild(f);
+    f.submit();
+  }
+  // The notice in a sheet over the form; never the class agreement.
+  function teeNotice(opener) {
+    const n = TEE.drop && TEE.drop.notice;
+    if (!n || !n.text) return;
+    $('#dlgIn').innerHTML = `<div class="tnotice"><h3 id="tnH" tabindex="-1">${esc(n.text.title)}</h3>
+      ${n.text.sections.map(([h, p]) => `<h4>${esc(h)}</h4><p>${esc(p)}</p>`).join('')}
+      <p class="note">${esc(n.version)}</p>
+      <p class="dacts"><button type="button" class="btn pink" id="tnOk">${esc(t('teeNoticeOk'))}</button></p></div>`;
+    const dlg = $('#dlg');
+    dlg.showModal();
+    dlg.scrollTop = 0;
+    $('#tnH').focus({ preventScroll: true });
+    $('#tnOk').onclick = () => dlg.close();
+    dlg.addEventListener('close', () => { if (document.body.contains(opener)) opener.focus({ preventScroll: true }); }, { once: true });
+  }
+  // One order's status. land: the page opened on it (its link, or back from paying), so it scrolls there.
+  function teeStatus(token, land) {
+    teePollStop();
+    TEE.view = 'status';
+    TEE.token = token;
+    TEE.st = null;
+    TEE.stErr = '';
+    TEE.land = TEE.land || !!land;
+    return renderTees().then(teeFetch).then(() => {
+      if (land) toHash(); else teeTop('#teeDrop');
+      if (teeOpenMoney(TEE.st)) teePollStart();
+    });
+  }
+  async function teeFetch() {
+    const tok = TEE.token;
+    let s = null, err = '';
+    try {
+      const r = await fetch(`/api/bkk/tee-orders/${tok}?lang=${LANG}`, { cache: 'no-store' });
+      if (r.status === 404) { err = 'gone'; teeForget(tok); }
+      else if (!r.ok) throw new Error(String(r.status));
+      else s = await r.json();
+    } catch (_) { err = 'net'; }
+    if (TEE.token !== tok || TEE.view !== 'status') return;
+    if (s || err === 'gone' || !TEE.st) { TEE.st = s; TEE.stErr = err; TEE.stLang = LANG; }
+    if (s && s.refno) teeKeep({ token: tok, refno: s.refno, qty: s.qty, st: s.status });
+    teeDraw();
+  }
+  // Waiting for the payment: asked again every 30 seconds for 10 minutes (the server asks PaySolutions).
+  function teePollStart() {
+    teePollStop();
+    TEE.pollEnd = Date.now() + 10 * 60e3;
+    TEE.poll = setInterval(async () => {
+      if (TEE.view !== 'status' || Date.now() > TEE.pollEnd) return teePollStop();
+      await teeFetch();
+      if (!teeOpenMoney(TEE.st)) teePollStop();
+    }, 30e3);
+  }
+  function teePollStop() { if (TEE.poll) clearInterval(TEE.poll); TEE.poll = null; }
+  // Still worth asking: a hold running, or one that ran out while its money row is still open.
+  const teeOpenMoney = s => !!s && (s.status === 'waiting' || (s.status === 'expired' && !!s.checking));
+  // Back from PaySolutions on a tee order (pay/check said kind 'tee'): its status, never "your pass is active".
+  function teeReturn(refno, j) {
+    let p = null;
+    try { p = JSON.parse(localStorage.getItem('aybkk_pending') || 'null'); } catch (_) {}
+    const same = x => x && Number(x.refno) === Number(refno);
+    const token = (p && p.kind === 'tee' && same(p) && p.token) || (teeMine().find(same) || {}).token;
+    if (!(j.tee && (j.tee.status === 'waiting' || (j.tee.status === 'expired' && j.status === 'pending'))))
+      try { localStorage.removeItem('aybkk_pending'); } catch (_) {}
+    if (token) teeStatus(token, true);
+    else if (j.status === 'paid') alert(t('teeRetMail'));
+  }
+  // "Change my order": the held order is let go first, so its tees are free for the new one.
+  // An order it did not let go (paid meanwhile from its link, a wrong amount, a network fault) stays, and
+  // its status opens instead: never a second order on top of a paid one.
+  async function teeRelease() {
+    const tok = TEE.made && TEE.made.token;
+    if (!tok) { TEE.made = null; return true; }
+    let ok = false;
+    try {
+      const r = await fetch(`/api/bkk/tee-orders/${tok}/release`, { method: 'POST', cache: 'no-store' });
+      ok = r.ok && (await r.json()).released === true;
+    } catch (_) {}
+    TEE.made = null;
+    if (!ok) { teeStatus(tok, false); return false; }
+    teeForget(tok);
+    try { const p = JSON.parse(localStorage.getItem('aybkk_pending') || 'null'); if (p && p.token === tok) localStorage.removeItem('aybkk_pending'); } catch (_) {}
+    return true;
+  }
+  async function teeCopy(btn) {
+    const link = (TEE.made && TEE.made.link) || (TEE.view === 'status' && TEE.token ? teeLinkOf(TEE.token) : '');
+    if (!link) return;
+    let done = false;
+    try { await navigator.clipboard.writeText(link); done = true; } catch (_) {}
+    if (!done) {
+      // Older in-app browsers have no clipboard API: the old way, from a hidden box.
+      const ta = document.createElement('textarea');
+      ta.value = link; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { done = document.execCommand('copy'); } catch (_) {}
+      ta.remove();
+    }
+    if (done) btn.textContent = t('copied');
+    else { const r = document.createRange(); r.selectNodeContents($('#teeLink')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+  }
+  $('#teeDrop').addEventListener('click', e => {
+    const b = e.target.closest('[data-act]');
+    if (!b || b.disabled || !$('#teeDrop').contains(b)) return;
+    const act = b.dataset.act, v = b.dataset.v, d = TEE.drop, card = b.closest('[data-design]');
+    const s = card && TEE.sel[card.dataset.design], line = v && TEE.cart.find(l => l.stockId === Number(v));
+    const room = d ? d.maxPerOrder - teeQty(TEE.cart) : 0;
+    if (act === 'colour' && s) { if (s.colour !== v) { s.colour = v; s.stockId = 0; } teeDraw(); }
+    else if (act === 'size' && s) { s.stockId = s.stockId === Number(v) ? 0 : Number(v); teeDraw(); }
+    else if (act === 'less' && s) { s.qty = Math.max(1, s.qty - 1); teeDraw(); }
+    else if (act === 'more' && s) { s.qty = Math.min(room, s.qty + 1); teeDraw(); }
+    else if (act === 'add' && s) {
+      const note = card.querySelector('.tnote');
+      if (!s.stockId) { note.textContent = t('teePickSize'); return; }
+      const q = Math.min(s.qty, room);
+      if (q < 1) { note.textContent = t('teeMax', d.maxPerOrder); return; }
+      const l = TEE.cart.find(x => x.stockId === s.stockId);
+      if (l) { l.qty = Math.min(10, l.qty + q); l.short = false; } else TEE.cart.push({ stockId: s.stockId, qty: q });
+      s.stockId = 0; s.qty = 1; TEE.msg = null;
+      teeDraw();
+      const n2 = $(`#teeDrop [data-design="${card.dataset.design}"] .tnote`);
+      if (n2) n2.innerHTML = `${esc(t('teeAdded', t('teeN', teeQty(TEE.cart))))}<button type="button" class="linkbtn" data-act="cart">${esc(t('teeSeeCart'))}</button>`;
+    }
+    else if (act === 'cart') teeTop('#teeCart');
+    else if (act === 'cless' && line) { line.qty = Math.max(1, line.qty - 1); line.short = false; teeDraw(); }
+    else if (act === 'cmore' && line) { if (room > 0) line.qty = Math.min(10, line.qty + 1); line.short = false; teeDraw(); }
+    else if (act === 'rm' && line) { TEE.cart = TEE.cart.filter(l => l !== line); TEE.msg = null; teeDraw(); teeTop('#teeCart'); }
+    else if (act === 'next') {
+      if (TEE.cart.some(l => l.short)) { TEE.msg = ['teeErrSold']; teeDraw(); return; }
+      TEE.view = 'details'; TEE.msg = null; TEE.err = {}; teeDraw(); teeTop('#teeForm');
+    }
+    else if (act === 'back') { TEE.view = 'pick'; TEE.msg = null; teeDraw(); teeTop('#teeCart'); }
+    else if (act === 'notice') teeNotice(b);
+    else if (act === 'copy') teeCopy(b);
+    else if (act === 'pay') teePay(TEE.made && TEE.made.pay, TEE.made && TEE.made.token);
+    else if (act === 'spay') teePay(TEE.st && TEE.st.pay, TEE.token);
+    else if (act === 'change') { b.disabled = true; teeRelease().then(ok => { if (!ok) return; TEE.view = 'details'; TEE.msg = null; teeDraw(); teeTop('#teeForm'); }); }
+    else if (act === 'open') teeStatus(v, false);
+    else if (act === 'check') { b.disabled = true; teeFetch(); }
+    else if (act === 'tees') { teePollStop(); TEE.view = 'pick'; TEE.token = ''; TEE.st = null; renderTees().then(() => teeTop('#teeDrop', true)); }
+  });
+  document.addEventListener('visibilitychange', () => {
+    const tok = TEE.made && TEE.made.token;
+    if (document.visibilityState !== 'visible' || !tok || TEE.view !== 'confirm') return;
+    fetch(`/api/bkk/tee-orders/${tok}?lang=${LANG}`, { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(st => {
+      if (st && st.status !== 'waiting' && TEE.made && TEE.made.token === tok && TEE.view === 'confirm') { TEE.made = null; teeStatus(tok, false); }
+    }).catch(() => {});
+  });
+  $('#teeDrop').addEventListener('submit', e => { e.preventDefault(); teeSend(); });
+  // What is typed is kept in TEE.form; a field's message goes once it is changed.
+  const teeType = e => {
+    const el = e.target, k = el.dataset && el.dataset.f;
+    if (!k) return;
+    TEE.form[k] = el.type === 'checkbox' ? el.checked : el.value;
+    if (!TEE.err[k]) return;
+    delete TEE.err[k];
+    el.removeAttribute('aria-invalid');
+    const m = document.getElementById(el.id + 'E');
+    if (m) m.remove();
+    el.removeAttribute('aria-describedby');
+    if (document.getElementById(el.id + 'H')) el.setAttribute('aria-describedby', el.id + 'H');
+  };
+  $('#teeDrop').addEventListener('input', teeType);
+  $('#teeDrop').addEventListener('change', teeType);
+  // A status link opened in this tab while the page is open.
+  addEventListener('hashchange', () => {
+    const m = /^#tee=([0-9a-f]{32})$/i.exec(location.hash);
+    if (!m) return;
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (_) {}
+    teeStatus(m[1].toLowerCase(), false);
+  });
+  if (TEE_AT) teeStatus(TEE_AT, true);
+
   // Bangkok tees from public/bkk-tees.json (Boonchu edits it). Read once; drawn again on a language change.
   // A colour can carry its own sizes ({"name": {...}, "sizes": [...]}): the card then lists each colour with its sizes.
   const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', '3XL'];
-  async function renderTees() {
-    if (CN_HOST) { $('#tees').hidden = true; return; }
+  // Draws the list and answers how many tees it shows (0: nothing to show).
+  async function renderLineTees() {
     if (!TEES_P) TEES_P = fetch('/bkk-tees.json').then(r => r.ok ? r.json() : null).catch(() => null);
     const d = await TEES_P;
     const shown = d && Array.isArray(d.tees) ? d.tees.filter(x => x && x.show !== false && String(x.show).toLowerCase() !== 'no' && x.name) : [];
-    $('#tees').hidden = !shown.length;
-    if (!shown.length) return;
+    if (!shown.length) { $('#teeAll').parentElement.hidden = true; return 0; }
     const vat = Number(d.vat) > 0 ? Number(d.vat) : 7;
     const L = v => v && typeof v === 'object' ? v[LANG] || v.en || '' : String(v ?? '');
     const lbl = k => t(k) + (LANG === 'zh' ? '：' : ': ');
@@ -3528,6 +4299,7 @@
           href="https://line.me/R/oaMessage/%40aybkk/?${encodeURIComponent(msg)}">${esc(t('teeOrder'))}</a></article>`;
     }).join('');
     $('#teeAll').parentElement.hidden = TEES_ALL || shown.length <= first;
+    return shown.length;
   }
   $('#teeAll').addEventListener('click', () => {
     const first = $('#teeList').children.length;
@@ -4102,7 +4874,8 @@
       try {
         const j = await fetch('/api/bkk/pay/check/' + encodeURIComponent(m)).then(r => r.json());
         history.replaceState({}, '', location.pathname);
-        if (j.status === 'paid') {
+        if (j.kind === 'tee') teeReturn(m, j);
+        else if (j.status === 'paid') {
           const viaMail = pendingForExisting();
           localStorage.removeItem('aybkk_pending');
           current = 'me';
