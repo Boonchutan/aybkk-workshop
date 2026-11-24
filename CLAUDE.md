@@ -124,6 +124,17 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
   Admin student card, saved by `POST /api/bkk/admin/members/:code/note` (admin key, a stale `at` is 409): staff only,
   never on /me, the door, /teach, emails or exports.
 - **Photo costs (Cloudinary free plan):** never change a `PHOTO_SIZES` or `FACE_SIZES` string in `bkk-api.js` (a new string re-bills every photo opened again). Download goes through the signed `/api/bkk/photo/<id>.<sig>/AYBKK-photo.jpg` (the stored JPEG, no copy made); staff `/photos` shows Drive thumbnails for Drive imports (the Drive id never reaches a student); `photos_daily_cap` (default 100, 0 = none, Admin, Settings) limits new photos a day while Cloudinary is 90% used or more.
+- **IDCN#3 teacher training (24 Nov 2026):** Machi's `idcn-api.js` app (`idc_*` tables, `/idcn3/<slug>`, admin
+  `public/idcn-admin.html`), now tied to AYBKK accounts: `idc_students.member_id` links a student to their
+  `bkk_members` profile (folded profiles followed), so the student's own AYBKK sign-in (`x-member-code`) opens their page
+  and only theirs; the old passcode still works. `/idcn3` is the one cohort link (sends a signed-in student to their page,
+  else bkk's email sign-in); My account shows an IDCN card. Admin: bulk add (code or email, never a second account),
+  "Link AYBKK account", a 7-day login link per student (bkk's `staffSigninLink`), the calendar pasted as Boonchu's table
+  (`idc_days`, `idc_sessions` from "#N"/"SN" in a slot), assignments per session and one teacher comment per student per
+  day; hand-ins are per session only (the old daily video box is gone, Boonchu, 25 Nov 2026; earlier videos still
+  list under Assignments & notes). `start_date` is per student (alumni start 2027-01-24, day 14, session #13); `terms_arranged` opens the course
+  without the sign flow. The staff note (`cohort_note`) never reaches the student. The roster, calendar text and links
+  are entered in Admin, never in git.
 - **Inbox:** `inbox.js` keeps 1:1 chats from the LINE Official Account (`/line/webhook`) and
   Instagram/Facebook DMs and comments (`/meta/webhook`) in `aybkk_inbox` for 90 days.
   Machi reads `GET /api/inbox` (header `x-inbox-key`). Env: `INBOX_KEY`; `LINE_CHANNEL_SECRET`

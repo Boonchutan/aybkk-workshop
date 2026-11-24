@@ -660,9 +660,11 @@ mountAttendance(app, { pgPool, rosterFile: rosterFile('hefei') });
 mountShop(app);
 
 // AYBKK Bangkok: packages, PaySolutions payment, passes, booking, check-in
-mountBkk(app, { pgPool, cloudinary });
+// Not awaited: the routes are mounted at once and the schema boots behind them. The
+// course admin waits on it only to make an AYBKK profile or a sign-in link.
+const bkkReady = mountBkk(app, { pgPool, cloudinary });
 mountPartner(app, { pgPool });
-mountIdcn(app, { pgPool });
+mountIdcn(app, { pgPool, bkk: bkkReady });
 
 // One inbox for LINE, Instagram and Facebook chats: stored for Machi's briefs,
 // hot ones pinged to Boonchu at once when ANTHROPIC_API_KEY is set
@@ -677,6 +679,10 @@ team.start();
 // In-Depth Mysore course profiles: /idcn3/yangyang ('#' can't appear in a URL
 // path, so generation 3 is idcn3). The page reads course+slug from the path.
 app.get('/:course(idcn\\d+)/:slug', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'idcn.html'));
+});
+// The same page with no slug is the cohort landing: one link for the whole group (/idcn3).
+app.get('/:course(idcn\\d+)', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'idcn.html'));
 });
 

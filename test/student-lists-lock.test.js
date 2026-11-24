@@ -143,6 +143,10 @@ const LOCKED = [
   ['/admin/line-status', r => r.status === 200 && /LINE pipeline/.test(r.text)],
   ['/rosters/hefei.json', r => r.status === 200 && Array.isArray(r.json.students)],
   ['/api/calendar', r => r.status === 200 && Array.isArray(r.json.lanes) && Array.isArray(r.json.events)],
+  // In-Depth course admin (24 Nov 2026): the roster, the course calendar and one day's work by student
+  ['/api/idcn/admin/idcn3/students', r => r.status === 200 && Array.isArray(r.json.students)],
+  ['/api/idcn/admin/idcn3/days', r => r.status === 200 && Array.isArray(r.json.days) && Array.isArray(r.json.sessions)],
+  ['/api/idcn/admin/idcn3/days/1/overview', null],
   // The cards and print files left git; the paths stay locked in case one is put back by hand.
   ['/qr-cards/manifest.json', r => r.status === 404],
   ['/qr-cards/hefei/manifest.json', r => r.status === 404],
@@ -320,6 +324,12 @@ fs.writeFileSync(path.join(PRIVATE, 'rosters', 'hefei.json'), JSON.stringify({ w
   ok('a journal by its own id is not behind the key', (await request('GET', '/api/journal/student/lock-test-x')).status === 404);
   ok('a photo by its own id is not behind the key', (await request('GET', '/api/student/photo/lock-test-x')).status === 200);
   ok('prices are public', (await request('GET', '/api/bkk/products')).status === 200);
+  const mineNone = await request('GET', '/api/idcn/mine/BLOCKTEST000000');
+  ok('a member code on no In-Depth course gets an empty list with no key, never cached', mineNone.status === 200
+    && JSON.stringify(mineNone.json) === '{"courses":[]}' && /no-store/.test(mineNone.headers['cache-control'] || ''), shape(mineNone));
+  const landing = await request('GET', '/idcn3');
+  ok('the cohort landing /idcn3 serves the course page', landing.status === 200 && /^text\/html/.test(landing.headers['content-type'] || ''),
+    `${landing.status}`);
   ok('the key helper for team pages is served', /javascript/.test((await request('GET', '/staff-key.js')).headers['content-type'] || ''));
   ok('the Hefei orientation form is served', (await request('GET', '/orientation-hefei.html')).status === 200);
   const link = await request('GET', `/j/${ids[0]}`);

@@ -60,6 +60,31 @@
   .steps span{flex:1;height:5px;border-radius:9px;background:var(--line)}
   .steps span.on{background:var(--pink)}
   .en-only .l-zh,.zh-first .l-en-hide{display:none}
+  .btn.ghost{background:#fff;color:var(--plum);border:1.5px solid var(--plum);padding:10.5px 14px}
+  header .t p.hday{color:#fdf7fa;font-weight:600}
+  .dayc{padding:0;overflow-wrap:anywhere}
+  .dayc>summary{list-style:none;cursor:pointer;padding:13px 16px;display:block}
+  .dayc>summary::-webkit-details-marker{display:none}
+  .dayc>summary .dh{font-weight:600}
+  .dayc>summary .dh::before{content:'▸ ';color:var(--soft)}
+  .dayc[open]>summary .dh::before{content:'▾ '}
+  .dayc .sm{display:block;color:var(--soft);font-size:13px;margin-top:2px}
+  .dayc[open] .sm{display:none}
+  .dayc .dbody{padding:0 16px 14px}
+  .dayc.today{border:2px solid var(--pink)}
+  .dayc.before{background:#faf8f9}
+  .tag{display:inline-block;font-size:12px;font-weight:700;line-height:1.5;border-radius:99px;
+    padding:1px 8px;margin:4px 4px 0 0;background:#f1ecf0;color:var(--soft)}
+  .tag.now{background:var(--pink);color:#fff}
+  .tag.ok{background:#e6f6ec;color:var(--good)}
+  .srow{border-top:1px solid var(--line);padding:8px 0}
+  .srow .sl{display:block;font-size:12.5px;color:var(--soft);font-weight:600}
+  .sess{border-left:3px solid var(--pink);padding:2px 0 2px 10px;margin:2px 0 10px}
+  .sess .sh{font-size:13px;font-weight:700;color:var(--pink)}
+  .wk{padding:6px 0}
+  .hand textarea{min-height:84px;margin-top:6px}
+  .hrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .cmt{background:#f5eef8;border-radius:8px;padding:10px 12px;margin-top:10px}
 </style>
 </head>
 <body class="zh-first">
@@ -71,11 +96,12 @@
   <p><button class="btn" style="width:100%;margin-top:10px" onclick="unlock()">进入 Enter</button></p>
   <p class="muted" id="gateMsg"></p>
   <p class="muted">密码在你的录取信息里 · Your passcode came with your acceptance message.</p>
+  <p class="muted"><a id="gateAcct" href="/idcn3" style="color:var(--plum);font-weight:600">没有密码？用 AYBKK 账户登录 · No passcode? Sign in with your AYBKK account</a></p>
 </div>
 
 <div id="app" style="display:none">
   <header>
-    <div class="t"><h1 id="hName">—</h1><p id="hCourse"></p></div>
+    <div class="t"><h1 id="hName">—</h1><p id="hCourse"></p><p id="hDay" class="hday" hidden></p></div>
     <button class="langbtn" onclick="flipLang()" id="langBtn">EN</button>
   </header>
   <main id="view"></main>
@@ -98,9 +124,14 @@
   let P = null;             // profile payload
   // Boonchu/Jamsai open any profile with the admin key remembered by idcn-admin
   const ADMIN = localStorage.getItem('idcn_admin_key') || '';
+  // The student's own AYBKK account on this site (set by the sign-in link on /book): it opens
+  // the course page linked to that account, so no passcode is needed.
+  const MEMBER = (() => { try { return localStorage.getItem('aybkk_member') || ''; } catch (_) { return ''; } })();
+  const keys = () => ({ 'x-idcn-key': KEY, ...(MEMBER ? { 'x-member-code': MEMBER } : {}),
+    ...(ADMIN ? { 'x-bkk-key': ADMIN } : {}) });
   const api = (u, o = {}) => fetch(u, { ...o,
-    headers: { 'Content-Type': 'application/json', 'x-idcn-key': KEY,
-      ...(ADMIN ? { 'x-bkk-key': ADMIN } : {}), ...(o.headers || {}) } });
+    headers: { 'Content-Type': 'application/json', ...keys(), ...(o.headers || {}) } });
+  const LABEL = COURSE.replace(/^idcn(\d+)$/i, 'IDCN#$1');
   const baht = st => {
     const n = Number(st), a = Math.abs(n);
     return '฿' + Math.floor(a / 100).toLocaleString('en-US')
@@ -149,7 +180,7 @@
     en: '(Optional) I additionally allow AYBKK to use course photos/videos on public channels (Instagram, Xiaohongshu, etc.).' };
 
   window.flipLang = () => { LANG = LANG === 'zh' ? 'en' : 'zh';
-    localStorage.setItem('idcn_lang', LANG); render(); };
+    localStorage.setItem('idcn_lang', LANG); if (P) render(); else landing(); };
 
   window.unlock = async () => {
     KEY = $('#key').value.trim();
@@ -157,26 +188,87 @@
   };
 
   async function load(fromGate) {
-    const r = await api(`/api/idcn/${COURSE}/students/${SLUG}`);
+    let r;
+    try { r = await api(`/api/idcn/${COURSE}/students/${SLUG}`); } catch (_) {
+      if (!P) { $('#gate').style.display = 'block'; $('#gateMsg').textContent = '网络中断，请重试 · Connection dropped. Try again.'; }
+      return;
+    }
     if (r.status === 401) {
       $('#gate').style.display = 'block'; $('#app').style.display = 'none';
       if (fromGate) $('#gateMsg').textContent = '密码不对 · That passcode is not recognised.';
+      else if (MEMBER && !KEY) $('#gateMsg').textContent =
+        '这台手机登录的 AYBKK 账户没有连到这个页面，请输入密码。 · The AYBKK account signed in on this phone is not linked to this page. Type your passcode.';
       return;
     }
-    if (!r.ok) { $('#gateMsg').textContent = '找不到这个页面 · page not found'; return; }
+    if (!r.ok) { $('#gate').style.display = 'block'; $('#gateMsg').textContent = '找不到这个页面 · page not found'; return; }
     P = await r.json();
-    localStorage.setItem(KEYNAME, KEY);
+    if (KEY) localStorage.setItem(KEYNAME, KEY);
     $('#gate').style.display = 'none'; $('#app').style.display = 'block';
     render();
   }
+
+  // ── the cohort landing (/idcn3, no name in the link): one link for the whole group.
+  // Signed in on this site with an AYBKK account on the course: straight to its page.
+  // Otherwise a sign-in by email (bkk's own, the same vague answer) or the personal link.
+  async function landing() {
+    $('#gate').style.display = 'none';
+    if (MEMBER && !landing.checked) {
+      landing.checked = true; landing.failed = false;
+      try {
+        const r = await fetch('/api/idcn/mine/' + encodeURIComponent(MEMBER), { cache: 'no-store' });
+        const d = r.ok ? await r.json() : null;
+        if (!d || !Array.isArray(d.courses)) throw new Error('no answer');
+        const c = d.courses.find(x => x.course === COURSE && /^\/idcn\d+\/[a-z0-9-]+$/.test(x.link || ''));
+        if (c) { location.replace(c.link); return; }
+        landing.notOn = true;
+      } catch (_) { landing.checked = false; landing.failed = true; }
+    }
+    $('#gate').style.display = 'none'; $('#app').style.display = 'block';
+    $('#langBtn').textContent = LANG === 'zh' ? 'EN' : '中文';
+    $('#hName').textContent = LABEL;
+    $('#hCourse').textContent = LANG === 'zh' ? 'AYBKK 深度迈索尔课程' : 'AYBKK In-Depth Mysore course';
+    $('#view').innerHTML = `${landing.notOn ? `<div class="card"><div class="warn">${T2(
+        '这台手机登录的 AYBKK 账户不在这个课程里。请用报名时的邮箱登录，或者请 Jamsai 发给你个人链接。',
+        'The AYBKK account signed in on this phone is not on this course. Sign in with the email you applied with, or ask Jamsai for your personal link.')}</div></div>`
+      : landing.failed ? `<div class="card"><p class="muted" style="margin:0">${T2('现在无法检查你的账户，请稍后刷新页面再试。',
+        'Your account could not be checked just now. Reload the page in a moment to try again.')}</p></div>` : ''}
+      <div class="card"><b class="h">${T('登录你的课程页面', 'Open your course page')}</b>
+        <p class="muted" style="margin:0 0 10px">${T2('输入你的邮箱，我们会发给你一个登录链接。打开链接后，点「打开我的课程页面」。',
+          'Type your email and we send you a sign-in link. Open it, then tap “Open my course page”.')}</p>
+        <input id="lemail" type="email" autocomplete="email" placeholder="you@example.com">
+        <p style="margin:10px 0 0"><button class="btn pink" style="width:100%" onclick="emailLink()">${T2('发送登录链接', 'Email me a sign-in link')}</button></p>
+        <p class="muted" id="lmsg" role="status"></p>
+        <p style="margin:14px 0 0">${T('或者请 Jamsai 发给你个人链接。', 'Or ask Jamsai for your personal link.')}</p></div>`;
+  }
+  window.emailLink = async () => {
+    const email = ($('#lemail').value || '').trim();
+    if (!email.includes('@')) { $('#lmsg').textContent = T2('请输入你的邮箱地址。', 'Please type your email address.'); return; }
+    $('#lmsg').textContent = T2('发送中…', 'Sending…');
+    try {
+      const r = await fetch('/api/bkk/login/request', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, lang: LANG }) });
+      if (!(await r.json()).ok) throw new Error('not sent');
+      // the same answer whether or not the address is known
+      $('#lmsg').textContent = T2('如果这个邮箱已注册，链接已经发出。链接只能用一次，30分钟内有效。',
+        'If that address is registered, a link is on its way. It works once and expires in 30 minutes.');
+    } catch (_) {
+      $('#lmsg').textContent = T2('无法连接 AYBKK，请再试一次。', 'Could not reach AYBKK. Try again.');
+    }
+  };
 
   function render() {
     $('#langBtn').textContent = LANG === 'zh' ? 'EN' : '中文';
     const s = P.student, c = P.course;
     $('#hName').textContent = (LANG === 'zh' && s.name_zh) ? s.name_zh : s.name_en;
-    $('#hCourse').textContent = LANG === 'zh' ? c.name_zh : c.name_en;
+    $('#hCourse').textContent = (P.cohort ? P.cohort.label + ' · ' : '') + (LANG === 'zh' ? c.name_zh : c.name_en);
+    const hDay = dayCount();
+    $('#hDay').hidden = !hDay; $('#hDay').textContent = hDay;
     const signed = !!P.consent;
-    const step = !signed ? 1 : ((P.payments || []).length ? 3 : 2);
+    // terms agreed with AYBKK directly open the course as a signature does
+    const arranged = !!(P.cohort && P.cohort.termsArranged);
+    const open = signed || arranged;
+    keepDrafts();
+    const step = !open ? 1 : ((P.payments || []).length ? 3 : 2);
     let html = `<div class="steps"><span class="${step >= 1 ? 'on' : ''}"></span>
       <span class="${step >= 2 ? 'on' : ''}"></span><span class="${step >= 3 ? 'on' : ''}"></span></div>`;
 
@@ -188,11 +280,12 @@
           `<div class="muted" style="padding:2px 0">${esc(LANG === 'zh' ? f.zh : f.en)}</div>`).join('')}
     </div>`;
 
-    if (!signed) html += renderEnroll(s, c);
-    else html += renderConfirmed(s, c);
+    if (signed) html += renderConfirmed(s, c);
+    else if (arranged) html += renderArranged();
+    else html += renderEnroll(s, c);
 
-    if (signed) {
-      html += renderSubmit();
+    if (open) {
+      html += renderDays();
       html += renderNotes();
       html += renderPayments();
       html += renderLinks(s);
@@ -206,7 +299,7 @@
     html += `<p class="muted" style="text-align:center">
       ${T('有任何问题，直接联系 AYBKK。', W('Any question — contact AYBKK directly.', 'Any question? Contact AYBKK directly.'))}</p>`;
     $('#view').innerHTML = html;
-    if (signed) loadPhotos();
+    if (open) { loadPhotos(); showToday(); }
   }
 
   const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -287,19 +380,176 @@
         'Policy ' + esc(cs.policy_version) + ' signed; ask AYBKK for the full text any time.')}</p></div>`;
   }
 
-  function renderSubmit() {
-    return `<div class="card"><b class="h">${T('每日作业视频', 'Daily assignment video')}</b>
-      <p class="muted">${W(T('每天把你的训练/作业视频传到这里，老师会在你的档案里看到。最大100MB。',
-        'Upload your daily drill video here — the teachers see it on your profile. Max 100MB.'),
-        T('每天把你的练习/作业视频传到这里，老师会在你的档案里看到。最大100MB。',
-        'Upload your daily practice video here. The teachers see it on your profile. Max 100MB.'))}</p>
-      <input id="subNote" placeholder="${LANG === 'zh' ? '想说的话（可选）' : 'a note with it (optional)'}"
-        autocomplete="off" style="margin-bottom:8px">
-      <p style="margin:4px 0 0"><button class="btn pink" onclick="pickSubmission()">
-        ${T('上传今天的视频', 'Upload today’s video')}</button>
-        <input id="subFile" type="file" accept="video/*,image/*" hidden></p>
-      <p class="muted" id="subMsg"></p></div>`;
+  // Terms agreed with AYBKK directly (staff set it): nothing to sign and no plan shown here.
+  function renderArranged() {
+    return `<div class="card">
+      <div class="okbox">${T('名额已确认 ✓', 'Your spot is confirmed ✓')}</div>
+      <p class="muted" style="margin:10px 0 0">${T('你的课程条款已与 AYBKK 直接确认，这里不需要签署。',
+        'Your terms were agreed with AYBKK directly, so there is nothing to sign here.')}</p></div>`;
   }
+
+  // ── the daily schedule: the course calendar staff pasted, one card per day, with each
+  // session's assignment, the student's own hand-ins and the day's teacher comment ──
+  const WD_ZH = { Mon: '周一', Tue: '周二', Wed: '周三', Thu: '周四', Fri: '周五', Sat: '周六', Sun: '周日' };
+  const bkkToday = () => new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10);
+  const bkkDay = ts => { const t = Date.parse(ts); return Number.isFinite(t)
+    ? new Date(t + 7 * 3600e3).toISOString().slice(0, 10) : ''; };
+  const dayName = d => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(d.date || '')) return esc(d.weekday || '');
+    const [, m, dd] = d.date.split('-').map(Number);
+    return LANG === 'zh' ? `${m}月${dd}日 ${esc(WD_ZH[d.weekday] || d.weekday || '')}`
+      : `${d.weekday ? esc(d.weekday) + ' ' : ''}${dd} ${MON[m - 1]}`;
+  };
+  const startOf = () => (P.cohort && P.cohort.startDate) || '';
+  // "Day N of 30" in the header: the day whose date is today in Bangkok
+  function dayCount() {
+    const days = P.days || [];
+    if (!days.length) return '';
+    const today = bkkToday(), d = days.find(x => x.date === today);
+    if (d) return LANG === 'zh' ? `第 ${d.day} 天 / 共 ${days.length} 天` : `Day ${d.day} of ${days.length}`;
+    if (days[0].date && today < days[0].date) {
+      const first = days.find(x => !startOf() || x.date >= startOf()) || days[0];
+      return LANG === 'zh' ? '开始：' + dateZh(first.date) : 'Starts ' + dateEn(first.date);
+    }
+    return '';
+  }
+  const FOLD = new Map();    // day → open, as the student left it
+  const DRAFT = {};          // session → an answer typed but not handed in yet
+  const FLASH = {};          // session → the line shown once after a hand-in
+  let SCROLLED = false;
+  function keepDrafts() {
+    document.querySelectorAll('textarea[data-sess]').forEach(t => { DRAFT[t.dataset.sess] = t.value; });
+  }
+  const WORK_BADGE = { assignment: ['作业', 'ASSIGNMENT', 'var(--pink)'], note: ['留言', 'NOTE', 'var(--soft)'],
+    submission: ['已提交', 'HANDED IN', 'var(--good)'] };
+  const workItem = n => { const bd = WORK_BADGE[n.kind] || WORK_BADGE.note;
+    return `<div class="wk"><span class="save" style="color:${bd[2]}">${T2(bd[0], bd[1])}</span>
+      ${n.title ? `<b style="display:block">${esc(n.title)}</b>` : ''}
+      ${n.body ? `<span style="white-space:pre-wrap;display:block">${esc(n.body)}</span>` : ''}
+      ${MEDIA(n)}
+      <span class="muted" style="display:block">${esc(bkkDay(n.created_at))}${n.kind === 'submission' ? '' : ' · ' + esc(n.created_by || 'AYBKK')}</span></div>`; };
+  const handForm = no => `<div class="hand">
+      <textarea data-sess="${no}" id="ans-${no}" maxlength="4000"
+        placeholder="${esc(T2('写下你的回答…', 'Write your answer…'))}">${esc(DRAFT[no] || '')}</textarea>
+      <input type="file" id="ansf-${no}" accept="video/*,image/*" hidden>
+      <div class="hrow"><button type="button" class="btn ghost" onclick="pickAns(${no})">${T2('加视频（可选）', 'Add a video (optional)')}</button>
+        <button type="button" class="btn pink" id="ansb-${no}" onclick="handIn(${no})">${T2('提交', 'Hand in')}</button></div>
+      <p class="muted" id="ansm-${no}" role="status" style="margin:6px 0 0">${esc(FLASH[no] || '')}</p></div>`;
+  function sessBlock(sn, hand) {
+    const w = (P.sessionsWork || {})[sn.no] || {}, as = w.assignments || [], subs = w.submissions || [];
+    if (!hand && !as.length && !subs.length) return '';
+    return `<div class="sess" id="sess-${sn.no}"><div class="sh">${T2('第' + sn.no + '课', 'Session #' + sn.no)}</div>
+      ${as.map(workItem).join('') || (hand ? `<p class="muted" style="margin:2px 0">${T2('这一课还没有作业。', 'No assignment for this session yet.')}</p>` : '')}
+      ${subs.map(workItem).join('')}
+      ${hand ? handForm(sn.no) : ''}</div>`;
+  }
+  function dayCard(d, today, start, focus) {
+    const before = !!start && !!d.date && d.date < start, isToday = d.date === today;
+    const handOk = !before && !!d.date && d.date <= today;
+    const slots = P.slots || {}, ss = d.sessions || [], work = P.sessionsWork || {};
+    const cm = (P.comments || {})[d.day];
+    const nAs = ss.reduce((n, x) => n + ((work[x.no] || {}).assignments || []).length, 0);
+    const nSub = ss.reduce((n, x) => n + ((work[x.no] || {}).submissions || []).length, 0);
+    const open = FOLD.has(d.day) ? FOLD.get(d.day) : !!focus && focus.day === d.day;
+    const row = (label, cell) => cell ? `<div class="srow"><span class="sl">${label}</span>${esc(cell)}</div>` : '';
+    const slotRow = k => { const cell = d['slot' + k]; if (!cell) return '';
+      return row(T2('时段' + k, 'Slot ' + k) + (slots[k] ? ' · ' + esc(slots[k]) : ''), cell)
+        + ss.filter(x => x.slot === k).map(x => sessBlock(x, handOk)).join(''); };
+    const short = [d.slotA, d.slotB].filter(Boolean).join(' · ') || d.morning || '';
+    const tags = [isToday ? `<span class="tag now">${T2('今天', 'Today')}</span>` : '',
+      before ? `<span class="tag">${T2('你加入之前', 'before your start')}</span>` : '',
+      start && d.date === start ? `<span class="tag now">${T2('你的第一天', 'your first day')}</span>` : '',
+      nAs ? `<span class="tag">${T2('作业 ' + nAs, nAs === 1 ? '1 assignment' : nAs + ' assignments')}</span>` : '',
+      nSub ? `<span class="tag ok">${T2('已提交 ' + nSub + ' ✓', nSub + ' handed in ✓')}</span>` : '',
+      cm ? `<span class="tag ok">${T2('老师点评', 'teacher’s comment')}</span>` : ''].join('');
+    return `<details class="card dayc${isToday ? ' today' : ''}${before ? ' before' : ''}" data-day="${d.day}"${open ? ' open' : ''}>
+      <summary><span class="dh">${T2('第 ' + d.day + ' 天', 'Day ' + d.day)} · ${dayName(d)}</span>
+        ${tags ? `<span style="display:block">${tags}</span>` : ''}
+        ${short ? `<span class="sm">${esc(short)}</span>` : ''}</summary>
+      <div class="dbody">
+        ${row(T2('上午', 'Morning'), d.morning)}${slotRow('A')}${slotRow('B')}
+        ${d.note ? `<div class="srow"><span class="sl">${T2('备注', 'Note')}</span><span style="white-space:pre-wrap">${esc(d.note)}</span></div>` : ''}
+        ${cm ? `<div class="cmt"><b style="display:block">${T('老师点评', 'Teacher’s comment')}</b>
+          <span style="white-space:pre-wrap;display:block">${esc(cm.body)}</span>
+          <span class="muted">${esc(bkkDay(cm.updated_at || cm.created_at))} · ${esc(cm.created_by || 'AYBKK')}</span></div>` : ''}
+      </div></details>`;
+  }
+  function renderDays() {
+    const days = P.days || [];
+    if (!days.length) return '';
+    const today = bkkToday(), start = startOf(), slots = P.slots || {};
+    // open on load: today, or before the course the student's next day
+    const focus = days.find(d => d.date && d.date >= today && !(start && d.date < start));
+    const first = start && days.find(d => d.date >= start);
+    const times = ['A', 'B'].filter(k => slots[k]).map(k => T2('时段' + k + ' ', 'Slot ' + k + ' ') + esc(slots[k])).join(' · ');
+    return `<div class="card" id="daily"><b class="h">${T('每日安排', 'Daily schedule')}</b>
+        ${times ? `<p style="margin:0">${times}</p>` : ''}
+        <p class="muted" style="margin:4px 0 0">${T2('上午练习是单独的部分，不算作课程。', 'Morning practice is a separate part and is not counted as a session.')}</p>
+        ${first && first.day !== days[0].day ? `<p style="margin:8px 0 0;font-weight:600">${T2(
+          `你从第 ${first.day} 天（${dateZh(first.date)}）开始。`, `You start on day ${first.day}, ${dateEn(first.date)}.`)}</p>` : ''}
+        <p class="muted" style="margin:8px 0 0">${T2('点开一天，查看作业、提交你的回答、阅读老师点评。',
+          'Open a day to see the assignment, hand in your answer and read the teacher’s comment.')}</p></div>
+      ${days.map(d => dayCard(d, today, start, focus)).join('')}`;
+  }
+  // once, on the first view of the calendar: a later redraw (a hand-in, the language) stays put
+  function showToday() {
+    if (SCROLLED || !document.querySelector('details.dayc')) return;
+    SCROLLED = true;
+    const el = document.querySelector('details.dayc.today[open]');
+    if (el) el.scrollIntoView({ block: 'start' });
+  }
+  // a folded or opened day stays that way through a reload of the profile
+  document.addEventListener('toggle', e => {
+    const el = e.target;
+    if (el && el.matches && el.matches('details.dayc')) FOLD.set(Number(el.dataset.day), el.open);
+  }, true);
+
+  window.pickAns = no => {
+    const f = $('#ansf-' + no);
+    f.onchange = () => {
+      const file = f.files && f.files[0];
+      if (file && file.size > 100 * 1024 * 1024) {
+        $('#ansm-' + no).textContent = T2('视频太大了，请控制在100MB以内（1-2分钟足够）。', 'That file is over 100MB. A 1 to 2 minute clip is enough.');
+        f.value = ''; return;
+      }
+      $('#ansm-' + no).textContent = file ? T2('已选：', 'Added: ') + file.name : '';
+    };
+    f.click();
+  };
+  window.handIn = async no => {
+    const ta = $('#ans-' + no), f = $('#ansf-' + no), msg = $('#ansm-' + no), btn = $('#ansb-' + no);
+    const body = ta.value.trim(), file = f.files && f.files[0];
+    if (!body && !file) { msg.textContent = T2('请写下你的回答，或加一个视频。', 'Write your answer, or add a video.'); return; }
+    if (body.length > 4000) { msg.textContent = T2('回答请控制在4000字以内。', 'Keep the answer under 4000 characters.'); return; }
+    msg.textContent = file ? T2('上传中… 视频较大时需要一点时间，请不要关闭页面。', 'Uploading… a video can take a while, keep the page open.')
+      : T2('提交中…', 'Sending…');
+    btn.disabled = true;
+    try {
+      let r;
+      if (file) {
+        const fd = new FormData();
+        fd.append('slug', SLUG); fd.append('sessionNo', String(no)); fd.append('body', body); fd.append('file', file);
+        r = await fetch(`/api/idcn/${COURSE}/submissions`, { method: 'POST', headers: keys(), body: fd });
+      } else {
+        r = await api(`/api/idcn/${COURSE}/submissions`, { method: 'POST',
+          body: JSON.stringify({ slug: SLUG, sessionNo: no, body }) });
+      }
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) {
+        btn.disabled = false;
+        msg.textContent = r.status === 403 ? T2('请先确认你的名额。', 'Confirm your spot first.')
+          : (j.error || T2('提交失败，请重试', 'That did not go through. Try again.'));
+        return;
+      }
+      ta.value = ''; DRAFT[no] = '';
+      FLASH[no] = T2('已提交 ✓ 老师会在你的档案里看到。', 'Handed in ✓ The teachers see it on your profile.');
+      await load();
+      delete FLASH[no];
+    } catch (_) {
+      btn.disabled = false;
+      msg.textContent = T2('网络中断，请重试', 'Connection dropped. Try again.');
+    }
+  };
 
   const MEDIA = n => !n.media_url ? '' : (n.media_type === 'video'
     ? `<video controls playsinline preload="metadata" style="width:100%;border-radius:8px;margin:6px 0"
@@ -323,36 +573,6 @@
         <span class="muted">${esc(String(n.created_at).slice(0, 10))} · ${esc(n.created_by || 'AYBKK')}</span>
       </div>`; }).join('')}</div>`;
   }
-
-  window.pickSubmission = () => {
-    const f = $('#subFile');
-    f.onchange = async () => {
-      const file = f.files && f.files[0]; if (!file) return;
-      if (file.size > 100 * 1024 * 1024) {
-        $('#subMsg').textContent = T2('视频太大了，请控制在100MB以内（1-2分钟足够）。',
-          W('That file is over 100MB — a 1–2 minute clip is enough.',
-            'That file is over 100MB. A 1 to 2 minute clip is enough.')); f.value = ''; return;
-      }
-      $('#subMsg').textContent = T2('上传中… 视频较大时需要一点时间，请不要关闭页面。',
-        'Uploading… a video can take a while, keep the page open.');
-      const fd = new FormData();
-      fd.append('slug', SLUG);
-      fd.append('body', ($('#subNote') ? $('#subNote').value.trim() : ''));
-      fd.append('file', file);
-      try {
-        const r = await fetch(`/api/idcn/${COURSE}/submissions`, { method: 'POST',
-          headers: { 'x-idcn-key': KEY, ...(ADMIN ? { 'x-bkk-key': ADMIN } : {}) }, body: fd });
-        const j = await r.json().catch(() => ({}));
-        if (!r.ok) { $('#subMsg').textContent = j.error || T2('上传失败，请重试', W('Upload failed — try again', 'Upload failed. Try again.')); return; }
-        $('#subMsg').textContent = '';
-        await load();
-      } catch (_) {
-        $('#subMsg').textContent = T2('网络中断，请重试', W('Connection dropped — try again', 'Connection dropped. Try again.'));
-      }
-      f.value = '';
-    };
-    f.click();
-  };
 
   function renderPayments() {
     const pays = P.payments || [];
@@ -432,7 +652,10 @@
   };
   const T2 = (zh, en) => LANG === 'zh' ? zh : en;
 
-  if (SLUG && KEY) load(); else $('#gate').style.display = 'block';
+  $('#gateAcct').href = '/' + COURSE;
+  if (!SLUG) landing();
+  else if (KEY || MEMBER || ADMIN) { $('#gate').style.display = 'none'; load(); }
+  else $('#gate').style.display = 'block';
 })();
 </script>
 </body>
