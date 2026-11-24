@@ -5,7 +5,7 @@
 <title>In-Depth Admin</title>
 <style>
   :root{--ink:#1a161d;--wall:#f6f3f5;--paper:#fff;--plum:#5c2160;--pink:#c92f74;
-    --soft:#6f6474;--line:rgba(26,22,29,.12);--good:#187a43}
+    --soft:#6f6474;--line:rgba(26,22,29,.12);--good:#187a43;--pale:#faf8fa}
   *{box-sizing:border-box}
   body{margin:0;background:var(--wall);color:var(--ink);
     font:15px/1.6 -apple-system,'PingFang SC','Helvetica Neue',sans-serif}
@@ -21,21 +21,76 @@
   .btn{background:var(--plum);color:#fdf7fa;border:none;border-radius:8px;
     padding:10px 14px;font:inherit;font-weight:600;font-size:13.5px;cursor:pointer}
   .btn.gray{background:#3d3542}.btn.pink{background:var(--pink)}
-  .row{display:flex;gap:8px}.row>*{flex:1}
+  .btn.sm{padding:6px 10px;font-size:12.5px}
+  .btn:disabled{opacity:.55;cursor:default}
+  .row{display:flex;gap:8px}.row>*{flex:1;min-width:0}
   .muted{color:var(--soft);font-size:12.5px}
   .stu{border-top:1px solid var(--line);padding:12px 0}
   .stu .top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .stu b{font-size:15px}
-  .pill{font-size:11px;font-weight:700;border-radius:99px;padding:2px 8px}
+  .pill{font-size:11px;font-weight:700;border-radius:99px;padding:2px 8px;white-space:nowrap}
   .invited{background:#fff3d6;color:#8a6a12}.confirmed{background:#e6f6ec;color:#187a43}
   .completed{background:#e8e4f7;color:#4b3a86}.withdrawn{background:#f2e5e5;color:#a33}
   .passbox{background:#fff3d6;color:#8a6a12;border-radius:8px;padding:12px;margin-top:8px;
     font-weight:700}
   .passbox code{font-size:19px;font-family:ui-monospace,Menlo,monospace;user-select:all}
   #gate{max-width:320px;margin:16vh auto;text-align:center;padding:0 16px}
-  .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;align-items:center}
   .ver{background:#efeaf0;color:var(--ink)}.ver.old{background:#e8e4f7;color:#4b3a86}
   .stale{color:#a33;font-weight:600}
+  /* IDCN#3: tabs, roster, calendar, day by day */
+  .tabs{display:flex;gap:2px;overflow-x:auto;max-width:680px;margin:0 auto;padding:6px 12px 0}
+  .tabs button{flex:none;background:none;border:none;border-bottom:3px solid transparent;
+    padding:8px 10px;font:inherit;font-size:14px;font-weight:600;color:var(--soft);cursor:pointer;white-space:nowrap}
+  .tabs button[aria-selected=true]{color:var(--plum);border-bottom-color:var(--plum)}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:13px;overflow-wrap:anywhere}
+  .sub{margin-top:8px;border:1.5px solid var(--line);border-radius:8px;padding:10px}
+  .acct{margin-top:2px;font-size:13px}
+  .stu .acts .btn{padding:7px 10px;font-size:13px}
+  .pill.note{background:#efeaf0;color:var(--ink)}.pill.arr{background:#e6f6ec;color:#187a43}
+  .pill.before{background:#f2e5e5;color:#a33}.pill.today{background:var(--pink);color:#fff}
+  .pill.asg{background:#f6e4ee;color:#8c1d50}
+  .sw{display:inline-flex;gap:6px;align-items:center;font-size:13px;color:var(--ink);margin:0;cursor:pointer}
+  .sw input{width:18px;height:18px;padding:0;margin:0}
+  .res{display:flex;gap:8px;align-items:flex-start;border-top:1px solid var(--line);padding:9px 0}
+  .res>div{flex:1;min-width:0;overflow-wrap:anywhere}
+  .res.bad{color:#7d1f1f}
+  .err{background:#fbecec;color:#8f2323;border-radius:8px;padding:10px;margin-top:8px;overflow-wrap:anywhere}
+  .err pre{margin:6px 0 0;white-space:pre-wrap;font-size:12px}
+  .warn{background:#fff3d6;color:#6b520c;border-radius:8px;padding:10px;margin-top:8px}
+  .warn ul{margin:4px 0 0;padding-left:18px}
+  .good{background:#e6f6ec;color:#14602f;border-radius:8px;padding:10px;margin-top:8px}
+  .linkbox{background:#e6f6ec;border-color:#bfe3cc}
+  .copyrow{display:flex;gap:8px;align-items:center;margin:6px 0}
+  .copyrow code{flex:1;min-width:0;background:#fff;border-radius:6px;padding:6px 8px;font-size:14px;user-select:all}
+  .tablewrap{overflow-x:auto;margin-top:8px;border:1px solid var(--line);border-radius:8px}
+  table.cal{border-collapse:collapse;width:100%;min-width:620px;font-size:13px;line-height:1.45}
+  table.cal th,table.cal td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+  table.cal th{background:#efeaf0;font-size:12px;white-space:nowrap}
+  table.cal td:nth-child(1),table.cal td:nth-child(2){white-space:nowrap}
+  table.cal tr.today td{background:#fdf0f6}
+  mark{background:#fff0b3;padding:0 2px;border-radius:3px}
+  .badge{display:inline-block;background:var(--plum);color:#fff;border-radius:6px;padding:0 6px;
+    font-size:11.5px;font-weight:700;margin-right:5px;white-space:nowrap}
+  .daybar{display:flex;gap:6px;align-items:center;margin-top:10px}
+  .daybar select{flex:1;min-width:0}
+  .dayhead{margin-top:12px;font-size:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .sched{background:var(--pale);border-radius:8px;padding:10px;margin-top:8px}
+  .sched .k{display:block;color:var(--soft);font-size:12px}
+  .sched>div+div{margin-top:6px}
+  .sess{border:1.5px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+  .sesshead{display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
+  .sess details{margin-top:8px}
+  .sess summary{cursor:pointer;font-weight:600;color:var(--plum);font-size:14px}
+  .item{background:var(--pale);border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:6px}
+  .item .body{white-space:pre-wrap;overflow-wrap:anywhere}
+  .item img,.item video{display:block;max-width:100%;max-height:220px;border-radius:6px;margin-top:6px}
+  .item .meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px}
+  h3.h3{font-size:15px;margin:18px 0 0}
+  .dstu{border-top:1px solid var(--line);padding:12px 0}
+  .dstu .top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .dstu.before .top b{color:var(--soft)}
+  .hand{margin-top:6px;font-size:13.5px}
 </style>
 </head>
 <body>
@@ -50,7 +105,15 @@
 <div id="app" style="display:none">
   <header><h1 id="hTitle">In-Depth Mysore #3 — admin</h1>
     <button class="btn gray" onclick="logout()">Lock</button></header>
+  <nav class="tabs" id="tabs" aria-label="Sections">
+    <button data-tab="students" aria-selected="true">Students 学员</button>
+    <button data-tab="day">Day by day 每日</button>
+    <button data-tab="calendar">Calendar 日历</button>
+    <button data-tab="add">Add 添加</button>
+    <button data-tab="send">Send &amp; syllabus 群发</button>
+  </nav>
   <main>
+    <section data-pane="add" hidden>
     <div class="card">
       <b class="h">Add a student 添加学员</b>
       <div class="row">
@@ -68,6 +131,25 @@
     </div>
 
     <div class="card">
+      <b class="h">Add several students 批量添加</b>
+      <p class="muted" style="margin:6px 0 0">One line per student:
+        <b>Name EN | 中文名 | member code or email | start date | note | arranged (yes/no)</b>.
+        Only the name is needed. A member code links the AYBKK account they already have (alumni);
+        an email links the account with that email, or makes one (new students). Start date is
+        YYYY-MM-DD; empty means from day 1 (alumni joining later: 2027-01-24, day 14, from session #13).
+        arranged yes = terms agreed directly with AYBKK, so the course opens without the online signature.
+        Up to 30 lines. Rows copied from a spreadsheet (tabs) work too. Someone already on the course is
+        never added twice: only their empty fields are filled.</p>
+      <textarea id="bulkBox" rows="7" spellcheck="false" placeholder="Sample Alum | 样例甲 | B0K3EXAMPLE123 | 2027-01-24 | IDCN #1 alum | yes&#10;Sample New | 样例乙 | sample.new@example.com | 2027-01-11 | | no"></textarea>
+      <p style="margin:10px 0 0"><button class="btn" id="bulkPrev" onclick="bulkRun(true)">Preview</button>
+        <button class="btn pink" id="bulkAdd" onclick="bulkRun(false)">Add</button>
+        <span class="muted" id="bulkMsg"></span></p>
+      <div id="bulkOut"></div>
+    </div>
+    </section>
+
+    <section data-pane="send" hidden>
+    <div class="card">
       <b class="h">Send to everyone 群发</b>
       <div class="row">
         <div><label>Type</label><select id="bKind">
@@ -80,6 +162,7 @@
       <input id="bFile" type="file" accept="video/*,image/*">
       <p style="margin:10px 0 0"><button class="btn pink" onclick="broadcast()">Send to ALL students</button>
         <span class="muted" id="bMsg"></span></p>
+      <p class="muted" style="margin:8px 0 0">For one session of the calendar, use Day by day: it files the assignment under that session.</p>
     </div>
 
     <div class="card">
@@ -89,11 +172,52 @@
       <p style="margin:10px 0 0"><button class="btn" onclick="saveLinks()">Save links</button>
         <span class="muted" id="linksMsg"></span></p>
     </div>
+    </section>
 
+    <section data-pane="day" hidden>
+    <div class="card">
+      <b class="h">Day by day 每日</b>
+      <div class="daybar" id="dayBar" hidden>
+        <button class="btn gray sm" onclick="stepDay(-1)" aria-label="Day before">‹</button>
+        <select id="daySel" onchange="switchDay(Number(this.value))" aria-label="Course day"></select>
+        <button class="btn gray sm" onclick="stepDay(1)" aria-label="Next day">›</button>
+        <button class="btn gray sm" onclick="switchDay(defaultDay())">Today</button>
+      </div>
+      <label for="byName">Your name on comments and assignments (optional)</label>
+      <input id="byName" maxlength="40" placeholder="teacher" autocomplete="off">
+      <div id="dayOut"><p class="muted">Loading…</p></div>
+    </div>
+    </section>
+
+    <section data-pane="calendar" hidden>
+    <div class="card">
+      <b class="h">Calendar 课程日历</b>
+      <p class="muted" style="margin:6px 0 0">Paste the CN #3 table as it was sent (markdown with | pipes, or rows
+        copied from a spreadsheet). The header row names the columns:
+        <b>Day no. | Date | Day | Morning class | Slot A 10:30-12:30 | Slot B 13:00-16:00</b>.
+        A slot cell that starts with #N (or SN, as S31) is session N; the morning column is never a session.
+        Lines around the table are fine, and a line such as "Slot A is 10:30-12:30." sets that slot's time.
+        Save replaces the whole calendar.</p>
+      <textarea id="calBox" rows="9" spellcheck="false" placeholder="| Day no. | Date | Day | Morning class | Slot A 10:30-12:30 | Slot B 13:00-16:00 |&#10;| --- | --- | --- | --- | --- | --- |&#10;| 1 | 11 Jan 2027 | Mon | Morning practice | – | #1 Session title |"></textarea>
+      <p style="margin:10px 0 0"><button class="btn" id="calPrev" onclick="calRun(true)">Preview</button>
+        <button class="btn pink" id="calSave" onclick="calRun(false)">Save calendar</button>
+        <span class="muted" id="calMsg"></span></p>
+      <div id="calOut"></div>
+    </div>
+    <div class="card">
+      <b class="h">Current calendar 当前日历</b> <span class="muted" id="calCount"></span>
+      <div id="calNow"><p class="muted">Loading…</p></div>
+    </div>
+    </section>
+
+    <section data-pane="students">
     <div class="card">
       <b class="h">Students 学员</b> <span class="muted" id="count"></span>
+      <div class="muted" style="margin-top:4px">Cohort page, one link for everyone:
+        <code id="cohortLink"></code> <button class="btn gray sm" data-copy="cohortLink">Copy</button></div>
       <div id="list"><p class="muted">Loading…</p></div>
     </div>
+    </section>
   </main>
 </div>
 
@@ -106,6 +230,7 @@
   let KEY = localStorage.getItem('idcn_admin_key') || '';
   const STU = {};
   let CURRENT = '';
+  let CAL = { days: [], sessions: [], slots: {} };
   const api = (u, o = {}) => fetch(u, { ...o,
     headers: { 'Content-Type': 'application/json', 'x-bkk-key': KEY, ...(o.headers || {}) } });
   const baht = st => '฿' + Math.floor(Number(st) / 100).toLocaleString('en-US')
@@ -117,39 +242,64 @@
     if (!r.ok) { $('#gateMsg').textContent = 'That key is not recognised.'; return; }
     localStorage.setItem('idcn_admin_key', KEY);
     $('#gate').style.display = 'none'; $('#app').style.display = 'block';
-    load();
+    $('#cohortLink').textContent = location.origin + '/' + COURSE;
+    loadLinks();
+    await load();
+    showTab();
   };
   window.logout = () => { localStorage.removeItem('idcn_admin_key'); location.reload(); };
 
-  async function load() {
-    const [sr, lr] = await Promise.all([
-      api(`/api/idcn/admin/${COURSE}/students`).then(r => r.json()),
-      api(`/api/idcn/admin/${COURSE}/links`).then(r => r.json()),
-    ]);
+  async function loadLinks() {
+    const lr = await api(`/api/idcn/admin/${COURSE}/links`).then(r => r.json()).catch(() => ({}));
     $('#linksBox').value = (lr.links || [])
       .map(l => `${l.title_en} | ${l.title_zh} | ${l.url}`).join('\n');
+  }
+
+  async function load() {
+    const [sr, dr] = await Promise.all([
+      api(`/api/idcn/admin/${COURSE}/students`).then(r => r.json()),
+      api(`/api/idcn/admin/${COURSE}/days`).then(r => r.ok ? r.json() : null).catch(() => null),
+    ]);
+    if (dr && Array.isArray(dr.days)) CAL = { days: dr.days, sessions: dr.sessions || [], slots: dr.slots || {} };
+    DAY_STALE = true;
+    renderCalNow(); fillDaySel();
     const students = sr.students || [];
+    for (const k of Object.keys(STU)) delete STU[k];
     for (const s of students) STU[s.id] = s;
     CURRENT = sr.policyVersion;
-    $('#count').textContent = `${students.length} total · ${students.filter(s => s.signed_at).length} signed`;
+    $('#count').textContent = `${students.length} total · ${students.filter(s => s.signed_at).length} signed`
+      + ` · ${students.filter(s => s.member_code).length} linked to AYBKK`
+      + ` · ${students.filter(s => s.terms_arranged).length} terms agreed directly`;
     $('#list').innerHTML = students.map(s => `<div class="stu">
       <div class="top">
         <b>${esc(s.name_zh || '')} ${esc(s.name_en)}</b>
         <span class="pill ${esc(s.status)}">${esc(s.status)}</span>
         <span class="pill ver${s.terms_version === CURRENT ? '' : ' old'}">${esc(s.terms_version)}</span>
         ${s.is_attendee && s.attendee_discount ? '<span class="pill confirmed">−3%</span>' : ''}
+        ${s.cohort_note ? `<span class="pill note">${esc(s.cohort_note)}</span>` : ''}
         <span style="flex:1"></span>
         <button class="btn gray" onclick="copyLink('${esc(s.slug)}')">Copy link</button>
       </div>
+      <div class="acct">${acctLine(s)}</div>
+      <div class="muted">${startLine(s)}</div>
       <div class="muted">/${COURSE}/${esc(s.slug)}
         · ${optionText(s)}
         · ${s.signed_at ? '✓ signed ' + String(s.signed_at).slice(0, 10) + ' as “' + esc(s.signed_name) + '”' : 'NOT signed'}
         · ${s.proofs} proof${s.proofs === 1 ? '' : 's'}
-        · ${s.submissions || 0} video submission${s.submissions === 1 ? '' : 's'}</div>
+        · ${s.submissions || 0} video submission${s.submissions === 1 ? '' : 's'}
+        · ${s.session_submissions || 0} session hand-in${s.session_submissions === 1 ? '' : 's'}
+        · ${s.comments || 0} daily comment${s.comments === 1 ? '' : 's'}</div>
       ${s.health_note ? `<div class="muted">健康: ${esc(s.health_note)}</div>` : ''}
       ${s.signed_at ? `<div class="muted">public media: ${s.media_public ? 'YES' : 'no'}</div>` : ''}
+      <div class="acts" style="margin-top:6px">
+        <label class="sw"><input type="checkbox" ${s.terms_arranged ? 'checked' : ''}
+          onchange="setArranged(${s.id}, this)"> Terms agreed directly (no online signature needed)</label>
+      </div>
       <div class="acts">
         <a class="btn" style="text-decoration:none" href="/${COURSE}/${esc(s.slug)}" target="_blank">Open profile</a>
+        <button class="btn" onclick="linkAcct(${s.id})">${s.member_code ? 'AYBKK account' : 'Link AYBKK account'}</button>
+        <button class="btn" onclick="loginLink(${s.id})">Login link</button>
+        <button class="btn gray" onclick="editCohort(${s.id})">Start date &amp; note</button>
         <button class="btn" onclick="addNote(${s.id})">+ Note / assignment</button>
         <button class="btn" onclick="addProof(${s.id}, '${esc(s.slug)}')">+ Payment proof</button>
         <button class="btn gray" onclick="setOption(${s.id})">Option</button>
@@ -234,7 +384,7 @@
     if (s.plan_changed) return optionText({ ...s, plan_changed: false })
       + ` <span class="stale">changed after signing; signed with ${s.signed_plan ? planText(s.signed_plan) : 'no plan'}</span>`;
     const qt = s.quote;
-    if (!s.payment_option) return 'no option yet';
+    if (!s.payment_option) return s.terms_arranged ? 'terms agreed directly' : 'no option yet';
     if (!qt) return 'Option ' + s.payment_option;
     if (!qt.installments) return 'Option ' + s.payment_option + ' — ' + baht(qt.totalSatang);
     return `Option ${esc(qt.code)}: ${baht(qt.totalSatang)} incl. VAT (` + planText(qt.installments) + ')';
@@ -378,6 +528,561 @@
       { method: 'PUT', body: JSON.stringify({ links }) });
     $('#linksMsg').textContent = r.ok ? 'Saved ✓' : 'failed';
   };
+
+  // ── IDCN#3 (24 Nov 2026): AYBKK account, start date, roster, calendar, day by day ──
+  const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const fmtDay = ymd => { const p = String(ymd || '').split('-'); return p.length === 3 ? `${+p[2]} ${MON[+p[1] - 1]} ${p[0]}` : String(ymd || ''); };
+  const todayBkk = () => new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10);
+  const fmtTime = iso => {
+    const t = new Date(iso);
+    return isNaN(t) ? '' : t.toLocaleString('en-GB', { timeZone: 'Asia/Bangkok', day: 'numeric', month: 'short',
+      hour: '2-digit', minute: '2-digit' });
+  };
+  const nameOf = s => [s.name_zh, s.name_en].filter(Boolean).join(' ');
+  const safeUrl = u => /^https:\/\//i.test(String(u || '')) ? String(u) : '';
+  const mediaHtml = n => {
+    const u = safeUrl(n.media_url);
+    if (!u) return '';
+    return n.media_type === 'video'
+      ? `<video src="${esc(u)}" controls preload="none" playsinline></video>`
+      : `<a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt="" loading="lazy"></a>`;
+  };
+  const busy = (ids, on) => ids.forEach(id => { const b = document.getElementById(id); if (b) b.disabled = on; });
+  const panel = (id, html) => { $('#proofRow' + id).innerHTML = html; };
+  window.closePanel = id => panel(id, '');
+  const byName = () => $('#byName').value.trim();
+
+  // copy buttons name the element whose text they copy (data-copy="id")
+  async function copyText(text, btn) {
+    let done = false;
+    try { await navigator.clipboard.writeText(text); done = true; } catch (_) {}
+    if (!done) {
+      const ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { done = document.execCommand('copy'); } catch (_) {}
+      ta.remove();
+    }
+    if (btn) { const was = btn.textContent; btn.textContent = done ? 'Copied ✓' : 'Select it and copy';
+      setTimeout(() => { btn.textContent = was; }, 1600); }
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-copy]');
+    if (b) { const el = document.getElementById(b.dataset.copy);
+      copyText(el ? (el.value != null && el.tagName === 'TEXTAREA' ? el.value : el.textContent) : '', b); return; }
+    const p = e.target.closest('[data-pick]');
+    if (p) pickAcct(Number(p.dataset.sid), p.dataset.pick, p);
+  });
+
+  // the first course day on or after a date, and the first session from it
+  const startInfo = ymd => {
+    if (!ymd || !CAL.days.length) return '';
+    const from = CAL.days.filter(d => d.date >= ymd);
+    if (!from.length) return 'after the last course day';
+    const first = from.flatMap(d => d.sessions)[0];
+    return `${from[0].date === ymd ? '' : 'first course day: '}day ${from[0].day}${first ? ', from session #' + first.no : ''}`;
+  };
+  const startLine = s => s.start_date
+    ? `Starts ${esc(fmtDay(s.start_date))}${startInfo(s.start_date) ? ' (' + startInfo(s.start_date) + ')' : ''}`
+    : 'Starts with the course (day 1)';
+  const acctLine = s => s.member_code
+    ? `AYBKK account: <b>${esc(s.member_name || '')}</b> · <code>${esc(s.member_code)}</code>`
+    : s.member_id != null ? '<span class="stale">The linked AYBKK account is not there any more: link it again.</span>'
+    : '<span class="muted">AYBKK account: not linked</span>';
+
+  window.setArranged = async (id, box) => {
+    const s = STU[id], on = box.checked;
+    const ask = on
+      ? `Terms agreed directly with AYBKK for ${nameOf(s)}?\n\nTheir course content (calendar, assignments, teacher comments) opens without the online signature. They can still sign if they want.`
+      : `Turn off "terms agreed directly" for ${nameOf(s)}?\n\nIf they have not signed online, their course content closes again.`;
+    if (!confirm(ask)) { box.checked = !on; return; }
+    box.disabled = true;
+    const r = await api(`/api/idcn/admin/${COURSE}/students/${id}`,
+      { method: 'PUT', body: JSON.stringify({ termsArranged: on }) });
+    if (!r.ok) { box.checked = !on; box.disabled = false;
+      return alert((await r.json().catch(() => ({}))).error || 'failed'); }
+    load();
+  };
+
+  window.editCohort = id => {
+    const s = STU[id];
+    const lo = CAL.days.length ? CAL.days[0].date : '', hi = CAL.days.length ? CAL.days[CAL.days.length - 1].date : '';
+    panel(id, `<div class="sub">
+      <div class="row">
+        <div><label for="sd${id}">Start date (empty = from day 1)</label>
+          <input id="sd${id}" type="date" value="${esc(s.start_date || '')}"${lo ? ` min="${lo}" max="${hi}"` : ''}></div>
+        <div><label for="sn${id}">Note (a few words, never an amount)</label>
+          <input id="sn${id}" maxlength="80" value="${esc(s.cohort_note || '')}" placeholder="IDCN #1 alum"></div>
+      </div>
+      <div class="muted" id="si${id}">${esc(startInfo(s.start_date))}</div>
+      <p class="muted" style="margin:4px 0 0">Alumni joining later start 2027-01-24 (day 14, from session #13).</p>
+      <p style="margin:8px 0 0"><button class="btn pink" id="sb${id}" onclick="saveCohort(${id})">Save</button>
+        <button class="btn gray" onclick="closePanel(${id})">Cancel</button> <span class="muted" id="sm${id}"></span></p></div>`);
+    $('#sd' + id).addEventListener('input', e => { $('#si' + id).textContent = startInfo(e.target.value); });
+  };
+  window.saveCohort = async id => {
+    busy(['sb' + id], true);
+    const r = await api(`/api/idcn/admin/${COURSE}/students/${id}`, { method: 'PUT',
+      body: JSON.stringify({ startDate: $('#sd' + id).value, note: $('#sn' + id).value.trim() }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) { busy(['sb' + id], false); $('#sm' + id).textContent = j.error || 'failed'; return; }
+    load();
+  };
+
+  // Link AYBKK account: bkk's own member search, then the code onto the course row
+  let ACCT_SEQ = 0;
+  window.linkAcct = id => {
+    const s = STU[id];
+    panel(id, `<div class="sub">
+      ${s.member_code ? `<div>Linked to <b>${esc(s.member_name || '')}</b> · <code>${esc(s.member_code)}</code>
+        <button class="btn gray sm" onclick="unlinkAcct(${id})">Unlink</button></div>` : ''}
+      <label for="ms${id}">Find their AYBKK account: name, email, phone or member code</label>
+      <input id="ms${id}" autocomplete="off" value="${esc(s.name_en)}">
+      <div id="mr${id}"></div>
+      <p class="muted" style="margin:6px 0 0">No account yet? Add them with their email under Add, Add several
+        students: that makes the account and links it.</p>
+      <p style="margin:8px 0 0"><button class="btn gray" onclick="closePanel(${id})">Close</button>
+        <span class="muted" id="mm${id}"></span></p></div>`);
+    let t;
+    $('#ms' + id).addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => searchAcct(id), 300); });
+    searchAcct(id);
+  };
+  async function searchAcct(id) {
+    const box = $('#mr' + id), inp = $('#ms' + id);
+    if (!box || !inp) return;
+    const term = inp.value.trim();
+    if (term.length < 2) { box.innerHTML = '<p class="muted">Type 2 letters or more.</p>'; return; }
+    const seq = ++ACCT_SEQ;
+    box.innerHTML = '<p class="muted">Searching…</p>';
+    const r = await api('/api/bkk/admin/members?q=' + encodeURIComponent(term)).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (seq !== ACCT_SEQ || !document.body.contains(box)) return;
+    if (!r || !r.ok) { box.innerHTML = `<p class="err">${esc(j.error || 'the search did not answer')}</p>`; return; }
+    const linkedTo = {};
+    for (const x of Object.values(STU)) if (x.member_code) linkedTo[x.member_code] = x;
+    const ms = (j.members || []).filter(m => m.code);
+    box.innerHTML = ms.map(m => {
+      const other = linkedTo[m.code];
+      const right = other && other.id === id ? '<span class="pill confirmed">linked here</span>'
+        : other ? `<span class="muted">linked to ${esc(nameOf(other))}</span>`
+        : `<button class="btn sm" data-pick="${esc(m.code)}" data-sid="${id}">Link</button>`;
+      return `<div class="res"><div><b>${esc(m.name || '')}</b> · <code>${esc(m.code)}</code>
+        <div class="muted">${esc(m.email || m.phone || 'no email')}</div></div>${right}</div>`;
+    }).join('') || '<p class="muted">No AYBKK account found.</p>';
+  }
+  async function pickAcct(id, code, btn) {
+    const s = STU[id];
+    if (!s || !confirm(`Link ${nameOf(s)} to the AYBKK account ${code}?\n\nTheir AYBKK sign-in then opens this course page too.`)) return;
+    if (btn) btn.disabled = true;
+    const r = await api(`/api/idcn/admin/${COURSE}/students/${id}`,
+      { method: 'PUT', body: JSON.stringify({ memberCode: code }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) { if (btn) btn.disabled = false; $('#mm' + id).textContent = j.error || 'failed'; return; }
+    await load();
+    panel(id, `<div class="sub good">Linked to <b>${esc((j.member && j.member.name) || '')}</b> ·
+      <code>${esc((j.member && j.member.code) || code)}</code>.
+      <button class="btn sm" onclick="loginLink(${id})">Login link</button>
+      <button class="btn gray sm" onclick="closePanel(${id})">Close</button></div>`);
+  }
+  window.unlinkAcct = async id => {
+    const s = STU[id];
+    if (!confirm(`Unlink ${nameOf(s)} from the AYBKK account ${s.member_code}?\n\nTheir AYBKK sign-in stops opening this course page; the passcode still works.`)) return;
+    const r = await api(`/api/idcn/admin/${COURSE}/students/${id}`,
+      { method: 'PUT', body: JSON.stringify({ memberCode: '' }) });
+    if (!r.ok) return ($('#mm' + id).textContent = (await r.json().catch(() => ({}))).error || 'failed');
+    load();
+  };
+
+  // one staff sign-in link per student (bkk's 7-day link); shown here only, never stored
+  async function makeLoginLink(id, box) {
+    box.innerHTML = '<div class="sub muted">Making a sign-in link…</div>';
+    const r = await api(`/api/idcn/admin/${COURSE}/students/${id}/login-link`, { method: 'POST', body: '{}' });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) {
+      const canLink = r.status === 409 && STU[id];
+      box.innerHTML = `<div class="sub"><span class="stale">${esc(j.error || 'failed')}</span>
+        <div class="acts">${canLink ? `<button class="btn sm" onclick="linkAcct(${id})">Link AYBKK account</button>` : ''}
+        <button class="btn gray sm" onclick="this.closest('.sub').remove()">Close</button></div></div>`;
+      return;
+    }
+    box.innerHTML = `<div class="sub linkbox">
+      <div>Sign-in link for <b>${esc(j.name || '')}</b>, works for ${Number(j.days) || 7} days. Send it to them only:</div>
+      <div class="copyrow"><code id="ll${id}">${esc(j.short_link || j.link)}</code>
+        <button class="btn sm" data-copy="ll${id}">Copy</button></div>
+      <div class="muted">It signs them in to their AYBKK account (My account), where the IDCN#3 card opens
+        the course page. No passcode needed. It is not saved anywhere: press Login link again for a new one.</div>
+      <div class="acts"><button class="btn gray sm" onclick="this.closest('.sub').remove()">Close</button></div></div>`;
+  }
+  window.loginLink = id => makeLoginLink(id, $('#proofRow' + id));
+  window.bulkLogin = (id, line) => makeLoginLink(id, $('#bl' + line));
+
+  // ── Add several students ──
+  const YES = /^(yes|y|true|1|是|对|✓|✔)$/i, NO = /^(no|n|false|0|否|不)$/i;
+  const FIELD = { nameEn: 'Name EN', nameZh: '中文名', member: 'member code or email', startDate: 'start date',
+    note: 'note', arranged: 'arranged' };
+  const blank = c => /^[-–—]?$/.test(c);
+  function parseRoster(text) {
+    const rows = [], src = [], errors = [];
+    String(text || '').replace(/\r\n?/g, '\n').split('\n').forEach((raw, i) => {
+      const line = i + 1;
+      let s = raw.trim();
+      if (!s) return;
+      let cells;
+      if (s.includes('\t')) cells = s.split('\t');
+      else {
+        if (s.startsWith('|')) s = s.slice(1);
+        if (s.endsWith('|')) s = s.slice(0, -1);
+        cells = s.split('|');
+      }
+      cells = cells.map(c => c.trim());
+      if (cells.every(c => !c || /^:?-{2,}:?$/.test(c))) return;
+      if (/^(name( ?\(?(en|latin)\)?)?|姓名|名字|英文名)$/i.test(cells[0])) return;
+      while (cells.length > 6 && blank(cells[cells.length - 1])) cells.pop();
+      if (cells.length > 6) return errors.push(`line ${line}: ${cells.length} cells, the box takes 6 (Name EN | 中文名 | member | start date | note | arranged)`);
+      const [nameEn, nameZh, member, startDate, note, arr] = cells.map(c => blank(c) ? '' : c);
+      const r = { nameEn: nameEn || '' };
+      if (nameZh) r.nameZh = nameZh;
+      if (member) r.member = member;
+      if (startDate) r.startDate = startDate;
+      if (note) r.note = note;
+      if (arr) {
+        if (YES.test(arr)) r.arranged = true;
+        else if (NO.test(arr)) r.arranged = false;
+        else return errors.push(`line ${line}: arranged is yes or no, not "${arr}"`);
+      }
+      rows.push(r); src.push({ line, nameEn: r.nameEn });
+    });
+    return { rows, src, errors };
+  }
+  function bulkItem(res, src, dry, all) {
+    const head = `Line ${src.line} · <b>${esc(src.nameEn || '(no name)')}</b>`;
+    if (res.action === 'error') return `<div class="res bad"><div>${head} <span class="pill withdrawn">error</span>
+      <div>${esc(FIELD[res.field] || res.field || '')}: ${esc(res.error)}</div></div></div>`;
+    const m = res.member;
+    const acct = m ? `AYBKK account: ${esc(m.name || '')}${m.code ? ' · <code>' + esc(m.code) + '</code>' : ''}${
+      m.created ? (dry ? ' <span class="pill invited">a new account will be made</span>' : ' <span class="pill invited">new account made</span>') : ''}`
+      : '<span class="muted">no AYBKK account given</span>';
+    const login = !dry && res.id && m && m.code
+      ? `<div class="acts"><button class="btn sm" onclick="bulkLogin(${Number(res.id)}, ${src.line})">Login link</button></div><div id="bl${src.line}"></div>` : '';
+    if (res.action === 'exists') {
+      const label = f => f === 'member' ? 'AYBKK account' : FIELD[f] || f;
+      const filled = (res.filled || []).map(label), kept = (res.kept || []).map(label);
+      const twin = res.sameAs && all[res.sameAs - 1];
+      if (twin) return `<div class="res"><div>${head} <span class="pill ver">same student as line ${twin.line}</span>
+        <div class="muted">/${COURSE}/${esc(res.slug)}${filled.length ? ' · would fill ' + esc(filled.join(', ')) : ''}</div></div></div>`;
+      return `<div class="res"><div>${head} <span class="pill ver">already on the course</span>
+        <div class="muted">/${COURSE}/${esc(res.slug)} · ${filled.length ? (dry ? 'would fill ' : 'filled ') + esc(filled.join(', ')) : 'nothing new to fill'}${
+          kept.length ? ' · keeps the saved ' + esc(kept.join(', ')) + ' (this line says something else)' : ''}</div>
+        <div>${acct}</div>${login}</div></div>`;
+    }
+    return `<div class="res"><div>${head} <span class="pill confirmed">${dry ? 'will be added' : 'added'}</span>
+      <div class="muted">${esc(location.origin + res.link)}</div><div>${acct}</div>
+      ${!dry && res.passcode ? `<div class="passbox" style="padding:8px 10px">passcode <code>${esc(res.passcode)}</code></div>` : ''}
+      ${login}</div></div>`;
+  }
+  window.bulkRun = async dry => {
+    const { rows, src, errors } = parseRoster($('#bulkBox').value);
+    const out = $('#bulkOut');
+    if (errors.length) { out.innerHTML = `<div class="err">${errors.map(esc).join('<br>')}</div>`; return; }
+    if (!rows.length) { out.innerHTML = '<div class="err">Paste one line per student first.</div>'; return; }
+    if (rows.length > 30) { out.innerHTML = `<div class="err">${rows.length} lines: at most 30 at a time.</div>`; return; }
+    if (!dry && !confirm(`Add these ${rows.length} line${rows.length === 1 ? '' : 's'} to ${COURSE.toUpperCase()}?\n\nSomeone already on the course only gets their empty fields filled. New AYBKK accounts are made for new emails.`)) return;
+    busy(['bulkPrev', 'bulkAdd'], true);
+    $('#bulkMsg').textContent = dry ? 'Checking…' : 'Adding…';
+    const r = await api(`/api/idcn/admin/${COURSE}/students/bulk`, { method: 'POST',
+      body: JSON.stringify({ rows, dryRun: dry }) }).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    busy(['bulkPrev', 'bulkAdd'], false);
+    $('#bulkMsg').textContent = '';
+    if (!r || !r.ok) { out.innerHTML = `<div class="err">${esc(j.error || 'the server did not answer')}</div>`; return; }
+    const c = j.counts || {};
+    const made = (j.results || []).filter(x => x.action === 'created' && x.passcode);
+    const all = made.map(x => {
+      const s = src[x.row - 1] || {};
+      return `${s.nameEn || x.slug} · ${location.origin}${x.link} · passcode ${x.passcode}`;
+    }).join('\n');
+    out.innerHTML = `<div class="${dry ? 'warn' : 'good'}"><b>${dry ? 'Preview, nothing saved yet' : 'Done'}:</b>
+        ${c.created || 0} ${dry ? 'to add' : 'added'} · ${c.exists || 0} already on the course · ${c.error || 0} with an error${
+        dry && !c.error ? '. Press Add to save.' : dry ? '. Fix the lines in red, or Add saves the others.' : ''}</div>
+      ${made.length ? `<div class="passbox">Passcodes are shown ONCE and saved nowhere. Students with an AYBKK
+        account can get a Login link instead (no passcode).
+        <textarea id="bulkAll" rows="${Math.min(made.length, 6)}" readonly spellcheck="false" wrap="off" style="margin-top:6px;font:12.5px ui-monospace,Menlo,monospace">${esc(all)}</textarea>
+        <div class="acts"><button class="btn sm" data-copy="bulkAll">Copy all</button>
+          <button class="btn gray sm" onclick="document.getElementById('bulkOut').innerHTML=''">Done, hide the passcodes</button></div></div>` : ''}
+      ${(j.results || []).map(x => bulkItem(x, src[x.row - 1] || { line: '?', nameEn: '' }, dry, src)).join('')}`;
+    if (!dry) load();
+  };
+
+  // ── Calendar ──
+  const markTbc = s => esc(s).replace(/\bTBC\b/g, '<mark>TBC</mark>');
+  const sessBadge = (d, se) => `<span class="badge">${/^S\d/i.test(d['slot' + se.slot] || '') ? 'S' : '#'}${se.no}</span>`;
+  function calTable(days, slots) {
+    const t = todayBkk(), notes = days.some(d => d.note);
+    const cell = (d, k) => {
+      const text = d['slot' + k];
+      if (!text) return '<span class="muted">–</span>';
+      const se = d.sessions.find(x => x.slot === k);
+      return se ? sessBadge(d, se) + markTbc(se.title || '') : markTbc(text);
+    };
+    return `<div class="tablewrap"><table class="cal"><thead><tr><th>Day</th><th>Date</th><th>Morning</th>
+      <th>Slot A${slots.A ? ' ' + esc(slots.A) : ''}</th><th>Slot B${slots.B ? ' ' + esc(slots.B) : ''}</th>${notes ? '<th>Note</th>' : ''}</tr></thead>
+      <tbody>${days.map(d => `<tr${d.date === t ? ' class="today"' : ''}><td>${d.day}</td>
+        <td>${esc(d.weekday || '')} ${esc(fmtDay(d.date))}</td><td>${d.morning ? markTbc(d.morning) : '<span class="muted">–</span>'}</td>
+        <td>${cell(d, 'A')}</td><td>${cell(d, 'B')}</td>${notes ? `<td>${esc(d.note || '')}</td>` : ''}</tr>`).join('')}</tbody></table></div>`;
+  }
+  const calSummary = (days, sessions, slots) => {
+    const nos = sessions.map(s => s.no);
+    return `${days.length} day${days.length === 1 ? '' : 's'} · ${sessions.length} session${sessions.length === 1 ? '' : 's'}${
+      nos.length ? ` (#${Math.min(...nos)} to #${Math.max(...nos)})` : ''} · Slot A ${slots.A || 'no time'} · Slot B ${slots.B || 'no time'}`;
+  };
+  function renderCalNow() {
+    $('#calCount').textContent = CAL.days.length ? calSummary(CAL.days, CAL.sessions, CAL.slots) : '';
+    $('#calNow').innerHTML = CAL.days.length ? calTable(CAL.days, CAL.slots)
+      : '<p class="muted">Nothing saved yet: paste the table above, Preview, then Save.</p>';
+  }
+  function calError(j) {
+    const lines = $('#calBox').value.replace(/\r\n?/g, '\n').split('\n');
+    const n = Number(j.line);
+    const text = n >= 1 && n <= lines.length ? lines[n - 1] : null;
+    if (text != null) {
+      const ta = $('#calBox'), start = lines.slice(0, n - 1).join('\n').length + (n > 1 ? 1 : 0);
+      ta.focus(); ta.setSelectionRange(start, start + text.length);
+    }
+    return `<div class="err"><b>${text != null ? 'Line ' + n + ': ' : ''}${esc(j.error || 'the server did not answer')}</b>${
+      text != null ? `<pre>${esc(text)}</pre>` : ''}</div>`;
+  }
+  const putCal = dry => api(`/api/idcn/admin/${COURSE}/days`, { method: 'PUT',
+    body: JSON.stringify({ text: $('#calBox').value, dryRun: dry }) })
+    .then(async r => ({ ok: r.ok, j: await r.json().catch(() => ({})) }), () => ({ ok: false, j: {} }));
+  const calView = (j, head) => `<div class="${head.cls}"><b>${head.text}</b> ${esc(calSummary(j.days, j.sessions, j.slots))}</div>
+    ${j.warnings && j.warnings.length ? `<div class="warn"><b>Check before saving:</b><ul>${j.warnings.map(w => `<li>${esc(w)}</li>`).join('')}</ul></div>` : ''}
+    ${calTable(j.days, j.slots)}`;
+  window.calRun = async dry => {
+    if (!$('#calBox').value.trim()) { $('#calOut').innerHTML = '<div class="err">Paste the calendar table first.</div>'; return; }
+    busy(['calPrev', 'calSave'], true);
+    $('#calMsg').textContent = 'Reading…';
+    try {
+      const pre = await putCal(true);
+      if (!pre.ok) { $('#calOut').innerHTML = calError(pre.j); return; }
+      if (dry) { $('#calOut').innerHTML = calView(pre.j, { cls: 'good', text: 'Preview, nothing saved yet:' }); return; }
+      const w = pre.j.warnings || [];
+      if (!confirm(`Save this calendar? It replaces the saved one${CAL.days.length ? ` (${CAL.days.length} days)` : ''}.\n\n`
+        + `${pre.j.days.length} days, ${pre.j.sessions.length} sessions.` + (w.length ? '\n\nCheck:\n- ' + w.join('\n- ') : ''))) return;
+      $('#calMsg').textContent = 'Saving…';
+      const res = await putCal(false);
+      if (!res.ok) { $('#calOut').innerHTML = calError(res.j); return; }
+      $('#calOut').innerHTML = calView(res.j, { cls: 'good', text: 'Saved ✓' });
+      DAYV = null;
+      await load();
+    } finally { busy(['calPrev', 'calSave'], false); $('#calMsg').textContent = ''; }
+  };
+
+  // ── Day by day ──
+  let DAY = null, DAYV = null, DAYSEQ = 0, DAY_STALE = false;
+  const GROUPS = {};
+  const defaultDay = () => {
+    const t = todayBkk(), ds = CAL.days;
+    if (!ds.length) return null;
+    return (ds.find(d => d.date === t) || ds.find(d => d.date > t) || ds[ds.length - 1]).day;
+  };
+  window.defaultDay = defaultDay;
+  function fillDaySel() {
+    const t = todayBkk();
+    $('#daySel').innerHTML = CAL.days.map(d => `<option value="${d.day}">Day ${d.day} · ${esc(d.weekday || '')} ${
+      esc(fmtDay(d.date))}${d.sessions.length ? ' · #' + d.sessions.map(x => x.no).join(', #') : ''}${d.date === t ? ' · today' : ''}</option>`).join('');
+    if (DAY != null) $('#daySel').value = String(DAY);
+  }
+  async function openDay(arg) {
+    if (!CAL.days.length) {
+      $('#dayBar').hidden = true;
+      $('#dayOut').innerHTML = '<p class="muted">No calendar yet: paste it under Calendar first.</p>';
+      return;
+    }
+    $('#dayBar').hidden = false;
+    const has = n => CAL.days.some(d => d.day === n);
+    const n = has(Number(arg)) ? Number(arg) : has(DAY) ? DAY : defaultDay();
+    const shown = !!(DAYV && DAYV.day.day === n && document.getElementById('dh-' + n));
+    if (shown && !DAY_STALE) { history.replaceState(null, '', '#day/' + n); return; }
+    DAY_STALE = false;
+    await loadDay(n, shown);
+  }
+  const dirtyComments = () => !DAYV ? [] : DAYV.students.filter(s => {
+    const ta = document.getElementById('cm' + s.id);
+    return ta && ta.value.trim() !== ((s.comment && s.comment.body) || '').trim();
+  });
+  window.switchDay = n => {
+    if (n == null) return;
+    const d = dirtyComments();
+    if (d.length && n !== DAY && !confirm(`Comment not saved for ${d.map(nameOf).join(', ')}. Change day anyway?`)) {
+      $('#daySel').value = String(DAY); return;
+    }
+    loadDay(n);
+  };
+  window.stepDay = k => {
+    const i = CAL.days.findIndex(d => d.day === DAY), next = CAL.days[i + k];
+    if (next) switchDay(next.day);
+  };
+  // keep = reload the same day without losing comments being typed
+  async function loadDay(n, keep) {
+    DAY = n; $('#daySel').value = String(n);
+    if (location.hash !== '#day/' + n) history.replaceState(null, '', '#day/' + n);
+    const seq = ++DAYSEQ;
+    const drafts = {};
+    if (keep) document.querySelectorAll('#dayOut textarea[id^="cm"]').forEach(t => { drafts[t.id] = t.value; });
+    else $('#dayOut').innerHTML = '<p class="muted">Loading…</p>';
+    const r = await api(`/api/idcn/admin/${COURSE}/days/${n}/overview`).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (seq !== DAYSEQ) return;
+    if (!r || !r.ok) { $('#dayOut').innerHTML = `<div class="err">${esc(j.error || 'the server did not answer')}</div>`; return; }
+    DAYV = j; renderDay();
+    for (const [k, v] of Object.entries(drafts)) { const t = document.getElementById(k); if (t) t.value = v; }
+  }
+  // one assignment sent to many students is one row per student: shown once here
+  function groupWork(no, students) {
+    const g = new Map();
+    for (const s of students) {
+      const seen = new Map();   // the same text sent twice is two items, not one item for twice the class
+      for (const n of ((s.sessionsWork[no] || {}).assignments || [])) {
+        const base = [n.kind, n.title, n.body, n.media_url].join('\u0000');
+        const nth = (seen.get(base) || 0) + 1;
+        seen.set(base, nth);
+        const k = base + '\u0000' + nth;
+        if (!g.has(k)) g.set(k, { ...n, ids: [], names: [] });
+        g.get(k).ids.push(n.id); g.get(k).names.push(nameOf(s));
+      }
+    }
+    return GROUPS[no] = [...g.values()];
+  }
+  function sessionBlock(d, se, students, slots) {
+    const groups = groupWork(se.no, students), all = students.length;
+    return `<div class="sess" id="se${se.no}">
+      <div class="sesshead">${sessBadge(d, se)}<b>${esc(se.title || '')}</b>
+        <span class="muted">Slot ${se.slot}${slots[se.slot] ? ' ' + esc(slots[se.slot]) : ''}</span></div>
+      ${groups.map((g, i) => `<div class="item">
+        <div class="meta"><span class="pill ${g.kind === 'assignment' ? 'asg' : 'note'}">${g.kind === 'assignment' ? 'ASSIGNMENT 作业' : 'NOTE 留言'}</span>
+          ${g.title ? `<b>${esc(g.title)}</b>` : ''}</div>
+        <div class="body">${esc(g.body)}</div>${mediaHtml(g)}
+        <div class="meta muted">${g.ids.length === all && all > 1 ? `to all ${all} students` : 'to ' + esc(g.names.join(', '))}
+          · ${esc(g.created_by || '')} · ${esc(fmtTime(g.created_at))}
+          <button class="btn gray sm" onclick="delGroup(${se.no}, ${i})">Delete${g.ids.length > 1 ? ' for all ' + g.ids.length : ''}</button></div></div>`).join('')}
+      <details${groups.length ? '' : ' open'}><summary>Assignment for session #${se.no}</summary>
+        <div class="row">
+          <div><label for="aTo${se.no}">To</label><select id="aTo${se.no}"><option value="all">All students (${all})</option>
+            ${students.map(s => `<option value="${s.id}">${esc(nameOf(s))}</option>`).join('')}</select></div>
+          <div><label for="aKind${se.no}">Type</label><select id="aKind${se.no}"><option value="assignment">Assignment 作业</option>
+            <option value="note">Note 留言</option></select></div>
+        </div>
+        <label for="aTitle${se.no}">Title (optional)</label><input id="aTitle${se.no}">
+        <label for="aBody${se.no}">Message 内容</label><textarea id="aBody${se.no}" rows="3"></textarea>
+        <label for="aFile${se.no}">Video / photo (optional)</label><input id="aFile${se.no}" type="file" accept="video/*,image/*">
+        <p style="margin:10px 0 0"><button class="btn pink" id="aSend${se.no}" onclick="sendSessionNote(${se.no})">Send</button>
+          <span class="muted" id="aMsg${se.no}"></span></p>
+      </details></div>`;
+  }
+  function studentDay(s, d) {
+    const work = d.sessions.map(se => {
+      const subs = ((s.sessionsWork[se.no] || {}).submissions || []).map(n => `<div class="item">
+        <div class="meta muted">hand-in · ${esc(fmtTime(n.created_at))}
+          <button class="btn gray sm" onclick="delNote(${Number(n.id)}, 'hand-in')">Delete</button></div>
+        ${n.title ? `<b>${esc(n.title)}</b>` : ''}${n.body ? `<div class="body">${esc(n.body)}</div>` : ''}${mediaHtml(n)}</div>`).join('');
+      return `<div class="hand">${sessBadge(d, se)}${subs || '<span class="muted">nothing handed in yet</span>'}</div>`;
+    }).join('');
+    const c = s.comment;
+    return `<div class="dstu${s.beforeStart ? ' before' : ''}" id="ds${s.id}">
+      <div class="top"><b>${esc(nameOf(s))}</b> <span class="pill ${esc(s.status)}">${esc(s.status)}</span>
+        ${s.beforeStart ? `<span class="pill before">before their start (${esc(fmtDay(s.start_date))})</span>` : ''}</div>
+      ${work}
+      <label for="cm${s.id}">Teacher's comment, day ${d.day} 老师点评</label>
+      <textarea id="cm${s.id}" rows="2">${esc(c ? c.body : '')}</textarea>
+      <div class="acts"><button class="btn pink sm" id="cb${s.id}" onclick="saveComment(${s.id})">Save</button>
+        ${c ? `<button class="btn gray sm" onclick="delComment(${s.id})">Delete</button>` : ''}
+        <span class="muted" id="cms${s.id}">${c ? 'saved' + (c.created_by ? ' by ' + esc(c.created_by) : '') + ' · '
+          + esc(fmtTime(c.updated_at || c.created_at)) : ''}</span></div></div>`;
+  }
+  function renderDay() {
+    const { day: d, slots, students } = DAYV;
+    const slot = (k, text) => text ? `<div><span class="k">Slot ${k}${slots[k] ? ' ' + esc(slots[k]) : ''}</span>${
+      (() => { const se = d.sessions.find(x => x.slot === k); return se ? sessBadge(d, se) + esc(se.title || '') : esc(text); })()}</div>` : '';
+    $('#dayOut').innerHTML = `<div class="dayhead" id="dh-${d.day}"><b>Day ${d.day} · ${esc(d.weekday || '')} ${esc(fmtDay(d.date))}</b>
+        ${d.date === todayBkk() ? '<span class="pill today">today</span>' : ''}</div>
+      <div class="sched">${d.morning ? `<div><span class="k">Morning</span>${esc(d.morning)}</div>` : ''}
+        ${slot('A', d.slotA)}${slot('B', d.slotB)}${d.note ? `<div><span class="k">Note</span>${esc(d.note)}</div>` : ''}</div>
+      ${d.sessions.length ? d.sessions.map(se => sessionBlock(d, se, students, slots)).join('')
+        : '<p class="muted">No teaching session on this day.</p>'}
+      <h3 class="h3">Students 学员 (${students.length})</h3>
+      ${students.map(s => studentDay(s, d)).join('') || '<p class="muted">No students yet.</p>'}`;
+  }
+  const redrawStudent = s => { const el = $('#ds' + s.id); if (el) el.outerHTML = studentDay(s, DAYV.day); };
+  window.saveComment = async id => {
+    const s = DAYV.students.find(x => x.id === id);
+    const body = $('#cm' + id).value.trim();
+    if (!body) { if (s.comment) return delComment(id); $('#cms' + id).textContent = 'Write the comment first.'; return; }
+    busy(['cb' + id], true);
+    $('#cms' + id).textContent = 'Saving…';
+    const r = await api(`/api/idcn/admin/${COURSE}/students/${id}/comments/${DAYV.day.day}`,
+      { method: 'PUT', body: JSON.stringify({ body, by: byName() || undefined }) }).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (!r || !r.ok) { busy(['cb' + id], false); $('#cms' + id).textContent = j.error || 'not saved: try again'; return; }
+    s.comment = j.comment; redrawStudent(s);
+    $('#cms' + id).textContent += ' ✓';
+  };
+  window.delComment = async id => {
+    const s = DAYV.students.find(x => x.id === id);
+    if (!confirm(`Delete the teacher's comment for ${nameOf(s)} on day ${DAYV.day.day}?`)) return;
+    const r = await api(`/api/idcn/admin/${COURSE}/students/${id}/comments/${DAYV.day.day}`,
+      { method: 'PUT', body: JSON.stringify({ body: '' }) }).catch(() => null);
+    if (!r || !r.ok) { $('#cms' + id).textContent = 'not deleted: try again'; return; }
+    s.comment = null; redrawStudent(s);
+    $('#cms' + id).textContent = 'deleted';
+  };
+  window.delNote = async (noteId, what) => {
+    if (!confirm(`Delete this ${what}? The student stops seeing it.`)) return;
+    const r = await api(`/api/idcn/admin/${COURSE}/notes/${noteId}`, { method: 'DELETE' }).catch(() => null);
+    if (!r || (!r.ok && r.status !== 404)) return alert('Not deleted: try again.');
+    loadDay(DAY, true);
+  };
+  window.delGroup = async (no, i) => {
+    const g = (GROUPS[no] || [])[i];
+    if (!g) return;
+    const who = g.ids.length === 1 ? g.names[0] : `all ${g.ids.length} students`;
+    if (!confirm(`Delete this ${g.kind} of session #${no} for ${who}? They stop seeing it.`)) return;
+    let failed = 0;
+    for (const id of g.ids) {
+      const r = await api(`/api/idcn/admin/${COURSE}/notes/${id}`, { method: 'DELETE' }).catch(() => null);
+      if (!r || (!r.ok && r.status !== 404)) failed++;
+    }
+    if (failed) alert(`${failed} of ${g.ids.length} could not be deleted: try again.`);
+    loadDay(DAY, true);
+  };
+  window.sendSessionNote = async no => {
+    const body = $('#aBody' + no).value.trim();
+    if (!body) { $('#aMsg' + no).textContent = 'Write the message first.'; return; }
+    const file = $('#aFile' + no).files[0];
+    if (!fileOk(file)) return;
+    const to = $('#aTo' + no).value;
+    if (to === 'all' && !confirm(`Send this to all ${DAYV.students.length} students, under session #${no}?`)) return;
+    busy(['aSend' + no], true);
+    $('#aMsg' + no).textContent = file ? 'Uploading… keep the page open.' : 'Sending…';
+    const r = await sendNoteForm({ sessionNo: no, kind: $('#aKind' + no).value, title: $('#aTitle' + no).value.trim(),
+      body, file, createdBy: byName(), ...(to === 'all' ? { all: 'true' } : { studentId: to }) }).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (!r || !r.ok) { busy(['aSend' + no], false); $('#aMsg' + no).textContent = j.error || 'not sent: try again'; return; }
+    await loadDay(DAY, true);
+  };
+
+  // ── tabs: #students, #day/14, #calendar, #add, #send (nothing kept in storage) ──
+  const TABS = ['students', 'day', 'calendar', 'add', 'send'];
+  function showTab() {
+    const [t, arg] = location.hash.slice(1).split('/');
+    const tab = TABS.includes(t) ? t : 'students';
+    document.querySelectorAll('[data-pane]').forEach(p => { p.hidden = p.dataset.pane !== tab; });
+    document.querySelectorAll('#tabs [data-tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
+    if (tab === 'day') openDay(arg);
+  }
+  window.addEventListener('hashchange', showTab);
+  document.querySelectorAll('#tabs [data-tab]').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.tab === 'students') load();
+    location.hash = b.dataset.tab;
+  }));
 
   if (KEY) { $('#key').value = KEY; unlock(); }
 })();

@@ -2208,22 +2208,29 @@ function mountBkk(app, opts = {}) {
   // one to send; link stays for anything that still reads it.
   const shortCode = () => Array.from({ length: SHORT_LEN },
     () => SHORT_ALPHABET[crypto.randomInt(SHORT_ALPHABET.length)]).join('');
+  // Also handed to idcn-api (the course admin's "Login link"), so both make the same link.
+  async function staffSigninLink(memberId) {
+    const m = (await q('SELECT id,name FROM bkk_members WHERE id=$1', [memberId])).rows[0];
+    if (!m) return null;
+    let made;
+    for (let tries = 0; !made && tries < 5; tries++) {
+      made = (await q(`INSERT INTO bkk_login_tokens (token,member_id,email,ip,expires_at,short_code)
+               VALUES ($1,$2,NULL,'staff', now() + ($3 || ' days')::interval, $4)
+               ON CONFLICT (short_code) DO NOTHING RETURNING token, short_code`,
+        [crypto.randomBytes(32).toString('hex'), m.id, String(STAFF_LINK_DAYS), shortCode()])).rows[0];
+    }
+    if (!made) throw new Error('could not make a link, please try again');
+    return { name: m.name, days: STAFF_LINK_DAYS,
+      link: `${baseUrl()}/api/bkk/login/${made.token}`,
+      short_link: `${baseUrl()}/in/${made.short_code}` };
+  }
   app.post('/api/bkk/admin/members/:code/signin-link', async (req, res) => {
     if (adminOnly(req, res)) return;
     try {
-      const m = (await q('SELECT id,name FROM bkk_members WHERE code=$1', [req.params.code])).rows[0];
-      if (!m) return res.status(404).json({ error: 'member not found' });
-      let made;
-      for (let tries = 0; !made && tries < 5; tries++) {
-        made = (await q(`INSERT INTO bkk_login_tokens (token,member_id,email,ip,expires_at,short_code)
-                 VALUES ($1,$2,NULL,'staff', now() + ($3 || ' days')::interval, $4)
-                 ON CONFLICT (short_code) DO NOTHING RETURNING token, short_code`,
-          [crypto.randomBytes(32).toString('hex'), m.id, String(STAFF_LINK_DAYS), shortCode()])).rows[0];
-      }
-      if (!made) throw new Error('could not make a link, please try again');
-      res.json({ success: true, name: m.name, days: STAFF_LINK_DAYS,
-        link: `${baseUrl()}/api/bkk/login/${made.token}`,
-        short_link: `${baseUrl()}/in/${made.short_code}` });
+      const m = (await q('SELECT id FROM bkk_members WHERE code=$1', [req.params.code])).rows[0];
+      const made = m && await staffSigninLink(m.id);
+      if (!made) return res.status(404).json({ error: 'member not found' });
+      res.json({ success: true, ...made });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -8794,7 +8801,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       return switchPrices().catch(e => console.error('✗ bkk: price switch failed:', e.message));
     })
     .catch(e => console.error('✗ bkk-api schema init failed:', e.message))
-    .then(() => ({ paySweep, moneyTick, moneyLine, resendAlerts, teePurge }));
+    .then(() => ({ paySweep, moneyTick, moneyLine, resendAlerts, teePurge, findOrCreateMember, staffSigninLink }));
 }
 
 // PaySolutions posts application/x-www-form-urlencoded; make sure that body is
