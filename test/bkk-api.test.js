@@ -33,6 +33,8 @@ const ok = (name, cond, extra = '') => {
         uploads.push(r); return r; },
       destroy: async (id, o) => { destroyed.push({ id, type: o.type }); return { result: 'ok' }; },
     },
+    // Well under the free plan, so no daily photo limit applies here.
+    api: { usage: async () => ({ credits: { usage: 5, limit: 25, used_percent: 20 } }) },
   };
   global.__uploads = uploads; global.__destroyed = destroyed;
   // Stand-in for Drive's public folder view and download.
@@ -1047,7 +1049,10 @@ const ok = (name, cond, extra = '') => {
   ok('a tagged student sees the photo, on its class date', annPics.length === 1 && annPics[0].date === '2026-10-03' && annPics[0].items.length === 1,
      JSON.stringify(annPics));
   ok('the photo link is a signed private one', /^signed:\/\/authenticated\//.test(annPics[0].items[0].thumb));
-  ok('each photo also has a full-size save link', /^signed:\/\/authenticated\/.+\/2048$/.test(annPics[0].items[0].save || ''), annPics[0].items[0].save);
+  ok('each photo also has a download link on this site, signed, named AYBKK-photo.jpg',
+     new RegExp(`^/api/bkk/photo/${annPics[0].items[0].id}\\.[\\w-]{22}/AYBKK-photo\\.jpg$`).test(annPics[0].items[0].save || ''), annPics[0].items[0].save);
+  ok('...and no Cloudinary link with a download (fl_attachment) copy is made any more',
+     !urlCalls.some(c => /attachment/.test(JSON.stringify(c.o)) || (c.o.transformation && c.o.transformation[0].width === 2048)), JSON.stringify(urlCalls.slice(-3)));
   ok('the photo a student taps open is the stored JPEG itself, with no resized copy made',
      /^signed:\/\/authenticated\/.+\/original\.jpg$/.test(annPics[0].items[0].full || '')
        && urlCalls.some(c => !c.o.transformation && c.o.format === 'jpg' && c.o.type === 'authenticated' && c.o.sign_url === true),
@@ -1129,11 +1134,12 @@ const ok = (name, cond, extra = '') => {
 
   const realUpload = fakeCloud.uploader.upload;
   fakeCloud.uploader.upload = async () => { throw { error: { message: 'Server returned unexpected status code - 403', http_code: 403 } }; };
-  fakeCloud.api = { usage: async () => ({ credits: { usage: 25.3, limit: 25, used_percent: 101.2 } }) };
+  const realUsage = fakeCloud.api.usage;
+  fakeCloud.api.usage = async () => ({ credits: { usage: 25.3, limit: 25, used_percent: 101.2 } });
   const refused = await post('/api/bkk/teacher/photos/from-drive', { date: '2026-10-05', folder: 'DAY5aaaaaaaaaaaaaaaaaaaaa', driveId: 'IMG1aaaaaaaaaaaaaaaaaaaaa', memberCodes: [] }, PKEY);
   ok('a Cloudinary 403 is explained in plain words, with the plan usage',
      refused.status === 500 && /Error Reports/.test(refused.body.error) && /25.3 of 25 credits/.test(refused.body.error), JSON.stringify(refused.body));
-  fakeCloud.uploader.upload = realUpload; delete fakeCloud.api;
+  fakeCloud.uploader.upload = realUpload; fakeCloud.api.usage = realUsage;
 
   console.log('\n-- main student and others in the frame --');
   {
@@ -1361,6 +1367,185 @@ const ok = (name, cond, extra = '') => {
     ok('a name sent twice counts once: 30 people named 60 times is still 30', twice.status === 200 && twice.body.photo.members.length === 30
        && twice.body.photo.members[0].role === 'main', JSON.stringify(twice.body).slice(0, 200));
     await tp(`/api/bkk/teacher/photos/${full.body.photo.id}/delete`, {});
+  }
+
+  console.log('\n— photos for less: Drive tiles on /photos, downloads from here, a daily cap —');
+  {
+    const apiSrc = require('fs').readFileSync(require('path').join(__dirname, '../bkk-api.js'), 'utf8');
+    ok('the size strings Cloudinary bills by are unchanged (a new one re-bills every photo)',
+       apiSrc.includes("    thumb: { width: 600, height: 600, crop: 'limit', quality: 'auto', fetch_format: 'webp' },\n    full: null,\n")
+         && apiSrc.includes("    s: { width: 160, height: 160, crop: 'fill', gravity: 'face', quality: 'auto', fetch_format: 'jpg' },")
+         && apiSrc.includes("    l: { width: 600, height: 600, crop: 'fill', gravity: 'face', quality: 'auto', fetch_format: 'jpg' },")
+         && apiSrc.includes("    d: { width: 320, height: 320, crop: 'fill', gravity: 'face', quality: 'auto', fetch_format: 'jpg' },")
+         && !/fl_attachment|flags: 'attachment/.test(apiSrc));
+
+    // The Drive id: on every answer that feeds /photos, never on a student's.
+    const fromDrive = (await pool.query(`SELECT id, drive_id FROM bkk_photos WHERE drive_id IS NOT NULL ORDER BY id`)).rows;
+    const dDay = (await J('/api/bkk/teacher/photos?date=2026-10-05', { headers: PKEY })).body.photos || [];
+    const pDay = (await J('/api/bkk/teacher/photos?date=2026-10-07', { headers: PKEY })).body.photos || [];
+    ok('the teacher day view carries the Drive id of a photo imported from Drive, and none for a phone upload',
+       fromDrive.length === 2 && fromDrive.every(r => dDay.some(p => p.id === r.id && p.drive === r.drive_id))
+         && pDay.length > 0 && pDay.every(p => !('drive' in p)), JSON.stringify([fromDrive, dDay.map(p => [p.id, p.drive]), pDay.map(p => p.drive)]));
+    const dHad = await post('/api/bkk/teacher/photos/from-drive', { date: '2026-10-05', folder: 'DAY5aaaaaaaaaaaaaaaaaaaaa',
+      driveId: 'IMG2aaaaaaaaaaaaaaaaaaaaa', memberCodes: [bob.code], add: true }, PKEY);
+    const dAdd = await post('/api/bkk/teacher/photos/tags/add', { photoIds: fromDrive.map(r => r.id), memberCodes: [bob.code] }, PKEY);
+    const dTag = await post(`/api/bkk/teacher/photos/${dHad.body.photo.id}/tags`, { tags: dHad.body.photo.members.map(m => ({ code: m.ref, role: m.role })) }, PKEY);
+    ok('...and so do the Drive re-tag, a bulk add and a tag change',
+       dHad.status === 200 && dHad.body.photo.drive === 'IMG2aaaaaaaaaaaaaaaaaaaaa' && dAdd.status === 200
+         && dAdd.body.photos.map(p => p.drive).join() === fromDrive.map(r => r.drive_id).join()
+         && dTag.status === 200 && dTag.body.photo.drive === 'IMG2aaaaaaaaaaaaaaaaaaaaa', JSON.stringify([dHad.body, dAdd.body]).slice(0, 300));
+    const bobProf = (await J(`/api/bkk/teacher/members/${bob.code}/photos`, { headers: PKEY })).body;
+    ok("...and one student's photos on /photos (the Drive ones)",
+       bobProf.photos.length === 2 && bobProf.photos.every(p => fromDrive.some(r => r.id === p.id && r.drive_id === p.drive)), JSON.stringify(bobProf.photos));
+    const bobMe = await J(`/api/bkk/me/${bob.code}/photos`);
+    const bobItems = (bobMe.body.days || []).flatMap(d => d.items);
+    const leaks = s => /IMG[23]a{21}|"drive"/.test(s);
+    ok("a student's own photos never carry the Drive id",
+       bobItems.length === 2 && bobItems.every(i => Object.keys(i).sort().join() === 'full,id,save,thumb') && !leaks(JSON.stringify(bobMe.body)),
+       JSON.stringify(bobMe.body));
+    const adminSide = JSON.stringify([(await J(`/api/bkk/admin/members/${bob.code}/history`, { headers: ADMIN })).body,
+      (await J('/api/bkk/admin/members?q=Bob%20Photo', { headers: ADMIN })).body, (await J('/api/bkk/admin/progress', { headers: ADMIN })).body]);
+    ok('...nor do the admin answers about that student', adminSide.length > 50 && !leaks(adminSide));
+
+    // Download: the stored JPEG through this server, no copy made at Cloudinary.
+    const raw = async (base, path) => {
+      const r = await fetch(base + path);
+      return { status: r.status, h: r.headers, buf: Buffer.from(await r.arrayBuffer()) };
+    };
+    const item = bobItems[0], pub = (await pool.query('SELECT public_id FROM bkk_photos WHERE id=$1', [item.id])).rows[0].public_id;
+    const callsBefore = urlCalls.length;
+    const got = await raw(B, item.save);
+    const asked = urlCalls.slice(callsBefore);
+    ok('the download link answers the photo as a file: JPEG, AYBKK-photo.jpg, cached a day by this browser only',
+       got.status === 200 && got.h.get('content-type') === 'image/jpeg' && got.h.get('content-disposition') === 'attachment; filename="AYBKK-photo.jpg"'
+         && got.h.get('cache-control') === 'private, max-age=86400' && got.h.get('x-content-type-options') === 'nosniff'
+         && got.buf.equals(Buffer.from([0xFF, 0xD8, 0xFF, 0xE0, 1, 2, 3])),
+       JSON.stringify([got.status, [...got.h.entries()]]));
+    ok('...fetched from the stored JPEG itself: no transformation, no attachment copy',
+       asked.length === 1 && asked[0].id === pub && !asked[0].o.transformation && asked[0].o.format === 'jpg' && !/attachment/.test(JSON.stringify(asked[0].o))
+         && driveFetches[driveFetches.length - 1] === `signed://authenticated/${pub}/original.jpg`, JSON.stringify(asked));
+    const [, idSig] = /^\/api\/bkk\/photo\/([^/]+)\//.exec(item.save);
+    const flip = idSig.slice(0, -1) + (idSig.endsWith('A') ? 'B' : 'A');
+    const other = bobItems[1];
+    ok('a link with a wrong signature is 403, another photo\'s signature too, and a malformed one 404',
+       (await raw(B, `/api/bkk/photo/${flip}/AYBKK-photo.jpg`)).status === 403
+         && (await raw(B, `/api/bkk/photo/${other.id}.${idSig.split('.')[1]}/AYBKK-photo.jpg`)).status === 403
+         && (await raw(B, `/api/bkk/photo/${item.id}/AYBKK-photo.jpg`)).status === 404
+         && (await raw(B, `/api/bkk/photo/${idSig}/other-name.jpg`)).status === 404);
+    const gone = await post('/api/bkk/teacher/photos', { date: '2026-10-08', image: IMG, tags: [{ code: bob.code, role: 'main' }] }, PKEY);
+    const goneSave = gone.body.photo.save;
+    const goneWas = (await raw(B, goneSave)).status;
+    await post(`/api/bkk/teacher/photos/${gone.body.photo.id}/delete`, {}, PKEY);
+    ok('a deleted photo\'s download link stops at once (404)', goneWas === 200 && (await raw(B, goneSave)).status === 404);
+    {
+      const appN = express();
+      await mountBkk(appN, { pgPool: pool, now });
+      const srvN = appN.listen(0);
+      ok('with no photo storage set up the download is 503',
+         (await raw(`http://127.0.0.1:${srvN.address().port}`, item.save)).status === 503);
+      srvN.close();
+    }
+
+    // A server of its own: its Cloudinary usage, its clock for the 30-minute cache, and its upstream.
+    // Its clock starts on the suite's, before the price switch, which it must not run at boot.
+    let usageP = null, usageCalls = 0, pc = clock, upMode = 'ok';
+    const cloudP = { ...fakeCloud, api: { usage: async () => { usageCalls++; if (usageP instanceof Error) throw usageP; return usageP; } } };
+    const fetchP = async url => {
+      if (!String(url).startsWith('signed://')) return fakeFetch(url);
+      if (upMode === 'throw') throw new TypeError('fetch failed');
+      if (upMode === '404') return new Response('gone', { status: 404 });
+      if (upMode === '500') return new Response('oops', { status: 500 });
+      if (upMode === 'html') return new Response('<html>not a photo</html>', { status: 200 });
+      return new Response(Buffer.from([0xFF, 0xD8, 0xFF, 0xE0, 9, 9]), { status: 200 });
+    };
+    const appP = express();
+    appP.use(express.json({ limit: '10mb' }));
+    await mountBkk(appP, { pgPool: pool, now: () => pc, cloudinary: cloudP, fetch: fetchP });
+    const srvP = appP.listen(0);
+    const BP = `http://127.0.0.1:${srvP.address().port}`;
+    const JP = async (path, o = {}) => { const r = await fetch(BP + path, o); return { status: r.status, body: await r.json().catch(() => ({})) }; };
+    const postP = (path, body, h = PKEY) => JP(path, { method: 'POST', headers: { 'Content-Type': 'application/json', ...h }, body: JSON.stringify(body) });
+    const meter = () => JP('/api/bkk/teacher/photos/meter', { headers: PKEY });
+    const later = () => { pc += 31 * 60000; };
+
+    const modes = [];
+    for (const m of ['ok', '404', '500', 'html', 'throw']) { upMode = m; modes.push((await raw(BP, item.save)).status); }
+    upMode = 'ok';
+    ok('the download: 404 when storage no longer has the photo, 502 for any other upstream failure or a non-image',
+       modes.join() === '200,404,502,502,502', modes.join());
+
+    ok('the meter needs the teacher passcode (401), not the admin key',
+       (await JP('/api/bkk/teacher/photos/meter')).status === 401 && (await JP('/api/bkk/teacher/photos/meter', { headers: ADMIN })).status === 401);
+    const todayN = async () => (await pool.query(`SELECT count(*)::int AS n FROM bkk_photos
+      WHERE created_at >= date_trunc('day', now() AT TIME ZONE 'Asia/Bangkok') AT TIME ZONE 'Asia/Bangkok'`)).rows[0].n;
+    const n0 = await todayN();
+    const filler = (await pool.query(`INSERT INTO bkk_photos (public_id, class_date)
+      SELECT 'test/cap/' || g, '2026-10-09' FROM generate_series(1, $1::int) g RETURNING id`, [100 - n0])).rows.map(r => r.id);
+    const made = [];
+    const shoot = async () => {
+      const r = await postP('/api/bkk/teacher/photos', { date: '2026-10-09', image: IMG, tags: [] });
+      if (r.body.photo) made.push(r.body.photo.id);
+      return r;
+    };
+    usageP = { credits: {} };
+    const m0 = await meter();
+    const open = await shoot();
+    ok('usage never read: the meter says so, no cap, and a 101st new photo today goes in',
+       n0 < 98 && m0.status === 200 && m0.body.percent === null && m0.body.used === null && m0.body.limit === null
+         && m0.body.cap === 100 && m0.body.today === 100 && m0.body.capOn === false && open.status === 200 && (await todayN()) === 101,
+       JSON.stringify([n0, m0.body, open.status]));
+    usageP = { credits: { usage: 35.3, limit: 25, used_percent: 141.2 } }; later();
+    const m1 = await meter();
+    const ups = uploads.length;
+    const shut = await shoot();
+    ok('at 141% the meter shows the plan and today against the cap, and a new photo past it is 429 with a plain reason, nothing stored',
+       JSON.stringify(m1.body) === JSON.stringify({ percent: 141.2, used: 35.3, limit: 25, cap: 100, today: 101, capOn: true })
+         && shut.status === 429 && shut.body.cap === true
+         && shut.body.error === "Not saved: today's limit of 100 new photos is reached. Cloudinary, where the photos are stored, is at 141% of its free plan and could be switched off. Pick the best ones; the rest can wait."
+         && uploads.length === ups && (await todayN()) === 101, JSON.stringify([m1.body, shut.body]));
+    await pool.query('DELETE FROM bkk_photos WHERE id = ANY($1::int[])', [filler.splice(0, 2)]);
+    const p100 = await shoot(), p101 = await shoot();
+    ok('the 100th new photo of the day goes in, the 101st is refused',
+       p100.status === 200 && p101.status === 429 && (await todayN()) === 100, JSON.stringify([p100.status, p101.body]));
+    const DRV = { date: '2026-10-05', folder: 'DAY5aaaaaaaaaaaaaaaaaaaaa' };
+    const driveNew = await postP('/api/bkk/teacher/photos/from-drive', { ...DRV, driveId: 'IMG1aaaaaaaaaaaaaaaaaaaaa', memberCodes: [] });
+    const driveHad = await postP('/api/bkk/teacher/photos/from-drive', { ...DRV, driveId: 'IMG2aaaaaaaaaaaaaaaaaaaaa', memberCodes: [cat.code], add: true });
+    const reTag = await postP(`/api/bkk/teacher/photos/${fromDrive[0].id}/tags`, { tags: dTag.body.photo.members.map(m => ({ code: m.ref, role: m.role })) });
+    const bulk = await postP('/api/bkk/teacher/photos/tags/add', { photoIds: fromDrive.map(r => r.id), memberCodes: [bob.code] });
+    ok('a new Drive import is refused the same way; re-tagging a Drive photo, a tag change and a bulk add still work',
+       driveNew.status === 429 && driveNew.body.cap === true && !(await pool.query(`SELECT 1 FROM bkk_photos WHERE drive_id='IMG1aaaaaaaaaaaaaaaaaaaaa'`)).rows.length
+         && driveHad.status === 200 && driveHad.body.photo.drive === 'IMG2aaaaaaaaaaaaaaaaaaaaa' && reTag.status === 200 && bulk.status === 200
+         && uploads.length === ups + 1, JSON.stringify([driveNew.body, driveHad.status, reTag.status, bulk.status]));
+    const calls = usageCalls;
+    await meter(); await shoot(); await meter();
+    ok('usage is read once per 30 minutes, not on every photo', usageCalls === calls);
+    usageP = new Error('Cloudinary API down'); later();
+    const kept = await meter(), keptShot = await shoot();
+    ok('a failed read keeps the last good usage, so the cap still holds',
+       usageCalls === calls + 1 && kept.body.percent === 141.2 && kept.body.capOn === true && keptShot.status === 429, JSON.stringify(kept.body));
+    await pool.query(`INSERT INTO bkk_settings (key,value) VALUES ('photos_daily_cap','0')`);
+    const m2 = await meter(), noCap = await shoot();
+    ok('photos_daily_cap 0: no daily limit, whatever the usage', m2.body.cap === 0 && m2.body.capOn === false && noCap.status === 200, JSON.stringify(m2.body));
+    await pool.query(`UPDATE bkk_settings SET value='3' WHERE key='photos_daily_cap'`);
+    const three = await shoot();
+    ok('a lower cap counts the same photos', three.status === 429 && /limit of 3 new photos/.test(three.body.error), JSON.stringify(three.body));
+    await pool.query(`DELETE FROM bkk_settings WHERE key='photos_daily_cap'`);
+    const set = (b) => post('/api/bkk/admin/settings', b, ADMIN);
+    const bad = [await set({ photosDailyCap: -1 }), await set({ photosDailyCap: 1.5 }), await set({ photosDailyCap: 'lots' }), await set({ photosDailyCap: 5001 })];
+    const fifty = await set({ photosDailyCap: 50 });
+    const asRead = (await J('/api/bkk/admin/settings', { headers: ADMIN })).body.photos;
+    const teacherSet = await post('/api/bkk/admin/settings', { photosDailyCap: 0 }, PKEY);
+    ok('Admin, Settings sets it: a whole number from 0 to 5000, read back; a teacher passcode cannot',
+       bad.every(r => r.status === 400) && fifty.status === 200 && fifty.body.photos.dailyCap === 50 && asRead.dailyCap === 50
+         && (await meter()).body.cap === 50 && teacherSet.status === 401, JSON.stringify([bad.map(r => r.body.error), fifty.body.photos, asRead]));
+    await pool.query(`DELETE FROM bkk_settings WHERE key='photos_daily_cap'`);
+    usageP = { credits: { usage: 12.5, limit: 25, used_percent: 50 } }; later();
+    const m3 = await meter(), under = await shoot();
+    ok('under 90% of the plan there is no cap', m3.body.percent === 50 && m3.body.capOn === false && m3.body.today > 100 && under.status === 200, JSON.stringify(m3.body));
+    usageP = { credits: { usage: 22.5, limit: 25 } }; later();
+    ok('a usage answer without used_percent is worked out from usage and limit', (await meter()).body.percent === 90 && (await meter()).body.capOn === true);
+    srvP.close();
+    await pool.query('DELETE FROM bkk_photos WHERE id = ANY($1::int[])', [[...filler, ...made]]);
   }
 
   console.log('\n— Rezerv import —');

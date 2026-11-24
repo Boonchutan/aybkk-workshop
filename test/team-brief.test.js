@@ -479,8 +479,9 @@ const fakeDriver = { session: () => ({
   for (const [pid, day, tagged] of [['aybkk/profile/2026-11-10/a', '2026-11-10T08:00:00+07:00', [anna, chai]],
     ['aybkk/profile/2026-11-10/b', '2026-11-10T08:01:00+07:00', [anna]], ['aybkk/profile/2026-11-10/c', '2026-11-10T08:02:00+07:00', []],
     ['aybkk/profile/2026-11-09/old', '2026-11-09T08:00:00+07:00', [anna]]]) {
-    const ph = (await pool.query(`INSERT INTO bkk_photos (public_id,class_date,uploaded_by,created_at) VALUES ($1,$2,$3,$4) RETURNING id`,
-      [pid, day.slice(0, 10), teacher, day])).rows[0].id;
+    // One came from Drive: its Drive id is for the staff /photos page only.
+    const ph = (await pool.query(`INSERT INTO bkk_photos (public_id,class_date,uploaded_by,created_at,drive_id) VALUES ($1,$2,$3,$4,$5) RETURNING id`,
+      [pid, day.slice(0, 10), teacher, day, pid.endsWith('/a') ? 'DRIVEbriefaaaaaaaaaaaaaaa' : null])).rows[0].id;
     for (const t of tagged) await pool.query('INSERT INTO bkk_photo_members (photo_id,member_id) VALUES ($1,$2)', [ph, t]);
   }
   await pool.query(`INSERT INTO bkk_notes (member_id,teacher_id,class_date,body,created_at) VALUES
@@ -542,6 +543,7 @@ const fakeDriver = { session: () => ({
      && imgs[0].original.endsWith('/b') && imgs[1].original.endsWith('/a') && imgs[2].original.endsWith('/c'), JSON.stringify(imgs));
   ok('...as one push: the text first, then the images', e.body.messages.length === 4 && e.body.messages[0].type === 'text'
      && e.body.messages.slice(1).every(x => x.type === 'image' && x.originalContentUrl && x.previewImageUrl));
+  ok('...and a photo from Drive goes by its Cloudinary copy: the Drive id is never in the brief', !JSON.stringify(e.body).includes('DRIVEbrief'));
   const en = await get(`/api/bkk/admin/team/preview?kind=evening&date=${D}&lang=en`);
   const ent = en.body.text || '';
   ok('English evening', ent.startsWith('🌙 Today on aybkk.net, Tue 10 Nov (20:00 yesterday to 20:00)') && ent.includes('Paid: 3 orders, ฿20,317 (VAT ฿1,329 included)')

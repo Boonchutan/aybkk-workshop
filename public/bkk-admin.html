@@ -579,6 +579,8 @@
       tcBad: 'Could not save: pick this month or a later one.',
       feeTitle: 'Online payment fee',
       feeHelp: 'Added on top of every package price at checkout. It exists to cover the card fees — PaySolutions is cheaper than Stripe, so you may want to lower it.',
+      capTitle: 'New class photos a day, while photo storage is nearly full',
+      capHelp: 'Cloudinary (photo storage, free plan) can switch the account off when it is far over its plan, and student photos and door faces would stop. From 90% used, /photos takes at most this many new photos a day. Changing who is on a photo is never limited. 0 = no limit.',
       save: 'Save', packages: 'Packages',
       pkgHelp: 'Change a price or retire one. What a package DOES — classes included, how long it lasts — is fixed once it exists, so passes already sold cannot be rewritten underneath the students who bought them.',
       thBase: 'Base', thPays: 'Student pays', price: 'Price', retire: 'Retire', addPkg: 'Add a package',
@@ -693,6 +695,8 @@
       tcBad: 'บันทึกไม่ได้: เลือกเดือนนี้หรือเดือนหลังจากนี้',
       feeTitle: 'ค่าธรรมเนียมจ่ายออนไลน์',
       feeHelp: 'บวกเพิ่มจากราคาแพ็กเกจตอนจ่ายเงินออนไลน์ เพื่อครอบคลุมค่าธรรมเนียมบัตร PaySolutions ถูกกว่า Stripe จึงอาจลดลงได้',
+      capTitle: 'รูปคลาสใหม่ต่อวัน ตอนที่เก็บรูปใกล้เต็ม',
+      capHelp: 'Cloudinary (ที่เก็บรูป แพลนฟรี) ปิดบัญชีได้ถ้าใช้เกินแพลนมาก แล้วรูปของนักเรียนและรูปหน้าที่ประตูจะหายไป เมื่อใช้ถึง 90% หน้า /photos จะรับรูปใหม่ได้ไม่เกินวันละเท่านี้ การแก้ชื่อคนในรูปที่มีอยู่แล้วไม่ถูกจำกัด ใส่ 0 = ไม่จำกัด',
       save: 'บันทึก', packages: 'แพ็กเกจ',
       pkgHelp: 'เปลี่ยนราคาหรือเลิกขายได้ ส่วนเนื้อหาของแพ็กเกจ (จำนวนครั้ง ระยะเวลา) แก้ไม่ได้หลังสร้างแล้ว เพื่อไม่ให้แพ็กเกจที่ขายไปแล้วเปลี่ยนไปจากที่นักเรียนซื้อ',
       thBase: 'ราคาตั้ง', thPays: 'นักเรียนจ่าย', price: 'แก้ราคา', retire: 'เลิกขาย', addPkg: 'เพิ่มแพ็กเกจ',
@@ -4425,6 +4429,11 @@
       <p><input id="sur" type="number" min="0" max="20" step="0.5" value="${p.surchargePct}" style="width:90px"> %
       <button class="btn" onclick="saveSur()">${T('save')}</button></p>
       </div>
+      ${PW && PW.photos ? `<div class="box"><b>${T('capTitle')}</b>
+      <p class="muted">${T('capHelp')}</p>
+      <p><input id="pcap" type="number" min="0" max="5000" step="1" inputmode="numeric" value="${Number(PW.photos.dailyCap)}" style="width:90px">
+      <button class="btn" onclick="savePhotoCap()">${T('save')}</button></p>
+      </div>` : ''}
       <div class="box"><b>${T('packages')}</b>
       <p class="muted">${T('pkgHelp')}</p>
       <table><tr><th>${T('thPackage')}</th><th>${T('thBase')}</th><th>${T('thPays')}</th><th></th></tr>
@@ -4925,6 +4934,12 @@
     const body = what === 'until' ? { bookingOpenUntil: $('#bkUntil').value } : { teachersThrough: month };
     const r = await api('/api/bkk/admin/settings', { method: 'POST', body: JSON.stringify(body) });
     if (month && r.status === 400) return alert(T('tcBad'));
+    if (await shout(r)) renderSettings();
+  };
+  window.savePhotoCap = async () => {
+    const v = $('#pcap').value.trim();
+    if (!/^\d+$/.test(v)) return alert(T('failed'));
+    const r = await api('/api/bkk/admin/settings', { method: 'POST', body: JSON.stringify({ photosDailyCap: Number(v) }) });
     if (await shout(r)) renderSettings();
   };
   window.saveSur = async () => {

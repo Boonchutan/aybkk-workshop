@@ -126,6 +126,13 @@
   #pfMonths th:first-child{text-align:left;font-weight:600}
   .grid h3{grid-column:1/-1;margin:10px 0 0;font-size:14px;font-weight:700}
   .tile span.m{color:var(--ink);font-weight:700}
+  /* How full Cloudinary's free plan is: amber from 90%, when the daily limit of new photos starts; red past the plan. */
+  .meter{margin:0 0 12px;padding:8px 12px;border-radius:8px;font-size:13.5px;line-height:1.4;font-weight:600;
+    background:var(--paper);border:1px solid var(--line);color:var(--soft)}
+  .meter.amber{background:#fff3d6;border-color:#e8c26a;color:#5e4000}
+  .meter.red{background:#fde4e4;border-color:#ec9b9b;color:#8f1d1d}
+  @media (prefers-color-scheme:dark){.meter.amber{background:#3a2e10;border-color:#8a6a1c;color:#f5d78a}
+    .meter.red{background:#3d1717;border-color:#8f3a3a;color:#ffb8b8}}
 </style>
 </head>
 <body>
@@ -142,6 +149,7 @@
   <header><h1>Photos</h1><span class="who" id="who"></span>
     <button class="btn ghost" style="color:#fdf7fa;border-color:rgba(253,247,250,.4)" onclick="logout()">Lock</button></header>
   <main>
+    <p class="meter" id="meter" role="status" hidden></p>
     <div class="box">
       <div class="row">
         <div><span class="muted">Class date</span><input type="date" id="date"></div>
@@ -289,6 +297,34 @@
     { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
   const monthText = m => new Date(m + '-01T00:00:00Z').toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
   const dthumb = (id, w) => `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w${w}`;
+  // A photo that came from Drive shows Drive's thumbnail (free), so Cloudinary makes
+  // a tile only when a student opens it. If Drive's does not load, Cloudinary's, once.
+  const tileSrc = (p, w) => p.drive ? `src="${esc(dthumb(p.drive, w))}" data-fb="${esc(p.thumb)}"` : `src="${esc(p.thumb)}"`;
+  document.addEventListener('error', e => {
+    const i = e.target;
+    if (!(i instanceof HTMLImageElement) || !i.dataset.fb) return;
+    const fb = i.dataset.fb;
+    i.removeAttribute('data-fb');
+    i.src = fb;
+  }, true);
+
+  // One line at the top: how full Cloudinary's free plan is, and today's new
+  // photos. From 90% the server takes at most the daily limit of new ones.
+  let meterSeq = 0;
+  async function loadMeter() {
+    const seq = ++meterSeq;
+    const r = await api('/api/bkk/teacher/photos/meter').catch(() => null);
+    const m = r && r.ok ? await r.json().catch(() => null) : null;
+    if (seq !== meterSeq) return;
+    const el = $('#meter');
+    if (!m) { el.hidden = true; return; }
+    const pct = typeof m.percent === 'number' ? m.percent : null;
+    const day = m.capOn ? `Today: ${m.today} of ${m.cap} new photos${m.today >= m.cap ? ', limit reached' : ''}`
+      : `Today: ${m.today} new photo${m.today === 1 ? '' : 's'}` + (!m.cap ? ', no daily limit' : pct != null && pct < 90 ? ` (limit of ${m.cap} from 90%)` : '');
+    el.textContent = (pct == null ? 'Cloudinary free plan: use not known yet' : `Cloudinary free plan: ${Math.round(pct)}% used`) + ' · ' + day;
+    el.className = 'meter' + (pct == null ? '' : pct >= 100 ? ' red' : pct >= 90 ? ' amber' : '');
+    el.hidden = false;
+  }
 
   window.unlock = async () => {
     KEY = $('#key').value.trim();
@@ -301,6 +337,7 @@
     $('#who').textContent = me.name;
     $('#date').value = bkkToday();
     loadDay();
+    loadMeter();
   };
   window.logout = () => { localStorage.removeItem('aybkk_teacher_key'); location.reload(); };
 
@@ -439,7 +476,7 @@
     $('#count').textContent = PHOTOS.length ? `(${PHOTOS.length})` : '';
     $('#grid').innerHTML = PHOTOS.map(p => `
       <div class="tile${p.members.length ? '' : ' none'}${SEL.has('p:' + p.id) ? ' sel' : ''}" data-id="${p.id}">
-        <button class="ph" aria-label="Photo: ${noMain(p) ? 'No Main yet. ' : ''}${esc(capText(p)) || 'nobody tagged'}"><img loading="lazy" src="${esc(p.thumb)}" alt=""></button>
+        <button class="ph" aria-label="Photo: ${noMain(p) ? 'No Main yet. ' : ''}${esc(capText(p)) || 'nobody tagged'}"><img loading="lazy" ${tileSrc(p, 400)} alt=""></button>
         ${p.members.length ? `<span class="cap">${capHtml(p)}</span>` : '<span>nobody tagged</span>'}
       </div>`).join('') || '<p class="muted">No photos yet for this day.</p>';
   }
@@ -633,7 +670,7 @@
             body: JSON.stringify({ date: $('#date').value, folder: $('#dFolder').value, driveId: EDIT.f.id, tags }) })
         : await api(`/api/bkk/teacher/photos/${EDIT.id}/tags`, { method: 'POST', body: JSON.stringify({ tags }) });
       const j = await r.json().catch(() => ({}));
-      if (!r.ok) throw new Error(j.error || 'Could not save.');
+      if (!r.ok) throw Object.assign(new Error(j.error || 'Could not save.'), { cap: j.cap === true });
       if (EDIT.kind === 'drive') EDIT.f.photoId = j.photo.id;
       if (EDIT.kind !== 'edit') {
         PHOTOS = PHOTOS.filter(p => p.id !== j.photo.id).concat(j.photo);
@@ -642,8 +679,13 @@
       renderGrid();
       if (DRIVE.length) renderDrive();
       refreshToday();
+      if (EDIT.kind !== 'edit') loadMeter();
       EDIT.kind !== 'edit' ? nextNew() : endEdit();
-    } catch (err) { $('#edMsg').textContent = '✗ NOT SAVED: ' + err.message + ' Press Save again.'; }
+    } catch (err) {
+      // Over the daily limit, Save again would only be refused again.
+      $('#edMsg').textContent = err.cap ? '✗ ' + err.message : '✗ NOT SAVED: ' + err.message + ' Press Save again.';
+      if (err.cap) loadMeter();
+    }
     btn.disabled = false;
     if (EDIT) btn.textContent = saveWord();
   });
@@ -758,7 +800,7 @@
     const items = BATCH = [...SEL.values()];
     $('#bTitle').textContent = `Who is in these ${items.length} photo${items.length === 1 ? '' : 's'}?`;
     $('#bStrip').innerHTML = items.map(it =>
-      `<img alt="" src="${esc(it.kind === 'photo' ? it.p.thumb : dthumb(it.f.id, 200))}">`).join('');
+      `<img alt="" ${it.kind === 'photo' ? tileSrc(it.p, 400) : `src="${esc(dthumb(it.f.id, 200))}"`}>`).join('');
     $('#bFind').value = ''; $('#bFound').innerHTML = ''; $('#bMsg').textContent = ''; $('#bProg').style.width = '0';
     $('[name=bRole][value=main]').checked = true;
     bulkTip();
@@ -790,7 +832,7 @@
     const total = BATCH.length;
     BUSY = true; renderBChips();
     $('#bMsg').style.color = ''; $('#bMsg').textContent = 'Saving…';
-    let done = 0, fail = null;
+    let done = 0, fail = null, capped = false;
     const got = [];                    // each photo as the server has it now
     const finished = it => { BATCH = BATCH.filter(x => x !== it); SEL.delete(keyOf(it)); done++; };
     try {
@@ -812,19 +854,21 @@
         const r = await api('/api/bkk/teacher/photos/from-drive', { method: 'POST',
           body: JSON.stringify({ date: $('#date').value, folder: $('#dFolder').value, driveId: f.id, memberCodes: codes, role, add: true }) });
         const j = await r.json().catch(() => ({}));
-        if (!r.ok) throw new Error(j.error || 'Could not save.');
+        if (!r.ok) throw Object.assign(new Error(j.error || 'Could not save.'), { cap: j.cap === true });
         f.photoId = it.f.photoId = j.photo.id;
         upsertPhoto(j.photo); got.push(j.photo);
         finished(it);
       }
-    } catch (err) { fail = err.message; }
+    } catch (err) { fail = err.message; capped = !!err.cap; }
     BUSY = false;
     renderGrid(); if (DRIVE.length) renderDrive();
     if (done) refreshToday();
+    loadMeter();
     $('#bProg').style.width = `${Math.round(100 * done / total)}%`;
     if (fail) {
       $('#bMsg').style.color = '#c33';
-      $('#bMsg').textContent = `✗ ${done ? `Added to ${done}. ` : ''}${BATCH.length} NOT SAVED: ${fail} The ones left are still picked: press Add again.`;
+      $('#bMsg').textContent = capped ? `✗ ${done ? `Added to ${done}. ` : ''}${fail}`
+        : `✗ ${done ? `Added to ${done}. ` : ''}${BATCH.length} NOT SAVED: ${fail} The ones left are still picked: press Add again.`;
       $('#bTitle').textContent = `Who is in these ${BATCH.length} photo${BATCH.length === 1 ? '' : 's'}?`;
       updateBar(); renderBChips();
       return;
@@ -898,7 +942,7 @@
       const head = p.date === me.day ? '' : `<h3>${dayText(p.date)}</h3>`;
       me.day = p.date;
       return head + `<button class="tile" data-go="${p.id}" data-date="${p.date}" aria-label="${dayText(p.date)}, ${roleWord(p.role)}. Open this photo.">
-        <img loading="lazy" src="${esc(p.thumb)}" alt=""><span${p.role === 'other' ? '' : ' class="m"'}>${p.role === 'other' ? 'In the frame' : '★ Main'}</span></button>`;
+        <img loading="lazy" ${tileSrc(p, 400)} alt=""><span${p.role === 'other' ? '' : ' class="m"'}>${p.role === 'other' ? 'In the frame' : '★ Main'}</span></button>`;
     }).join('') || (me.n ? '' : '<p class="muted">No photos yet.</p>'));
     me.n += j.photos.length;
     $('#pfShown').textContent = t.photos > me.n ? `(${me.n} of ${t.photos})` : '';

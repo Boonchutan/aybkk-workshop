@@ -123,6 +123,7 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
   ended ones folded under "Past passes". The desk note is `bkk_members.desk_note` (+ `desk_note_at`), one box on the
   Admin student card, saved by `POST /api/bkk/admin/members/:code/note` (admin key, a stale `at` is 409): staff only,
   never on /me, the door, /teach, emails or exports.
+- **Photo costs (Cloudinary free plan):** never change a `PHOTO_SIZES` or `FACE_SIZES` string in `bkk-api.js` (a new string re-bills every photo opened again). Download goes through the signed `/api/bkk/photo/<id>.<sig>/AYBKK-photo.jpg` (the stored JPEG, no copy made); staff `/photos` shows Drive thumbnails for Drive imports (the Drive id never reaches a student); `photos_daily_cap` (default 100, 0 = none, Admin, Settings) limits new photos a day while Cloudinary is 90% used or more.
 - **Inbox:** `inbox.js` keeps 1:1 chats from the LINE Official Account (`/line/webhook`) and
   Instagram/Facebook DMs and comments (`/meta/webhook`) in `aybkk_inbox` for 90 days.
   Machi reads `GET /api/inbox` (header `x-inbox-key`). Env: `INBOX_KEY`; `LINE_CHANNEL_SECRET`
