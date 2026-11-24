@@ -358,6 +358,82 @@
   @media (max-width:480px){nav{overflow-x:auto}nav button{flex:1 0 auto;padding:12px 4px;font-size:13px;line-height:1.3;white-space:nowrap}
     header h1{font-size:22px}
     .cimap{grid-template-columns:1fr;gap:2px}.cimap label{margin-top:8px}}
+  /* Tees: the pre-order (24 Nov 2026). A drop's state (ts-) and an order's (tv-). */
+  .pill.ts-draft,.pill.tv-expired,.pill.tv-cancelled{background:#eeeaf0;color:#5d5463}
+  .pill.ts-soon,.pill.tv-waiting{background:#fff3d6;color:#8a6a12}
+  .pill.ts-open,.pill.tv-paid{background:#e6f6ec;color:#187a43}
+  .pill.ts-closed,.pill.ts-done,.pill.tv-handed{background:#e3eefa;color:#2a5d8f}
+  .pill.tv-oversold,.pill.tv-mismatch{background:#fdeaea;color:#a33}
+  .pill.tee{background:var(--blush);color:var(--plum);vertical-align:1px}
+  .seg button .pill{margin-left:6px;vertical-align:1px}
+  details.box>summary{cursor:pointer;font:800 16px/1.4 'Work Sans','Plex',sans-serif}
+  details.box>summary:focus-visible{outline:2px solid var(--plum);outline-offset:2px;border-radius:4px}
+  .tform{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(270px,100%),1fr));gap:12px 16px;margin:12px 0}
+  .tf{display:flex;flex-direction:column;gap:4px;min-width:0;margin:0 0 6px}
+  .tf>span{font-size:13px;color:var(--soft);font-weight:700}
+  .tf small{font-size:12px;color:var(--soft);line-height:1.4}
+  .tf input{width:100%;min-width:0}
+  .tdt{display:flex;gap:6px}.tdt input{flex:1 1 0;min-width:0}
+  .tpk{display:flex;gap:6px;align-items:center;margin-bottom:6px;max-width:560px}
+  .tpk select{flex:none}.tpk input{flex:1 1 auto;min-width:0}
+  .tgw table{min-width:980px}
+  table.tg td{padding:6px 4px}
+  table.tg input,table.tg select{width:100%;padding:6px 7px;font-size:14px;margin:0 0 3px}
+  table.tg td.n input{text-align:right}
+  table.tg td:nth-child(-n+2){width:22%}
+  table.tg td:nth-child(3) select{min-width:76px}
+  table.tg td:nth-child(4) input{min-width:88px}
+  table.tg td:nth-child(5){min-width:180px}
+  table.tg td:nth-child(6) input{min-width:68px}
+  table.tg input[disabled],table.tg select[disabled]{opacity:.55}
+  img.tpth{display:block;width:36px;height:36px;object-fit:cover;border-radius:4px;margin-top:2px}
+  input.tbad,select.tbad,textarea.tbad{border-color:#d92d20;box-shadow:0 0 0 1px #d92d20}
+  table.tcost{max-width:480px}table.tcost td{padding:4px;vertical-align:middle}table.tcost input{width:100%}
+  table.tcost td.n input{text-align:right}
+  .box h3.tph{margin:16px 0 4px;font:800 15px/1.3 'Work Sans','Plex',sans-serif}
+  table.ord tr.tsel td{background:var(--blush)}
+  /* One order opens in a panel on the right, over the list. */
+  .tdrawer{position:fixed;inset:0;z-index:35;display:flex;justify-content:flex-end;background:rgba(23,18,26,.45)}
+  .tdcard{background:var(--paper);color:var(--ink);width:min(460px,100%);height:100%;overflow-y:auto;padding:16px 16px 40px;
+    box-shadow:-8px 0 30px rgba(0,0,0,.25)}
+  .tdtop{display:flex;align-items:flex-start;gap:10px}
+  .tdtop h2{flex:1;min-width:0;margin:0;font:800 22px/1.25 'Work Sans','Plex',sans-serif;overflow-wrap:anywhere}
+  .tdcard h3{margin:18px 0 6px;font:800 12.5px/1.4 'Work Sans','Plex',sans-serif;color:var(--soft);letter-spacing:.06em;text-transform:uppercase}
+  :lang(th) .tdcard h3{letter-spacing:0}
+  .tdl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0;font-size:14.5px}
+  .tdl dt{color:var(--soft)}.tdl dd{margin:0;overflow-wrap:anywhere}
+  .tdrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0}
+  .tdrow select{flex:1 1 180px;min-width:0}
+  .tdcard textarea{width:100%;padding:9px;border:1.5px solid var(--line);border-radius:7px;font:inherit;font-size:15px;
+    background:var(--wall);color:var(--ink)}
+  .tdcard .btn.big{width:100%;min-height:48px;font-size:16px;margin-top:12px}
+  @media (max-width:640px),(pointer:coarse){.tdcard .btn,.tdcard select,.tpk .btn{min-height:44px}}
+  /* A4 lists: a white sheet on screen, and only the sheet on paper. */
+  #tpPrint{position:fixed;inset:0;z-index:50;overflow-y:auto;background:#e9e6ea;padding:16px}
+  .ptool{max-width:210mm;margin:0 auto 10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .ptool .muted{color:#5d5463}
+  .sheet{background:#fff;color:#111;max-width:210mm;min-height:297mm;margin:0 auto;padding:14mm;box-shadow:0 2px 12px rgba(0,0,0,.2);
+    font:11pt/1.45 'Plex',-apple-system,'Helvetica Neue','PingFang SC','Noto Sans CJK SC',sans-serif}
+  .sheet h1{font:800 18pt/1.2 'Work Sans','Plex','PingFang SC',sans-serif;margin:0 0 4px}
+  .sheet h2{font:800 13pt/1.3 'Work Sans','Plex','PingFang SC',sans-serif;margin:18px 0 6px}
+  .sheet table{font-size:10.5pt}
+  .sheet th,.sheet td{border-bottom:1px solid #bbb;padding:5px 6px;color:#111}
+  .sheet th{color:#444}
+  .sheet .tick{font-size:15pt;line-height:1;width:26px;text-align:center}
+  .sheet .sm{font-size:9pt;color:#444}
+  .sheet .zh{font-weight:400;color:#444}
+  .sheet .warnp{border:1.5px solid #a33;border-radius:6px;padding:6px 9px;color:#a33;font-weight:700}
+  .sheet .sign p{margin:16px 0 0}
+  .sheet .line{display:inline-block;min-width:50mm;border-bottom:1px solid #111;margin:0 8px;height:1.1em;vertical-align:bottom}
+  .sheet tr{break-inside:avoid}
+  @media print{
+    @page{size:A4;margin:12mm}
+    body{background:#fff}
+    body>*:not(#tpPrint){display:none!important}
+    #tpPrint{position:static;padding:0;background:#fff;overflow:visible}
+    .ptool{display:none}
+    .sheet{box-shadow:none;margin:0;padding:0;min-height:0;max-width:none}
+  }
 </style>
 </head>
 <body>
@@ -382,6 +458,7 @@
   <button id="t-students" data-t="tabStudents" onclick="tab('students')">Students</button>
   <button id="t-calendar" data-t="tabCalendar" onclick="tab('calendar')">Calendar</button>
   <button id="t-orders" data-t="tabOrders" onclick="tab('orders')">Payments</button>
+  <button id="t-tees" data-t="tabTees" onclick="tab('tees')">Tees</button>
   <button id="t-reports" data-t="tabReports" onclick="tab('reports')">Reports</button>
   <button id="t-settings" data-t="tabSettings" onclick="tab('settings')">Settings</button>
 </nav>
@@ -389,6 +466,8 @@
 </div>
 <div id="qrPanel" class="qrwrap" hidden></div>
 <p id="qrLive" class="qrlive" role="status"></p>
+<div id="tpDrawer" class="tdrawer" hidden onclick="if(event.target===this)tpShut()"></div>
+<div id="tpPrint" hidden></div>
 
 <script>
 (() => {
@@ -1288,6 +1367,183 @@
     agPrivFilled: 'กรอกครบแล้ว', agPrivEmpty: 'ยังไม่ได้กรอก', agCant: m => `ยังเปิดไม่ได้: ยังขาด ${m}`,
     agSure: m => `เปลี่ยนข้อตกลงนักเรียนเป็น "${m}"?`,
   });
+  // Tees, the pre-order (24 Nov 2026): the Tees tab, and a tee line in Payments.
+  Object.assign(STR.en, {
+    tabTees: 'Tees', tpH: 'Tee pre-orders',
+    tpHelp: 'A 7-day pre-order of tees, paid online and collected from an AYBKK team member in China. Set it up, save the tees, then Publish. Buyers order at aybkk.net/tees (cn.aybkk.net/tees in China).',
+    tpNoticeNot: 'The tee privacy notice is not filled in, so nobody can order: fill in the legal name, address and email in Settings, Student agreement.',
+    tpPayNot: 'PaySolutions is not connected here, so nobody can pay for a tee online.',
+    tpNew: '+ New pre-order', tpNewH: 'New pre-order', tpNone: 'No pre-order yet. Tap + New pre-order.',
+    tpStates: { draft: 'Draft', soon: 'Opens soon', open: 'Open', closed: 'Closed', done: 'Finished' },
+    tpStateHelp: { draft: 'Buyers do not see it. Save the settings and the tees, then Publish.',
+      soon: 'Buyers see it with its open time. They cannot order yet.', open: 'Buyers can order now.',
+      closed: 'No new orders. Hand the tees over, then Finish below.', done: 'Finished: the report below is frozen.' },
+    tpWindow: (a, b) => `Bangkok time: opens ${a}, closes ${b}`, tpBeijing: (a, b) => `Beijing time: opens ${a}, closes ${b}`,
+    tpLinkL: 'Buyers order at',
+    tpPublish: 'Publish', tpUnpublish: 'Unpublish', tpCloseNow: 'Close now',
+    tpQPublish: a => `Publish this pre-order?\nBuyers see it now and can order from ${a} (Bangkok time).`,
+    tpQUnpublish: 'Unpublish? Buyers no longer see it.',
+    tpQClose: 'Close the pre-order now? Nobody can order after this. Orders made already can still be paid within their hold time.',
+    tpPublished: 'Published.', tpClosedNow: 'Closed. Nobody can order any more.', tpSaveGridFirst: 'Save the tees first.',
+    tpSetH: 'Pre-order settings', tpCode: 'Code', tpCodeHelp: '3 to 24 lowercase letters, digits or dashes, e.g. spring-26. It is in the payment line.',
+    tpCodeLocked: 'Fixed: this pre-order has orders.', tpTitleEn: 'Title (English)', tpTitleZh: 'Title (Chinese)',
+    tpOpens: 'Opens (Bangkok time)', tpCloses: 'Closes (Bangkok time)', tpClosesHelp: '7 days after it opens, unless you change it.',
+    tpCap: 'Tees in all', tpCapHelp: 'All the tees of this pre-order together, 1 to 500.', tpMax: 'Most tees in one order',
+    tpHold: 'Hold (minutes)', tpHoldHelp: 'How long an unpaid order keeps its tees.',
+    tpPurgeDays: 'Delete contact details after (days)', tpPurgeDaysHelp: 'Counted from the hand-over.',
+    tpRmb: 'Yuan for 1 baht (optional)', tpRmbHelp: 'Only for the "about ¥" line buyers see, e.g. 0.2. The payment page sets the real rate.',
+    tpPickups: 'Pickup points', tpPkAdd: 'Add a pickup point',
+    tpPkHelp: 'Up to 6 (A to F). Buyers pick one and see this label: the city and the team member who hands the tees over.',
+    tpPkPh: 'City · first name', tpPkKey: 'Letter', tpPkLabel: 'Pickup point label', tpPkDel: 'Remove',
+    tpCreate: 'Create', tpSaved: 'Saved.',
+    tpTotalsH: 'Totals', tpSold: 'Tees sold', tpSoldSub: (c, h, l) => `of ${c} · ${h} held · ${l} left`,
+    tpPaidOrders: 'Paid orders', tpPaidSub: (h, o) => `${h} handed over${o ? ` · ${o} oversold` : ''}`,
+    tpWaitingT: 'Waiting to pay', tpWaitSub: (e, m) => `${e} lapsed${m ? ` · ${m} wrong amount` : ''}`,
+    tpMoney: 'Money in', tpMoneySub: (b, f, v) => `${b} + fee ${f} + VAT ${v}`, tpRefunded: 'Refunded',
+    tpGridH: 'Tees',
+    tpGridHelp: 'One row per design, colour and size. The price is in baht before the online fee and VAT. Photo: a path under /img/, e.g. /img/tees/lotus-black.jpg. A tee with orders keeps its design, colour, size and price, and its cap goes down only to what is sold or held.',
+    tpDesign: 'Design', tpColour: 'Colour', tpSize: 'Size', tpPrice: 'Price ฿', tpPhoto: 'Photo', tpCapCol: 'Cap',
+    tpSoldCol: 'Sold', tpHeldCol: 'Held', tpLeftCol: 'Left', tpKeyPh: 'key, e.g. lotus', tpEnPh: 'English',
+    tpRowAdd: 'Add a row', tpRowDel: 'Remove row', tpLocked: 'Has orders: it stays', tpGridSave: 'Save tees', tpUnsaved: 'Not saved yet',
+    tpRowNeed: n => `Row ${n}: fill in the price and the cap.`, tpNoRows: 'No tees yet. Tap Add a row.',
+    tpLeaveGrid: 'The tees are not saved yet. Leave without saving?',
+    tpSum: (s, c) => `Caps add up to ${s}. Tees in all: ${c}.`, tpSumLess: s => ` Buyers can buy at most ${s}.`, tpSumMore: c => ` Sales stop at ${c}.`,
+    tpOrdersH: 'Orders', tpAll: 'All', tpAllPoints: 'All pickup points', tpSearchPh: 'Name, WeChat or ref', tpNoOrders: 'No orders here.',
+    tpViews: { waiting: 'Waiting to pay', paid: 'Paid', oversold: 'Oversold', handed: 'Handed over', cancelled: 'Cancelled',
+      expired: 'Lapsed', mismatch: 'Wrong amount' },
+    tpBuyer: 'Buyer', tpPickupCol: 'Pickup', tpTeesCol: 'Tees', tpPurged: '(details deleted)', tpProblemFlag: 'Problem note',
+    tpHoldTill: t => `Keeps its tees until ${t}.`,
+    tpOversoldHelp: 'Paid, but this tee was sold out when the money came. Swap it for a tee that is left, or cancel it as refunded. The buyer was told within 3 days.',
+    tpTeesH: 'Tees', tpFeeVat: (f, v) => `online fee ${f} + VAT ${v}`, tpMade: t => `Ordered ${t}`, tpPaidAt: t => `Paid ${t}`,
+    tpHandedAt: t => `Handed over ${t}`, tpCancelledAt: t => `Cancelled ${t}`,
+    tpContactH: 'Contact', tpMobile: 'Mobile', tpEmail: 'Email', tpLangL: 'Language', tpPurgedAt: t => `Contact details deleted ${t}.`,
+    tpHandBtn: 'Handed over ✓', tpUnhand: 'Undo hand-over', tpQUnhand: 'Mark as not handed over yet?',
+    tpHandedOk: 'Marked as handed over.', tpUnhandOk: 'Marked as not handed over yet.',
+    tpPickupH: 'Pickup point', tpProblemH: 'Problem note', tpPbClear: 'Clear note',
+    tpProblemHelp: 'Staff only. While there is a note, the contact details are kept.',
+    tpSwapH: 'Swap a tee', tpSwapFrom: 'This tee', tpSwapTo: 'for', tpSwapBtn: 'Swap', tpLeftN: n => `${n} left`,
+    tpSwapHelp: 'The price paid stays. The order becomes Paid.', tpSwapNone: 'No other tee is left to swap to.',
+    tpQSwap: (a, b) => `Swap ${a} for ${b}?`, tpSwapped: 'Swapped. The order is paid.', tpSoldOutSwap: 'That tee is sold out now. Pick another.',
+    tpCancelH: 'Cancel', tpCancel: 'Cancel order', tpCancelRef: 'Cancel, refunded',
+    tpQCancel: 'Cancel this unpaid order? Its tees go back on sale.',
+    tpQRefund: a => `Refund ${a} in the PaySolutions panel first.\n\nHave you refunded it? OK cancels the order and voids its payment.`,
+    tpQReason: 'Why? (for the payment note)', tpQHanded: 'These tees were handed over already. Cancel and void it anyway?',
+    tpCancelled: 'Cancelled.', tpChkPaid: 'Paid: the tee order is confirmed.',
+    tpPrintH: 'Print for the team members',
+    tpPrintHelp: 'A4 lists for each pickup point: the tees to take, with the buyers to tick off, and the customs list for that bag (design, colour, how many, price in baht). The pickup list names buyers: keep it safe and throw it away after the hand-over.',
+    tpPoint: 'Pickup point', tpPaidN: 'Orders', tpTeesN: 'Tees', tpToHand: 'To hand over', tpPickList: 'Pickup list',
+    tpCustoms: 'Customs list', tpAllPts: 'All points',
+    tpPrintBtn: 'Print', tpPrinted: t => `Printed ${t}`, tpTake: 'Tees to take', tpBuyers: 'Buyers', tpQty: 'Qty', tpTotal: 'Total',
+    tpTick: 'Tick each buyer when you hand the tees over, then mark it in Admin, Tees.',
+    tpKeepSafe: 'This list names buyers. Keep it with you and throw it away after the hand-over.',
+    tpOverN: n => `${n} oversold order(s) are not counted above: swap or refund them first.`,
+    tpOverRow: 'Oversold: do not hand over yet', tpNoneToTake: 'Nothing paid for this point yet.',
+    tpFinishH: 'Finish',
+    tpFinishHelp: 'When every tee is handed over: type the costs, check the report, then Finish. Finish freezes the report, and the pre-order cannot change after that.',
+    tpCostL: 'Cost', tpCostAdd: 'Add a cost', tpCostPrint: 'Printing', tpCostCarry: 'Carrying', tpCostsT: 'Costs',
+    tpReportLive: 'Report so far', tpFinishBtn: 'Finish', tpFinishWait: 'Close the pre-order first.',
+    tpQFinish: c => `Finish this pre-order with costs of ${c}?\nThe report is frozen and nothing can change after this.`,
+    tpQNotHanded: n => `${n} paid order(s) are not handed over yet. Finish anyway?`, tpFinished: 'Finished. The report is frozen.',
+    tpFinHolds: (n, t) => `${n} unpaid order(s) can still be paid until ${t}. Finish after that.`,
+    tpReportH: 'Report', tpLiveNote: 'So far, not frozen. The costs are the ones typed above.', tpFrozen: t => `Report, frozen ${t}`,
+    tpHandedN: n => `${n} handed over`, tpLess: 'Price less costs', tpLessSub: 'before the online fee and VAT', tpHanded: 'Handed',
+    tpTeeCol: 'Tee', tpCsv: 'Download report (CSV)',
+    tpPurgeH: 'Delete contact details now',
+    tpPurgeHelp: d => `Names, WeChat IDs, mobiles and emails go by themselves ${d} days after the hand-over, and 7 days after a cancel or a lapsed order. This deletes them now for handed, cancelled and lapsed orders, and on a finished pre-order for every order. An order with a problem note keeps them.`,
+    tpKept: n => `${n} order(s) still have contact details.`, tpPurgeBtn: 'Delete contact details now',
+    tpQPurge: 'Delete the contact details now? This cannot be undone.', tpPurgeDone: (n, k) => `Deleted on ${n} order(s). ${k} still have them.`,
+    tpPill: d => `Tee · ${d}`, tpItem: d => `Tee pre-order ${d}`, tpTeeNote: s => `Tee order: ${s}`,
+    tpQActivate: 'Mark this tee order paid?\nOnly do this once you have seen the money arrive in PaySolutions.',
+    tpForcedOver: 'Paid, but the tees were sold out: open Tees to swap a size or refund.',
+  });
+  Object.assign(STR.th, {
+    tabTees: 'เสื้อ', tpH: 'พรีออเดอร์เสื้อ',
+    tpHelp: 'พรีออเดอร์เสื้อ 7 วัน จ่ายออนไลน์ แล้วรับเสื้อจากทีม AYBKK ในจีน ตั้งค่า บันทึกเสื้อ แล้วกดเผยแพร่ ผู้ซื้อสั่งที่ aybkk.net/tees (ในจีนใช้ cn.aybkk.net/tees)',
+    tpNoticeNot: 'ยังไม่ได้กรอกประกาศความเป็นส่วนตัวของการสั่งเสื้อ จึงยังไม่มีใครสั่งได้: กรอกชื่อนิติบุคคล ที่อยู่ และอีเมล ในตั้งค่า > ข้อตกลงนักเรียน',
+    tpPayNot: 'หน้านี้ยังไม่ได้เชื่อมต่อ PaySolutions จึงยังจ่ายค่าเสื้อออนไลน์ไม่ได้',
+    tpNew: '+ พรีออเดอร์ใหม่', tpNewH: 'พรีออเดอร์ใหม่', tpNone: 'ยังไม่มีพรีออเดอร์ กด + พรีออเดอร์ใหม่',
+    tpStates: { draft: 'ฉบับร่าง', soon: 'ยังไม่เปิด', open: 'เปิดอยู่', closed: 'ปิดแล้ว', done: 'จบแล้ว' },
+    tpStateHelp: { draft: 'ผู้ซื้อยังไม่เห็น บันทึกการตั้งค่าและเสื้อ แล้วกดเผยแพร่',
+      soon: 'ผู้ซื้อเห็นแล้วพร้อมเวลาเปิด แต่ยังสั่งไม่ได้', open: 'ผู้ซื้อสั่งได้ตอนนี้',
+      closed: 'ไม่รับออเดอร์ใหม่แล้ว ส่งมอบเสื้อให้ครบ แล้วกดจบด้านล่าง', done: 'จบแล้ว: รายงานด้านล่างถูกล็อกไว้' },
+    tpWindow: (a, b) => `เวลากรุงเทพฯ: เปิด ${a} ปิด ${b}`, tpBeijing: (a, b) => `เวลาปักกิ่ง: เปิด ${a} ปิด ${b}`,
+    tpLinkL: 'ผู้ซื้อสั่งที่',
+    tpPublish: 'เผยแพร่', tpUnpublish: 'ยกเลิกการเผยแพร่', tpCloseNow: 'ปิดตอนนี้',
+    tpQPublish: a => `เผยแพร่พรีออเดอร์นี้?\nผู้ซื้อจะเห็นตั้งแต่ตอนนี้ และสั่งได้ตั้งแต่ ${a} (เวลากรุงเทพฯ)`,
+    tpQUnpublish: 'ยกเลิกการเผยแพร่? ผู้ซื้อจะไม่เห็นอีก',
+    tpQClose: 'ปิดพรีออเดอร์ตอนนี้? หลังจากนี้จะไม่มีใครสั่งได้ ออเดอร์ที่สั่งไว้แล้วยังจ่ายได้ภายในเวลาที่จองไว้',
+    tpPublished: 'เผยแพร่แล้ว', tpClosedNow: 'ปิดแล้ว ไม่มีใครสั่งได้อีก', tpSaveGridFirst: 'บันทึกเสื้อก่อน',
+    tpSetH: 'ตั้งค่าพรีออเดอร์', tpCode: 'รหัส', tpCodeHelp: 'ตัวอักษรอังกฤษพิมพ์เล็ก ตัวเลข หรือขีด 3 ถึง 24 ตัว เช่น spring-26 รหัสนี้อยู่ในรายการชำระเงิน',
+    tpCodeLocked: 'เปลี่ยนไม่ได้แล้ว: พรีออเดอร์นี้มีออเดอร์แล้ว', tpTitleEn: 'ชื่อ (อังกฤษ)', tpTitleZh: 'ชื่อ (จีน)',
+    tpOpens: 'เปิด (เวลากรุงเทพฯ)', tpCloses: 'ปิด (เวลากรุงเทพฯ)', tpClosesHelp: '7 วันหลังเปิด ถ้าไม่เปลี่ยน',
+    tpCap: 'จำนวนเสื้อทั้งหมด', tpCapHelp: 'เสื้อทุกตัวของพรีออเดอร์นี้รวมกัน 1 ถึง 500 ตัว', tpMax: 'สั่งได้มากสุดต่อออเดอร์',
+    tpHold: 'จองไว้ (นาที)', tpHoldHelp: 'ออเดอร์ที่ยังไม่จ่ายจะจองเสื้อไว้นานเท่านี้',
+    tpPurgeDays: 'ลบข้อมูลติดต่อหลังจาก (วัน)', tpPurgeDaysHelp: 'นับจากวันส่งมอบ',
+    tpRmb: 'หยวนต่อ 1 บาท (ไม่บังคับ)', tpRmbHelp: 'ใช้แค่บรรทัด "ประมาณ ¥" ที่ผู้ซื้อเห็น เช่น 0.2 อัตราจริงหน้าชำระเงินเป็นคนกำหนด',
+    tpPickups: 'จุดรับเสื้อ', tpPkAdd: 'เพิ่มจุดรับเสื้อ',
+    tpPkHelp: 'สูงสุด 6 จุด (A ถึง F) ผู้ซื้อเลือกหนึ่งจุดและเห็นชื่อนี้: เมือง และคนในทีมที่ส่งมอบเสื้อ',
+    tpPkPh: 'เมือง · ชื่อเล่น', tpPkKey: 'ตัวอักษร', tpPkLabel: 'ชื่อจุดรับเสื้อ', tpPkDel: 'ลบ',
+    tpCreate: 'สร้าง', tpSaved: 'บันทึกแล้ว',
+    tpTotalsH: 'ยอดรวม', tpSold: 'เสื้อที่ขายแล้ว', tpSoldSub: (c, h, l) => `จาก ${c} · จองไว้ ${h} · เหลือ ${l}`,
+    tpPaidOrders: 'ออเดอร์ที่จ่ายแล้ว', tpPaidSub: (h, o) => `ส่งมอบแล้ว ${h}${o ? ` · ขายเกิน ${o}` : ''}`,
+    tpWaitingT: 'รอจ่าย', tpWaitSub: (e, m) => `หมดเวลาจอง ${e}${m ? ` · ยอดไม่ตรง ${m}` : ''}`,
+    tpMoney: 'เงินเข้า', tpMoneySub: (b, f, v) => `${b} + ค่าธรรมเนียม ${f} + VAT ${v}`, tpRefunded: 'คืนเงินแล้ว',
+    tpGridH: 'เสื้อ',
+    tpGridHelp: 'หนึ่งแถวต่อหนึ่งลาย สี และไซซ์ ราคาเป็นบาทก่อนบวกค่าธรรมเนียมออนไลน์และ VAT รูป: path ใต้ /img/ เช่น /img/tees/lotus-black.jpg เสื้อที่มีออเดอร์แล้วเปลี่ยนลาย สี ไซซ์ และราคาไม่ได้ และลดจำนวนได้ไม่ต่ำกว่าที่ขายหรือจองไว้',
+    tpDesign: 'ลาย', tpColour: 'สี', tpSize: 'ไซซ์', tpPrice: 'ราคา ฿', tpPhoto: 'รูป', tpCapCol: 'จำนวน',
+    tpSoldCol: 'ขายแล้ว', tpHeldCol: 'จองไว้', tpLeftCol: 'เหลือ', tpKeyPh: 'รหัส เช่น lotus', tpEnPh: 'อังกฤษ',
+    tpRowAdd: 'เพิ่มแถว', tpRowDel: 'ลบแถว', tpLocked: 'มีออเดอร์แล้ว: ลบไม่ได้', tpGridSave: 'บันทึกเสื้อ', tpUnsaved: 'ยังไม่ได้บันทึก',
+    tpRowNeed: n => `แถว ${n}: ใส่ราคาและจำนวน`, tpNoRows: 'ยังไม่มีเสื้อ กด เพิ่มแถว',
+    tpLeaveGrid: 'ยังไม่ได้บันทึกเสื้อ จะออกไปโดยไม่บันทึกไหม?',
+    tpSum: (s, c) => `จำนวนทุกแถวรวม ${s} ตัว จำนวนเสื้อทั้งหมด ${c} ตัว`, tpSumLess: s => ` ขายได้มากสุด ${s} ตัว`, tpSumMore: c => ` ขายครบ ${c} ตัวแล้วจะหยุดขาย`,
+    tpOrdersH: 'ออเดอร์', tpAll: 'ทั้งหมด', tpAllPoints: 'ทุกจุดรับเสื้อ', tpSearchPh: 'ชื่อ WeChat หรือเลขอ้างอิง', tpNoOrders: 'ไม่มีออเดอร์',
+    tpViews: { waiting: 'รอจ่าย', paid: 'จ่ายแล้ว', oversold: 'ขายเกิน', handed: 'ส่งมอบแล้ว', cancelled: 'ยกเลิกแล้ว',
+      expired: 'หมดเวลาจอง', mismatch: 'ยอดไม่ตรง' },
+    tpBuyer: 'ผู้ซื้อ', tpPickupCol: 'จุดรับ', tpTeesCol: 'เสื้อ', tpPurged: '(ลบข้อมูลแล้ว)', tpProblemFlag: 'มีบันทึกปัญหา',
+    tpHoldTill: t => `จองเสื้อไว้ถึง ${t}`,
+    tpOversoldHelp: 'จ่ายแล้ว แต่ตอนเงินเข้าเสื้อตัวนี้หมดแล้ว เปลี่ยนเป็นตัวที่ยังเหลือ หรือยกเลิกแบบคืนเงิน ผู้ซื้อได้รับแจ้งว่าจะจัดการภายใน 3 วัน',
+    tpTeesH: 'เสื้อ', tpFeeVat: (f, v) => `ค่าธรรมเนียมออนไลน์ ${f} + VAT ${v}`, tpMade: t => `สั่งเมื่อ ${t}`, tpPaidAt: t => `จ่ายเมื่อ ${t}`,
+    tpHandedAt: t => `ส่งมอบเมื่อ ${t}`, tpCancelledAt: t => `ยกเลิกเมื่อ ${t}`,
+    tpContactH: 'ข้อมูลติดต่อ', tpMobile: 'มือถือ', tpEmail: 'อีเมล', tpLangL: 'ภาษา', tpPurgedAt: t => `ลบข้อมูลติดต่อแล้วเมื่อ ${t}`,
+    tpHandBtn: 'ส่งมอบแล้ว ✓', tpUnhand: 'ยกเลิกการส่งมอบ', tpQUnhand: 'เปลี่ยนเป็นยังไม่ได้ส่งมอบ?',
+    tpHandedOk: 'บันทึกว่าส่งมอบแล้ว', tpUnhandOk: 'บันทึกว่ายังไม่ได้ส่งมอบ',
+    tpPickupH: 'จุดรับเสื้อ', tpProblemH: 'บันทึกปัญหา', tpPbClear: 'ลบบันทึก',
+    tpProblemHelp: 'เห็นเฉพาะทีม ระหว่างที่มีบันทึกนี้ ข้อมูลติดต่อจะยังไม่ถูกลบ',
+    tpSwapH: 'เปลี่ยนเสื้อ', tpSwapFrom: 'ตัวนี้', tpSwapTo: 'เป็น', tpSwapBtn: 'เปลี่ยน', tpLeftN: n => `เหลือ ${n}`,
+    tpSwapHelp: 'ราคาที่จ่ายไว้คงเดิม ออเดอร์จะเป็น "จ่ายแล้ว"', tpSwapNone: 'ไม่มีเสื้อตัวอื่นเหลือให้เปลี่ยน',
+    tpQSwap: (a, b) => `เปลี่ยน ${a} เป็น ${b}?`, tpSwapped: 'เปลี่ยนแล้ว ออเดอร์เป็นจ่ายแล้ว', tpSoldOutSwap: 'เสื้อตัวนั้นหมดแล้ว เลือกตัวอื่น',
+    tpCancelH: 'ยกเลิก', tpCancel: 'ยกเลิกออเดอร์', tpCancelRef: 'ยกเลิก (คืนเงินแล้ว)',
+    tpQCancel: 'ยกเลิกออเดอร์ที่ยังไม่จ่ายนี้? เสื้อจะกลับไปขายได้อีก',
+    tpQRefund: a => `คืนเงิน ${a} ในหน้า PaySolutions ก่อน\n\nคืนเงินแล้วใช่ไหม? กด OK เพื่อยกเลิกออเดอร์และยกเลิกการชำระเงินนี้`,
+    tpQReason: 'เหตุผล (ใส่ในหมายเหตุการชำระเงิน)', tpQHanded: 'เสื้อชุดนี้ส่งมอบไปแล้ว จะยกเลิกและยกเลิกการชำระเงินเลยไหม?',
+    tpCancelled: 'ยกเลิกแล้ว', tpChkPaid: 'จ่ายแล้ว: ยืนยันออเดอร์เสื้อแล้ว',
+    tpPrintH: 'พิมพ์ให้ทีมที่ถือเสื้อ',
+    tpPrintHelp: 'เอกสาร A4 ของแต่ละจุดรับ: เสื้อที่ต้องเอาไปพร้อมรายชื่อผู้ซื้อให้ติ๊ก และรายการสำหรับศุลกากรของกระเป๋าใบนั้น (ลาย สี จำนวน ราคาเป็นบาท) รายการรับเสื้อมีชื่อผู้ซื้อ เก็บไว้ให้ดีและทิ้งหลังส่งมอบเสร็จ',
+    tpPoint: 'จุดรับเสื้อ', tpPaidN: 'ออเดอร์', tpTeesN: 'เสื้อ', tpToHand: 'ยังไม่ส่งมอบ', tpPickList: 'รายการรับเสื้อ',
+    tpCustoms: 'รายการศุลกากร', tpAllPts: 'ทุกจุด',
+    tpPrintBtn: 'พิมพ์', tpPrinted: t => `พิมพ์เมื่อ ${t}`, tpTake: 'เสื้อที่ต้องเอาไป', tpBuyers: 'ผู้ซื้อ', tpQty: 'จำนวน', tpTotal: 'รวม',
+    tpTick: 'ติ๊กผู้ซื้อแต่ละคนเมื่อส่งมอบเสื้อแล้ว จากนั้นบันทึกในหน้าแอดมิน แท็บเสื้อ',
+    tpKeepSafe: 'รายการนี้มีชื่อผู้ซื้อ เก็บไว้กับตัวและทิ้งหลังส่งมอบเสร็จ',
+    tpOverN: n => `มีออเดอร์ขายเกิน ${n} รายการที่ไม่ได้นับข้างบน: เปลี่ยนไซซ์หรือคืนเงินก่อน`,
+    tpOverRow: 'ขายเกิน: ยังไม่ต้องส่งมอบ', tpNoneToTake: 'จุดนี้ยังไม่มีออเดอร์ที่จ่ายแล้ว',
+    tpFinishH: 'จบพรีออเดอร์',
+    tpFinishHelp: 'เมื่อส่งมอบเสื้อครบแล้ว: ใส่ค่าใช้จ่าย ดูรายงาน แล้วกดจบ การจบจะล็อกรายงานไว้ และพรีออเดอร์นี้จะเปลี่ยนอะไรไม่ได้อีก',
+    tpCostL: 'ค่าใช้จ่าย', tpCostAdd: 'เพิ่มค่าใช้จ่าย', tpCostPrint: 'ค่าพิมพ์เสื้อ', tpCostCarry: 'ค่าขนเสื้อ', tpCostsT: 'ค่าใช้จ่าย',
+    tpReportLive: 'รายงานถึงตอนนี้', tpFinishBtn: 'จบ', tpFinishWait: 'ปิดพรีออเดอร์ก่อน',
+    tpQFinish: c => `จบพรีออเดอร์นี้ ค่าใช้จ่ายรวม ${c}?\nรายงานจะถูกล็อก และเปลี่ยนอะไรไม่ได้อีก`,
+    tpQNotHanded: n => `ยังมีออเดอร์ที่จ่ายแล้วแต่ยังไม่ได้ส่งมอบ ${n} รายการ จะจบเลยไหม?`, tpFinished: 'จบแล้ว รายงานถูกล็อกไว้',
+    tpFinHolds: (n, t) => `ยังมี ${n} ออเดอร์ที่ยังไม่จ่าย แต่ยังจ่ายได้ถึง ${t} กดจบหลังเวลานั้น`,
+    tpReportH: 'รายงาน', tpLiveNote: 'ถึงตอนนี้ ยังไม่ล็อก ค่าใช้จ่ายตามที่พิมพ์ไว้ข้างบน', tpFrozen: t => `รายงาน ล็อกเมื่อ ${t}`,
+    tpHandedN: n => `ส่งมอบแล้ว ${n}`, tpLess: 'ราคาหักค่าใช้จ่าย', tpLessSub: 'ก่อนค่าธรรมเนียมออนไลน์และ VAT', tpHanded: 'ส่งมอบแล้ว',
+    tpTeeCol: 'เสื้อ', tpCsv: 'ดาวน์โหลดรายงาน (CSV)',
+    tpPurgeH: 'ลบข้อมูลติดต่อตอนนี้',
+    tpPurgeHelp: d => `ชื่อ WeChat มือถือ และอีเมล จะถูกลบเองหลังส่งมอบ ${d} วัน และ 7 วันหลังยกเลิกหรือหมดเวลาจอง ปุ่มนี้ลบทันทีสำหรับออเดอร์ที่ส่งมอบแล้ว ยกเลิกแล้ว และหมดเวลาจอง ถ้าพรีออเดอร์จบแล้วจะลบทุกออเดอร์ ออเดอร์ที่มีบันทึกปัญหาจะยังเก็บไว้`,
+    tpKept: n => `ยังมีข้อมูลติดต่ออยู่ ${n} ออเดอร์`, tpPurgeBtn: 'ลบข้อมูลติดต่อตอนนี้',
+    tpQPurge: 'ลบข้อมูลติดต่อตอนนี้? ย้อนกลับไม่ได้', tpPurgeDone: (n, k) => `ลบแล้ว ${n} ออเดอร์ ยังมีข้อมูลอยู่ ${k} ออเดอร์`,
+    tpPill: d => `เสื้อ · ${d}`, tpItem: d => `พรีออเดอร์เสื้อ ${d}`, tpTeeNote: s => `ออเดอร์เสื้อ: ${s}`,
+    tpQActivate: 'เปลี่ยนออเดอร์เสื้อนี้เป็นจ่ายแล้ว?\nทำเมื่อเห็นเงินเข้าใน PaySolutions แล้วเท่านั้น',
+    tpForcedOver: 'จ่ายแล้ว แต่เสื้อหมด: เปิดแท็บเสื้อเพื่อเปลี่ยนไซซ์หรือคืนเงิน',
+  });
   const T =(k, ...a) => { const v = STR[LANG][k] ?? STR.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
   const W = w => STR[LANG].words[w] || w;
   let TH_NAMES = null, TH_BY_EN = {};
@@ -1370,6 +1626,8 @@
   window.tab = t => {
     current = t; SUB = null;
     closeQr(false);
+    if (t !== 'tees') tpShut(false);
+    tpPrintClose();
     checkPage();
     $('#view').classList.remove('wide');
     document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.id === 't-' + t));
@@ -1377,6 +1635,7 @@
     if (t === 'students') renderStudents();
     if (t === 'calendar') renderCalendar();
     if (t === 'orders') renderOrders();
+    if (t === 'tees') renderTees();
     if (t === 'reports') renderReports();
     if (t === 'settings') renderSettings();
   };
@@ -2576,10 +2835,14 @@
         b = first.match(/^same Rezerv payment as order (\d+), imported twice$/);
       return (v ? T('voidNote', v[1], v[2]) : b ? T('rzTwice', b[1]) : first).slice(0, 160);
     };
+    // A tee order has no profile: the buyer's name and the pre-order it belongs to.
+    const tee = o.kind === 'tee', teeSt = tee && o.tee_status && o.tee_status !== 'new' ? o.tee_status : null;
+    if (teeSt) notes.push([T('tpTeeNote', tpWord('tpViews', teeSt) + (o.tee_pickup ? ' · ' + o.tee_pickup : '')), teeSt === 'oversold']);
     return `<tr>
-      <td>${o.member_code ? whoBtn(o.member_code, o.member_name, 'who-' + o.id) : `<b>${esc(o.member_name || '–')}</b>`}<br><span class="muted">${esc(o.email || '')}<br>${esc(o.member_code)}</span>
+      <td>${tee ? `<b>${esc(o.tee_name || T('tpPurged'))}</b> <span class="pill tee">${esc(T('tpPill', o.tee_drop || ''))}</span>`
+        : `${o.member_code ? whoBtn(o.member_code, o.member_name, 'who-' + o.id) : `<b>${esc(o.member_name || '–')}</b>`}<br><span class="muted">${esc(o.email || '')}<br>${esc(o.member_code)}</span>`}
         ${notes.map(([n, w]) => `<span class="onote${w ? ' warn' : ''}">${esc(n)}</span>`).join('')}</td>
-      <td>${esc(pkgName(o))}${cl ? `<span class="onote">${esc(cl)}</span>` : '<br>'}<b${o.status === 'void' ? ' class="gone"' : ''}>฿${o.amount_thb.toLocaleString()}</b>
+      <td>${esc(tee ? T('tpItem', o.tee_drop || '') : pkgName(o))}${cl ? `<span class="onote">${esc(cl)}</span>` : '<br>'}<b${o.status === 'void' ? ' class="gone"' : ''}>฿${o.amount_thb.toLocaleString()}</b>
         <br><span class="muted">${o.base_thb.toLocaleString()} + ${T('fee')} ${o.fee_thb.toLocaleString()} + ${T('vat')} ${(o.vat_thb || 0).toLocaleString()}</span></td>
       <td><span class="pill ${zero ? 'zero' : esc(o.status)}">${esc(ordPill(o))}</span> <span class="muted">${esc(W(o.method || 'online'))}</span>${isRz(o) ? ' <span class="badge">Rezerv</span>' : ''}<br>
         <span class="muted">${o.created_at ? ordWhen(o) : ''}</span>
@@ -2646,8 +2909,9 @@
     const r = await fetch('/api/bkk/pay/check/' + encodeURIComponent(o.refno)).catch(() => null);
     const j = r ? await r.json().catch(() => ({})) : {};
     const st = r && r.ok ? j.status : null, note = String(j.note || '');
+    const over = j.kind === 'tee' && j.tee && j.tee.status === 'oversold';
     const c = CHK[o.id] = !st ? { text: T('chkErr'), raw: j.error || (r ? `http ${r.status}` : '') }
-      : st === 'paid' ? { text: T('chkPaid'), kind: 'ok' }
+      : st === 'paid' ? { text: T(over ? 'tpForcedOver' : j.kind === 'tee' ? 'tpChkPaid' : 'chkPaid'), kind: over ? 'warn' : 'ok' }
       : st === 'mismatch' ? { text: T('chkMismatch'), kind: 'warn' }
       : st === 'unknown' ? { text: T('chkUnknown') }
       : note === 'gateway not configured' ? { text: T('chkNoGw') }
@@ -2695,7 +2959,8 @@
   // A try whose package the student already paid for: the server names that payment, and staff say yes once more.
   const whenPaid = at => at ? `${dayShort(bkkYmd(Date.parse(at)))} ${time(at)}` : '';
   window.force = async (id) => {
-    if (!confirm(T('qActivate'))) return;
+    const tee = (ORD.find(x => x.id === id) || {}).kind === 'tee';
+    if (!confirm(T(tee ? 'tpQActivate' : 'qActivate'))) return;
     let r = await api(`/api/bkk/admin/orders/${id}/force-activate`, { method: 'POST', body: '{}' });
     let j = await r.json().catch(() => ({}));
     if (r.status === 409 && j.paidAlready) {
@@ -2708,8 +2973,702 @@
     // A drop-in bought for a class that was cancelled or over by now: the pass
     // is live but nobody is on the list, and this list does not show the class.
     else if (j.bookingError) alert(T('activatedNoClass', j.bookingError));
+    else if (j.tee && j.tee.status === 'oversold') alert(T('tpForcedOver'));
     renderOrders({ keep: true, show: r.ok ? id : null });
   };
+
+  // ── tees: the pre-order (24 Nov 2026) ─────────────────────────────────────
+  // One pre-order at a time: its settings, its tees and their caps, its orders
+  // (a panel per order), A4 lists for the team members who carry the tees, then
+  // Finish with the costs. Staff only, like Payments.
+  const TP_SIZES = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'];
+  const TP_VIEWS = ['waiting', 'paid', 'oversold', 'handed', 'cancelled', 'expired', 'mismatch'];
+  const TP_LANGS = { zh: '中文', en: 'English', th: 'ไทย', ru: 'Русский' };
+  // grid: the tees as typed (kept across redraws until saved); costs: the Finish lines as typed.
+  const TP = { drops: [], notice: null, payment: null, sel: null, orders: [], totals: null, report: null,
+    f: { view: '', pickup: '', q: '' }, grid: null, gridDirty: false, gridFor: undefined, gridOpen: true, edOpen: undefined,
+    edFor: undefined, costs: null, drawer: null, drawerFrom: null, closeTouched: false, seq: 0 };
+  const tpDrop = () => TP.drops.find(d => d.id === TP.sel) || null;
+  const tpWord = (group, k) => (STR[LANG][group] || {})[k] || (STR.en[group] || {})[k] || k;
+  const tpAt = iso => iso ? `${day(iso)} ${time(iso)}` : '';
+  const tpBj = iso => iso ? `${new Date(iso).toLocaleDateString(locale(), { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Shanghai' })} ${
+    new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Shanghai' })}` : '';
+  const tpBkkIso = s => { const ms = Date.parse(String(s).replace(' ', 'T') + ':00+07:00'); return isNaN(ms) ? '' : new Date(ms).toISOString(); };
+  const tpItem = it => `${it.designName} · ${it.colourName} · ${it.size}${it.qty > 1 ? ' ×' + it.qty : ''}`;
+  const tpStockName = s => `${s.designName.en} · ${s.colourName.en} · ${s.size}`;
+  const tpPill = v => `<span class="pill tv-${esc(v)}">${esc(tpWord('tpViews', v))}</span>`;
+  const tpGet = async url => { const r = await api(url).catch(() => null); return r && r.ok ? r.json().catch(() => null) : null; };
+  const tpSend = (url, body, method = 'POST') => api(url, { method, body: JSON.stringify(body || {}) })
+    .then(async r => ({ ok: r.ok, status: r.status, j: await r.json().catch(() => ({})) }))
+    .catch(() => ({ ok: false, status: 0, j: {} }));
+  // The button stays off while its request runs, so a double tap sends once.
+  const tpBusy = async (btn, fn) => {
+    if (btn && btn.disabled) return;
+    if (btn) btn.disabled = true;
+    try { return await fn(); } finally { if (btn && btn.isConnected) btn.disabled = false; }
+  };
+  const tpLive = () => current === 'tees' && !SUB;
+
+  // keepEd: the settings box stays as it is, with whatever is typed in it.
+  async function renderTees({ flash, keepEd } = {}) {
+    const seq = ++TP.seq;
+    $('#view').classList.add('wide');
+    if (!$('#tpTop')) $('#view').innerHTML = `<div class="box"><b>${esc(T('tpH'))}</b><p class="muted">${esc(T('loadingTxt'))}</p></div>`;
+    const d = await tpGet('/api/bkk/admin/tee/drops');
+    if (seq !== TP.seq || !tpLive()) return;
+    if (!d) { $('#view').innerHTML = `<div class="box"><b>${esc(T('tpH'))}</b><p class="hint bad">${esc(T('failed'))}</p></div>`; return; }
+    TP.drops = d.drops || []; TP.notice = d.notice || null; TP.payment = d.payment || null;
+    if (TP.sel !== 'new' && !tpDrop()) {
+      const kept = Number(store.get('aybkk_admin_tee'));
+      const pick = TP.drops.find(x => x.id === kept) || TP.drops.find(x => x.state !== 'done') || TP.drops[0];
+      TP.sel = pick ? pick.id : null;
+    }
+    if (TP.gridFor !== TP.sel) {
+      Object.assign(TP, { gridFor: TP.sel, grid: null, gridDirty: false, costs: null, report: null, edOpen: undefined,
+        f: { view: '', pickup: '', q: '' } });
+    }
+    const dr = tpDrop();
+    TP.orders = []; TP.totals = dr ? dr.totals : null;
+    if (dr) {
+      const [o, rep] = await Promise.all([tpGet(`/api/bkk/admin/tee/drops/${dr.id}/orders`),
+        dr.state === 'done' && !(TP.report && !TP.report.live) ? tpGet(`/api/bkk/admin/tee/drops/${dr.id}/report`) : null]);
+      if (seq !== TP.seq || !tpLive()) return;
+      if (o) { TP.orders = o.orders || []; TP.totals = o.totals || TP.totals; }
+      if (rep) TP.report = rep.report;
+    }
+    if (!TP.gridDirty) TP.grid = TP.totals ? tpGridRows(TP.totals.stock) : null;
+    paintTees(flash, keepEd);
+  }
+
+  function paintTees(flash, keepEd) {
+    const d = tpDrop(), isNew = TP.sel === 'new';
+    const parts = d ? { tpHead: tpHeadHtml(d), tpTot: tpTotalsHtml(d), tpOrdW: tpOrdersHtml(d), tpPrW: tpPrintBoxHtml(d),
+      tpGridW: tpGridHtml(d), tpFinW: tpFinishHtml(d), tpPgW: tpPurgeHtml(d) } : {};
+    const ids = Object.keys(parts);
+    if (keepEd && TP.edFor === TP.sel && $('#tpTop') && $('#tpEdW') && ids.every(id => document.getElementById(id))) {
+      $('#tpTop').outerHTML = tpTopHtml(flash);
+      for (const id of ids) document.getElementById(id).innerHTML = parts[id];
+    } else {
+      TP.edFor = TP.sel;
+      parts.tpEdW = tpEditorHtml(isNew ? null : d);
+      // A draft is set up from the top; once published, the orders come first.
+      const order = isNew ? ['tpEdW'] : !d ? [] : d.state === 'draft'
+        ? ['tpHead', 'tpEdW', 'tpGridW', 'tpTot', 'tpOrdW', 'tpPrW', 'tpFinW', 'tpPgW']
+        : ['tpHead', 'tpTot', 'tpOrdW', 'tpPrW', 'tpEdW', 'tpGridW', 'tpFinW', 'tpPgW'];
+      $('#view').innerHTML = tpTopHtml(flash) + order.map(id => `<div id="${id}">${parts[id]}</div>`).join('')
+        + (!isNew && !d ? `<div class="box"><p class="muted">${esc(T('tpNone'))}</p></div>` : '');
+      const e = $('#tpEd');
+      if (e) e.addEventListener('toggle', () => { TP.edOpen = e.open; });
+    }
+    tpWire();
+    if (TP.drawer) tpPaintDrawer();
+  }
+  function tpWire() {
+    const g = $('#tpGrid');
+    if (g) g.addEventListener('toggle', () => { TP.gridOpen = g.open; });
+  }
+  const tpRepaint = id => {
+    const d = tpDrop(), el = document.getElementById(id);
+    const f = { tpGridW: tpGridHtml, tpFinW: tpFinishHtml, tpOrdW: tpOrdersHtml }[id];
+    if (d && el && f) { el.innerHTML = f(d); tpWire(); }
+  };
+
+  const tpTopHtml = flash => {
+    const warn = [TP.notice && !TP.notice.ready && T('tpNoticeNot'), TP.payment && TP.payment.mode !== 'gateway' && T('tpPayNot')].filter(Boolean);
+    return `<div class="box" id="tpTop"><b>${esc(T('tpH'))}</b>
+      <button class="btn gray rfr" style="float:right" onclick="tpReload()" aria-label="${esc(T('reload'))}">↻</button>
+      <p class="muted">${esc(T('tpHelp'))}</p>
+      ${warn.map(w => `<p class="warnline">${esc(w)}</p>`).join('')}
+      <div class="seg">${TP.drops.map(x => `<button class="${x.id === TP.sel ? 'on' : ''}" aria-pressed="${x.id === TP.sel}" onclick="tpPick(${x.id})">${esc(x.code)}<span class="pill ts-${esc(x.state)}">${esc(tpWord('tpStates', x.state))}</span></button>`).join('')}
+        <button class="${TP.sel === 'new' ? 'on' : ''}" aria-pressed="${TP.sel === 'new'}" onclick="tpPick('new')">${esc(T('tpNew'))}</button></div>
+      ${flash ? `<div class="flash${flash.warn ? ' warn' : ''}" role="status">${esc(flash.text)}</div>` : ''}</div>`;
+  };
+  window.tpPick = id => {
+    if (id === TP.sel) return;
+    if (TP.gridDirty && !confirm(T('tpLeaveGrid'))) return;
+    TP.sel = id; TP.drawer = null;
+    if (id !== 'new') store.set('aybkk_admin_tee', String(id));
+    renderTees();
+  };
+  window.tpReload = () => renderTees({ keepEd: true });
+
+  const tpHeadHtml = d => {
+    const st = d.state, acts = [
+      st === 'draft' && `<button class="btn pink" onclick="tpPublish(this)">${esc(T('tpPublish'))}</button>`,
+      st === 'soon' && `<button class="btn gray" onclick="tpUnpublish(this)">${esc(T('tpUnpublish'))}</button>`,
+      st === 'open' && `<button class="btn red" onclick="tpCloseNow(this)">${esc(T('tpCloseNow'))}</button>`].filter(Boolean);
+    return `<div class="box"><div class="hhead"><h2>${esc(d.title.en)}</h2></div>
+      <p class="muted" lang="zh" style="margin:0">${esc(d.title.zh)}</p>
+      <p><span class="pill ts-${esc(st)}">${esc(tpWord('tpStates', st))}</span> <span class="badge">${esc(d.code)}</span></p>
+      <p style="margin:6px 0 2px">${esc(T('tpWindow', tpAt(d.opensAt), tpAt(d.closesAt)))}</p>
+      <p class="muted" style="margin:0">${esc(T('tpBeijing', tpBj(d.opensAt), tpBj(d.closesAt)))}</p>
+      <p class="muted">${esc(tpWord('tpStateHelp', st))}${st === 'soon' || st === 'open'
+        ? ` ${esc(T('tpLinkL'))} <a href="/tees" target="_blank" rel="noopener">aybkk.net/tees</a> · cn.aybkk.net/tees` : ''}</p>
+      ${acts.length ? `<p class="row2">${acts.join('')}</p>` : ''}</div>`;
+  };
+  const tpTotalsHtml = d => {
+    const t = TP.totals;
+    if (!t || (d.state === 'draft' && !TP.orders.length)) return '';
+    const o = t.orders, m = t.money;
+    return `<div class="box"><b>${esc(T('tpTotalsH'))}</b><div class="tiles">
+      ${tile(T('tpSold'), String(t.tees.sold), T('tpSoldSub', t.tees.cap, t.tees.held, t.tees.left))}
+      ${tile(T('tpPaidOrders'), String(o.paid + o.oversold + o.handed), T('tpPaidSub', o.handed, o.oversold))}
+      ${tile(T('tpWaitingT'), String(o.waiting), T('tpWaitSub', o.expired, o.mismatch))}
+      ${tile(T('tpMoney'), baht(m.amount), T('tpMoneySub', baht(m.base), baht(m.fee), baht(m.vat)))}
+      ${t.refunds.n ? tile(T('tpRefunded'), baht(t.refunds.amount), T('nRefunds', t.refunds.n)) : ''}</div></div>`;
+  };
+
+  // ── tees: settings ──
+  const tpPkRow = (p, dis) => `<div class="tpk" data-pk><select aria-label="${esc(T('tpPkKey'))}"${dis}>${'ABCDEF'.split('').map(k => `<option${k === p.key ? ' selected' : ''}>${k}</option>`).join('')}</select>
+      <input maxlength="60" value="${esc(p.label)}" placeholder="${esc(T('tpPkPh'))}" aria-label="${esc(T('tpPkLabel'))}"${dis}>
+      ${dis ? '' : `<button class="btn gray sm" type="button" onclick="tpPkDel(this)" aria-label="${esc(T('tpPkDel'))}">×</button>`}</div>`;
+  function tpEditorHtml(d) {
+    const v = d || { code: '', title: { en: '', zh: '' }, opensAtBkk: '', closesAtBkk: '', cap: '', maxPerOrder: 5, holdMin: 30,
+      purgeDays: 30, rmbRate: null, pickups: [], state: 'draft' };
+    const [od = '', ot = ''] = String(v.opensAtBkk || '').split(' '), [cd = '', ct = ''] = String(v.closesAtBkk || '').split(' ');
+    TP.closeTouched = !!d && Date.parse(v.closesAt) - Date.parse(v.opensAt) !== 7 * 864e5;
+    const done = v.state === 'done', lock = !!d && TP.orders.length > 0, dis = done ? ' disabled' : '';
+    const open = TP.edOpen ?? (!d || v.state === 'draft');
+    const f = (label, input, help) => `<label class="tf"><span>${esc(label)}</span>${input}${help ? `<small>${esc(help)}</small>` : ''}</label>`;
+    const num = (id, val, lo, hi, step = 1) => `<input id="${id}" type="number" min="${lo}" max="${hi}" step="${step}" inputmode="${step === 1 ? 'numeric' : 'decimal'}" value="${esc(val ?? '')}"${dis}>`;
+    return `<details class="box" id="tpEd"${open ? ' open' : ''}><summary>${esc(T(d ? 'tpSetH' : 'tpNewH'))}</summary>
+      <div class="tform">
+        ${f(T('tpCode'), `<input id="tpeCode" value="${esc(v.code)}" maxlength="24" autocomplete="off" autocapitalize="none" spellcheck="false"${lock || done ? ' readonly' : ''}>`, T(lock ? 'tpCodeLocked' : 'tpCodeHelp'))}
+        ${f(T('tpTitleEn'), `<input id="tpeTen" value="${esc(v.title.en)}" maxlength="80"${dis}>`)}
+        ${f(T('tpTitleZh'), `<input id="tpeTzh" value="${esc(v.title.zh)}" maxlength="80" lang="zh"${dis}>`)}
+        <div class="tf"><span>${esc(T('tpOpens'))}</span><div class="tdt"><input id="tpeOd" type="date" value="${esc(od)}" aria-label="${esc(T('tpOpens'))}" onchange="tpAutoClose()"${dis}><input id="tpeOt" type="time" value="${esc(ot)}" aria-label="${esc(T('tpOpens'))}" onchange="tpAutoClose()"${dis}></div></div>
+        <div class="tf"><span>${esc(T('tpCloses'))}</span><div class="tdt"><input id="tpeCd" type="date" value="${esc(cd)}" aria-label="${esc(T('tpCloses'))}" oninput="tpCloseSet()"${dis}><input id="tpeCt" type="time" value="${esc(ct)}" aria-label="${esc(T('tpCloses'))}" oninput="tpCloseSet()"${dis}></div><small>${esc(T('tpClosesHelp'))}</small></div>
+        ${f(T('tpCap'), num('tpeCap', v.cap, 1, 500), T('tpCapHelp'))}
+        ${f(T('tpMax'), num('tpeMax', v.maxPerOrder, 1, 10))}
+        ${f(T('tpHold'), num('tpeHold', v.holdMin, 5, 1440), T('tpHoldHelp'))}
+        ${f(T('tpPurgeDays'), num('tpePurge', v.purgeDays, 1, 365), T('tpPurgeDaysHelp'))}
+        ${f(T('tpRmb'), num('tpeRmb', v.rmbRate, 0, 10, 0.0001), T('tpRmbHelp'))}
+      </div>
+      <div class="tf"><span>${esc(T('tpPickups'))}</span><div id="tpePk">${v.pickups.map(p => tpPkRow(p, dis)).join('')}</div>
+        ${done ? '' : `<p style="margin:2px 0"><button class="btn gray sm" type="button" id="tpePkAdd" onclick="tpPkAdd()">+ ${esc(T('tpPkAdd'))}</button></p>`}
+        <small>${esc(T('tpPkHelp'))}</small></div>
+      ${done ? '' : `<p class="row2"><button class="btn" onclick="tpSave(this)">${esc(T(d ? 'save' : 'tpCreate'))}</button>
+        <span id="tpEdMsg" class="muted" role="status"></span></p>`}
+    </details>`;
+  }
+  window.tpPkAdd = () => {
+    const box = $('#tpePk');
+    if (!box) return;
+    const used = [...box.querySelectorAll('select')].map(s => s.value);
+    const key = 'ABCDEF'.split('').find(k => !used.includes(k));
+    if (!key) return;
+    box.insertAdjacentHTML('beforeend', tpPkRow({ key, label: '' }, ''));
+    box.lastElementChild.querySelector('input').focus();
+  };
+  window.tpPkDel = btn => { const r = btn.closest('[data-pk]'); if (r) r.remove(); };
+  // Close follows open at +7 days until staff set a close of their own.
+  window.tpCloseSet = () => { TP.closeTouched = true; };
+  window.tpAutoClose = () => {
+    const od = ($('#tpeOd') || {}).value, ot = ($('#tpeOt') || {}).value;
+    if (TP.closeTouched || !od || !ot) return;
+    const ms = Date.parse(`${od}T${ot}:00+07:00`);
+    if (isNaN(ms)) return;
+    const s = new Date(ms + 7 * 864e5 + 7 * 3600e3).toISOString();
+    $('#tpeCd').value = s.slice(0, 10); $('#tpeCt').value = s.slice(11, 16);
+  };
+  const tpEdRead = () => {
+    const v = id => (document.getElementById(id) || {}).value || '';
+    const n = id => v(id).trim() === '' ? null : Number(v(id));
+    const od = v('tpeOd'), ot = v('tpeOt'), cd = v('tpeCd'), ct = v('tpeCt');
+    return { code: v('tpeCode').trim(), title: { en: v('tpeTen'), zh: v('tpeTzh') },
+      opensAt: od && ot ? `${od} ${ot}` : '', closesAt: cd && ct ? `${cd} ${ct}` : '',
+      cap: n('tpeCap'), maxPerOrder: n('tpeMax'), holdMin: n('tpeHold'), purgeDays: n('tpePurge'), rmbRate: n('tpeRmb'),
+      pickups: [...document.querySelectorAll('#tpePk [data-pk]')].map(r => ({ key: r.querySelector('select').value, label: r.querySelector('input').value.trim() })) };
+  };
+  const TP_ED_FIELD = { code: 'tpeCode', title: 'tpeTen', opensAt: 'tpeOd', closesAt: 'tpeCd', cap: 'tpeCap', maxPerOrder: 'tpeMax',
+    holdMin: 'tpeHold', purgeDays: 'tpePurge', rmbRate: 'tpeRmb', pickups: 'tpePk' };
+  // Saves what the settings box holds (plus extra); a refusal points at its field.
+  async function tpSaveDrop(extra) {
+    const d = tpDrop(), isNew = TP.sel === 'new';
+    const body = { ...(document.getElementById('tpeCode') ? tpEdRead() : {}), ...extra, ...(isNew ? {} : { id: d.id }) };
+    document.querySelectorAll('#tpEd .tbad').forEach(x => x.classList.remove('tbad'));
+    const r = await tpSend('/api/bkk/admin/tee/drops', body);
+    if (!r.ok) {
+      const at = r.j.field === 'pickups' && r.j.pickup
+        ? [...document.querySelectorAll('#tpePk [data-pk]')].find(x => x.querySelector('select').value === r.j.pickup)
+        : document.getElementById(TP_ED_FIELD[r.j.field] || '');
+      const el = at && (at.matches('input,select') ? at : at.querySelector('input') || at);
+      if (el && el.matches('input,select')) { el.classList.add('tbad'); el.focus(); }
+      if (r.j.field === 'published' && $('#tpGrid')) $('#tpGrid').open = true;
+      alert(r.j.error || T('failed'));
+      return null;
+    }
+    TP.sel = r.j.drop.id;
+    store.set('aybkk_admin_tee', String(TP.sel));
+    return r.j.drop;
+  }
+  window.tpSave = btn => tpBusy(btn, async () => {
+    if (!await tpSaveDrop({})) return;
+    await renderTees();
+    const m = $('#tpEdMsg');
+    if (m) m.textContent = T('tpSaved');
+  });
+  window.tpPublish = btn => tpBusy(btn, async () => {
+    const d = tpDrop();
+    if (!d) return;
+    if (TP.gridDirty) { alert(T('tpSaveGridFirst')); return; }
+    const f = document.getElementById('tpeCode') ? tpEdRead() : null;
+    if (!confirm(T('tpQPublish', tpAt(tpBkkIso(f && f.opensAt ? f.opensAt : d.opensAtBkk))))) return;
+    if (!await tpSaveDrop({ published: true })) return;
+    TP.edOpen = undefined;
+    renderTees({ flash: { text: T('tpPublished') } });
+  });
+  window.tpUnpublish = btn => tpBusy(btn, async () => {
+    const d = tpDrop();
+    if (!d || !confirm(T('tpQUnpublish'))) return;
+    const r = await tpSend('/api/bkk/admin/tee/drops', { id: d.id, published: false });
+    if (!r.ok) { alert(r.j.error || T('failed')); return; }
+    renderTees();
+  });
+  window.tpCloseNow = btn => tpBusy(btn, async () => {
+    const d = tpDrop();
+    if (!d || !confirm(T('tpQClose'))) return;
+    const r = await tpSend(`/api/bkk/admin/tee/drops/${d.id}/close`, {});
+    if (!r.ok) { alert(r.j.error || T('failed')); return; }
+    renderTees({ flash: { text: T('tpClosedNow') } });
+  });
+
+  // ── tees: the grid of tees, with what is sold, held and left of each ──
+  const tpGridRows = st => (st || []).map(s => ({ id: s.id, design: s.design, designEn: s.designName.en, designZh: s.designName.zh,
+    colour: s.colour, colourEn: s.colourName.en, colourZh: s.colourName.zh, size: s.size, priceThb: String(s.priceThb),
+    photo: s.photo || '', cap: String(s.cap), locked: !!s.hasOrders }));
+  const tpSumText = d => {
+    const s = (TP.grid || []).reduce((n, r) => n + (Number(r.cap) || 0), 0);
+    return T('tpSum', s, d.cap) + (s < d.cap ? T('tpSumLess', s) : s > d.cap ? T('tpSumMore', d.cap) : '');
+  };
+  const tpGridHtml = d => {
+    const done = d.state === 'done', rows = TP.grid || [];
+    const by = new Map(((TP.totals || {}).stock || []).map(s => [s.id, s]));
+    // A tee with orders keeps its design, colour, size and price: only its names and cap change.
+    const inp = (i, r, k, more) => `<input data-i="${i}" data-k="${k}" value="${esc(r[k])}"${more}${done || (r.locked && ['design', 'colour', 'priceThb'].includes(k)) ? ' disabled' : ''}>`;
+    const three = (i, r, k, label) => inp(i, r, k, ` placeholder="${esc(T('tpKeyPh'))}" aria-label="${esc(label)}" maxlength="24" autocomplete="off" autocapitalize="none" spellcheck="false"`)
+      + inp(i, r, k + 'En', ` placeholder="${esc(T('tpEnPh'))}" aria-label="${esc(label + ' · ' + T('tpEnPh'))}" maxlength="60"`)
+      + inp(i, r, k + 'Zh', ` placeholder="中文" lang="zh" aria-label="${esc(label)} · 中文" maxlength="60"`);
+    const body = rows.map((r, i) => {
+      const s = r.id ? by.get(r.id) : null;
+      return `<tr>
+        <td>${three(i, r, 'design', T('tpDesign'))}</td><td>${three(i, r, 'colour', T('tpColour'))}</td>
+        <td><select data-i="${i}" data-k="size" aria-label="${esc(T('tpSize'))}"${done || r.locked ? ' disabled' : ''}>${TP_SIZES.map(z => `<option${z === r.size ? ' selected' : ''}>${z}</option>`).join('')}</select></td>
+        <td class="n">${inp(i, r, 'priceThb', ` type="number" min="1" step="1" inputmode="numeric" aria-label="${esc(T('tpPrice'))}"`)}</td>
+        <td>${inp(i, r, 'photo', ` placeholder="/img/tees/…" aria-label="${esc(T('tpPhoto'))}" spellcheck="false" autocapitalize="none"`)}${/^\/img\/[\w./-]+$/.test(r.photo) ? `<img src="${esc(r.photo)}" alt="" class="tpth">` : ''}</td>
+        <td class="n">${inp(i, r, 'cap', ` type="number" min="0" max="500" step="1" inputmode="numeric" aria-label="${esc(T('tpCapCol'))}"`)}</td>
+        <td class="n">${s ? s.sold : ''}</td><td class="n">${s ? s.held : ''}</td>
+        <td class="n">${s ? `<b${s.left <= 0 ? ' class="agno"' : ''}>${s.left}</b>` : ''}</td>
+        <td>${done ? '' : `<button class="btn gray sm" onclick="tpRowDel(${i})" aria-label="${esc(T('tpRowDel'))}" title="${esc(T(r.locked ? 'tpLocked' : 'tpRowDel'))}"${r.locked ? ' disabled' : ''}>×</button>`}</td></tr>`;
+    }).join('');
+    const heads = [T('tpDesign'), T('tpColour'), T('tpSize'), [T('tpPrice'), 'n'], T('tpPhoto'), [T('tpCapCol'), 'n'], [T('tpSoldCol'), 'n'],
+      [T('tpHeldCol'), 'n'], [T('tpLeftCol'), 'n'], ''].map(h => Array.isArray(h) ? `<th class="n">${esc(h[0])}</th>` : `<th>${esc(h)}</th>`).join('');
+    return `<details class="box" id="tpGrid"${TP.gridOpen || !rows.length ? ' open' : ''}><summary>${esc(T('tpGridH'))} <span class="muted">(${rows.length})</span></summary>
+      <p class="muted">${esc(T('tpGridHelp'))}</p>
+      ${rows.length ? `<div class="scroll tgw"><table class="tg" oninput="tpGridIn(event)" onchange="tpGridIn(event)"><tr>${heads}</tr>${body}</table></div>`
+        : `<p class="muted">${esc(T('tpNoRows'))}</p>`}
+      <p id="tpSum" class="muted">${esc(tpSumText(d))}</p>
+      ${done ? '' : `<p class="row2"><button class="btn gray sm" onclick="tpRowAdd()">+ ${esc(T('tpRowAdd'))}</button>
+        <button class="btn" onclick="tpGridSave(this)">${esc(T('tpGridSave'))}</button>
+        <span id="tpGridMsg" class="muted" role="status">${TP.gridDirty ? esc(T('tpUnsaved')) : ''}</span></p>`}
+    </details>`;
+  };
+  window.tpGridIn = e => {
+    const el = e.target, i = Number(el.dataset.i), k = el.dataset.k, r = TP.grid && TP.grid[i];
+    if (!k || !r || r[k] === el.value) return;
+    r[k] = el.value; TP.gridDirty = true;
+    el.classList.remove('tbad');
+    const m = $('#tpGridMsg'), s = $('#tpSum'), d = tpDrop();
+    if (m) m.textContent = T('tpUnsaved');
+    if (s && d) s.textContent = tpSumText(d);
+  };
+  // A new row copies the one above it with the next size, so a colour's sizes go in quickly.
+  window.tpRowAdd = () => {
+    const g = TP.grid || (TP.grid = []), last = g[g.length - 1];
+    const used = last ? g.filter(r => r.design === last.design && r.colour === last.colour).map(r => r.size) : [];
+    const after = last ? TP_SIZES.indexOf(last.size) : -1;
+    const size = TP_SIZES.find((z, i) => i > after && !used.includes(z)) || TP_SIZES.find(z => !used.includes(z)) || 'M';
+    g.push(last ? { ...last, id: null, size, cap: '', locked: false }
+      : { id: null, design: '', designEn: '', designZh: '', colour: '', colourEn: '', colourZh: '', size: 'M', priceThb: '', photo: '', cap: '', locked: false });
+    TP.gridDirty = true; TP.gridOpen = true;
+    tpRepaint('tpGridW');
+    const el = document.querySelector(`#tpGrid [data-i="${g.length - 1}"][data-k="${last ? 'cap' : 'design'}"]`);
+    if (el) el.focus();
+  };
+  window.tpRowDel = i => {
+    if (!TP.grid || !TP.grid[i] || TP.grid[i].locked) return;
+    TP.grid.splice(i, 1); TP.gridDirty = true;
+    tpRepaint('tpGridW');
+  };
+  const TP_GRID_FIELD = { designName: 'designEn', colourName: 'colourEn' };
+  const tpGridMark = (i, k) => {
+    const el = document.querySelector(`#tpGrid [data-i="${i}"][data-k="${k}"]`) || document.querySelector(`#tpGrid [data-i="${i}"]`);
+    if (el) { el.classList.add('tbad'); el.focus(); }
+  };
+  window.tpGridSave = btn => tpBusy(btn, async () => {
+    const d = tpDrop();
+    if (!d || !TP.grid) return;
+    document.querySelectorAll('#tpGrid .tbad').forEach(x => x.classList.remove('tbad'));
+    const empty = TP.grid.findIndex(r => String(r.priceThb).trim() === '' || String(r.cap).trim() === '');
+    if (empty >= 0) {
+      tpGridMark(empty, String(TP.grid[empty].priceThb).trim() === '' ? 'priceThb' : 'cap');
+      alert(T('tpRowNeed', empty + 1));
+      return;
+    }
+    const stock = TP.grid.map((r, i) => ({ ...(r.id ? { id: r.id } : {}), design: r.design.trim(), designName: { en: r.designEn, zh: r.designZh },
+      colour: r.colour.trim(), colourName: { en: r.colourEn, zh: r.colourZh }, size: r.size, priceThb: Number(r.priceThb),
+      photo: r.photo.trim() || null, cap: Number(r.cap), sort: i * 10 }));
+    const r = await tpSend(`/api/bkk/admin/tee/drops/${d.id}/stock`, { stock }, 'PUT');
+    if (!r.ok) {
+      const i = Number.isInteger(r.j.row) ? r.j.row : r.j.stockId ? TP.grid.findIndex(x => x.id === r.j.stockId) : -1;
+      if (i >= 0) tpGridMark(i, TP_GRID_FIELD[r.j.field] || r.j.field || 'cap');
+      alert(r.j.error || T('failed'));
+      return;
+    }
+    TP.totals = r.j.totals; TP.grid = tpGridRows(r.j.totals.stock); TP.gridDirty = false;
+    await renderTees({ keepEd: true });
+    const m = $('#tpGridMsg');
+    if (m) m.textContent = T('tpSaved');
+  });
+
+  // ── tees: the orders, and one order in a panel ──
+  const tpShown = () => {
+    const { view, pickup, q } = TP.f, s = q.trim().toLowerCase();
+    return TP.orders.filter(o => (!view || o.view === view) && (!pickup || o.pickup === pickup)
+      && (!s || [o.name, o.wechat, o.refno, o.email, o.mobile].some(x => String(x || '').toLowerCase().includes(s))));
+  };
+  const tpTableHtml = () => {
+    const list = tpShown();
+    const rows = list.length ? list.map(o => `<tr${o.orderId === TP.drawer ? ' class="tsel"' : ''}>
+        <td class="muted ref" data-l="${esc(T('thRef'))}" style="font-size:12px;word-break:break-all">${esc(o.refno)}</td>
+        <td>${tpPill(o.view)}${o.problem ? `<span class="onote warn">${esc(T('tpProblemFlag'))}</span>` : ''}</td>
+        <td><button class="link who" id="tpo-${o.orderId}" onclick="tpOpen(${o.orderId})">${esc(o.name || T('tpPurged'))}</button>${o.wechat ? `<span class="onote">${esc(o.wechat)}</span>` : ''}</td>
+        <td>${esc(o.pickup || '')}</td>
+        <td>${o.items.map(it => `<div>${esc(tpItem(it))}</div>`).join('')}</td>
+        <td class="n">${baht(o.amount)}</td></tr>`).join('')
+      : `<tr><td colspan="6" class="muted">${esc(T('tpNoOrders'))}</td></tr>`;
+    return `<div class="scroll"><table class="ord"><tr><th>${esc(T('thRef'))}</th><th>${esc(T('thStatus'))}</th><th>${esc(T('tpBuyer'))}</th>
+      <th>${esc(T('tpPickupCol'))}</th><th>${esc(T('tpTeesCol'))}</th><th class="n">${esc(T('thAmount'))}</th></tr>${rows}</table></div>`;
+  };
+  const tpOrdersHtml = d => {
+    if (d.state === 'draft' && !TP.orders.length) return '';
+    const { view, pickup } = TP.f;
+    const inPt = TP.orders.filter(o => !pickup || o.pickup === pickup);
+    const n = v => inPt.filter(o => !v || o.view === v).length;
+    const chips = ['', ...TP_VIEWS].filter(v => !v || n(v) || v === view).map(v => `<button class="${v === view ? 'on' : ''}" aria-pressed="${v === view}"
+      onclick="tpFilter('view','${v}')">${esc(v ? tpWord('tpViews', v) : T('tpAll'))} ${n(v)}</button>`).join('');
+    return `<div class="box"><b>${esc(T('tpOrdersH'))}</b>
+      <div class="seg">${chips}</div>
+      <div class="row2"><select aria-label="${esc(T('tpPoint'))}" onchange="tpFilter('pickup', this.value)"><option value="">${esc(T('tpAllPoints'))}</option>
+        ${d.pickups.map(p => `<option value="${esc(p.key)}"${p.key === pickup ? ' selected' : ''}>${esc(p.key + ' · ' + p.label)}</option>`).join('')}</select>
+        <input id="tpQ" type="search" placeholder="${esc(T('tpSearchPh'))}" aria-label="${esc(T('tpSearchPh'))}" value="${esc(TP.f.q)}"
+          oninput="tpFilter('q', this.value)" style="flex:1 1 200px;min-width:0"></div>
+      <div id="tpOrdT">${tpTableHtml()}</div></div>`;
+  };
+  window.tpFilter = (k, v) => {
+    TP.f[k] = v;
+    if (k === 'q') { const el = $('#tpOrdT'); if (el) el.innerHTML = tpTableHtml(); return; }
+    tpRepaint('tpOrdW');
+  };
+  const tpOrder = () => TP.orders.find(x => x.orderId === TP.drawer) || null;
+  window.tpOpen = id => {
+    TP.drawer = id; TP.drawerFrom = 'tpo-' + id;
+    tpPaintDrawer();
+    const el = $('#tpOrdT');
+    if (el) el.innerHTML = tpTableHtml();
+    const b = $('#tpDrawer .tdtop .btn');
+    if (b) b.focus();
+  };
+  window.tpShut = (focus = true) => {
+    const el = $('#tpDrawer');
+    if (!el) return;
+    const was = TP.drawer;
+    TP.drawer = null; el.hidden = true; el.innerHTML = '';
+    if (was == null || !focus) return;
+    const t = $('#tpOrdT');
+    if (t) t.innerHTML = tpTableHtml();
+    const b = TP.drawerFrom && document.getElementById(TP.drawerFrom);
+    if (b) b.focus();
+  };
+  function tpPaintDrawer(msg) {
+    const o = tpOrder(), d = tpDrop(), el = $('#tpDrawer');
+    if (!o || !d) { tpShut(false); return; }
+    const st = o.status, paid = o.money === 'paid' || o.money === 'mismatch', live = st !== 'cancelled';
+    const stock = (TP.totals || {}).stock || [];
+    const others = stock.filter(s => !o.items.some(it => it.stockId === s.id));
+    const when = [T('tpMade', tpAt(o.createdAt)), o.paidAt && T('tpPaidAt', tpAt(o.paidAt)), o.handedAt && T('tpHandedAt', tpAt(o.handedAt)),
+      o.cancelledAt && T('tpCancelledAt', tpAt(o.cancelledAt))].filter(Boolean).map(esc).join('<br>');
+    const swap = st !== 'paid' && st !== 'oversold' ? '' : `<h3>${esc(T('tpSwapH'))}</h3>${others.some(s => s.left > 0)
+      ? `<div class="tdrow">${o.items.length > 1
+          ? `<select id="tdFrom" aria-label="${esc(T('tpSwapFrom'))}">${o.items.map(it => `<option value="${it.stockId}">${esc(tpItem(it))}</option>`).join('')}</select>`
+          : `<span>${esc(tpItem(o.items[0]))}</span>`}
+        <span class="muted">${esc(T('tpSwapTo'))}</span>
+        <select id="tdTo" aria-label="${esc(T('tpSwapTo'))}">${others.map(s => `<option value="${s.id}"${s.left > 0 ? '' : ' disabled'}>${esc(tpStockName(s))} (${esc(T('tpLeftN', s.left))})</option>`).join('')}</select>
+        <button class="btn sm" onclick="tpSwap(this)">${esc(T('tpSwapBtn'))}</button></div><p class="muted">${esc(T('tpSwapHelp'))}</p>`
+      : `<p class="muted">${esc(T('tpSwapNone'))}</p>`}`;
+    el.innerHTML = `<div class="tdcard" role="dialog" aria-modal="true" aria-labelledby="tdH">
+      <div class="tdtop"><h2 id="tdH">${esc(o.name || T('tpPurged'))}</h2><button class="btn gray sm" onclick="tpShut()">${esc(T('qrClose'))}</button></div>
+      <p>${tpPill(o.view)} <span class="muted">${esc(T('thRef'))} ${esc(o.refno)}</span></p>
+      ${msg ? `<div class="flash${msg.warn ? ' warn' : ''}" role="status">${esc(msg.text)}</div>` : ''}
+      ${o.view === 'waiting' ? `<p class="muted">${esc(T('tpHoldTill', tpAt(o.holdUntil)))}</p>` : ''}
+      ${st === 'oversold' ? `<p class="warnline">${esc(T('tpOversoldHelp'))}</p>` : ''}
+      ${o.view === 'mismatch' ? `<p class="warnline">${esc(T('chkMismatch'))}</p>` : ''}
+      ${st === 'paid' ? `<button class="btn pink big" onclick="tpHand(true, this)">${esc(T('tpHandBtn'))}</button>` : ''}
+      <h3>${esc(T('tpTeesH'))}</h3>
+      <table>${o.items.map(it => `<tr><td>${esc(tpItem(it))}</td><td class="n">${baht(it.unitThb * it.qty)}</td></tr>`).join('')}
+        <tr><td class="muted">${esc(T('tpFeeVat', baht(o.fee), baht(o.vat)))}</td><td class="n"><b>${baht(o.amount)}</b></td></tr></table>
+      <p class="muted">${when}</p>
+      ${st === 'handed' ? `<p><button class="btn gray sm" onclick="tpHand(false, this)">${esc(T('tpUnhand'))}</button></p>` : ''}
+      <h3>${esc(T('tpContactH'))}</h3>
+      ${o.purgedAt ? `<p class="muted">${esc(T('tpPurgedAt', tpAt(o.purgedAt)))}</p>`
+        : `<dl class="tdl"><dt>WeChat</dt><dd>${esc(o.wechat || '–')}</dd><dt>${esc(T('tpMobile'))}</dt><dd>${esc(o.mobile || '–')}</dd>
+          <dt>${esc(T('tpEmail'))}</dt><dd>${esc(o.email || '–')}</dd><dt>${esc(T('tpLangL'))}</dt><dd>${esc(TP_LANGS[o.lang] || o.lang || '–')}</dd></dl>`}
+      <h3>${esc(T('tpPickupH'))}</h3>
+      ${live ? `<div class="tdrow"><select id="tdPk" aria-label="${esc(T('tpPickupH'))}">${d.pickups.map(p => `<option value="${esc(p.key)}"${p.key === o.pickup ? ' selected' : ''}>${esc(p.key + ' · ' + p.label)}</option>`).join('')}</select>
+          <button class="btn sm" onclick="tpSetPk(this)">${esc(T('save'))}</button></div>`
+        : `<p>${esc([o.pickup, o.pickupLabel].filter(Boolean).join(' · '))}</p>`}
+      ${swap}
+      <h3>${esc(T('tpProblemH'))}</h3>
+      <textarea id="tdPb" rows="2" maxlength="300" aria-label="${esc(T('tpProblemH'))}">${esc(o.problem || '')}</textarea>
+      <div class="tdrow"><button class="btn sm" onclick="tpSetPb(false, this)">${esc(T('save'))}</button>${o.problem
+        ? `<button class="btn gray sm" onclick="tpSetPb(true, this)">${esc(T('tpPbClear'))}</button>` : ''}</div>
+      <p class="muted">${esc(T('tpProblemHelp'))}</p>
+      ${o.money === 'pending' && st === 'new' ? `<p><button class="btn sm" onclick="tpChk(this)">${esc(T('chkPay'))}</button></p>` : ''}
+      ${live && o.money !== 'void' && o.view !== 'cancelled' ? `<h3>${esc(T('tpCancelH'))}</h3>
+        <p><button class="btn red sm" onclick="tpCancel(this)">${esc(T(paid ? 'tpCancelRef' : 'tpCancel'))}</button></p>` : ''}
+      ${o.note ? `<p class="onote">${esc(o.note)}</p>` : ''}
+    </div>`;
+    el.hidden = false;
+  }
+  // After a change: everything but the settings box is drawn again, and the panel says what happened.
+  const tpAfter = async (r, okText) => {
+    if (!r.ok) {
+      tpPaintDrawer({ text: r.j.error === 'sold out' ? T('tpSoldOutSwap') : r.j.error || T('failed'), warn: true });
+      return;
+    }
+    await renderTees({ keepEd: true });
+    if (TP.drawer) tpPaintDrawer({ text: okText });
+  };
+  const tpAct = body => { const o = tpOrder(); return o ? tpSend(`/api/bkk/admin/tee/orders/${o.orderId}`, body) : Promise.resolve({ ok: false, j: {} }); };
+  window.tpHand = (on, btn) => tpBusy(btn, async () => {
+    if (!on && !confirm(T('tpQUnhand'))) return;
+    await tpAfter(await tpAct({ handed: on }), T(on ? 'tpHandedOk' : 'tpUnhandOk'));
+  });
+  window.tpSetPk = btn => tpBusy(btn, async () => { await tpAfter(await tpAct({ pickup: $('#tdPk').value }), T('tpSaved')); });
+  window.tpSetPb = (clear, btn) => tpBusy(btn, async () => { await tpAfter(await tpAct({ problem: clear ? '' : $('#tdPb').value }), T('tpSaved')); });
+  window.tpSwap = btn => tpBusy(btn, async () => {
+    const o = tpOrder();
+    if (!o) return;
+    const to = Number($('#tdTo').value), from = $('#tdFrom') ? Number($('#tdFrom').value) : o.items[0].stockId;
+    const a = o.items.find(it => it.stockId === from), b = ((TP.totals || {}).stock || []).find(s => s.id === to);
+    if (!a || !b || !confirm(T('tpQSwap', tpItem(a), tpStockName(b)))) return;
+    await tpAfter(await tpAct({ swapStockId: to, ...(o.items.length > 1 ? { fromStockId: from } : {}) }), T('tpSwapped'));
+  });
+  window.tpChk = btn => tpBusy(btn, async () => {
+    const o = tpOrder();
+    if (!o) return;
+    const r = await fetch('/api/bkk/pay/check/' + encodeURIComponent(o.refno)).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {}, st = r && r.ok ? j.status : null;
+    const over = j.tee && j.tee.status === 'oversold';
+    await renderTees({ keepEd: true });
+    if (TP.drawer) tpPaintDrawer(st === 'paid' ? { text: T(over ? 'tpForcedOver' : 'tpChkPaid'), warn: over }
+      : { text: T(st === 'mismatch' ? 'chkMismatch' : st ? 'chkNot' : 'chkErr'), warn: true });
+  });
+  window.tpCancel = btn => tpBusy(btn, async () => {
+    const o = tpOrder();
+    if (!o) return;
+    const paid = o.money === 'paid' || o.money === 'mismatch', body = paid ? { refunded: true } : {};
+    if (!confirm(paid ? T('tpQRefund', baht(o.amount)) : T('tpQCancel'))) return;
+    if (paid) { const why = ask(T('tpQReason')); if (why === null) return; body.reason = why; }
+    const url = `/api/bkk/admin/tee/orders/${o.orderId}/cancel`;
+    let r = await tpSend(url, body);
+    if (r.status === 409 && r.j.needs === 'confirm') {
+      if (!confirm(T('tpQHanded'))) return;
+      r = await tpSend(url, { ...body, confirm: true });
+    }
+    await tpAfter(r, T('tpCancelled'));
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if (!$('#tpPrint').hidden) tpPrintClose();
+    else if (TP.drawer != null) tpShut();
+  });
+
+  // ── tees: A4 lists for the team members who carry the tees ──
+  const tpPaidish = o => ['paid', 'handed', 'oversold'].includes(o.status);
+  const tpPrintBoxHtml = d => {
+    if (!d.pickups.length || (d.state === 'draft' && !TP.orders.length)) return '';
+    const row = (key, label) => {
+      const os = TP.orders.filter(o => tpPaidish(o) && (!key || o.pickup === key));
+      const tees = os.filter(o => o.status !== 'oversold').reduce((n, o) => n + o.qty, 0);
+      const k = `'${key}'`;
+      return `<tr><td>${key ? `<b>${esc(key)}</b> ${esc(label)}` : `<b>${esc(T('tpAllPts'))}</b>`}</td><td class="n">${os.length}</td><td class="n">${tees}</td>
+        <td class="n">${os.filter(o => o.status === 'paid').length}</td>
+        <td class="nowrap"><button class="btn sm" onclick="tpPrint('pickup',${k},this)">${esc(T('tpPickList'))}</button>
+          <button class="btn gray sm" onclick="tpPrint('declaration',${k},this)">${esc(T('tpCustoms'))}</button></td></tr>`;
+    };
+    return `<div class="box"><b>${esc(T('tpPrintH'))}</b><p class="muted">${esc(T('tpPrintHelp'))}</p>
+      <div class="scroll"><table><tr><th>${esc(T('tpPoint'))}</th><th class="n">${esc(T('tpPaidN'))}</th><th class="n">${esc(T('tpTeesN'))}</th>
+        <th class="n">${esc(T('tpToHand'))}</th><th></th></tr>
+      ${d.pickups.map(p => row(p.key, p.label)).join('')}${d.pickups.length > 1 ? row('', '') : ''}</table></div></div>`;
+  };
+  const tpZh = s => ` <span class="zh" lang="zh">${s}</span>`;
+  const tpPickSheet = j => {
+    const all = !j.pickup;
+    return `<article class="sheet">
+      <h1>AYBKK · ${esc(j.drop.title)}</h1>
+      <p class="sm">${esc(j.drop.code)} · ${esc(T('tpPrinted', tpAt(new Date().toISOString())))}</p>
+      <p style="font-size:13pt;margin:8px 0">${esc(T('tpPoint'))}${tpZh('取货点')}: <b>${esc(all ? T('tpAllPts') : `${j.pickup.key} · ${j.pickup.label}`)}</b></p>
+      <h2>${esc(T('tpTake'))}${tpZh('要带的T恤')}</h2>
+      ${j.totals.length ? `<table><tr><th>${esc(T('tpDesign'))}</th><th>${esc(T('tpColour'))}</th><th>${esc(T('tpSize'))}</th><th class="n">${esc(T('tpQty'))}</th></tr>
+        ${j.totals.map(t => `<tr><td>${esc(t.designName)}</td><td>${esc(t.colourName)}</td><td>${esc(t.size)}</td><td class="n">${t.qty}</td></tr>`).join('')}
+        <tr><td colspan="3"><b>${esc(T('tpTotal'))}</b></td><td class="n"><b>${j.total}</b></td></tr></table>` : `<p>${esc(T('tpNoneToTake'))}</p>`}
+      ${j.oversold ? `<p class="warnp">${esc(T('tpOverN', j.oversold))}</p>` : ''}
+      <h2>${esc(T('tpBuyers'))}${tpZh('买家')} (${j.buyers.length})</h2>
+      ${j.buyers.length ? `<table><tr><th class="tick">✓</th><th>${esc(T('tpBuyer'))}</th><th>WeChat</th><th>${esc(T('tpTeesCol'))}</th>${all ? `<th>${esc(T('tpPickupCol'))}</th>` : ''}<th>${esc(T('thRef'))}</th></tr>
+        ${j.buyers.map(b => `<tr><td class="tick">${b.handed ? '☑' : '☐'}</td>
+          <td><b>${esc(b.name || T('tpPurged'))}</b>${b.status === 'oversold' ? `<br><span class="sm">${esc(T('tpOverRow'))}</span>` : ''}${b.problem ? `<br><span class="sm">⚠ ${esc(b.problem)}</span>` : ''}</td>
+          <td>${esc(b.wechat || '')}</td><td>${b.items.map(it => `<div>${esc(tpItem(it))}</div>`).join('')}</td>${all ? `<td>${esc(b.pickup || '')}</td>` : ''}
+          <td class="sm">${esc(b.refno)}</td></tr>`).join('')}</table>` : ''}
+      <p class="sm" style="margin-top:14px">${esc(T('tpTick'))}</p><p class="sm"><b>${esc(T('tpKeepSafe'))}</b></p></article>`;
+  };
+  // For China customs, so in English and Chinese whatever the page language. No buyer on it.
+  const tpDeclSheet = (j, d) => {
+    const rate = d.rmbRate, n = v => Number(v).toLocaleString('en-US'), cny = v => '≈ ¥' + Math.round(v * rate).toLocaleString('en-US');
+    return `<article class="sheet">
+      <h1>Goods carried · 随身携带物品申报清单</h1>
+      <p>T-shirts (new) · 新T恤<br><span class="sm">AYBKK · ${esc(j.drop.code)}${j.pickup ? ` · bag ${esc(j.pickup.key)} · 行李 ${esc(j.pickup.key)}` : ''}</span></p>
+      <table><tr><th>#</th><th>Item · 物品</th><th class="n">Qty · 数量</th><th class="n">Unit price (THB) · 单价（泰铢）</th>
+        <th class="n">Total (THB) · 总价（泰铢）</th>${rate ? '<th class="n">CNY · 人民币</th>' : ''}</tr>
+        ${j.lines.length ? j.lines.map((l, i) => `<tr><td>${i + 1}</td><td>T-shirt · T恤: ${esc(l.designName)} / <span lang="zh">${esc(l.designNameZh)}</span>,
+          ${esc(l.colourName)} / <span lang="zh">${esc(l.colourNameZh)}</span></td><td class="n">${l.qty}</td><td class="n">${n(l.unitThb)}</td>
+          <td class="n">${n(l.totalThb)}</td>${rate ? `<td class="n">${cny(l.totalThb)}</td>` : ''}</tr>`).join('')
+          : `<tr><td></td><td colspan="${rate ? 5 : 4}">${esc(T('tpNoneToTake'))}</td></tr>`}
+        <tr><td></td><td><b>Total · 合计</b></td><td class="n"><b>${j.total.qty}</b></td><td></td><td class="n"><b>${n(j.total.thb)}</b></td>
+          ${rate ? `<td class="n"><b>${cny(j.total.thb)}</b></td>` : ''}</tr></table>
+      <p class="sm">Unit price: the tee's price, before the online payment fee and Thai VAT · 单价为T恤售价，不含网上支付手续费和泰国增值税${rate
+        ? `<br>CNY at about ${esc(rate)} per THB · 按 1 泰铢约 ${esc(rate)} 人民币估算` : ''}</p>
+      <div class="sign"><p>Carried by · 携带人<span class="line"></span></p>
+        <p>Flight · 航班<span class="line"></span> Date · 日期<span class="line"></span></p>
+        <p>Signature · 签名<span class="line"></span></p></div>
+      <p class="sm" style="margin-top:18px">${esc(T('tpPrinted', tpAt(new Date().toISOString())))}</p></article>`;
+  };
+  window.tpPrint = (kind, key, btn) => tpBusy(btn, async () => {
+    const d = tpDrop();
+    if (!d) return;
+    const j = await tpGet(`/api/bkk/admin/tee/drops/${d.id}/${kind}${key ? '?pickup=' + encodeURIComponent(key) : ''}`);
+    if (!j) { alert(T('failed')); return; }
+    const el = $('#tpPrint');
+    TP.printFrom = btn || null;
+    el.innerHTML = `<div class="ptool"><button class="btn" onclick="window.print()">${esc(T('tpPrintBtn'))}</button>
+      <button class="btn gray" onclick="tpPrintClose()">${esc(T('qrClose'))}</button><span class="muted">A4</span></div>
+      ${kind === 'pickup' ? tpPickSheet(j) : tpDeclSheet(j, d)}`;
+    el.hidden = false; el.scrollTop = 0;
+    el.querySelector('.ptool .btn').focus();
+  });
+  window.tpPrintClose = () => {
+    const el = $('#tpPrint');
+    if (!el || el.hidden) return;
+    el.hidden = true; el.innerHTML = '';
+    if (TP.printFrom && TP.printFrom.isConnected) TP.printFrom.focus();
+  };
+
+  // ── tees: Finish, the report, and deleting contact details ──
+  const tpCostRows = d => TP.costs || (TP.costs = Object.keys(d.costs || {}).length
+    ? Object.entries(d.costs).map(([k, v]) => [k, String(v)]) : [[T('tpCostPrint'), ''], [T('tpCostCarry'), '']]);
+  const tpCostsObj = () => {
+    const out = {};
+    for (const [k, v] of TP.costs || []) { const l = k.trim(); if (l && String(v).trim() !== '') out[l] = (out[l] || 0) + Number(v); }
+    return out;
+  };
+  const tpCostSum = c => Object.values(c).reduce((n, v) => n + (Number(v) || 0), 0);
+  const tpReportHtml = r => {
+    const costs = r.live ? tpCostsObj() : r.costs || {}, spent = tpCostSum(costs);
+    return `<div id="tpRep"><h3 class="tph">${esc(r.live ? T('tpReportH') : T('tpFrozen', tpAt(r.frozenAt)))}</h3>
+      ${r.live ? `<p class="muted">${esc(T('tpLiveNote'))}</p>` : ''}
+      <div class="tiles">${tile(T('tpSold'), String(r.tees.sold), T('tpHandedN', r.tees.handed))}
+        ${tile(T('tpMoney'), baht(r.money.amount), T('tpMoneySub', baht(r.money.base), baht(r.money.fee), baht(r.money.vat)))}
+        ${r.refunds.n ? tile(T('tpRefunded'), baht(r.refunds.amount), T('nRefunds', r.refunds.n)) : ''}
+        ${tile(T('tpCostsT'), baht(spent))}${tile(T('tpLess'), baht(r.money.base - spent), T('tpLessSub'))}</div>
+      ${tbl([[T('tpTeeCol')], [T('tpPrice'), 'n'], [T('tpCapCol'), 'n'], [T('tpSoldCol'), 'n'], [T('tpHanded'), 'n']],
+        r.stock.map(s => `<tr><td>${esc(`${s.designName} · ${s.colourName} · ${s.size}`)}</td><td class="n">${baht(s.priceThb)}</td>
+          <td class="n">${s.cap}</td><td class="n">${s.sold}</td><td class="n">${s.handed}</td></tr>`))}
+      ${Object.keys(costs).length ? tbl([[T('tpCostL')], ['฿', 'n']], Object.entries(costs).map(([k, v]) => `<tr><td>${esc(k)}</td><td class="n">${baht(v)}</td></tr>`)) : ''}</div>`;
+  };
+  const tpFinishHtml = d => {
+    const done = d.state === 'done';
+    if (!done && d.state === 'draft' && !TP.orders.length) return '';
+    const can = !(d.published && (d.state === 'open' || d.state === 'soon'));
+    const costs = done ? [] : tpCostRows(d);
+    return `<div class="box"><b>${esc(T(done ? 'tpReportH' : 'tpFinishH'))}</b>
+      ${done ? '' : `<p class="muted">${esc(T('tpFinishHelp'))}</p>
+        <table class="tcost" oninput="tpCostIn(event)">${costs.map(([k, v], i) => `<tr>
+          <td><input data-i="${i}" data-k="0" value="${esc(k)}" maxlength="40" placeholder="${esc(T('tpCostL'))}" aria-label="${esc(T('tpCostL'))}"></td>
+          <td class="n"><input data-i="${i}" data-k="1" type="number" min="0" step="1" inputmode="numeric" value="${esc(v)}" placeholder="฿" aria-label="${esc(k || T('tpCostL'))} ฿"></td>
+          <td><button class="btn gray sm" onclick="tpCostDel(${i})" aria-label="${esc(T('tpRowDel'))}">×</button></td></tr>`).join('')}
+          <tr><td class="muted">${esc(T('tpCostsT'))}</td><td class="n"><b id="tpCostSum">${baht(tpCostSum(tpCostsObj()))}</b></td><td></td></tr></table>
+        <p class="row2"><button class="btn gray sm" onclick="tpCostAdd()">+ ${esc(T('tpCostAdd'))}</button></p>
+        <p class="row2"><button class="btn gray" onclick="tpReport(this)">${esc(T('tpReportLive'))}</button>
+          <button class="btn pink" onclick="tpFinish(this)"${can ? '' : ' disabled'}>${esc(T('tpFinishBtn'))}</button></p>
+        ${can ? '' : `<p class="muted">${esc(T('tpFinishWait'))}</p>`}`}
+      ${TP.report ? tpReportHtml(TP.report) : ''}
+      ${done ? `<p><button class="btn sm" onclick="tpCsv(this)">${esc(T('tpCsv'))}</button></p>` : ''}</div>`;
+  };
+  window.tpCostIn = e => {
+    const el = e.target, i = Number(el.dataset.i), k = Number(el.dataset.k);
+    if (!TP.costs || !TP.costs[i] || !(k === 0 || k === 1)) return;
+    TP.costs[i][k] = el.value;
+    const s = $('#tpCostSum');
+    if (s) s.textContent = baht(tpCostSum(tpCostsObj()));
+    const rep = $('#tpRep');
+    if (rep && TP.report && TP.report.live) rep.outerHTML = tpReportHtml(TP.report);
+  };
+  window.tpCostAdd = () => { (TP.costs || []).push(['', '']); tpRepaint('tpFinW'); const ins = document.querySelectorAll('.tcost input[data-k="0"]'); if (ins.length) ins[ins.length - 1].focus(); };
+  window.tpCostDel = i => { if (TP.costs) TP.costs.splice(i, 1); tpRepaint('tpFinW'); };
+  window.tpReport = btn => tpBusy(btn, async () => {
+    const d = tpDrop();
+    if (!d) return;
+    const j = await tpGet(`/api/bkk/admin/tee/drops/${d.id}/report`);
+    if (!j) { alert(T('failed')); return; }
+    TP.report = j.report;
+    tpRepaint('tpFinW');
+  });
+  window.tpFinish = btn => tpBusy(btn, async () => {
+    const d = tpDrop();
+    if (!d) return;
+    const costs = tpCostsObj(), url = `/api/bkk/admin/tee/drops/${d.id}/finish`;
+    if (!confirm(T('tpQFinish', baht(tpCostSum(costs))))) return;
+    let r = await tpSend(url, { costs });
+    if (r.status === 409 && r.j.notHanded) {
+      if (!confirm(T('tpQNotHanded', r.j.notHanded))) return;
+      r = await tpSend(url, { costs, confirm: true });
+    }
+    if (r.status === 409 && r.j.holds) { alert(T('tpFinHolds', r.j.holds, tpAt(r.j.until))); return; }
+    if (!r.ok) { alert(r.j.error || T('failed')); return; }
+    TP.report = { ...r.j.report, live: false };
+    renderTees({ flash: { text: T('tpFinished') } });
+  });
+  window.tpCsv = btn => tpBusy(btn, async () => {
+    const d = tpDrop();
+    if (!d) return;
+    const r = await api(`/api/bkk/admin/tee/drops/${d.id}/report.csv`).catch(() => null);
+    if (!r || !r.ok) { alert(T('failed')); return; }
+    saveBlob(await r.blob(), `aybkk-tees-${d.code}-report.csv`);
+  });
+  const tpPurgeHtml = d => {
+    if (!TP.orders.length) return '';
+    const kept = TP.orders.filter(o => !o.purgedAt).length;
+    return `<div class="box"><b>${esc(T('tpPurgeH'))}</b><p class="muted">${esc(T('tpPurgeHelp', d.purgeDays))}</p>
+      <p>${esc(T('tpKept', kept))}</p>
+      <p><button class="btn red" onclick="tpPurge(this)"${kept ? '' : ' disabled'}>${esc(T('tpPurgeBtn'))}</button></p></div>`;
+  };
+  window.tpPurge = btn => tpBusy(btn, async () => {
+    const d = tpDrop();
+    if (!d || !confirm(T('tpQPurge'))) return;
+    const r = await tpSend(`/api/bkk/admin/tee/drops/${d.id}/purge`, { confirm: true });
+    if (!r.ok) { alert(r.j.error || T('failed')); return; }
+    await renderTees({ keepEd: true, flash: { text: T('tpPurgeDone', r.j.purged, r.j.kept) } });
+  });
 
   // ── shared by history, reports and the import ─────────────────────────────
   const baht = n => (n < 0 ? '-' : '') + '฿' + Math.abs(Number(n) || 0).toLocaleString('en-US');

@@ -8746,6 +8746,625 @@ const ok = (name, cond, extra = '') => {
          && ((await J('/api/bkk/admin/members?consent=missing', { headers: ADMIN })).body.members || []).length === 0, JSON.stringify(offB.body));
   }
 
+  console.log('\n— the tee pre-order: collected in China, paid through PaySolutions (24 Nov 2026) —');
+  {
+    const http = require('http');
+    const { TEE_NOTICE, TEE_NOTICE_VERSION } = require('../bkk-api.js');
+    const mail = require('../mailer.js').outbox;
+    const one = async (sql, args = []) => (await pool.query(sql, args)).rows[0] || {};
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    const until = async (cond, ms = 3000) => { const end = Date.now() + ms; let v; while (!(v = await cond()) && Date.now() < end) await wait(25); return v; };
+    const sha = x => crypto.createHash('sha256').update(JSON.stringify(x)).digest('hex');
+    const MIN = 60000, DAY = 86400000;
+    const clockWas = clock, T0 = Math.floor(Date.now() / MIN) * MIN;
+    clock = T0;
+    const bkkMin = ms => new Date(ms + 7 * 3600000).toISOString().slice(0, 16).replace('T', ' ');
+    const iso7 = ms => new Date(ms + 7 * 3600000).toISOString().slice(0, 19) + '+07:00';
+    // PaySolutions on 127.0.0.1: an answer per 12-digit ref, every ask counted.
+    const asked = [], answers = {};
+    const stub = http.createServer((req, res) => {
+      let body = ''; req.on('data', c => { body += c; });
+      req.on('end', () => {
+        let ref = null; try { ref = JSON.parse(body).refno; } catch (_) {}
+        asked.push(ref);
+        res.setHeader('Content-Type', 'application/json');
+        res.end(answers[ref] == null ? '' : JSON.stringify(answers[ref]));
+      });
+    });
+    const tg = [];
+    const tgStub = http.createServer((req, res) => {
+      let body = ''; req.on('data', c => { body += c; });
+      req.on('end', () => { let j = {}; try { j = JSON.parse(body); } catch (_) {}
+        tg.push(String(j.text || '')); res.setHeader('Content-Type', 'application/json'); res.end('{"ok":true,"result":{}}'); });
+    });
+    await new Promise(r => stub.listen(0, '127.0.0.1', r));
+    await new Promise(r => tgStub.listen(0, '127.0.0.1', r));
+    const env = { PAYSO_MERCHANT_ID: '00012345', PAYSO_SECRET_KEY: 'test-only', PAYSO_API_KEY: 'test-only',
+      PAYSO_INQUIRY_BASE: `http://127.0.0.1:${stub.address().port}`, TELEGRAM_BOT_TOKEN: 'tg-test-token', BOONCHU_CHAT_ID: '4242',
+      TELEGRAM_API_BASE: `http://127.0.0.1:${tgStub.address().port}` };
+    const envWas = Object.fromEntries(Object.keys(env).map(k => [k, process.env[k]]));
+    Object.assign(process.env, env);
+    const KEYS = ['privacy_legal_name', 'privacy_address', 'privacy_email', 'consent_mode', 'ping_each_sale'];
+    const keysWas = (await pool.query('SELECT key, value FROM bkk_settings WHERE key = ANY($1::text[])', [KEYS])).rows;
+    const setKey = (k, v) => pool.query(`INSERT INTO bkk_settings (key,value) VALUES ($1,$2) ON CONFLICT (key) DO UPDATE SET value=$2`, [k, JSON.stringify(v)]);
+    await setKey('privacy_legal_name', 'Example Yoga Co., Ltd.');
+    await setKey('privacy_address', '1 Example Road, Bangkok');
+    await setKey('privacy_email', 'privacy@example.com');
+    await setKey('consent_mode', 'off');
+    await setKey('ping_each_sale', 'off');
+    const A = (p, body) => post('/api/bkk/admin/tee/' + p, body, ADMIN);
+    const AG = p => J('/api/bkk/admin/tee/' + p, { headers: ADMIN });
+    const PUT = (p, body, headers = ADMIN) => J('/api/bkk/admin/tee/' + p, { method: 'PUT', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(body) });
+    let ipN = 0;
+    const order = (body, ip) => post('/api/bkk/tee-orders', body, { 'x-forwarded-for': ip || `198.51.100.${++ipN % 250}` });
+    const r12 = refno => String(refno).padStart(12, '0');
+    const payAs = (o, amount = o.body.order.amount) => { answers[r12(o.body.order.refno)] = [{ ReferenceNo: r12(o.body.order.refno), Total: amount, Status: 'Y', StatusName: 'Paid' }]; };
+    const teeRow = refno => one(`SELECT t.*, o.status AS money, o.kind, o.product_id, o.member_id, o.source, o.method, o.item_name,
+      o.base_thb, o.fee_thb, o.vat_thb, o.amount_thb, o.gateway_note FROM bkk_tee_orders t JOIN bkk_orders o ON o.id=t.order_id WHERE o.refno=$1`, [refno]);
+    const receipts = to => mail.filter(m => m.to === to && m.tag === 'teeReceipt');
+    const counts = async () => one(`SELECT (SELECT count(*)::int FROM bkk_members) AS members, (SELECT count(*)::int FROM bkk_login_tokens) AS tokens,
+      (SELECT count(*)::int FROM bkk_consents) AS consents, (SELECT count(*)::int FROM bkk_passes) AS passes,
+      (SELECT count(*)::int FROM bkk_bookings) AS bookings`);
+    // Every buyer in this block: no Telegram text may carry any of it.
+    const PRIVATE = /Example|Over (One|Two)|@example\.com|_wx|lin_example|wen_example|13800138000|13912345678/;
+
+    try {
+      console.log('  schema and notice');
+      const col = await one(`SELECT column_default, is_nullable FROM information_schema.columns WHERE table_name='bkk_orders' AND column_name='kind'`);
+      let badKind = null;
+      try { await pool.query(`INSERT INTO bkk_orders (refno,base_thb,amount_thb,kind) VALUES (990800000009,1,1,'shirt')`); } catch (e) { badKind = e.message; }
+      ok("bkk_orders.kind: 'pass' by default, never empty, every order so far a pass, and only 'pass' or 'tee'", /'pass'/.test(col.column_default || '')
+         && col.is_nullable === 'NO' && (await one(`SELECT count(*)::int AS n FROM bkk_orders WHERE kind <> 'pass'`)).n === 0
+         && /check constraint/.test(badKind || ''), JSON.stringify([col, badKind]));
+      const TEE_PINNED = { en: '500d81ab133aae671281586f25d260a12f7f455b115af7f041502b4bd83cd839', zh: '7a055ae371710e213d1a63899f083119df72d48425e279f978989bea6001d865' };
+      ok('tee notice t1: English and Chinese only, each the pinned text', TEE_NOTICE_VERSION === 't1' && Object.keys(TEE_NOTICE.t1).join() === 'en,zh'
+         && sha(TEE_NOTICE.t1.en) === TEE_PINNED.en && sha(TEE_NOTICE.t1.zh) === TEE_PINNED.zh, `${sha(TEE_NOTICE.t1.en)} ${sha(TEE_NOTICE.t1.zh)}`);
+      ok('...it names who handles the data, the pickup team member, the trip between Thailand and China, and how long', ['en', 'zh'].every(l => {
+        const s = TEE_NOTICE.t1[l].sections.map(x => x[1]).join(' ');
+        return ['PaySolutions', 'Resend', 'Railway', 'Telegram', '{purge_days}', '{legal_name}', '{address}', '{email}', '5'].every(w => s.includes(w))
+          && (l === 'en' ? /WeChat ID/.test(s) && /Thailand and China/.test(s) : /微信号/.test(s) && /泰国和中国/.test(s));
+      }));
+
+      console.log('  a drop and its tees (Admin)');
+      const opens = T0 - 60 * MIN, closes = opens + 7 * DAY;
+      const PICKUPS = [{ key: 'A', label: 'Shanghai · Carrier One' }, { key: 'B', label: 'Shenzhen · Carrier Two' }];
+      const mk = await A('drops', { code: 'test-drop-1', title: { en: 'Test tees', zh: '测试T恤' }, opensAt: bkkMin(opens), cap: 20,
+        maxPerOrder: 5, holdMin: 30, purgeDays: 30, rmbRate: 0.2, pickups: PICKUPS });
+      const D1 = mk.body.drop || {};
+      ok('staff make a drop: Bangkok times in, close 7 days after open by default, a draft until published', mk.status === 200
+         && D1.opensAt === iso7(opens) && D1.closesAt === iso7(closes) && D1.opensAtBkk === bkkMin(opens) && D1.state === 'draft'
+         && D1.published === false && D1.cap === 20 && D1.rmbRate === 0.2 && D1.pickups.length === 2, JSON.stringify(mk.body));
+      const badDrops = await Promise.all([{ code: 'X' }, { code: 'test-drop-x', title: { en: 'x' } },
+        { code: 'test-drop-x', title: { en: 'x', zh: 'y' }, opensAt: '2026-13-01 10:00', cap: 5 },
+        { code: 'test-drop-x', title: { en: 'x', zh: 'y' }, opensAt: bkkMin(opens), closesAt: bkkMin(opens - MIN), cap: 5 },
+        { code: 'test-drop-x', title: { en: 'x', zh: 'y' }, opensAt: bkkMin(opens), cap: 501 },
+        { code: 'test-drop-x', title: { en: 'x', zh: 'y' }, opensAt: bkkMin(opens), cap: 5, pickups: [{ key: 'G', label: 'x' }] }].map(b => A('drops', b)));
+      ok('...a bad code, a title missing Chinese, a bad date, a close before the open, a cap over 500, a pickup key past F: 400 with the field',
+         badDrops.map(r => `${r.status}:${r.body.field}`).join() === '400:code,400:title,400:opensAt,400:closesAt,400:cap,400:pickups',
+         badDrops.map(r => `${r.status}:${r.body.field}`).join());
+      const dupe = await A('drops', { code: 'test-drop-1', title: { en: 'x', zh: 'y' }, opensAt: bkkMin(opens), cap: 5 });
+      const pubEmpty = await A('drops', { id: D1.id, published: true });
+      ok('...a code already used is 409, and nothing is published before it has tees', dupe.status === 409 && dupe.body.field === 'code'
+         && pubEmpty.status === 409 && pubEmpty.body.field === 'published', JSON.stringify([dupe.body, pubEmpty.body]));
+      const row = (design, colour, size, cap, price, o = {}) => ({ design, designName: { en: design === 'lotus' ? 'Lotus' : 'Moon', zh: design === 'lotus' ? '莲花' : '月亮' },
+        colour, colourName: { en: colour[0].toUpperCase() + colour.slice(1), zh: { black: '黑色', white: '白色', navy: '藏青' }[colour] },
+        size, priceThb: price, cap, photo: `/img/tees/${design}-${colour}.jpg`, ...o });
+      const GRID = [row('lotus', 'black', 'S', 2, 690), row('lotus', 'black', 'M', 5, 690), row('lotus', 'black', 'L', 1, 690),
+        row('lotus', 'white', 'M', 3, 690), row('moon', 'navy', 'M', 4, 750), row('moon', 'navy', 'L', 2, 750), row('moon', 'navy', 'XL', 0, 750)];
+      const badGrid = await Promise.all([[row('lotus', 'black', 'XXL', 1, 690)], [row('lotus', 'black', 'S', 1, 690, { photo: '/img/../x.jpg' })],
+        [row('lotus', 'black', 'S', 1, 0)], [row('lotus', 'black', 'S', 1, 690), row('lotus', 'black', 'S', 2, 690)]].map(g => PUT(`drops/${D1.id}/stock`, { stock: g })));
+      ok('the tee grid: a size not on the list, a photo outside /img/, a price of 0, one tee twice: 400', badGrid.every(r => r.status === 400),
+         JSON.stringify(badGrid.map(r => r.body)));
+      const g1 = await PUT(`drops/${D1.id}/stock`, { stock: GRID });
+      const stockId = {};
+      for (const s of (g1.body.totals || {}).stock || []) stockId[`${s.design}-${s.colour}-${s.size}`] = s.id;
+      ok('...saved whole, with each tee cap, sold, held and left for staff, and the sum of caps next to the drop cap', g1.status === 200
+         && g1.body.totals.stock.length === 7 && g1.body.totals.tees.stockCaps === 17 && g1.body.totals.tees.cap === 20
+         && g1.body.totals.stock.every(s => s.sold === 0 && s.held === 0 && s.left === s.cap), JSON.stringify(g1.body).slice(0, 300));
+      const pub = await A('drops', { id: D1.id, published: true });
+      ok('...then it publishes, and is open', pub.status === 200 && pub.body.drop.state === 'open' && pub.body.drop.published === true, JSON.stringify(pub.body));
+      // A draft open at the same time is never shown or sold.
+      const draft = await A('drops', { code: 'test-draft', title: { en: 'Draft', zh: '草稿' }, opensAt: bkkMin(opens - DAY), cap: 5, pickups: PICKUPS });
+      await PUT(`drops/${draft.body.drop.id}/stock`, { stock: [row('lotus', 'black', 'M', 5, 690)] });
+
+      console.log('  the public drop');
+      const pd = await J('/api/bkk/tee-drop?lang=zh');
+      const pdj = JSON.stringify(pd.body), d = pd.body.drop || {};
+      const sizesOf = (design, colour) => ((d.designs || []).find(x => x.design === design) || { colours: [] }).colours.find(c => c.colour === colour);
+      ok('GET /api/bkk/tee-drop: the open drop in Chinese, its window in +07:00, the fee, VAT, the about-yuan rate and the pickup points',
+         pd.status === 200 && d.code === 'test-drop-1' && d.title === '测试T恤' && d.state === 'open' && d.opensAt === iso7(opens) && d.closesAt === iso7(closes)
+         && /\+07:00$/.test(d.now) && d.maxPerOrder === 5 && typeof d.surchargePct === 'number' && d.vatPct === 7 && d.rmbRate === 0.2 && d.canPay === true
+         && JSON.stringify(d.pickups) === JSON.stringify(PICKUPS), pdj.slice(0, 400));
+      ok('...one card per design, colours and sizes in size order, ok / few / out and never a number',
+         d.designs.length === 2 && d.designs[0].name === '莲花' && d.designs[0].priceThb === 690 && d.designs[0].photo === '/img/tees/lotus-black.jpg'
+         && sizesOf('lotus', 'black').sizes.map(s => `${s.size}:${s.state}`).join() === 'S:few,M:ok,L:few'
+         && sizesOf('moon', 'navy').sizes.map(s => `${s.size}:${s.state}`).join() === 'M:ok,L:few,XL:out'
+         && sizesOf('lotus', 'black').name === '黑色', JSON.stringify(d.designs));
+      ok('...no stock number, no order count and nothing a buyer typed, anywhere in it', !/"(cap|sold|held|left|taken|orders|count)"/.test(pdj)
+         && d.designs.every(x => x.colours.every(c => c.sizes.every(s => JSON.stringify(Object.keys(s)) === '["stockId","size","priceThb","state"]'))), pdj);
+      ok('...and the tee notice, filled in, with its pinned sha (never the class agreement)', d.notice && d.notice.version === 't1' && d.notice.lang === 'zh'
+         && d.notice.sha === sha(TEE_NOTICE.t1.zh) && d.notice.ready === true && d.notice.text.sections.some(([, p]) => p.includes('Example Yoga Co., Ltd.'))
+         && d.notice.text.sections.some(([, p]) => p.includes('30 天')) && !/\{(legal_name|address|email|purge_days)\}/.test(JSON.stringify(d.notice.text))
+         && !pdj.includes('Before your first class'), JSON.stringify(d.notice));
+      const pdR = await fetch(B + '/api/bkk/tee-drop');
+      ok('...not cached, and English when no language is asked', /no-store/.test(pdR.headers.get('cache-control') || '') && (await pdR.json()).drop.title === 'Test tees');
+
+      const base = (o = {}) => ({ drop: 'test-drop-1', lines: [{ stockId: stockId['lotus-black-M'], qty: 1 }], pickup: 'A', name: 'Lin Example',
+        wechat: 'lin_example', mobile: '+86 138-0013-8000', email: 'Lin.Example@example.com', lang: 'zh', notice: { agree: true, version: 't1' }, ...o });
+
+      console.log('  the window');
+      const edge = async ms => { clock = ms; const r = (await J('/api/bkk/tee-drop')).body.drop; return r && r.state; };
+      const s1 = await edge(opens - 1), o1 = await order(base());
+      const s2 = await edge(opens), s3 = await edge(closes - 1), s4 = await edge(closes), o4 = await order(base());
+      clock = T0;
+      ok('one millisecond before it opens: soon, and an order is 409 not open yet; at the open and to the last millisecond open; at the close closed (409)',
+         s1 === 'soon' && o1.status === 409 && o1.body.error === 'not open yet' && s2 === 'open' && s3 === 'open' && s4 === 'closed'
+         && o4.status === 409 && o4.body.error === 'closed', JSON.stringify([s1, o1.body, s2, s3, s4, o4.body]));
+      const dr = await order(base({ drop: 'test-draft', lines: [{ stockId: (await one(`SELECT id FROM bkk_tee_stock WHERE drop_id=$1`, [draft.body.drop.id])).id, qty: 1 }] }));
+      ok('an unpublished drop is never shown and never sold (404)', dr.status === 404 && (await J('/api/bkk/tee-drop')).body.drop.code === 'test-drop-1', JSON.stringify(dr.body));
+
+      console.log('  checking an order');
+      const otherStock = (await one(`SELECT id FROM bkk_tee_stock WHERE drop_id=$1`, [draft.body.drop.id])).id;
+      const bad = await Promise.all([base({ lines: [] }), base({ lines: [{ stockId: stockId['lotus-black-M'], qty: 0 }] }),
+        base({ lines: [{ stockId: stockId['lotus-black-M'], qty: 3 }, { stockId: stockId['lotus-white-M'], qty: 3 }] }),
+        base({ lines: [{ stockId: otherStock, qty: 1 }] }), base({ lines: [{ stockId: stockId['lotus-black-M'], qty: 1 }, { stockId: stockId['lotus-black-M'], qty: 1 }] }),
+        base({ pickup: 'Z', name: 'L' }), base({ name: 'L' }), base({ wechat: '' }), base({ wechat: 'has space' }), base({ email: 'nope' }), base({ mobile: '12345' }),
+        base({ mobile: '+1 415 555 0100' })].map(b => order(b)));
+      ok('400 naming the field: no tees, a quantity of 0, more than 5 tees, a tee of another drop, one tee twice, then the pickup point, name, WeChat ID, email, mobile',
+         bad.map(r => `${r.status}:${r.body.field}`).join() === '400:lines,400:lines,400:lines,400:lines,400:lines,400:pickup,400:name,400:wechat,400:wechat,400:email,400:mobile,400:mobile'
+         && bad[2].body.max === 5, bad.map(r => `${r.status}:${r.body.field}`).join());
+      const nNo = await order(base({ notice: undefined })), nOld = await order(base({ notice: { agree: true, version: 't0' } }));
+      const nOff = await order(base({ notice: { agree: false, version: 't1' } }));
+      ok('the tee notice: not ticked or not sent is 409 notice; an old version is 409 stale', nNo.status === 409 && nNo.body.error === 'notice'
+         && nNo.body.version === 't1' && !nNo.body.stale && nOld.status === 409 && nOld.body.stale === true && nOff.status === 409 && nOff.body.error === 'notice',
+         JSON.stringify([nNo.body, nOld.body, nOff.body]));
+      await pool.query(`DELETE FROM bkk_settings WHERE key='privacy_address'`);
+      const nReady = await order(base()), dNotReady = (await J('/api/bkk/tee-drop')).body.drop;
+      await setKey('privacy_address', '1 Example Road, Bangkok');
+      ok('...until the privacy notice has its legal name, address and email, the checkout is closed (503) and the page says it cannot pay',
+         nReady.status === 503 && nReady.body.notReady === true && JSON.stringify(nReady.body.missing) === '["address"]'
+         && dNotReady.canPay === false && dNotReady.notice.ready === false, JSON.stringify(nReady.body));
+      delete process.env.PAYSO_API_KEY;
+      const noGw = await order(base());
+      process.env.PAYSO_API_KEY = env.PAYSO_API_KEY;
+      ok('...without the PaySolutions keys: 503, and never a pay.sn link (it cannot be verified)', noGw.status === 503 && noGw.body.payUnavailable === true
+         && !('payLink' in noGw.body), JSON.stringify(noGw.body));
+
+      console.log('  a tee order');
+      const c0 = await counts(), m0 = mail.length;
+      await setKey('consent_mode', 'require');
+      const L1 = await order(base());
+      await setKey('consent_mode', 'off');
+      const c1 = await counts(), t1 = await teeRow(L1.body.order && L1.body.order.refno);
+      const pct = (await J('/api/bkk/tee-drop')).body.drop.surchargePct;
+      const fee = Math.round(690 * pct / 100), vat = Math.round((690 + fee) * 7 / 100);
+      const f = (L1.body.pay || {}).fields || {};
+      ok("with consent_mode 'require' the tee checkout still asks only the tee notice: the order is made", L1.status === 200 && !!L1.body.token, JSON.stringify(L1.body));
+      ok('the money row: kind tee, no package, no member, no source, online, one item name for the drop, base + fee + VAT', t1.kind === 'tee'
+         && t1.product_id === null && t1.member_id === null && t1.source === null && t1.method === 'online' && t1.item_name === 'AYBKK tee pre-order test-drop-1'
+         && t1.money === 'pending' && t1.base_thb === 690 && t1.fee_thb === fee && t1.vat_thb === vat && t1.amount_thb === 690 + fee + vat
+         && L1.body.order.amount === 690 + fee + vat && L1.body.order.base === 690 && L1.body.order.fee === fee && L1.body.order.vat === vat, JSON.stringify(t1));
+      ok('...the tee order: the buyer as typed (mobile without +86, email lower case), the pickup point, the notice tick with its sha, a 30-minute hold',
+         t1.name === 'Lin Example' && t1.wechat === 'lin_example' && t1.mobile === '13800138000' && t1.email === 'lin.example@example.com' && t1.pickup === 'A'
+         && t1.lang === 'zh' && t1.status === 'new' && t1.notice_version === 't1' && t1.notice_lang === 'zh' && t1.notice_sha === sha(TEE_NOTICE.t1.zh)
+         && +new Date(t1.hold_until) === T0 + 30 * MIN && L1.body.order.holdUntil === iso7(T0 + 30 * MIN) && /^[0-9a-f]{32}$/.test(t1.token)
+         && L1.body.link === `https://cn.aybkk.net/book#tee=${t1.token}`, JSON.stringify(t1));
+      ok('...and no member, sign-in token, consent row, pass, booking or email', JSON.stringify(c0) === JSON.stringify(c1) && mail.length === m0, JSON.stringify([c0, c1]));
+      ok('the pay form: a 12-digit ref, baht (00), English page, the email typed, a product line of 255 or fewer with no < > & " \'',
+         /^\d{12}$/.test(f.refno) && f.refno === r12(L1.body.order.refno) && f.cc === '00' && f.lang === 'EN' && f.customeremail === 'lin.example@example.com'
+         && f.total === (690 + fee + vat).toFixed(2) && f.merchantid === '00012345' && f.productdetail.length <= 255 && !/[<>&"']/.test(f.productdetail)
+         && f.productdetail === `AYBKK Tee test-drop-1 x1 ref ${f.refno}` && L1.body.pay.action === 'https://payments.paysolutions.asia/payment', JSON.stringify(L1.body.pay));
+      const L2 = await order(base({ lines: [{ stockId: stockId['lotus-black-M'], qty: 2 }], email: 'lin.example@example.com' }));
+      const L3 = await order(base());
+      ok('two live unpaid orders per email per drop; a third is 429', L2.status === 200 && L3.status === 429 && L3.body.holds === true, JSON.stringify(L3.body));
+
+      console.log('  stock, holds and races');
+      const race = await Promise.all(['ra', 'rb', 'rc'].map(k => order(base({ lines: [{ stockId: stockId['moon-navy-L'], qty: 1 }], email: `race.${k}@example.com`, name: 'Race Example' }))));
+      const held = (await AG(`drops/${D1.id}/orders`)).body.totals.stock.find(s => s.id === stockId['moon-navy-L']);
+      ok('three orders at once for the last 2: exactly 2 held, the third 409 sold out naming that tee', race.filter(r => r.status === 200).length === 2
+         && race.filter(r => r.status === 409 && r.body.error === 'sold out' && JSON.stringify(r.body.soldOut) === `[${stockId['moon-navy-L']}]`).length === 1
+         && held.held === 2 && held.left === 0, JSON.stringify([race.map(r => r.status), held]));
+      ok('...and the page shows it out', sizesOf('moon', 'navy') && (await J('/api/bkk/tee-drop')).body.drop.designs[1].colours[0].sizes.find(s => s.size === 'L').state === 'out');
+      clock = T0 + 31 * MIN;
+      const R4 = await order(base({ lines: [{ stockId: stockId['moon-navy-L'], qty: 1 }], email: 'wen.example@example.com', name: 'Wen Example', wechat: 'wen_example', pickup: 'B', lang: 'en', mobile: '' }));
+      const R5 = await order(base({ lines: [{ stockId: stockId['moon-navy-L'], qty: 2 }], email: 'race.rd@example.com', name: 'Race Example' }));
+      ok('a hold that lapsed frees its tees with no sweep: one more is sold, two more are not', R4.status === 200 && R5.status === 409
+         && JSON.stringify(R5.body.soldOut) === `[${stockId['moon-navy-L']}]`, JSON.stringify([R4.body, R5.body]));
+      const L4 = await order(base({ email: 'lin.example@example.com' }));
+      ok('...and a lapsed hold no longer counts toward the 2 per email', L4.status === 200, JSON.stringify(L4.body));
+
+      console.log('  every way a payment is confirmed');
+      const plain = async (o, how) => {
+        const t = await teeRow(o.body.order.refno), m = receipts(t.email);
+        const pr = await one(`SELECT count(*)::int AS n FROM bkk_passes WHERE order_id=$1`, [t.order_id]);
+        return { money: t.money, status: t.status, passes: pr.n, mails: m.length, mail: m[0], how };
+      };
+      const cBefore = await counts();
+      payAs(R4);
+      await J(`/api/bkk/pay/postback?refno=${r12(R4.body.order.refno)}`);
+      await until(async () => (await teeRow(R4.body.order.refno)).money === 'paid');
+      await until(() => receipts('wen.example@example.com').length);
+      payAs(L1);
+      await fetch(B + '/api/bkk/pay/postback', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: `refno=${r12(L1.body.order.refno)}` });
+      await until(async () => (await teeRow(L1.body.order.refno)).money === 'paid');
+      payAs(L2);
+      const chk = (await J('/api/bkk/pay/check/' + L2.body.order.refno)).body;
+      const W1 = await order(base({ email: 'sweep.example@example.com', name: 'Sweep Example', lines: [{ stockId: stockId['lotus-white-M'], qty: 1 }] }));
+      payAs(W1);
+      const NOWS = Date.now() + 30 * DAY;
+      await pool.query(`UPDATE bkk_orders SET created_at=$2 WHERE refno=$1`, [W1.body.order.refno, new Date(NOWS - 6 * MIN)]);
+      const sw = await watch.paySweep({ now: NOWS, manual: true });
+      const F1 = await order(base({ email: 'hand.example@example.com', name: 'Hand Example', lines: [{ stockId: stockId['lotus-white-M'], qty: 1 }] }));
+      const F1id = (await teeRow(F1.body.order.refno)).order_id;
+      const fa = await post(`/api/bkk/admin/orders/${F1id}/force-activate`, {}, ADMIN);
+      await until(() => receipts('lin.example@example.com').length >= 2);
+      for (const e of ['sweep.example@example.com', 'hand.example@example.com']) await until(() => receipts(e).length);
+      await wait(100);
+      const paths = await Promise.all([[R4, 'GET postback'], [L1, 'POST postback'], [L2, 'pay/check'], [W1, 'payment watch'], [F1, 'Activate by hand']].map(([o, h]) => plain(o, h)));
+      const cAfter = await counts();
+      ok('GET postback, POST postback, pay/check, the payment watch and Activate by hand each turn a tee order paid, with no pass',
+         paths.every(p => p.money === 'paid' && p.status === 'paid' && p.passes === 0), JSON.stringify(paths.map(p => [p.how, p.money, p.status, p.passes])));
+      ok('...and no member, sign-in token, consent row, pass or booking anywhere', JSON.stringify(cBefore) === JSON.stringify(cAfter), JSON.stringify([cBefore, cAfter]));
+      ok('...one teeReceipt each (the same email twice gets one per order), with no sign-in link and no pass', paths.filter(p => p.how !== 'pay/check' && p.how !== 'POST postback').every(p => p.mails === 1)
+         && receipts('lin.example@example.com').length === 2 && mail.filter(m => /tee/.test(m.tag || '')).every(m => !m.text.includes('/api/bkk/login/') && !/pass is active|Book a class/i.test(m.text)),
+         JSON.stringify(paths.map(p => p.mails)));
+      const zh = receipts('lin.example@example.com').find(m => m.text.includes(r12(L1.body.order.refno))), en = receipts('wen.example@example.com')[0];
+      ok('...in the buyer\'s language: Chinese, the items, unit price, fee, VAT, total, ref, pickup point, status link, and that the payment page was English',
+         zh && zh.subject.includes('测试T恤') && zh.text.startsWith('Lin Example，你好') && zh.text.includes('莲花 · 黑色 · M × 1') && zh.text.includes(`在线交易手续费: ฿${fee}`)
+         && zh.text.includes(`增值税 7%: ฿${vat}`) && zh.text.includes(`已付: ฿${(690 + fee + vat).toLocaleString('en-US')}`) && zh.text.includes(r12(L1.body.order.refno))
+         && zh.text.includes('领取点: Shanghai · Carrier One') && zh.text.includes(`https://cn.aybkk.net/book#tee=${t1.token}`) && zh.text.includes('付款页面是英文的'),
+         zh && zh.text);
+      ok('...English for an English buyer, with their own pickup point', en && en.text.startsWith('Hello Wen Example,') && en.text.includes('Moon · Navy · L × 1')
+         && en.text.includes('Collect from: Shenzhen · Carrier Two') && en.text.includes('The payment page was in English. This email is your receipt.'), en && en.text);
+      ok('pay/check says the kind and where the tee order stands', chk.status === 'paid' && chk.kind === 'tee' && chk.tee && chk.tee.status === 'paid', JSON.stringify(chk));
+      ok('...the watch said it turned on, and Activate by hand answered for the tee', sw.ran && sw.orders.some(x => x.refno === String(W1.body.order.refno) && x.note === 'turned on')
+         && fa.status === 200 && fa.body.success === true && fa.body.tee && fa.body.tee.status === 'paid' && !fa.body.booking, JSON.stringify([sw, fa.body]));
+      const again = (await J('/api/bkk/pay/check/' + L2.body.order.refno)).body;
+      await wait(100);
+      ok('a second confirm is a no-op: still paid, no second receipt', again.status === 'paid' && again.already === true && receipts('lin.example@example.com').length === 2, JSON.stringify(again));
+      const pm = await one(`INSERT INTO bkk_members (code,name,email) VALUES ('BTEEPASS00001','Pass Example','pass.tee@example.com') RETURNING id`);
+      await pool.query(`INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,amount_thb,status) VALUES (990800000002,
+        (SELECT id FROM bkk_products WHERE code='dropin'),$1,1500,1500,'paid')`, [pm.id]);
+      const passCheck = (await J('/api/bkk/pay/check/990800000002')).body;
+      ok('...and pay/check on a package order says kind pass', passCheck.kind === 'pass', JSON.stringify(passCheck));
+
+      console.log('  a wrong amount, sold out while paying, a pass order with no package');
+      const tg0 = tg.length;
+      const M1 = await order(base({ email: 'mismatch.example@example.com', name: 'Mis Example', lines: [{ stockId: stockId['moon-navy-M'], qty: 1 }] }));
+      payAs(M1, M1.body.order.amount - 1);
+      const mm = (await J('/api/bkk/pay/check/' + M1.body.order.refno)).body;
+      await until(() => tg.length > tg0);
+      const mPing = tg.slice(tg0).join('\n');
+      const mView = (await J(`/api/bkk/tee-orders/${(await teeRow(M1.body.order.refno)).token}`)).body;
+      ok('a wrong amount: mismatch, nothing sold, no receipt, and the ping says "Nothing was sold." with the ref and no buyer', mm.status === 'mismatch'
+         && mm.kind === 'tee' && (await teeRow(M1.body.order.refno)).status === 'new' && mView.status === 'mismatch' && receipts('mismatch.example@example.com').length === 0
+         && mPing.includes('Nothing was sold.') && !mPing.includes('No pass was made') && mPing.includes(`Tee order · AYBKK tee pre-order test-drop-1 ×1 · ฿`)
+         && mPing.includes(`ref ${M1.body.order.refno}`) && !/Mis Example|mismatch\.example|lin_example/.test(mPing), mPing);
+      const O1 = await order(base({ email: 'over.one@example.com', name: 'Over One', lines: [{ stockId: stockId['lotus-black-L'], qty: 1 }] }));
+      clock = T0 + 62 * MIN;
+      const O2 = await order(base({ email: 'over.two@example.com', name: 'Over Two', lines: [{ stockId: stockId['lotus-black-L'], qty: 1 }] }));
+      const tg1 = tg.length;
+      payAs(O1);
+      const ov = (await J('/api/bkk/pay/check/' + O1.body.order.refno)).body;
+      await until(() => receipts('over.one@example.com').length);
+      await until(() => tg.length > tg1);
+      const oRec = receipts('over.one@example.com')[0], oPing = tg.slice(tg1).join('\n');
+      ok('paid after its hold lapsed, and the last one is held by someone else: paid money, tee order oversold', ov.status === 'paid' && ov.tee.status === 'oversold'
+         && (await teeRow(O1.body.order.refno)).status === 'oversold' && (await teeRow(O1.body.order.refno)).money === 'paid', JSON.stringify(ov));
+      ok('...the receipt (Chinese) says staff swap a size or refund within 3 days; the ping names the ref, no buyer', oRec && oRec.text.includes('3 天内')
+         && oRec.text.includes('换一个尺码或全额退款') && oRec.subject.includes('已收到付款') && oPing.includes('sold out') && oPing.includes(`ref ${O1.body.order.refno}`) && !/Over One|over\.one/.test(oPing), oPing);
+      payAs(O2);
+      const ov2 = (await J('/api/bkk/pay/check/' + O2.body.order.refno)).body;
+      ok('...while the one holding it pays and gets it', ov2.tee.status === 'paid', JSON.stringify(ov2));
+      const O1id = (await teeRow(O1.body.order.refno)).order_id;
+      const swFull = await A(`orders/${O1id}`, { swapStockId: stockId['lotus-black-L'] });
+      const swOk = await A(`orders/${O1id}`, { swapStockId: stockId['lotus-black-S'] });
+      ok('staff swap the oversold size: to one that is gone 409, to one with tees left it is paid', swFull.status === 409 && swFull.body.error === 'sold out'
+         && swOk.status === 200 && swOk.body.order.status === 'paid' && swOk.body.order.items[0].size === 'S' && swOk.body.order.items[0].unitThb === 690, JSON.stringify([swFull.body, swOk.body]));
+      const mem = await one(`INSERT INTO bkk_members (code,name,email) VALUES ('BTEENOPKG0001','Nopkg Example','nopkg@example.com') RETURNING id`);
+      const np = await one(`INSERT INTO bkk_orders (refno,member_id,base_thb,amount_thb,status,method) VALUES (990800000001,$1,100,100,'pending','online') RETURNING id`, [mem.id]);
+      answers[r12(990800000001)] = [{ Total: 100, Status: 'Y', StatusName: 'Paid' }];
+      const npChk = await J('/api/bkk/pay/check/990800000001');
+      const npRow = await one(`SELECT status, (SELECT count(*)::int FROM bkk_passes WHERE order_id=$1) AS passes FROM bkk_orders WHERE id=$1`, [np.id]);
+      ok('a pass order with no package fails loudly and stays pending, with no pass', npChk.status === 500 && npChk.body.error === 'order has no package'
+         && npRow.status === 'pending' && npRow.passes === 0, JSON.stringify([npChk.body, npRow]));
+
+      console.log("  the buyer's status page");
+      const Q1 = await order(base({ email: 'quiet.example@example.com', name: 'Quiet Example', wechat: 'quiet_wx', mobile: '13912345678', lines: [{ stockId: stockId['moon-navy-M'], qty: 1 }] }));
+      const qt = (await teeRow(Q1.body.order.refno)).token, qAsk = () => asked.filter(r => r === r12(Q1.body.order.refno)).length;
+      const st1 = await J(`/api/bkk/tee-orders/${qt}`), st2 = await J(`/api/bkk/tee-orders/${qt}`);
+      ok('a waiting order: asked about at most once a minute however often the page refreshes', st1.status === 200 && st1.body.status === 'waiting'
+         && st2.body.status === 'waiting' && qAsk() === 1, `${qAsk()} ${JSON.stringify(st1.body)}`);
+      clock += 61000;
+      await J(`/api/bkk/tee-orders/${qt}`);
+      ok('...and again a minute on', qAsk() === 2, String(qAsk()));
+      const lv = await fetch(`${B}/api/bkk/tee-orders/${t1.token}`);
+      const lvb = await lv.json();
+      ok('a paid order: its tees, money, pickup point and dates, and never the whole email, WeChat ID or mobile', lv.status === 200 && /no-store/.test(lv.headers.get('cache-control') || '')
+         && lvb.status === 'paid' && lvb.kind === 'tee' && lvb.refno === r12(L1.body.order.refno) && lvb.items.length === 1 && lvb.items[0].designName === '莲花'
+         && lvb.items[0].qty === 1 && lvb.money.amount === 690 + fee + vat && lvb.pickup.label === 'Shanghai · Carrier One' && /\+07:00$/.test(lvb.paidAt)
+         && lvb.buyer.email === 'l***@example.com' && lvb.buyer.wechat === 'li***e' && lvb.buyer.mobile === '138****8000' && lvb.buyer.name === 'Lin Example'
+         && !/lin\.example@|lin_example|13800138000/.test(JSON.stringify(lvb)), JSON.stringify(lvb));
+      const lapsed = (await J(`/api/bkk/tee-orders/${(await teeRow(race.find(r => r.status === 200).body.order.refno)).token}`)).body;
+      ok('...a hold that lapsed unpaid reads expired; an unknown or malformed token is 404', lapsed.status === 'expired'
+         && (await J('/api/bkk/tee-orders/' + 'f'.repeat(32))).status === 404 && (await J('/api/bkk/tee-orders/nope')).status === 404, JSON.stringify(lapsed));
+
+      console.log('  staff: orders, pickup list, customs paper');
+      const noKey = [['GET', 'drops'], ['POST', 'drops'], ['PUT', `drops/${D1.id}/stock`], ['POST', `drops/${D1.id}/close`], ['GET', `drops/${D1.id}/orders`],
+        ['POST', `orders/${O1id}`], ['POST', `orders/${O1id}/cancel`], ['GET', `drops/${D1.id}/pickup?pickup=A`], ['GET', `drops/${D1.id}/declaration`],
+        ['POST', `drops/${D1.id}/finish`], ['GET', `drops/${D1.id}/report`], ['GET', `drops/${D1.id}/report.csv`], ['POST', `drops/${D1.id}/purge`]];
+      const nk = await Promise.all(noKey.map(async ([m, p]) => { const r = await fetch(`${B}/api/bkk/admin/tee/${p}`, { method: m,
+        headers: { 'Content-Type': 'application/json', 'x-bkk-key': 'wrong' }, body: m === 'GET' ? undefined : '{}' });
+        return `${r.status}:${/private, no-store/.test(r.headers.get('cache-control') || '')}`; }));
+      ok('every /api/bkk/admin/tee/* route: 401 without the staff key, and private, no-store', nk.every(x => x === '401:true'), nk.join());
+      const ord = await AG(`drops/${D1.id}/orders`), lst = ord.body.orders || [];
+      const lo = lst.find(o => o.refno === r12(L1.body.order.refno));
+      ok('the orders list (staff): contact details, items, money, status and view; totals per tee, by status, and money', ord.status === 200
+         && lo && lo.name === 'Lin Example' && lo.wechat === 'lin_example' && lo.mobile === '13800138000' && lo.email === 'lin.example@example.com'
+         && lo.status === 'paid' && lo.pickupLabel === 'Shanghai · Carrier One' && lo.items[0].designName === 'Lotus' && lo.amount === 690 + fee + vat
+         && ord.body.totals.orders.paid >= 6 && ord.body.totals.orders.mismatch === 1 && ord.body.totals.orders.expired >= 2
+         && ord.body.totals.money.n === ord.body.totals.orders.paid + ord.body.totals.orders.handed + ord.body.totals.orders.oversold, JSON.stringify(ord.body.totals));
+      const fl = await AG(`drops/${D1.id}/orders?status=expired&pickup=A`);
+      ok('...filtered by status (or view) and pickup point', fl.body.orders.length >= 2 && fl.body.orders.every(o => o.view === 'expired' && o.pickup === 'A'), JSON.stringify(fl.body.orders.map(o => o.view)));
+      const pays = (await J('/api/bkk/admin/orders?limit=2000&source=aybkk', { headers: ADMIN })).body.orders || [];
+      const pt = pays.find(o => String(o.refno) === String(L1.body.order.refno));
+      ok('Payments shows a tee order as one: kind, its drop and the buyer (staff only)', pt && pt.kind === 'tee' && pt.tee_drop === 'test-drop-1'
+         && pt.tee_name === 'Lin Example' && pt.item === 'AYBKK tee pre-order test-drop-1', JSON.stringify(pt));
+      const L2id = (await teeRow(L2.body.order.refno)).order_id;
+      const ed = await A(`orders/${L2id}`, { pickup: 'B', problem: '  asked to  collect later  ' });
+      const edBad = await A(`orders/${L2id}`, { pickup: 'Q' });
+      const hand = await A(`orders/${(await teeRow(R4.body.order.refno)).order_id}`, { handed: true });
+      const handNo = await A(`orders/${(await teeRow(Q1.body.order.refno)).order_id}`, { handed: true });
+      ok('staff change the pickup point, write a problem note, mark one handed; an unknown point is 400, an unpaid order cannot be handed (409)',
+         ed.status === 200 && ed.body.order.pickup === 'B' && ed.body.order.problem === 'asked to collect later' && edBad.status === 400
+         && hand.status === 200 && hand.body.order.status === 'handed' && /\+07:00$/.test(hand.body.order.handedAt) && handNo.status === 409, JSON.stringify([ed.body, hand.body, handNo.body]));
+      await A(`orders/${L2id}`, { problem: '' });
+      const pk = await AG(`drops/${D1.id}/pickup?pickup=A`), pkAll = await AG(`drops/${D1.id}/pickup`);
+      const toTake = (await pool.query(`SELECT sum(l.qty)::int AS n FROM bkk_tee_lines l JOIN bkk_tee_orders t ON t.order_id=l.order_id
+        WHERE t.drop_id=$1 AND t.pickup='A' AND t.status IN ('paid','handed')`, [D1.id])).rows[0].n;
+      ok('the pickup list for point A: totals to take per design, colour and size, then the buyers by name with WeChat ID, tees and handed',
+         pk.status === 200 && pk.body.pickup.label === 'Shanghai · Carrier One' && pk.body.total === toTake && pk.body.totals.every(x => x.qty > 0 && x.size && x.designName)
+         && pk.body.buyers.length > 0 && pk.body.buyers.every(b => b.pickup === 'A' && typeof b.handed === 'boolean' && b.wechat && b.items.length)
+         && pk.body.buyers.map(b => b.name).join('|') === [...pk.body.buyers.map(b => b.name)].sort((a, b) => a.localeCompare(b)).join('|')
+         && pkAll.body.buyers.length > pk.body.buyers.length && (await AG(`drops/${D1.id}/pickup?pickup=Z`)).status === 404, JSON.stringify(pk.body).slice(0, 500));
+      const dc = await AG(`drops/${D1.id}/declaration`), dcB = await AG(`drops/${D1.id}/declaration?pickup=B`);
+      const allPaid = (await pool.query(`SELECT sum(l.qty)::int AS n, sum(l.qty * l.unit_thb)::int AS thb FROM bkk_tee_lines l JOIN bkk_tee_orders t ON t.order_id=l.order_id
+        WHERE t.drop_id=$1 AND t.status IN ('paid','handed')`, [D1.id])).rows[0];
+      ok('the customs paper: design × colour, how many and the unit price in baht, with totals; one carrier\'s bag with ?pickup=', dc.status === 200
+         && dc.body.total.qty === allPaid.n && dc.body.total.thb === allPaid.thb && dc.body.lines.every(l => l.design && l.colour && l.qty > 0 && l.unitThb > 0 && l.designNameZh)
+         && !dc.body.lines.some(l => 'size' in l) && dcB.body.total.qty < dc.body.total.qty && dcB.body.total.qty > 0, JSON.stringify(dc.body));
+
+      console.log('  staff edits that would break an order');
+      const capLow = await A('drops', { id: D1.id, cap: 3 });
+      const codeCh = await A('drops', { id: D1.id, code: 'test-drop-2' });
+      const pkGone = await A('drops', { id: D1.id, pickups: [PICKUPS[0]] });
+      const relabel = await A('drops', { id: D1.id, pickups: [PICKUPS[0], { key: 'B', label: 'Shenzhen · Carrier Three' }] });
+      ok('the drop: its cap never below what is taken, its code and the pickup points its orders name stay (a label can change)',
+         capLow.status === 409 && capLow.body.field === 'cap' && codeCh.status === 409 && codeCh.body.field === 'code' && pkGone.status === 409 && pkGone.body.pickup === 'B'
+         && relabel.status === 200 && relabel.body.drop.pickups[1].label === 'Shenzhen · Carrier Three', JSON.stringify([capLow.body, codeCh.body, pkGone.body]));
+      await A('drops', { id: D1.id, pickups: PICKUPS });
+      const cur = (await AG('drops')).body.drops.find(x => x.id === D1.id).totals.stock;
+      const asGrid = cur.map(s => ({ id: s.id, design: s.design, designName: s.designName, colour: s.colour, colourName: s.colourName, size: s.size,
+        priceThb: s.priceThb, photo: s.photo, cap: s.cap, sort: s.sort }));
+      const gid = k => asGrid.find(s => s.id === stockId[k]);
+      const gCap = await PUT(`drops/${D1.id}/stock`, { stock: asGrid.map(s => s === gid('lotus-black-M') ? { ...s, cap: 1 } : s) });
+      const gDel = await PUT(`drops/${D1.id}/stock`, { stock: asGrid.filter(s => s !== gid('lotus-black-M')) });
+      const gPrice = await PUT(`drops/${D1.id}/stock`, { stock: asGrid.map(s => s === gid('lotus-black-M') ? { ...s, priceThb: 700 } : s) });
+      const gSize = await PUT(`drops/${D1.id}/stock`, { stock: asGrid.map(s => s === gid('lotus-black-M') ? { ...s, size: 'XL' } : s) });
+      const gFree = await PUT(`drops/${D1.id}/stock`, { stock: [...asGrid.filter(s => s !== gid('moon-navy-XL')).map(s => s === gid('lotus-white-M') ? s : s),
+        { ...gid('moon-navy-XL'), priceThb: 760, cap: 3 }, row('lotus', 'white', 'L', 2, 690)] });
+      const after = (await AG('drops')).body.drops.find(x => x.id === D1.id).totals.stock;
+      stockId['lotus-white-L'] = (after.find(s => s.design === 'lotus' && s.colour === 'white' && s.size === 'L') || {}).id;
+      ok('the grid: a tee with orders keeps its cap above what is taken, is never removed, and keeps its price and size (409)',
+         gCap.status === 409 && gCap.body.taken >= 3 && gDel.status === 409 && gPrice.status === 409 && gSize.status === 409, JSON.stringify([gCap.body, gDel.body, gPrice.body, gSize.body]));
+      ok('...a tee with no orders takes a new price and cap, and a new tee is added', gFree.status === 200 && after.length === 8
+         && after.find(s => s.id === stockId['moon-navy-XL']).priceThb === 760 && after.find(s => s.size === 'L' && s.colour === 'white').cap === 2, JSON.stringify(gFree.body));
+
+      console.log('  cancel, refund, void');
+      const tgC = tg.length;
+      const C1 = await order(base({ email: 'cancel.example@example.com', name: 'Cancel Example', lines: [{ stockId: stockId['moon-navy-L'], qty: 1 }] }));
+      const C1id = (await teeRow(C1.body.order.refno)).order_id;
+      const leftOf = async id => (await AG(`drops/${D1.id}/orders`)).body.totals.stock.find(s => s.id === id).left;
+      const left0 = await leftOf(stockId['moon-navy-L']);
+      const cc = await A(`orders/${C1id}/cancel`, {});
+      const left1 = await leftOf(stockId['moon-navy-L']);
+      const ccRow = await teeRow(C1.body.order.refno);
+      ok('an unpaid order is cancelled at once, and its tee is free again', cc.status === 200 && cc.body.voided === false && ccRow.status === 'cancelled'
+         && ccRow.money === 'pending' && left1 === left0 + 1 && (await A(`orders/${C1id}/cancel`, {})).body.already === true, JSON.stringify([cc.body, left0, left1]));
+      payAs(C1);
+      const back = (await J('/api/bkk/pay/check/' + C1.body.order.refno)).body;
+      await until(() => tg.slice(tgC).some(t => t.includes('cancelled tee order was paid')));
+      ok('...if its payment still comes in, the order is back on (paid) and staff are told, with the ref only', back.status === 'paid' && back.tee.status === 'paid'
+         && tg.slice(tgC).some(t => t.includes('cancelled tee order was paid') && t.includes(`ref ${C1.body.order.refno}`) && !t.includes('Cancel Example')), JSON.stringify(back));
+      const ccPaid = await A(`orders/${C1id}/cancel`, {});
+      const ccRef = await A(`orders/${C1id}/cancel`, { refunded: true, reason: 'changed mind' });
+      const refRow = await teeRow(C1.body.order.refno);
+      ok('a paid order: only once refunded in PaySolutions (409 needs refunded), then the money row is void with "Void: tee refund" and the tee order cancelled',
+         ccPaid.status === 409 && ccPaid.body.needs === 'refunded' && ccRef.status === 200 && ccRef.body.voided === true && refRow.money === 'void'
+         && refRow.status === 'cancelled' && /^Void: tee refund: changed mind \(by staff, \d{4}-\d{2}-\d{2}\)/.test(refRow.gateway_note)
+         && (await J(`/api/bkk/tee-orders/${refRow.token}`)).body.status === 'cancelled', JSON.stringify([ccPaid.body, ccRef.body, refRow.gateway_note]));
+      const R4id = (await teeRow(R4.body.order.refno)).order_id;
+      const hc1 = await A(`orders/${R4id}/cancel`, { refunded: true }), hc2 = await A(`orders/${R4id}/cancel`, { refunded: true, confirm: true });
+      ok('...handed over already: it also needs confirm', hc1.status === 409 && hc1.body.needs === 'confirm' && hc2.status === 200
+         && (await teeRow(R4.body.order.refno)).status === 'cancelled', JSON.stringify([hc1.body, hc2.body]));
+      const vd = await post(`/api/bkk/admin/orders/${F1id}/void`, { reason: 'paid twice' }, ADMIN);
+      const vdRow = await teeRow(F1.body.order.refno);
+      ok('Void on a paid tee order (Payments) cancels its tee order too, and frees its tee', vd.status === 200 && vd.body.passesVoided === 0
+         && vdRow.money === 'void' && vdRow.status === 'cancelled' && !!vdRow.cancelled_at, JSON.stringify([vd.body, vdRow.status]));
+
+      console.log('  pings');
+      await setKey('ping_each_sale', 'on');
+      const tgS = tg.length;
+      const S1 = await order(base({ email: 'sale.example@example.com', name: 'Sale Example', wechat: 'sale_wx', lines: [{ stockId: stockId['lotus-white-L'], qty: 2 }] }));
+      payAs(S1);
+      await J('/api/bkk/pay/check/' + S1.body.order.refno);
+      await until(() => tg.length > tgS);
+      await setKey('ping_each_sale', 'off');
+      const sPing = tg.slice(tgS).join('\n');
+      ok('a sale ping, when switched on: the drop, how many tees, the amount and the ref, never a buyer', sPing.includes('💳 AYBKK tee order (online)')
+         && sPing.includes('AYBKK tee pre-order test-drop-1 ×2') && sPing.includes(`refno ${S1.body.order.refno}`) && !/Sale Example|sale\.example|sale_wx/.test(sPing), sPing);
+      ok('...and no Telegram message from the tee pre-order ever names a buyer, a WeChat ID, an email or a mobile', tg.length >= 4
+         && !tg.some(t => PRIVATE.test(t)), tg.filter(t => PRIVATE.test(t)).join(' | '));
+
+      console.log('  close, finish, report');
+      const close = await A(`drops/${D1.id}/close`, {});
+      const shut = await order(base({ email: 'late.example@example.com', name: 'Late Example' }));
+      ok('Close now: closed at once, a new order is 409 closed', close.status === 200 && close.body.drop.state === 'closed'
+         && Date.parse(close.body.drop.closesAt) === clock && shut.status === 409 && shut.body.error === 'closed', JSON.stringify(close.body.drop));
+      const csv = await fetch(`${B}/api/bkk/admin/export/payments.csv`, { headers: ADMIN }).then(r => r.text());
+      const csvLines = csv.replace(/^﻿/, '').trim().split('\r\n');
+      ok('payments.csv ends with a kind column: tee for a tee order, pass for a package', csvLines[0].endsWith(',kind')
+         && csvLines.some(l => l.includes(`"${L1.body.order.refno}"`) && l.endsWith(',"tee"')) && csvLines.some(l => l.endsWith(',"pass"')), csvLines[0]);
+      clock += 31 * MIN; // every hold made before the close has run out (Finish waits for them: see test-fix below)
+      const fin0 = await A(`drops/${D1.id}/finish`, { costs: { print: 4000, 'carry to China': 500 } });
+      const finBad = await A(`drops/${D1.id}/finish`, { costs: { print: -1 } });
+      ok('Finish is refused while a paid order is not handed over (and costs must be whole baht)', fin0.status === 409 && fin0.body.notHanded > 0
+         && finBad.status === 400, JSON.stringify([fin0.body, finBad.body]));
+      const live = await AG(`drops/${D1.id}/report`);
+      const fin = await A(`drops/${D1.id}/finish`, { costs: { print: 4000, 'carry to China': 500 }, confirm: true });
+      const rep = fin.body.report || {};
+      const mt = (await AG(`drops/${D1.id}/orders`)).body.totals;
+      ok('...with confirm it is finished: the report is frozen with the money, the tees sold and handed, the costs and the price less costs',
+         live.body.report.live === true && fin.status === 200 && fin.body.drop.state === 'done' && rep.money.amount === mt.money.amount && rep.money.base === mt.money.base
+         && rep.costTotal === 4500 && rep.baseLessCosts === mt.money.base - 4500 && rep.tees.sold === mt.tees.sold && rep.refunds.n === 3
+         && rep.stock.length === 8, JSON.stringify(rep).slice(0, 400));
+      const frozen = await AG(`drops/${D1.id}/report`), repCsv = await fetch(`${B}/api/bkk/admin/tee/drops/${D1.id}/report.csv`, { headers: ADMIN });
+      const repTxt = await repCsv.text();
+      ok('...GET report gives the frozen one; report.csv has the tees, money, costs and result', frozen.body.report.live === false
+         && frozen.body.report.frozenAt === rep.frozenAt && /text\/csv/.test(repCsv.headers.get('content-type')) && repTxt.includes('"section","item","qty","thb"')
+         && repTxt.includes('"cost","print","",4000') && repTxt.includes(`"result","price less costs","",${rep.baseLessCosts}`), repTxt.slice(0, 300));
+      ok('...a finished drop is no longer on the page and cannot change', (await J('/api/bkk/tee-drop')).body.drop === null
+         && (await A('drops', { id: D1.id, cap: 25 })).status === 409 && (await PUT(`drops/${D1.id}/stock`, { stock: asGrid })).status === 409);
+
+      console.log('  contact details deleted');
+      await A(`orders/${L2id}`, { problem: 'refund question open' });
+      const handedRow = await teeRow(O2.body.order.refno);
+      await A(`orders/${handedRow.order_id}`, { handed: true });
+      const p0 = await watch.teePurge({ now: clock + 8 * DAY });
+      const early = await teeRow(O2.body.order.refno), cancelled8 = await teeRow(C1.body.order.refno), lapsed8 = await teeRow(race.find(r => r.status === 200).body.order.refno);
+      ok('8 days on: a cancelled order and a lapsed unpaid hold lose their contact details; one handed over 8 days ago keeps them (30 days)',
+         p0.purged > 0 && !!cancelled8.purged_at && cancelled8.name === null && cancelled8.email === null && !!lapsed8.purged_at && lapsed8.wechat === null
+         && !early.purged_at && early.name === 'Over Two', JSON.stringify([p0, cancelled8.purged_at, early.purged_at]));
+      const p1 = await watch.teePurge({ now: clock + 31 * DAY }), p2 = await watch.teePurge({ now: clock + 31 * DAY });
+      const late = await teeRow(O2.body.order.refno), noted = await teeRow(L2.body.order.refno);
+      ok('31 days on: the handed one too; the items, money, ref, pickup point and dates stay; a problem note pauses it; a second run deletes nothing',
+         p1.purged > 0 && p2.purged === 0 && !!late.purged_at && late.name === null && late.wechat === null && late.mobile === null && late.email === null
+         && late.pickup && late.amount_thb > 0 && !!late.handed_at && !noted.purged_at && noted.email === 'lin.example@example.com', JSON.stringify([p1, p2]));
+      const pv = (await J(`/api/bkk/tee-orders/${late.token}`)).body;
+      ok('...the buyer\'s page then says only where it stands, its tees and the pickup point', JSON.stringify(Object.keys(pv).sort()) === '["items","pickup","purged","status"]'
+         && pv.status === 'handed' && pv.items.length === 1, JSON.stringify(pv));
+      const pgNo = await A(`drops/${D1.id}/purge`, {}), pg = await A(`drops/${D1.id}/purge`, { confirm: true });
+      const leftC = await one(`SELECT count(*)::int AS n FROM bkk_tee_orders WHERE drop_id=$1 AND purged_at IS NULL`, [D1.id]);
+      ok('Delete contact details now: needs confirm; on a finished drop it deletes them all but the order with a problem note and the one paid the wrong amount',
+         pgNo.status === 409 && pg.status === 200 && pg.body.purged > 0 && pg.body.kept === 2 && leftC.n === 2
+         && (await teeRow(M1.body.order.refno)).email === 'mismatch.example@example.com', JSON.stringify([pgNo.body, pg.body]));
+
+      console.log('  one address');
+      const ipd = await A('drops', { code: 'test-ip', title: { en: 'IP', zh: 'IP' }, opensAt: bkkMin(clock - MIN), cap: 100, pickups: PICKUPS });
+      await PUT(`drops/${ipd.body.drop.id}/stock`, { stock: [row('lotus', 'black', 'M', 100, 690)] });
+      await A('drops', { id: ipd.body.drop.id, published: true });
+      const ipStock = (await one(`SELECT id FROM bkk_tee_stock WHERE drop_id=$1`, [ipd.body.drop.id])).id;
+      const ipRes = [];
+      for (let i = 0; i < 21; i++) ipRes.push((await order(base({ drop: 'test-ip', email: `ip.${i >> 1}@example.com`, lines: [{ stockId: ipStock, qty: 1 }] }), '203.0.113.9')).status);
+      await A(`drops/${ipd.body.drop.id}/close`, {});
+      ok('20 orders an hour from one address, then 429', ipRes.slice(0, 20).every(s => s === 200) && ipRes[20] === 429, ipRes.join());
+
+      console.log('  the tunnel address, paying and letting go by the link, a late payment, a wrong amount, Finish with a hold');
+      const fx = await A('drops', { code: 'test-fix', title: { en: 'Fix', zh: '修' }, opensAt: bkkMin(clock - MIN), cap: 40, maxPerOrder: 5,
+        holdMin: 30, purgeDays: 30, pickups: PICKUPS });
+      const FX = fx.body.drop.id;
+      await PUT(`drops/${FX}/stock`, { stock: [row('lotus', 'black', 'M', 1, 690), row('lotus', 'black', 'L', 30, 690)] });
+      await A('drops', { id: FX, published: true });
+      const fxS = Object.fromEntries((await pool.query(`SELECT id, size FROM bkk_tee_stock WHERE drop_id=$1`, [FX])).rows.map(r => [r.size, r.id]));
+      const fb = (o = {}) => base({ drop: 'test-fix', lines: [{ stockId: fxS.L, qty: 1 }], ...o });
+      const tun = [];
+      for (let i = 0; i < 21; i++) tun.push((await post('/api/bkk/tee-orders', fb({ email: `tun.${i >> 1}@example.com` }),
+        { 'x-forwarded-for': `10.9.0.${i}, 198.51.100.77`, 'cf-connecting-ip': '198.51.100.77' })).status);
+      ok('through the tunnel, a new made-up x-forwarded-for each time does not get round the 20 an hour', tun.slice(0, 20).every(s => s === 200)
+         && tun[20] === 429, tun.join());
+
+      const P1 = await order(fb({ email: 'pay.link@example.com', name: 'Pay Link', lines: [{ stockId: fxS.M, qty: 1 }] }));
+      const p1t = (await teeRow(P1.body.order.refno)).token;
+      const pv1 = (await J(`/api/bkk/tee-orders/${p1t}`)).body;
+      ok('a waiting order can be paid from its own link: the same pay form as the confirm card', pv1.status === 'waiting' && !!pv1.pay
+         && pv1.pay.action === P1.body.pay.action && JSON.stringify(pv1.pay.fields) === JSON.stringify(P1.body.pay.fields) && pv1.checking === false,
+         JSON.stringify([pv1.pay, P1.body.pay]));
+      const again1 = await order(fb({ email: 'pay.link@example.com', name: 'Pay Link', wechat: 'pay_link_fixed', lines: [{ stockId: fxS.M, qty: 1 }] }));
+      const rel = await post(`/api/bkk/tee-orders/${p1t}/release`, {});
+      const P2 = await order(fb({ email: 'pay.link@example.com', name: 'Pay Link', wechat: 'pay_link_fixed', lines: [{ stockId: fxS.M, qty: 1 }] }));
+      const relRow = await teeRow(P1.body.order.refno);
+      ok('"Change my order": the held order is let go by its link, so the same last tee can be ordered again at once', again1.status === 409
+         && rel.status === 200 && rel.body.released === true && relRow.status === 'cancelled' && relRow.money === 'pending' && P2.status === 200
+         && !(await J(`/api/bkk/tee-orders/${p1t}`)).body.pay, JSON.stringify([again1.body, rel.body, P2.body.error]));
+      answers[r12(P2.body.order.refno)] = [{ ReferenceNo: r12(P2.body.order.refno), Total: P2.body.order.amount, Status: 'Y', StatusName: 'Paid',
+        CustomerEmal: 'pay.link@example.com', CardType: 'AL' }];
+      await J('/api/bkk/pay/check/' + P2.body.order.refno);
+      const p2t = (await teeRow(P2.body.order.refno)).token;
+      const relPaid = await post(`/api/bkk/tee-orders/${p2t}/release`, {});
+      const paidView = (await J(`/api/bkk/tee-orders/${p2t}`)).body;
+      ok('...a paid order is never let go and has no pay form; an unknown link is 404', relPaid.body.released === false
+         && (await teeRow(P2.body.order.refno)).status === 'paid' && paidView.status === 'paid' && !paidView.pay
+         && (await post('/api/bkk/tee-orders/' + 'e'.repeat(32) + '/release', {})).status === 404, JSON.stringify([relPaid.body, paidView.status]));
+      const gw = (await one('SELECT gateway_ref FROM bkk_orders WHERE refno=$1', [P2.body.order.refno])).gateway_ref || '';
+      ok('...the money row keeps what was paid from the PaySolutions answer, never the buyer\'s email it repeats', /"ReferenceNo"/.test(gw)
+         && /"CardType":"AL"/.test(gw) && /"Total"/.test(gw) && !/pay\.link|CustomerEmal/.test(gw), gw);
+
+      const LT = await order(fb({ email: 'late.pay@example.com', name: 'Late Pay' }));
+      const ltt = (await teeRow(LT.body.order.refno)).token;
+      clock += 31 * MIN;
+      const ltv = (await J(`/api/bkk/tee-orders/${ltt}`)).body;
+      payAs(LT);
+      clock += 61000;
+      const ltv2 = (await J(`/api/bkk/tee-orders/${ltt}`)).body;
+      ok('a hold that ran out on a money row still open reads expired but still checking, with no pay form; a payment that lands then is paid',
+         ltv.status === 'expired' && ltv.checking === true && !ltv.pay && ltv2.status === 'paid' && ltv2.checking === false,
+         JSON.stringify([ltv.status, ltv.checking, ltv2.status]));
+
+      const WA = await order(fb({ email: 'wrong.amount@example.com', name: 'Wrong Amount' }));
+      payAs(WA, WA.body.order.amount - 50);
+      await J('/api/bkk/pay/check/' + WA.body.order.refno);
+      const waId = (await teeRow(WA.body.order.refno)).order_id;
+      const wa1 = await A(`orders/${waId}/cancel`, {});
+      const wa2 = await A(`orders/${waId}/cancel`, { refunded: true, reason: 'paid 50 short' });
+      const waRow = await teeRow(WA.body.order.refno);
+      ok('a wrong amount is money in: cancel asks for the refund first (409 needs refunded), then voids it, saying "(wrong amount)"',
+         wa1.status === 409 && wa1.body.needs === 'refunded' && wa2.status === 200 && wa2.body.voided === true && waRow.money === 'void'
+         && waRow.status === 'cancelled' && /^Void: tee refund \(wrong amount\): paid 50 short/.test(waRow.gateway_note), JSON.stringify([wa1.body, wa2.body, waRow.gateway_note]));
+      const WB = await order(fb({ email: 'wrong.kept@example.com', name: 'Wrong Kept' }));
+      payAs(WB, WB.body.order.amount + 10);
+      await J('/api/bkk/pay/check/' + WB.body.order.refno);
+      await watch.teePurge({ now: clock + 40 * DAY, dropId: FX, all: true });
+      ok('...and one still wrong keeps its contact details through any purge until staff settle it',
+         (await teeRow(WB.body.order.refno)).email === 'wrong.kept@example.com' && !!(await teeRow(LT.body.order.refno)).email);
+
+      const FH = await order(fb({ email: 'finish.hold@example.com', name: 'Finish Hold' }));
+      await A(`drops/${FX}/close`, {});
+      clock += MIN;
+      await watch.teePurge({ now: clock, dropId: FX, done: true });
+      const fh0 = await A(`drops/${FX}/finish`, { costs: { print: 100 }, confirm: true });
+      ok('Finish waits while an unpaid order can still be paid (409, how many, until when); the finished-drop purge keeps that hold\'s contact details',
+         fh0.status === 409 && fh0.body.holds === 1 && fh0.body.until === FH.body.order.holdUntil
+         && (await teeRow(FH.body.order.refno)).email === 'finish.hold@example.com' && (await teeRow(LT.body.order.refno)).email === null,
+         JSON.stringify(fh0.body));
+      clock += 31 * MIN;
+      const fh1 = await A(`drops/${FX}/finish`, { costs: { print: 100 }, confirm: true });
+      const tgF = tg.length;
+      payAs(FH);
+      const fhChk = (await J('/api/bkk/pay/check/' + FH.body.order.refno)).body;
+      await until(() => tg.slice(tgF).some(t => t.includes('after its pre-order was finished')));
+      ok('...once it has run out, Finish goes through; a payment that lands after that is a refund for staff (oversold), never a sale, told with the ref only',
+         fh1.status === 200 && fhChk.status === 'paid' && fhChk.tee && fhChk.tee.status === 'oversold' && fh1.body.report.money.n === 2
+         && tg.slice(tgF).some(t => t.includes('after its pre-order was finished') && t.includes(`ref ${FH.body.order.refno}`) && !t.includes('Finish Hold')),
+         JSON.stringify([fh1.body.error, fhChk, tg.slice(tgF)]));
+    } finally {
+      clock = clockWas;
+      for (const [k, v] of Object.entries(envWas)) { if (v === undefined) delete process.env[k]; else process.env[k] = v; }
+      await pool.query('DELETE FROM bkk_settings WHERE key = ANY($1::text[])', [KEYS]);
+      for (const r of keysWas) await pool.query('INSERT INTO bkk_settings (key,value) VALUES ($1,$2)', [r.key, JSON.stringify(r.value)]);
+      stub.close(); tgStub.close();
+    }
+  }
+
   console.log(`\n${PASS} passed, ${FAIL} failed`);
   srv.close(); await pool.end();
   process.exit(FAIL ? 1 : 0);

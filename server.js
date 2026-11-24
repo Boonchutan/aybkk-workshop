@@ -263,7 +263,7 @@ const ORIENTATION_SHORTCUTS = {
 // Bangkok shala: timetable, packages, booking. ('/bkk' is the orientation form, sent to /book while the agreement is on.)
 const PAGE_SHORTCUTS = { book: 'bkk.html', shala: 'bkk.html', booking: 'bkk.html',
   door: 'bkk-door.html', teach: 'bkk-teacher.html', photos: 'bkk-photos.html', start: 'start.html', partner: 'partner.html',
-  tablet: TABLET_FILE };
+  tablet: TABLET_FILE, tees: 'bkk.html' };
 // In-Depth Mysore. On every host but cn.*, /in-depth is the public English page: the priority list
 // for the next English intake. cn.aybkk.net/in-depth is Generation #3, a Chinese cohort, sent only by
 // link on WeChat. That page sits in pages/, so no static path serves it; ?lang= changes nothing; it is
