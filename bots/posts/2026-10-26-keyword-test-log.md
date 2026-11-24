@@ -30,3 +30,6 @@ Staff page start stats on Sun 22 Nov (30 days): ig-aybkk views = , line-aybkk vi
 Carne, Mon 16 Nov: no weekly score for week 3. The log has no Reel plays, word comments or LINE counts yet (inbox 16 Nov: 0 chats with start/ig-aybkk or start/line-aybkk). Without plays there is nothing to divide. Readout Wed 25 Nov needs the per-Reel rows filled first.
 
 Carne, Mon 23 Nov: test window ended 22 Nov. No weekly score for week 4: still no Reel plays or word comments in the log. Inbox: 0 LINE chats with start/ig-aybkk or start/line-aybkk in week 4 (and none seen in weeks 1 to 3). Staff page start stats for 22 Nov not filled. Readout Wed 25 Nov can only run if the per-Reel rows and start stats come in first.
+
+## Readout, Wed 25 Nov (Carne)
+No result. The log has 0 Reel rows, 0 plays, 0 word comments, and the start stats for 22 Nov are empty. Inbox: 0 LINE chats with start/ig-aybkk or start/line-aybkk in all 4 weeks. By the brief, a missing Reel is left out and nobody guesses a number, so every Reel is left out. P vs R is not answered. Lane B: 0 chats is not proof that "aybkk" fails, because we can't tell if any Reel asked for it. Boonchu picks: A run the same 4 weeks again from a start day he names, with one person filling the Reel rows each Sunday, or B drop the test.
