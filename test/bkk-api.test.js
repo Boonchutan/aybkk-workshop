@@ -8816,12 +8816,12 @@ const ok = (name, cond, extra = '') => {
       ok("bkk_orders.kind: 'pass' by default, never empty, every order so far a pass, and only 'pass' or 'tee'", /'pass'/.test(col.column_default || '')
          && col.is_nullable === 'NO' && (await one(`SELECT count(*)::int AS n FROM bkk_orders WHERE kind <> 'pass'`)).n === 0
          && /check constraint/.test(badKind || ''), JSON.stringify([col, badKind]));
-      const TEE_PINNED = { en: '500d81ab133aae671281586f25d260a12f7f455b115af7f041502b4bd83cd839', zh: '7a055ae371710e213d1a63899f083119df72d48425e279f978989bea6001d865' };
+      const TEE_PINNED = { en: '32c23c3e2fb00fbfb255b77eb545929258dfbe41fe5d91605226621d9dc48312', zh: '9c13d47e785b8162820ae3962e50e3727d28fe0bd6d4c53e07d6c449380e90c1' };
       ok('tee notice t1: English and Chinese only, each the pinned text', TEE_NOTICE_VERSION === 't1' && Object.keys(TEE_NOTICE.t1).join() === 'en,zh'
          && sha(TEE_NOTICE.t1.en) === TEE_PINNED.en && sha(TEE_NOTICE.t1.zh) === TEE_PINNED.zh, `${sha(TEE_NOTICE.t1.en)} ${sha(TEE_NOTICE.t1.zh)}`);
       ok('...it names who handles the data, the pickup team member, the trip between Thailand and China, and how long', ['en', 'zh'].every(l => {
         const s = TEE_NOTICE.t1[l].sections.map(x => x[1]).join(' ');
-        return ['PaySolutions', 'Resend', 'Railway', 'Telegram', '{purge_days}', '{legal_name}', '{address}', '{email}', '5'].every(w => s.includes(w))
+        return ['PaySolutions', 'Resend', 'Railway', 'Cloudflare', 'cn.aybkk.net', 'Telegram', '{purge_days}', '{legal_name}', '{address}', '{email}', '5', '60'].every(w => s.includes(w))
           && (l === 'en' ? /WeChat ID/.test(s) && /Thailand and China/.test(s) : /微信号/.test(s) && /泰国和中国/.test(s));
       }));
 
@@ -9251,8 +9251,9 @@ const ok = (name, cond, extra = '') => {
          p1.purged > 0 && p2.purged === 0 && !!late.purged_at && late.name === null && late.wechat === null && late.mobile === null && late.email === null
          && late.pickup && late.amount_thb > 0 && !!late.handed_at && !noted.purged_at && noted.email === 'lin.example@example.com', JSON.stringify([p1, p2]));
       const pv = (await J(`/api/bkk/tee-orders/${late.token}`)).body;
-      ok('...the buyer\'s page then says only where it stands, its tees and the pickup point', JSON.stringify(Object.keys(pv).sort()) === '["items","pickup","purged","status"]'
-         && pv.status === 'handed' && pv.items.length === 1, JSON.stringify(pv));
+      ok('...the buyer\'s page then says only where it stands, its ref, its tees and the pickup point',
+         JSON.stringify(Object.keys(pv).sort()) === '["items","kind","pickup","purged","refno","status"]'
+         && pv.status === 'handed' && pv.items.length === 1 && pv.refno === r12(O2.body.order.refno), JSON.stringify(pv));
       const pgNo = await A(`drops/${D1.id}/purge`, {}), pg = await A(`drops/${D1.id}/purge`, { confirm: true });
       const leftC = await one(`SELECT count(*)::int AS n FROM bkk_tee_orders WHERE drop_id=$1 AND purged_at IS NULL`, [D1.id]);
       ok('Delete contact details now: needs confirm; on a finished drop it deletes them all but the order with a problem note and the one paid the wrong amount',
@@ -9334,7 +9335,7 @@ const ok = (name, cond, extra = '') => {
       payAs(WB, WB.body.order.amount + 10);
       await J('/api/bkk/pay/check/' + WB.body.order.refno);
       await watch.teePurge({ now: clock + 40 * DAY, dropId: FX, all: true });
-      ok('...and one still wrong keeps its contact details through any purge until staff settle it',
+      ok('...and one still wrong keeps its contact details through Delete now and the daily purge while it is open',
          (await teeRow(WB.body.order.refno)).email === 'wrong.kept@example.com' && !!(await teeRow(LT.body.order.refno)).email);
 
       const FH = await order(fb({ email: 'finish.hold@example.com', name: 'Finish Hold' }));
@@ -9356,6 +9357,81 @@ const ok = (name, cond, extra = '') => {
          fh1.status === 200 && fhChk.status === 'paid' && fhChk.tee && fhChk.tee.status === 'oversold' && fh1.body.report.money.n === 2
          && tg.slice(tgF).some(t => t.includes('after its pre-order was finished') && t.includes(`ref ${FH.body.order.refno}`) && !t.includes('Finish Hold')),
          JSON.stringify([fh1.body.error, fhChk, tg.slice(tgF)]));
+
+      console.log('  a wrong amount on a let-go order, Delete now never early, a note held at most 60 days, the report per tee');
+      const r2 = await A('drops', { code: 'test-r2', title: { en: 'R2', zh: '二' }, opensAt: bkkMin(clock - MIN), cap: 20, maxPerOrder: 5,
+        holdMin: 30, purgeDays: 30, pickups: PICKUPS });
+      const R2 = r2.body.drop.id;
+      await PUT(`drops/${R2}/stock`, { stock: [row('lotus', 'black', 'M', 10, 600), row('lotus', 'black', '2XL', 5, 800)] });
+      await A('drops', { id: R2, published: true });
+      const r2S = Object.fromEntries((await pool.query(`SELECT id, size FROM bkk_tee_stock WHERE drop_id=$1`, [R2])).rows.map(r => [r.size, r.id]));
+      const rb = (o = {}) => base({ drop: 'test-r2', lines: [{ stockId: r2S.M, qty: 1 }], ...o });
+
+      const X1 = await order(rb({ email: 'let.go@example.com', name: 'Let Go' }));
+      const x1 = await teeRow(X1.body.order.refno);
+      await post(`/api/bkk/tee-orders/${x1.token}/release`, {});
+      payAs(X1, X1.body.order.amount - 100);
+      await J('/api/bkk/pay/check/' + X1.body.order.refno);
+      const x1v = (await J(`/api/bkk/tee-orders/${x1.token}`)).body;
+      const x1s = (await AG(`drops/${R2}/orders`)).body;
+      const x1c0 = await A(`orders/${x1.order_id}/cancel`, {});
+      const x1c1 = await A(`orders/${x1.order_id}/cancel`, { refunded: true, reason: 'short' });
+      const x1r = await teeRow(X1.body.order.refno);
+      ok('a wrong amount on an order the buyer let go: buyer and staff both see a payment problem, and staff refund it (409 needs refunded, then void)',
+         x1v.status === 'mismatch' && (x1s.orders.find(o => o.orderId === x1.order_id) || {}).view === 'mismatch' && x1s.totals.orders.mismatch === 1
+         && x1c0.status === 409 && x1c0.body.needs === 'refunded' && x1c1.status === 200 && x1c1.body.voided === true && x1r.money === 'void'
+         && x1r.status === 'cancelled' && /^Void: tee refund \(wrong amount\): short/.test(x1r.gateway_note), JSON.stringify([x1v.status, x1s.totals.orders, x1c0.body, x1c1.body]));
+
+      const X6 = await order(rb({ email: 'swap.price@example.com', name: 'Swap Price' }));
+      payAs(X6);
+      await J('/api/bkk/pay/check/' + X6.body.order.refno);
+      const x6id = (await teeRow(X6.body.order.refno)).order_id;
+      const sw6 = await A(`orders/${x6id}`, { swapStockId: r2S['2XL'] });
+      const rcsv = await fetch(`${B}/api/bkk/admin/tee/drops/${R2}/report.csv`, { headers: ADMIN }).then(r => r.text());
+      const rep6 = (await AG(`drops/${R2}/report`)).body.report;
+      ok('after a swap to a tee at another price, the report\'s per-tee money is what was paid, and the tees add up to the money in', sw6.status === 200
+         && rcsv.includes('"tees","Lotus · Black · 2XL",1,600') && rcsv.includes('"tees","Lotus · Black · M",0,0')
+         && rep6.stock.reduce((n, x) => n + x.thb, 0) === rep6.money.base && rep6.money.base === 600, rcsv);
+
+      const X5 = await order(rb({ email: 'noted.hand@example.com', name: 'Noted Hand' }));
+      payAs(X5);
+      await J('/api/bkk/pay/check/' + X5.body.order.refno);
+      const x5id = (await teeRow(X5.body.order.refno)).order_id;
+      await A(`orders/${x5id}`, { problem: 'swapped on the day' });
+      await A(`orders/${x5id}`, { handed: true });
+
+      const X2 = await order(rb({ email: 'lapsed.late@example.com', name: 'Lapsed Late', wechat: 'lapsed_wx' }));
+      const X3 = await order(rb({ email: 'released.late@example.com', name: 'Released Late', wechat: 'released_wx' }));
+      await post(`/api/bkk/tee-orders/${(await teeRow(X3.body.order.refno)).token}/release`, {});
+      clock += 31 * MIN;
+      const pn = await A(`drops/${R2}/purge`, { confirm: true });
+      payAs(X2); payAs(X3);
+      await J('/api/bkk/pay/check/' + X2.body.order.refno);
+      await J('/api/bkk/pay/check/' + X3.body.order.refno);
+      await until(() => receipts('lapsed.late@example.com').length && receipts('released.late@example.com').length);
+      const x2r = await teeRow(X2.body.order.refno), x3r = await teeRow(X3.body.order.refno);
+      ok('Delete contact details now leaves a lapsed hold and a let-go order whose money is still open: a late payment still finds its buyer and sends the receipt',
+         pn.status === 200 && x2r.status === 'paid' && x2r.wechat === 'lapsed_wx' && x3r.status === 'paid' && x3r.wechat === 'released_wx'
+         && receipts('lapsed.late@example.com').length === 1 && receipts('released.late@example.com').length === 1
+         && (await teeRow(X1.body.order.refno)).email === null, JSON.stringify([pn.body, x2r.status, x3r.status]));
+
+      const X4 = await order(rb({ email: 'never.paid@example.com', name: 'Never Paid' }));
+      clock += 31 * MIN;
+      await A(`drops/${R2}/purge`, { confirm: true });
+      const x4a = await teeRow(X4.body.order.refno);
+      await watch.teePurge({ now: clock + 7 * DAY });
+      const x4b = await teeRow(X4.body.order.refno);
+      const x4v = (await J(`/api/bkk/tee-orders/${x4b.token}`)).body;
+      ok('...a hold that ran out unpaid waits for its 7 days, then goes; its page still shows the ref', x4a.email === 'never.paid@example.com'
+         && x4b.email === null && !!x4b.purged_at && x4v.purged === true && x4v.refno === r12(X4.body.order.refno) && x4v.status === 'expired', JSON.stringify(x4v));
+
+      await watch.teePurge({ now: clock + 31 * DAY });
+      const x5a = await teeRow(X5.body.order.refno);
+      await watch.teePurge({ now: clock + 91 * DAY });
+      const x5b = await teeRow(X5.body.order.refno), wb = await teeRow(WB.body.order.refno);
+      ok('a problem note keeps a handed order\'s contact details past its 30 days, but at most 60 days longer, and the note goes with them; a wrong amount nobody settled the same',
+         x5a.email === 'noted.hand@example.com' && x5a.problem === 'swapped on the day' && x5b.email === null && x5b.problem === null && !!x5b.purged_at
+         && wb.email === null && !!wb.purged_at, JSON.stringify([x5a.email, x5b.email, x5b.problem, wb.email]));
     } finally {
       clock = clockWas;
       for (const [k, v] of Object.entries(envWas)) { if (v === undefined) delete process.env[k]; else process.env[k] = v; }

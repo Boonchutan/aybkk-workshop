@@ -485,6 +485,7 @@
   .tcart,.tform,.tconf,.tstat,.tmine{margin-top:var(--grp);padding-top:14px;border-top:2px solid var(--ink)}
   #teeDrop > :first-child{margin-top:0}
   #teeDrop h3{margin:0 0 14px;font:700 var(--fs-l)/1.3 var(--f-text)}
+  #teeList:not([hidden]) ~ #teeDrop{margin-top:calc(2 * var(--bl))}
   #teeDrop h3:focus{outline:none}
   #teeDrop h4{margin:var(--bl) 0 6px;font:700 var(--fs-b)/28px var(--f-text)}
   .tlines{list-style:none;margin:0;padding:0}
@@ -3918,6 +3919,8 @@
       <p class="tchg"><button type="button" class="linkbtn" data-act="change">${esc(t('teeChange'))}</button></p>
       <p class="note">${esc(t('teeChangeNote'))}</p></div>`;
   }
+  // The order's own link on this host (cn.aybkk.net for buyers in China), to carry it to another browser.
+  function teeLinkOf(tok) { return `${location.origin}/book#tee=${tok}`; }
   // One order, by its token: where it stands, its tees, the money and the pickup point.
   function teeStatusHtml() {
     const s = TEE.st;
@@ -3946,7 +3949,10 @@
       ${b ? `<dl class="tbuyer"><dt>${esc(t('teeName'))}</dt><dd>${esc(b.name)}</dd><dt>${esc(t('teeWx'))}</dt><dd>${esc(b.wechat)}</dd>
         ${b.mobile ? `<dt>${esc(t('teeMobileS'))}</dt><dd>${esc(b.mobile)}</dd>` : ''}<dt>${esc(t('teeEmailS'))}</dt><dd>${esc(b.email)}</dd></dl>` : ''}
       ${s.purged ? `<p class="note">${esc(t('teeStPurged'))}</p>` : ''}
-      ${st === 'waiting' && s.pay ? `${TEE_WX ? `<p class="twx">${esc(t('teeHow3'))}</p>` : ''}
+      ${st === 'waiting' && s.pay ? `<h4>${esc(t('teeLinkH'))}</h4>
+        <div class="wechat tlink"><span id="teeLink">${esc(teeLinkOf(TEE.token).replace(/^https?:\/\//, ''))}</span>
+          <button type="button" class="btn ghost" data-act="copy">${esc(t('copy'))}</button></div>
+        ${TEE_WX ? `<p class="twx">${esc(t('teeHow3'))}</p>` : ''}
         <p class="act"><button type="button" class="btn buy" data-act="spay">${esc(t('teePay', baht(s.money.amount)))}</button></p>` : ''}
       <p class="note">${esc(t('teeAsk'))}</p>
       <p class="dacts">${st === 'waiting' || late ? `<button type="button" class="btn ghost" data-act="check">${esc(t('teeCheck'))}</button>` : ''}
@@ -3965,13 +3971,15 @@
   // The section: the pre-order when there is a drop or one order's status is open; else the LINE list
   // (not on cn), with this phone's tee orders under it.
   async function renderTees() {
-    const d = await teeLoad();
+    const d0 = await teeLoad(), d = d0 && (CN_HOST || d0.state !== 'closed') ? d0 : null;
     const sec = $('#tees'), box = $('#teeDrop'), h = sec.querySelector('h2'), lead = sec.querySelector('.lead');
     if (d || TEE.view === 'status') {
-      $('#teeList').hidden = true;
-      $('#teeAll').parentElement.hidden = true;
-      h.textContent = d && TEE.view !== 'status' ? d.title : t('teeH');
-      lead.textContent = t('teeCollect');
+      const line = !CN_HOST && TEE.view !== 'status' ? await renderLineTees() : 0;
+      TEE.lineToo = !!line;
+      $('#teeList').hidden = !line;
+      if (!line) $('#teeAll').parentElement.hidden = true;
+      h.textContent = line ? t('teeH') : d && TEE.view !== 'status' ? d.title : t('teeH');
+      lead.textContent = t(line ? 'teeLead' : 'teeCollect');
       box.hidden = sec.hidden = false;
       teeDraw();
       // The order's title and tee names come from the server in one language: ask again on a switch.
@@ -3979,6 +3987,7 @@
       return;
     }
     TEE.view = 'pick';
+    TEE.lineToo = false;
     box.innerHTML = teeMineHtml('');
     box.hidden = !box.innerHTML;
     const line = CN_HOST ? 0 : await renderLineTees();
@@ -4000,6 +4009,8 @@
       if (TEE.view === 'confirm' && TEE.made) html = teeConfirmHtml(d, stock);
       else if (TEE.view === 'details' && TEE.cart.length && d.state === 'open') html = teeFormHtml(d, stock);
       else { TEE.view = 'pick'; html = teePickHtml(d, stock) + teeMineHtml(''); }
+      // Under the shala's LINE list (aybkk.net), the China pre-order says what it is.
+      if (TEE.lineToo) html = `<h3 class="tdrop">${esc(d.title)}</h3><p class="note">${esc(t('teeCollect'))}</p>` + html;
     }
     box.innerHTML = html;
     if (!was) return;
@@ -4147,16 +4158,24 @@
     else if (j.status === 'paid') alert(t('teeRetMail'));
   }
   // "Change my order": the held order is let go first, so its tees are free for the new one.
+  // An order it did not let go (paid meanwhile from its link, a wrong amount, a network fault) stays, and
+  // its status opens instead: never a second order on top of a paid one.
   async function teeRelease() {
     const tok = TEE.made && TEE.made.token;
+    if (!tok) { TEE.made = null; return true; }
+    let ok = false;
+    try {
+      const r = await fetch(`/api/bkk/tee-orders/${tok}/release`, { method: 'POST', cache: 'no-store' });
+      ok = r.ok && (await r.json()).released === true;
+    } catch (_) {}
     TEE.made = null;
-    if (!tok) return;
-    try { await fetch(`/api/bkk/tee-orders/${tok}/release`, { method: 'POST', cache: 'no-store' }); } catch (_) {}
+    if (!ok) { teeStatus(tok, false); return false; }
     teeForget(tok);
     try { const p = JSON.parse(localStorage.getItem('aybkk_pending') || 'null'); if (p && p.token === tok) localStorage.removeItem('aybkk_pending'); } catch (_) {}
+    return true;
   }
   async function teeCopy(btn) {
-    const link = TEE.made && TEE.made.link;
+    const link = (TEE.made && TEE.made.link) || (TEE.view === 'status' && TEE.token ? teeLinkOf(TEE.token) : '');
     if (!link) return;
     let done = false;
     try { await navigator.clipboard.writeText(link); done = true; } catch (_) {}
@@ -4206,10 +4225,17 @@
     else if (act === 'copy') teeCopy(b);
     else if (act === 'pay') teePay(TEE.made && TEE.made.pay, TEE.made && TEE.made.token);
     else if (act === 'spay') teePay(TEE.st && TEE.st.pay, TEE.token);
-    else if (act === 'change') { b.disabled = true; teeRelease().then(() => { TEE.view = 'details'; TEE.msg = null; teeDraw(); teeTop('#teeForm'); }); }
+    else if (act === 'change') { b.disabled = true; teeRelease().then(ok => { if (!ok) return; TEE.view = 'details'; TEE.msg = null; teeDraw(); teeTop('#teeForm'); }); }
     else if (act === 'open') teeStatus(v, false);
     else if (act === 'check') { b.disabled = true; teeFetch(); }
     else if (act === 'tees') { teePollStop(); TEE.view = 'pick'; TEE.token = ''; TEE.st = null; renderTees().then(() => teeTop('#teeDrop', true)); }
+  });
+  document.addEventListener('visibilitychange', () => {
+    const tok = TEE.made && TEE.made.token;
+    if (document.visibilityState !== 'visible' || !tok || TEE.view !== 'confirm') return;
+    fetch(`/api/bkk/tee-orders/${tok}?lang=${LANG}`, { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(st => {
+      if (st && st.status !== 'waiting' && TEE.made && TEE.made.token === tok && TEE.view === 'confirm') { TEE.made = null; teeStatus(tok, false); }
+    }).catch(() => {});
   });
   $('#teeDrop').addEventListener('submit', e => { e.preventDefault(); teeSend(); });
   // What is typed is kept in TEE.form; a field's message goes once it is changed.

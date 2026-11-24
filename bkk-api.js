@@ -342,9 +342,9 @@ const TEE_NOTICE = {
         ['Who we are', '{legal_name} runs AYBKK (Ashtanga Yoga Center of Bangkok), {address}. Contact us at {email} or on LINE @aybkk.'],
         ['What we keep', 'Your name, WeChat ID, mobile number if you give one, email, the tees you order, your pickup point, and the payment record (amount, date, reference). We never see or keep your card or wallet details: PaySolutions handles the payment.'],
         ['Why', 'To hand this order to you at the pickup point you chose, to send your receipt, and to answer your questions about this order. We never sell your data.'],
-        ['Who else sees it', 'PaySolutions takes the payment and receives your email. Resend sends our emails. Railway runs the server and database of this site. The AYBKK team member at your pickup point sees your name, WeChat ID and the tees you ordered, to hand them to you. Alerts to our staff on Telegram carry the order reference and how many tees, never your name or contact details.'],
+        ['Who else sees it', 'PaySolutions takes the payment and receives your email. Resend sends our emails. Railway runs the server and database of this site. Cloudflare carries this site’s traffic to and from cn.aybkk.net. The AYBKK team member at your pickup point sees your name, WeChat ID and the tees you ordered, to hand them to you. Alerts to our staff on Telegram carry the order reference and how many tees, never your name or contact details.'],
         ['Thailand and China', 'AYBKK is in Thailand. Your details are kept on servers outside China, and travel between Thailand and China so that a team member can hand your order to you in China.'],
-        ['How long', 'Your name, WeChat ID, mobile number and email are deleted {purge_days} days after you collect your order, or 7 days after an order is cancelled or left unpaid. The payment record is kept for 5 years, as Thai tax law asks.'],
+        ['How long', 'Your name, WeChat ID, mobile number and email are deleted {purge_days} days after you collect your order, or 7 days after an order is cancelled or left unpaid. If a problem with your order is still open (a swap, a refund, a wrong amount), we keep them until it is settled, at most 60 days longer. The payment record is kept for 5 years, as Thai tax law asks.'],
         ['Your rights', 'You can ask to see your data, get a copy, correct it or delete it. Write to {email} or message LINE @aybkk. We keep the payment record for the time above even if you ask us to delete the rest. If you are not happy with how we handle your data, you can complain to the Personal Data Protection Committee of Thailand.'],
       ],
       tick: 'I have read the privacy notice for this order.',
@@ -355,9 +355,9 @@ const TEE_NOTICE = {
         ['我们是谁', '{legal_name} 经营 AYBKK（Ashtanga Yoga Center of Bangkok），地址：{address}。联系方式：{email} 或 LINE @aybkk。'],
         ['我们保存什么', '你的姓名、微信号、手机号（如果你填写）、邮箱、你订购的T恤、你选择的领取点，以及付款记录（金额、日期、订单号）。我们看不到，也不保存你的银行卡或钱包信息：付款由 PaySolutions 处理。'],
         ['为什么保存', '用于在你选择的领取点把这份订单交给你、发送收据，以及回答你关于这份订单的问题。我们绝不出售你的资料。'],
-        ['还有谁会看到', 'PaySolutions 处理付款，并会收到你的邮箱。Resend 发送我们的邮件。Railway 运行本网站的服务器和数据库。你所选领取点的 AYBKK 成员会看到你的姓名、微信号和你订购的T恤，以便把T恤交给你。通过 Telegram 发给工作人员的提醒只包含订单号和T恤数量，绝不包含你的姓名或联系方式。'],
+        ['还有谁会看到', 'PaySolutions 处理付款，并会收到你的邮箱。Resend 发送我们的邮件。Railway 运行本网站的服务器和数据库。Cloudflare 为 cn.aybkk.net 传送本网站的数据。你所选领取点的 AYBKK 成员会看到你的姓名、微信号和你订购的T恤，以便把T恤交给你。通过 Telegram 发给工作人员的提醒只包含订单号和T恤数量，绝不包含你的姓名或联系方式。'],
         ['泰国和中国', 'AYBKK 位于泰国。你的资料保存在中国境外的服务器上，并会在泰国和中国之间传送，以便 AYBKK 成员在中国把订单交给你。'],
-        ['保存多久', '你的姓名、微信号、手机号和邮箱会在你领取订单 {purge_days} 天后删除；订单取消或未付款的，7 天后删除。付款记录按照泰国税法要求保存 5 年。'],
+        ['保存多久', '你的姓名、微信号、手机号和邮箱会在你领取订单 {purge_days} 天后删除；订单取消或未付款的，7 天后删除。如果订单还有未解决的问题（换货、退款、金额不符），我们会保留到问题解决为止，最多再保留 60 天。付款记录按照泰国税法要求保存 5 年。'],
         ['你的权利', '你可以要求查看你的资料、获取副本、更正或删除。请发邮件到 {email}，或通过 LINE @aybkk 联系我们。即使你要求删除其他资料，我们也会按上述期限保存付款记录。如果你对我们处理资料的方式不满意，可以向泰国个人数据保护委员会投诉。'],
       ],
       tick: '我已阅读这份订单的隐私声明。',
@@ -371,6 +371,7 @@ const TEE_FEW = 3;                                  // "a few left" at this many
 const TEE_HOLDS_PER_EMAIL = 2;                      // live unpaid holds per drop per email
 const TEE_ORDERS_PER_IP_HOUR = 20;                  // a script holding the whole drop, from one address
 const TEE_UNPAID_PURGE_DAYS = 7;                    // contact details after a cancel or a lapsed unpaid hold
+const TEE_HELD_DAYS = 60;                           // at most this much longer while a problem note or a wrong amount is open
 const TEE_GATEWAY_KEEP = ['ReferenceNo', 'OrderNo', 'Status', 'StatusName', 'Total', 'CardType', 'CurrencyCode', 'OrderDateTime'];
 const TEE_ORIGIN = 'https://cn.aybkk.net';          // the status link in the receipt: buyers are in China
 
@@ -4707,14 +4708,15 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   const pickupsOf = d => Array.isArray(d.pickups) ? d.pickups : [];
   const qtyOf = lines => lines.reduce((n, l) => n + l.qty, 0);
   // The buyer's page and the staff list say the same thing: the tee order's own state once it is
-  // paid or ended, else the money row's (a wrong amount, a void), else whether the hold still runs.
-  const TEE_VIEW = n => `CASE WHEN t.status <> 'new' THEN t.status WHEN o.status = 'paid' THEN 'paid'
-    WHEN o.status = 'mismatch' THEN 'mismatch' WHEN o.status IN ('void','twin') THEN 'cancelled'
+  // paid or ended, else the money row's (a void), else whether the hold still runs. A wrong amount comes first:
+  // money came in, even on an order that was let go or cancelled, and staff must refund it.
+  const TEE_VIEW = n => `CASE WHEN o.status = 'mismatch' THEN 'mismatch' WHEN t.status <> 'new' THEN t.status
+    WHEN o.status = 'paid' THEN 'paid' WHEN o.status IN ('void','twin') THEN 'cancelled'
     WHEN t.hold_until > ${n} THEN 'waiting' ELSE 'expired' END`;
   function teeView(t, money, now) {
+    if (money === 'mismatch') return 'mismatch';
     if (t.status !== 'new') return t.status;
     if (money === 'paid') return 'paid';
-    if (money === 'mismatch') return 'mismatch';
     if (money === 'void' || money === 'twin') return 'cancelled';
     return new Date(t.hold_until).getTime() > now ? 'waiting' : 'expired';
   }
@@ -4956,7 +4958,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const p = pickupsOf(t).find(x => x.key === t.pickup);
       const status = teeView(t, t.money, now), pickup = { key: t.pickup, label: p ? p.label : null };
       const items = (await teeItems(pool, [t.order_id], L)).get(t.order_id);
-      if (t.purged_at) return res.json({ status, items, pickup, purged: true });
+      if (t.purged_at) return res.json({ status, kind: 'tee', refno: refno12(t.refno), items, pickup, purged: true });
       const when = v => v ? isoBkk(v) : null;
       // A hold still running can be paid from its link too: a lost tab, "Open in Browser" in WeChat
       // or a wallet that came back unpaid loses nothing. checking: past its hold, but the money row
@@ -5062,20 +5064,23 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   }
 
   // Contact details go: purge_days after hand-over, 7 days after a cancel or after an unpaid hold
-  // lapsed. The tees, the money, the ref, the pickup point and the dates stay. A problem note
-  // pauses it. now: the drop's own Delete now (all), and on a finished drop everything.
+  // lapsed. While a problem note or a wrong-amount payment is open they wait, at most TEE_HELD_DAYS
+  // longer (the notice says so), and the note goes with them. A row whose money can still turn paid
+  // (pending, failed) is never taken early: a late payment must still find its buyer. The tees, the
+  // money, the ref, the pickup point and the dates stay. all: the drop's own Delete now (handed
+  // orders and settled cancels); done: a finished drop, everything that is settled.
   async function teePurge({ now = nowMs(), dropId = null, all = false, done = false } = {}) {
-    const r = await q(`UPDATE bkk_tee_orders t SET name=NULL, wechat=NULL, mobile=NULL, email=NULL, purged_at=$1
+    const r = await q(`UPDATE bkk_tee_orders t SET name=NULL, wechat=NULL, mobile=NULL, email=NULL, problem=NULL, purged_at=$1
       FROM bkk_orders o, bkk_tee_drops d
-      WHERE o.id = t.order_id AND d.id = t.drop_id AND t.purged_at IS NULL AND t.problem IS NULL
+      WHERE o.id = t.order_id AND d.id = t.drop_id AND t.purged_at IS NULL
         AND ($2::int IS NULL OR t.drop_id = $2)
-        AND o.status <> 'mismatch'
-        AND (($5::boolean AND NOT (t.status = 'new' AND o.status IN ('pending','failed') AND t.hold_until > $1))
-          OR (t.status = 'handed' AND t.handed_at <= $1::timestamptz - make_interval(days => d.purge_days))
-          OR (t.status = 'cancelled' AND t.cancelled_at <= $1::timestamptz - make_interval(days => $3))
-          OR (t.status = 'new' AND o.status IN ('pending','failed') AND t.hold_until <= $1::timestamptz - make_interval(days => $3))
-          OR ($4::boolean AND (t.status IN ('handed','cancelled') OR (t.status = 'new' AND o.status IN ('pending','failed') AND t.hold_until <= $1))))
-      RETURNING t.order_id`, [at(now), dropId, TEE_UNPAID_PURGE_DAYS, all, done]);
+        AND ((CASE WHEN t.status = 'handed' THEN t.handed_at + make_interval(days => d.purge_days)
+                   WHEN t.status = 'cancelled' THEN t.cancelled_at + make_interval(days => $3)
+                   WHEN t.status = 'new' AND o.status IN ('pending','failed','mismatch') THEN t.hold_until + make_interval(days => $3) END)
+              + CASE WHEN t.problem IS NOT NULL OR o.status = 'mismatch' THEN make_interval(days => $6) ELSE interval '0' END <= $1::timestamptz
+          OR (t.problem IS NULL AND o.status NOT IN ('mismatch','pending','failed')
+            AND ($5::boolean OR ($4::boolean AND t.status IN ('handed','cancelled')))))
+      RETURNING t.order_id`, [at(now), dropId, TEE_UNPAID_PURGE_DAYS, all, done, TEE_HELD_DAYS]);
     return { purged: r.rowCount };
   }
   const teePurgeTick = () => teePurge().then(r => { if (r.purged) console.log(`✓ bkk tee: contact details deleted on ${r.purged} order(s)`); })
@@ -5425,7 +5430,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       await teeDropById(client, t0.drop_id, true);
       const o = (await client.query('SELECT * FROM bkk_orders WHERE id=$1 FOR UPDATE', [oid])).rows[0];
       const t = (await client.query('SELECT * FROM bkk_tee_orders WHERE order_id=$1 FOR UPDATE', [oid])).rows[0];
-      if (t.status === 'cancelled') return await stop(200, { success: true, already: true, refno: String(o.refno) });
+      if (t.status === 'cancelled' && o.status !== 'mismatch') return await stop(200, { success: true, already: true, refno: String(o.refno) });
       let note = null;
       // A wrong amount is money received too: it is refunded like a paid order, never just dropped.
       if (o.status === 'paid' || o.status === 'mismatch') {
@@ -5502,10 +5507,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const tot = await teeTotals(db, d, now);
     const handed = (await db.query(`SELECT l.stock_id, sum(l.qty)::int AS n FROM bkk_tee_lines l
       JOIN bkk_tee_orders t ON t.order_id = l.order_id WHERE t.drop_id = $1 AND t.status = 'handed' GROUP BY 1`, [d.id])).rows;
+    const paidAt = (await db.query(`SELECT l.stock_id, sum(l.qty * l.unit_thb)::int AS thb FROM bkk_tee_lines l
+      JOIN bkk_tee_orders t ON t.order_id = l.order_id WHERE t.drop_id = $1 AND t.status IN ('paid','handed') GROUP BY 1`, [d.id])).rows;
     const costTotal = Object.values(costs || {}).reduce((n, v) => n + v, 0);
     return { frozenAt: isoBkk(now), drop: { code: d.code, title: pickLang(d.title, 'en'), opensAt: isoBkk(d.opens_at), closesAt: isoBkk(d.closes_at), cap: d.cap },
       stock: tot.stock.map(s => ({ stockId: s.id, design: s.design, designName: s.designName.en, colour: s.colour, colourName: s.colourName.en,
-        size: s.size, priceThb: s.priceThb, cap: s.cap, sold: s.sold, handed: (handed.find(h => h.stock_id === s.id) || {}).n || 0 })),
+        size: s.size, priceThb: s.priceThb, cap: s.cap, sold: s.sold, thb: (paidAt.find(x => x.stock_id === s.id) || {}).thb || 0,
+        handed: (handed.find(h => h.stock_id === s.id) || {}).n || 0 })),
       tees: { sold: tot.tees.sold, handed: handed.reduce((n, h) => n + h.n, 0) }, orders: tot.orders, money: tot.money, refunds: tot.refunds,
       costs: costs || {}, costTotal, baseLessCosts: tot.money.base - costTotal };
   }
@@ -5560,7 +5568,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const r = d.report ? { ...d.report, live: false } : { ...await teeReport(pool, d, d.costs || {}, now), live: true };
       if (!req.path.endsWith('.csv')) return res.json({ report: r });
       const rows = [['section', 'item', 'qty', 'thb'],
-        ...r.stock.map(s => ['tees', `${s.designName} · ${s.colourName} · ${s.size}`, s.sold, s.sold * s.priceThb]),
+        ...r.stock.map(s => ['tees', `${s.designName} · ${s.colourName} · ${s.size}`, s.sold, s.thb]),
         ['money', 'paid orders', r.money.n, r.money.amount], ['money', 'price (before fee and VAT)', '', r.money.base],
         ['money', 'online fee', '', r.money.fee], ['money', 'VAT 7%', '', r.money.vat],
         ['money', 'refunded orders', r.refunds.n, r.refunds.amount],

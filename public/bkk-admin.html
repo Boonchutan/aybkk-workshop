@@ -1420,7 +1420,7 @@
     tpHandBtn: 'Handed over ✓', tpUnhand: 'Undo hand-over', tpQUnhand: 'Mark as not handed over yet?',
     tpHandedOk: 'Marked as handed over.', tpUnhandOk: 'Marked as not handed over yet.',
     tpPickupH: 'Pickup point', tpProblemH: 'Problem note', tpPbClear: 'Clear note',
-    tpProblemHelp: 'Staff only. While there is a note, the contact details are kept.',
+    tpProblemHelp: 'Staff only. While there is a note, the contact details are kept, at most 60 days longer. The note goes with them.',
     tpSwapH: 'Swap a tee', tpSwapFrom: 'This tee', tpSwapTo: 'for', tpSwapBtn: 'Swap', tpLeftN: n => `${n} left`,
     tpSwapHelp: 'The price paid stays. The order becomes Paid.', tpSwapNone: 'No other tee is left to swap to.',
     tpQSwap: (a, b) => `Swap ${a} for ${b}?`, tpSwapped: 'Swapped. The order is paid.', tpSoldOutSwap: 'That tee is sold out now. Pick another.',
@@ -1449,7 +1449,7 @@
     tpHandedN: n => `${n} handed over`, tpLess: 'Price less costs', tpLessSub: 'before the online fee and VAT', tpHanded: 'Handed',
     tpTeeCol: 'Tee', tpCsv: 'Download report (CSV)',
     tpPurgeH: 'Delete contact details now',
-    tpPurgeHelp: d => `Names, WeChat IDs, mobiles and emails go by themselves ${d} days after the hand-over, and 7 days after a cancel or a lapsed order. This deletes them now for handed, cancelled and lapsed orders, and on a finished pre-order for every order. An order with a problem note keeps them.`,
+    tpPurgeHelp: d => `Names, WeChat IDs, mobiles and emails go by themselves ${d} days after the hand-over, and 7 days after a cancel or a lapsed order. This deletes them now for handed orders and settled cancels, and on a finished pre-order for every settled order. An order that could still be paid, has a problem note or a wrong amount keeps them (at most 60 days longer).`,
     tpKept: n => `${n} order(s) still have contact details.`, tpPurgeBtn: 'Delete contact details now',
     tpQPurge: 'Delete the contact details now? This cannot be undone.', tpPurgeDone: (n, k) => `Deleted on ${n} order(s). ${k} still have them.`,
     tpPill: d => `Tee · ${d}`, tpItem: d => `Tee pre-order ${d}`, tpTeeNote: s => `Tee order: ${s}`,
@@ -1508,7 +1508,7 @@
     tpHandBtn: 'ส่งมอบแล้ว ✓', tpUnhand: 'ยกเลิกการส่งมอบ', tpQUnhand: 'เปลี่ยนเป็นยังไม่ได้ส่งมอบ?',
     tpHandedOk: 'บันทึกว่าส่งมอบแล้ว', tpUnhandOk: 'บันทึกว่ายังไม่ได้ส่งมอบ',
     tpPickupH: 'จุดรับเสื้อ', tpProblemH: 'บันทึกปัญหา', tpPbClear: 'ลบบันทึก',
-    tpProblemHelp: 'เห็นเฉพาะทีม ระหว่างที่มีบันทึกนี้ ข้อมูลติดต่อจะยังไม่ถูกลบ',
+    tpProblemHelp: 'เห็นเฉพาะทีม ระหว่างที่มีบันทึกนี้ ข้อมูลติดต่อจะยังไม่ถูกลบ นานสุดอีก 60 วัน แล้วบันทึกจะถูกลบไปด้วย',
     tpSwapH: 'เปลี่ยนเสื้อ', tpSwapFrom: 'ตัวนี้', tpSwapTo: 'เป็น', tpSwapBtn: 'เปลี่ยน', tpLeftN: n => `เหลือ ${n}`,
     tpSwapHelp: 'ราคาที่จ่ายไว้คงเดิม ออเดอร์จะเป็น "จ่ายแล้ว"', tpSwapNone: 'ไม่มีเสื้อตัวอื่นเหลือให้เปลี่ยน',
     tpQSwap: (a, b) => `เปลี่ยน ${a} เป็น ${b}?`, tpSwapped: 'เปลี่ยนแล้ว ออเดอร์เป็นจ่ายแล้ว', tpSoldOutSwap: 'เสื้อตัวนั้นหมดแล้ว เลือกตัวอื่น',
@@ -1537,7 +1537,7 @@
     tpHandedN: n => `ส่งมอบแล้ว ${n}`, tpLess: 'ราคาหักค่าใช้จ่าย', tpLessSub: 'ก่อนค่าธรรมเนียมออนไลน์และ VAT', tpHanded: 'ส่งมอบแล้ว',
     tpTeeCol: 'เสื้อ', tpCsv: 'ดาวน์โหลดรายงาน (CSV)',
     tpPurgeH: 'ลบข้อมูลติดต่อตอนนี้',
-    tpPurgeHelp: d => `ชื่อ WeChat มือถือ และอีเมล จะถูกลบเองหลังส่งมอบ ${d} วัน และ 7 วันหลังยกเลิกหรือหมดเวลาจอง ปุ่มนี้ลบทันทีสำหรับออเดอร์ที่ส่งมอบแล้ว ยกเลิกแล้ว และหมดเวลาจอง ถ้าพรีออเดอร์จบแล้วจะลบทุกออเดอร์ ออเดอร์ที่มีบันทึกปัญหาจะยังเก็บไว้`,
+    tpPurgeHelp: d => `ชื่อ WeChat มือถือ และอีเมล จะถูกลบเองหลังส่งมอบ ${d} วัน และ 7 วันหลังยกเลิกหรือหมดเวลาจอง ปุ่มนี้ลบทันทีสำหรับออเดอร์ที่ส่งมอบแล้วและที่ยกเลิกเรียบร้อยแล้ว ถ้าพรีออเดอร์จบแล้วจะลบทุกออเดอร์ที่เรียบร้อยแล้ว ออเดอร์ที่ยังอาจมีเงินเข้ามา มีบันทึกปัญหา หรือยอดเงินไม่ตรง จะยังเก็บไว้ (นานสุดอีก 60 วัน)`,
     tpKept: n => `ยังมีข้อมูลติดต่ออยู่ ${n} ออเดอร์`, tpPurgeBtn: 'ลบข้อมูลติดต่อตอนนี้',
     tpQPurge: 'ลบข้อมูลติดต่อตอนนี้? ย้อนกลับไม่ได้', tpPurgeDone: (n, k) => `ลบแล้ว ${n} ออเดอร์ ยังมีข้อมูลอยู่ ${k} ออเดอร์`,
     tpPill: d => `เสื้อ · ${d}`, tpItem: d => `พรีออเดอร์เสื้อ ${d}`, tpTeeNote: s => `ออเดอร์เสื้อ: ${s}`,
@@ -3434,7 +3434,7 @@
         ? `<button class="btn gray sm" onclick="tpSetPb(true, this)">${esc(T('tpPbClear'))}</button>` : ''}</div>
       <p class="muted">${esc(T('tpProblemHelp'))}</p>
       ${o.money === 'pending' && st === 'new' ? `<p><button class="btn sm" onclick="tpChk(this)">${esc(T('chkPay'))}</button></p>` : ''}
-      ${live && o.money !== 'void' && o.view !== 'cancelled' ? `<h3>${esc(T('tpCancelH'))}</h3>
+      ${(live || o.money === 'mismatch') && o.money !== 'void' && o.view !== 'cancelled' ? `<h3>${esc(T('tpCancelH'))}</h3>
         <p><button class="btn red sm" onclick="tpCancel(this)">${esc(T(paid ? 'tpCancelRef' : 'tpCancel'))}</button></p>` : ''}
       ${o.note ? `<p class="onote">${esc(o.note)}</p>` : ''}
     </div>`;
