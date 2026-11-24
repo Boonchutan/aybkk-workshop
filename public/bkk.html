@@ -785,6 +785,10 @@
 
   .pkg{background:var(--paper);padding:22px;margin-bottom:14px}
   .pkg h3{margin:0 0 4px;font:700 var(--fs-l)/1.3 var(--f-text);color:var(--ink)}
+  .pkg.ended{background:none;box-shadow:inset 0 0 0 1px var(--line)}
+  .pkg.ended h3{color:var(--soft)}
+  .pastp summary{display:flex;align-items:center;min-height:44px;cursor:pointer;text-decoration:underline;color:var(--soft)}
+  .pastp[open] summary{margin-bottom:10px}
   .note{font-size:var(--fs-s);color:var(--soft);line-height:20px}
   /* ── The Packages tab is the price poster (Boonchu, 12 Nov 2026): 01 membership, 02 packs behind it, 03 the
      member notes, on a fixed Louvre red field like the hero. It bleeds out of main's padding to the screen
@@ -1831,6 +1835,8 @@
     cameH: 'Classes you came to', noCame: 'No classes yet. They appear here after you practise.',
     passUnlim: n => `Unlimited · ${n} bookings per day`, passUnlimOnly: 'Unlimited classes',
     passLeft: n => `${n} classes left`, validUntil: d => `Valid until ${d}`,
+    validRange: (a, b) => `Valid ${a} to ${b}`, passEnded: d => `Ended ${d}`, pastPasses: n => `Past passes (${n})`,
+    noLivePass: 'No current pass.',
     startsFirst: 'Starts when you book your first class', noPassYet: 'No pass yet.',
     noUpcoming: 'No upcoming classes booked.', member: 'Member', cancelBk: 'Cancel',
   });
@@ -1840,6 +1846,8 @@
     cameH: 'คลาสที่คุณมาเรียน', noCame: 'ยังไม่มีคลาส หลังจากมาฝึก คลาสจะขึ้นที่นี่',
     passUnlim: n => `เรียนไม่จำกัด · จองได้วันละ ${n} คลาส`, passUnlimOnly: 'เรียนไม่จำกัด',
     passLeft: n => `เหลือ ${n} ครั้ง`, validUntil: d => `ใช้ได้ถึง ${d}`,
+    validRange: (a, b) => `ใช้ได้ ${a} ถึง ${b}`, passEnded: d => `หมดอายุเมื่อ ${d}`, pastPasses: n => `แพ็กเกจที่หมดอายุแล้ว (${n})`,
+    noLivePass: 'ตอนนี้ยังไม่มีแพ็กเกจที่ใช้ได้',
     startsFirst: 'เริ่มนับเมื่อคุณจองคลาสแรก', noPassYet: 'ยังไม่มีแพ็กเกจ',
     noUpcoming: 'ยังไม่มีคลาสที่จองไว้', member: 'สมาชิก', cancelBk: 'ยกเลิก',
   });
@@ -1849,6 +1857,8 @@
     cameH: '你上过的课', noCame: '还没有记录。练习之后，课程会显示在这里。',
     passUnlim: n => `不限次数 · 每天可预约 ${n} 节课`, passUnlimOnly: '不限次数',
     passLeft: n => `剩余 ${n} 次课`, validUntil: d => `有效期至 ${d}`,
+    validRange: (a, b) => `有效期 ${a} 至 ${b}`, passEnded: d => `已于 ${d} 结束`, pastPasses: n => `已结束的会员卡（${n}）`,
+    noLivePass: '目前没有有效的会员卡。',
     startsFirst: '从你预约第一节课开始计算', noPassYet: '还没有会员卡。',
     noUpcoming: '还没有预约的课程。', member: '会员', cancelBk: '取消预约',
   });
@@ -1858,6 +1868,8 @@
     cameH: 'Занятия, на которых вы были', noCame: 'Пока пусто. После практики занятия появятся здесь.',
     passUnlim: n => `Без ограничений · до ${n} записей в день`, passUnlimOnly: 'Без ограничений',
     passLeft: n => `Осталось занятий: ${n}`, validUntil: d => `Действует до: ${d}`,
+    validRange: (a, b) => `Действует с ${a} по ${b}`, passEnded: d => `Закончился ${d}`, pastPasses: n => `Прошлые абонементы (${n})`,
+    noLivePass: 'Сейчас нет действующего абонемента.',
     startsFirst: 'Начнётся, когда вы запишетесь на первое занятие', noPassYet: 'Абонемента пока нет.',
     noUpcoming: 'Нет записей на ближайшие занятия.', member: 'Участник', cancelBk: 'Отменить',
   });
@@ -3113,14 +3125,21 @@
       setMine(code, d);
       if (REV.code !== code) REV = { code, renewals: 0, w12: null, thanks: false };
       REV.renewals = Math.max(0, Math.floor(Number(d.renewals)) || 0);
-      const passes = (d.passes || []).map(p => `<div class="pkg">
+      // What the student holds: never a void pass; one whose last day has gone says it ended, folded
+      // under the passes that still let them in.
+      const pday = v => dayLong(String(v).slice(0, 10));
+      const pkg = p => `<div class="pkg${p.ended ? ' ended' : ''}">
         <h3>${esc((LANG === 'th' && p.nameTh) || p.name)}</h3>
-        <div class="note">${esc(p.kind === 'unlimited'
+        ${p.ended ? '' : `<div class="note">${esc(p.kind === 'unlimited'
           ? (p.dailyCap ? t('passUnlim', p.dailyCap) : t('passUnlimOnly'))
-          : t('passLeft', p.creditsLeft ?? 0))}</div>
-        <div class="note">${esc(p.validUntil ? t('validUntil', fmtDay(String(p.validUntil).slice(0, 10) + 'T12:00:00+07:00'))
+          : t('passLeft', p.creditsLeft ?? 0))}</div>`}
+        <div class="note">${esc(p.ended ? t('passEnded', pday(p.validUntil))
+          : p.validUntil ? (p.validFrom ? t('validRange', pday(p.validFrom), pday(p.validUntil)) : t('validUntil', pday(p.validUntil)))
           : t('startsFirst'))}</div>
-      </div>`).join('') || `<p class="note">${esc(t('noPassYet'))}</p>`;
+      </div>`;
+      const held = (d.passes || []).filter(p => p.status !== 'void'), live = held.filter(p => !p.ended), past = held.filter(p => p.ended);
+      const passes = (live.map(pkg).join('') || `<p class="note">${esc(t(past.length ? 'noLivePass' : 'noPassYet'))}</p>`)
+        + (past.length ? `<details class="pastp"><summary>${esc(t('pastPasses', past.length))}</summary>${past.map(pkg).join('')}</details>` : '');
       const bookings = (d.bookings || []).map(b => `<div class="cls">
         <div class="t">${fmtTime(b.start_at)}</div>
         <div class="b"><div class="n">${esc(clsName(b.title))}</div>
