@@ -11,3 +11,5 @@
 - Inbox 07:08: 1 thread with news, 1 hot.
 
 13:08 check-in: old-price ask and teacher-training ask still waiting (due 19:00 today). Keyword readout tomorrow. Inbox: 3 new, 3 hot.
+
+19:08 check-in: old-price ask and teacher-training ask passed 19:00 with no answer, defaults on. No win today. Next step: check the bank for the 2 slips. Inbox: 2 new, 0 hot.
