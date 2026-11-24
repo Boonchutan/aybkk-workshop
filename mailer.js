@@ -183,6 +183,52 @@ const TEMPLATES = {
     };
   }])),
 
+  // The tee pre-order receipt (24 Nov 2026), in the buyer's language (zh, or en for every other).
+  // items: [{ designName, colourName, size, qty, unitThb }]. oversold: paid, but those tees ran
+  // out, so staff swap a size or refund. No sign-in link and no pass: a tee buyer has neither.
+  teeReceipt: Object.fromEntries(Object.entries({
+    en: { subject: (t, o) => o ? `AYBKK tee order: payment received, ${t}` : `Your AYBKK tee order: ${t}`, hello: n => `Hello ${n},`,
+      paid: 'Thank you. Your payment is received and your tees are reserved.',
+      oversold: 'Thank you. Your payment is received, but some of these tees sold out while you were paying. We will message you within 3 days to swap a size or refund you in full.',
+      price: 'Price', fee: 'Online transaction fee', vat: 'VAT 7%', total: 'Paid', ref: 'Reference',
+      pickupH: 'Collect from', pickup: 'An AYBKK team member hands you your tees at this pickup point. They will contact you on WeChat.',
+      link: 'Your order, any time:', linkBtn: 'See my order',
+      english: 'The payment page was in English. This email is your receipt.' },
+    zh: { subject: (t, o) => o ? `AYBKK T恤订单：已收到付款，${t}` : `你的 AYBKK T恤订单：${t}`, hello: n => `${n}，你好：`,
+      paid: '谢谢！我们已收到你的付款，你的T恤已为你保留。',
+      oversold: '谢谢！我们已收到你的付款，但在你付款期间，其中部分T恤已售完。我们会在 3 天内联系你，为你换一个尺码或全额退款。',
+      price: '价格', fee: '在线交易手续费', vat: '增值税 7%', total: '已付', ref: '订单号',
+      pickupH: '领取点', pickup: 'AYBKK 成员会在这个领取点把T恤交给你，并会通过微信联系你。',
+      link: '随时查看你的订单：', linkBtn: '查看我的订单',
+      english: '付款页面是英文的。这封邮件就是你的收据。' },
+  }).map(([lang, w]) => [lang, ({ name, title, items, base, fee, vat, amount, refno, pickup, link, oversold }) => {
+    const line = it => `${it.designName} · ${it.colourName} · ${it.size} × ${it.qty}`;
+    return {
+      subject: w.subject(title, oversold),
+      text: [w.hello(name), '', oversold ? w.oversold : w.paid, '',
+        ...items.map(it => `${line(it)}  ${baht(it.unitThb)} × ${it.qty} = ${baht(it.unitThb * it.qty)}`), '',
+        `${w.price}: ${baht(base)}`, `${w.fee}: ${baht(fee)}`, `${w.vat}: ${baht(vat)}`, `${w.total}: ${baht(amount)}`,
+        `${w.ref}: ${refno}`, '', `${w.pickupH}: ${pickup}`, w.pickup, '', `${w.link} ${link}`, '', w.english].join('\n'),
+      html: shell(`
+        <p>${esc(w.hello(name))}</p>
+        <p${oversold ? ' style="background:#fbe7f0;padding:12px 14px;border-radius:8px"' : ''}>${esc(oversold ? w.oversold : w.paid)}</p>
+        <table style="width:100%;font-size:14px;margin:16px 0">
+          ${items.map(it => `<tr><td>${esc(line(it))}</td><td align="right">${baht(it.unitThb * it.qty)}</td></tr>`).join('')}
+          <tr><td style="color:#6b5d70;padding-top:8px">${esc(w.price)}</td><td align="right" style="padding-top:8px">${baht(base)}</td></tr>
+          <tr><td style="color:#6b5d70">${esc(w.fee)}</td><td align="right">${baht(fee)}</td></tr>
+          <tr><td style="color:#6b5d70">${esc(w.vat)}</td><td align="right">${baht(vat)}</td></tr>
+          <tr><td style="padding-top:8px"><b>${esc(w.total)}</b></td><td align="right" style="padding-top:8px"><b>${baht(amount)}</b></td></tr>
+          <tr><td style="color:#6b5d70">${esc(w.ref)}</td><td align="right">${esc(refno)}</td></tr>
+        </table>
+        <p><b>${esc(w.pickupH)}:</b> ${esc(pickup)}<br><span style="font-size:13px;color:#6b5d70">${esc(w.pickup)}</span></p>
+        <p style="text-align:center;margin:22px 0">
+          <a href="${esc(link)}" style="background:#5c2160;color:#fdf7fa;text-decoration:none;
+             padding:12px 26px;border-radius:8px;display:inline-block;font-weight:600">${esc(w.linkBtn)}</a></p>
+        <p style="font-size:13px;color:#6b5d70">${esc(w.link)} ${esc(link)}</p>
+        <p style="font-size:13px;color:#6b5d70">${esc(w.english)}</p>`),
+    };
+  }])),
+
   classCancelled: {
     en: ({ name, className, date, time, reason }) => ({
       subject: `Class cancelled — ${className}, ${date}`,

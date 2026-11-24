@@ -516,7 +516,7 @@ function mountTeam(app, opts = {}) {
       q(`SELECT m.name, o.refno, o.amount_thb, pr.name_en AS item_en,
            to_char(o.created_at AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS day
          FROM bkk_orders o JOIN bkk_members m ON m.id=o.member_id LEFT JOIN bkk_products pr ON pr.id=o.product_id
-         WHERE o.status='pending' AND o.source IS NULL AND o.method='online'
+         WHERE o.status='pending' AND o.source IS NULL AND o.method='online' AND o.kind='pass'
            AND o.created_at >= ($1::date - 3)::timestamp AT TIME ZONE 'Asia/Bangkok'
            AND o.created_at < ($1::date + 1)::timestamp AT TIME ZONE 'Asia/Bangkok'
            AND NOT EXISTS (SELECT 1 FROM bkk_orders x WHERE x.member_id=o.member_id AND x.status='paid' AND x.created_at > o.created_at)
@@ -623,7 +623,8 @@ function mountTeam(app, opts = {}) {
     const tomorrow = addDays(date, 1);
     const one = async (sql, args = W) => (await q(sql, args)).rows[0];
     const all = async (sql, args = W) => (await q(sql, args)).rows;
-    const unpaidStill = `o.status='pending' AND o.source IS NULL AND o.created_at >= $1 AND o.created_at < $2
+    // A tee pre-order's lapsed hold is no one to chase: unpaid lists are package orders only.
+    const unpaidStill = `o.status='pending' AND o.source IS NULL AND o.kind='pass' AND o.created_at >= $1 AND o.created_at < $2
       AND NOT EXISTS (SELECT 1 FROM bkk_orders x WHERE x.member_id=o.member_id AND x.status='paid' AND x.created_at > o.created_at)`;
     const [paid, pending, mismatch, joined, started, ended, seats, made, today, next, nextSeats,
       photos, tagged, notes, checks, tokens, letter, start, journal] = await Promise.all([

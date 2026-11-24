@@ -377,6 +377,9 @@ const fakeDriver = { session: () => ({
   const nina = await member('Nina Paid');
   await order(nina, 'unlim1', { refno: 990000000003, amount: 10580, status: 'pending', created: '2026-11-09T08:00:00+07:00' });
   await order(nina, 'unlim1', { refno: 990000000004, amount: 10580, status: 'paid', created: '2026-11-09T08:05:00+07:00', verified: '2026-11-09T08:06:00+07:00' });
+  // A tee pre-order whose hold lapsed unpaid (24 Nov 2026): no one to chase, in no unpaid list.
+  await pool.query(`INSERT INTO bkk_orders (refno,kind,base_thb,fee_thb,vat_thb,amount_thb,status,method,created_at,item_name)
+    VALUES (990000000077,'tee',700,21,51,772,'pending','online','2026-11-10T10:00:00+07:00','AYBKK tee pre-order test-drop')`);
 
   const zoe = await member('Zoe Renewed');
   await pass(zoe, 'unlim1', { from: '2026-10-13', until: '2026-11-12', created: '2026-10-13T08:00:00+07:00' });
@@ -409,6 +412,7 @@ const fakeDriver = { session: () => ({
   ok('NOT PAID: an online order pending from the last 3 days, and a booking today with no valid pass',
      mt.includes(`💳 ยังไม่จ่าย ช่วยตามเก็บเงิน\n• Kim L. สั่ง 3 months unlimited ฿26,412 ยังไม่ได้จ่าย (สั่ง จ. 9 พ.ย., ref ${kimRef})\n• Tom H. จอง 05:30 แต่แพ็กเกจถูกยกเลิกแล้ว`));
   ok('...not an older order, one the student paid since, or a Rezerv seat', !mt.includes('Sam O.') && !mt.includes('Nina P.') && !/Rex R\. จอง/.test(mt));
+  ok('...nor a tee pre-order left unpaid', !mt.includes('990000000077') && !mt.includes('฿772') && !/tee pre-order/.test(mt));
   ok('MATS: in the class, ฿200 with VAT included, paid at the shala; the old day-level mat section is gone',
      mt.includes('เช่าเสื่อ 1 (฿200 รวม VAT จ่ายที่ชาลา): Anna B.') && !mt.includes('เตรียมเสื่อ') && !/฿214/.test(mt));
   ok('class and package names stay in the original English in the Thai brief', !/มายซอร์|รอบแรก|ไม่จำกัด|ครั้ง \/ 1 เดือน/.test(mt), mt);
@@ -515,6 +519,7 @@ const fakeDriver = { session: () => ({
      + '• 1 month unlimited ×1 ฿10,580\n• 8 classes / 2 months ×1 ฿8,132\n• Drop-in ×1 ฿1,605'));
   ok('...desk sales by method, online, and what is still pending (an order from 21:15 last night too)',
      et.includes('ที่เคาน์เตอร์ เงินสด 1 ฿1,605 · โอน 1 ฿8,132\nออนไลน์ 1 รายการ ฿10,580\nค้างจ่าย 2 รายการ ฿52,824'), (et.match(/ค้างจ่าย.*/) || [])[0]);
+  ok('...the tee pre-order left unpaid is not in what is still pending', et.includes('ค้างจ่าย 2 รายการ ฿52,824') && !/tee pre-order|฿772/.test(et));
   ok('...not a payment after 20:00 or one moved over from Rezerv', !et.includes('฿9,600') && !et.includes('×2'));
   ok('students: new members, passes started, passes that ended today (renewed or not)', et.includes('👥 นักเรียน\nสมัครใหม่ 2 คน: Lin N., Ola F.\n'
      + 'เริ่มแพ็กเกจ 1 คน: Chai D. (1 month unlimited)\nแพ็กเกจหมดวันนี้ 2 คน: Eve E. (ยังไม่ต่อ), Ray R. (ต่อแล้ว)') && !et.includes('Rita'));
