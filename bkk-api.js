@@ -4572,7 +4572,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     try {
       res.json({ surchargePct: await surcharge(), teamBrief: await teamSettings(),
         payWatch: await payWatchSettings(), telegram: await telegramStatus(), payment: { mode: paymentStatus().mode },
-        booking: await bookingSettings(), consent: await consentSettings() });
+        booking: await bookingSettings(), consent: await consentSettings(), photos: { dailyCap: await photosCap() } });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -4627,6 +4627,11 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         team.push([MONEY_AT[0], at]);
       }
       if (b.surchargePct !== undefined) team.push(['surcharge_pct', Number(b.surchargePct)]);
+      if (b.photosDailyCap !== undefined) {
+        const n = Number(b.photosDailyCap);
+        if (!Number.isInteger(n) || n < 0 || n > 5000) return res.status(400).json({ error: 'photosDailyCap must be a whole number from 0 (no limit) to 5000' });
+        team.push(['photos_daily_cap', n]);
+      }
       if (b.bookingOpenUntil !== undefined) {
         const d = String(b.bookingOpenUntil || '').trim(), today = bkkToday();
         if (!isYmd(d) || d < addDaysYmd(today, SCHEDULE_DAYS - 1) || d > addDaysYmd(today, OPEN_MAX_DAYS))
@@ -4683,7 +4688,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (mode !== modeWas) console.log(`✓ bkk: student agreement ${modeWas} → ${mode}`);
       res.json({ success: true, surchargePct: await surcharge(), teamBrief: await teamSettings(),
         payWatch: await payWatchSettings(), telegram: await telegramStatus(), booking: await bookingSettings(),
-        consent: await consentSettings() });
+        consent: await consentSettings(), photos: { dailyCap: await photosCap() } });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -7545,17 +7550,30 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // 'full' is what students long-press to keep and repost on Instagram: the
   // stored JPEG itself (uploads are already capped at 2048), no copy made. The
   // f_auto copy it once was looked soft once saved.
-  // 'save' is a plain JPEG sent as a download: the WebP/AVIF that f_auto gives
-  // Android can't be long-pressed into a Samsung gallery or out of LINE's browser.
+  // Never change one of these strings: a new string is a new copy of every photo
+  // opened again, billed again (it happened on 2 and 17 Nov 2026).
+  // Download ('save') is a plain JPEG sent as a file: the WebP/AVIF that f_auto
+  // gives Android can't be long-pressed into a Samsung gallery or out of LINE's
+  // browser. It is the stored JPEG itself, sent by this server (photoSave): the
+  // Cloudinary attachment link it replaces made one more full-size copy of each
+  // photo downloaded, billed and stored for good, of the very same bytes.
   const PHOTO_SIZES = {
     thumb: { width: 600, height: 600, crop: 'limit', quality: 'auto', fetch_format: 'webp' },
     full: null,
-    save: { width: 2048, height: 2048, crop: 'limit', quality: 95, fetch_format: 'jpg', flags: 'attachment:AYBKK-photo' },
   };
   const photoUrl = (publicId, kind) => cloudinary.url(publicId, {
     type: 'authenticated', sign_url: true, secure: true,
     ...(PHOTO_SIZES[kind] ? { transformation: [PHOTO_SIZES[kind]] } : { format: 'jpg' }),
   });
+  // A download link never ends, as the Cloudinary one before it never did: a
+  // student may leave the page open for days. A path on this site, so it works on
+  // aybkk.net and through cn.aybkk.net alike. Signed over the photo's own random
+  // public_id too, as that link was: a row id handed out again (a restore, a reset
+  // sequence) or another database with the same key never opens someone else's photo.
+  const SAVE_KEY = crypto.createHash('sha256').update('aybkk-photo-save:' + (process.env.CLOUDINARY_API_SECRET
+    || ADMIN_KEY || crypto.randomBytes(32).toString('hex'))).digest();
+  const saveSig = (id, publicId) => crypto.createHmac('sha256', SAVE_KEY).update(`save.${id}.${publicId}`).digest('base64url').slice(0, 22);
+  const photoSave = (id, publicId) => `/api/bkk/photo/${id}.${saveSig(id, publicId)}/AYBKK-photo.jpg`;
   const isDate = d => /^\d{4}-\d{2}-\d{2}$/.test(String(d || ''));
   // Who is in a photo, and how: 'main' (the photo is about them) or 'other'
   // (in the frame). Sent as tags: [{ code, role }]; the old memberCodes still
@@ -7616,7 +7634,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // Students see the photos they are main in. The ones they are only in the
   // frame of stay hidden unless this setting is true (privacy, the safe default).
   const othersVisible = async () => (await getSetting('photos_others_visible', false)) === true;
-  async function photosWithTags(where, args) {
+  // staff: for the /photos page, which shows a photo imported from Drive by
+  // Drive's own thumbnail, so Cloudinary makes a tile only when a student opens
+  // it. The Drive id never goes to a student.
+  async function photosWithTags(where, args, staff) {
     const rows = (await q(
       `SELECT p.*, to_char(p.class_date, 'YYYY-MM-DD') AS day,
               coalesce(json_agg(json_build_object('id', m.id, 'name', m.name, 'role', pm.role)
@@ -7627,7 +7648,56 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
        WHERE ${where} GROUP BY p.id ORDER BY p.id`, args)).rows;
     const sec = await serverSecret();
     return rows.map(p => ({ id: p.id, date: p.day, members: p.members.map(({ id, ...m }) => ({ ...m, ref: memberRef(sec, id) })),
-      thumb: photoUrl(p.public_id, 'thumb'), full: photoUrl(p.public_id, 'full'), save: photoUrl(p.public_id, 'save') }));
+      thumb: photoUrl(p.public_id, 'thumb'), full: photoUrl(p.public_id, 'full'), save: photoSave(p.id, p.public_id),
+      ...(staff && p.drive_id ? { drive: p.drive_id } : {}) }));
+  }
+
+  // Cloudinary's free plan is 25 credits a rolling 30 days, and an account far
+  // past it can be switched off, taking every student photo and door face with
+  // it. Its usage is read at most every 30 minutes; a failed read keeps the last
+  // good one, and never read is null: no limit then.
+  const USAGE_TTL = 30 * 60000, PHOTO_CAP_AT = 90, PHOTO_CAP_DEFAULT = 100;
+  let usageAt = 0, usageWait = null, usageLast = null;
+  function cloudUsage() {
+    const t = nowMs();
+    if (usageWait && t >= usageAt && t - usageAt < USAGE_TTL) return usageWait;
+    usageAt = t;
+    return (usageWait = (async () => {
+      let timer;
+      try {
+        if (!cloudinary || !cloudinary.api || typeof cloudinary.api.usage !== 'function') return usageLast;
+        const u = await Promise.race([cloudinary.api.usage(),
+          new Promise((_, no) => { timer = setTimeout(() => no(new Error('timeout')), 10000); })]);
+        const num = v => v == null || v === '' ? NaN : Number(v);
+        const c = (u && u.credits) || {}, used = num(c.usage), limit = num(c.limit);
+        const pct = Number.isFinite(num(c.used_percent)) ? num(c.used_percent) : limit > 0 ? 100 * used / limit : NaN;
+        if (Number.isFinite(pct)) usageLast = { percent: Math.round(pct * 10) / 10,
+          used: Number.isFinite(used) ? used : null, limit: Number.isFinite(limit) ? limit : null };
+      } catch (e) {
+        console.warn('[bkk photos] Cloudinary usage not read:', (e && (e.message || (e.error && e.error.message))) || e);
+      } finally { clearTimeout(timer); }
+      return usageLast;
+    })());
+  }
+  // New class photos stored today (Bangkok day), from the phone or from Drive.
+  const photosToday = async () => (await q(`SELECT count(*)::int AS n FROM bkk_photos
+    WHERE created_at >= date_trunc('day', now() AT TIME ZONE 'Asia/Bangkok') AT TIME ZONE 'Asia/Bangkok'`)).rows[0].n;
+  const photosCap = async () => {
+    const v = await getSetting('photos_daily_cap', PHOTO_CAP_DEFAULT);
+    return typeof v === 'number' || /^\d+$/.test(String(v)) ? Math.max(0, Math.floor(Number(v))) : PHOTO_CAP_DEFAULT;
+  };
+  async function photoMeter() {
+    const [u, cap, today] = await Promise.all([cloudUsage(), photosCap(), photosToday()]);
+    return { percent: u ? u.percent : null, used: u ? u.used : null, limit: u ? u.limit : null,
+      cap, today, capOn: !!u && u.percent >= PHOTO_CAP_AT && cap > 0 };
+  }
+  // While Cloudinary is nearly full: at most photos_daily_cap NEW photos a day
+  // (0: no limit). Changing who is on a photo already in never counts.
+  async function photoCapHit() {
+    const m = await photoMeter();
+    if (!m.capOn || m.today < m.cap) return null;
+    return `Not saved: today's limit of ${m.cap} new photos is reached. Cloudinary, where the photos are stored, is at `
+      + `${Math.round(m.percent)}% of its free plan and could be switched off. Pick the best ones; the rest can wait.`;
   }
 
   // Two people (or one person twice) can share a name; a hint of the email
@@ -7682,8 +7752,17 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
     const date = isDate(req.query.date) ? req.query.date : ymd(bkkNow());
     try {
-      res.json({ date, photos: await photosWithTags('p.class_date = $1', [date]), othersVisible: await othersVisible() });
+      res.json({ date, photos: await photosWithTags('p.class_date = $1', [date], true), othersVisible: await othersVisible() });
     } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // The line at the top of /photos: how full Cloudinary is, and today's new photos against the cap.
+  app.get('/api/bkk/teacher/photos/meter', async (req, res) => {
+    const t = await teacherFrom(req);
+    if (!t) return res.status(401).json({ error: 'bad passcode' });
+    if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
+    try { res.json(await photoMeter()); }
+    catch (e) { res.status(500).json({ error: e.message }); }
   });
 
   app.post('/api/bkk/teacher/photos', async (req, res) => {
@@ -7699,6 +7778,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (typeof cloudinary.config === 'function' && !cloudinary.config().api_secret) {
         return res.status(503).json({ error: 'Photo storage key is missing in Railway. Nothing was saved: tell Boonchu.' });
       }
+      const full = await photoCapHit();
+      if (full) return res.status(429).json({ error: full, cap: true });
       res.json({ success: true, photo: await storePhoto(t, date, image, await tagsFrom(req.body), null) });
     } catch (e) { res.status(e.status || 500).json({ error: e.message }); }
   });
@@ -7731,7 +7812,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
        VALUES ($1,$2,$3,$4,$5,$6) RETURNING id`,
       [up.public_id, date, up.width || null, up.height || null, t.id, driveId])).rows[0];
     await addTags([photo.id], tags);
-    return (await photosWithTags('p.id = $1', [photo.id]))[0];
+    return (await photosWithTags('p.id = $1', [photo.id], true))[0];
   }
 
   // ── photos straight from the Drive day folder (Boonchu, 5 Oct) ────────────
@@ -7831,11 +7912,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const had = (await q('SELECT id FROM bkk_photos WHERE drive_id=$1', [driveId])).rows[0];
       if (had) {               // already in: set who is in it (add: keep who is there)
         await (add ? addTags([had.id], tags) : setTags(had.id, tags, !tags.given));
-        return res.json({ success: true, photo: (await photosWithTags('p.id = $1', [had.id]))[0] });
+        return res.json({ success: true, photo: (await photosWithTags('p.id = $1', [had.id], true))[0] });
       }
       if (typeof cloudinary.config === 'function' && !cloudinary.config().api_secret) {
         return res.status(503).json({ error: 'Photo storage key is missing in Railway. Nothing was saved: tell Boonchu.' });
       }
+      const full = await photoCapHit();
+      if (full) return res.status(429).json({ error: full, cap: true });
       // Ask Drive for a 2048px copy (about 0.5 MB, the size we keep anyway) rather
       // than the 5 MB camera original: smaller to send and store. Original if that fails.
       const grab = async url => {
@@ -7863,7 +7946,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (!p) return res.status(404).json({ error: 'photo not found' });
       const tags = await tagsFrom(req.body || {});
       await setTags(p.id, tags, !tags.given);
-      res.json({ success: true, photo: (await photosWithTags('p.id = $1', [p.id]))[0] });
+      res.json({ success: true, photo: (await photosWithTags('p.id = $1', [p.id], true))[0] });
     } catch (e) { res.status(e.status || 500).json({ error: e.message }); }
   });
 
@@ -7883,7 +7966,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const found = (await q('SELECT id FROM bkk_photos WHERE id = ANY($1::int[])', [photoIds])).rows.map(r => r.id);
       if (found.length < photoIds.length) return res.status(409).json({ error: 'A photo was deleted meanwhile. Reload the page.' });
       await addTags(photoIds, tags);
-      res.json({ success: true, photos: await photosWithTags('p.id = ANY($1::int[])', [photoIds]) });
+      res.json({ success: true, photos: await photosWithTags('p.id = ANY($1::int[])', [photoIds], true) });
     } catch (e) { res.status(e.status || 500).json({ error: e.message }); }
   });
 
@@ -7921,12 +8004,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
              (now() AT TIME ZONE 'Asia/Bangkok')::date - max(p.class_date) ${MAIN} AS "lastMainDays" ${TAGS}`, [m.id]),
         q(`SELECT to_char(p.class_date,'YYYY-MM') AS month, count(*) ${MAIN}::int AS main,
              count(*) FILTER (WHERE pm.role <> 'main')::int AS other ${TAGS} GROUP BY 1 ORDER BY 1 DESC`, [m.id]),
-        q(`SELECT p.id, p.public_id, to_char(p.class_date,'YYYY-MM-DD') AS date, pm.role ${TAGS}
+        q(`SELECT p.id, p.public_id, p.drive_id, to_char(p.class_date,'YYYY-MM-DD') AS date, pm.role ${TAGS}
            ORDER BY p.class_date DESC, (pm.role <> 'main'), p.id DESC LIMIT $2 OFFSET $3`, [m.id, limit, offset]),
       ]);
       res.json({ member: { ...(byRef ? { ref: req.params.code } : { code: m.code }), name: m.name, hint: emailHint(m.email) },
         totals: totals.rows[0], months: months.rows, limit, offset,
-        photos: photos.rows.map(p => ({ id: p.id, date: p.date, role: p.role, thumb: photoUrl(p.public_id, 'thumb') })) });
+        photos: photos.rows.map(p => ({ id: p.id, date: p.date, role: p.role, thumb: photoUrl(p.public_id, 'thumb'),
+          ...(p.drive_id ? { drive: p.drive_id } : {}) })) });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -7952,6 +8036,30 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       res.json({ days: [...byDay.entries()].sort((a, b) => b[0].localeCompare(a[0]))
         .map(([date, [main, other]]) => ({ date, items: [...main, ...other] })) });
     } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // "Save photo" on My photos: the stored JPEG as a file, fetched here with no
+  // transformation, so no copy is made per download. The link is the key (a
+  // download sends no header); a deleted photo stops at once. An unknown id is
+  // 403 like a bad signature, so which ids exist cannot be probed.
+  app.get('/api/bkk/photo/:t/AYBKK-photo.jpg', async (req, res) => {
+    const m = /^([1-9]\d{0,9})\.([\w-]{22})$/.exec(req.params.t);
+    if (!m) return res.status(404).json({ error: 'not found' });
+    if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
+    const file = { 'Content-Disposition': 'attachment; filename="AYBKK-photo.jpg"',
+      'Cache-Control': 'private, max-age=86400', 'X-Content-Type-Options': 'nosniff' };
+    try {
+      const row = (await q('SELECT public_id FROM bkk_photos WHERE id=$1', [Number(m[1])])).rows[0];
+      const want = Buffer.from(saveSig(m[1], row ? row.public_id : '')), got = Buffer.from(m[2]);
+      if (!row || want.length !== got.length || !crypto.timingSafeEqual(want, got)) return res.status(403).json({ error: 'bad link' });
+      // A HEAD (a link check) gets the headers without pulling the photo from Cloudinary.
+      if (req.method === 'HEAD') return res.set({ ...file, 'Content-Type': 'image/jpeg' }).end();
+      const r = await httpFetch(photoUrl(row.public_id, 'full'), { signal: AbortSignal.timeout(30000) });
+      const buf = r.ok ? Buffer.from(await r.arrayBuffer()) : null;
+      const type = buf && sniff(buf);
+      if (!type) return res.status(r.status === 404 ? 404 : 502).json({ error: 'photo not available' });
+      res.set({ ...file, 'Content-Type': type }).send(buf);
+    } catch (e) { res.status(502).json({ error: 'photo not available' }); }
   });
 
   // ── the student's own face (Boonchu, 9 Nov 2026) ──────────────────────────
