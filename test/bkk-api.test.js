@@ -1408,8 +1408,8 @@ const ok = (name, cond, extra = '') => {
     ok('...nor do the admin answers about that student', adminSide.length > 50 && !leaks(adminSide));
 
     // Download: the stored JPEG through this server, no copy made at Cloudinary.
-    const raw = async (base, path) => {
-      const r = await fetch(base + path);
+    const raw = async (base, path, method = 'GET') => {
+      const r = await fetch(base + path, { method });
       return { status: r.status, h: r.headers, buf: Buffer.from(await r.arrayBuffer()) };
     };
     const item = bobItems[0], pub = (await pool.query('SELECT public_id FROM bkk_photos WHERE id=$1', [item.id])).rows[0].public_id;
@@ -1432,11 +1432,30 @@ const ok = (name, cond, extra = '') => {
          && (await raw(B, `/api/bkk/photo/${other.id}.${idSig.split('.')[1]}/AYBKK-photo.jpg`)).status === 403
          && (await raw(B, `/api/bkk/photo/${item.id}/AYBKK-photo.jpg`)).status === 404
          && (await raw(B, `/api/bkk/photo/${idSig}/other-name.jpg`)).status === 404);
+    ok('an id that is not a photo is 403 like a bad signature, so ids cannot be probed',
+       (await raw(B, `/api/bkk/photo/999999999.${idSig.split('.')[1]}/AYBKK-photo.jpg`)).status === 403);
+    // The link is signed over the photo's own public_id: the same row id holding
+    // another photo (a restore, a reset sequence, another database) opens nothing.
+    await pool.query('UPDATE bkk_photos SET public_id=$2 WHERE id=$1', [item.id, pub + '-other']);
+    const reused = await raw(B, item.save);
+    const reusedNew = (await J(`/api/bkk/me/${bob.code}/photos`)).body.days.flatMap(d => d.items).find(i => i.id === item.id);
+    const reusedNewGot = await raw(B, reusedNew.save);
+    await pool.query('UPDATE bkk_photos SET public_id=$2 WHERE id=$1', [item.id, pub]);
+    ok('...an old link to a row id now holding another photo is 403; that photo has a link of its own',
+       reused.status === 403 && reusedNew.save !== item.save && reusedNewGot.status === 200
+         && driveFetches[driveFetches.length - 1] === `signed://authenticated/${pub}-other/original.jpg`, JSON.stringify([reused.status, reusedNewGot.status]));
+    const fetchesBefore = driveFetches.length;
+    const head = await raw(B, item.save, 'HEAD');
+    ok('a HEAD gets the file headers without pulling the photo from Cloudinary; a bad one is 403',
+       head.status === 200 && head.h.get('content-type') === 'image/jpeg' && head.h.get('content-disposition') === 'attachment; filename="AYBKK-photo.jpg"'
+         && head.h.get('cache-control') === 'private, max-age=86400' && head.h.get('x-content-type-options') === 'nosniff'
+         && head.buf.length === 0 && driveFetches.length === fetchesBefore
+         && (await raw(B, `/api/bkk/photo/${flip}/AYBKK-photo.jpg`, 'HEAD')).status === 403, JSON.stringify([head.status, [...head.h.entries()]]));
     const gone = await post('/api/bkk/teacher/photos', { date: '2026-10-08', image: IMG, tags: [{ code: bob.code, role: 'main' }] }, PKEY);
     const goneSave = gone.body.photo.save;
     const goneWas = (await raw(B, goneSave)).status;
     await post(`/api/bkk/teacher/photos/${gone.body.photo.id}/delete`, {}, PKEY);
-    ok('a deleted photo\'s download link stops at once (404)', goneWas === 200 && (await raw(B, goneSave)).status === 404);
+    ok('a deleted photo\'s download link stops at once (403)', goneWas === 200 && (await raw(B, goneSave)).status === 403);
     {
       const appN = express();
       await mountBkk(appN, { pgPool: pool, now });

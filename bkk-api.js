@@ -7560,11 +7560,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   });
   // A download link never ends, as the Cloudinary one before it never did: a
   // student may leave the page open for days. A path on this site, so it works on
-  // aybkk.net and through cn.aybkk.net alike.
+  // aybkk.net and through cn.aybkk.net alike. Signed over the photo's own random
+  // public_id too, as that link was: a row id handed out again (a restore, a reset
+  // sequence) or another database with the same key never opens someone else's photo.
   const SAVE_KEY = crypto.createHash('sha256').update('aybkk-photo-save:' + (process.env.CLOUDINARY_API_SECRET
     || ADMIN_KEY || crypto.randomBytes(32).toString('hex'))).digest();
-  const saveSig = id => crypto.createHmac('sha256', SAVE_KEY).update(`save.${id}`).digest('base64url').slice(0, 22);
-  const photoSave = id => `/api/bkk/photo/${id}.${saveSig(id)}/AYBKK-photo.jpg`;
+  const saveSig = (id, publicId) => crypto.createHmac('sha256', SAVE_KEY).update(`save.${id}.${publicId}`).digest('base64url').slice(0, 22);
+  const photoSave = (id, publicId) => `/api/bkk/photo/${id}.${saveSig(id, publicId)}/AYBKK-photo.jpg`;
   const isDate = d => /^\d{4}-\d{2}-\d{2}$/.test(String(d || ''));
   // Who is in a photo, and how: 'main' (the photo is about them) or 'other'
   // (in the frame). Sent as tags: [{ code, role }]; the old memberCodes still
@@ -7639,7 +7641,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
        WHERE ${where} GROUP BY p.id ORDER BY p.id`, args)).rows;
     const sec = await serverSecret();
     return rows.map(p => ({ id: p.id, date: p.day, members: p.members.map(({ id, ...m }) => ({ ...m, ref: memberRef(sec, id) })),
-      thumb: photoUrl(p.public_id, 'thumb'), full: photoUrl(p.public_id, 'full'), save: photoSave(p.id),
+      thumb: photoUrl(p.public_id, 'thumb'), full: photoUrl(p.public_id, 'full'), save: photoSave(p.id, p.public_id),
       ...(staff && p.drive_id ? { drive: p.drive_id } : {}) }));
   }
 
@@ -8031,22 +8033,25 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
 
   // "Save photo" on My photos: the stored JPEG as a file, fetched here with no
   // transformation, so no copy is made per download. The link is the key (a
-  // download sends no header); a deleted photo stops at once.
+  // download sends no header); a deleted photo stops at once. An unknown id is
+  // 403 like a bad signature, so which ids exist cannot be probed.
   app.get('/api/bkk/photo/:t/AYBKK-photo.jpg', async (req, res) => {
     const m = /^([1-9]\d{0,9})\.([\w-]{22})$/.exec(req.params.t);
     if (!m) return res.status(404).json({ error: 'not found' });
     if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
-    const want = Buffer.from(saveSig(m[1])), got = Buffer.from(m[2]);
-    if (want.length !== got.length || !crypto.timingSafeEqual(want, got)) return res.status(403).json({ error: 'bad link' });
+    const file = { 'Content-Disposition': 'attachment; filename="AYBKK-photo.jpg"',
+      'Cache-Control': 'private, max-age=86400', 'X-Content-Type-Options': 'nosniff' };
     try {
       const row = (await q('SELECT public_id FROM bkk_photos WHERE id=$1', [Number(m[1])])).rows[0];
-      if (!row) return res.status(404).json({ error: 'not found' });
+      const want = Buffer.from(saveSig(m[1], row ? row.public_id : '')), got = Buffer.from(m[2]);
+      if (!row || want.length !== got.length || !crypto.timingSafeEqual(want, got)) return res.status(403).json({ error: 'bad link' });
+      // A HEAD (a link check) gets the headers without pulling the photo from Cloudinary.
+      if (req.method === 'HEAD') return res.set({ ...file, 'Content-Type': 'image/jpeg' }).end();
       const r = await httpFetch(photoUrl(row.public_id, 'full'), { signal: AbortSignal.timeout(30000) });
       const buf = r.ok ? Buffer.from(await r.arrayBuffer()) : null;
       const type = buf && sniff(buf);
       if (!type) return res.status(r.status === 404 ? 404 : 502).json({ error: 'photo not available' });
-      res.set({ 'Content-Type': type, 'Content-Disposition': 'attachment; filename="AYBKK-photo.jpg"',
-        'Cache-Control': 'private, max-age=86400', 'X-Content-Type-Options': 'nosniff' }).send(buf);
+      res.set({ ...file, 'Content-Type': type }).send(buf);
     } catch (e) { res.status(502).json({ error: 'photo not available' }); }
   });
 

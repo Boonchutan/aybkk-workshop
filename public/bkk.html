@@ -4395,8 +4395,11 @@
 
   document.addEventListener('click', e => {
     const b = e.target.closest('.myph button'); if (!b) return;
+    // No download attribute: the server's attachment header makes Safari and Chrome
+    // save the file, and an in-app browser (LINE, Instagram) that cannot download
+    // shows the photo instead, to long-press. With it, those may do nothing.
     $('#dlgIn').innerHTML = `<img src="${esc(b.dataset.full)}" alt="" style="display:block;width:100%;border-radius:8px">
-      <p style="margin:12px 0 0"><a class="btn pink" href="${esc(b.dataset.save)}" download>${esc(t('photoDl'))}</a></p>
+      <p style="margin:12px 0 0"><a class="btn pink" href="${esc(b.dataset.save)}">${esc(t('photoDl'))}</a></p>
       <p class="note" style="margin:10px 0 0">${esc(t('photoSave'))}</p>
       <p style="margin-top:10px"><button class="btn ghost" onclick="document.getElementById('dlg').close()">${esc(t('cancel'))}</button></p>`;
     $('#dlg').showModal();
