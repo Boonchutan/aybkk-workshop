@@ -1,6 +1,7 @@
 // idcn-api.js — AYBKK In-Depth Mysore courses (idcn3 first: Chinese Generation #3).
 //
-// Mount:  mountIdcn(app, { pgPool })
+// Mount:  mountIdcn(app, { pgPool, bkk })   bkk: what mountBkk resolves to (a promise
+//         is fine), for making an AYBKK profile or a staff sign-in link; optional
 //
 // One app from invitation to completion:
 //   - each student has a named link  /idcn3/<slug>  behind a per-person passcode
@@ -104,6 +105,253 @@ const termsFor = (course, version) => TERMS_BY_POLICY[version] || course.terms;
 // the old wording until the old instance is gone.
 const CURRENT_POLICY = { idcn3: IDCN3_POLICY_VERSION };
 const currentVersion = course => CURRENT_POLICY[course.code] || course.policy_version;
+
+// What staff and students call the group; the code stays the one in links and tables.
+const COURSE_LABEL = { idcn3: 'IDCN#3' };
+const courseLabel = code => COURSE_LABEL[code] || String(code).toUpperCase();
+const ymd = v => v == null ? null : v instanceof Date
+  ? `${v.getFullYear()}-${String(v.getMonth() + 1).padStart(2, '0')}-${String(v.getDate()).padStart(2, '0')}`
+  : String(v).slice(0, 10);
+const realYmd = v => {
+  const s = String(v || ''), t = new Date(s + 'T00:00:00Z');
+  return /^\d{4}-\d{2}-\d{2}$/.test(s) && !isNaN(t) && t.toISOString().slice(0, 10) === s;
+};
+// a staff label such as "IDCN #1 alum": words only, never money
+const COHORT_NOTE_MAX = 80;
+const noteError = v => {
+  const s = String(v || '').trim();
+  if (s.length > COHORT_NOTE_MAX) return `the note holds at most ${COHORT_NOTE_MAX} characters`;
+  if (/[฿$¥€]|元|铢|\b(thb|baht|rmb|cny|yuan|usd|satang)\b|\d{1,3}(,\d{3})+|\d{5,}/i.test(s))
+    return 'the note is a few words such as "IDCN #1 alum", never an amount';
+  return null;
+};
+
+// ── the course calendar ─────────────────────────────────────────────────────
+// Course material, so it lives in the database (pasted in the admin), never in
+// this public repo. Read as pasted: Boonchu's markdown table, tab rows from a
+// spreadsheet, or ' | ' rows without the outer pipes. Text around the table is
+// ignored, except a line that gives a slot's time ("Slot A is 10:30-12:30.").
+// A slot cell that starts with "#N" or "SN" is teaching session N; the morning
+// column never is (morning practice is not a session).
+const CAL_CELL_MAX = 300;
+const CAL_MAX_DAY = 60;
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
+  'september', 'october', 'november', 'december'];
+const ZH_WEEKDAY = { 日: 0, 天: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6 };
+const DEFAULT_COLUMNS = ['day', 'date', 'weekday', 'morning', 'slotA', 'slotB', 'note'];
+const COLUMN_NAMES = { day: 'Day no.', date: 'Date', weekday: 'Day', morning: 'Morning class',
+  slotA: 'Slot A', slotB: 'Slot B', note: 'Note' };
+
+class CalError extends Error {
+  constructor(msg, line) { super(msg); this.line = line == null ? null : line; }
+}
+const isoDate = (y, m, d) => {
+  const t = new Date(Date.UTC(+y, +m - 1, +d));
+  return t.getUTCFullYear() === +y && t.getUTCMonth() === +m - 1 && t.getUTCDate() === +d
+    ? t.toISOString().slice(0, 10) : null;
+};
+const monthNo = w => {
+  const s = String(w).toLowerCase();
+  const i = s.length >= 3 ? MONTHS.findIndex(n => n.startsWith(s) || (s === 'sept' && n === 'september')) : -1;
+  return i < 0 ? null : i + 1;
+};
+// "11 Jan 2027", "Jan 11, 2027", "2027-01-11", "11/1/2027" (D/M/YYYY), "2027年1月11日"
+function calDate(v) {
+  const s = String(v == null ? '' : v).trim().replace(/^(mon|tue|wed|thu|fri|sat|sun)[a-z]*\.?,?\s+/i, '');
+  let m;
+  if ((m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/))) return isoDate(m[1], m[2], m[3]);
+  if ((m = s.match(/^(\d{1,2})[/.](\d{1,2})[/.](\d{4})$/))) return isoDate(m[3], m[2], m[1]);
+  if ((m = s.match(/^(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日?$/))) return isoDate(m[1], m[2], m[3]);
+  if ((m = s.match(/^(\d{1,2})(?:st|nd|rd|th)?[\s-]+([A-Za-z]{3,9})\.?,?[\s-]+(\d{4})$/)) && monthNo(m[2]))
+    return isoDate(m[3], monthNo(m[2]), m[1]);
+  if ((m = s.match(/^([A-Za-z]{3,9})\.?\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})$/)) && monthNo(m[1]))
+    return isoDate(m[3], monthNo(m[1]), m[2]);
+  return null;
+}
+function weekdayIndex(v) {
+  const s = String(v || '').trim().toLowerCase().replace(/\.$/, '');
+  if (/^[a-z]{3,9}$/.test(s)) {
+    const i = WEEKDAYS.findIndex(w => s.startsWith(w.toLowerCase()));
+    if (i >= 0) return i;
+  }
+  const m = s.match(/^(?:周|星期|礼拜)([日天一二三四五六])$/);
+  return m ? ZH_WEEKDAY[m[1]] : -1;
+}
+const TIME_RANGE = /(\d{1,2})[:.](\d{2})\s*(?:-|–|—|~|to|至|到)\s*(\d{1,2})[:.](\d{2})/i;
+function timeRange(v) {
+  const m = String(v || '').match(TIME_RANGE);
+  if (!m || +m[1] > 23 || +m[2] > 59 || +m[3] > 23 || +m[4] > 59) return null;
+  return `${m[1].padStart(2, '0')}:${m[2]}-${m[3].padStart(2, '0')}:${m[4]}`;
+}
+const blankCell = v => /^[-–—−]?$/.test(String(v == null ? '' : v).trim());
+function tableCells(line) {
+  let cells;
+  if (line.includes('\t')) cells = line.split('\t');
+  else if (line.includes('|')) {
+    let s = line.trim();
+    if (s.startsWith('|')) s = s.slice(1);
+    if (s.endsWith('|') && !s.endsWith('\\|')) s = s.slice(0, -1);
+    cells = s.split(/(?<!\\)\|/).map(c => c.replace(/\\\|/g, '|'));
+  } else return null;
+  cells = cells.map(c => c.trim());
+  return cells.filter(Boolean).length >= 2 ? cells : null;
+}
+const isSeparator = cells => cells.some(Boolean) && cells.every(c => !c || /^:?-{3,}:?$/.test(c));
+// 'dayish' is a column named only "Day": the day number when its values are numbers, else the weekday
+function headerKind(cell) {
+  const h = String(cell).trim().toLowerCase().replace(/\s+/g, ' ');
+  if (/^slot ?a(?![a-z])|^时段 ?a/.test(h)) return 'slotA';
+  if (/^slot ?b(?![a-z])|^时段 ?b/.test(h)) return 'slotB';
+  const w = h.replace(/[.:：]+$/, '').trim();
+  if (['day no', 'day number', 'day num', 'day #', 'no', '#', '天数'].includes(w)) return 'day';
+  if (['day', '天'].includes(w)) return 'dayish';
+  if (['date', '日期'].includes(w)) return 'date';
+  if (['weekday', 'day of week', 'day of the week', '星期', '周'].includes(w)) return 'weekday';
+  if (/^(morning|上午|早课|早上)/.test(w)) return 'morning';
+  if (['note', 'notes', 'remark', 'remarks', '备注'].includes(w)) return 'note';
+  return null;
+}
+const isHeaderRow = kinds => kinds.filter(Boolean).length >= 2
+  && kinds.some(k => k === 'date' || k === 'slotA' || k === 'slotB');
+const SLOT_LINE = /(?:slot|时段)\s*([AB])(?![a-z])[^0-9\n]{0,20}?(\d{1,2}[:.]\d{2}\s*(?:-|–|—|~|to|至|到)\s*\d{1,2}[:.]\d{2})/gi;
+const SESSION_CELL = /^(?:#\s*(\d+)|S(\d+))/i;
+const dayList = ns => ns.length === 1 ? `day ${ns[0]}` : `days ${ns.join(', ')}`;
+
+// rows: [{ line, day, date, weekday, morning, slotA, slotB, note }] → the days, their
+// sessions and warnings; a CalError names the line (the row's place in rows mode)
+function checkDays(input, warnings = []) {
+  const days = [], sessions = [], byDay = new Map(), byDate = new Map(), bySession = new Map();
+  const tbc = [], idle = [];
+  let prev = null, outOfOrder = false;
+  for (const r of input) {
+    const line = r.line;
+    const cell = k => {
+      const v = r[k] == null ? '' : String(r[k]).trim();
+      if (v.length > CAL_CELL_MAX)
+        throw new CalError(`a cell holds at most ${CAL_CELL_MAX} characters (${COLUMN_NAMES[k]})`, line);
+      return blankCell(v) ? null : v;
+    };
+    const dayS = String(r.day == null ? '' : r.day).trim();
+    if (!/^\d{1,2}$/.test(dayS) || +dayS < 1 || +dayS > CAL_MAX_DAY)
+      throw new CalError(`the day number must be 1 to ${CAL_MAX_DAY}, not "${dayS.slice(0, 20)}"`, line);
+    const day = +dayS;
+    if (byDay.has(day)) throw new CalError(`day ${day} appears twice (line ${byDay.get(day)} too)`, line);
+    const date = calDate(r.date);
+    if (!date) throw new CalError(`cannot read the date "${String(r.date == null ? '' : r.date).slice(0, 40)}": `
+      + 'write it as 11 Jan 2027, 2027-01-11 or 11/1/2027', line);
+    if (byDate.has(date)) throw new CalError(`${date} appears twice (day ${byDate.get(date)} too)`, line);
+    if (prev && date < prev.date) throw new CalError(`the dates must go forward: ${date} comes after ${prev.date}`, line);
+    if (prev && day < prev.day) outOfOrder = true;
+    byDay.set(day, line); byDate.set(date, day);
+    const actual = WEEKDAYS[new Date(date + 'T00:00:00Z').getUTCDay()];
+    let weekday = cell('weekday');
+    if (!weekday) weekday = actual;
+    else {
+      const wi = weekdayIndex(weekday);
+      if (wi >= 0) weekday = WEEKDAYS[wi];
+      if (weekday !== actual) warnings.push(`day ${day}: "${weekday}" but ${date} is a ${actual}`);
+    }
+    const out = { day, date, weekday, morning: cell('morning'), slotA: cell('slotA'), slotB: cell('slotB'),
+      note: cell('note'), sessions: [] };
+    for (const slot of ['A', 'B']) {
+      const text = out['slot' + slot];
+      const m = text && text.match(SESSION_CELL);
+      if (!m) continue;
+      const no = Number(m[1] || m[2]);
+      if (no < 1 || no > 99) throw new CalError(`session numbers run 1 to 99, not ${no}`, line);
+      if (bySession.has(no)) throw new CalError(`session #${no} appears twice (day ${bySession.get(no)} too)`, line);
+      bySession.set(no, day);
+      const title = text.slice(m[0].length).replace(/^[\s\-–—:：.,，、)）]+/, '').trim();
+      out.sessions.push({ no, slot, title });
+      sessions.push({ no, day, slot, title });
+    }
+    if (['morning', 'slotA', 'slotB', 'note'].some(k => /\bTBC\b|待定/i.test(out[k] || ''))) tbc.push(day);
+    if (!out.sessions.length) idle.push(day);
+    days.push(out);
+    prev = { day, date };
+  }
+  if (outOfOrder) warnings.push('the day numbers do not follow the dates');
+  if (tbc.length) warnings.push(`still to confirm (TBC) on ${dayList(tbc)}`);
+  if (days.length && idle.length) warnings.push(`no session on ${dayList(idle)}`);
+  sessions.sort((a, b) => a.no - b.no);
+  if (sessions.length) {
+    const have = new Set(sessions.map(s => s.no));
+    const gaps = [];
+    for (let n = 1; n < sessions[sessions.length - 1].no; n++) if (!have.has(n)) gaps.push(n);
+    if (gaps.length) warnings.push(`no session #${gaps.join(', #')}`);
+  }
+  days.sort((a, b) => a.day - b.day);
+  return { days, sessions, warnings };
+}
+
+// The pasted text → { days, sessions, slots, warnings }, or a CalError with its line.
+function parseCalendar(text) {
+  const lines = String(text == null ? '' : text).replace(/\r\n?/g, '\n').split('\n');
+  const headSlots = {}, lineSlots = {}, warnings = [], data = [];
+  let header = null, headerLine = null;
+  lines.forEach((raw, i) => {
+    const line = i + 1;
+    const cells = tableCells(raw);
+    if (!cells) {
+      for (const m of raw.matchAll(SLOT_LINE)) {
+        const t = timeRange(m[2]);
+        if (t) lineSlots[m[1].toUpperCase()] = t;
+      }
+      return;
+    }
+    if (isSeparator(cells)) return;
+    const kinds = cells.map(headerKind);
+    if (isHeaderRow(kinds)) {
+      if (header) return;                       // the header pasted again
+      header = kinds; headerLine = line;
+      kinds.forEach((k, j) => { if (k === 'slotA' || k === 'slotB') {
+        const t = timeRange(cells[j]); if (t) headSlots[k.slice(-1)] = t; } });
+      return;
+    }
+    if (!header) {
+      // no header (or one it cannot read): rows that start with a day number and a date
+      // are read in Boonchu's column order
+      if (!(/^\d{1,2}$/.test(cells[0]) && calDate(cells[1]))) return;
+      header = DEFAULT_COLUMNS;
+      warnings.push(`no header row found: the columns are read as ${DEFAULT_COLUMNS.map(k => COLUMN_NAMES[k]).join(' | ')}`);
+    }
+    data.push({ line, cells });
+  });
+  if (!data.length) throw new CalError('no calendar rows found: paste the table with its header row '
+    + '(Day no. | Date | Day | Morning class | Slot A | Slot B)', headerLine);
+  const kinds = header.slice();
+  kinds.forEach((k, j) => {
+    if (k !== 'dayish') return;
+    const vals = data.map(r => r.cells[j] || '').filter(v => !blankCell(v));
+    const numeric = vals.length > 0 && vals.every(v => /^\d{1,2}$/.test(v));
+    kinds[j] = numeric && !kinds.includes('day') ? 'day' : !kinds.includes('weekday') ? 'weekday' : null;
+  });
+  const seen = new Set();
+  kinds.forEach((k, j) => {
+    if (!k) return;
+    if (seen.has(k)) { warnings.push(`two columns read as ${COLUMN_NAMES[k]}: the second is left out`); kinds[j] = null; }
+    else seen.add(k);
+  });
+  if (!seen.has('date')) throw new CalError('the table has no Date column', headerLine);
+  const rows = data.map((r, idx) => {
+    if (r.cells.slice(kinds.length).some(c => !blankCell(c)))
+      throw new CalError(`this row has ${r.cells.length} cells but the header has ${kinds.length}`, r.line);
+    const o = { line: r.line };
+    kinds.forEach((k, j) => { if (k) o[k] = r.cells[j] == null ? '' : r.cells[j]; });
+    if (!seen.has('day')) o.day = idx + 1;
+    return o;
+  });
+  if (!seen.has('day')) warnings.push('no day-number column: the days are numbered in order');
+  const out = checkDays(rows, warnings);
+  const slots = {};
+  for (const k of ['A', 'B']) {
+    if (headSlots[k] && lineSlots[k] && headSlots[k] !== lineSlots[k])
+      warnings.push(`Slot ${k}: the header says ${headSlots[k]} and a line says ${lineSlots[k]}; the header is kept`);
+    if (headSlots[k] || lineSlots[k]) slots[k] = headSlots[k] || lineSlots[k];
+  }
+  return { ...out, slots };
+}
 
 // Money recorded for a student who has not signed and has no option of the
 // terms they would sign: they paid under older terms, or before an option was
@@ -284,6 +532,34 @@ function mountIdcn(app, opts = {}) {
     // the dated payments on screen when the student signed (insert-only, like
     // the rest of the row): a plan changed later never hides what was signed
     await q(`ALTER TABLE idc_consents ADD COLUMN IF NOT EXISTS plan JSONB`);
+    // IDCN#3 (24 Nov 2026): the student's own AYBKK account (bkk_members.id, no FK:
+    // this module also runs without bkk), a later start for alumni, a staff label,
+    // and terms agreed directly with AYBKK instead of the online signature
+    await q(`ALTER TABLE idc_students ADD COLUMN IF NOT EXISTS member_id INTEGER`);
+    await q(`ALTER TABLE idc_students ADD COLUMN IF NOT EXISTS start_date DATE`);
+    await q(`ALTER TABLE idc_students ADD COLUMN IF NOT EXISTS cohort_note TEXT`);
+    await q(`ALTER TABLE idc_students ADD COLUMN IF NOT EXISTS terms_arranged BOOLEAN NOT NULL DEFAULT false`);
+    await q(`CREATE INDEX IF NOT EXISTS idc_students_member ON idc_students (member_id)`);
+    await q(`CREATE UNIQUE INDEX IF NOT EXISTS idc_students_course_member ON idc_students (course_code, member_id)
+      WHERE member_id IS NOT NULL`);
+    // the daily calendar, pasted in the admin; sessions are rebuilt from it on every save
+    await q(`CREATE TABLE IF NOT EXISTS idc_days (
+      course_code TEXT NOT NULL REFERENCES idc_courses(code),
+      day_no INTEGER NOT NULL, date DATE, weekday TEXT,
+      morning TEXT, slot_a TEXT, slot_b TEXT, note TEXT,
+      PRIMARY KEY (course_code, day_no))`);
+    await q(`CREATE TABLE IF NOT EXISTS idc_sessions (
+      course_code TEXT NOT NULL, session_no INTEGER NOT NULL,
+      day_no INTEGER NOT NULL, slot TEXT NOT NULL, title TEXT,
+      PRIMARY KEY (course_code, session_no),
+      FOREIGN KEY (course_code, day_no) REFERENCES idc_days (course_code, day_no) ON DELETE CASCADE)`);
+    // assignments and hand-ins belong to a session, the teacher's comment to a day
+    // (one per student per day); both empty = undated, as before
+    await q(`ALTER TABLE idc_notes ADD COLUMN IF NOT EXISTS session_no INTEGER`);
+    await q(`ALTER TABLE idc_notes ADD COLUMN IF NOT EXISTS day_no INTEGER`);
+    await q(`ALTER TABLE idc_notes ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ`);
+    await q(`CREATE UNIQUE INDEX IF NOT EXISTS idc_notes_day_comment ON idc_notes (student_id, day_no)
+      WHERE kind='comment'`);
   }
 
   // the policy a student signed, or the one they would sign now
@@ -308,10 +584,119 @@ function mountIdcn(app, opts = {}) {
     if (!c) { res.status(404).json({ error: 'not found' }); return null; }
     return c;
   };
+  // terms agreed directly with AYBKK: never held, whatever was paid
+  const heldFor = (terms, s, signed, paymentCount) =>
+    !s.terms_arranged && isHeld(terms, s, signed, paymentCount);
+  const mayLearn = (s, signed, admin) => !!(signed || s.terms_arranged || admin);
+  const bkkOf = async () => { try { return (await opts.bkk) || null; } catch (_) { return null; } };
+
+  // ── the student's AYBKK account (bkk_members, owned by bkk-api.js) ─────────
+  // Read only here, merges followed (a folded profile points at the one kept).
+  // Without bkk's tables (this module's own tests) every account is "not found".
+  let membersTable = false;
+  async function hasMembers(db = pool) {
+    if (!membersTable)
+      membersTable = (await db.query(`SELECT to_regclass('bkk_members') IS NOT NULL AS ok`)).rows[0].ok;
+    return membersTable;
+  }
+  // stored member ids → Map(stored id → the live profile { id, code, name })
+  async function liveMembers(ids, db = pool) {
+    const out = new Map();
+    const want = [...new Set(ids.map(Number).filter(Number.isSafeInteger))];
+    if (!want.length || !(await hasMembers(db))) return out;
+    const r = await db.query(`WITH RECURSIVE ch (start, id, code, name, merged_into, d) AS (
+        SELECT id, id, code, name, merged_into, 0 FROM bkk_members WHERE id = ANY($1::int[])
+        UNION ALL
+        SELECT ch.start, m.id, m.code, m.name, m.merged_into, ch.d + 1
+        FROM ch JOIN bkk_members m ON m.id = ch.merged_into WHERE ch.d < 10)
+      SELECT start, id, code, name FROM ch WHERE merged_into IS NULL`, [want]);
+    for (const x of r.rows) out.set(x.start, { id: x.id, code: x.code, name: x.name });
+    return out;
+  }
+  async function memberWhere(where, val, db = pool) {
+    if (!(await hasMembers(db))) return null;
+    const r = (await db.query(`SELECT id FROM bkk_members WHERE ${where} ORDER BY id LIMIT 1`, [val])).rows[0];
+    return r ? (await liveMembers([r.id], db)).get(r.id) || null : null;
+  }
+  const memberByCode = (code, db) => memberWhere('code=$1', String(code || ''), db);
+  const memberByEmail = (email, db) => memberWhere('lower(email)=$1', String(email || '').trim().toLowerCase(), db);
+  // every stored id that leads to this live profile (itself and the profiles folded into it)
+  async function foldedInto(liveId, db = pool) {
+    if (!(await hasMembers(db))) return [liveId];
+    return (await db.query(`WITH RECURSIVE f (id, d) AS (
+        SELECT $1::int, 0
+        UNION ALL
+        SELECT m.id, f.d + 1 FROM bkk_members m JOIN f ON m.merged_into = f.id WHERE f.d < 10)
+      SELECT DISTINCT id FROM f`, [liveId])).rows.map(r => r.id);
+  }
+  // a member code opens the idcn row linked to the same live profile, and nothing else
+  async function memberOpens(code, storedId) {
+    const c = String(code || '').trim();
+    if (!c || c.length > 40 || storedId == null) return false;
+    const m = await memberByCode(c);
+    const linked = m && (await liveMembers([storedId])).get(Number(storedId));
+    return !!linked && linked.id === m.id;
+  }
+
+  // ── calendar and dated notes ──────────────────────────────────────────────
+  async function getSetting(code, key, db = pool) {
+    const r = (await db.query(`SELECT value FROM idc_settings WHERE course_code=$1 AND key=$2`,
+      [code, key])).rows[0];
+    return r ? r.value : null;
+  }
+  async function calendarOf(code, db = pool) {
+    const days = (await db.query(
+      `SELECT day_no, to_char(date, 'YYYY-MM-DD') AS date, weekday, morning, slot_a, slot_b, note
+       FROM idc_days WHERE course_code=$1 ORDER BY day_no`, [code])).rows;
+    const sessions = (await db.query(
+      `SELECT session_no, day_no, slot, title FROM idc_sessions WHERE course_code=$1
+       ORDER BY session_no`, [code])).rows;
+    const slots = { A: null, B: null, ...((await getSetting(code, 'slots', db)) || {}) };
+    const byDay = new Map();
+    for (const s of [...sessions].sort((a, b) => a.slot.localeCompare(b.slot) || a.session_no - b.session_no)) {
+      if (!byDay.has(s.day_no)) byDay.set(s.day_no, []);
+      byDay.get(s.day_no).push({ no: s.session_no, slot: s.slot, title: s.title });
+    }
+    return {
+      days: days.map(d => ({ day: d.day_no, date: d.date, weekday: d.weekday, morning: d.morning,
+        slotA: d.slot_a, slotB: d.slot_b, note: d.note, sessions: byDay.get(d.day_no) || [] })),
+      sessions: sessions.map(s => ({ no: s.session_no, day: s.day_no, slot: s.slot, title: s.title })),
+      slots,
+    };
+  }
+  const NOTE_FIELDS = ['id', 'kind', 'title', 'body', 'media_url', 'media_type', 'created_by', 'created_at',
+    'updated_at', 'session_no', 'day_no'];
+  const NOTE_COLS = NOTE_FIELDS.join(', ');
+  const noteOut = n => ({ id: n.id, kind: n.kind, title: n.title, body: n.body, media_url: n.media_url,
+    media_type: n.media_type, created_by: n.created_by, created_at: n.created_at,
+    updated_at: n.updated_at || null, session: n.session_no, day: n.day_no });
+  // dated notes → { sessionsWork: { "<no>": { assignments, submissions } }, comments: { "<day>": note } }
+  function workOf(rows) {
+    const sessionsWork = {}, comments = {};
+    for (const n of rows) {
+      if (n.kind === 'comment') { if (n.day_no != null) comments[n.day_no] = noteOut(n); continue; }
+      if (n.session_no == null) continue;
+      const w = sessionsWork[n.session_no] || (sessionsWork[n.session_no] = { assignments: [], submissions: [] });
+      (n.kind === 'submission' ? w.submissions : w.assignments).push(noteOut(n));
+    }
+    return { sessionsWork, comments };
+  }
+  const sessionExists = async (code, no) => (await q(
+    'SELECT 1 FROM idc_sessions WHERE course_code=$1 AND session_no=$2', [code, no])).rowCount > 0;
+  // a sessionNo field: absent/empty → null, a whole number 1 to 99, or false when it is not one
+  const sessionField = v => {
+    if (v == null || String(v).trim() === '') return null;
+    const s = String(v).trim().replace(/^[#sS]/, '');
+    return /^\d{1,2}$/.test(s) && +s >= 1 ? +s : false;
+  };
+  // multer keeps the upload in tmp until something moves it; on any refusal it goes
+  const dropUpload = req => { if (req.file && req.file.path) fs.unlink(req.file.path, () => {}); };
 
   // A student key only ever opens its own row; the admin key opens any slug in
   // the course. Wrong key and wrong slug are the same 401/404 — a named link
-  // must not confirm whose passcode is whose.
+  // must not confirm whose passcode is whose. The student's own AYBKK member code
+  // (x-member-code, the same trust as every /api/bkk/me/:code route) opens the row
+  // linked to that account.
   async function studentFrom(req, res, course, slug) {
     const row = (await q(
       'SELECT * FROM idc_students WHERE course_code=$1 AND slug=$2',
@@ -321,16 +706,15 @@ function mountIdcn(app, opts = {}) {
       return row;
     }
     const key = req.headers['x-idcn-key'];
-    if (!key || !row || row.key_hash !== sha(key)) {
-      res.status(401).json({ error: 'passcode needed' }); return null;
-    }
-    return row;
+    if (row && key && row.key_hash === sha(key)) return row;
+    if (row && row.member_id != null && await memberOpens(req.headers['x-member-code'], row.member_id)) return row;
+    res.status(401).json({ error: 'passcode needed' }); return null;
   }
 
   const REQUIRED_CONSENTS = ['payment_final', 'adjustments', 'risk_health',
     'instructions', 'travel', 'schedule', 'media_course', 'privacy'];
 
-  async function profileJson(course, s) {
+  async function profileJson(course, s, view = {}) {
     const signedRow = (await q(
       `SELECT policy_version, payment_option, items, signed_name, health_note,
               media_public, signed_at, plan
@@ -344,12 +728,29 @@ function mountIdcn(app, opts = {}) {
     const links = (await q(
       `SELECT value FROM idc_settings WHERE course_code=$1 AND key='links'`,
       [course.code])).rows[0];
+    // the undated feed; work for a session and the day's comment come in their own keys
     const notes = (await q(
       `SELECT id, kind, title, body, created_by, media_url, media_type, created_at
-       FROM idc_notes WHERE student_id=$1 ORDER BY id DESC LIMIT 100`, [s.id])).rows;
+       FROM idc_notes WHERE student_id=$1 AND session_no IS NULL AND day_no IS NULL
+       ORDER BY id DESC LIMIT 100`, [s.id])).rows;
     const version = consent ? consent.policy_version : currentVersion(course);
     const terms = termsFor(course, version);
-    const held = isHeld(terms, s, !!consent, payments.length);
+    const held = heldFor(terms, s, !!consent, payments.length);
+    // new keys only when there is something in them, so earlier profiles keep their shape
+    const more = {};
+    if (s.member_id != null || s.start_date || s.cohort_note || s.terms_arranged)
+      more.cohort = { label: courseLabel(course.code), startDate: ymd(s.start_date),
+        ...(view.admin ? { note: s.cohort_note || null } : {}), termsArranged: !!s.terms_arranged };
+    if (mayLearn(s, !!consent, view.admin)) {
+      const cal = await calendarOf(course.code);
+      if (cal.days.length) { more.days = cal.days; more.slots = cal.slots; }
+      const dated = (await q(
+        `SELECT ${NOTE_COLS} FROM idc_notes
+         WHERE student_id=$1 AND (session_no IS NOT NULL OR day_no IS NOT NULL) ORDER BY id`, [s.id])).rows;
+      const w = workOf(dated);
+      if (Object.keys(w.sessionsWork).length) more.sessionsWork = w.sessionsWork;
+      if (Object.keys(w.comments).length) more.comments = w.comments;
+    }
     const c = { code: course.code, name_en: terms.name_en || course.name_en,
       name_zh: terms.name_zh || course.name_zh,
       sessions: terms.sessions, confirmBy: terms.confirmBy, policyVersion: version };
@@ -368,15 +769,36 @@ function mountIdcn(app, opts = {}) {
       // only in v4-era profiles, so a v3 signer's profile stays as it was
       ...(signedPlan ? { signedPlan } : {}),
       ...(held ? { held: { paidSatang: payments.reduce((n, p) => n + Number(p.amount_satang || 0), 0) } } : {}),
+      ...more,
     };
   }
 
   // ── student endpoints ─────────────────────────────────────────────────────
+  // The courses an AYBKK account is enrolled in, for My account on /book and the
+  // cohort landing (/idcn3). Opened by the member code alone, like /api/bkk/me/:code;
+  // an unknown code is an empty list, never a 404 (the page asks for every member).
+  app.get('/api/idcn/mine/:code', async (req, res) => {
+    res.set('Cache-Control', 'private, no-store');
+    try {
+      const m = await memberByCode(req.params.code);
+      if (!m) return res.json({ courses: [] });
+      const rows = (await q(
+        `SELECT s.course_code, s.slug, s.name_en, s.name_zh, to_char(s.start_date, 'YYYY-MM-DD') AS start_date
+         FROM idc_students s JOIN idc_courses c ON c.code = s.course_code AND c.active
+         WHERE s.member_id = ANY($1::int[]) AND s.status != 'withdrawn'
+         ORDER BY s.course_code, s.id`, [await foldedInto(m.id)])).rows;
+      res.json({ courses: rows.map(r => ({ course: r.course_code, label: courseLabel(r.course_code),
+        name_en: r.name_en, name_zh: r.name_zh, slug: r.slug, link: `/${r.course_code}/${r.slug}`,
+        startDate: r.start_date })) });
+    } catch (e) { res.status(500).json({ error: 'something went wrong' }); }
+  });
+
   app.get('/api/idcn/:course/students/:slug', async (req, res) => {
+    res.set('Cache-Control', 'private, no-store');
     try {
       const course = await courseFor(req, res); if (!course) return;
       const s = await studentFrom(req, res, course, req.params.slug); if (!s) return;
-      res.json(await profileJson(course, s));
+      res.json(await profileJson(course, s, { admin: isAdmin(req) }));
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -396,7 +818,7 @@ function mountIdcn(app, opts = {}) {
       const terms = termsFor(course, version);
       const paid = (await q('SELECT count(*)::int AS n FROM idc_payments WHERE student_id=$1',
         [s.id])).rows[0].n;
-      if (isHeld(terms, s, false, paid))
+      if (heldFor(terms, s, false, paid))
         return res.status(409).json({ held: true,
           error: 'AYBKK will confirm your payment plan with you before you sign' });
       const items = b.items || {};
@@ -423,24 +845,43 @@ function mountIdcn(app, opts = {}) {
   });
 
   // daily drill videos: a student sends their assignment work into their own
-  // profile. Kept per-student (never in the shared course feed).
+  // profile. Kept per-student (never in the shared course feed). For a session
+  // of the calendar (sessionNo) a written answer alone is enough.
   app.post('/api/idcn/:course/submissions', (req, res) => mediaUpload(req, res, async (mErr) => {
     try {
       if (mErr) return res.status(400).json({ error: mErr.code === 'LIMIT_FILE_SIZE'
         ? 'video too large — keep it under 100MB' : mErr.message });
       const course = await courseFor(req, res); if (!course) return;
-      const s = await studentFrom(req, res, course, (req.body || {}).slug); if (!s) return;
-      if (!req.file) return res.status(400).json({ error: 'attach the video (or photo) file' });
-      const media = await pushMedia(req.file, `aybkk/${course.code}/submissions/${s.slug}`);
+      const b = req.body || {};
+      const s = await studentFrom(req, res, course, b.slug); if (!s) return;
+      const sessionNo = sessionField(b.sessionNo);
+      if (sessionNo === false) return res.status(400).json({ error: 'sessionNo is a session number (1 to 99)' });
+      const body = String(b.body || '').trim();
+      if (sessionNo != null) {
+        const signed = (await q('SELECT 1 FROM idc_consents WHERE student_id=$1', [s.id])).rowCount > 0;
+        if (!mayLearn(s, signed, isAdmin(req)))
+          return res.status(403).json({ error: 'confirm your spot first' });
+        if (!(await sessionExists(course.code, sessionNo)))
+          return res.status(400).json({ error: `there is no session #${sessionNo} in the calendar` });
+        if (!req.file && !body)
+          return res.status(400).json({ error: 'write your answer, or attach the video (or photo) file' });
+        if (body.length > 4000) return res.status(400).json({ error: 'keep the answer under 4000 characters' });
+      } else if (!req.file) return res.status(400).json({ error: 'attach the video (or photo) file' });
+      const media = req.file ? await pushMedia(req.file, `aybkk/${course.code}/submissions/${s.slug}`)
+        : { url: null, type: null };
       const r = await q(
-        `INSERT INTO idc_notes (student_id, kind, title, body, created_by, media_url, media_type)
-         VALUES ($1,'submission',$2,$3,$4,$5,$6)
-         RETURNING id, kind, title, body, created_by, media_url, media_type, created_at`,
-        [s.id, String((req.body || {}).title || '').slice(0, 200) || null,
-         String((req.body || {}).body || '').slice(0, 4000),
-         s.name_zh || s.name_en, media.url, media.type]);
-      res.json({ success: true, note: r.rows[0] });
+        `INSERT INTO idc_notes (student_id, kind, title, body, created_by, media_url, media_type, session_no)
+         VALUES ($1,'submission',$2,$3,$4,$5,$6,$7)
+         RETURNING ${NOTE_COLS}`,
+        [s.id, String(b.title || '').slice(0, 200) || null,
+         sessionNo != null ? body : String(b.body || '').slice(0, 4000),
+         s.name_zh || s.name_en, media.url, media.type, sessionNo]);
+      const n = r.rows[0];
+      res.json({ success: true, note: sessionNo != null ? noteOut(n) : { id: n.id, kind: n.kind, title: n.title,
+        body: n.body, created_by: n.created_by, media_url: n.media_url, media_type: n.media_type,
+        created_at: n.created_at } });
     } catch (e) { res.status(500).json({ error: e.message }); }
+    finally { dropUpload(req); }
   }));
 
   // ── course photo hub (Cloudinary, own tag so nothing leaks between feeds) ──
@@ -489,10 +930,16 @@ function mountIdcn(app, opts = {}) {
   });
 
   // ── admin (Boonchu + Jamsai, x-bkk-key) ───────────────────────────────────
+  // never cached on the way, and the 401 names the key (as lib/staff-key.js does)
   const needAdmin = (req, res) => {
-    if (!isAdmin(req)) { res.status(401).json({ error: 'bad key' }); return false; }
+    res.set('Cache-Control', 'private, no-store');
+    if (!isAdmin(req)) {
+      res.set('WWW-Authenticate', 'X-Bkk-Key').status(401).json({ error: 'bad key' }); return false;
+    }
     return true;
   };
+  const slugOf = v => String(v || '').trim().toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 
   app.post('/api/idcn/admin/:course/students', async (req, res) => {
     if (!needAdmin(req, res)) return;
@@ -501,8 +948,7 @@ function mountIdcn(app, opts = {}) {
       const b = req.body || {};
       const nameEn = String(b.nameEn || '').trim();
       if (!nameEn) return res.status(400).json({ error: 'nameEn required' });
-      const slug = String(b.slug || nameEn).trim().toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      const slug = slugOf(b.slug || nameEn);
       if (!slug) return res.status(400).json({ error: 'slug required (latin letters)' });
       const passcode = newPasscode();
       try {
@@ -539,19 +985,30 @@ function mountIdcn(app, opts = {}) {
                 (SELECT COALESCE(sum(p.amount_satang), 0)::bigint FROM idc_payments p
                   WHERE p.student_id=s.id) AS paid_satang,
                 (SELECT count(*)::int FROM idc_notes n
-                  WHERE n.student_id=s.id AND n.kind='submission') AS submissions
+                  WHERE n.student_id=s.id AND n.kind='submission') AS submissions,
+                s.member_id, to_char(s.start_date, 'YYYY-MM-DD') AS start_date, s.cohort_note,
+                s.terms_arranged,
+                (SELECT count(*)::int FROM idc_notes n
+                  WHERE n.student_id=s.id AND n.kind='comment') AS comments,
+                (SELECT count(*)::int FROM idc_notes n
+                  WHERE n.student_id=s.id AND n.kind='submission' AND n.session_no IS NOT NULL)
+                  AS session_submissions
          FROM idc_students s
          LEFT JOIN idc_consents c ON c.student_id=s.id
          WHERE s.course_code=$1 ORDER BY s.name_en`, [course.code])).rows;
+      const members = await liveMembers(rows.map(r => r.member_id).filter(x => x != null));
       res.json({ policyVersion: currentVersion(course), students: rows.map(r => {
         const version = r.policy_version || currentVersion(course);
         const terms = termsFor(course, version);
         const qt = studentQuote(terms, r);
         r.signed_plan = planOf(r.signed_plan);
+        const m = r.member_id != null ? members.get(r.member_id) : null;
         return { ...r, paid_satang: Number(r.paid_satang), terms_version: version, quote: qt,
+          // the live AYBKK profile (merges followed); null when not linked or gone
+          member_code: m ? m.code : null, member_name: m ? m.name : null,
           // an option set under older terms for someone who never signed
           option_stale: r.payment_option != null && !terms.options[r.payment_option],
-          held: isHeld(terms, r, !!r.signed_at, r.proofs),
+          held: heldFor(terms, r, !!r.signed_at, r.proofs),
           plan_changed: !!r.signed_plan && JSON.stringify(r.signed_plan)
             !== JSON.stringify((qt && qt.installments) || null),
           attendee_discount: !!terms.attendeePct, options: optionList(terms) };
@@ -568,6 +1025,49 @@ function mountIdcn(app, opts = {}) {
         [Number(req.params.id), course.code])).rows[0];
       if (!s) return res.status(404).json({ error: 'not found' });
       const out = { success: true };
+      // the IDCN#3 fields are all checked before anything below is written
+      const set = {};
+      if (b.memberCode !== undefined) {
+        const code = String(b.memberCode || '').trim().toUpperCase();
+        out.member = null;
+        if (!code) set.member_id = null;
+        else {
+          const m = await memberByCode(code);
+          if (!m) return res.status(400).json({ error: 'no AYBKK account has this member code' });
+          const other = (await q(`SELECT slug FROM idc_students
+            WHERE course_code=$1 AND id != $2 AND member_id = ANY($3::int[])`,
+            [course.code, s.id, await foldedInto(m.id)])).rows[0];
+          if (other) return res.status(409).json({ error: `this AYBKK account is already linked to ${other.slug}` });
+          set.member_id = m.id; out.member = { code: m.code, name: m.name };
+        }
+      }
+      if (b.startDate !== undefined) {
+        const d = String(b.startDate || '').trim();
+        if (d && !realYmd(d)) return res.status(400).json({ error: 'startDate is a date (YYYY-MM-DD)' });
+        set.start_date = d || null;
+      }
+      if (b.note !== undefined) {
+        const err = noteError(b.note);
+        if (err) return res.status(400).json({ error: err });
+        set.cohort_note = String(b.note || '').trim() || null;
+      }
+      if (b.termsArranged !== undefined) {
+        if (typeof b.termsArranged !== 'boolean')
+          return res.status(400).json({ error: 'termsArranged is true or false' });
+        set.terms_arranged = b.termsArranged;
+      }
+      const cols = Object.keys(set);
+      if (cols.length) {
+        try {
+          await q(`UPDATE idc_students SET ${cols.map((c, i) => `${c}=$${i + 2}`).join(', ')} WHERE id=$1`,
+            [s.id, ...cols.map(c => set[c])]);
+        } catch (e) {
+          if (String(e.message).includes('idc_students_course_member'))
+            return res.status(409).json({ error: 'this AYBKK account is already linked to another student' });
+          throw e;
+        }
+        Object.assign(s, set);
+      }
       if (b.resetKey === true) {
         const passcode = newPasscode();
         await q('UPDATE idc_students SET key_hash=$1 WHERE id=$2', [sha(passcode), s.id]);
@@ -596,7 +1096,7 @@ function mountIdcn(app, opts = {}) {
           plan = b.customPlan.map(p => ({ amountSatang: p.amountSatang, due: p.due }))
             .sort((x, y) => x.due.localeCompare(y.due));
         }
-        if (isHeld(terms, s, signed, paid) && b.confirmHeld !== true)
+        if (heldFor(terms, s, signed, paid) && b.confirmHeld !== true)
           return res.status(409).json({ held: true, error: 'this student paid before they had an option '
             + 'of these terms: if that was under older terms, Boonchu decides what they pay first' });
         await q('UPDATE idc_students SET payment_option=$1, custom_plan=$2 WHERE id=$3',
@@ -648,8 +1148,10 @@ function mountIdcn(app, opts = {}) {
   // a note or assignment into one profile, or every profile in the course —
   // multipart so an assignment can carry a demo video (uploaded once, the URL
   // shared by every recipient)
+  // With sessionNo the note belongs to that session of the calendar (all=true:
+  // every non-withdrawn student gets it under the same session).
   app.post('/api/idcn/admin/:course/notes', (req, res) => mediaUpload(req, res, async (mErr) => {
-    if (!needAdmin(req, res)) return;
+    if (!needAdmin(req, res)) return dropUpload(req);
     try {
       if (mErr) return res.status(400).json({ error: mErr.code === 'LIMIT_FILE_SIZE'
         ? 'video too large — keep it under 100MB' : mErr.message });
@@ -658,8 +1160,10 @@ function mountIdcn(app, opts = {}) {
       const kind = b.kind === 'assignment' ? 'assignment' : 'note';
       const body = String(b.body || '').trim();
       if (!body) return res.status(400).json({ error: 'body required' });
-      let media = { url: null, type: null };
-      if (req.file) media = await pushMedia(req.file, `aybkk/${course.code}/assignments`);
+      const sessionNo = sessionField(b.sessionNo);
+      if (sessionNo === false) return res.status(400).json({ error: 'sessionNo is a session number (1 to 99)' });
+      if (sessionNo != null && !(await sessionExists(course.code, sessionNo)))
+        return res.status(400).json({ error: `there is no session #${sessionNo} in the calendar` });
       let ids;
       if (b.all === true || b.all === 'true') {
         ids = (await q(
@@ -671,22 +1175,27 @@ function mountIdcn(app, opts = {}) {
         if (!s) return res.status(404).json({ error: 'student not found' });
         ids = [s.id];
       }
+      let media = { url: null, type: null };
+      if (req.file) media = await pushMedia(req.file, `aybkk/${course.code}/assignments`);
       for (const id of ids) {
-        await q(`INSERT INTO idc_notes (student_id, kind, title, body, created_by, media_url, media_type)
-                 VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+        await q(`INSERT INTO idc_notes (student_id, kind, title, body, created_by, media_url, media_type, session_no)
+                 VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
           [id, kind, String(b.title || '').slice(0, 200) || null, body.slice(0, 8000),
-           String(b.createdBy || 'AYBKK').slice(0, 60), media.url, media.type]);
+           String(b.createdBy || 'AYBKK').slice(0, 60), media.url, media.type, sessionNo]);
       }
-      res.json({ success: true, sentTo: ids.length });
+      res.json({ success: true, sentTo: ids.length, ...(sessionNo != null ? { session: sessionNo } : {}) });
     } catch (e) { res.status(500).json({ error: e.message }); }
+    finally { dropUpload(req); }
   }));
 
   app.get('/api/idcn/admin/:course/links', async (req, res) => {
     if (!needAdmin(req, res)) return;
-    const course = await courseFor(req, res); if (!course) return;
-    const r = (await q(`SELECT value FROM idc_settings WHERE course_code=$1 AND key='links'`,
-      [course.code])).rows[0];
-    res.json({ links: (r && r.value) || [] });
+    try {
+      const course = await courseFor(req, res); if (!course) return;
+      const r = (await q(`SELECT value FROM idc_settings WHERE course_code=$1 AND key='links'`,
+        [course.code])).rows[0];
+      res.json({ links: (r && r.value) || [] });
+    } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
   app.put('/api/idcn/admin/:course/links', async (req, res) => {
@@ -707,10 +1216,349 @@ function mountIdcn(app, opts = {}) {
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
+  // ── IDCN#3 (24 Nov 2026): the roster in one go, the calendar, daily work ──
+  class RowError extends Error { constructor(field, msg) { super(msg); this.field = field; } }
+  const BULK_MAX = 30;
+  const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // One roster line: an existing student of the course (same AYBKK account first,
+  // then the same link name) only gets its empty fields filled; anyone else is
+  // created like the single add, passcode once.
+  async function bulkRow(db, course, r, row, { dryRun, seen }) {
+    const nameEn = String(r.nameEn || '').trim();
+    if (!nameEn) throw new RowError('nameEn', 'the name in latin letters is needed');
+    if (nameEn.length > 120) throw new RowError('nameEn', 'the name holds at most 120 characters');
+    const nameZh = String(r.nameZh || '').trim() || null;
+    if (nameZh && nameZh.length > 120) throw new RowError('nameZh', 'the name holds at most 120 characters');
+    const slug = slugOf(r.slug || nameEn);
+    if (!slug) throw new RowError('nameEn', 'the name needs latin letters for the link');
+    const startDate = String(r.startDate || '').trim() || null;
+    if (startDate && !realYmd(startDate)) throw new RowError('startDate', 'the start date is YYYY-MM-DD');
+    const noteErr = noteError(r.note);
+    if (noteErr) throw new RowError('note', noteErr);
+    const note = String(r.note || '').trim() || null;
+    if (r.arranged != null && typeof r.arranged !== 'boolean')
+      throw new RowError('arranged', 'arranged is true or false');
+    const arranged = r.arranged === true;
+    const lang = ['zh', 'en'].includes(r.lang) ? r.lang : 'zh';
+
+    let member = null, memberNew = false;
+    const given = String(r.member || '').trim();
+    if (given) {
+      // codes made before 8 Oct 2026 are shorter, so any code an account has is taken
+      if (!given.includes('@')) {
+        if (given.length > 40 || /\s/.test(given)) throw new RowError('member', 'member is an AYBKK member code or an email');
+        member = await memberByCode(given.toUpperCase(), db);
+        if (!member) throw new RowError('member', 'no AYBKK account has this member code');
+      } else if (EMAIL.test(given)) {
+        member = await memberByEmail(given, db);
+        if (!member) {
+          const bkk = await bkkOf();
+          if (!bkk || typeof bkk.findOrCreateMember !== 'function')
+            throw new RowError('member', 'cannot create a member here');
+          const made = await bkk.findOrCreateMember({ name: nameEn, email: given }, db);
+          member = (await liveMembers([made.id], db)).get(made.id) || { id: made.id, code: made.code, name: made.name };
+          // made in this transaction (created_at is its start), or found by bkk's own email rules
+          memberNew = (await db.query('SELECT created_at = now() AS fresh FROM bkk_members WHERE id=$1',
+            [made.id])).rows[0].fresh === true;
+        }
+      } else throw new RowError('member', 'member is an AYBKK member code or an email');
+    }
+    if (member && memberNew) seen.members.add(member.id);
+    // an account an earlier line of this same preview made is still only a plan
+    const planned = dryRun && member && seen.members.has(member.id);
+    const memberOut = member
+      ? { code: planned ? null : member.code, name: member.name, created: memberNew || planned } : null;
+
+    let ex = null;
+    if (member) ex = (await db.query(
+      `SELECT * FROM idc_students WHERE course_code=$1 AND member_id = ANY($2::int[]) ORDER BY id LIMIT 1`,
+      [course.code, await foldedInto(member.id, db)])).rows[0] || null;
+    let exMember = null;
+    if (!ex) {
+      ex = (await db.query('SELECT * FROM idc_students WHERE course_code=$1 AND slug=$2',
+        [course.code, slug])).rows[0] || null;
+      if (ex && ex.member_id != null) {
+        exMember = (await liveMembers([ex.member_id], db)).get(ex.member_id) || null;
+        if (member && (!exMember || exMember.id !== member.id))
+          throw new RowError('member', `${slug} is linked to another AYBKK account`);
+      }
+    }
+    if (ex) {
+      const set = {}, filled = [], kept = [];
+      const fill = (col, field, v, now) => {
+        if (v == null || v === false) return;
+        if (ex[col] == null || ex[col] === false) { set[col] = v; filled.push(field); }
+        else if (now !== v) kept.push(field);
+      };
+      // a linked row was matched by this same account, so only an unlinked one takes it
+      if (member && ex.member_id == null) { set.member_id = member.id; filled.push('member'); }
+      fill('start_date', 'startDate', startDate, ymd(ex.start_date));
+      fill('cohort_note', 'note', note, ex.cohort_note);
+      fill('name_zh', 'nameZh', nameZh, ex.name_zh);
+      fill('terms_arranged', 'arranged', arranged, ex.terms_arranged);
+      const cols = Object.keys(set);
+      if (cols.length) await db.query(
+        `UPDATE idc_students SET ${cols.map((c, i) => `${c}=$${i + 2}`).join(', ')} WHERE id=$1`,
+        [ex.id, ...cols.map(c => set[c])]);
+      const sameAs = seen.students.get(ex.id);
+      return { row, action: 'exists', ...(dryRun && sameAs ? { sameAs } : { id: ex.id }), slug: ex.slug, status: ex.status,
+        link: `/${course.code}/${ex.slug}`, filled, kept,
+        member: memberOut || (exMember ? { code: exMember.code, name: exMember.name, created: false } : null) };
+    }
+    const passcode = newPasscode();
+    let made;
+    try {
+      made = (await db.query(
+        `INSERT INTO idc_students (course_code, slug, name_en, name_zh, lang, key_hash,
+           member_id, start_date, cohort_note, terms_arranged)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id`,
+        [course.code, slug, nameEn, nameZh, lang, sha(passcode), member ? member.id : null,
+         startDate, note, arranged])).rows[0];
+    } catch (e) {
+      if (String(e.message).includes('idc_students_course_code_slug_key'))
+        throw new RowError('nameEn', `the link name '${slug}' is taken`);
+      if (String(e.message).includes('idc_students_course_member'))
+        throw new RowError('member', 'this AYBKK account is already linked to another student');
+      throw e;
+    }
+    seen.students.set(made.id, row);
+    const out = { row, action: 'created', slug, link: `/${course.code}/${slug}`, member: memberOut };
+    if (!dryRun) Object.assign(out, { id: made.id, passcode });
+    return out;
+  }
+
+  app.post('/api/idcn/admin/:course/students/bulk', async (req, res) => {
+    if (!needAdmin(req, res)) return;
+    let client = null;
+    try {
+      const course = await courseFor(req, res); if (!course) return;
+      const b = req.body || {};
+      const rows = Array.isArray(b.rows) ? b.rows : null;
+      if (!rows || !rows.length) return res.status(400).json({ error: 'rows is the list of students' });
+      if (rows.length > BULK_MAX) return res.status(400).json({ error: `at most ${BULK_MAX} students at a time` });
+      const dryRun = b.dryRun === true || b.dryRun === 'true';
+      client = await pool.connect();
+      await client.query('BEGIN');
+      // one roster at a time per course, so a double click never adds anyone twice
+      await client.query('SELECT 1 FROM idc_courses WHERE code=$1 FOR UPDATE', [course.code]);
+      const results = [], seen = { members: new Set(), students: new Map() };
+      for (let i = 0; i < rows.length; i++) {
+        await client.query('SAVEPOINT roster_row');
+        try {
+          const r = rows[i] && typeof rows[i] === 'object' ? rows[i] : {};
+          results.push(await bulkRow(client, course, r, i + 1, { dryRun, seen }));
+          await client.query('RELEASE SAVEPOINT roster_row');
+        } catch (e) {
+          await client.query('ROLLBACK TO SAVEPOINT roster_row');
+          if (!(e instanceof RowError)) throw e;
+          results.push({ row: i + 1, action: 'error', field: e.field, error: e.message });
+        }
+      }
+      await client.query(dryRun ? 'ROLLBACK' : 'COMMIT');
+      const counts = { created: 0, exists: 0, error: 0 };
+      for (const r of results) counts[r.action]++;
+      res.json({ success: true, dryRun, counts, results,
+        ...(counts.created && !dryRun ? { note: 'Passcodes are shown once.' } : {}) });
+    } catch (e) {
+      if (client) await client.query('ROLLBACK').catch(() => {});
+      res.status(500).json({ error: e.message });
+    } finally { if (client) client.release(); }
+  });
+
+  // the calendar: { text } as pasted, or { rows, slots }; a CalError is a 400 with its line
+  const CAL_TEXT_MAX = 200000;
+  function calendarFrom(b) {
+    if (typeof b.text === 'string') {
+      if (b.text.length > CAL_TEXT_MAX) throw new CalError('the text is too long for a calendar', null);
+      return parseCalendar(b.text);
+    }
+    if (Array.isArray(b.rows)) {
+      if (b.rows.length > CAL_MAX_DAY) throw new CalError(`a calendar has at most ${CAL_MAX_DAY} days`, null);
+      const out = checkDays(b.rows.map((r, i) => ({ ...(r && typeof r === 'object' ? r : {}), line: i + 1 })));
+      const slots = {};
+      if (b.slots != null) {
+        if (typeof b.slots !== 'object') throw new CalError('slots is { "A": "10:30-12:30", "B": "13:00-16:00" }', null);
+        for (const k of ['A', 'B']) {
+          if (b.slots[k] == null || String(b.slots[k]).trim() === '') continue;
+          const t = timeRange(b.slots[k]);
+          if (!t) throw new CalError(`Slot ${k}: write the time as 10:30-12:30`, null);
+          slots[k] = t;
+        }
+      }
+      if (!out.days.length) out.warnings.push('the calendar is empty');
+      return { ...out, slots };
+    }
+    throw new CalError('send the pasted table as text, or the days as rows', null);
+  }
+
+  app.get('/api/idcn/admin/:course/days', async (req, res) => {
+    if (!needAdmin(req, res)) return;
+    try {
+      const course = await courseFor(req, res); if (!course) return;
+      res.json(await calendarOf(course.code));
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Replaces every day and session of the course in one go (dryRun: only shows it).
+  app.put('/api/idcn/admin/:course/days', async (req, res) => {
+    if (!needAdmin(req, res)) return;
+    let client = null;
+    try {
+      const course = await courseFor(req, res); if (!course) return;
+      const b = req.body || {};
+      let cal;
+      try { cal = calendarFrom(b); } catch (e) {
+        if (e instanceof CalError) return res.status(400).json({ error: e.message, line: e.line });
+        throw e;
+      }
+      const slots = { A: null, B: null, ...((await getSetting(course.code, 'slots')) || {}), ...cal.slots };
+      // work already saved under a session or day this calendar does not have
+      const sessionNos = new Set(cal.sessions.map(s => s.no)), dayNos = new Set(cal.days.map(d => d.day));
+      const dated = (await q(
+        `SELECT DISTINCT n.session_no, n.day_no FROM idc_notes n JOIN idc_students s ON s.id = n.student_id
+         WHERE s.course_code=$1 AND (n.session_no IS NOT NULL OR n.day_no IS NOT NULL)`, [course.code])).rows;
+      const lostS = [...new Set(dated.map(x => x.session_no).filter(n => n != null && !sessionNos.has(n)))].sort((a, b) => a - b);
+      const lostD = [...new Set(dated.map(x => x.day_no).filter(n => n != null && !dayNos.has(n)))].sort((a, b) => a - b);
+      const warnings = [...cal.warnings];
+      if (lostS.length) warnings.push(`work saved under session #${lostS.join(', #')} is kept, but this calendar `
+        + 'has no such session, so nobody sees it until the session is back');
+      if (lostD.length) warnings.push(`teacher comments saved for ${dayList(lostD)} are kept, but this calendar `
+        + 'has no such day, so nobody sees them until the day is back');
+      const dryRun = b.dryRun === true || b.dryRun === 'true';
+      if (!dryRun) {
+        client = await pool.connect();
+        await client.query('BEGIN');
+        await client.query('SELECT 1 FROM idc_courses WHERE code=$1 FOR UPDATE', [course.code]);
+        await client.query('DELETE FROM idc_sessions WHERE course_code=$1', [course.code]);
+        await client.query('DELETE FROM idc_days WHERE course_code=$1', [course.code]);
+        const col = k => cal.days.map(d => d[k]);
+        if (cal.days.length) await client.query(
+          `INSERT INTO idc_days (course_code, day_no, date, weekday, morning, slot_a, slot_b, note)
+           SELECT $1, * FROM unnest($2::int[], $3::date[], $4::text[], $5::text[], $6::text[], $7::text[], $8::text[])`,
+          [course.code, col('day'), col('date'), col('weekday'), col('morning'), col('slotA'), col('slotB'), col('note')]);
+        if (cal.sessions.length) await client.query(
+          `INSERT INTO idc_sessions (course_code, session_no, day_no, slot, title)
+           SELECT $1, * FROM unnest($2::int[], $3::int[], $4::text[], $5::text[])`,
+          [course.code, cal.sessions.map(s => s.no), cal.sessions.map(s => s.day),
+           cal.sessions.map(s => s.slot), cal.sessions.map(s => s.title)]);
+        await client.query(`INSERT INTO idc_settings (course_code, key, value) VALUES ($1,'slots',$2)
+          ON CONFLICT (course_code, key) DO UPDATE SET value=$2, updated_at=now()`,
+          [course.code, JSON.stringify(slots)]);
+        await client.query('COMMIT');
+      }
+      res.json({ success: true, dryRun, saved: !dryRun, days: cal.days, sessions: cal.sessions, slots, warnings });
+    } catch (e) {
+      if (client) await client.query('ROLLBACK').catch(() => {});
+      res.status(500).json({ error: e.message });
+    } finally { if (client) client.release(); }
+  });
+
+  const dayIn = async (code, day) => Number.isSafeInteger(day)
+    && (await q('SELECT 1 FROM idc_days WHERE course_code=$1 AND day_no=$2', [code, day])).rowCount > 0;
+  const idParam = v => { const n = Number(v); return Number.isSafeInteger(n) && n > 0 ? n : null; };
+
+  // The teacher's comment for one student on one day: saved again it is edited,
+  // saved empty it is gone.
+  app.put('/api/idcn/admin/:course/students/:id/comments/:day', async (req, res) => {
+    if (!needAdmin(req, res)) return;
+    try {
+      const course = await courseFor(req, res); if (!course) return;
+      const id = idParam(req.params.id);
+      const s = id && (await q('SELECT id FROM idc_students WHERE id=$1 AND course_code=$2',
+        [id, course.code])).rows[0];
+      if (!s) return res.status(404).json({ error: 'student not found' });
+      const day = Number(req.params.day);
+      if (!(await dayIn(course.code, day)))
+        return res.status(404).json({ error: `there is no day ${String(req.params.day).slice(0, 10)} in the calendar` });
+      const b = req.body || {};
+      const body = String(b.body || '').trim();
+      if (!body) {
+        const gone = await q(`DELETE FROM idc_notes WHERE student_id=$1 AND day_no=$2 AND kind='comment'`, [s.id, day]);
+        return res.json({ success: true, comment: null, deleted: gone.rowCount > 0 });
+      }
+      if (body.length > 4000) return res.status(400).json({ error: 'keep the comment under 4000 characters' });
+      const by = String(b.by || '').trim().slice(0, 40) || 'teacher';
+      const r = await q(
+        `INSERT INTO idc_notes (student_id, kind, body, created_by, day_no, updated_at)
+         VALUES ($1,'comment',$2,$3,$4,now())
+         ON CONFLICT (student_id, day_no) WHERE kind='comment'
+         DO UPDATE SET body=EXCLUDED.body, created_by=EXCLUDED.created_by, updated_at=now()
+         RETURNING ${NOTE_COLS}`, [s.id, body, by, day]);
+      res.json({ success: true, comment: noteOut(r.rows[0]) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // One day for the teacher: its schedule and sessions, and every student still on
+  // the course with that day's assignments, hand-ins and comment.
+  app.get('/api/idcn/admin/:course/days/:day/overview', async (req, res) => {
+    if (!needAdmin(req, res)) return;
+    try {
+      const course = await courseFor(req, res); if (!course) return;
+      const day = Number(req.params.day);
+      const cal = await calendarOf(course.code);
+      const d = cal.days.find(x => x.day === day);
+      if (!d) return res.status(404).json({ error: `there is no day ${String(req.params.day).slice(0, 10)} in the calendar` });
+      const nos = d.sessions.map(x => x.no);
+      const students = (await q(
+        `SELECT id, slug, name_en, name_zh, status, to_char(start_date, 'YYYY-MM-DD') AS start_date
+         FROM idc_students WHERE course_code=$1 AND status != 'withdrawn' ORDER BY name_en, id`,
+        [course.code])).rows;
+      const notes = (await q(
+        `SELECT n.student_id, ${NOTE_FIELDS.map(c => 'n.' + c).join(', ')}
+         FROM idc_notes n JOIN idc_students s ON s.id = n.student_id
+         WHERE s.course_code=$1 AND s.status != 'withdrawn'
+           AND ((n.kind='comment' AND n.day_no=$2) OR (n.kind != 'comment' AND n.session_no = ANY($3::int[])))
+         ORDER BY n.id`, [course.code, day, nos])).rows;
+      const byStudent = new Map(students.map(s => [s.id, []]));
+      for (const n of notes) if (byStudent.has(n.student_id)) byStudent.get(n.student_id).push(n);
+      res.json({ day: d, slots: cal.slots, students: students.map(s => {
+        const w = workOf(byStudent.get(s.id));
+        return { id: s.id, slug: s.slug, name_en: s.name_en, name_zh: s.name_zh, status: s.status,
+          start_date: s.start_date, beforeStart: !!s.start_date && d.date < s.start_date,
+          sessionsWork: Object.fromEntries(nos.map(no => [no, w.sessionsWork[no] || { assignments: [], submissions: [] }])),
+          comment: w.comments[day] || null };
+      }) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // a note, assignment, hand-in or comment put in by mistake (its media stays on Cloudinary)
+  app.delete('/api/idcn/admin/:course/notes/:id', async (req, res) => {
+    if (!needAdmin(req, res)) return;
+    try {
+      const course = await courseFor(req, res); if (!course) return;
+      const id = idParam(req.params.id);
+      const r = id ? await q(`DELETE FROM idc_notes n USING idc_students s
+        WHERE n.id=$1 AND s.id = n.student_id AND s.course_code=$2 RETURNING n.id, n.kind`, [id, course.code]) : null;
+      if (!r || !r.rowCount) return res.status(404).json({ error: 'note not found' });
+      res.json({ success: true, id: r.rows[0].id, kind: r.rows[0].kind });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // The staff sign-in link of bkk's admin (same token table, days and short /in/ code),
+  // for the student's linked AYBKK account: it opens My account, which links the course page.
+  app.post('/api/idcn/admin/:course/students/:id/login-link', async (req, res) => {
+    if (!needAdmin(req, res)) return;
+    try {
+      const course = await courseFor(req, res); if (!course) return;
+      const id = idParam(req.params.id);
+      const s = id && (await q('SELECT id, member_id FROM idc_students WHERE id=$1 AND course_code=$2',
+        [id, course.code])).rows[0];
+      if (!s) return res.status(404).json({ error: 'student not found' });
+      if (s.member_id == null) return res.status(409).json({ error: 'link this student to an AYBKK account first' });
+      const m = (await liveMembers([s.member_id])).get(s.member_id);
+      const bkk = m ? await bkkOf() : null;
+      if (m && (!bkk || typeof bkk.staffSigninLink !== 'function'))
+        return res.status(503).json({ error: 'sign-in links are not available on this server' });
+      const made = m ? await bkk.staffSigninLink(m.id) : null;
+      if (!made) return res.status(409).json({ error: 'the linked AYBKK account is not there any more: link it again' });
+      res.json({ success: true, link: made.link, short_link: made.short_link, days: made.days, name: made.name });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
   initSchema()
     .then(() => console.log('✓ idcn-api mounted (/api/idcn/*)'))
     .catch(e => console.error('✗ idcn-api schema init failed:', e.message));
 }
 
 module.exports = { mountIdcn, quote, applyPct, planError, termsFor, IDCN3_TERMS, IDCN3_TERMS_V4,
-  IDCN3_POLICY_VERSION, TERMS_BY_POLICY };
+  IDCN3_POLICY_VERSION, TERMS_BY_POLICY, parseCalendar };
