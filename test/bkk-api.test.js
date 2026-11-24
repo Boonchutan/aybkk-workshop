@@ -8746,6 +8746,80 @@ const ok = (name, cond, extra = '') => {
          && ((await J('/api/bkk/admin/members?consent=missing', { headers: ADMIN })).body.members || []).length === 0, JSON.stringify(offB.body));
   }
 
+  console.log('\n— the student page: never a void pass, an ended one says so, live ones first (24 Nov 2026) —');
+  {
+    const ymd = n => new Date(Date.now() + 7 * 3600000 + n * 86400000).toISOString().slice(0, 10);
+    const code = 'BPASSVIEW901';
+    const mem = (await pool.query(`INSERT INTO bkk_members (code,name) VALUES ($1,'Pass View') RETURNING id`, [code])).rows[0].id;
+    const prod = (await pool.query(`SELECT id FROM bkk_products WHERE kind='unlimited' ORDER BY id LIMIT 1`)).rows[0].id;
+    const add = async (from, until, status) => (await pool.query(`INSERT INTO bkk_passes (member_id,product_id,kind,valid_days,valid_from,valid_until,status)
+      VALUES ($1,$2,'unlimited',30,$3::date,$4::date,$5) RETURNING id`, [mem, prod, from, until, status])).rows[0].id;
+    const longAgo = await add(ymd(-400), ymd(-370), 'active');
+    const current = await add(ymd(-27), ymd(3), 'active');
+    const lastMonth = await add(ymd(-60), ymd(-31), 'active');
+    const endsToday = await add(ymd(-29), ymd(0), 'active');
+    const paused = await add(ymd(-40), ymd(-10), 'frozen');
+    await add(ymd(4), ymd(34), 'void');
+    const me = (await J('/api/bkk/me/' + code)).body;
+    const ps = (me.passes || []).map(p => [String(p.validUntil).slice(0, 10), p.status, p.ended]);
+    ok('/me: a void pass is never listed; live passes first (one ending today is live), then the ended ones, each saying so: a frozen pass whose end has passed too',
+       JSON.stringify(ps) === JSON.stringify([[ymd(0), 'active', false], [ymd(3), 'active', false],
+         [ymd(-10), 'frozen', true], [ymd(-31), 'active', true], [ymd(-370), 'active', true]]) && [longAgo, current, lastMonth, endsToday, paused].length === 5, JSON.stringify(ps));
+    const pausing = await add(ymd(-20), ymd(17), 'frozen');
+    const me2 = (await J('/api/bkk/me/' + code)).body;
+    ok('...a pause still running (its end moved out past today) stays live', (me2.passes || []).some(p => String(p.validUntil).slice(0, 10) === ymd(17)
+       && p.status === 'frozen' && p.ended === false) && !!pausing, JSON.stringify(me2.passes));
+  }
+
+  console.log('\n— the desk note on a student (24 Nov 2026) —');
+  {
+    const one = async (sql, args = []) => (await pool.query(sql, args)).rows[0] || {};
+    await pool.query(`INSERT INTO bkk_members (code,name,email) VALUES ('BDESKNOTE901','Desk Note','desk.note@example.com'),
+      ('BDESKNOTE902','Desk Twin','desk.twin@example.com')`);
+    const N = (code, body, headers = ADMIN) => post(`/api/bkk/admin/members/${code}/note`, body, headers);
+    const noKey = await N('BDESKNOTE901', { note: 'x' }, {});
+    const s1 = await N('BDESKNOTE901', { note: '  Paid 500 cash, owes 300.\r\nLeft knee: go easy.  ', at: null });
+    const card = ((await J('/api/bkk/admin/members?q=desk.note', { headers: ADMIN })).body.members || [])[0] || {};
+    const meTxt = JSON.stringify((await J('/api/bkk/me/BDESKNOTE901')).body);
+    ok('a desk note: staff key only (401 without), saved trimmed with its time, shown on the search card, never on the student\'s own /me',
+       noKey.status === 401 && s1.status === 200 && s1.body.note === 'Paid 500 cash, owes 300.\nLeft knee: go easy.' && !!s1.body.at
+       && card.desk_note === s1.body.note && new Date(card.desk_note_at).getTime() === new Date(s1.body.at).getTime()
+       && !/owes 300|knee|desk_note/.test(meTxt), JSON.stringify([noKey.status, s1.body, card.desk_note]));
+    const stale = await N('BDESKNOTE901', { note: 'Overwrite from an old page', at: null });
+    const s2 = await N('BDESKNOTE901', { note: 'Paid in full.', at: s1.body.at });
+    const tooLong = await N('BDESKNOTE901', { note: 'x'.repeat(2001), at: s2.body.at });
+    const pasted = await N('BDESKNOTE902', { note: 'Paid 500 cash\u000bowes 300\u0007' });
+    await N('BDESKNOTE902', { note: '' });
+    ok('...a save from a page that saw an older note is 409 with what is saved now; the right one goes through; over 2000 characters is 400',
+       stale.status === 409 && stale.body.changed === true && stale.body.note === s1.body.note && s2.status === 200 && s2.body.note === 'Paid in full.'
+       && tooLong.status === 400 && (await one(`SELECT desk_note FROM bkk_members WHERE code='BDESKNOTE901'`)).desk_note === 'Paid in full.'
+       && pasted.status === 200 && pasted.body.note === 'Paid 500 cash\nowes 300',
+       JSON.stringify([stale.status, stale.body.note, s2.body.note, tooLong.status]));
+    await N('BDESKNOTE902', { note: 'Twin profile: same person, old email.' });
+    const mg = await post('/api/bkk/admin/members/BDESKNOTE901/merge', { from: 'BDESKNOTE902', sure: true }, ADMIN);
+    const keepA = await one(`SELECT desk_note FROM bkk_members WHERE code='BDESKNOTE901'`);
+    const card2 = ((await J('/api/bkk/admin/members?q=desk.note', { headers: ADMIN })).body.members || [])[0] || {};
+    const viaFold = await N('BDESKNOTE902', { note: 'Paid in full. Same person as the twin.', at: s2.body.at });
+    ok('...merging keeps the kept profile\'s note and shows the folded one\'s beside it; a save on the folded code lands on the kept profile',
+       mg.status === 200 && keepA.desk_note === 'Paid in full.' && (card2.folded || []).some(f => f.code === 'BDESKNOTE902' && f.desk_note === 'Twin profile: same person, old email.')
+       && viaFold.status === 200 && viaFold.body.code === 'BDESKNOTE901'
+       && (await one(`SELECT desk_note FROM bkk_members WHERE code='BDESKNOTE901'`)).desk_note === 'Paid in full. Same person as the twin.',
+       JSON.stringify([mg.status, keepA, card2.folded, viaFold.body]));
+    const cl = await N('BDESKNOTE901', { note: '   ', at: viaFold.body.at });
+    await post('/api/bkk/admin/members/BDESKNOTE902/unmerge', {}, ADMIN);
+    await pool.query(`UPDATE bkk_members SET desk_note=NULL, desk_note_at=NULL WHERE code='BDESKNOTE901'`);
+    await pool.query(`INSERT INTO bkk_members (code,name,email,desk_note,desk_note_at) VALUES ('BDESKNOTE903','Desk Third','desk.third@example.com','From the old profile.',now())`);
+    await post('/api/bkk/admin/members/BDESKNOTE901/merge', { from: 'BDESKNOTE903', sure: true }, ADMIN);
+    const moved = await one(`SELECT desk_note, desk_note_at FROM bkk_members WHERE code='BDESKNOTE901'`);
+    await post('/api/bkk/admin/members/BDESKNOTE903/unmerge', {}, ADMIN);
+    const backK = await one(`SELECT desk_note, desk_note_at FROM bkk_members WHERE code='BDESKNOTE901'`);
+    const backF = await one(`SELECT desk_note, desk_note_at FROM bkk_members WHERE code='BDESKNOTE903'`);
+    ok('...an empty save clears it (no time left); a note the kept profile lacks comes across on a merge, and undo takes it back with its time',
+       cl.status === 200 && cl.body.note === null && cl.body.at === null && moved.desk_note === 'From the old profile.' && !!moved.desk_note_at
+       && backK.desk_note === null && backK.desk_note_at === null && backF.desk_note === 'From the old profile.' && !!backF.desk_note_at,
+       JSON.stringify([cl.body, moved, backK, backF]));
+  }
+
   console.log('\n— the tee pre-order: collected in China, paid through PaySolutions (24 Nov 2026) —');
   {
     const http = require('http');

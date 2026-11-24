@@ -890,6 +890,9 @@ function mountBkk(app, opts = {}) {
     await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS merge_log JSONB`);
     // Names a profile had before staff changed it (Change name), still found by search and the import.
     await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS former_names TEXT[]`);
+    // The desk's own note on a student (24 Nov 2026): staff only, never on /me, the door or /teach.
+    await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS desk_note TEXT`);
+    await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS desk_note_at TIMESTAMPTZ`);
     // Checkout with a folded profile's email: the pass lands on the kept profile,
     // the receipt and its sign-in link go to the address that was typed.
     await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS mail_to TEXT`);
@@ -2348,6 +2351,41 @@ function mountBkk(app, opts = {}) {
   // still finds this profile; a fix of capitals or spaces only keeps none.
   // { forget } takes one old name off (a rename made by mistake). A folded
   // code changes the profile it was folded into.
+  // The desk's note on a student: one box, staff only. at: the saved time the page last saw, so a
+  // second desk saving meanwhile is never written over (409 with what is saved now).
+  const DESK_NOTE_MAX = 2000;
+  app.post('/api/bkk/admin/members/:code/note', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const b = req.body || {};
+    // Pasted from Word or PowerPoint: their soft breaks become line breaks, other invisible characters go.
+    const note = String(b.note ?? '').replace(/\r\n?/g, '\n').replace(/[\u000b\u000c]/g, '\n')
+      .replace(/[\u0000-\u0008\u000e-\u001f\u007f]/g, '').trim();
+    if (note.length > DESK_NOTE_MAX)
+      return res.status(400).json({ error: `a note is up to ${DESK_NOTE_MAX} characters` });
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const cols = 'id, code, desk_note, desk_note_at, merged_into';
+      let m = (await client.query(`SELECT ${cols} FROM bkk_members WHERE code=$1 FOR UPDATE`, [String(req.params.code || '')])).rows[0];
+      for (let hop = 0; m && m.merged_into && hop < 10; hop++)
+        m = (await client.query(`SELECT ${cols} FROM bkk_members WHERE id=$1 FOR UPDATE`, [m.merged_into])).rows[0];
+      if (!m || m.merged_into) { await client.query('ROLLBACK'); return res.status(404).json({ error: 'member not found' }); }
+      const ms = v => v == null || v === '' ? null : new Date(v).getTime();
+      if ('at' in b && ms(b.at) !== ms(m.desk_note_at)) {
+        await client.query('ROLLBACK');
+        return res.status(409).json({ error: 'Someone changed this note meanwhile. This is what is saved now.', changed: true,
+          code: m.code, note: m.desk_note, at: m.desk_note_at });
+      }
+      const r = (await client.query(`UPDATE bkk_members SET desk_note=$2::text,
+          desk_note_at=CASE WHEN $2::text IS NULL THEN NULL ELSE now() END WHERE id=$1 RETURNING code, desk_note, desk_note_at`,
+        [m.id, note || null])).rows[0];
+      await client.query('COMMIT');
+      res.json({ success: true, code: r.code, note: r.desk_note, at: r.desk_note_at });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      res.status(500).json({ error: e.message });
+    } finally { client.release(); }
+  });
   app.post('/api/bkk/admin/members/:code/name', async (req, res) => {
     if (adminOnly(req, res)) return;
     const b = req.body || {};
@@ -2438,7 +2476,7 @@ function mountBkk(app, opts = {}) {
   // merge_log is what undo puts back.
   // dryRun runs the same steps and rolls back. Two different emails or phones
   // may be two people with one name: that needs sure:true.
-  const MERGE_FIELDS = ['email', 'phone', 'photo_id', 'photo_at', 'journal_id', 'lang'];
+  const MERGE_FIELDS = ['email', 'phone', 'photo_id', 'photo_at', 'journal_id', 'lang', 'desk_note', 'desk_note_at'];
   const last9 = s => { const d = String(s || '').replace(/\D/g, ''); return d.length >= 9 ? d.slice(-9) : ''; };
   const mergeWho = m => ({ code: m.code, name: m.name, email: m.email, phone: m.phone, rezervId: m.rezerv_id,
     source: m.source || 'aybkk', created: m.created_at });
@@ -2505,7 +2543,8 @@ function mountBkk(app, opts = {}) {
         AND photo_id NOT IN (SELECT photo_id FROM bkk_photo_members WHERE member_id=$1) RETURNING photo_id`, [K, F]))
         .rows.map(x => x.photo_id);
 
-      const take = MERGE_FIELDS.filter(k => fold[k] != null && keep[k] == null && (k !== 'photo_at' || keep.photo_id == null));
+      const take = MERGE_FIELDS.filter(k => fold[k] != null && keep[k] == null && (k !== 'photo_at' || keep.photo_id == null)
+        && (k !== 'desk_note_at' || keep.desk_note == null));
       if (take.length) {
         for (const k of take) log.fields[k] = fold[k];
         // Off the folded one first: email and journal are unique.
@@ -2679,7 +2718,8 @@ function mountBkk(app, opts = {}) {
       const back = MERGE_FIELDS.filter(k => k in (L.fields || {}));
       const keepNow = (await client.query('SELECT * FROM bkk_members WHERE id=$1', [K])).rows[0];
       const still = back.filter(k => String(keepNow[k] ?? '') === String(L.fields[k] ?? '')
-        || (k === 'photo_at' && back.includes('photo_id') && keepNow.photo_id === L.fields.photo_id));
+        || (k === 'photo_at' && back.includes('photo_id') && keepNow.photo_id === L.fields.photo_id)
+        || (k === 'desk_note_at' && back.includes('desk_note') && keepNow.desk_note === L.fields.desk_note));
       if (still.length) {
         await client.query(`UPDATE bkk_members SET ${still.map(k => `${k}=NULL`).join(', ')} WHERE id=$1`, [K]);
         await client.query(`UPDATE bkk_members SET ${still.map((k, i) => `${k}=$${i + 2}`).join(', ')} WHERE id=$1`,
@@ -3052,8 +3092,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const m = await memberByCode(req.params.code);
       if (!m) return res.status(404).json({ error: 'not found' });
       const passes = (await q(
-        `SELECT p.*, pr.name_en, pr.name_th, pr.code AS product_code FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
-         WHERE p.member_id=$1 ORDER BY p.id DESC`, [m.id])).rows;
+        `SELECT p.*, pr.name_en, pr.name_th, pr.code AS product_code,
+           p.valid_until IS NOT NULL AND p.valid_until < $2::date AS ended
+         FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
+         WHERE p.member_id=$1 ORDER BY p.id DESC`, [m.id, bkkToday()])).rows;
       // For the review ask in My account: study passes beyond the first. A single
       // class is a visit, not a stay, and a void pass was written off, except a
       // Rezerv pack that was used up before its end date: importPass stores it
@@ -3105,8 +3147,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         photo: faceLinks(m.photo_id, m.code),
         history: { practised: c.practised, days: c.days, thisMonth: c.this_month, recent: recent.rows },
         notes,
-        passes: passes.map(p => ({
-          name: p.name_en, nameTh: p.name_th, kind: p.kind, status: p.status,
+        // What the student holds: a void pass (written off, or a used-up Rezerv pack, which lets no one in)
+        // never shows, and one whose last day has gone says it ended. Live ones first.
+        passes: passes.filter(p => p.status !== 'void').sort((a, b) => a.ended - b.ended).map(p => ({
+          name: p.name_en, nameTh: p.name_th, kind: p.kind, status: p.status, ended: p.ended,
           creditsLeft: p.kind === 'unlimited' ? null : (p.credits_total - p.credits_used),
           validFrom: p.valid_from, validUntil: p.valid_until, dailyCap: p.daily_cap,
         })),
@@ -5638,7 +5682,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const [passes, folded] = ids.length ? await Promise.all([q(
         `SELECT p.*, pr.name_en, pr.name_th FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
          WHERE p.member_id = ANY($1::int[]) ORDER BY p.id DESC`, [ids]), q(
-        `SELECT merged_into, code, name, email, rezerv_id, to_char(merged_at AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS merged_on
+        `SELECT merged_into, code, name, email, rezerv_id, desk_note, to_char(merged_at AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS merged_on
          FROM bkk_members WHERE merged_into = ANY($1::int[]) ORDER BY merged_at`, [ids])]).then(rs => rs.map(x => x.rows)) : [[], []];
       res.json({
         members: r.rows.map(({ merge_log, consent_signed, guardian_due, ...m }) => ({

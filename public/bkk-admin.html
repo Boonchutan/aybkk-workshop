@@ -26,6 +26,10 @@
   th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
   th{color:var(--soft);font-size:12px}
   .pill{display:inline-block;padding:3px 9px;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap}
+  .dnote{margin-top:8px}
+  .dnote textarea{display:block;width:100%;max-width:640px;margin-top:4px;padding:8px 10px;font:inherit;line-height:1.5;border:1.5px solid var(--line);border-radius:7px;background:var(--wall);color:var(--ink);resize:vertical}
+  .dnote p{margin:6px 0 0}
+  .dnfold{white-space:pre-wrap}
   .pending{background:#fff3d6;color:#8a6a12}.paid{background:#e6f6ec;color:#187a43}
   .mismatch,.failed{background:#fdeaea;color:#a33}
   .btn{padding:9px 14px;border:none;border-radius:7px;background:var(--plum);color:var(--on-dark);font-weight:700;font-size:14px;cursor:pointer;font-family:'Work Sans','Plex',sans-serif;font-weight:800}
@@ -510,6 +514,9 @@
       mergeNo: 'Nothing was merged.',
       mergePlan: j => `Keep: ${j.keep.name} (${j.keep.code}) ${j.keep.email || ''}\nFold in: ${j.fold.name} (${j.fold.code}) ${j.fold.email || ''}\n\nMoves: ${j.moved.passes} passes, ${j.moved.bookings} classes, ${j.moved.orders} payments, ${j.moved.photo_members} photos, ${j.moved.notes} notes.${j.seatsCancelled ? `\n${j.seatsCancelled} class(es) were booked on both: one copy is cancelled.` : ''}${j.journalLeft ? `\n\nBoth have a practice journal: entries written under ${j.fold.code} stay there and do not show on this profile. To keep that journal, merge the other way round.` : ''}${j.left.checks || j.left.photos ? `\nStays on ${j.fold.code} (this profile already has the same day or photo): ${j.left.checks} check(s), ${j.left.photos} photo tag(s).` : ''}\n\nThe other code and email lead to this profile from now on. Undo is on this card.`,
       mergeDone: n => `Done. ${n} has one profile now.`,
+      noteL: 'Desk note (staff only, never shown to the student)', noteSaved: w => `Saved ${w}`, noteCleared: 'Note cleared',
+      noteChanged: 'Someone changed this note meanwhile. Theirs is on top, yours below: check it and save again.',
+      foldedNote: c => `Note on ${c}:`,
       foldedL: 'Merged in:', undoBtn: 'Undo', qUndo: c => `Take ${c} back out as its own profile? Everything that moved goes back.`,
       undoDone: j => `Undone.${j.fieldsKept && j.fieldsKept.length ? `\nChanged on the kept profile since, so not moved back: ${j.fieldsKept.join(', ')}.` : ''}${j.seatsNotBack ? `\n${j.seatsNotBack} cancelled class(es) not booked again: the seat is taken or the pack is used up.` : ''}${j.twinsUndone && j.twinsUndone.passes ? `\n${j.twinsUndone.passes} Rezerv pass(es) kept void as the copy of the other profile's sale are live again: check each student has one pass.` : ''}${j.moves && j.moves.undone ? `\n${j.moves.undone} Rezerv class(es) taken from a pass on the other profile are back on Rezerv with their student${j.moves.keptUsed ? `; ${j.moves.keptUsed} stay used on that pass, as a Rezerv copy may have counted them: check it, and if Rezerv did not count them give them back with Extend on that pass (they are off it now, so nothing else gives them back)` : ', and the pass has them back'}.` : ''}${j.moves && j.moves.givenBack ? `\n${j.moves.givenBack} cancelled class(es) kept used for a Rezerv copy that went with the other profile are given back on their own pass.` : ''}`,
       impTitle: 'Move students from Rezerv', impBtn: 'Import',
@@ -622,6 +629,9 @@
       mergeNo: 'ยังไม่ได้รวม',
       mergePlan: j => `เก็บ: ${j.keep.name} (${j.keep.code}) ${j.keep.email || ''}\nรวมเข้ามา: ${j.fold.name} (${j.fold.code}) ${j.fold.email || ''}\n\nย้าย: แพ็กเกจ ${j.moved.passes} คลาส ${j.moved.bookings} การชำระเงิน ${j.moved.orders} รูป ${j.moved.photo_members} โน้ต ${j.moved.notes}${j.seatsCancelled ? `\nมี ${j.seatsCancelled} คลาสที่จองไว้ทั้งสองโปรไฟล์: ยกเลิกอันที่ซ้ำ` : ''}${j.journalLeft ? `\n\nทั้งสองโปรไฟล์มีบันทึกการฝึก: บันทึกของ ${j.fold.code} จะอยู่ที่เดิม ไม่แสดงในโปรไฟล์นี้ ถ้าอยากเก็บบันทึกนั้น ให้รวมกลับด้าน` : ''}${j.left.checks || j.left.photos ? `\nอยู่ที่ ${j.fold.code} ต่อ (โปรไฟล์นี้มีวันหรือรูปเดียวกันแล้ว): ผลตรวจ ${j.left.checks} รูป ${j.left.photos}` : ''}\n\nรหัสและอีเมลของอีกอันจะพามาที่โปรไฟล์นี้ ยกเลิกการรวมได้ที่การ์ดนี้`,
       mergeDone: n => `เรียบร้อย ${n} มีโปรไฟล์เดียวแล้ว`,
+      noteL: 'บันทึกของเคาน์เตอร์ (เห็นเฉพาะทีม นักเรียนไม่เห็น)', noteSaved: w => `บันทึกแล้ว ${w}`, noteCleared: 'ลบบันทึกแล้ว',
+      noteChanged: 'มีคนแก้บันทึกนี้ไปก่อนแล้ว ของเค้าอยู่ด้านบน ของคุณอยู่ด้านล่าง ตรวจดูแล้วกดบันทึกอีกครั้ง',
+      foldedNote: c => `บันทึกของ ${c}:`,
       foldedL: 'รวมเข้ามาแล้ว:', undoBtn: 'ยกเลิกการรวม', qUndo: c => `แยก ${c} ออกเป็นโปรไฟล์ของตัวเองอีกครั้งไหม? ทุกอย่างที่ย้ายมาจะกลับไป`, undoDone: j => `แยกออกแล้ว${j.fieldsKept && j.fieldsKept.length ? `\nมีการแก้ในโปรไฟล์ที่เก็บไว้หลังรวม จึงไม่ย้ายกลับ: ${j.fieldsKept.join(', ')}` : ''}${j.seatsNotBack ? `\nมี ${j.seatsNotBack} คลาสที่ยกเลิกไว้ไม่ได้จองคืน: ที่นั่งถูกใช้แล้วหรือแพ็กเกจหมดแล้ว` : ''}${j.twinsUndone && j.twinsUndone.passes ? `\nแพ็กเกจจาก Rezerv ${j.twinsUndone.passes} ใบที่ยกเลิกไว้เพราะเป็นสำเนาการขายของอีกโปรไฟล์ กลับมาใช้งานได้แล้ว: ตรวจว่านักเรียนแต่ละคนมีแพ็กเกจเดียว` : ''}${j.moves && j.moves.undone ? `\nคลาส Rezerv ${j.moves.undone} คลาสที่หักจากแพ็กเกจของอีกโปรไฟล์ กลับไปเป็น Rezerv กับนักเรียนของคลาสนั้น${j.moves.keptUsed ? ` โดย ${j.moves.keptUsed} คลาสยังนับว่าใช้ในแพ็กเกจนั้น เพราะสำเนาจาก Rezerv อาจนับไว้แล้ว: ตรวจดู ถ้า Rezerv ไม่ได้นับ ให้คืนครั้งด้วยปุ่ม ยืดวัน ที่แพ็กเกจนั้น (คลาสไม่ได้ผูกกับแพ็กเกจแล้ว จึงไม่มีอะไรคืนให้อีก)` : ' และแพ็กเกจได้คืนแล้ว'}` : ''}${j.moves && j.moves.givenBack ? `\nคลาสที่ยกเลิกแล้ว ${j.moves.givenBack} คลาสที่เคยนับว่าใช้เพราะสำเนา Rezerv ซึ่งไปกับอีกโปรไฟล์ ได้คืนครั้งในแพ็กเกจของตัวเองแล้ว` : ''}`,
       impTitle: 'ย้ายนักเรียนจาก Rezerv', impBtn: 'นำเข้า',
       impHelp: 'บรรทัดละหนึ่งคน: ชื่อ | อีเมล | แพ็กเกจ | วันหมดอายุ | ครั้งที่เหลือ (เฉพาะแพ็กครั้ง) อีเมลเว้นว่างไว้ก่อนได้ แล้วนำเข้าบรรทัดเดิมพร้อมอีเมลภายหลัง กดซ้ำได้ ไม่มีชื่อหรือบัตรซ้ำ',
@@ -1744,13 +1754,42 @@
         <button class="btn gray" onclick="changeEmail('${esc(m.code)}')">${T('emailBtn')}</button>
         <button class="btn red" onclick="signOutAll('${esc(m.code)}')">${T('outBtn')}</button>
         <button class="btn gray" onclick="mergeInto('${esc(m.code)}')">${T('mergeBtn')}</button></p>
+      <div class="dnote"><label for="dn_${esc(m.code)}" class="muted">${esc(T('noteL'))}</label>
+        <textarea id="dn_${esc(m.code)}" rows="${Math.min(8, Math.max(2, String(m.desk_note || '').split('\n').length + 1))}" maxlength="2000" data-at="${esc(m.desk_note_at || '')}">${esc(m.desk_note || '')}</textarea>
+        <p><button class="btn sm" onclick="saveNote('${esc(m.code)}', this)">${T('save')}</button>
+          <span class="muted" id="dns_${esc(m.code)}" role="status">${m.desk_note_at ? esc(T('noteSaved', noteWhen(m.desk_note_at))) : ''}</span></p></div>
       ${(m.folded || []).length ? `<p class="muted">${T('foldedL')} ${m.folded.map(f => `${esc(f.code)}${f.email ? ' · ' + esc(f.email) : ''}
         <button class="btn sm gray" onclick="unmerge('${esc(f.code)}')">${T('undoBtn')}</button>`).join(' ')}</p>` : ''}
+      ${(m.folded || []).filter(f => f.desk_note).map(f => `<p class="muted dnfold">${esc(T('foldedNote', f.code))} ${esc(f.desk_note)}</p>`).join('')}
       <div id="sl_${esc(m.code)}"></div>
     </div>`).join('');
   }
 
   let FOUND = {};
+  const noteWhen = iso => `${day(iso)} ${time(iso)}`;
+  // The desk's note: saved with the time the box last saw, so a colleague's save meanwhile is never lost.
+  window.saveNote = async (code, btn) => {
+    const ta = document.getElementById('dn_' + code), st = document.getElementById('dns_' + code);
+    if (!ta || !st) return;
+    btn.disabled = true;
+    try {
+      const r = await api(`/api/bkk/admin/members/${encodeURIComponent(code)}/note`, { method: 'POST',
+        body: JSON.stringify({ note: ta.value, at: ta.dataset.at || null }) }).catch(() => null);
+      const j = r ? await r.json().catch(() => ({})) : {};
+      if (r && r.status === 409 && j.changed) {
+        const mine = ta.value.trim();
+        ta.value = [j.note || '', mine].filter(Boolean).join('\n\n');
+        ta.dataset.at = j.at || '';
+        st.textContent = T('noteChanged');
+        return;
+      }
+      if (!r || !r.ok) { st.textContent = j.error || T('failed'); return; }
+      ta.value = j.note || '';
+      ta.dataset.at = j.at || '';
+      st.textContent = j.at ? T('noteSaved', noteWhen(j.at)) : T('noteCleared');
+      if (FOUND[code]) Object.assign(FOUND[code], { desk_note: j.note, desk_note_at: j.at });
+    } finally { btn.disabled = false; }
+  };
   // A student who goes by another name. The old one stays searchable.
   window.changeName = async (code) => {
     const m = FOUND[code]; if (!m) return;
