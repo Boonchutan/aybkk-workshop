@@ -2012,12 +2012,20 @@ const ok = (name, cond, extra = '') => {
     ok('a Drive file replaced since (same id, another shape) is passed over: the photo moves from its Cloudinary JPEG, the one that was tagged',
        s4.moved === 3 && k4.store === 'r2' && k4.width === 2048 && k4.height === 1365 && await size(objs(k4)[0].body) === '2048x1365'
          && r2Fetches.some(u => u.includes('id=MIGSWAP')) && r2Fetches.some(u => u.startsWith('signed://')), JSON.stringify([s4, k4]));
-    // The server stopped (out of memory, say) while moving m5: the step after notes it, skips it for good.
+    // The server stopped while moving m5 (a deploy, say): the step after tries it once more.
+    const afterM4 = (await pool.query(`SELECT (value->>'after')::int AS a FROM bkk_settings WHERE key='photo_r2_move'`)).rows[0].a;
     await pool.query(`UPDATE bkk_settings SET value = value || jsonb_build_object('trying', $1::int) WHERE key='photo_r2_move'`, [m5]);
+    cloudDown = true;
+    const s5a = await R2b.api.photoMove();
+    cloudDown = false;
+    ok('a photo cut off once by a server stop is tried once more, not passed over',
+       s5a.cut.includes(m5) && !s5a.skip.includes(m5) && /Neither Drive nor Cloudinary sent the photo/.test(s5a.failed[0].why), JSON.stringify(s5a));
+    // Cut off a second time (out of memory, say): listed once and passed over for good.
+    await pool.query(`UPDATE bkk_settings SET value = value || jsonb_build_object('trying', $1::int, 'after', $2::int) WHERE key='photo_r2_move'`, [m5, afterM4]);
     const s5 = await R2b.api.photoMove();
-    ok('a photo that was being moved when the server stopped is listed and passed over, so it cannot stop the server again',
-       s5.after === m5 && s5.trying === null && s5.skip.includes(m5) && s5.failed[0].id === m5 && /server stopped/.test(s5.failed[0].why)
-         && (await keysOf(m5)).store === 'cloudinary', JSON.stringify(s5));
+    ok('a photo that was being moved when the server stopped twice is listed and passed over, so it cannot stop the server again',
+       s5.after === m5 && s5.trying === null && s5.skip.includes(m5) && s5.failed[0].id === m5 && /server stopped twice/.test(s5.failed[0].why)
+         && s5.failed.filter(f => f.id === m5).length === 1 && (await keysOf(m5)).store === 'cloudinary', JSON.stringify(s5));
     const s6 = await R2b.api.photoMove();
     ok('the end of the pass switches it off, done', s6.on === false && s6.done === true && s6.moved === 3, JSON.stringify(s6));
     const tagsAfter = (await pool.query('SELECT photo_id, member_id, role FROM bkk_photo_members WHERE photo_id = ANY($1::int[]) ORDER BY 1', [[m1, m2]])).rows;

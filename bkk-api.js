@@ -8287,11 +8287,11 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // Same photo id, so who is on it does not change.
   // The place reached is kept in bkk_settings. It never runs by itself: a server
   // start stops it, and Start goes on from there. The photo being moved is noted
-  // first: one that stopped the server (out of memory) is listed and passed over
-  // in this pass and the next ones (skip), so it never stops the server twice.
+  // first. A deploy also stops the server, so a photo cut off once is tried once
+  // more; cut off twice (out of memory, say) it is listed and passed over for good (skip).
   const MOVE_KEY = 'photo_r2_move', MOVE_EVERY_MS = 20000;
   // q, not getSetting: a database error throws, so the timer keeps going.
-  const moveState = async () => ({ on: false, after: 0, moved: 0, failedN: 0, failed: [], trying: null, skip: [],
+  const moveState = async () => ({ on: false, after: 0, moved: 0, failedN: 0, failed: [], trying: null, cut: [], skip: [],
     ...((await q('SELECT value FROM bkk_settings WHERE key = $1', [MOVE_KEY])).rows[0] || {}).value });
   // A step can switch it off (done) but not back on: Stop pressed while a photo was moving holds.
   const saveMove = (s, plain) => q(`INSERT INTO bkk_settings (key,value,updated_at) VALUES ($1,$2::jsonb,now())
@@ -8308,9 +8308,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const p = (await q(`SELECT id, public_id, drive_id, width, height, to_char(class_date,'YYYY-MM-DD') AS day FROM bkk_photos
       WHERE store = 'cloudinary' AND id > $1 AND id <> ALL($2::int[]) ORDER BY id LIMIT 1`, [s.after, s.skip])).rows[0];
     const done = async () => { Object.assign(s, { after: p.id, at, trying: null }); await saveMove(s); return s; };
-    const fail = why => { s.failedN++; s.failed = [{ id: p.id, why, at }, ...s.failed].slice(0, 20); };
+    const fail = why => { s.failedN++; s.failed = [{ id: p.id, why, at }, ...s.failed.filter(f => f.id !== p.id)].slice(0, 20); };
     if (!p) { Object.assign(s, { on: false, done: true, at, trying: null }); await saveMove(s); return s; }
-    if (s.trying === p.id) { s.skip = [...s.skip, p.id].slice(-100); fail('The server stopped while it was moving this photo: it stays on Cloudinary.'); return done(); }
+    if (s.trying === p.id && s.cut.includes(p.id)) { s.skip = [...s.skip, p.id].slice(-100); fail('The server stopped twice while it was moving this photo: it stays on Cloudinary.'); return done(); }
+    if (s.trying === p.id) s.cut = [...s.cut, p.id].slice(-100);
     await saveMove({ ...s, trying: p.id });
     const key = crypto.randomBytes(12).toString('hex');
     const sources = [...(p.drive_id ? driveSources(p.drive_id) : []), () => grab(photoUrl(p.public_id, 'full'))];
