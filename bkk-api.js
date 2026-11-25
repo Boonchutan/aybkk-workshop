@@ -79,8 +79,9 @@ const MANUAL_NOTE = 'MANUAL ACTIVATION by admin';
 // notice. Thai calls a third person เค้า, never เขา. {since} in line 17
 // is the day the switch first left off; the privacy notice's {legal_name}, {address} and {email}
 // come from Admin, Settings. The notice names every service personal data goes to (inbox.js:
-// LINE, Meta, Anthropic, Telegram; team-brief.js: LINE; server.js: Neo4j, OpenRouter): a new one is a new version.
-const CONSENT_VERSION = 'v1';
+// LINE, Meta, Anthropic, Telegram; team-brief.js: LINE; server.js: Neo4j, OpenRouter, and the
+// Cloudflare tunnel cn.aybkk.net comes in through): a new one is a new version. v2 is below the v1 text.
+const CONSENT_VERSION = 'v2';
 const CONSENT_LANGS = ['en', 'th', 'zh', 'ru'];
 const CONSENT_TEXT = {
   v1: {
@@ -312,6 +313,18 @@ const CONSENT_TEXT = {
     },
   },
 };
+// v2 (25 Nov 2026): v1's agreement word for word, and one sentence more in the privacy notice's
+// "Who else handles it", after Railway: cn.aybkk.net comes in through a Cloudflare tunnel (server.js
+// doSpawnTunnel), so what is typed there passes Cloudflare. The sentence is TEE_NOTICE t1's. Thai names
+// no person in it (no เค้า or เขา). ZH AND RU NEED A NATIVE CHECK, as v1's do; TH still waits for Jamsai's.
+const consentV2 = (l, whoElse) => ({ agreement: CONSENT_TEXT.v1[l].agreement, privacy: { title: CONSENT_TEXT.v1[l].privacy.title,
+  sections: CONSENT_TEXT.v1[l].privacy.sections.map((s, i) => i === 3 ? [s[0], whoElse] : s) } });
+CONSENT_TEXT.v2 = {
+  en: consentV2('en', 'PaySolutions takes online payments. Resend sends our emails. Cloudinary stores photos. Google: teachers put class photos in Google Drive before they go to profiles, and Google Ads runs only if you tap OK on the cookie bar. Railway runs the server and database of this site. Cloudflare carries this site’s traffic to and from cn.aybkk.net. Neo4j stores orientation forms and practice journals. OpenRouter (DeepSeek) writes an AI summary of a practice journal when a teacher asks for one. LINE carries our LINE chats, and the daily class list we send to our staff group (first name and initial, classes and passes). Meta carries Instagram and Facebook messages. Anthropic (Claude) reads the messages you send us, to sort them and draft our replies. Telegram carries alerts to our staff, for example about a payment or a new message, with its text. Some of these services keep data outside Thailand.'),
+  th: consentV2('th', 'PaySolutions รับชำระเงินออนไลน์ Resend ส่งอีเมลของเรา Cloudinary เก็บรูปภาพ Google: ครูเก็บรูปในคลาสไว้ใน Google Drive ก่อนนำขึ้นโปรไฟล์ และ Google Ads ทำงานเฉพาะเมื่อคุณกด "ตกลง" ที่แถบคุกกี้ Railway ดูแลเซิร์ฟเวอร์และฐานข้อมูลของเว็บไซต์นี้ Cloudflare รับส่งข้อมูลของเว็บไซต์นี้ที่เข้าและออกทาง cn.aybkk.net Neo4j เก็บแบบฟอร์มปฐมนิเทศและบันทึกการฝึก OpenRouter (DeepSeek) เขียนสรุปบันทึกการฝึกด้วย AI เมื่อครูขอ LINE รับส่งแชต LINE ของเรา และรายชื่อคลาสประจำวันที่เราส่งเข้ากลุ่มทีมงาน (ชื่อและอักษรแรกของนามสกุล คลาส และแพ็กเกจ) Meta รับส่งข้อความ Instagram และ Facebook Anthropic (Claude) อ่านข้อความที่คุณส่งถึงเรา เพื่อจัดลำดับและร่างคำตอบ Telegram ส่งการแจ้งเตือนถึงทีมงาน เช่น เรื่องการชำระเงินหรือข้อความใหม่ พร้อมเนื้อความ บางบริการเก็บข้อมูลไว้นอกประเทศไทย'),
+  zh: consentV2('zh', 'PaySolutions 处理在线付款。Resend 发送我们的邮件。Cloudinary 保存照片。Google：老师先把课堂照片放在 Google Drive，再放到个人页面；只有当你在 Cookie 提示栏点击“好的”时，才会使用 Google Ads。Railway 运行本网站的服务器和数据库。Cloudflare 为 cn.aybkk.net 传送本网站的数据。Neo4j 保存入门表格和练习日记。老师要求时，OpenRouter（DeepSeek）会为练习日记写一份 AI 摘要。LINE 传送我们的 LINE 聊天，以及我们每天发到员工群的课程名单（名字和姓氏首字母、课程和课程卡）。Meta 传送 Instagram 和 Facebook 消息。Anthropic（Claude）会阅读你发给我们的消息，用于分类并起草我们的回复。Telegram 向我们的工作人员发送提醒，例如关于付款或新消息的提醒，并附上消息内容。其中一些服务会在泰国境外保存资料。'),
+  ru: consentV2('ru', 'PaySolutions принимает онлайн-платежи. Resend отправляет наши письма. Cloudinary хранит фотографии. Google: учителя кладут фото с занятий в Google Drive, прежде чем добавить их в профили, а Google Ads работает, только если вы нажмёте OK в панели cookie. Railway обеспечивает работу сервера и базы данных этого сайта. Cloudflare передаёт трафик этого сайта на cn.aybkk.net и обратно. Neo4j хранит анкеты для новичков и дневники практики. OpenRouter (DeepSeek) пишет ИИ-сводку дневника практики, когда об этом просит учитель. LINE передаёт наши чаты в LINE и ежедневный список занятий, который мы отправляем в группу сотрудников (имя и первая буква фамилии, занятия и абонементы). Meta передаёт сообщения Instagram и Facebook. Anthropic (Claude) читает сообщения, которые вы нам пишете, чтобы сортировать их и готовить черновики наших ответов. Telegram доставляет нашим сотрудникам уведомления, например о платеже или новом сообщении, вместе с его текстом. Некоторые из этих сервисов хранят данные за пределами Таиланда.'),
+};
 // The idcn pattern: a version this server would ask people to sign must have English and Thai.
 function checkConsentText(text = CONSENT_TEXT, version = CONSENT_VERSION) {
   const v = text[version];
@@ -323,6 +336,12 @@ function checkConsentText(text = CONSENT_TEXT, version = CONSENT_VERSION) {
   }
 }
 checkConsentText();
+// A signature holds while the agreement it signed is still the current one, word for word in every
+// language: v2 changed only the privacy notice, so a v1 signature still counts and nobody signs again.
+// The day the agreement's own words change, the older versions drop out of this list by themselves.
+const CONSENT_HOLDS = Object.keys(CONSENT_TEXT).filter(v => /^v\d{1,3}$/.test(v) && CONSENT_LANGS.every(l =>
+  JSON.stringify((CONSENT_TEXT[v][l] || {}).agreement) === JSON.stringify((CONSENT_TEXT[CONSENT_VERSION][l] || {}).agreement)));
+const HOLDS_SQL = CONSENT_HOLDS.map(v => `'${v}'`).join(',');
 const consentLangs = (version = CONSENT_VERSION) => CONSENT_LANGS.filter(l => CONSENT_TEXT[version] && CONSENT_TEXT[version][l]);
 // What a signature points at: the agreement as written, in the language it was shown in.
 const consentSha = (version, lang) => crypto.createHash('sha256').update(JSON.stringify(CONSENT_TEXT[version][lang].agreement)).digest('hex');
@@ -1315,26 +1334,28 @@ function mountBkk(app, opts = {}) {
       return [k, typeof v === 'string' ? v : ''];
     }));
   }
-  // A member (column or $n) who signed the current agreement, on any route that reads it.
+  // A member (column or $n) who signed the current agreement, on any route that reads it: any
+  // version whose agreement is still word for word the current one (CONSENT_HOLDS).
   const SIGNED = a => `EXISTS (SELECT 1 FROM bkk_consents c WHERE c.member_id = ${a} AND c.kind = 'agreement'
-    AND c.given AND c.version = '${CONSENT_VERSION}')`;
+    AND c.given AND c.version IN (${HOLDS_SQL}))`;
   // Signed as under 20, and no guardian's paper recorded yet.
   const GUARDIAN_DUE = a => `(EXISTS (SELECT 1 FROM bkk_consents c WHERE c.member_id = ${a} AND c.kind = 'agreement'
-    AND c.given AND c.under20 AND c.version = '${CONSENT_VERSION}') AND NOT EXISTS (SELECT 1 FROM bkk_consents g
-    WHERE g.member_id = ${a} AND g.kind = 'guardian' AND g.given AND g.version = '${CONSENT_VERSION}'))`;
+    AND c.given AND c.under20 AND c.version IN (${HOLDS_SQL})) AND NOT EXISTS (SELECT 1 FROM bkk_consents g
+    WHERE g.member_id = ${a} AND g.kind = 'guardian' AND g.given AND g.version IN (${HOLDS_SQL})))`;
   const consentOk = async (db, memberId) => (await db.query(`SELECT ${SIGNED('$1::int')} AS ok`, [memberId])).rows[0].ok;
   const sameName = (a, b) => String(a || '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim()
     === String(b || '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
   // Where a profile stands on the current version. The signature shown is the student's own
   // (their phone or a checkout they held) before one typed by a buyer with their email.
+  // version: the one they signed (a v1 signature says v1), else the one they would sign.
   async function consentOf(db, m) {
-    const rows = (await db.query(`SELECT kind, via, signed_name, under20, guardian_name,
+    const rows = (await db.query(`SELECT kind, version, via, signed_name, under20, guardian_name,
         to_char(signed_on,'YYYY-MM-DD') AS signed_on, created_at, lang
-      FROM bkk_consents WHERE member_id=$1 AND version=$2 AND given ORDER BY created_at, id`, [m.id, CONSENT_VERSION])).rows;
+      FROM bkk_consents WHERE member_id=$1 AND version = ANY($2::text[]) AND given ORDER BY created_at, id`, [m.id, CONSENT_HOLDS])).rows;
     const ag = rows.filter(r => r.kind === 'agreement');
     const own = ag.find(r => r.via !== 'checkout-email') || ag[0] || null;
     const g = rows.filter(r => r.kind === 'guardian').pop() || null;
-    return { version: CONSENT_VERSION, signed: !!own, signedAt: own ? own.created_at : null, signedName: own ? own.signed_name : null,
+    return { version: own ? own.version : CONSENT_VERSION, signed: !!own, signedAt: own ? own.created_at : null, signedName: own ? own.signed_name : null,
       via: own ? own.via : null, nameDiffers: !!own && !sameName(own.signed_name, m.name), under20: !!(own && own.under20),
       guardianSigned: !!g, guardianName: g ? g.guardian_name : null, guardianOn: g ? g.signed_on : null };
   }
@@ -2100,10 +2121,11 @@ function mountBkk(app, opts = {}) {
     await q(`INSERT INTO bkk_login_tokens (token,member_id,email,ip,expires_at)
              VALUES ($1,$2,$3,'receipt', now() + interval '30 days')`,
       [token, via.id, via.email]);
-    // Once the agreement is on, the receipt says which one the pass was bought under, for the
-    // owner to read when someone else bought it for them.
-    const agreement = await consentMode() !== 'off' && await consentOk(pool, m.id)
-      ? { version: CONSENT_VERSION, link: `${baseUrl()}/book?agreement=${CONSENT_VERSION}#agreement` } : null;
+    // Once the agreement is on, the receipt says which one the pass was bought under (the version
+    // signed: a v1 signature says v1), for the owner to read when someone else bought it for them.
+    const cst = await consentMode() !== 'off' ? await consentOf(pool, m) : null;
+    const agreement = cst && cst.signed
+      ? { version: cst.version, link: `${baseUrl()}/book?agreement=${cst.version}#agreement` } : null;
     const t = render('receipt', m.lang || 'en', {
       name: m.name, product: product.name_en,
       amount: order.amount_thb, base: order.base_thb, fee: order.fee_thb, vat: order.vat_thb || 0,
@@ -8918,4 +8940,4 @@ const express = require('express');
 const express_urlencoded_safe = express.urlencoded({ extended: false });
 
 module.exports = { mountBkk, CANCEL_CUTOFF_HOURS, SEED_PRODUCTS, SEED_SLOTS, moonDaysBetween, rotationTeacher, parseWhen,
-  CONSENT_VERSION, CONSENT_TEXT, checkConsentText, TEE_NOTICE_VERSION, TEE_NOTICE };
+  CONSENT_VERSION, CONSENT_TEXT, CONSENT_HOLDS, checkConsentText, TEE_NOTICE_VERSION, TEE_NOTICE };
