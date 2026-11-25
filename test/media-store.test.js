@@ -10,7 +10,8 @@
 //      and every answer then says /sp instead of the old Cloudinary link (Neo4j unchanged)
 //   5. the share card reads the copy from R2, and gives up on a host that hangs (10 s)
 //   6. a start the database refused is tried again; a copy runs on one server at a
-//      time, checks the size Cloudinary lists, and starts by itself
+//      time, checks the size Cloudinary lists, gives up on a list that hangs, and
+//      starts by itself
 //   7. faces wait in the server's one photo queue
 // Made-up people and photos only.
 const http = require('http');
@@ -66,6 +67,7 @@ const fakeCloud = {
     cl.listed++;
     // as the SDK does: a plain object, not an Error
     if (cl.refuse) throw { error: { message: cl.refuse, http_code: 401 } };
+    if (cl.hang) return new Promise(() => {});      // taken and never answered: the SDK waits for ever
     const i = o.next_cursor ? Number(o.next_cursor) : 0;
     return { resources: cl.pages[i] || [], ...(i + 1 < cl.pages.length ? { next_cursor: String(i + 1) } : {}) };
   } },
@@ -369,7 +371,7 @@ const J = base => async (p, opts = {}, headers = {}) => {
   cl.refuse = 'Unknown API key (test)';
   const listed0 = cl.listed;
   r2On();
-  const wdone = media.wsPhotos({ r2Endpoint: fr2.url, fetch: fakeFetch, auto: { firstMs: 100, everyMs: 150 } });
+  const wdone = media.wsPhotos({ r2Endpoint: fr2.url, fetch: fakeFetch, auto: { firstMs: 100, everyMs: 150 }, listMs: 300 });
   r2Off();
   const sD = await listen(makeApp(wdone)); await wdone.start();
   const JD = J(`http://127.0.0.1:${sD.address().port}`);
@@ -382,7 +384,21 @@ const J = base => async (p, opts = {}, headers = {}) => {
   const d1 = wdone.status();
   ok('...staff can still run a full pass: Cloudinary is asked, and the box says why it could not list',
      dp.status === 202 && cl.listed === listed0 + 1 && d1.error === 'Cloudinary list: Unknown API key (test)' && d1.done === true, JSON.stringify(d1));
-  cl.refuse = null;
+  cl.refuse = null; cl.hang = true;
+  const settle = () => Promise.race([wdone.waitCopy(), sleep(3000)]);
+  const th = Date.now();
+  await JD('/api/ws-photos/copy', { method: 'POST', body: '{}' }, A);
+  await settle();
+  const d2 = wdone.status(), tHang = Date.now() - th;
+  const locks = (await pool.query(`SELECT count(*)::int AS n FROM pg_locks WHERE locktype='advisory'`)).rows[0].n;
+  ok('...a Cloudinary that takes the list and never answers: the pass ends after the time limit, says so, and lets go of the copy lock',
+     !d2.running && !!d2.finishedAt && d2.error === 'Cloudinary list: no answer in time' && tHang < 2000 && locks === 0 && d2.done === true, `${tHang} ms, ${locks} locks, ${JSON.stringify(d2)}`);
+  cl.hang = false;
+  const listed2 = cl.listed;
+  await JD('/api/ws-photos/copy', { method: 'POST', body: '{}' }, A);
+  await settle();
+  ok('...Copy now again once it answers: a whole pass, not "another server is copying"',
+     cl.listed === listed2 + 1 && !wdone.status().error && wdone.status().left === 0, JSON.stringify(wdone.status()));
   sD.close();
   await pool.query('DELETE FROM ws_photo_copy');
   r2On();
