@@ -8607,9 +8607,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (inR2(id)) {
       await dropR2Face(id);
       const kept = `${FACE_FOLDER}/${faceRef(id)}`;
+      // Not awaited: the student's answer never waits on Cloudinary (closed, it can hang); the sweep tries again.
       if ((await q(`UPDATE bkk_photo_orphans SET not_before = now() WHERE store = 'cloudinary' AND ref = $1 AND not_before > now()`, [kept])
-        .catch(() => ({ rowCount: 0 }))).rowCount && await cloudGone(kept)) {
-        await q(`DELETE FROM bkk_photo_orphans WHERE store = 'cloudinary' AND ref = $1`, [kept]).catch(() => {});
+        .catch(() => ({ rowCount: 0 }))).rowCount) {
+        cloudGone(kept).then(gone => gone && q(`DELETE FROM bkk_photo_orphans WHERE store = 'cloudinary' AND ref = $1`, [kept])).catch(() => {});
       }
       return;
     }

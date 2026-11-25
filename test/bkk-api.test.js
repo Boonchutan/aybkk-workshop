@@ -2379,7 +2379,7 @@ const ok = (name, cond, extra = '') => {
          && [lN, dN, sN].every(o => noMeta(o.body)) && upN.body.photo.small.includes(`/api/bkk/face/${refN}.s.`), JSON.stringify(upN.body));
     ok("...from a tall photo, the square near its top, where the head is (there is no face finder here)", await rgb(lN.body, 0.5, 0.01) === 'green'
        && await rgb(lN.body, 0.5, 0.2) === 'blue');
-    for (let i = 0; i < 40 && !destroyedR.some(d => d.id === `aybkk-profile/${fm3.ref}`); i++) await new Promise(r => setTimeout(r, 25));
+    for (let i = 0; i < 80 && (!destroyedR.some(d => d.id === `aybkk-profile/${fm3.ref}`) || await keptFace(fm3.ref)); i++) await new Promise(r => setTimeout(r, 25));
     ok("...the photo it replaced goes from R2 and its kept Cloudinary copy goes too, at once",
        !faceLeft(fm3.ref).length && destroyedR.some(d => d.id === `aybkk-profile/${fm3.ref}`) && !(await keptFace(fm3.ref)));
     const servedN = await getR(upN.body.photo.small);
@@ -2401,7 +2401,7 @@ const ok = (name, cond, extra = '') => {
     delete cloudR.config;
     // Removing a moved face: gone from R2, and its kept Cloudinary copy goes at once.
     await postR3(`/api/bkk/me/${fm1.code}/photo/remove`, {});
-    for (let i = 0; i < 40 && !destroyedR.some(d => d.id === `aybkk-profile/${fm1.ref}`); i++) await new Promise(r => setTimeout(r, 25));
+    for (let i = 0; i < 80 && (!destroyedR.some(d => d.id === `aybkk-profile/${fm1.ref}`) || await keptFace(fm1.ref)); i++) await new Promise(r => setTimeout(r, 25));
     ok('removing a moved face deletes its three R2 copies, and its kept Cloudinary copy goes then too (the student took it away)',
        !(await rowF(fm1.code)) && !faceLeft(fm1.ref).length && destroyedR.some(d => d.id === `aybkk-profile/${fm1.ref}`) && !(await keptFace(fm1.ref)));
     ok('...and its old links stop at once', (await getR(old1.small)).status === 404);
