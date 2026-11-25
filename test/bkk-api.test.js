@@ -1676,6 +1676,7 @@ const ok = (name, cond, extra = '') => {
       + entry('R2HEICaaaaaaaaaaaaaaaaaaa', 'r2-phone.HEIC') + entry('R2HUGEaaaaaaaaaaaaaaaaaaa', 'r2-huge.jpg') };
     const DRIVE_ORIG = { R2ORIGaaaaaaaaaaaaaaaaaaa: original, R2HEICaaaaaaaaaaaaaaaaaaa: heic, R2HUGEaaaaaaaaaaaaaaaaaaa: huge, MIGDRIVEaaaaaaaaaaaaaaaaa: original };
     const r2Fetches = [];
+    const swapped = await quad(1365, 2048, 85);
     let cloudBytes = await quad(2048, 1365, 85), cloudDown = false;
     const fetchR = async url => {
       url = String(url);
@@ -1683,6 +1684,7 @@ const ok = (name, cond, extra = '') => {
       if (url.startsWith('signed://')) return cloudDown ? new Response('gone', { status: 404 }) : new Response(cloudBytes, { status: 200 });
       const id = new URL(url).searchParams.get('id');
       if (url.includes('embeddedfolderview')) return new Response(R2_HTML[id] || '', { status: 200 });
+      if (id === 'MIGSWAPaaaaaaaaaaaaaaaaaa') return new Response(swapped, { status: 200 });   // replaced in Drive: a portrait now
       if (url.includes('uc?export=download')) return DRIVE_ORIG[id] ? new Response(DRIVE_ORIG[id], { status: 200 }) : new Response('<html>no</html>', { status: 200 });
       return new Response(driveCopy, { status: 200 });                  // Drive's 2048 px thumbnail
     };
@@ -1690,11 +1692,13 @@ const ok = (name, cond, extra = '') => {
     const cloudR = { ...fakeCloud, uploader: { ...fakeCloud.uploader, destroy: async (id, o) => { destroyedR.push({ id, ...o }); return { result: 'ok' }; } },
       api: { usage: async () => ({ credits: { usage: 35.3, limit: 25, used_percent: 141.2 } }) } };
     const envWas = Object.fromEntries(Object.keys(R2ENV).map(k => [k, process.env[k]]));
-    const mountR = async () => {
+    let poolHook = null;                 // (sql, params) => a promise instead of the real query, or null
+    const hookedPool = { query: (sql, p) => (poolHook && poolHook(sql, p)) || pool.query(sql, p), connect: (...a) => pool.connect(...a) };
+    const mountR = async (pg = pool) => {
       Object.assign(process.env, R2ENV);
       const a = express();
       a.use(express.json({ limit: '10mb' }));
-      const api = await mountBkk(a, { pgPool: pool, now, cloudinary: cloudR, fetch: fetchR, r2Endpoint: R2_URL });
+      const api = await mountBkk(a, { pgPool: pg, now, cloudinary: cloudR, fetch: fetchR, r2Endpoint: R2_URL });
       for (const [k, v] of Object.entries(envWas)) { if (v === undefined) delete process.env[k]; else process.env[k] = v; }
       const s = a.listen(0);
       return { api, s, base: `http://127.0.0.1:${s.address().port}` };
@@ -1757,6 +1761,27 @@ const ok = (name, cond, extra = '') => {
     ok('a phone upload (2048 px JPEG) is stored as it is, re-encoded and stripped, plus a tile; nothing goes to Cloudinary, cap or not',
        capAfter.status === 200 && rowP.store === 'r2' && await size(vP.body) === '2048x1365' && await size(tP.body) === '600x400'
          && noMeta(vP.body) && uploads.length === uploadsBefore, JSON.stringify(capAfter.body).slice(0, 200));
+    const psnr = async (a, b) => {
+      const px = async buf => { const i = await loadImage(buf), c = createCanvas(i.width, i.height), x = c.getContext('2d'); x.drawImage(i, 0, 0); return x.getImageData(0, 0, i.width, i.height).data; };
+      const A = await px(a), Bp = await px(b);
+      let se = 0, n = 0;
+      for (let i = 0; i < A.length; i += 4) for (let k = 0; k < 3; k++) { const d = A[i + k] - Bp[i + k]; se += d * d; n++; }
+      return 10 * Math.log10(255 * 255 / (se / n));
+    };
+    const lines = createCanvas(2048, 1365), lx = lines.getContext('2d');
+    lx.fillStyle = '#d8c8b0'; lx.fillRect(0, 0, 2048, 1365); lx.fillStyle = '#222';
+    for (let i = 0; i < 2048; i += 3) lx.fillRect(i, 0, 1, 1365);
+    const linesJpg = await lines.encode('jpeg', 92), linesMade = await r2lib.photoVariants(linesJpg);
+    const linesDb = await psnr(linesJpg, linesMade.v);
+    ok('...at its own size a photo is copied, not smoothed: 1 px lines stay sharp (over 36 dB against the upload, a plain re-encode; the smoothed draw gave 26)',
+       linesDb > 36 && await size(linesMade.v) === '2048x1365', linesDb.toFixed(1));
+    const keysBefore = new Set(store.keys());
+    r2Fail = (m, k) => m === 'PUT' && /t\.webp$/.test(k) && 500;
+    const halfUp = await postR('/api/bkk/teacher/photos', { date: '2026-10-05', image: 'data:image/jpeg;base64,' + driveCopy.toString('base64'), tags: [] });
+    r2Fail = null;
+    ok("a phone upload whose tile R2 refuses fails with R2's reason, and its v.jpg is removed again: nothing left in R2",
+       halfUp.status === 502 && halfUp.body.error === 'R2 PUT refused (500 InternalError)' && [...store.keys()].every(k => keysBefore.has(k)),
+       JSON.stringify([halfUp.status, halfUp.body, [...store.keys()].filter(k => !keysBefore.has(k))]));
     const badUp = await postR('/api/bkk/teacher/photos', { date: '2026-10-05', image: 'data:image/jpeg;base64,/9j/4AAQSkZJRg==', tags: [] });
     ok('...a file that is not a photo is refused with a reason, nothing stored',
        badUp.status === 400 && /could not be read/.test(badUp.body.error), JSON.stringify(badUp.body));
@@ -1784,11 +1809,25 @@ const ok = (name, cond, extra = '') => {
          && !g.h.get('set-cookie') && g.buf.equals(t1.body) && gv.buf.equals(v1.body) && Number(gv.h.get('content-length')) === v1.body.length,
        JSON.stringify([g.status, [...g.h.entries()]]));
     const [, phId, phSig] = /^\/ph\/(\d+)\.([\w-]{22})\//.exec(r2Item.thumb);
+    const cond = (path, etag) => new Promise((resolve, reject) => {
+      const rq = http.request(BR + path, { headers: { 'If-None-Match': etag } }, r => { r.resume(); r.on('end', () => resolve({ status: r.statusCode, h: r.headers })); });
+      rq.on('error', reject); rq.end();
+    });
+    const logAt0 = r2Log.length;
+    const c304 = await cond(r2Item.thumb, g.h.get('etag'));
+    ok('each /ph answer has an ETag (the bytes behind a link never change), and a revalidation is a 304 without asking R2',
+       g.h.get('etag') === `"${phSig}"` && c304.status === 304 && c304.h['cache-control'] === 'public, max-age=86400, s-maxage=86400'
+         && r2Log.length === logAt0 && (await cond(r2Item.thumb, '"other"')).status === 200, JSON.stringify([g.h.get('etag'), c304.status]));
     const flipped = phSig.slice(0, -1) + (phSig.endsWith('A') ? 'B' : 'A');
     const bads = [await rawR(`/ph/${phId}.${flipped}/t.webp`), await rawR(`/ph/${phId}.${phSig}/v.jpg`), await rawR(`/ph/99999999.${phSig}/t.webp`),
       await rawR(`/ph/${oldItem.id}.${phSig}/t.webp`)];
     ok('a bad signature, the tile\'s signature on the photo, an unknown id and a Cloudinary photo are all 403, kept by nobody',
        bads.every(r => r.status === 403 && r.h.get('cache-control') === 'no-store'), JSON.stringify(bads.map(r => r.status)));
+    const proto = [];
+    for (const f of ['constructor', '__proto__', 'toString', 'hasOwnProperty']) proto.push(await rawR(`/ph/${phId}.${phSig}/${f}`));
+    ok('...a name only an object has (constructor, __proto__, toString) is 404 too, and the server still answers; an id past the integer range is 403',
+       proto.every(r => r.status === 404) && (await rawR(r2Item.thumb)).status === 200
+         && (await rawR(`/ph/9999999999.${phSig}/t.webp`)).status === 403, JSON.stringify(proto.map(r => r.status)));
     ok('...a malformed link or another file name is 404',
        (await rawR(`/ph/${phId}/t.webp`)).status === 404 && (await rawR(`/ph/${phId}.${phSig}/x.png`)).status === 404);
     const logAt = r2Log.length;
@@ -1836,7 +1875,9 @@ const ok = (name, cond, extra = '') => {
          && !JSON.stringify(tNo.body).includes(R2ENV.R2_ACCESS_KEY_ID), JSON.stringify(tNo.body));
     const cnt = (await JR('/api/bkk/admin/photo-store', { headers: ADMIN })).body;
     const dbCnt = (await pool.query(`SELECT count(*) FILTER (WHERE store='r2')::int AS r2, count(*) FILTER (WHERE store='cloudinary')::int AS c FROM bkk_photos`)).rows[0];
-    ok('Admin counts the photos on each', cnt.r2 === true && cnt.photos.r2 === dbCnt.r2 && cnt.photos.cloudinary === dbCnt.c && dbCnt.r2 === 4, JSON.stringify(cnt));
+    ok('Admin counts the photos on each, and says the privacy notice does not name Cloudflare yet',
+       cnt.r2 === true && cnt.photos.r2 === dbCnt.r2 && cnt.photos.cloudinary === dbCnt.c && dbCnt.r2 === 4
+         && cnt.noticeNamesR2 === false && cnt.left.cloudinary === 0 && cnt.left.r2 === 0, JSON.stringify(cnt));
 
     // Delete: both objects and the row.
     const delRow = await keysOf(capAfter.body.photo.id);
@@ -1845,9 +1886,45 @@ const ok = (name, cond, extra = '') => {
        delR.status === 200 && objs(delRow).every(o => !o) && !(await keysOf(capAfter.body.photo.id)) && !destroyedR.length
          && (await rawR(capAfter.body.photo.thumb)).status === 403, JSON.stringify(delR.body));
 
-    // Moving the Cloudinary photos: one from Drive, one only on Cloudinary, one that fails.
-    const mk = async (pid, driveId, tag) => {
-      const id = (await pool.query(`INSERT INTO bkk_photos (public_id,class_date,drive_id) VALUES ($1,'2026-09-20',$2) RETURNING id`, [pid, driveId])).rows[0].id;
+    // R2 switched off with photos in it (the suite's main server has no R2 variables):
+    // they do not show, nobody keeps the miss, Admin warns, a delete waits for R2.
+    const offThumb = await rawR(r2Item.thumb, 'GET', B), offSave = await rawR(r2Item.save, 'GET', B);
+    const offOther = await rawR(`/ph/1.${'A'.repeat(22)}/constructor`, 'GET', B);
+    const offAdmin = (await J('/api/bkk/admin/photo-store', { headers: ADMIN })).body;
+    ok('R2 off with photos in R2: their /ph link and Save are 503, never kept; any other /ph path is as before; Admin sees them on R2',
+       offThumb.status === 503 && offThumb.h.get('cache-control') === 'no-store' && offThumb.h.get('etag') !== `"${phSig}"`
+         && offSave.status === 503 && offSave.h.get('cache-control') === 'no-store' && offOther.status === 404
+         && /Cannot GET/.test(offOther.buf.toString()) && offAdmin.r2 === false && offAdmin.photos.r2 === 3,
+       JSON.stringify([offThumb.status, offThumb.h.get('cache-control'), offThumb.h.get('etag'), offSave.status, offSave.h.get('cache-control'), offOther.status, offOther.buf.toString().slice(0, 60)]));
+    const hRow = await keysOf(dH.body.photo.id);
+    const offDel = await post(`/api/bkk/teacher/photos/${dH.body.photo.id}/delete`, {}, PKEY);
+    const notedR2 = (await pool.query(`SELECT ref FROM bkk_photo_orphans WHERE store='r2' ORDER BY ref`)).rows.map(r => r.ref);
+    ok('...a delete with R2 off removes the row and notes both R2 copies to remove later',
+       offDel.status === 200 && !(await keysOf(dH.body.photo.id)) && objs(hRow).every(Boolean)
+         && JSON.stringify(notedR2) === JSON.stringify(['t', 'v'].map(k => r2lib.objectKey(hRow.day, hRow.r2_key, k))), JSON.stringify(notedR2));
+    await R.api.photoSweep();
+    ok('...and the sweep, with R2 on, removes them', objs(hRow).every(o => !o)
+       && (await pool.query(`SELECT count(*)::int AS n FROM bkk_photo_orphans`)).rows[0].n === 0);
+    r2Fail = m => m === 'DELETE' && 500;
+    const gRow = await keysOf(dG.body.photo.id);
+    const failDel = await postR(`/api/bkk/teacher/photos/${dG.body.photo.id}/delete`, {});
+    r2Fail = null;
+    const failNoted = (await pool.query(`SELECT count(*)::int AS n FROM bkk_photo_orphans WHERE store='r2'`)).rows[0].n;
+    await R.api.photoSweep();
+    ok('a delete R2 refuses is noted and swept later, so a deleted photo never stays in R2 for good',
+       failDel.status === 200 && failNoted === 2 && objs(gRow).every(o => !o)
+         && (await pool.query(`SELECT count(*)::int AS n FROM bkk_photo_orphans`)).rows[0].n === 0, String(failNoted));
+    const badAcct = Object.fromEntries(Object.keys(R2ENV).map(k => [k, process.env[k]]));
+    Object.assign(process.env, R2ENV, { R2_ACCOUNT_ID: 'acct 0000' });
+    const signErr = await r2lib.makeR2().get('x').then(() => null, e => e);
+    for (const [k, v] of Object.entries(badAcct)) { if (v === undefined) delete process.env[k]; else process.env[k] = v; }
+    ok('an R2 request that cannot be made (an account id with a space) says so, not "could not connect", and names no address',
+       signErr && signErr.message === 'R2 GET: the request could not be made (ERR_INVALID_URL)' && signErr.r2 === true, signErr && signErr.message);
+
+    // Moving the Cloudinary photos: from Drive, only on Cloudinary, a replaced Drive file,
+    // one no source sends, one that stopped the server.
+    const mk = async (pid, driveId, tag, w = null, h = null) => {
+      const id = (await pool.query(`INSERT INTO bkk_photos (public_id,class_date,drive_id,width,height) VALUES ($1,'2026-09-20',$2,$3,$4) RETURNING id`, [pid, driveId, w, h])).rows[0].id;
       if (tag) await pool.query(`INSERT INTO bkk_photo_members (photo_id,member_id,role) VALUES ($1,(SELECT id FROM bkk_members WHERE code=$2),'main')`, [id, tag]);
       return id;
     };
@@ -1856,38 +1933,71 @@ const ok = (name, cond, extra = '') => {
     const m1 = await mk('aybkk/profile/2026-09-20/mig1', 'MIGDRIVEaaaaaaaaaaaaaaaaa', bob.code);
     const m2 = await mk('aybkk/profile/2026-09-20/mig2', null, bob.code);
     const m3 = await mk('aybkk/profile/2026-09-20/mig3', null, null);
+    const m4 = await mk('aybkk/profile/2026-09-20/mig4', 'MIGSWAPaaaaaaaaaaaaaaaaaa', null, 2048, 1365);
+    const m5 = await mk('aybkk/profile/2026-09-20/mig5', null, null);
     const step = () => R.api.photoMove();
+    const orphanOf = pid => pool.query(`SELECT not_before > now() + interval '23 hours' AS later FROM bkk_photo_orphans WHERE store='cloudinary' AND ref=$1`, [pid]).then(r => r.rows[0]);
     const st0 = await step();
     ok('the move is off until an admin starts it: a step does nothing', st0.on === false && (await keysOf(m1)).store === 'cloudinary');
     ok('...Start needs the admin key and a true or false', (await postR('/api/bkk/admin/photo-store/move', { on: true }, PKEY)).status === 401
        && (await postR('/api/bkk/admin/photo-store/move', { on: 'yes' }, ADMIN)).status === 400);
+    r2Fail = (m, k) => m === 'PUT' && /^test\//.test(k) && 403;
+    const notStarted = await postR('/api/bkk/admin/photo-store/move', { on: true }, ADMIN);
+    r2Fail = null;
+    ok('...and R2 passing its test: with R2 refusing, Start says why and starts nothing',
+       notStarted.status === 502 && notStarted.body.error === 'R2 did not pass its test, so nothing was started: R2 PUT refused (403 AccessDenied)'
+         && (await step()).on === false, JSON.stringify(notStarted.body));
     const started = await postR('/api/bkk/admin/photo-store/move', { on: true }, ADMIN);
     const tagsBefore = (await pool.query('SELECT photo_id, member_id, role FROM bkk_photo_members WHERE photo_id = ANY($1::int[]) ORDER BY 1', [[m1, m2]])).rows;
     r2Fetches.length = 0;
     const s1 = await step();
     const k1 = await keysOf(m1);
     const [mv1, mt1] = objs(k1);
-    ok('step 1: the Drive photo moves from the Drive original (upright, 2560 px), checked, switched, then destroyed on Cloudinary',
+    ok('step 1: the Drive photo moves from the Drive original (upright, 2560 px), checked, switched; its Cloudinary copy is noted to go a day later, not destroyed now',
        started.status === 200 && started.body.move.on === true && s1.moved === 1 && s1.after === m1 && k1.store === 'r2' && /^[0-9a-f]{24}$/.test(k1.r2_key)
          && k1.public_id === 'aybkk/profile/2026-09-20/mig1' && await size(mv1.body) === '1707x2560' && !!mt1
          && r2Fetches[0].includes('uc?export=download&id=MIGDRIVE') && !r2Fetches.some(u => u.startsWith('signed://'))
-         && JSON.stringify(destroyedR) === JSON.stringify([{ id: 'aybkk/profile/2026-09-20/mig1', type: 'authenticated', invalidate: true }]),
+         && !destroyedR.length && (await orphanOf('aybkk/profile/2026-09-20/mig1')).later === true && s1.trying === null,
        JSON.stringify([s1, k1, destroyedR, r2Fetches]));
     const heads = r2Log.filter(l => l.method === 'HEAD' && l.key && l.key.includes(k1.r2_key));
     ok('...both copies checked with a HEAD before the switch', heads.length === 2, JSON.stringify(heads));
-    // A restart: a new server on the same database carries on from where it was.
     await postR('/api/bkk/admin/photo-store/move', { on: false }, ADMIN);
     const sStop = await step();
-    ok('Stop: a step does nothing, the place is kept', sStop.on === false && sStop.after === m1 && (await keysOf(m2)).store === 'cloudinary');
+    ok('Stop: a step does nothing, the place is kept', sStop.on === false && sStop.after === m1 && sStop.moved === 1 && (await keysOf(m2)).store === 'cloudinary');
+    // A restart stops it: a new server on the same database moves nothing until Start.
     await postR('/api/bkk/admin/photo-store/move', { on: true }, ADMIN);
     R.s.close();
-    const R2b = await mountR();
+    const R2b = await mountR(hookedPool);
+    const BR2 = R2b.base;
+    const adminR2 = (path, body) => fetch(BR2 + path, { method: 'POST', headers: { 'Content-Type': 'application/json', ...ADMIN }, body: JSON.stringify(body) }).then(async r => ({ status: r.status, body: await r.json() }));
+    const sBoot = await R2b.api.photoMove();
+    const afterBoot = (await (await fetch(BR2 + '/api/bkk/admin/photo-store', { headers: ADMIN })).json()).move;
+    ok('a server start stops the move (it never runs by itself): a step does nothing, Admin sees it stopped by the restart',
+       sBoot.on === false && afterBoot.on === false && afterBoot.restarted === true && afterBoot.after === m1 && (await keysOf(m2)).store === 'cloudinary',
+       JSON.stringify(afterBoot));
+    const again1 = await adminR2('/api/bkk/admin/photo-store/move', { on: true });
     const s2 = await R2b.api.photoMove();
     const k2 = await keysOf(m2);
-    ok('after a restart it goes on from the next photo: one only on Cloudinary moves from its stored JPEG (no transformation)',
-       s2.moved === 2 && s2.after === m2 && k2.store === 'r2' && await size(objs(k2)[0].body) === '2048x1365'
-         && urlCalls.some(c => c.id === 'aybkk/profile/2026-09-20/mig2' && !c.o.transformation && c.o.format === 'jpg')
-         && destroyedR.length === 2, JSON.stringify([s2, k2]));
+    ok('...Start goes on from the next photo: one only on Cloudinary moves from its stored JPEG (no transformation)',
+       again1.body.move.restarted === false && s2.moved === 2 && s2.after === m2 && k2.store === 'r2' && await size(objs(k2)[0].body) === '2048x1365'
+         && urlCalls.some(c => c.id === 'aybkk/profile/2026-09-20/mig2' && !c.o.transformation && c.o.format === 'jpg') && !destroyedR.length,
+       JSON.stringify([s2, k2]));
+    // R2 refusing mid-move: stop there, nothing skipped, the photo untouched.
+    r2Fail = m => m === 'PUT' && 500;
+    r2Fetches.length = 0;
+    const sHalt = await R2b.api.photoMove();
+    r2Fail = null;
+    const sHalt2 = await R2b.api.photoMove();
+    ok('R2 refusing mid-move stops it at that photo: not skipped, not listed as failed, nothing else fetched, nothing left in R2',
+       sHalt.on === false && sHalt.halted === 'R2 PUT refused (500 InternalError)' && sHalt.after === m2 && sHalt.failedN === 0
+         && (await keysOf(m3)).store === 'cloudinary' && r2Fetches.length === 1 && sHalt2.on === false
+         && (await pool.query(`SELECT count(*)::int AS n FROM bkk_photo_orphans WHERE store='r2'`)).rows[0].n === 0, JSON.stringify(sHalt));
+    // A database blip while reading the state: the step fails (the timer tries again), it does not end the move.
+    await adminR2('/api/bkk/admin/photo-store/move', { on: true });
+    poolHook = (sql, p) => /^SELECT value FROM bkk_settings WHERE key = \$1/.test(sql) && p[0] === 'photo_r2_move' ? Promise.reject(new Error('Connection terminated unexpectedly')) : null;
+    const blip = await R2b.api.photoMove().then(() => null, e => e.message);
+    poolHook = null;
+    ok('a database error reading the move state fails the step instead of reporting it off', blip === 'Connection terminated unexpectedly', String(blip));
     cloudDown = true;
     const before3 = store.size;
     const s3 = await R2b.api.photoMove();
@@ -1895,32 +2005,77 @@ const ok = (name, cond, extra = '') => {
     const k3 = await keysOf(m3);
     ok('a photo no source sends stays on Cloudinary untouched, listed with its reason; nothing left in R2, nothing destroyed',
        k3.store === 'cloudinary' && !k3.r2_key && s3.failedN === 1 && s3.failed[0].id === m3 && /Neither Drive nor Cloudinary sent the photo/.test(s3.failed[0].why)
-         && store.size === before3 && destroyedR.length === 2 && s3.on === true, JSON.stringify(s3));
+         && store.size === before3 && !destroyedR.length && s3.on === true, JSON.stringify(s3));
+    r2Fetches.length = 0;
     const s4 = await R2b.api.photoMove();
-    ok('the end of the pass switches it off, done', s4.on === false && s4.done === true && s4.moved === 2, JSON.stringify(s4));
+    const k4 = await keysOf(m4);
+    ok('a Drive file replaced since (same id, another shape) is passed over: the photo moves from its Cloudinary JPEG, the one that was tagged',
+       s4.moved === 3 && k4.store === 'r2' && k4.width === 2048 && k4.height === 1365 && await size(objs(k4)[0].body) === '2048x1365'
+         && r2Fetches.some(u => u.includes('id=MIGSWAP')) && r2Fetches.some(u => u.startsWith('signed://')), JSON.stringify([s4, k4]));
+    // The server stopped (out of memory, say) while moving m5: the step after notes it, skips it for good.
+    await pool.query(`UPDATE bkk_settings SET value = value || jsonb_build_object('trying', $1::int) WHERE key='photo_r2_move'`, [m5]);
+    const s5 = await R2b.api.photoMove();
+    ok('a photo that was being moved when the server stopped is listed and passed over, so it cannot stop the server again',
+       s5.after === m5 && s5.trying === null && s5.skip.includes(m5) && s5.failed[0].id === m5 && /server stopped/.test(s5.failed[0].why)
+         && (await keysOf(m5)).store === 'cloudinary', JSON.stringify(s5));
+    const s6 = await R2b.api.photoMove();
+    ok('the end of the pass switches it off, done', s6.on === false && s6.done === true && s6.moved === 3, JSON.stringify(s6));
     const tagsAfter = (await pool.query('SELECT photo_id, member_id, role FROM bkk_photo_members WHERE photo_id = ANY($1::int[]) ORDER BY 1', [[m1, m2]])).rows;
     ok('...same photo ids, so who is on them is unchanged', JSON.stringify(tagsAfter) === JSON.stringify(tagsBefore) && tagsAfter.length === 2);
-    // Start again: a new pass tries the failed one; a copy R2 does not hold as sent fails it again, cleanly.
-    const BR2 = R2b.base;
-    const again = await fetch(BR2 + '/api/bkk/admin/photo-store/move', { method: 'POST', headers: { 'Content-Type': 'application/json', ...ADMIN }, body: JSON.stringify({ on: true }) }).then(r => r.json());
+    // A new pass tries the failed one (not the one that stopped the server); a copy R2 does not hold as sent fails it again, cleanly.
+    const again = await adminR2('/api/bkk/admin/photo-store/move', { on: true });
     badEtag = true;
-    const s5 = await R2b.api.photoMove();
+    r2Fetches.length = 0;
+    const s7 = await R2b.api.photoMove();
     badEtag = false;
     ok('a new pass after the end tries the failed photo again; a copy R2 does not hold as sent leaves it on Cloudinary, its R2 copies removed',
-       again.move.after === 0 && again.move.failedN === 0 && s5.failedN === 1 && /R2 does not hold the photo as it was sent/.test(s5.failed[0].why)
-         && (await keysOf(m3)).store === 'cloudinary' && store.size === before3 && destroyedR.length === 2, JSON.stringify(s5));
-    const s6 = await R2b.api.photoMove();
-    await fetch(BR2 + '/api/bkk/admin/photo-store/move', { method: 'POST', headers: { 'Content-Type': 'application/json', ...ADMIN }, body: JSON.stringify({ on: true }) });
-    const s7 = await R2b.api.photoMove();
-    ok('...that pass ends; the next Start moves it', s6.done === true && s6.on === false && (await keysOf(m3)).store === 'r2' && s7.moved === 3 && destroyedR.length === 3,
-       JSON.stringify([s6, s7]));
+       again.body.move.after === 0 && again.body.move.failedN === 1 && again.body.move.failed[0].id === m5
+         && s7.failedN === 2 && /R2 does not hold the photo as it was sent/.test(s7.failed[0].why)
+         && (await keysOf(m3)).store === 'cloudinary' && store.size === before3 + 2 && !destroyedR.length, JSON.stringify([again.body.move, s7]));
+    const s8 = await R2b.api.photoMove();
+    await adminR2('/api/bkk/admin/photo-store/move', { on: true });
+    r2Fetches.length = 0;
+    const s9 = await R2b.api.photoMove(), s10 = await R2b.api.photoMove();
+    ok('...that pass ends; the next Start moves it, and never tries the one that stopped the server',
+       s8.done === true && s8.on === false && (await keysOf(m3)).store === 'r2' && s9.moved === 4 && s10.done === true
+         && (await keysOf(m5)).store === 'cloudinary' && !r2Fetches.some(u => u.includes('mig5')), JSON.stringify([s8, s9, s10]));
     const bobNow = (await (await fetch(`${BR2}/api/bkk/me/${bob.code}/photos`)).json()).days.flatMap(d => d.items).find(i => i.id === m1);
     const migrated = await fetch(BR2 + bobNow.thumb);
     ok('a moved photo shows to its student from R2 at once', /^\/ph\//.test(bobNow.thumb) && migrated.status === 200
        && migrated.headers.get('content-type') === 'image/webp', JSON.stringify(bobNow));
+    // A lost answer after the switch went in: the copies stay, the photo counts as moved.
+    const m6 = await mk('aybkk/profile/2026-09-20/mig6', null, null);
+    await adminR2('/api/bkk/admin/photo-store/move', { on: true });
+    poolHook = (sql, p) => /^WITH m AS \(UPDATE bkk_photos SET store='r2'/.test(sql) ? pool.query(sql, p).then(() => { throw new Error('Connection terminated unexpectedly'); }) : null;
+    const s11 = await R2b.api.photoMove();
+    poolHook = null;
+    const k6 = await keysOf(m6);
+    ok('the database taking the switch but its answer being lost leaves the photo on R2 with both copies, counted as moved',
+       k6.store === 'r2' && objs(k6).every(Boolean) && s11.moved === 5 && !s11.failed.some(f => f.id === m6)
+         && (await orphanOf('aybkk/profile/2026-09-20/mig6')).later === true, JSON.stringify(s11));
+    // The Cloudinary copies: a day after the move; a staff delete at once.
+    const pending = (await (await fetch(BR2 + '/api/bkk/admin/photo-store', { headers: ADMIN })).json()).left;
+    await R2b.api.photoSweep();
+    const delMoved = await fetch(`${BR2}/api/bkk/teacher/photos/${m2}/delete`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...PKEY }, body: '{}' });
+    ok('a moved photo keeps its Cloudinary copy for a day (Admin counts them); a staff delete removes it at once with both R2 copies',
+       pending.cloudinary === 5 && !destroyedR.some(d => d.id !== 'aybkk/profile/2026-09-20/mig2') && delMoved.status === 200
+         && JSON.stringify(destroyedR) === JSON.stringify([{ id: 'aybkk/profile/2026-09-20/mig2', type: 'authenticated', invalidate: true }])
+         && objs(k2).every(o => !o) && !(await orphanOf('aybkk/profile/2026-09-20/mig2')), JSON.stringify([pending, destroyedR]));
+    await pool.query(`UPDATE bkk_photo_orphans SET not_before = now() - interval '1 minute' WHERE store='cloudinary'`);
+    const destroyWas = cloudR.uploader.destroy;
+    cloudR.uploader.destroy = async (id, o) => id.endsWith('mig4') ? { error: { message: 'Account is disabled' } } : destroyWas(id, o);
+    await R2b.api.photoSweep();
+    cloudR.uploader.destroy = destroyWas;
+    const leftAfter = (await pool.query(`SELECT ref, tries FROM bkk_photo_orphans WHERE store='cloudinary'`)).rows;
+    await R2b.api.photoSweep();
+    ok('...a day later the sweep destroys them (authenticated, invalidate); one Cloudinary refuses stays noted and goes on the next sweep',
+       ['mig1', 'mig3', 'mig6'].every(n => destroyedR.some(d => d.id === `aybkk/profile/2026-09-20/${n}` && d.type === 'authenticated' && d.invalidate === true))
+         && JSON.stringify(leftAfter) === JSON.stringify([{ ref: 'aybkk/profile/2026-09-20/mig4', tries: 1 }])
+         && destroyedR.some(d => d.id.endsWith('mig4')) && (await pool.query(`SELECT count(*)::int AS n FROM bkk_photo_orphans`)).rows[0].n === 0
+         && !destroyedR.some(d => d.id.endsWith('mig5')), JSON.stringify([leftAfter, destroyedR.map(d => d.id)]));
     R2b.s.close();
     await pool.query(`UPDATE bkk_photos SET store='cloudinary', r2_key=NULL WHERE id = ANY($1::int[])`, [parked]);
-    await pool.query(`DELETE FROM bkk_photos WHERE id = ANY($1::int[])`, [[m1, m2, m3, d1.body.photo.id, dH.body.photo.id, dG.body.photo.id, annOld.body.photo.id]]);
+    await pool.query(`DELETE FROM bkk_photos WHERE id = ANY($1::int[])`, [[m1, m2, m3, m4, m5, m6, d1.body.photo.id, dH.body.photo.id, dG.body.photo.id, annOld.body.photo.id]]);
     await pool.query(`DELETE FROM bkk_settings WHERE key='photo_r2_move'`);
     fakeR2.close();
   }

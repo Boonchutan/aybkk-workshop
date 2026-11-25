@@ -1561,7 +1561,9 @@
   // Settings: where class photos are kept, the R2 test and the move of older photos (Nov 2026).
   Object.assign(STR.en, {
     psTitle: 'Photo storage',
-    psHelp: 'Where class photos are kept. With R2 on, new photos go to Cloudflare R2: sharper, no daily limit, sent from this site. Faces stay on Cloudinary.',
+    psHelp: 'Where class photos are kept. With R2 on, new photos go to Cloudflare R2: sharper, no daily limit, sent from this site. Faces stay on Cloudinary. Once photos are in R2, keep R2 on: with it off, they do not show.',
+    psOffHeld: n => `R2 is off, but ${n} photos are kept in R2: students cannot see them, and Save photo fails, until all four R2 variables are back in Railway.`,
+    psNotice: 'The privacy notice students sign says Cloudinary stores photos and does not name Cloudflare. With R2 on that is no longer true: a new agreement version has to name it (Boonchu decides the wording; students then sign again).',
     psOn: 'New class photos go to Cloudflare R2.',
     psOff: 'R2 is off: new class photos go to Cloudinary. To switch it on, set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY and R2_BUCKET in Railway.',
     psCount: (c, r) => `On Cloudinary: ${c} photos · On R2: ${r} photos`,
@@ -1569,18 +1571,23 @@
     psTestOk: ms => `OK: R2 stored, sent back and deleted a test file (${ms} ms).`,
     psTestNo: e => `Not OK: ${e}`,
     psMoveH: 'Move older photos to R2',
-    psMoveHelp: 'One photo at a time, about 3 a minute: from the Drive original when the photo came from Drive, else from its copy on Cloudinary. Each one is checked in R2 before it switches, and only then removed from Cloudinary. Students see every photo all the way through. It starts only when you tap Start; after a server restart it goes on by itself until it is done or you tap Stop.',
+    psMoveHelp: 'One photo at a time, about 3 a minute: from the Drive original when the photo came from Drive (and is still the same shape), else from its copy on Cloudinary. Each one is checked in R2 before it switches. Its Cloudinary copy is removed a day later, so a page a student already has open keeps working. It starts only when you tap Start, once R2 passes its test. A server restart stops it: tap Start to go on from where it stopped.',
     psStart: 'Start', psStop: 'Stop',
     psIdle: 'Not started.',
     psRunning: (n, at) => `Moving: ${n} moved so far${at ? `, the last at ${at}` : ''}.`,
     psStopped: n => `Stopped after ${n} moved. Start goes on from where it stopped.`,
+    psRestarted: n => `Stopped by a server restart after ${n} moved. Start goes on from where it stopped.`,
+    psHalted: (n, why) => `Stopped after ${n} moved: R2 refused (${why}). No photo was skipped. Check it with Test R2, then tap Start.`,
     psDone: n => `Done: ${n} moved. Every photo that could be moved is on R2.`,
     psFailed: n => `${n} could not be moved this round and stay on Cloudinary, untouched. Once the round is done, Start tries them again:`,
-    psLeft: (n, why) => `${n} moved photo(s) could not be removed from Cloudinary (students see them from R2 all the same). Last reason: ${why}`,
+    psLeftC: n => `${n} moved photos still have their copy on Cloudinary: each goes a day after its move, tried again until it goes.`,
+    psLeftR: n => `${n} R2 copies of deleted photos wait to be removed (R2 was off or refused), tried again each day.`,
   });
   Object.assign(STR.th, {
     psTitle: 'ที่เก็บรูป',
-    psHelp: 'ที่เก็บรูปคลาส ถ้าเปิด R2 รูปใหม่จะไปที่ Cloudflare R2: คมกว่า ไม่จำกัดต่อวัน และส่งจากเว็บนี้เอง รูปหน้ายังอยู่ที่ Cloudinary',
+    psHelp: 'ที่เก็บรูปคลาส ถ้าเปิด R2 รูปใหม่จะไปที่ Cloudflare R2: คมกว่า ไม่จำกัดต่อวัน และส่งจากเว็บนี้เอง รูปหน้ายังอยู่ที่ Cloudinary เมื่อมีรูปอยู่ใน R2 แล้ว ให้เปิด R2 ไว้ตลอด ถ้าปิด รูปเหล่านั้นจะไม่แสดง',
+    psOffHeld: n => `R2 ปิดอยู่ แต่มีรูป ${n} รูปเก็บอยู่ใน R2: นักเรียนจะไม่เห็นรูปเหล่านี้ และบันทึกรูปไม่ได้ จนกว่าจะตั้งตัวแปร R2 ครบทั้ง 4 ตัวใน Railway อีกครั้ง`,
+    psNotice: 'ประกาศความเป็นส่วนตัวที่นักเรียนเซ็นบอกว่า Cloudinary เก็บรูป และไม่ได้ระบุ Cloudflare ถ้าเปิด R2 ข้อความนี้จะไม่ตรงอีกต่อไป: ต้องออกข้อตกลงฉบับใหม่ที่ระบุ Cloudflare (Boonchu เป็นคนตัดสินใจถ้อยคำ แล้วนักเรียนต้องเซ็นใหม่)',
     psOn: 'รูปคลาสใหม่ไปที่ Cloudflare R2',
     psOff: 'R2 ปิดอยู่: รูปคลาสใหม่ไปที่ Cloudinary ถ้าจะเปิด ให้ตั้ง R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY และ R2_BUCKET ใน Railway',
     psCount: (c, r) => `อยู่ที่ Cloudinary ${c} รูป · อยู่ที่ R2 ${r} รูป`,
@@ -1588,14 +1595,17 @@
     psTestOk: ms => `ใช้ได้: R2 เก็บ ส่งกลับ และลบไฟล์ทดสอบแล้ว (${ms} ms)`,
     psTestNo: e => `ใช้ไม่ได้: ${e}`,
     psMoveH: 'ย้ายรูปเก่าไป R2',
-    psMoveHelp: 'ย้ายทีละรูป ประมาณนาทีละ 3 รูป: ใช้ไฟล์ต้นฉบับจาก Drive ถ้ารูปมาจาก Drive ไม่อย่างนั้นใช้ไฟล์ที่อยู่ใน Cloudinary ทุกรูปจะตรวจใน R2 ก่อนสลับ แล้วจึงลบออกจาก Cloudinary นักเรียนเห็นรูปครบตลอด จะเริ่มเมื่อกด เริ่ม เท่านั้น ถ้าเซิร์ฟเวอร์รีสตาร์ตจะทำต่อเองจนเสร็จ หรือจนกด หยุด',
+    psMoveHelp: 'ย้ายทีละรูป ประมาณนาทีละ 3 รูป: ใช้ไฟล์ต้นฉบับจาก Drive ถ้ารูปมาจาก Drive (และยังเป็นรูปทรงเดิม) ไม่อย่างนั้นใช้ไฟล์ที่อยู่ใน Cloudinary ทุกรูปจะตรวจใน R2 ก่อนสลับ ไฟล์ใน Cloudinary จะถูกลบหลังย้ายหนึ่งวัน หน้าที่นักเรียนเปิดค้างไว้จึงยังใช้ได้ จะเริ่มเมื่อกด เริ่ม และ R2 ผ่านการทดสอบเท่านั้น ถ้าเซิร์ฟเวอร์รีสตาร์ต การย้ายจะหยุด กด เริ่ม เพื่อทำต่อจากที่หยุด',
     psStart: 'เริ่ม', psStop: 'หยุด',
     psIdle: 'ยังไม่ได้เริ่ม',
     psRunning: (n, at) => `กำลังย้าย: ย้ายแล้ว ${n} รูป${at ? ` ล่าสุดเวลา ${at}` : ''}`,
     psStopped: n => `หยุดแล้ว ย้ายไป ${n} รูป กด เริ่ม เพื่อทำต่อจากที่หยุด`,
+    psRestarted: n => `หยุดเพราะเซิร์ฟเวอร์รีสตาร์ต ย้ายไปแล้ว ${n} รูป กด เริ่ม เพื่อทำต่อจากที่หยุด`,
+    psHalted: (n, why) => `หยุดแล้ว ย้ายไป ${n} รูป: R2 ไม่รับ (${why}) ไม่มีรูปไหนถูกข้าม ตรวจด้วย ทดสอบ R2 แล้วกด เริ่ม`,
     psDone: n => `เสร็จแล้ว: ย้าย ${n} รูป รูปที่ย้ายได้อยู่ที่ R2 ครบแล้ว`,
     psFailed: n => `${n} รูปย้ายไม่ได้ในรอบนี้ ยังอยู่ที่ Cloudinary เหมือนเดิม จบรอบแล้วกด เริ่ม จะลองใหม่:`,
-    psLeft: (n, why) => `${n} รูปที่ย้ายแล้วลบออกจาก Cloudinary ไม่ได้ (นักเรียนยังเห็นจาก R2 ตามปกติ) เหตุผลล่าสุด: ${why}`,
+    psLeftC: n => `${n} รูปที่ย้ายแล้วยังมีไฟล์อยู่ที่ Cloudinary: จะลบหลังย้ายหนึ่งวัน และลองใหม่จนกว่าจะลบได้`,
+    psLeftR: n => `${n} ไฟล์ใน R2 ของรูปที่ลบแล้วรอลบอยู่ (ตอน R2 ปิดหรือไม่รับ) จะลองใหม่ทุกวัน`,
   });
   const T =(k, ...a) => { const v = STR[LANG][k] ?? STR.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
   const W = w => STR[LANG].words[w] || w;
@@ -4534,11 +4544,15 @@
     const head = `<b>${T('psTitle')}</b><p class="muted">${T('psHelp')}</p>`;
     if (!st) return `<div class="box" id="psBox">${head}<p class="${failed ? 'flash warn' : 'muted'}" role="status">${esc(T(failed ? 'failed' : 'tbLoading'))}</p></div>`;
     const m = st.move || {}, at = m.at ? tbWhen(m.at) : '';
-    const state = m.on ? T('psRunning', m.moved || 0, at) : m.done ? T('psDone', m.moved || 0) : m.startedAt ? T('psStopped', m.moved || 0) : T('psIdle');
+    const state = m.on ? T('psRunning', m.moved || 0, at) : m.done ? T('psDone', m.moved || 0) : m.halted ? T('psHalted', m.moved || 0, m.halted)
+      : m.restarted ? T('psRestarted', m.moved || 0) : m.startedAt ? T('psStopped', m.moved || 0) : T('psIdle');
+    const left = st.left || {};
     const fails = (m.failed || []).length ? `<p class="flash warn">${esc(T('psFailed', m.failedN || m.failed.length))}</p>
       <ul class="muted">${m.failed.map(f => `<li>#${Number(f.id)}: ${esc(f.why)}</li>`).join('')}</ul>` : '';
     return `<div class="box" id="psBox">${head}
       <p><b>${esc(T(st.r2 ? 'psOn' : 'psOff'))}</b></p>
+      ${!st.r2 && st.photos.r2 ? `<p class="flash warn" role="alert">${esc(T('psOffHeld', st.photos.r2))}</p>` : ''}
+      ${st.noticeNamesR2 === false ? `<p class="flash warn">${esc(T('psNotice'))}</p>` : ''}
       <p>${esc(T('psCount', st.photos.cloudinary, st.photos.r2))}</p>
       <p><button class="btn gray" id="psTestBtn" onclick="psTest()"${PS_TEST === 'wait' ? ' disabled' : ''}>${esc(T(PS_TEST === 'wait' ? 'psTesting' : 'psTest'))}</button></p>
       ${PS_TEST && PS_TEST !== 'wait' ? `<p class="${PS_TEST.ok ? 'flash' : 'flash warn'}" role="status">${esc(PS_TEST.ok ? T('psTestOk', PS_TEST.ms) : T('psTestNo', PS_TEST.error))}</p>` : ''}
@@ -4546,7 +4560,8 @@
       <p class="muted">${T('psMoveHelp')}</p>
       <p role="status">${esc(state)}</p>
       ${fails}
-      ${m.cloudLeft ? `<p class="muted">${esc(T('psLeft', m.cloudLeft, m.cloudWhy || '?'))}</p>` : ''}
+      ${left.cloudinary ? `<p class="muted">${esc(T('psLeftC', left.cloudinary))}</p>` : ''}
+      ${left.r2 ? `<p class="muted">${esc(T('psLeftR', left.r2))}</p>` : ''}
       <p>${m.on ? `<button class="btn gray" onclick="psMove(false)">${T('psStop')}</button>`
         : `<button class="btn pink" onclick="psMove(true)"${st.r2 ? '' : ' disabled'}>${T('psStart')}</button>`}</p></div>`;
   };

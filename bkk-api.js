@@ -739,6 +739,13 @@ function mountBkk(app, opts = {}) {
     // Where the photo is kept. 'r2': cls/<class date>/<r2_key>/v.jpg and t.webp in R2, r2_key random hex.
     await q(`ALTER TABLE bkk_photos ADD COLUMN IF NOT EXISTS store TEXT NOT NULL DEFAULT 'cloudinary'`);
     await q(`ALTER TABLE bkk_photos ADD COLUMN IF NOT EXISTS r2_key TEXT`);
+    // Class photo copies waiting to be removed (sweepPhotos): store 'cloudinary' (ref: public_id) or 'r2' (ref: object key).
+    await q(`CREATE TABLE IF NOT EXISTS bkk_photo_orphans (
+      store TEXT NOT NULL,
+      ref TEXT NOT NULL,
+      not_before TIMESTAMPTZ NOT NULL DEFAULT now(),
+      tries INTEGER NOT NULL DEFAULT 0,
+      PRIMARY KEY (store, ref))`);
 
     // The 12-week proof check (habit #1, Track): numbers the student already
     // has on their watch or phone, at week 0, 6 and 12. One row per day.
@@ -7832,12 +7839,16 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // ── class photos in R2 (lib/r2.js) ────────────────────────────────────────
   // sources: functions that fetch the photo, best first; the first one that can
   // be read is kept. The row goes in only once both copies are stored.
-  async function r2Made(sources, none) {
+  // accept(made, i): false passes the copy over for the next source.
+  async function r2Made(sources, none, accept = () => true) {
     let why = null;
-    for (const src of sources) {
+    for (const [i, src] of sources.entries()) {
       const buf = await src().catch(() => null);
       if (!buf) continue;
-      try { return await r2lib.photoVariants(buf); } catch (e) { why = e; }
+      try {
+        const made = await r2lib.photoVariants(buf);
+        if (accept(made, i)) return made;
+      } catch (e) { why = e; }
     }
     throw Object.assign(new Error(why ? why.message : none), { status: why ? why.status || 502 : 502 });
   }
@@ -7845,19 +7856,24 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     await r2.put(r2lib.objectKey(day, key, 'v'), made.v, 'image/jpeg');
     await r2.put(r2lib.objectKey(day, key, 't'), made.t, 'image/webp');
   }
-  // Best effort: a copy left behind is never shown (no row signs a link to it), only stored.
+  // A photo's two R2 copies go, never ones a row points at: the database may have
+  // taken a write whose answer was lost. What cannot go now (R2 off or refusing,
+  // the database unsure) waits in bkk_photo_orphans for sweepPhotos.
   async function r2Drop(day, key) {
-    if (!r2) return console.warn('[bkk photos] R2 is off: a photo\'s copies stay in R2');
-    for (const kind of ['v', 't']) {
-      await r2.del(r2lib.objectKey(day, key, kind)).catch(e => console.warn('[bkk photos] R2 copy not removed:', e.message));
+    const used = await q('SELECT 1 FROM bkk_photos WHERE r2_key=$1', [key]).then(r => r.rows.length > 0, () => null);
+    if (used) return;
+    for (const ref of ['v', 't'].map(kind => r2lib.objectKey(day, key, kind))) {
+      if (r2 && used === false && await r2.del(ref).then(() => true, e => { console.warn('[bkk photos] R2 copy not removed:', e.message); return false; })) continue;
+      await q(`INSERT INTO bkk_photo_orphans (store, ref) VALUES ('r2', $1) ON CONFLICT DO NOTHING`, [ref])
+        .catch(e => console.error('[bkk photos] R2 copy not noted for later:', e.message));
     }
   }
   async function storeR2(t, date, sources, tags, driveId, none = 'The photo could not be read.') {
     const made = await r2Made(sources, none);
     const key = crypto.randomBytes(12).toString('hex');
-    await r2Put(date, key, made);
     let photo;
     try {
+      await r2Put(date, key, made);
       photo = (await q(
         `INSERT INTO bkk_photos (public_id,class_date,width,height,uploaded_by,drive_id,store,r2_key)
          VALUES ($1,$2,$3,$4,$5,$6,'r2',$7) RETURNING id`,
@@ -7950,17 +7966,19 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     } catch (e) { res.status(e.status || 502).json({ error: e.message }); }
   });
 
-  const grab = async (url, maxBytes) => {
-    const r = await httpFetch(url, { signal: AbortSignal.timeout(60000) });
+  const grab = async (url, maxBytes, ms = 60000) => {
+    const r = await httpFetch(url, { signal: AbortSignal.timeout(ms) });
     if (maxBytes && Number(r.headers.get('content-length')) > maxBytes) { r.body?.cancel().catch(() => {}); return null; }
     const b = Buffer.from(await r.arrayBuffer());
     return r.ok && sniff(b) && !(maxBytes && b.length > maxBytes) ? b : null;
   };
   const DRIVE_ORIGINAL_MAX = 60 * 1024 * 1024;
-  const driveSources = driveId => {
+  // ms: for the original. A staff import waits on it, and Cloudflare ends a request at 100 s:
+  // 25 s, then 20 s for the 2048 px copy, then 2 R2 PUTs of 20 s at most.
+  const driveSources = (driveId, ms = 60000) => {
     const id = encodeURIComponent(driveId);
-    return [() => grab(`https://drive.google.com/uc?export=download&id=${id}`, DRIVE_ORIGINAL_MAX),
-      () => grab(`https://drive.google.com/thumbnail?id=${id}&sz=s2048`)];
+    return [() => grab(`https://drive.google.com/uc?export=download&id=${id}`, DRIVE_ORIGINAL_MAX, ms),
+      () => grab(`https://drive.google.com/thumbnail?id=${id}&sz=s2048`, 0, 20000)];
   };
 
   app.post('/api/bkk/teacher/photos/from-drive', async (req, res) => {
@@ -7982,7 +8000,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (r2) {
         // The camera original makes the sharp 2560 px copy; Drive's 2048 px JPEG when the
         // original cannot be had or read here (a HEIC, too big). No daily limit: not Cloudinary.
-        return res.json({ success: true, photo: await storeR2(t, date, driveSources(driveId), tags, driveId,
+        return res.json({ success: true, photo: await storeR2(t, date, driveSources(driveId, 25000), tags, driveId,
           'Drive did not send a photo. Is the folder still shared by link?') });
       }
       if (typeof cloudinary.config === 'function' && !cloudinary.config().api_secret) {
@@ -8044,8 +8062,15 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const p = (await q(`DELETE FROM bkk_photos WHERE id=$1 RETURNING public_id, store, r2_key, to_char(class_date,'YYYY-MM-DD') AS day`,
         [req.params.id])).rows[0];
       if (!p) return res.status(404).json({ error: 'photo not found' });
-      if (p.store === 'r2') await r2Drop(p.day, p.r2_key);
-      else await cloudinary.uploader.destroy(p.public_id, { type: 'authenticated', invalidate: true }).catch(() => {});
+      if (p.store === 'r2') {
+        await r2Drop(p.day, p.r2_key);
+        // Moved from Cloudinary: its copy there was to go a day after the move. Deleted, it goes now.
+        if (!p.public_id.startsWith('r2/')) {
+          await q(await cloudGone(p.public_id) ? `DELETE FROM bkk_photo_orphans WHERE store='cloudinary' AND ref=$1`
+            : `INSERT INTO bkk_photo_orphans (store, ref) VALUES ('cloudinary', $1) ON CONFLICT (store, ref) DO UPDATE SET not_before = now()`,
+          [p.public_id]).catch(e => console.error('[bkk photos] Cloudinary copy not noted for later:', e.message));
+        }
+      } else await cloudinary.uploader.destroy(p.public_id, { type: 'authenticated', invalidate: true }).catch(() => {});
       res.json({ success: true });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
@@ -8125,9 +8150,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (req.method === 'HEAD') return res.set({ ...file, 'Content-Type': 'image/jpeg' }).end();
       // In R2: its v.jpg, the same link and file name, so a page open from before a move still saves.
       if (row.store === 'r2') {
-        if (!r2) return res.status(503).json({ error: 'photo storage not configured' });
+        if (!r2) return res.status(503).set('Cache-Control', 'no-store').json({ error: 'photo storage is switched off' });
         const r = await r2.get(r2lib.objectKey(row.day, row.r2_key, 'v'));
-        if (!r) return res.status(404).json({ error: 'photo not available' });
+        if (!r) return res.status(404).set('Cache-Control', 'no-store').json({ error: 'photo not available' });
         return res.set({ ...file, 'Content-Type': 'image/jpeg' }).send(Buffer.from(await r.arrayBuffer()));
       }
       const r = await httpFetch(photoUrl(row.public_id, 'full'), { signal: AbortSignal.timeout(30000) });
@@ -8144,33 +8169,43 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // bytes. One day at most, in browsers and at the edge alike: a deleted photo must
   // stop being served within a day, and nothing here empties Cloudflare's cache.
   // No cookie is set on these answers (Cloudflare would not keep them), and an
-  // error is never kept. An unknown id is 403 like a bad signature. Only while R2
-  // is on: with it off, /ph is not a route here, as before.
+  // error is never kept. An unknown id is 403 like a bad signature. The bytes
+  // behind a link never change (r2_key is new for every photo), so the ETag is
+  // the link's own signature and a revalidation is a 304 without asking R2.
+  // With R2 off, a link to a photo in R2 is a 503 nobody keeps (the photo is back
+  // once the variables are); any other /ph path is passed on, as when it was no route.
   const PH_FILES = { 't.webp': ['t', 'image/webp'], 'v.jpg': ['v', 'image/jpeg'], 'p.jpg': ['p', 'image/jpeg'] };
-  if (r2) app.get('/ph/:t/:f', async (req, res) => {
-    const no = (status, error) => res.status(status).set('Cache-Control', 'no-store').json({ error });
-    const m = /^([1-9]\d{0,9})\.([\w-]{22})$/.exec(req.params.t), f = PH_FILES[req.params.f];
-    if (!m || !f) return no(404, 'not found');
-    const [kind, type] = f;
+  app.get('/ph/:t/:f', async (req, res, next) => {
+    const no = (status, error) => { res.removeHeader('ETag'); return res.status(status).set('Cache-Control', 'no-store').json({ error }); };
     try {
-      const row = (await q(`SELECT r2_key, to_char(class_date,'YYYY-MM-DD') AS day FROM bkk_photos WHERE id=$1 AND store='r2'`,
-        [Number(m[1])])).rows[0];
+      // Own names only: "constructor" or "__proto__" is no file here.
+      const f = Object.hasOwn(PH_FILES, req.params.f) ? PH_FILES[req.params.f] : null;
+      const m = /^([1-9]\d{0,9})\.([\w-]{22})$/.exec(req.params.t);
+      if (!m || !f) return r2 ? no(404, 'not found') : next();
+      const [kind, type] = f;
+      const row = Number(m[1]) > 2147483647 ? null : (await q(
+        `SELECT r2_key, to_char(class_date,'YYYY-MM-DD') AS day FROM bkk_photos WHERE id=$1 AND store='r2'`, [Number(m[1])])).rows[0];
       const want = Buffer.from(r2lib.phSig(m[1], row ? row.r2_key : '', kind)), got = Buffer.from(m[2]);
-      if (!row || want.length !== got.length || !crypto.timingSafeEqual(want, got)) return no(403, 'bad link');
+      if (!row || want.length !== got.length || !crypto.timingSafeEqual(want, got)) return r2 ? no(403, 'bad link') : next();
+      if (!r2) return no(503, 'photo storage is switched off');
       const key = r2lib.objectKey(row.day, row.r2_key, kind);       // p.jpg is made from t.webp
-      const head = { 'Content-Type': type, 'Cache-Control': 'public, max-age=86400, s-maxage=86400', 'X-Content-Type-Options': 'nosniff' };
+      res.set({ 'Content-Type': type, 'Cache-Control': 'public, max-age=86400, s-maxage=86400', 'X-Content-Type-Options': 'nosniff',
+        ETag: `"${m[2]}"` });
+      if (req.fresh) return res.status(304).end();
       if (req.method === 'HEAD') {
         const h = await r2.head(key);
         if (!h) return no(404, 'photo not available');
-        return res.set(kind === 'p' ? head : { ...head, 'Content-Length': String(h.size) }).end();
+        if (kind !== 'p') res.set('Content-Length', String(h.size));
+        return res.end();
       }
       const r = await r2.get(key);
       if (!r) return no(404, 'photo not available');
-      if (kind === 'p') return res.set(head).send(await r2lib.tileJpeg(Buffer.from(await r.arrayBuffer())));
+      if (kind === 'p') return res.send(await r2lib.tileJpeg(Buffer.from(await r.arrayBuffer())));
       const size = r.headers.get('content-length');
-      res.set(size ? { ...head, 'Content-Length': size } : head);
+      if (size) res.set('Content-Length', size);
       pipeline(Readable.fromWeb(r.body), res, () => {});
     } catch (e) {
+      if (!r2) return next();
       console.warn('[bkk photos] /ph not served:', e.message);
       if (!res.headersSent) no(502, 'photo not available');
     }
@@ -8179,20 +8214,23 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // ── Admin, Settings, "Photo storage" ──────────────────────────────────────
   // Photo counts only, for staff. The test writes, reads back and deletes one
   // small object under test/ and says OK or R2's refusal; never a key.
+  // The privacy notice students sign names who stores their photos: until a new
+  // version names Cloudflare, Admin says so (a new version is Boonchu's call).
+  const noticeNamesR2 = JSON.stringify(CONSENT_TEXT[CONSENT_VERSION]).includes('Cloudflare');
   app.get('/api/bkk/admin/photo-store', async (req, res) => {
     if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
     res.set('Cache-Control', 'private, no-store');
     try {
-      const c = (await q(`SELECT count(*) FILTER (WHERE store = 'r2')::int AS r2,
-          count(*) FILTER (WHERE store = 'cloudinary')::int AS cloudinary FROM bkk_photos`)).rows[0];
-      res.json({ r2: !!r2, photos: { cloudinary: c.cloudinary, r2: c.r2 }, move: await moveState() });
+      const [c, o, move] = await Promise.all([
+        q(`SELECT count(*) FILTER (WHERE store = 'r2')::int AS r2, count(*) FILTER (WHERE store = 'cloudinary')::int AS cloudinary FROM bkk_photos`),
+        q(`SELECT count(*) FILTER (WHERE store = 'cloudinary')::int AS cloudinary, count(*) FILTER (WHERE store = 'r2')::int AS r2 FROM bkk_photo_orphans`),
+        moveState()]);
+      res.json({ r2: !!r2, photos: c.rows[0], left: o.rows[0], noticeNamesR2, move });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
-  app.post('/api/bkk/admin/photo-store/test', async (req, res) => {
-    if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
-    if (!r2) return res.json({ ok: false, error: `R2 is not set up: ${r2lib.R2_VARS.join(', ')} are needed in Railway.` });
-    const t0 = Date.now(), key = `test/${crypto.randomBytes(8).toString('hex')}.txt`;
-    const body = Buffer.from(`AYBKK R2 test ${new Date().toISOString()}`);
+  // Writes, reads back and deletes one small object: null when R2 does all three, else why not.
+  async function r2Check() {
+    const key = `test/${crypto.randomBytes(8).toString('hex')}.txt`, body = Buffer.from(`AYBKK R2 test ${new Date().toISOString()}`);
     try {
       await r2.put(key, body, 'text/plain');
       let back = null;
@@ -8200,43 +8238,87 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         const r = await r2.get(key);
         back = r ? Buffer.from(await r.arrayBuffer()) : null;
       } finally { await r2.del(key); }
-      if (!back || !back.equals(body)) throw new Error('R2 sent back something other than what was stored');
-      res.json({ ok: true, ms: Date.now() - t0 });
-    } catch (e) { res.json({ ok: false, error: e.message }); }
+      return back && back.equals(body) ? null : 'R2 sent back something other than what was stored';
+    } catch (e) { return e.message; }
+  }
+  app.post('/api/bkk/admin/photo-store/test', async (req, res) => {
+    if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
+    if (!r2) return res.json({ ok: false, error: `R2 is not set up: ${r2lib.R2_VARS.join(', ')} are needed in Railway.` });
+    const t0 = Date.now(), why = await r2Check();
+    res.json(why ? { ok: false, error: why } : { ok: true, ms: Date.now() - t0 });
   });
+
+  // ── class photo copies waiting to be removed (bkk_photo_orphans) ──────────
+  // A Cloudinary copy a day after its photo moved to R2 (a page still open keeps
+  // working until then; one staff delete goes at once), an R2 copy R2 or the
+  // database could not drop at once. Never one a row still points at. Tried at
+  // boot, each day and after each move step, until it goes.
+  const cloudGone = async id => {
+    try {
+      const d = cloudinary && await cloudinary.uploader.destroy(id, { type: 'authenticated', invalidate: true });
+      return !!d && ['ok', 'not found'].includes(d.result);
+    } catch (e) { return false; }
+  };
+  let sweeping = null;
+  const sweepPhotos = () => sweeping || (sweeping = (async () => {
+    try {
+      const due = (await q(`SELECT store, ref FROM bkk_photo_orphans WHERE not_before <= now() ORDER BY not_before LIMIT 5000`)).rows;
+      for (const o of due) {
+        const used = (await q(o.store === 'r2' ? 'SELECT 1 FROM bkk_photos WHERE r2_key=$1' : `SELECT 1 FROM bkk_photos WHERE public_id=$1 AND store='cloudinary'`,
+          [o.store === 'r2' ? o.ref.split('/')[2] : o.ref])).rows.length > 0;
+        const gone = used || (o.store === 'r2' ? !!r2 && await r2.del(o.ref).then(() => true, () => false) : await cloudGone(o.ref));
+        await q(gone ? 'DELETE FROM bkk_photo_orphans WHERE store=$1 AND ref=$2'
+          : 'UPDATE bkk_photo_orphans SET tries = tries + 1 WHERE store=$1 AND ref=$2', [o.store, o.ref]);
+      }
+    } catch (e) { console.error('[bkk photos] sweep failed:', e.message); }
+    finally { sweeping = null; }
+  })());
+  setInterval(sweepPhotos, 24 * 3600 * 1000).unref();
 
   // ── moving the Cloudinary class photos to R2 (off until Start) ────────────
   // One photo at a time, 3 a minute: the Drive original when the photo came from
-  // Drive (else Drive's 2048 px copy), else the JPEG stored on Cloudinary, which
-  // makes no new copy there. Both R2 copies are checked (size, and MD5 when R2
-  // gives one) before the row switches in one update, and only then is the
-  // Cloudinary asset destroyed. A failure leaves the photo on Cloudinary as it
+  // Drive and is still the same shape (a file replaced in Drive keeps its id),
+  // else Drive's 2048 px copy, else the JPEG stored on Cloudinary, which makes no
+  // new copy there. Both R2 copies are checked (size, and MD5 when R2 gives one)
+  // before the row switches; the same statement notes the Cloudinary copy, which
+  // goes a day later (sweepPhotos). A failure leaves the photo on Cloudinary as it
   // was and is listed with its reason; the next Start after the end of a pass
-  // tries those again. Same photo id, so who is on it does not change.
-  // The place reached is kept in bkk_settings: it never starts by itself, but
-  // once started it goes on after a restart, until done or Stop.
+  // tries those again. R2 itself refusing stops the move there, nothing skipped.
+  // Same photo id, so who is on it does not change.
+  // The place reached is kept in bkk_settings. It never runs by itself: a server
+  // start stops it, and Start goes on from there. The photo being moved is noted
+  // first: one that stopped the server (out of memory) is listed and passed over
+  // in this pass and the next ones (skip), so it never stops the server twice.
   const MOVE_KEY = 'photo_r2_move', MOVE_EVERY_MS = 20000;
-  const moveState = async () => ({ on: false, after: 0, moved: 0, failedN: 0, failed: [], cloudLeft: 0,
-    ...((await getSetting(MOVE_KEY, null)) || {}) });
+  // q, not getSetting: a database error throws, so the timer keeps going.
+  const moveState = async () => ({ on: false, after: 0, moved: 0, failedN: 0, failed: [], trying: null, skip: [],
+    ...((await q('SELECT value FROM bkk_settings WHERE key = $1', [MOVE_KEY])).rows[0] || {}).value });
   // A step can switch it off (done) but not back on: Stop pressed while a photo was moving holds.
   const saveMove = (s, plain) => q(`INSERT INTO bkk_settings (key,value,updated_at) VALUES ($1,$2::jsonb,now())
     ON CONFLICT (key) DO UPDATE SET updated_at=now(), value = EXCLUDED.value${plain ? ''
       : ` || jsonb_build_object('on', (EXCLUDED.value->>'on')::boolean AND coalesce((bkk_settings.value->>'on')::boolean, false))`}`,
   [MOVE_KEY, JSON.stringify(s)]);
   const errText = e => String((e && (e.message || (e.error && e.error.message))) || e).slice(0, 200);
+  // Same shape within 1%, both turned upright: else not the photo the tags were made on.
+  const sameShape = (made, p) => !p.width || !p.height || Math.abs((made.width / made.height) / (p.width / p.height) - 1) < 0.01;
   async function moveOne() {
     const s = await moveState();
     if (!s.on || !r2 || !cloudinary) return { ...s, on: false };
     const at = new Date(nowMs()).toISOString();
-    const p = (await q(`SELECT id, public_id, drive_id, to_char(class_date,'YYYY-MM-DD') AS day FROM bkk_photos
-      WHERE store = 'cloudinary' AND id > $1 ORDER BY id LIMIT 1`, [s.after])).rows[0];
-    if (!p) { Object.assign(s, { on: false, done: true, at }); await saveMove(s); return s; }
+    const p = (await q(`SELECT id, public_id, drive_id, width, height, to_char(class_date,'YYYY-MM-DD') AS day FROM bkk_photos
+      WHERE store = 'cloudinary' AND id > $1 AND id <> ALL($2::int[]) ORDER BY id LIMIT 1`, [s.after, s.skip])).rows[0];
+    const done = async () => { Object.assign(s, { after: p.id, at, trying: null }); await saveMove(s); return s; };
+    const fail = why => { s.failedN++; s.failed = [{ id: p.id, why, at }, ...s.failed].slice(0, 20); };
+    if (!p) { Object.assign(s, { on: false, done: true, at, trying: null }); await saveMove(s); return s; }
+    if (s.trying === p.id) { s.skip = [...s.skip, p.id].slice(-100); fail('The server stopped while it was moving this photo: it stays on Cloudinary.'); return done(); }
+    await saveMove({ ...s, trying: p.id });
     const key = crypto.randomBytes(12).toString('hex');
-    let sent = false;
+    const sources = [...(p.drive_id ? driveSources(p.drive_id) : []), () => grab(photoUrl(p.public_id, 'full'))];
+    let made;
     try {
-      const made = await r2Made([...(p.drive_id ? driveSources(p.drive_id) : []), () => grab(photoUrl(p.public_id, 'full'))],
-        'Neither Drive nor Cloudinary sent the photo.');
-      sent = true;
+      made = await r2Made(sources, 'Neither Drive nor Cloudinary sent the photo.', (m, i) => i === sources.length - 1 || sameShape(m, p));
+    } catch (e) { fail(errText(e)); return done(); }
+    try {
       await r2Put(p.day, key, made);
       for (const kind of ['v', 't']) {
         const h = await r2.head(r2lib.objectKey(p.day, key, kind)), b = made[kind];
@@ -8244,27 +8326,30 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
           throw new Error(`R2 does not hold the ${kind === 'v' ? 'photo' : 'tile'} as it was sent`);
         }
       }
-      const moved = (await q(`UPDATE bkk_photos SET store='r2', r2_key=$2, width=$3, height=$4
-        WHERE id=$1 AND store='cloudinary' RETURNING id`, [p.id, key, made.width, made.height])).rows[0];
-      if (!moved) await r2Drop(p.day, key);              // deleted meanwhile
-      else {
-        s.moved++;
-        try {
-          const d = await cloudinary.uploader.destroy(p.public_id, { type: 'authenticated', invalidate: true });
-          if (!d || !['ok', 'not found'].includes(d.result)) throw new Error(`Cloudinary answered ${d && d.result}`);
-        } catch (e) { s.cloudLeft++; s.cloudWhy = `#${p.id}: ${errText(e)}`; }
-      }
     } catch (e) {
-      if (sent) await r2Drop(p.day, key);
-      s.failedN++;
-      s.failed = [{ id: p.id, why: errText(e), at }, ...s.failed].slice(0, 20);
+      await r2Drop(p.day, key);
+      if (!e.r2) { fail(errText(e)); return done(); }
+      // R2 itself refused or did not answer: stop at this photo, untouched, rather than fetch every other one for nothing.
+      Object.assign(s, { on: false, halted: errText(e), at, trying: null });
+      await saveMove(s);
+      return s;
     }
-    Object.assign(s, { after: p.id, at });
-    await saveMove(s);
-    return s;
+    try {
+      const moved = (await q(`WITH m AS (UPDATE bkk_photos SET store='r2', r2_key=$2, width=$3, height=$4
+          WHERE id=$1 AND store='cloudinary' RETURNING public_id)
+        INSERT INTO bkk_photo_orphans (store, ref, not_before) SELECT 'cloudinary', public_id, now() + interval '1 day' FROM m
+        ON CONFLICT (store, ref) DO UPDATE SET not_before = EXCLUDED.not_before RETURNING ref`, [p.id, key, made.width, made.height])).rows[0];
+      if (moved) s.moved++;
+      else await r2Drop(p.day, key);                   // deleted meanwhile
+    } catch (e) {
+      // The answer was lost: the switch may have gone in all the same.
+      if (await q('SELECT 1 FROM bkk_photos WHERE id=$1 AND r2_key=$2', [p.id, key]).then(r => r.rows.length > 0, () => false)) s.moved++;
+      else { await r2Drop(p.day, key); fail(errText(e)); }
+    }
+    return done();
   }
   let moving = null, moveTimer = null;
-  const moveStep = () => moving || (moving = moveOne().finally(() => { moving = null; }));
+  const moveStep = () => moving || (moving = moveOne().finally(() => { moving = null; sweepPhotos(); }));
   function moveSoon(ms = MOVE_EVERY_MS) {
     clearTimeout(moveTimer);
     if (!timers) return;                 // a test steps by hand
@@ -8278,17 +8363,31 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (typeof on !== 'boolean') return res.status(400).json({ error: 'on must be true or false' });
     if (on && (!r2 || !cloudinary)) return res.status(400).json({ error: r2 ? 'Cloudinary is not set up: nothing to move.' : 'R2 is not set up.' });
     try {
+      if (!on) {
+        // Only the switch: a step finishing meanwhile keeps its count and place.
+        await q(`UPDATE bkk_settings SET value = value || '{"on": false}'::jsonb, updated_at = now() WHERE key = $1`, [MOVE_KEY]);
+        clearTimeout(moveTimer);
+        return res.json({ move: await moveState() });
+      }
+      if (moving) await moving.catch(() => {});      // a step Stop did not wait for: its place first
       const s = await moveState();
-      if (on && !s.on) {
-        // After a finished pass, a new one: the photos that failed are tried again.
-        if (s.done || !s.startedAt) Object.assign(s, { after: 0, failed: [], failedN: 0, done: false, startedAt: new Date(nowMs()).toISOString() });
-        s.on = true;
-      } else if (!on) s.on = false;
-      await saveMove(s, true);
-      if (s.on) moveSoon(1000); else clearTimeout(moveTimer);
+      if (!s.on) {
+        const why = await r2Check();
+        if (why) return res.status(502).json({ error: `R2 did not pass its test, so nothing was started: ${why}` });
+        // After a finished pass, a new one: the photos that failed are tried again, but not one that stopped the server.
+        const kept = s.failed.filter(f => s.skip.includes(f.id));
+        if (s.done || !s.startedAt) Object.assign(s, { after: 0, failed: kept, failedN: kept.length, done: false, trying: null, startedAt: new Date(nowMs()).toISOString() });
+        Object.assign(s, { on: true, restarted: false, halted: null });
+        await saveMove(s, true);
+      }
+      moveSoon(1000);
       res.json({ move: s });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
+  // A server start stops a move staff started: it never runs by itself (a copy of
+  // this database on another server would move and remove photos with nobody there).
+  const moveStopAtBoot = () => q(`UPDATE bkk_settings SET value = value || '{"on": false, "restarted": true}'::jsonb, updated_at = now()
+    WHERE key = $1 AND value->>'on' = 'true'`, [MOVE_KEY]).catch(e => console.error('[bkk photos] move not stopped at start:', e.message));
 
   // ── the student's own face (Boonchu, 9 Nov 2026) ──────────────────────────
   // One square photo per student, for the round account button and for staff
@@ -9134,12 +9233,11 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     .then(() => {
       console.log('✓ bkk-api mounted (/api/bkk/*)'); letterPurge(); sweepFaces();
       if (timers) { startPayWatch(); teePurgeTick(); setInterval(teePurgeTick, 24 * 3600 * 1000).unref(); }
-      // A move of photos to R2 that staff started and did not stop goes on, a minute after a restart.
-      if (timers && r2) moveState().then(s => { if (s.on) moveSoon(60000); }).catch(() => {});
-      return switchPrices().catch(e => console.error('✗ bkk: price switch failed:', e.message));
+      sweepPhotos();
+      return Promise.all([moveStopAtBoot(), switchPrices().catch(e => console.error('✗ bkk: price switch failed:', e.message))]);
     })
     .catch(e => console.error('✗ bkk-api schema init failed:', e.message))
-    .then(() => ({ paySweep, moneyTick, moneyLine, resendAlerts, teePurge, findOrCreateMember, staffSigninLink, photoMove: moveStep }));
+    .then(() => ({ paySweep, moneyTick, moneyLine, resendAlerts, teePurge, findOrCreateMember, staffSigninLink, photoMove: moveStep, photoSweep: sweepPhotos }));
 }
 
 // PaySolutions posts application/x-www-form-urlencoded; make sure that body is
