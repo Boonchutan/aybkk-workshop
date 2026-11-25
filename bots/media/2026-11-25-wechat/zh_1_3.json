@@ -1,0 +1,377 @@
+[
+ {
+  "id": "01_balance",
+  "final": {
+   "hook": {
+    "lines": [
+     "用手撑还是用脚站",
+     "平衡都是一个道理"
+    ],
+    "en": "Holding yourself up on your hands or standing on your feet, balance is the same principle."
+   },
+   "subs": [
+    {
+     "id": "def1",
+     "start": 1,
+     "end": 19,
+     "appear_at_en_line": 1,
+     "lines": [
+      "瑜伽里的平衡，是清楚感知重力"
+     ],
+     "en": "Balance in yoga is clearly sensing gravity"
+    },
+    {
+     "id": "def2",
+     "start": 2.9,
+     "end": 19,
+     "appear_at_en_line": 3,
+     "lines": [
+      "由 bandha 引导"
+     ],
+     "en": "guided by bandha"
+    },
+    {
+     "id": "def3",
+     "start": 3.8,
+     "end": 19,
+     "appear_at_en_line": 4,
+     "lines": [
+      "控制身体在各个方向的移动"
+     ],
+     "en": "controlling the body's movement in every direction"
+    },
+    {
+     "id": "def4",
+     "start": 6.6,
+     "end": 19,
+     "appear_at_en_line": 7,
+     "lines": [
+      "不管是用手还是用脚"
+     ],
+     "en": "whether on your hands or on your feet"
+    }
+   ],
+   "caption": [
+    {
+     "zh": "用手撑还是用脚站，平衡都是一个道理。",
+     "en": "Holding yourself up on your hands or standing on your feet, balance is the same principle."
+    },
+    {
+     "zh": "瑜伽里的平衡，是清楚地感知重力，由 bandha 来引导。",
+     "en": "Balance in yoga is clearly sensing gravity, guided by bandha."
+    },
+    {
+     "zh": "身体不管往哪个方向移动，你都控制得住。",
+     "en": "Whichever direction your body shifts, you can keep it under control."
+    },
+    {
+     "zh": "Bandha（收束），就是下腹部轻轻往上提。",
+     "en": "Bandha (shoushu, the usual Chinese yoga word for it) is a gentle upward lift low in the belly."
+    },
+    {
+     "zh": "视频里，一位女生用双手倒立保持平衡，另一位单脚站立。",
+     "en": "In the video, one woman balances upside down on her hands, and another stands on one foot."
+    },
+    {
+     "zh": "这是曼谷 AYBKK 周五的 Mysore 课，老师是 Boonchu 和 Jamsai。",
+     "en": "This is a Friday Mysore class at AYBKK in Bangkok. The teachers are Boonchu and Jamsai."
+    },
+    {
+     "zh": "Mysore 课上，大家各练各的，按自己的节奏来。",
+     "en": "In a Mysore class, everyone does their own practice, at their own pace."
+    },
+    {
+     "zh": "老师会一个一个地帮助每个人。",
+     "en": "The teacher helps each person, one by one."
+    },
+    {
+     "zh": "#阿斯汤加 #阿斯汤加瑜伽 #瑜伽平衡 #迈索尔 #AYBKK",
+     "en": "#Ashtanga #AshtangaYoga #YogaBalance #Mysore #AYBKK"
+    },
+    {
+     "zh": "aybkk.net",
+     "en": "aybkk.net (website)"
+    }
+   ],
+   "notes": "FINAL REVIEW, REEL 1 (01_balance_CN). I merged A and B and changed some lines. Nothing has been posted. This is for Boonchu to check.\n\nON-SCREEN, WHERE EACH LINE COMES FROM AND WHY\n- Hook (top box, 0 to 19 s): A and B agreed, so I kept 用手撑还是用脚站 / 平衡都是一个道理. Each line is 8 characters, under the 12 limit, with no end punctuation. I took A's timing notes out of hook.en so it is only the back-translation. Unlike B, I did not repeat the hook as an entry in subs, because the editor would then burn it in twice. Burn the hook once, in the top box, from 0 to 19 s.\n- Definition, 4 lines tagged to English lines 1, 3, 4 and 7 (start times 1.0 / 2.9 / 3.8 / 6.6 s, all ending at 19 s). The times use the same even-typing model both translators used: 1.0 s + 0.93 s per English line. That way each line is one phrase and no verb is cut off from its object across a line break.\n  def1 瑜伽里的平衡，是清楚感知重力 (new). This joins English lines 1 and 2. It is 14 characters, exactly at the limit. The comma sits inside the line, and nothing ends the line. If the editor types it in over about 1.0 to 2.8 s, the second half arrives about when English line 2 did. A 13-character fallback is 瑜伽的平衡，是清楚感知重力.\n  def2 由 bandha 引导 (new as its own line). It starts at English line 3, the same time bandha appears in the English. This fixes A's def2 (是清楚感知重力，由 bandha 引导), which is about 15 wide counting bandha as about 3, so over the limit, and which also shows bandha about 1 s early.\n  def3 控制身体在各个方向的移动 (A's line, with 往……的 changed to 在……的, which is more standard). 11 characters. This avoids B's split 控制身体 / 往各个方向移动, where the verb and its object land on different lines.\n  def4 不管是用手还是用脚 (new). 9 characters. This is how people say \"on hands or on feet\" as a tag after the main sentence. It replaces A's 无论用手还是用脚 (a dangling 无论, which reads more formal) and B's 手脚都一样 (which adds \"the same\" and shows it about 2 s early).\n- Credit \"Friday / Mysore / @boonchutanti / @missjamsai\" is unchanged, with no Chinese.\n- Checks passed: bandha is in Latin letters on screen; no on-screen line ends with a comma or full stop; no em dash or long dash; no 姿势, 大师, 功夫 or 上床; no asana is named, because the English names none.\n\nPOST CAPTION CHANGES\n- Line 2 and 3: I split the long definition sentence in two. Line 2 says it plainly (由 bandha 来引导). Line 3 uses B's spoken 身体不管往哪个方向移动，你都控制得住 (\"whichever way your body shifts, you can keep it under control\") for \"with control over how your body shifts in every direction\".\n- Line 4: I kept A's gloss 收束 (the usual Chinese yoga term for bandha) in the caption only, as the brief allows. I kept A's 下腹部. I did not use B's 小腹下方, which can read as below the belly, i.e. the pelvic floor.\n- Line 6: 老师是 Boonchu 和 Jamsai. The repo lists Jamsai Tanti as an AYBKK teacher (public/bkk.html bio; bkk-api.js teacher rotation).\n- Line 7: 大家各练各的，按自己的节奏来 replaces 每个人按自己的节奏，做自己的练习, which reads like a translation.\n- Hashtags: 5 tags (#阿斯汤加 #阿斯汤加瑜伽 #瑜伽平衡 #迈索尔 #AYBKK; the topic tag is #瑜伽平衡) on the second-to-last line, so aybkk.net is the last line by itself. No trial offer and no call to comment.\n- Each English line under the Chinese is a back-translation of the Chinese as written, not of the original English.\n\nRISKS AND CHOICES FOR BOONCHU\n1. def1 is 14 characters, right at the limit. If it looks crowded in the burn, use the 13-character fallback.\n2. I added 曼谷 (Bangkok) in caption line 6. It is true (AYBKK is in Bangkok, and the reel brief says so), but the English caption does not say it. Delete it for a strictly literal version. It is not an offer.\n3. The English does not say whether both Boonchu and Jamsai taught that Friday. If not, use 和 Boonchu、Jamsai 一起 instead of 老师是.\n4. 各练各的 is casual. The more neutral option is 每个人按自己的节奏，做自己的练习.\n5. 重力 (gravity) is the literal word. Chinese teachers often say 重心 (centre of gravity) when they talk about balance. I kept 重力 to match the English. Boonchu can switch to 重心 if he prefers.\n6. I wrote 女生 (woman) for both people because the English does not say they are students. 每个人 is used for \"each person\"."
+  }
+ },
+ {
+  "id": "02_suptaurdhva",
+  "final": {
+   "hook": {
+    "lines": [
+     "这个体式够不到脚？",
+     "不是你手臂太短"
+    ],
+    "en": "Can't reach your feet in this asana? / It's not that your arms are too short"
+   },
+   "subs": [
+    {
+     "id": "S1",
+     "start": 0.56,
+     "end": 2.7,
+     "appear_at_en_line": 0,
+     "lines": [
+      "这个体式叫",
+      "Supta Urdhva Pada Vajrasana"
+     ],
+     "en": "This asana is called / Supta Urdhva Pada Vajrasana"
+    },
+    {
+     "id": "S1b",
+     "start": 2.7,
+     "end": 5.44,
+     "appear_at_en_line": 0,
+     "lines": [
+      "二序列快结束时会练到"
+     ],
+     "en": "You get to it near the end of the second series"
+    },
+    {
+     "id": "S2",
+     "start": 6.46,
+     "end": 10.54,
+     "appear_at_en_line": 0,
+     "lines": [
+      "躺下，同侧手从背后绕过去",
+      "抓住半 Padmasana 的那只脚"
+     ],
+     "en": "Lie down, the same-side hand reaches around behind your back / and grabs the foot that is in half Padmasana"
+    },
+    {
+     "id": "S3",
+     "start": 11.06,
+     "end": 12.68,
+     "appear_at_en_line": 0,
+     "lines": [
+      "另一只手再去抓另一只脚"
+     ],
+     "en": "Then the other hand goes to grab the other foot"
+    },
+    {
+     "id": "S4",
+     "start": 13.4,
+     "end": 17.62,
+     "appear_at_en_line": 0,
+     "lines": [
+      "吸气，屈膝",
+      "滚起来坐好，然后扭转"
+     ],
+     "en": "Inhale, bend the knees / roll up to sit, then twist"
+    },
+    {
+     "id": "S5",
+     "start": 18.46,
+     "end": 19.34,
+     "appear_at_en_line": 0,
+     "lines": [
+      "听着很简单吧？"
+     ],
+     "en": "Sounds simple, right?"
+    },
+    {
+     "id": "S6",
+     "start": 20.52,
+     "end": 23.96,
+     "appear_at_en_line": 0,
+     "lines": [
+      "有意思的是，我见过很多练习者",
+      "都完成不了这个体式"
+     ],
+     "en": "The interesting thing is, I've met many practitioners / who can't complete this asana"
+    },
+    {
+     "id": "S7",
+     "start": 24.76,
+     "end": 27.5,
+     "appear_at_en_line": 0,
+     "lines": [
+      "明明坐着、站着都能抓到脚"
+     ],
+     "en": "Even though they can clearly grab their foot sitting and standing"
+    },
+    {
+     "id": "S8",
+     "start": 27.5,
+     "end": 30.22,
+     "appear_at_en_line": 0,
+     "lines": [
+      "却突然说：我的手臂太短了"
+     ],
+     "en": "they suddenly say: my arms are too short"
+    },
+    {
+     "id": "S9",
+     "start": 31.22,
+     "end": 32.34,
+     "appear_at_en_line": 0,
+     "lines": [
+      "这到底是怎么回事？"
+     ],
+     "en": "So what is really going on?"
+    },
+    {
+     "id": "S10",
+     "start": 33.62,
+     "end": 34.88,
+     "appear_at_en_line": 0,
+     "lines": [
+      "这个体式你也觉得难吗？"
+     ],
+     "en": "Do you also find this asana hard?"
+    }
+   ],
+   "caption": [
+    {
+     "zh": "这个体式叫 Supta Urdhva Pada Vajrasana，在二序列（中级）快结束的地方。",
+     "en": "This asana is called Supta Urdhva Pada Vajrasana. It comes near the end of the second series (intermediate)."
+    },
+    {
+     "zh": "躺下，同侧的手从背后绕过去，抓住半 Padmasana 的那只脚。",
+     "en": "Lie down. The hand on the same side reaches around behind your back and holds the foot that is in half Padmasana."
+    },
+    {
+     "zh": "另一只手抓住另一只脚，然后滚起来坐好，再扭转。",
+     "en": "The other hand takes hold of the other foot, then you roll up to sit, and twist."
+    },
+    {
+     "zh": "Boonchu 老师见过很多学生，坐着、站着都能抓到脚。",
+     "en": "Teacher Boonchu has met many students who can grab their feet sitting and standing."
+    },
+    {
+     "zh": "可一到这个体式，他们就说：“我的手臂太短了。”",
+     "en": "But as soon as they get to this asana, they say: \"My arms are too short.\""
+    },
+    {
+     "zh": "其实问题不在手臂短。",
+     "en": "Actually, short arms are not the problem."
+    },
+    {
+     "zh": "这里面是有技巧的。",
+     "en": "There is a technique to it."
+    },
+    {
+     "zh": "这就是老师在垫子上会教你的那种细节。",
+     "en": "This is the kind of detail a teacher will teach you on the mat."
+    },
+    {
+     "zh": "#阿斯汤加 #阿斯汤加瑜伽 #二序列 #瑜伽体式 #AYBKK",
+     "en": "#Ashtanga #AshtangaYoga #SecondSeries #YogaAsana #AYBKK"
+    },
+    {
+     "zh": "aybkk.net",
+     "en": "aybkk.net (website)"
+    }
+   ],
+   "notes": "How I counted: one Chinese character or full-width punctuation mark = 1. One Latin letter or space = 0.5. Every on-screen line is 14 or under. Hook lines are 9 and 7 (limit 12).\n\nCHANGES, LINE BY LINE\nHook: line 1 is from A (够不到脚 matches \"reach\"). Line 2 is from B (不是你手臂太短). It speaks to the viewer and answers S8's complaint 我的手臂太短了 directly.\nS1: from B (这个体式叫 / name). A had 这是 alone on a line, which looked thin. The Sanskrit name gets its own line (about 13.5).\nS1b: new line, 二序列快结束时会练到 (10). A ended with 一个体式, which repeated 体式 straight after S1. B's 在二序列快结束的地方 has no verb and read like a fragment. The new line is honest to \"comes towards the end of the intermediate series\".\nS2: from B. It is clearer that the same-side hand binds the half Padmasana foot. Line 1 is 12, line 2 about 12.5. A's 同侧半 Padmasana 的脚 was compressed and could be read two ways.\nS3: from A plus 再 for \"then\": 另一只手再去抓另一只脚 (11).\nS4: from B. 屈膝 is the normal teacher cue and reads better than A's 弯曲膝盖.\nS5: changed to 听着很简单吧？ (7). The subtitle is only on screen for 0.88 s. A's 10 characters would be about 11 per second, too fast to read. B's 8 is right at the limit.\nS6: line break from B (subject on line 1, verb on line 2), with A's 有意思的是. Line 1 is exactly 14. A broke the noun phrase 我遇到的 / 很多练习者 across two lines. If 14 is too tight, use 有趣的是 instead (13).\nS7, S8, S9, S10: from A. For S10 I kept 觉得难 (\"find it hard\") instead of B's 卡在 (\"stuck\"), because \"struggle\" is broader than \"stuck\".\nCaption line 2: split into two lines with 同侧的手, to match the audio and S2.\nCaption line 8: I replaced A's line, because its English was not an honest back-translation. 要老师示范 means \"it NEEDS a teacher to show you\", which claims more than the source. I used B's wording, which says only that this is the kind of detail a teacher teaches on the mat.\nCaption: I dropped B's 你也卡在这个体式上吗？留言说说 (\"Stuck here too? Tell us in the comments\"). The source does not have it and Boonchu has not approved a call to action. Add it back only if he wants one.\nCaption: hashtags are on the second-to-last line and aybkk.net is the last line. There is no Bangkok trial offer and no comment call to action. #二序列 is the topic tag. #AYBKK stays in Latin letters, as in the house example.\n\nRULE CHECK\n- 体式 is used for every \"pose\" (hook, S1, S6, S10, caption). No 姿势, 大师, 功夫 or em dash anywhere.\n- No on-screen line ends with a comma or full stop. Only S5, S9 and S10 end with ？.\n- The colon in S8 is inside the line.\n- All times are kept as given.\n- 中级 is added once, in caption line 1 only.\n\nRISKS\n1) The 2.70 s split in S1 is an estimate (A and B both guessed). Before burning, snap it to the end of \"Vajrasana\" or the start of \"an\" in the English word captions.\n2) S4 leaves out the unclear words \"take the foot of straight legs\" on purpose. Only the certain part is subtitled: inhale, bend the knees, roll up to sit, twist. If an editor can hear those words clearly, the line can be revised.\n3) Reading speed is tight on the short subtitles: S9 is about 8 characters per second over 1.12 s, and S10 about 8.7 per second over 1.26 s. Both are within the usual 9-per-second limit. If Boonchu allows small timing changes, S5 could stay on screen until about 20.4 s, but I did not change any times.\n4) 半 Padmasana follows Boonchu's spoken \"half Padmasana\". The proper Sanskrit, Ardha Padmasana, would push S2 line 2 to about 15.5, over the limit.\n5) The hook (top) and S1 (bottom) both say 这个体式 between 0.56 and 2.70 s. This is a small repeat, but it reads as one idea: a question, then the name.\n6) The caption calls Boonchu 老师 in the third person, as the source does. Switch to 我 if the account posts in his voice.\n7) Nothing in the subtitles or caption describes the technique, because the video does not show it. 这里面是有技巧的 (\"there is a technique to it\") comes straight from the source caption."
+  }
+ },
+ {
+  "id": "03_galavasana",
+  "final": {
+   "hook": {
+    "lines": [
+     "这个高难度体式",
+     "靠的不是蛮力",
+     "少用力，多呼吸"
+    ],
+    "en": "This hard asana / is not about brute force / less force, more breath"
+   },
+   "subs": [
+    {
+     "id": "tw1",
+     "start": 1,
+     "end": 6.5,
+     "appear_at_en_line": 0,
+     "lines": [
+      "练高阶体式的秘诀",
+      "就是不要刻意去表现"
+     ],
+     "en": "The secret of practising advanced asanas / is to not deliberately try to perform"
+    },
+    {
+     "id": "tw2",
+     "start": 4.5,
+     "end": 6.5,
+     "appear_at_en_line": 0,
+     "lines": [
+      "但还有一件事"
+     ],
+     "en": "But there's one more thing"
+    },
+    {
+     "id": "label_d",
+     "start": 15,
+     "end": 21,
+     "appear_at_en_line": 0,
+     "lines": [
+      "二序列 + 三序列 口令课"
+     ],
+     "en": "Second series + third series, led class"
+    },
+    {
+     "id": "label_e",
+     "start": 24,
+     "end": 32,
+     "appear_at_en_line": 0,
+     "lines": [
+      "AYBKK 广州工作坊"
+     ],
+     "en": "AYBKK Guangzhou workshop"
+    }
+   ],
+   "caption": [
+    {
+     "zh": "这是 Galavasana，三序列（高级A）里的一个体式。",
+     "en": "This is Galavasana, an asana from the third series (Advanced A)."
+    },
+    {
+     "zh": "一排同学从头倒立落下进入体式，停留，再回到头倒立。",
+     "en": "A row of students comes down from headstand into the asana, holds, then goes back up to headstand."
+    },
+    {
+     "zh": "老话说得好：四两拨千斤。",
+     "en": "As the old saying goes: four ounces can deflect a thousand pounds."
+    },
+    {
+     "zh": "小小的巧劲，胜过很大的力气。",
+     "en": "A little clever force beats a lot of strength."
+    },
+    {
+     "zh": "高难度体式也是这个道理。",
+     "en": "Hard asanas follow the same principle."
+    },
+    {
+     "zh": "靠的是你的关节和呼吸，不是蛮力。",
+     "en": "It relies on your joints and your breath, not brute force."
+    },
+    {
+     "zh": "这段是在我们广州工作坊的口令课上拍的。",
+     "en": "This was filmed in a led class at our Guangzhou workshop."
+    },
+    {
+     "zh": "口令课上，老师报数，所有人跟着同一个呼吸一起动。",
+     "en": "In a led class the teacher calls the count, and everyone moves together on the same breath."
+    },
+    {
+     "zh": "没有人一开始就练这个。",
+     "en": "Nobody practises this at the very start."
+    },
+    {
+     "zh": "从一序列开始，一天一天练上来。",
+     "en": "You start from the first series and build up, one day at a time."
+    },
+    {
+     "zh": "#阿斯汤加 #阿斯汤加瑜伽 #AYBKK #四两拨千斤 #口令课",
+     "en": "#Ashtanga #AshtangaYoga #AYBKK #FourOuncesDeflectAThousandPounds #LedClass"
+    },
+    {
+     "zh": "aybkk.net",
+     "en": "aybkk.net"
+    }
+   ],
+   "notes": "Final reviewer, reel 3 (Galavasana, 36.4 s). This is a merge of A and B with a few new lines. I kept all the timings from the brief.\n\nHOOK (top box, 0 to 7.5 s)\n- Lines 1 and 2 are from A (这个高难度体式 / 靠的不是蛮力), at 7 and 6 characters. They follow the English sentence more closely and read faster than B's split (这个体式很难 / 但靠的不是蛮力), which adds a 但 that isn't in the English.\n- Line 3 is new: 少用力，多呼吸 (7 characters). A's 少一点用力，多一点呼吸 (11) is correct but too long for a hook. B's 少使劲 is fine but more northern and colloquial. 用力 reads the same everywhere. Like B, I avoided 推, which on this channel means \"push the floor away\".\n- No line ends in punctuation. The comma inside line 3 is allowed.\n- I left 四两拨千斤 out of the hook to stay faithful to the on-screen English. If Boonchu wants it on screen, a tested option is 四两拨千斤 / 这个体式不靠蛮力 / 少用力，多呼吸 (5, 8, 7 characters).\n\nTYPEWRITER (tw1 1.0 to 6.5 s, tw2 4.5 to 6.5 s, stacked like the English build)\n- tw1 line 1 is new: 练高阶体式的秘诀 (8). 高阶体式 is the usual way Chinese yoga practitioners say \"advanced asanas\". It also stops 高级 here from being confused with the 高级A series name in the caption. A used 高阶 and B used 高级.\n- tw1 line 2 is from A: 就是不要刻意去表现 (9). 刻意 carries \"try to\". 表现 covers both readings of \"perform\" (\"show off\" and \"strive to achieve it\"). B's 表演 leans only toward \"putting on a show\". Risk: if Boonchu meant only \"don't strive\", use 就是不要刻意去完成.\n- tw2 is from A: 但还有一件事 (\"but there's one more thing\"). It's a more natural teaser than B's 但还有别的, which sounds unfinished in a flat way. The ending stays open and nothing answers it.\n- The English trailing \"..\" is dropped, because of the line-end punctuation rule.\n- Layout risk: from 1.0 to 6.5 s the 3-line hook box and up to 3 typewriter lines are on screen together, which is 6 Chinese lines. The typewriter lines should sit over the English typewriter area and must not touch the hook box. If it looks crowded, end tw1 at 4.5 s so that only tw2 shows from 4.5 to 6.5 s.\n\nLABELS\n- label_d is 二序列 + 三序列 口令课 (about 10 characters). This changes A's 引导课 to B's 口令课, the standard term in mainland Ashtanga studios (paired with 迈索尔 for Mysore). I used it in the label, the caption and a hashtag. I didn't add 中级/高级, to keep the label short.\n- label_e is AYBKK 广州工作坊. Both translators had this.\n- The Galavasana label (8 to 14.5 s) has no Chinese and no sub entry, so the name isn't burned twice. The @boonchutanti and @missjamsai stickers are left alone. The teacher's count has no words to subtitle.\n\nPOST CAPTION (line by line)\n1. Taken from B's structure with 一个 added: 这是 Galavasana，三序列（高级A）里的一个体式. This reads more naturally than A's 出自. 高级A appears once, in brackets.\n2. One sentence: 一排同学…停留，再回到头倒立. I used 同学 rather than 学员, because it is warmer and is how Chinese studio teachers refer to students. 停留 is the standard yoga word for \"hold\". \"Lifts back up\" is rendered 回到头倒立, back-translated honestly as \"goes back up to headstand\". I didn't write Sirsasana, because the English doesn't name the headstand variation (in Advanced A it may be Sirsasana II).\n3. B's 老话说得好. Chinese readers don't need \"中国有句老话\", which sounds like it's explaining China to foreigners.\n4. New: 小小的巧劲，胜过很大的力气. 巧劲 is the natural spoken word for \"smart force\". A's 小而巧的力，胜过大力 sounds stiff, and B's 一身蛮力 overstates \"a big one\" and repeats 蛮力 from line 6.\n5. A's 高难度体式也是这个道理.\n6. Both translators had this: 靠的是你的关节和呼吸，不是蛮力. It is straight from the source.\n7. A's spoken form, changed to 口令课.\n8. 老师报数 is new. 报数 is the natural phrase for calling the count. A's 数口令 is an odd collocation, and B's 数数 sounds childish.\n9. B's 没有人一开始就练这个. It is more spoken than A's line and means the same.\n10. 从一序列开始，一天一天练上来. This is A's version with the subject left out, which is natural in Chinese and implies a general \"you\". B's 慢慢 was dropped as padding that isn't in the source.\n11. 5 hashtags: #阿斯汤加 #阿斯汤加瑜伽 #AYBKK #四两拨千斤 (topic) #口令课.\n12. The last line is aybkk.net only.\n- The caption uses normal Chinese punctuation, because the no-end-punctuation rule applies only to on-screen lines.\n\nCHECKS\n- No em dash or long dash anywhere.\n- 体式 throughout, never 姿势.\n- No 大师 or 功夫.\n- Sanskrit name in Latin letters.\n- Every on-screen line is within the limit: hook 12 characters or fewer, subtitles 14 or fewer, 2 lines or fewer per subtitle.\n- No on-screen line ends in a comma or full stop.\n- No Bangkok trial offer, no price, and no comment call to action.\n- No facts, numbers or quotes beyond the English source. Galavasana being in Advanced A and the entry from headstand match the house rules and the Ashtanga sequence.\n- Every English line under the caption is a back-translation of the Chinese chosen, not of the source."
+  }
+ }
+]
