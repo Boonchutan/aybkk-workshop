@@ -1704,11 +1704,11 @@ const ok = (name, cond, extra = '') => {
     const envWas = Object.fromEntries(Object.keys(R2ENV).map(k => [k, process.env[k]]));
     let poolHook = null;                 // (sql, params) => a promise instead of the real query, or null
     const hookedPool = { query: (sql, p) => (poolHook && poolHook(sql, p)) || pool.query(sql, p), connect: (...a) => pool.connect(...a) };
-    const mountR = async (pg = pool) => {
+    const mountR = async (pg = pool, extra = {}) => {
       Object.assign(process.env, R2ENV);
       const a = express();
       a.use(express.json({ limit: '10mb' }));
-      const api = await mountBkk(a, { pgPool: pg, now, cloudinary: cloudR, fetch: fetchR, r2Endpoint: R2_URL });
+      const api = await mountBkk(a, { pgPool: pg, now, cloudinary: cloudR, fetch: fetchR, r2Endpoint: R2_URL, ...extra });
       for (const [k, v] of Object.entries(envWas)) { if (v === undefined) delete process.env[k]; else process.env[k] = v; }
       const s = a.listen(0);
       return { api, s, base: `http://127.0.0.1:${s.address().port}` };
@@ -1754,8 +1754,8 @@ const ok = (name, cond, extra = '') => {
        noMeta(v1.body) && noMeta(t1.body) && !jpegApp1(v1.body) && !(await exifr.parse(v1.body).catch(() => null)) && v1.body.length < 3e6,
        JSON.stringify([v1.body.length, t1.body.length]));
     const meterR = await JR('/api/bkk/teacher/photos/meter', { headers: PKEY });
-    ok('no daily cap with R2 on, even at 141% of Cloudinary and a cap of 1: the meter says R2, the percent kept for information',
-       d1.status === 200 && meterR.body.store === 'r2' && meterR.body.capOn === false && meterR.body.percent === 141.2 && meterR.body.cap === 1, JSON.stringify(meterR.body));
+    ok('no daily cap with R2 on, even with Cloudinary at 141% and a cap of 1: the meter says R2, with no Cloudinary percent (it is not asked)',
+       d1.status === 200 && meterR.body.store === 'r2' && meterR.body.capOn === false && meterR.body.percent === null && meterR.body.cap === 1, JSON.stringify(meterR.body));
     const dH = await postR('/api/bkk/teacher/photos/from-drive', { ...DRV, driveId: 'R2HEICaaaaaaaaaaaaaaaaaaa', tags: [] });
     const dG = await postR('/api/bkk/teacher/photos/from-drive', { ...DRV, driveId: 'R2HUGEaaaaaaaaaaaaaaaaaaa', tags: [] });
     const rowH = dH.body.photo && await keysOf(dH.body.photo.id), rowG = dG.body.photo && await keysOf(dG.body.photo.id);
@@ -2080,6 +2080,8 @@ const ok = (name, cond, extra = '') => {
     const pending = (await (await fetch(BR2 + '/api/bkk/admin/photo-store', { headers: ADMIN })).json()).left;
     await R2b.api.photoSweep();
     const delMoved = await fetch(`${BR2}/api/bkk/teacher/photos/${m2}/delete`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...PKEY }, body: '{}' });
+    // Its Cloudinary copy goes in the background, just after the answer.
+    for (let i = 0; i < 40 && await orphanOf('aybkk/profile/2026-09-20/mig2'); i++) await new Promise(r => setTimeout(r, 25));
     ok('a moved photo keeps its Cloudinary copy for a day (Admin counts them); a staff delete removes it at once with both R2 copies',
        pending.cloudinary === 6 && !destroyedR.some(d => d.id !== 'aybkk/profile/2026-09-20/mig2') && delMoved.status === 200
          && JSON.stringify(destroyedR) === JSON.stringify([{ id: 'aybkk/profile/2026-09-20/mig2', type: 'authenticated', invalidate: true }])
@@ -2494,6 +2496,124 @@ const ok = (name, cond, extra = '') => {
     ok('a teacher delete of a photo still on Cloudinary that Cloudinary refuses: the row goes, the copy is noted, and the sweep removes it later',
        td.status === 200 && td.body.success === true && tdNoted && destroyed.some(d => d.id === tdPid)
          && !(await pool.query(`SELECT 1 FROM bkk_photo_orphans WHERE ref=$1`, [tdPid])).rows.length, JSON.stringify([td.body, tdNoted]));
+
+    // Start pressed in the first seconds after a server start, before that start has stopped the move from before it:
+    // Start waits for that stop, so the move it starts holds. The start's stop is held here until Start is pressed.
+    await pool.query(`INSERT INTO bkk_settings (key, value, updated_at) VALUES ('photo_r2_move', $1::jsonb, now())
+      ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`, [JSON.stringify({ on: true, fast: false, after: 0, moved: 0, startedAt: '2026-11-25T00:00:00.000Z' })]);
+    let letStop, stopAsked;
+    const stopHeld = new Promise(r => { letStop = r; }), stopReached = new Promise(r => { stopAsked = r; });
+    poolHook = (sql, p) => /"restarted": true\}'::jsonb/.test(sql) ? (stopAsked(), stopHeld.then(() => pool.query(sql, p))) : null;
+    Object.assign(process.env, R2ENV);
+    const aS = express();
+    aS.use(express.json());
+    const bootS = mountBkk(aS, { pgPool: hookedPool, now, cloudinary: cloudR, fetch: fetchR, r2Endpoint: R2_URL });
+    const sS = aS.listen(0);
+    const early = fetch(`http://127.0.0.1:${sS.address().port}/api/bkk/admin/photo-store/move`, { method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...ADMIN }, body: JSON.stringify({ on: true }) }).then(async r => ({ status: r.status, body: await r.json() }));
+    await Promise.race([stopReached, new Promise(r => setTimeout(r, 5000))]);
+    const first = await Promise.race([early.then(() => 'answered'), new Promise(r => setTimeout(() => r('waiting'), 300))]);
+    letStop();
+    const startS = await early;
+    await bootS;
+    for (const [k, v] of Object.entries(envWas)) { if (v === undefined) delete process.env[k]; else process.env[k] = v; }
+    poolHook = null;
+    sS.close();
+    const moveS = (await pool.query(`SELECT value FROM bkk_settings WHERE key='photo_r2_move'`)).rows[0].value;
+    ok("Start pressed right after a server start waits for that start's stop of the earlier move, then holds: the move it starts stays on",
+       first === 'waiting' && startS.status === 200 && startS.body.move.on === true && moveS.on === true && moveS.restarted === false,
+       JSON.stringify([first, startS.status, moveS]));
+    await pool.query(`DELETE FROM bkk_settings WHERE key='photo_r2_move'`);
+
+    // Cloudinary closed (29 Nov 2026) and hanging. Each Cloudinary delete gives up after a time limit (10 s; 150 ms on this
+    // server), and nothing a teacher or a student does waits on one. A request that does is cut off here after 4 s.
+    const RH = await mountR(pool, { cloudWaitMs: 150 });
+    const postH = (path, body, h = PKEY) => fetch(RH.base + path, { method: 'POST', headers: { 'Content-Type': 'application/json', ...h },
+      body: JSON.stringify(body), signal: AbortSignal.timeout(4000) }).then(async r => ({ status: r.status, body: await r.json() }), e => ({ status: 0, body: { error: e.name } }));
+    const timed = async f => { const t = Date.now(), r = await f(); return { ...r, ms: Date.now() - t }; };
+    const within = (p, ms = 5000) => Promise.race([p, new Promise(r => setTimeout(r, ms))]);
+    const destroyOk = cloudR.uploader.destroy, usageOk = cloudR.api.usage;
+    let hungN = 0, usageN = 0;
+    const hang = () => { cloudR.uploader.destroy = () => { hungN++; return new Promise(() => {}); }; };
+    cloudR.api.usage = () => { usageN++; return new Promise(() => {}); };
+    const mH = await timed(() => fetch(RH.base + '/api/bkk/teacher/photos/meter', { headers: PKEY, signal: AbortSignal.timeout(4000) })
+      .then(async r => ({ status: r.status, body: await r.json() }), e => ({ status: 0, body: { error: e.name } })));
+    cloudR.api.usage = usageOk;
+    ok('Cloudinary hanging: the /photos meter with R2 on answers at once and never asks Cloudinary: R2, no limit, no Cloudinary percent',
+       mH.status === 200 && mH.ms < 2000 && usageN === 0 && mH.body.store === 'r2' && mH.body.percent === null && mH.body.capOn === false,
+       JSON.stringify([mH, usageN]));
+    // A teacher deletes a moved photo whose Cloudinary copy a fast move kept, and one still on Cloudinary.
+    const k1row = await keysOf(m1);
+    await pool.query(`INSERT INTO bkk_photo_orphans (store, ref, not_before) VALUES ('cloudinary', $1, 'infinity')
+      ON CONFLICT (store, ref) DO UPDATE SET not_before = 'infinity'`, [k1row.public_id]);
+    const onCloud = await mk('aybkk/profile/2026-09-20/hang1', null, null);
+    hang();
+    const delM = await timed(() => postH(`/api/bkk/teacher/photos/${m1}/delete`, {}));
+    const delC = await timed(() => postH(`/api/bkk/teacher/photos/${onCloud}/delete`, {}));
+    const dueOf = ref => pool.query(`SELECT not_before <= now() AS due FROM bkk_photo_orphans WHERE store='cloudinary' AND ref=$1`, [ref]).then(r => r.rows[0]);
+    const [dueM, dueC] = [await dueOf(k1row.public_id), await dueOf('aybkk/profile/2026-09-20/hang1')];
+    ok('Cloudinary hanging: a teacher delete of a moved photo, and of one still on Cloudinary, answers at once as before; each Cloudinary copy is noted, due now',
+       k1row.store === 'r2' && delM.status === 200 && delM.body.success === true && delC.status === 200 && delC.body.success === true
+         && delM.ms < 2000 && delC.ms < 2000 && !(await keysOf(m1)) && !(await keysOf(onCloud)) && objs(k1row).every(o => !o)
+         && !!dueM && dueM.due === true && !!dueC && dueC.due === true && hungN === 2, JSON.stringify([delM, delC, dueM, dueC, hungN]));
+    cloudR.uploader.destroy = destroyOk;
+    const dD = destroyedR.length;
+    await within(RH.api.photoSweep());
+    ok('...and once Cloudinary answers again the sweep removes both copies',
+       [k1row.public_id, 'aybkk/profile/2026-09-20/hang1'].every(id => destroyedR.slice(dD).some(d => d.id === id))
+         && !(await dueOf(k1row.public_id)) && !(await dueOf('aybkk/profile/2026-09-20/hang1')), JSON.stringify(destroyedR.slice(dD)));
+    // A face still on Cloudinary (the move failed on it or passed it over): a new face over it, or removing it.
+    const fq1 = await quickAdd({ name: 'Quade Hangface', email: 'quade.hangface@example.com' }, PKEY);
+    const fq2 = await quickAdd({ name: 'Quella Hangface', email: 'quella.hangface@example.com' }, PKEY);
+    const [cf1, cf2] = [`aybkk-profile/${hex()}`, `aybkk-profile/${hex()}`];
+    await pool.query(`UPDATE bkk_members SET photo_id = CASE code WHEN $1 THEN $3 ELSE $4 END, photo_at = now() WHERE code IN ($1, $2)`, [fq1.code, fq2.code, cf1, cf2]);
+    hang();
+    const upF = await timed(() => postH(`/api/bkk/me/${fq1.code}/photo`, { imageBase64: portraitUrl }, {}));
+    const rmF = await timed(() => postH(`/api/bkk/me/${fq2.code}/photo/remove`, {}, {}));
+    const facesNoted = async () => (await pool.query(`SELECT photo_id FROM bkk_face_orphans WHERE photo_id = ANY($1::text[]) ORDER BY photo_id`, [[cf1, cf2]])).rows.map(r => r.photo_id);
+    const notedF = await facesNoted();
+    ok('Cloudinary hanging: a new face over one still on Cloudinary, and removing one, answer at once as before; the old ones are noted to delete',
+       upF.status === 200 && upF.body.success === true && /^r2face\//.test(await rowF(fq1.code)) && rmF.status === 200 && rmF.body.photo === null
+         && !(await rowF(fq2.code)) && upF.ms < 2000 && rmF.ms < 2000 && JSON.stringify(notedF) === JSON.stringify([cf1, cf2].sort()),
+       JSON.stringify([upF.status, upF.ms, rmF, notedF]));
+    cloudR.uploader.destroy = destroyOk;
+    const dF = destroyedR.length;
+    // A delete still in hand (given up on after the time limit) is left to the face sweep after that.
+    for (let i = 0; i < 20 && (await facesNoted()).length; i++) { await within(RH.api.faceSweep()); await new Promise(r => setTimeout(r, 50)); }
+    ok('...and the face sweep removes them from Cloudinary once it answers again',
+       [cf1, cf2].every(id => destroyedR.slice(dF).some(d => d.id === id)) && !(await facesNoted()).length, JSON.stringify(destroyedR.slice(dF)));
+    // The face sweep gives up on a hanging delete after the time limit, and runs once at a time.
+    const cf3 = `aybkk-profile/${hex()}`;
+    await pool.query(`INSERT INTO bkk_face_orphans (photo_id) VALUES ($1)`, [cf3]);
+    hang();
+    const fsA = RH.api.faceSweep(), fsB = RH.api.faceSweep();
+    const fsDone = await Promise.race([fsA.then(() => 'done'), new Promise(r => setTimeout(() => r('hung'), 3000))]);
+    const triesF = (await pool.query('SELECT tries FROM bkk_face_orphans WHERE photo_id=$1', [cf3])).rows[0];
+    ok('Cloudinary hanging: a face sweep gives up on the delete after the time limit and keeps it for later; a second call while it runs joins it',
+       fsA === fsB && fsDone === 'done' && !!triesF && triesF.tries === 2, JSON.stringify([fsA === fsB, fsDone, triesF]));
+    // A photo sweep with many Cloudinary copies due (as after "Remove the Cloudinary copies") and one R2 copy after them.
+    const dueRefs = Array.from({ length: 25 }, (_, i) => `aybkk/profile/2026-09-21/hangsweep${String(i).padStart(2, '0')}`);
+    await pool.query(`INSERT INTO bkk_photo_orphans (store, ref, not_before) SELECT 'cloudinary', r, '-infinity' FROM unnest($1::text[]) r`, [dueRefs]);
+    const r2Orph = r2lib.objectKey('2026-09-21', hex(), 'v');
+    store.set(r2Orph, { body: Buffer.from('left over'), type: 'image/jpeg' });
+    await pool.query(`INSERT INTO bkk_photo_orphans (store, ref, not_before) VALUES ('r2', $1, now() - interval '1 minute')`, [r2Orph]);
+    const hungAt = hungN, tSw = Date.now();
+    const swept = await Promise.race([RH.api.photoSweep().then(() => 'done'), new Promise(r => setTimeout(() => r('hung'), 5000))]);
+    const sweepMs = Date.now() - tSw;
+    const triesC = (await pool.query(`SELECT tries FROM bkk_photo_orphans WHERE store='cloudinary' AND ref = ANY($1::text[])`, [dueRefs])).rows.map(r => r.tries);
+    ok('Cloudinary hanging: a sweep stops asking it after 10 failures in a row (its other copies wait for the next pass, tries kept) and still removes the R2 copy',
+       swept === 'done' && sweepMs < 4000 && hungN - hungAt === 10 && triesC.length === 25 && triesC.filter(t => t === 1).length === 10
+         && triesC.filter(t => t === 0).length === 15 && !store.has(r2Orph)
+         && !(await pool.query(`SELECT 1 FROM bkk_photo_orphans WHERE store='r2' AND ref=$1`, [r2Orph])).rows.length,
+       JSON.stringify([swept, sweepMs, hungN - hungAt, triesC]));
+    cloudR.uploader.destroy = destroyOk;
+    await within(RH.api.photoSweep());
+    await within(RH.api.faceSweep());
+    ok('...once Cloudinary answers again, the next sweeps remove them all',
+       !(await pool.query(`SELECT 1 FROM bkk_photo_orphans WHERE ref = ANY($1::text[])`, [dueRefs])).rows.length
+         && !(await pool.query('SELECT 1 FROM bkk_face_orphans WHERE photo_id=$1', [cf3])).rows.length);
+    RH.s.close();
+    await pool.query(`UPDATE bkk_members SET photo_id=NULL, photo_at=NULL WHERE code = ANY($1::text[])`, [[fq1.code, fq2.code]]);
     R2b.s.close();
     await pool.query(`UPDATE bkk_photos SET store='cloudinary', r2_key=NULL WHERE id = ANY($1::int[])`, [parked]);
     await pool.query(`DELETE FROM bkk_photos WHERE id = ANY($1::int[])`, [[m1, m2, m3, m4, m5, m6, d1.body.photo.id, dH.body.photo.id, dG.body.photo.id, annOld.body.photo.id]]);

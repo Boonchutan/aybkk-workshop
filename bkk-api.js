@@ -7730,8 +7730,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     return typeof v === 'number' || /^\d+$/.test(String(v)) ? Math.max(0, Math.floor(Number(v))) : PHOTO_CAP_DEFAULT;
   };
   async function photoMeter() {
-    const [u, cap, today] = await Promise.all([cloudUsage(), photosCap(), photosToday()]);
-    // With R2 on, new photos never go to Cloudinary: no limit, and the percent is for faces and older photos.
+    // With R2 on, new photos never go to Cloudinary: no limit, and Cloudinary (closed 29 Nov 2026, it can hang) is not asked.
+    const [u, cap, today] = await Promise.all([r2 ? null : cloudUsage(), photosCap(), photosToday()]);
     return { percent: u ? u.percent : null, used: u ? u.used : null, limit: u ? u.limit : null,
       cap, today, capOn: !r2 && !!u && u.percent >= PHOTO_CAP_AT && cap > 0, ...(r2 ? { store: 'r2' } : {}) };
   }
@@ -8093,16 +8093,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (p.store === 'r2') {
         await r2Drop(p.day, p.r2_key);
         // Moved from Cloudinary: its copy there was to go a day after the move. Deleted, it goes now.
-        if (!p.public_id.startsWith('r2/')) {
-          await q(await cloudGone(p.public_id) ? `DELETE FROM bkk_photo_orphans WHERE store='cloudinary' AND ref=$1`
-            : `INSERT INTO bkk_photo_orphans (store, ref) VALUES ('cloudinary', $1) ON CONFLICT (store, ref) DO UPDATE SET not_before = now()`,
-          [p.public_id]).catch(e => console.error('[bkk photos] Cloudinary copy not noted for later:', e.message));
-        }
-      } else if (!await cloudGone(p.public_id)) {
-        // Not destroyed (Cloudinary down or refusing): noted, so the sweep removes it later.
-        await q(`INSERT INTO bkk_photo_orphans (store, ref) VALUES ('cloudinary', $1) ON CONFLICT (store, ref) DO UPDATE SET not_before = now()`,
-          [p.public_id]).catch(e => console.error('[bkk photos] Cloudinary copy not noted for later:', e.message));
-      }
+        if (!p.public_id.startsWith('r2/')) await cloudLater(p.public_id);
+      } else await cloudLater(p.public_id);
       res.json({ success: true });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
@@ -8293,23 +8285,40 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // working until then; one staff delete goes at once), an R2 copy R2 or the
   // database could not drop at once. Never one a row still points at. Tried at
   // boot, each day and after each move step, until it goes.
+  // Cloudinary closed on 29 Nov 2026, and a closed account can hang: each delete there gives up after CLOUD_WAIT_MS.
+  const CLOUD_WAIT_MS = Number(opts.cloudWaitMs) || 10000, CLOUD_FAILS_MAX = 10;
+  const cloudDestroy = id => {
+    let timer;
+    return Promise.race([cloudinary.uploader.destroy(id, { type: 'authenticated', invalidate: true }),
+      new Promise((_, no) => { timer = setTimeout(() => no(new Error('Cloudinary did not answer')), CLOUD_WAIT_MS); timer.unref(); })])
+      .finally(() => clearTimeout(timer));
+  };
   const cloudGone = async id => {
     try {
-      const d = cloudinary && await cloudinary.uploader.destroy(id, { type: 'authenticated', invalidate: true });
+      const d = cloudinary && await cloudDestroy(id);
       return !!d && ['ok', 'not found'].includes(d.result);
     } catch (e) { return false; }
+  };
+  // A staff delete: noted as due now, then tried in the background, so the answer never waits on Cloudinary.
+  const cloudLater = async id => {
+    await q(`INSERT INTO bkk_photo_orphans (store, ref) VALUES ('cloudinary', $1) ON CONFLICT (store, ref) DO UPDATE SET not_before = now()`,
+      [id]).catch(e => console.error('[bkk photos] Cloudinary copy not noted for later:', e.message));
+    cloudGone(id).then(gone => gone && q(`DELETE FROM bkk_photo_orphans WHERE store='cloudinary' AND ref=$1`, [id])).catch(() => {});
   };
   let sweeping = null;
   const sweepPhotos = () => sweeping || (sweeping = (async () => {
     try {
       const due = (await q(`SELECT store, ref FROM bkk_photo_orphans WHERE not_before <= now() ORDER BY not_before LIMIT 5000`)).rows;
+      let fails = 0;                     // Cloudinary failing that many in a row: its other rows wait for the next pass, R2's still go
       for (const o of due) {
+        if (o.store !== 'r2' && fails >= CLOUD_FAILS_MAX) continue;
         // A face's file (face/<at>/<kind>.jpg) or Cloudinary copy is in use while a member points at it.
         const r2o = o.store === 'r2', face = r2o ? o.ref.startsWith('face/') : o.ref.startsWith(`${FACE_FOLDER}/`);
         const [sql, arg] = face ? ['SELECT 1 FROM bkk_members WHERE photo_id=$1', r2o ? `${FACE_R2}/${o.ref.split('/').slice(1, -1).join('/')}` : o.ref]
           : r2o ? ['SELECT 1 FROM bkk_photos WHERE r2_key=$1', o.ref.split('/')[2]] : [`SELECT 1 FROM bkk_photos WHERE public_id=$1 AND store='cloudinary'`, o.ref];
         const used = (await q(sql, [arg])).rows.length > 0;
         const gone = used || (o.store === 'r2' ? !!r2 && await r2.del(o.ref).then(() => true, () => false) : await cloudGone(o.ref));
+        if (!r2o && !used) fails = gone ? 0 : fails + 1;
         await q(gone ? 'DELETE FROM bkk_photo_orphans WHERE store=$1 AND ref=$2'
           : 'UPDATE bkk_photo_orphans SET tries = tries + 1 WHERE store=$1 AND ref=$2', [o.store, o.ref]);
       }
@@ -8493,6 +8502,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         clearTimeout(moveTimer);
         return res.json({ move: await moveState() });
       }
+      await bootStopped;                             // Start in the first seconds after a server start: the start's stop first
       if (moving) await moving.catch(() => {});      // a step Stop did not wait for: its place first
       const s = await moveState();
       if (s.on && s.fast !== fast) return res.status(409).json({ error: 'The move is running the other way: stop it first.', move: s });
@@ -8527,8 +8537,11 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   });
   // A server start stops a move staff started: it never runs by itself (a copy of
   // this database on another server would move and remove photos with nobody there).
+  // Only one from before this start: Start waits for bootStopped, settled once this has run or the boot failed.
+  let bootStopDone;
+  const bootStopped = new Promise(ok => { bootStopDone = ok; });
   const moveStopAtBoot = () => q(`UPDATE bkk_settings SET value = value || '{"on": false, "restarted": true}'::jsonb, updated_at = now()
-    WHERE key = $1 AND value->>'on' = 'true'`, [MOVE_KEY]).catch(e => console.error('[bkk photos] move not stopped at start:', e.message));
+    WHERE key = $1 AND value->>'on' = 'true'`, [MOVE_KEY]).catch(e => console.error('[bkk photos] move not stopped at start:', e.message)).finally(bootStopDone);
 
   // ── the student's own face (Boonchu, 9 Nov 2026) ──────────────────────────
   // One square photo per student, for the round account button and for staff
@@ -8582,7 +8595,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   const destroyFace = async id => {
     try {
       if (!cloudinary) throw new Error('photo storage not configured');
-      const r = await cloudinary.uploader.destroy(id, { type: 'authenticated', invalidate: true });
+      const r = await cloudDestroy(id);
       if (r && r.error) throw new Error(r.error.message || String(r.error));
       return true;
     } catch (e) {
@@ -8598,11 +8611,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         .catch(e => console.error('[bkk face] R2 copy not noted for later:', e.message));
     }
   };
-  // A photo that could not be deleted (Cloudinary down or not set up) waits in
-  // bkk_face_orphans and is tried again at boot, once a day and after the next
-  // photo is stored, so a removed or replaced face never stays in storage for good.
+  // A photo on Cloudinary is noted in bkk_face_orphans, then deleted in the background;
+  // if that fails (Cloudinary down or not set up) the note stays and it is tried again at
+  // boot, once a day and after the next photo is stored, so a removed or replaced face
+  // never stays in storage for good.
   // A face the student removed or replaced that had moved to R2: its Cloudinary
   // copy, kept since the move (bkk_photo_orphans, not_before infinity), goes now too.
+  const faceGoing = new Set();           // deletes dropFace has started: the sweep leaves them (never asked twice)
   const dropFace = async id => {
     if (inR2(id)) {
       await dropR2Face(id);
@@ -8614,10 +8629,11 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       }
       return;
     }
-    if (await destroyFace(id)) return;
-    await q(`INSERT INTO bkk_face_orphans (photo_id) VALUES ($1)
-             ON CONFLICT (photo_id) DO UPDATE SET tries = bkk_face_orphans.tries + 1`, [id])
+    faceGoing.add(id);
+    await q(`INSERT INTO bkk_face_orphans (photo_id) VALUES ($1) ON CONFLICT (photo_id) DO NOTHING`, [id])
       .catch(e => console.error(`[bkk face] could not note ${id} to delete later:`, e.message));
+    destroyFace(id).then(gone => gone && q('DELETE FROM bkk_face_orphans WHERE photo_id=$1', [id])).catch(() => {})
+      .finally(() => faceGoing.delete(id));
   };
   // The files of an upload or a move that did not switch in. Only this try's own (its at is
   // new), and never while a row points at them: the database may have taken a write whose
@@ -8634,18 +8650,19 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     for (const k of FACE_KINDS) await r2.put(r2lib.faceKey(faceAt(id), k), made[k], 'image/jpeg');
     for (const k of FACE_KINDS) await r2Holds(r2lib.faceKey(faceAt(id), k), made[k], 'face');
   };
-  const sweepFaces = async () => {
+  let faceSweeping = null;
+  const sweepFaces = () => faceSweeping || (faceSweeping = (async () => {
     if (!cloudinary) return;
     try {
       const left = (await q(`SELECT photo_id FROM bkk_face_orphans
-        WHERE photo_id NOT IN (SELECT photo_id FROM bkk_members WHERE photo_id IS NOT NULL)
-        ORDER BY since LIMIT 100`)).rows;
+        WHERE photo_id NOT IN (SELECT photo_id FROM bkk_members WHERE photo_id IS NOT NULL) AND photo_id <> ALL($1::text[])
+        ORDER BY since LIMIT 100`, [[...faceGoing]])).rows;
       for (const { photo_id: id } of left) {
         await q(await destroyFace(id) ? 'DELETE FROM bkk_face_orphans WHERE photo_id=$1'
           : 'UPDATE bkk_face_orphans SET tries = tries + 1 WHERE photo_id=$1', [id]);
       }
     } catch (e) { console.error('[bkk face] sweep failed:', e.message); }
-  };
+  })().finally(() => { faceSweeping = null; }));
   setInterval(sweepFaces, 24 * 3600 * 1000).unref();
   // Swaps the member's photo in one statement and returns the one it replaced,
   // so two uploads at once each delete the right old asset.
@@ -9459,7 +9476,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       sweepPhotos();
       return Promise.all([moveStopAtBoot(), switchPrices().catch(e => console.error('✗ bkk: price switch failed:', e.message))]);
     })
-    .catch(e => console.error('✗ bkk-api schema init failed:', e.message))
+    .catch(e => { console.error('✗ bkk-api schema init failed:', e.message); bootStopDone(); })
     .then(() => ({ paySweep, moneyTick, moneyLine, resendAlerts, teePurge, findOrCreateMember, staffSigninLink, photoMove: moveStep, photoSweep: sweepPhotos, faceSweep: sweepFaces }));
 }
 

@@ -164,7 +164,10 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
   never take a `not_before` infinity row). The save, face and `/ph` links are
   signed with `PHOTO_LINK_SECRET`, else `CLOUDINARY_API_SECRET`: never remove `CLOUDINARY_API_SECRET` unless
   `PHOTO_LINK_SECRET` holds the same value, or every photo and face link stops. The `PHOTO_SIZES`/`FACE_SIZES` strings
-  never change (a new one re-bills every photo).
+  never change (a new one re-bills every photo). **Cloudinary is closed from 29 Nov 2026:** nothing a student or
+  teacher does waits on it (a delete there is noted in `bkk_photo_orphans` or `bkk_face_orphans` and tried in the
+  background, 10 s at most; with R2 on the `/photos` meter does not ask it), and the Cloudinary variables stay in
+  Railway unless `PHOTO_LINK_SECRET` holds `CLOUDINARY_API_SECRET`'s value.
 - **Inbox:** `inbox.js` keeps 1:1 chats from the LINE Official Account (`/line/webhook`) and
   Instagram/Facebook DMs and comments (`/meta/webhook`) in `aybkk_inbox` for 90 days.
   Machi reads `GET /api/inbox` (header `x-inbox-key`). Env: `INBOX_KEY`; `LINE_CHANNEL_SECRET`
