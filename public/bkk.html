@@ -20,6 +20,7 @@
      (the Google Fonts CDN is blocked in China). One column grid for every band: 4 columns
      on phones, 8 on tablets, 12 on desktop, where the content hangs from column 5. */
   @font-face{font-family:'Long Cang';src:url('/fonts/longcang.woff2') format('woff2');font-display:swap}
+  @font-face{font-family:'Long Cang';src:url('/fonts/longcang-yang.woff2') format('woff2');unicode-range:U+7F8A;font-display:swap}
   /* Patrick Hand: class names and the habit count in the app (Boonchu's pick, 21 Sep). */
   @font-face{font-family:'Patrick Hand';src:url('/fonts/patrickhand.woff2') format('woff2');font-display:swap}
   /* One family name for two files: the browser takes the Thai file only for Thai
@@ -63,6 +64,8 @@
     /* Fixed fields: the hero, the footer and the monthly theme never flip. */
     --hero-ink:#fbf4e8; --hero-muted:#e7d1c6; --hero-rule:rgba(214,163,92,.5);
     --aub:#5f1c23; --aub-ink:#fbf4e8; --aub-muted:#e6d1b3; --aub-rule:rgba(214,163,92,.38);
+    /* The New Year party: lantern red, cream 8.5:1, gold 5.8:1. */
+    --goat:#8a1a1e; --goat-ink:#fbf4e8; --goat-gold:#f0c766;
     /* The grid. --W is the content width, --colw one column. */
     --cols:4; --m:16px; --g:16px; --maxw:1600px;
     --W:min(100% - 2*var(--m), var(--maxw));
@@ -174,6 +177,20 @@
   :lang(th) .sec > .lead{line-height:1.45}
   .field-aub{background:var(--aub);color:var(--aub-ink);--rule:var(--aub-ink);--num:var(--aub-ink);--ring:var(--aub-ink);--line:var(--aub-rule)}
   .field-price{background:var(--price-bg)}
+  /* ── #party: the New Year party (Boonchu, 25 Nov 2026), Year of the Goat 2027, on a fixed red field.
+     #partyPic is its photo, a section of its own right under it: no number, no rule, hidden until there is a photo. */
+  .field-goat{background:var(--goat);color:var(--goat-ink);--rule:var(--goat-ink);--num:var(--goat-gold);--ring:var(--goat-ink)}
+  #party .yang{grid-row:2;justify-self:end;align-self:center;font:400 88px/.9 var(--f-mark);color:var(--goat-gold)}
+  #party .ptext p{margin:0;font-size:var(--fs-l);line-height:1.4}
+  #party .ptext b{color:var(--goat-gold)}
+  #party .ready{margin-top:14px;font-weight:700}
+  #partyPic{counter-increment:none;padding-top:0}
+  #partyPic::before,#partyPic::after{content:none}
+  #partyPic figure{margin:0}
+  #partyPic img{display:block;width:100%;max-width:560px;height:auto}
+  @media (min-width:1100px){
+    #party .yang{grid-column:c 1/c 4;grid-row:3/span 3;justify-self:start;align-self:start;font-size:168px}
+  }
 
   /* ── Buttons: square. Plum is the second colour; pink-deep is the action. */
   .btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:10px 24px;
@@ -1178,6 +1195,22 @@
       </ul>
     </div>
     <p class="rm" hidden><button type="button" class="readmore" aria-expanded="true" aria-controls="loyal fair mnotes">Read more</button></p>
+  </section>
+
+  <!-- The New Year party (Boonchu, 25 Nov 2026): his own words, in English in every language, shown until the
+       party day (PARTY in the script). My account never folds them (data-acc-open). -->
+  <section id="party" class="sec sgrid field-goat" lang="en" aria-labelledby="partyH" data-acc-open hidden>
+    <span class="yang" aria-hidden="true">羊</span>
+    <h2 id="partyH">AYBKK New Year Party, Saturday 16 Jan.</h2>
+    <div class="ptext">
+      <p>Last year a horse head ran the party.</p>
+      <p>2027 is the year of the <b>G.O.A.T.</b></p>
+      <p>"<b>G</b>"reatest shala "<b>O</b>"f "<b>A</b>"ll "<b>T</b>"ime.</p>
+      <p class="ready">Be ready.</p>
+    </div>
+  </section>
+  <section id="partyPic" class="sec sgrid field-goat" lang="en" aria-labelledby="partyH" data-acc-open hidden>
+    <figure><img id="partyImg" alt="Boonchu in the horse head at last year's AYBKK New Year Party" decoding="async"></figure>
   </section>
 
   <section id="habits" class="sec sgrid" data-fold>
@@ -2471,13 +2504,21 @@
     const a = e.target.closest && e.target.closest('a[href^="#"]');
     if (a) unfoldTo(a.getAttribute('href').slice(1));
   }, true);
+  // ── the New Year party (Boonchu, 25 Nov 2026) ─────────────────────────────
+  // Shown until the party day. The photo section waits for photo: a picture in public/img, e.g. '/img/party-horse-head.jpg'.
+  const PARTY = { until: '2027-01-16', photo: null };
+  if (bkkTodayP() <= PARTY.until) {
+    $('#party').hidden = false;
+    if (PARTY.photo) { $('#partyImg').src = PARTY.photo; $('#partyPic').hidden = false; }
+  }
+
   // ── My account keeps the page short (Boonchu, 25 Nov 2026) ─────────────────
   // On the My account tab, section 2 (#prices) folds to two buttons, the Packages tab and the promos to come,
   // and every later section to its title, its one button (data-acc-keep, if it has one) and Read more.
   // Every other tab shows the page as before. The promos are teasers: no discount and no announce date
   // until Boonchu sets them, and each one leaves the page after its day.
   const PROMOS = [{ k: 'Bday', until: '2026-12-04' }, { k: 'Xmas', until: '2026-12-24' }];
-  const ACC_SECS = [...document.querySelectorAll('.sw .sec')].filter(sec => !sec.classList.contains('terms'));
+  const ACC_SECS = [...document.querySelectorAll('.sw .sec')].filter(sec => !sec.classList.contains('terms') && !sec.hasAttribute('data-acc-open'));
   let ACC_ON = null, PROMO_OPEN = false;
   // Everything in a section but its title, its kept button (and the boxes around it) and Read more.
   function accMark(el, keep) {
