@@ -247,9 +247,11 @@
   .acctm .accrm{display:block}
   .acctm [data-fold] .rm:not(.accrm){display:none!important}
   #pacct .act{margin-top:0}
-  #promoBox .lead{margin:21px 0 0}
-  #promoBox .soon{margin:0;font-size:var(--fs-s);color:var(--soft)}
-  #promoBox .plan{background:var(--promo-soft);border-top-color:var(--promo);padding:14px 16px 16px;margin-top:12px}
+  #eventBox{margin-top:21px}
+  #eventBox .plan{background:var(--promo-soft);border-top-color:var(--promo);padding:14px 16px 16px;margin-top:0}
+  #eventBox .plan + .plan{margin-top:14px}
+  #eventBox .plan h3{margin:0 0 7px}
+  #eventBox .plan .line{margin:0}
 
   /* ── Hero (dark field, not numbered) */
   header.hero{position:relative;background:var(--header);color:var(--hero-ink);--ring:var(--hero-ink);padding-top:16px;
@@ -1174,8 +1176,8 @@
     <h2 data-i18n="pricesH">From 331 baht a class +VAT.</h2>
     <div id="pacct" data-acc-keep hidden>
       <p class="act"><a class="btn pink" href="#book" id="seePkgs" data-i18n="seePkgs">See packages</a>
-        <button type="button" class="btn ghost" id="seePromo" aria-expanded="false" aria-controls="promoBox" data-i18n="seePromo">See future promos</button></p>
-      <div id="promoBox" role="region" aria-labelledby="seePromo" aria-live="polite" hidden></div>
+        <button type="button" class="btn ghost" id="seeEvents" aria-expanded="false" aria-controls="eventBox" data-i18n="seeEvents">Upcoming events</button></p>
+      <div id="eventBox" role="region" aria-labelledby="seeEvents" aria-live="polite" hidden></div>
     </div>
     <p class="lead" data-i18n="pricesSub">Counted at 4 mornings a week (16 classes a month).</p>
     <div class="plans">
@@ -1806,23 +1808,15 @@
     const n = (navigator.language || 'en').slice(0, 2).toLowerCase();
     return STR[n] ? n : 'en';
   })();
-  // My account's section 2 and the promos to come (Boonchu, 25 Nov 2026): no discount and no announce date yet.
-  Object.assign(STR.en, { seePromo: 'See future promos', promoH: 'Coming soon. Keep practising, and watch this space.',
-    promoBdayH: 'Teacher Boonchu turns 53', promoBdayP: 'A birthday promo on sale 5 Dec.',
-    promoXmasH: 'Christmas to New Year', promoXmasP: 'A holiday special, so your mornings keep going through the holidays.',
-    promoSoon: 'Details soon.' });
-  Object.assign(STR.th, { seePromo: 'ดูโปรที่กำลังจะมา', promoH: 'เร็วๆ นี้ ฝึกต่อไปนะ แล้วรอติดตามที่นี่',
-    promoBdayH: 'ครูบุญชูอายุครบ 53 ปี', promoBdayP: 'โปรวันเกิด เริ่มขาย 5 ธ.ค.',
-    promoXmasH: 'คริสต์มาสถึงปีใหม่', promoXmasP: 'โปรพิเศษช่วงวันหยุด ให้คุณฝึกตอนเช้าต่อเนื่องตลอดเทศกาล',
-    promoSoon: 'รายละเอียดเร็วๆ นี้' });
-  Object.assign(STR.zh, { seePromo: '查看即将推出的优惠', promoH: '即将推出。继续练习，留意这里的消息。',
-    promoBdayH: 'Boonchu 老师 53 岁生日', promoBdayP: '生日优惠，12 月 5 日开售。',
-    promoXmasH: '圣诞到新年', promoXmasP: '节日特别优惠，让你的晨练在假期里也不间断。',
-    promoSoon: '详情即将公布。' });
-  Object.assign(STR.ru, { seePromo: 'Будущие акции', promoH: 'Скоро. Продолжайте практику и следите за этой страницей.',
-    promoBdayH: 'Учителю Бунчу исполняется 53', promoBdayP: 'Акция ко дню рождения, в продаже с 5 декабря.',
-    promoXmasH: 'С 25 декабря до Нового года', promoXmasP: 'Праздничное предложение, чтобы утренняя практика не прерывалась в праздники.',
-    promoSoon: 'Подробности скоро.' });
+  // My account's section 2: upcoming events (Boonchu, 25 Nov 2026: no promo, sale, discount or price anywhere).
+  Object.assign(STR.en, { seeEvents: 'Upcoming events',
+    evBday: 'Shala ceremony + Teacher Boonchu’s 53rd birthday', evParty: 'AYBKK New Year Party, G.O.A.T theme' });
+  Object.assign(STR.th, { seeEvents: 'กิจกรรมที่กำลังจะมา',
+    evBday: 'พิธีที่ชาลา + วันเกิดครูบุญชู ครบ 53 ปี', evParty: 'ปาร์ตี้ปีใหม่ AYBKK ธีม G.O.A.T' });
+  Object.assign(STR.zh, { seeEvents: '近期活动',
+    evBday: '道场仪式 + Boonchu 老师 53 岁生日', evParty: 'AYBKK 新年派对，G.O.A.T 主题' });
+  Object.assign(STR.ru, { seeEvents: 'Ближайшие события',
+    evBday: 'Церемония в шале + 53-летие учителя Бунчу', evParty: 'Новогодняя вечеринка AYBKK, тема G.O.A.T' });
   const t = (k, ...a) => {
     const s = STR[LANG][k] ?? STR.en[k];
     return typeof s === 'function' ? s(...a) : s;
@@ -2481,7 +2475,7 @@
     renderTheme();
     if (typeof nlDefault === 'function') nlDefault();
     drawAcct();
-    if (PROMO_OPEN) drawPromo(true);
+    if (EVENTS_OPEN) drawEvents(true);
   }
   document.querySelectorAll('.langs button').forEach(b => b.addEventListener('click', () => {
     LANG = b.dataset.lang;
@@ -2529,21 +2523,26 @@
     if (a) unfoldTo(a.getAttribute('href').slice(1));
   }, true);
   // ── the New Year party (Boonchu, 25 Nov 2026) ─────────────────────────────
-  // Shown until the party day. The photo section waits for photo: a picture in public/img, e.g. '/img/party-horse-head.jpg'.
-  const PARTY = { until: '2027-01-16', photo: null };
+  // Shown until the party day. The photo section shows photo (a picture in public/img, with its size) when set.
+  const PARTY = { until: '2027-01-16', photo: { src: '/img/party-horse-head-2026.jpg', w: 746, h: 600 } };
   if (bkkTodayP() <= PARTY.until) {
     $('#party').hidden = false;
-    if (PARTY.photo) { $('#partyImg').src = PARTY.photo; $('#partyPic').hidden = false; }
+    if (PARTY.photo) {
+      const img = $('#partyImg');
+      img.width = PARTY.photo.w; img.height = PARTY.photo.h; img.src = PARTY.photo.src;
+      $('#partyPic').hidden = false;
+    }
   }
 
   // ── My account keeps the page short (Boonchu, 25 Nov 2026) ─────────────────
-  // On the My account tab, section 2 (#prices) folds to two buttons, the Packages tab and the promos to come,
+  // On the My account tab, section 2 (#prices) folds to two buttons, the Packages tab and the upcoming events,
   // and every later section to its title, its one button (data-acc-keep, if it has one) and Read more.
-  // Every other tab shows the page as before. The promos are teasers: no discount and no announce date
-  // until Boonchu sets them, and each one leaves the page after its day.
-  const PROMOS = [{ k: 'Bday', until: '2026-12-04' }, { k: 'Xmas', until: '2026-12-24' }];
+  // Every other tab shows the page as before. An event shows until its day (or its own until) is over, so a
+  // past one leaves by itself. To add one (Christmas to New Year, Valentine's): a line here, and its words as
+  // ev<k> in the 4 languages above, e.g. { day: '2026-12-25', until: '2027-01-01', k: 'Xmas' }.
+  const EVENTS = [{ day: '2026-12-05', k: 'Bday' }, { day: '2027-01-16', k: 'Party' }];
   const ACC_SECS = [...document.querySelectorAll('.sw .sec')].filter(sec => !sec.classList.contains('terms') && !sec.hasAttribute('data-acc-open'));
-  let ACC_ON = null, PROMO_OPEN = false;
+  let ACC_ON = null, EVENTS_OPEN = false;
   // Everything in a section but its title, its kept button (and the boxes around it) and Read more.
   function accMark(el, keep) {
     for (const c of el.children) {
@@ -2587,19 +2586,18 @@
       if (b) { b.setAttribute('aria-expanded', 'false'); b.textContent = t('readMore'); }
     });
     accPairs();
-    drawPromo(false);
+    drawEvents(false);
   }
-  function drawPromo(open) {
-    const live = PROMOS.filter(p => bkkTodayP() <= p.until), btn = $('#seePromo'), box = $('#promoBox');
-    PROMO_OPEN = open && live.length > 0;
+  function drawEvents(open) {
+    const live = EVENTS.filter(e => bkkTodayP() <= (e.until || e.day)), btn = $('#seeEvents'), box = $('#eventBox');
+    EVENTS_OPEN = open && live.length > 0;
     btn.hidden = !live.length;
-    btn.setAttribute('aria-expanded', String(PROMO_OPEN));
-    box.hidden = !PROMO_OPEN;
-    box.innerHTML = !PROMO_OPEN ? '' : `<p class="lead">${esc(t('promoH'))}</p>${live.map(p => `<div class="plan">
-        <h3>${esc(t('promo' + p.k + 'H'))}</h3><p class="line">${esc(t('promo' + p.k + 'P'))}</p>
-        <p class="soon">${esc(t('promoSoon'))}</p></div>`).join('')}`;
+    btn.setAttribute('aria-expanded', String(EVENTS_OPEN));
+    box.hidden = !EVENTS_OPEN;
+    box.innerHTML = !EVENTS_OPEN ? '' : live.map(e => `<div class="plan">
+        <h3>${esc(fmtDay(e.day + 'T12:00:00+07:00'))}</h3><p class="line">${esc(t('ev' + e.k))}</p></div>`).join('');
   }
-  $('#seePromo').addEventListener('click', () => drawPromo(!PROMO_OPEN));
+  $('#seeEvents').addEventListener('click', () => drawEvents(!EVENTS_OPEN));
 
   // ── the Monday letter ─────────────────────────────────────────────────────
   // The door follows the reader's language until they pick one themselves:
