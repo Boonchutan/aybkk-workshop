@@ -200,7 +200,8 @@
   .field-aub .readmore,.field-aub .readmore:hover{color:var(--aub-ink)}
   /* My account keeps the page short (Boonchu, 25 Nov 2026): section 2 is two buttons, each later section its title,
      its button and Read more. Only the script sets .acctm and .acc, so other tabs and no JavaScript show it all. */
-  .acc .acx{display:none!important}
+  .acc .acx,.acc .acdup{display:none!important}
+  .acc .act,#find.acc .links{margin-top:0}
   .accrm{display:none}
   .acctm .accrm{display:block}
   .acctm [data-fold] .rm:not(.accrm){display:none!important}
@@ -597,7 +598,7 @@
   /* Folded, LINE is the one contact left; Thai readers keep the Thai address (for the taxi),
      and Chinese readers keep WeChat, because LINE is blocked in China. */
   @media (max-width:1099px){ #find.shut .contact > a:first-child{grid-column:1/-1} }
-  html[lang="th"] #find.shut #findTh{display:block!important}
+  html[lang="th"] #find.shut:not(.acc) #findTh{display:block!important}
   html[lang="zh-Hans"] #find.shut #findWx{display:flex!important}
   @media (min-width:1100px){
     #find .card > .addr{grid-column:c 5/c 11}
@@ -1131,9 +1132,9 @@
   <section class="prices sec sgrid field-price" id="prices" data-fold>
     <h2 data-i18n="pricesH">From 331 baht a class +VAT.</h2>
     <div id="pacct" data-acc-keep hidden>
-      <p class="act"><a class="btn buy" href="#book" id="seePkgs" data-i18n="seePkgs">See packages</a>
+      <p class="act"><a class="btn pink" href="#book" id="seePkgs" data-i18n="seePkgs">See packages</a>
         <button type="button" class="btn ghost" id="seePromo" aria-expanded="false" aria-controls="promoBox" data-i18n="seePromo">See future promos</button></p>
-      <div id="promoBox" role="region" aria-live="polite" hidden></div>
+      <div id="promoBox" role="region" aria-labelledby="seePromo" aria-live="polite" hidden></div>
     </div>
     <p class="lead" data-i18n="pricesSub">Counted at 4 mornings a week (16 classes a month).</p>
     <div class="plans">
@@ -1750,20 +1751,20 @@
   })();
   // My account's section 2 and the promos to come (Boonchu, 25 Nov 2026): no discount and no announce date yet.
   Object.assign(STR.en, { seePromo: 'See future promos', promoH: 'Coming soon. Keep practising, and watch this space.',
-    promoBdayH: 'Boonchu turns 53', promoBdayP: 'A birthday promo for our students. On sale 5 Dec.',
+    promoBdayH: 'Boonchu turns 53', promoBdayP: 'A birthday promo. On sale 5 Dec.',
     promoXmasH: 'Christmas to New Year', promoXmasP: 'A holiday special, so your mornings keep going through the holidays.',
     promoSoon: 'Details soon.' });
   Object.assign(STR.th, { seePromo: 'ดูโปรที่กำลังจะมา', promoH: 'เร็วๆ นี้ ฝึกต่อไปนะ แล้วรอติดตามที่นี่',
-    promoBdayH: 'ครูบุญชูอายุครบ 53 ปี', promoBdayP: 'โปรวันเกิดสำหรับนักเรียนของเรา เริ่มขาย 5 ธ.ค.',
+    promoBdayH: 'ครูบุญชูอายุครบ 53 ปี', promoBdayP: 'โปรวันเกิด เริ่มขาย 5 ธ.ค.',
     promoXmasH: 'คริสต์มาสถึงปีใหม่', promoXmasP: 'โปรพิเศษช่วงวันหยุด ให้คุณฝึกตอนเช้าต่อเนื่องตลอดเทศกาล',
     promoSoon: 'รายละเอียดเร็วๆ นี้' });
   Object.assign(STR.zh, { seePromo: '查看即将推出的优惠', promoH: '即将推出。继续练习，留意这里的消息。',
-    promoBdayH: 'Boonchu 老师 53 岁生日', promoBdayP: '为学员准备的生日优惠，12 月 5 日开售。',
+    promoBdayH: 'Boonchu 老师 53 岁生日', promoBdayP: '生日优惠，12 月 5 日开售。',
     promoXmasH: '圣诞到新年', promoXmasP: '节日特别优惠，让你的晨练在假期里也不间断。',
     promoSoon: '详情即将公布。' });
   Object.assign(STR.ru, { seePromo: 'Будущие акции', promoH: 'Скоро. Продолжайте практику и следите за этой страницей.',
-    promoBdayH: 'Бунчу исполняется 53', promoBdayP: 'Акция ко дню рождения для наших учеников. В продаже с 5 декабря.',
-    promoXmasH: 'От Рождества до Нового года', promoXmasP: 'Праздничное предложение, чтобы утренняя практика не прерывалась в праздники.',
+    promoBdayH: 'Бунчу исполняется 53', promoBdayP: 'Акция ко дню рождения. В продаже с 5 декабря.',
+    promoXmasH: 'С 25 декабря до Нового года', promoXmasP: 'Праздничное предложение, чтобы утренняя практика не прерывалась в праздники.',
     promoSoon: 'Подробности скоро.' });
   const t = (k, ...a) => {
     const s = STR[LANG][k] ?? STR.en[k];
@@ -2451,6 +2452,8 @@
     try { el = id && document.getElementById(decodeURIComponent(id)); } catch (_) {}
     const sec = el && el.closest('.xm') && el.closest('[data-fold]');
     if (sec && sec.classList.contains('shut')) setFold(sec, true);
+    const acc = el && el.closest('.acc');
+    if (acc && acc.querySelector('.accrm')) accOpen(acc, true);
   }
   document.querySelectorAll('[data-fold]').forEach(sec => {
     setFold(sec, false);
@@ -2473,7 +2476,7 @@
   // and every later section to its title, its one button (data-acc-keep, if it has one) and Read more.
   // Every other tab shows the page as before. The promos are teasers: no discount and no announce date
   // until Boonchu sets them, and each one leaves the page after its day.
-  const PROMOS = [{ k: 'Bday', until: '2026-12-05' }, { k: 'Xmas', until: '2026-12-24' }];
+  const PROMOS = [{ k: 'Bday', until: '2026-12-04' }, { k: 'Xmas', until: '2026-12-24' }];
   const ACC_SECS = [...document.querySelectorAll('.sw .sec')].filter(sec => !sec.classList.contains('terms'));
   let ACC_ON = null, PROMO_OPEN = false;
   // Everything in a section but its title, its kept button (and the boxes around it) and Read more.
@@ -2496,18 +2499,22 @@
     if (sec.id === 'prices') return;
     const p = document.createElement('p');
     p.className = 'rm accrm';
-    p.innerHTML = '<button type="button" class="readmore" aria-expanded="false"></button>';
+    p.innerHTML = `<button type="button" class="readmore" aria-expanded="false" aria-controls="${sec.id}"></button>`;
     sec.appendChild(p);
     p.firstChild.addEventListener('click', () => accOpen(sec, sec.classList.contains('acc')));
   });
   function accMode(on) {
     if (on === ACC_ON) return;
+    const first = ACC_ON === null;
     ACC_ON = on;
     document.body.classList.toggle('acctm', on);
     $('#pacct').hidden = !on;
     ACC_SECS.forEach(sec => {
       sec.classList.toggle('acc', on);
-      if (sec.hasAttribute('data-fold')) setFold(sec, false);
+      if (sec.hasAttribute('data-fold')) {
+        if (on) sec.dataset.wasShut = sec.classList.contains('shut');
+        else if (!first) setFold(sec, sec.dataset.wasShut === 'false');
+      }
       const b = sec.querySelector('.accrm .readmore');
       if (b) { b.setAttribute('aria-expanded', 'false'); b.textContent = t('readMore'); }
     });
@@ -2652,6 +2659,7 @@
     if (t === 'me') renderMe();
   };
   accMode(current === 'me');
+  unfoldTo(location.hash.slice(1));
 
   const SCHEDULE_URL = '/api/bkk/schedule?days=62';
   // A request that hangs (a slow line from China) must end in a Try again, not a page that loads forever.
@@ -4246,6 +4254,7 @@
   }
   // One order's status. land: the page opened on it (its link, or back from paying), so it scrolls there.
   function teeStatus(token, land) {
+    if ($('#tees').classList.contains('acc')) accOpen($('#tees'), true);
     teePollStop();
     TEE.view = 'status';
     TEE.token = token;
@@ -4507,6 +4516,8 @@
     const cta = d.cta || {}, href = String(cta.href || '#mysore');
     $('#themeCta').href = /^(#[\w-]+|\/[\w./?=&#-]*)$/.test(href) ? href : '#mysore';
     $('#themeCta').textContent = L(cta.label) || t('habCta');
+    // My account keeps one "Start with one morning": the theme's button hides there while it says the same
+    $('#theme .act').classList.toggle('acdup', $('#themeCta').textContent === t('habCta') && $('#themeCta').getAttribute('href') === '#mysore');
     $('#themeNote').textContent = L(cta.note);
     $('#themeNote').hidden = !L(cta.note);
     syncFolds();
