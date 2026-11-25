@@ -11,3 +11,5 @@
 - Inbox 07:08: 0 new, 0 hot.
 
 13:08 check-in: old-price ask (2nd round) and keyword test A/B still waiting, both due 19:00 today. Inbox 13:08: 0 new, 0 hot.
+
+19:08 check-in: old-price ask and keyword test: no answer, defaults applied (no reply sent, asked again Thu 07:08; test stays paused). Inbox 19:08: 4 new threads, 2 need a reply, 1 hot.
