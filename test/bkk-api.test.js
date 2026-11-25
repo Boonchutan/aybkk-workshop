@@ -2612,6 +2612,20 @@ const ok = (name, cond, extra = '') => {
     ok('...once Cloudinary answers again, the next sweeps remove them all',
        !(await pool.query(`SELECT 1 FROM bkk_photo_orphans WHERE ref = ANY($1::text[])`, [dueRefs])).rows.length
          && !(await pool.query('SELECT 1 FROM bkk_face_orphans WHERE photo_id=$1', [cf3])).rows.length);
+    // Cloudinary closed (it answers 401) with more of its copies due than one pass takes, and an R2 copy noted after them.
+    await pool.query(`INSERT INTO bkk_photo_orphans (store, ref, not_before)
+      SELECT 'cloudinary', 'aybkk/profile/2026-09-22/closed' || g, '-infinity' FROM generate_series(1, 5001) g`);
+    const r2Late = r2lib.objectKey('2026-09-22', hex(), 'v');
+    store.set(r2Late, { body: Buffer.from('left over'), type: 'image/jpeg' });
+    await pool.query(`INSERT INTO bkk_photo_orphans (store, ref) VALUES ('r2', $1)`, [r2Late]);
+    let closedN = 0;
+    cloudR.uploader.destroy = () => { closedN++; return Promise.reject({ error: { message: 'cloud_name is disabled', http_code: 401 } }); };
+    await within(RH.api.photoSweep());
+    cloudR.uploader.destroy = destroyOk;
+    ok('Cloudinary closed with more of its copies due than one pass takes: the sweep still removes an R2 copy noted after them',
+       closedN === 10 && !store.has(r2Late) && !(await pool.query(`SELECT 1 FROM bkk_photo_orphans WHERE store='r2' AND ref=$1`, [r2Late])).rows.length,
+       JSON.stringify([closedN, store.has(r2Late)]));
+    await pool.query(`DELETE FROM bkk_photo_orphans WHERE ref LIKE 'aybkk/profile/2026-09-22/closed%'`);
     RH.s.close();
     await pool.query(`UPDATE bkk_members SET photo_id=NULL, photo_at=NULL WHERE code = ANY($1::text[])`, [[fq1.code, fq2.code]]);
     R2b.s.close();

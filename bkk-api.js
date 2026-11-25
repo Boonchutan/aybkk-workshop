@@ -8308,7 +8308,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   let sweeping = null;
   const sweepPhotos = () => sweeping || (sweeping = (async () => {
     try {
-      const due = (await q(`SELECT store, ref FROM bkk_photo_orphans WHERE not_before <= now() ORDER BY not_before LIMIT 5000`)).rows;
+      // R2's first: Cloudinary's, which never go once it is closed, would otherwise fill the pass.
+      const due = (await q(`SELECT store, ref FROM bkk_photo_orphans WHERE not_before <= now() ORDER BY store = 'cloudinary', not_before LIMIT 5000`)).rows;
       let fails = 0;                     // Cloudinary failing that many in a row: its other rows wait for the next pass, R2's still go
       for (const o of due) {
         if (o.store !== 'r2' && fails >= CLOUD_FAILS_MAX) continue;
