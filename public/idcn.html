@@ -542,7 +542,9 @@
         return;
       }
       ta.value = ''; DRAFT[no] = '';
-      FLASH[no] = T2('已提交 ✓ 老师会在你的档案里看到。', 'Handed in ✓ The teachers see it on your profile.');
+      FLASH[no] = j.mediaFailed
+        ? T2('你的回答已保存，但文件没有上传成功。请点下面的「重新上传文件」。', 'Your answer is saved, but the file did not upload. Tap “Send the file again” below.')
+        : T2('已提交 ✓ 老师会在你的档案里看到。', 'Handed in ✓ The teachers see it on your profile.');
       await load();
       delete FLASH[no];
     } catch (_) {
@@ -551,11 +553,44 @@
     }
   };
 
-  const MEDIA = n => !n.media_url ? '' : (n.media_type === 'video'
+  // a hand-in saved without its file: the student sends the file again from here
+  const MEDIA = n => n.media_failed ? (n.kind !== 'submission' ? '' : `<div class="warn" style="margin:6px 0">
+      ${T2('文件没有上传成功，你写的内容已经保存。', 'The file did not upload. Your words are saved.')}
+      <input type="file" id="rf-${n.id}" accept="video/*,image/*" hidden>
+      <p style="margin:8px 0 0"><button type="button" class="btn ghost" id="rb-${n.id}" onclick="resend(${n.id})">${T2('重新上传文件', 'Send the file again')}</button></p>
+      <p class="muted" id="rm-${n.id}" role="status" style="margin:6px 0 0"></p></div>`)
+    : !n.media_url ? '' : (n.media_type === 'video'
     ? `<video controls playsinline preload="metadata" style="width:100%;border-radius:8px;margin:6px 0"
          src="${esc(n.media_url)}"></video>`
     : `<img src="${esc(n.media_url)}" style="max-width:100%;border-radius:8px;margin:6px 0"
          onclick="lightbox('${esc(n.media_url)}')" alt="">`);
+
+  window.resend = id => {
+    const f = $('#rf-' + id), msg = $('#rm-' + id), btn = $('#rb-' + id);
+    f.onchange = async () => {
+      const file = f.files && f.files[0];
+      if (!file) return;
+      if (file.size > 100 * 1024 * 1024) {
+        msg.textContent = T2('视频太大了，请控制在100MB以内（1-2分钟足够）。', 'That file is over 100MB. A 1 to 2 minute clip is enough.');
+        f.value = ''; return;
+      }
+      msg.textContent = T2('上传中… 视频较大时需要一点时间，请不要关闭页面。', 'Uploading… a video can take a while, keep the page open.');
+      btn.disabled = true;
+      try {
+        const fd = new FormData();
+        fd.append('slug', SLUG); fd.append('file', file);
+        const r = await fetch(`/api/idcn/${COURSE}/submissions/${id}/media`, { method: 'POST', headers: keys(), body: fd });
+        if (r.ok) { await load(); return; }
+        btn.disabled = false; f.value = '';
+        msg.textContent = r.status === 404 ? T2('这个文件已经上传过了，请刷新页面。', 'This file is in already. Reload the page.')
+          : T2('还是没有上传成功，请稍后再试。', 'It did not upload this time either. Try again in a moment.');
+      } catch (_) {
+        btn.disabled = false; f.value = '';
+        msg.textContent = T2('网络中断，请重试', 'Connection dropped. Try again.');
+      }
+    };
+    f.click();
+  };
 
   function renderNotes() {
     const notes = P.notes || [];

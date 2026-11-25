@@ -16,6 +16,12 @@ on:
       - 'lib/staff-key.js'
       - 'api/**'
       - 'test/student-lists-lock.test.js'
+      - 'idcn-api.js'
+      - 'test/idcn-api.test.js'
+      - 'lib/**'
+      - 'share-card-renderer.js'
+      - 'test/media-store.test.js'
+      - 'test/fake-r2.js'
       - '.github/workflows/bkk-test.yml'
 
 jobs:
@@ -52,6 +58,10 @@ jobs:
         env:
           TEST_DATABASE_URL: postgres://test:test@127.0.0.1:5432/bkktest
         run: node test/idcn-api.test.js
+      - name: Run old workshop photo tests (R2 and Cloudinary fakes, fake Neo4j)
+        env:
+          TEST_DATABASE_URL: postgres://test:test@127.0.0.1:5432/bkktest
+        run: node test/media-store.test.js
       - name: Run inbox tests (signatures, threads, instant sort with a fake Claude)
         env:
           TEST_DATABASE_URL: postgres://test:test@127.0.0.1:5432/bkktest

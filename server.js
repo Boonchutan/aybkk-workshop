@@ -17,6 +17,7 @@ const { mountIdcn } = require('./idcn-api');
 const { mountShop } = require('./shop-api');
 const { mountInbox, APPLY_PATH_RE, LEAD_PATH_RE } = require('./inbox');
 const { mountTeam } = require('./team-brief');
+const { wsPhotos: makeWsPhotos } = require('./lib/media-store');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
@@ -38,6 +39,9 @@ const taskApi = require('./task-api');
 require('dotenv').config();
 
 const app = express();
+// The old workshop system's student photos: in Cloudflare R2 when the four R2_*
+// variables are set, else Cloudinary as before (lib/media-store.js).
+const wsPhotos = makeWsPhotos();
 const PORT = process.env.PORT || process.env.MISSION_CONTROL_PORT || 3000;
 // Uploads must live on the persistent volume (/data on Railway) — the app
 // directory is wiped on every redeploy, which silently deleted payment
@@ -123,6 +127,9 @@ const upload = multer({
 // (/api/bkk/login/<token>, /p/<slug>).
 app.use((req, res, next) => { res.set('Referrer-Policy', 'strict-origin'); next(); });
 app.use(cors());
+// Neo4j keeps the Cloudinary links of student photos; once a photo is copied to R2,
+// every answer says its /sp/ link instead (Neo4j itself is not changed).
+app.use(wsPhotos.rewrite);
 // LINE and Meta sign the exact bytes they send; the inbox and the team briefs
 // (team-brief.js) check those signatures. The public In-Depth application form and
 // the /start first-step form read their own bodies with small limits (inbox.js).
@@ -408,74 +415,10 @@ app.get('/api/student/photo/:studentId', async (req, res) => {
   } finally { await session.close(); }
 });
 
-// POST /api/upload/student-photo
-// Body: { studentId, imageBase64, assessmentId? }  — base64 data URL from browser.
-//
-// When `assessmentId` is provided, we upload to a UNIQUE public_id per entry
-// (`student_<studentId>_<assessmentId>`) so each entry gets its own immutable
-// Cloudinary asset. Future uploads for OTHER entries can never overwrite this
-// one. The historical photo is preserved forever.
-//
-// When `assessmentId` is omitted (orientation / profile setup), we use the
-// canonical `student_<studentId>` id and `backup: true` so even those uploads
-// keep an asset-version safety net.
-// POST /api/upload/student-photo
-// Body: { studentId, imageBase64, assessmentId?, slotIndex? }
-//
-// Per-assessment 4-slot photo storage:
-//   - public_id = student_<studentId>_<assessmentId>_slot<slotIndex>
-//   - each slot gets its OWN Cloudinary asset (never overwrites another slot)
-//   - photoUrls array on the assessment node accumulates all 4 slots
-app.post('/api/upload/student-photo', async (req, res) => {
-  const { studentId, imageBase64, assessmentId, slotIndex, name, location } = req.body;
-  if (!studentId || !imageBase64) return res.status(400).json({ error: 'Missing studentId or imageBase64' });
-  try {
-    const isPerEntry = !!assessmentId;
-    // Slot-aware public_id: each slot index gets its own asset
-    const slotSuffix = (slotIndex !== undefined && slotIndex !== null) ? `_slot${slotIndex}` : '';
-    const publicId = isPerEntry
-      ? `student_${studentId}_${assessmentId}${slotSuffix}`
-      : `student_${studentId}${slotSuffix}`;
-    const result = await cloudinary.uploader.upload(imageBase64, {
-      folder: 'aybkk-students',
-      public_id: publicId,
-      overwrite: true, // re-upload same slot = refresh; different slot = separate asset
-      backup: false,   // no backup version needed per slot
-      transformation: [{ width: 400, height: 400, crop: 'fill', gravity: 'face', quality: 'auto' }]
-    });
-    const photoUrl = result.secure_url;
-
-    const session = driver.session();
-    try {
-      // Always update Student.photoUrl (latest-known face for dashboard).
-      // Optional name/location let the door station create a proper node for
-      // roster students who never touched Neo4j; never overwrites an existing name.
-      await session.run(
-        `MERGE (s:Student {id: $sid})
-         ON CREATE SET s.createdAt = datetime(),
-                       s.location = coalesce($location, 'hefei'),
-                       s.isChineseStudent = true
-         SET s.photoUrl = $url,
-             s.name = coalesce(s.name, $name)`,
-        { sid: studentId, url: photoUrl, name: name || null, location: location || null }
-      );
-      // Pin to the specific assessment using photoUrls array
-      if (assessmentId) {
-        await session.run(
-          `MATCH (sa) WHERE (sa:SelfAssessment OR sa:PracticeLog) AND sa.id = $aid
-           SET sa.photoUrls = coalesce(sa.photoUrls, []) + $url,
-               sa.photoUrl = $url
-           RETURN sa.id AS id`,
-          { aid: assessmentId, url: photoUrl }
-        );
-      }
-    } finally { await session.close(); }
-    res.json({ success: true, photoUrl });
-  } catch (err) {
-    console.error('[Cloudinary upload error]', err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
+// POST /api/upload/student-photo (orientation forms, journals, the check-in station),
+// GET /sp/<file> (those photos in R2) and the staff copy of the old ones to R2
+// (/api/ws-photos/copy): lib/media-store.js. With R2 off, Cloudinary as before.
+wsPhotos.mount(app, { cloudinary, driver, staffOnly, pool: () => pgPool });
 
 // Store LINE group ID for notifications
 global.LINE_GROUP_ID = null;
@@ -665,6 +608,7 @@ mountShop(app);
 const bkkReady = mountBkk(app, { pgPool, cloudinary });
 mountPartner(app, { pgPool });
 mountIdcn(app, { pgPool, bkk: bkkReady });
+wsPhotos.start();
 
 // One inbox for LINE, Instagram and Facebook chats: stored for Machi's briefs,
 // hot ones pinged to Boonchu at once when ANTHROPIC_API_KEY is set
@@ -1999,7 +1943,8 @@ app.get('/api/share-card/:studentId', async (req, res) => {
       dateInfo: dateInfo || defaultDateInfo,
       quote: quote || defaultQuote,
       uplift: uplift || '',
-      photoUrl,
+      // the copy in R2 when there is one (bytes), else the stored link as before
+      photoUrl: await wsPhotos.cardImage(photoUrl),
       dayIndex: dayIndex !== undefined ? parseInt(dayIndex, 10) : undefined,
     });
 

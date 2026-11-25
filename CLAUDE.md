@@ -135,6 +135,19 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
   list under Assignments & notes). `start_date` is per student (alumni start 2027-01-24, day 14, session #13); `terms_arranged` opens the course
   without the sign flow. The staff note (`cohort_note`) never reaches the student. The roster, calendar text and links
   are entered in Admin, never in git.
+- **Course files and old workshop photos off Cloudinary (25 Nov 2026, `lib/media-store.js`):** with the same four
+  `R2_*` variables, every IDCN upload (hub photos, hand-ins with videos up to 100 MB, notes, payment screenshots) goes to
+  R2; the database keeps `r2:<key>` and pages get signed `/md/<exp>.<sig>/idcn/...` links made when sent (`private`,
+  byte ranges for video; a payment screenshot's link ends within 2 days). The hub lists from `idc_hub_photos`, plus
+  Cloudinary's tag search until `hub_copied`. A file that fails never costs the words or the payment: the row is saved
+  with `media_state`/`proof_state` 'failed' and the file is sent again (student: the button on the hand-in; staff:
+  Send/Upload again, or Day by day). Old workshop photos (`POST /api/upload/student-photo`) go to R2 as a new random
+  `/sp/<32 hex>.jpg` (400 px square, public like the old links); Neo4j's old `aybkk-students` Cloudinary links are not
+  changed but rewritten in every answer (`wsPhotos.rewrite`) once `ws_photo_map` has their copy, and the share card reads
+  the copy from R2. IDCN admin, Send & syllabus, "Files on Cloudinary": "Copy course files" and "Copy old workshop
+  photos" (`/api/idcn/admin/<course>/media-copy`, `/api/ws-photos/copy`, staff key) copy what is still on Cloudinary
+  and point at a copy only after a HEAD check (size, MD5); Cloudinary's files are kept. With R2 off all of this is as
+  before, except that a failed file still saves the row.
 - **Class photos:** new ones go to Cloudflare R2 when `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`
   and `R2_BUCKET` are all set (`lib/r2.js`); until then everything is on Cloudinary as before. Once a photo is in R2
   the switch is one-way: with a variable missing, or the code rolled back past this change, R2 photos do not show
