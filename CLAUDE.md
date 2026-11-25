@@ -155,7 +155,9 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
   copies (`/api/idcn/admin/media-copy` for every course and `/api/idcn/admin/<course>/media-copy`,
   `/api/ws-photos/copy`, staff key) start by themselves with R2 on, 3 min after each start and every 3 h until nothing
   is left (until 2027), one server at a time (a Postgres advisory lock); staff see them and Copy now in Admin, Settings,
-  "Course files and old workshop photos" and in IDCN admin, "Files on Cloudinary". A row points at a copy only after a
+  "Course files and old workshop photos" and in IDCN admin, "Files on Cloudinary". After one whole old-workshop pass
+  with nothing failed or left, a done mark (`ws_photo_copy`) stops its runs by themselves for good and Admin says done;
+  Copy now still runs a full pass. A row points at a copy only after a
   HEAD check (size, MD5, and the size Cloudinary lists) and keeps the old link in `media_src`/`proof_src`;
   Cloudinary's files are kept. With R2 off all of this is as before, except that a failed file still saves the row.
 - **Class photos:** new ones go to Cloudflare R2 when `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`

@@ -64,6 +64,8 @@ const fakeCloud = {
   } },
   api: { resources: async o => {
     cl.listed++;
+    // as the SDK does: a plain object, not an Error
+    if (cl.refuse) throw { error: { message: cl.refuse, http_code: 401 } };
     const i = o.next_cursor ? Number(o.next_cursor) : 0;
     return { resources: cl.pages[i] || [], ...(i + 1 < cl.pages.length ? { next_cursor: String(i + 1) } : {}) };
   } },
@@ -72,11 +74,12 @@ const fakeFetch = async url => cl.originals.has(url) ? new Response(cl.originals
 
 // The routes as server.js has them: the rewrite first, then old routes that send Neo4j's links.
 const OLD = id => `https://res.cloudinary.com/dw1uubecu/image/upload/v1700000000/aybkk-students/${id}.jpg`;
-function makeApp(ws) {
+const NEW_SP = '/sp/' + '9'.repeat(32) + '.jpg';
+function makeApp(ws, db = pool) {
   const app = express();
   app.use(express.json({ limit: '10mb' }));
   app.use(ws.rewrite);
-  ws.mount(app, { cloudinary: fakeCloud, driver, staffOnly, pool: () => pool });
+  ws.mount(app, { cloudinary: fakeCloud, driver, staffOnly, pool: () => db });
   app.get('/t/json', (req, res) => res.json({
     photoUrl: OLD('student_test-a'),
     photoUrls: [OLD('student_test-b_test-entry_slot1').replace('/upload/', '/upload/w_200,h_200,c_fill/'), OLD('student_test-unknown')],
@@ -84,6 +87,8 @@ function makeApp(ws) {
   }));
   app.get('/t/csv', (req, res) => { res.setHeader('Content-Type', 'text/csv; charset=utf-8'); res.send(`id,photoUrl\ntest-a,${OLD('student_test-a')}\n`); });
   app.get('/t/html', (req, res) => res.send(`<img src="${OLD('student_test-a')}">`));
+  app.get('/t/csv-sp', (req, res) => { res.setHeader('Content-Type', 'text/csv; charset=utf-8'); res.send(`id,photoUrl\ntest-n,${NEW_SP}\n"test-q","${NEW_SP}"\n`); });
+  app.get('/t/json-sp', (req, res) => res.json({ photoUrl: NEW_SP }));
   return app;
 }
 const listen = app => new Promise(r => { const s = app.listen(0, '127.0.0.1', () => r(s)); });
@@ -95,7 +100,7 @@ const J = base => async (p, opts = {}, headers = {}) => {
 };
 
 (async () => {
-  await pool.query('DROP TABLE IF EXISTS ws_photo_map');
+  await pool.query('DROP TABLE IF EXISTS ws_photo_map, ws_photo_copy');
   const fr2 = await fakeR2();
 
   console.log('\n[R2 off: Cloudinary exactly as before]');
@@ -116,7 +121,8 @@ const J = base => async (p, opts = {}, headers = {}) => {
        && runs.length === 3 && runs[0].p.url === OLD('student_test-a') && runs[2].p.aid === 'test-entry' && /photoUrls/.test(runs[2].q));
   ok('...and no limit on uploads from one address, as before', u0.status === 200 && u0b.status === 200);
   ok('...a missing photo is the same 400', (await JO('/api/upload/student-photo', { method: 'POST', body: JSON.stringify({ studentId: 'x' }) })).status === 400);
-  ok('no table is made for the copies', (await pool.query(`SELECT to_regclass('ws_photo_map') AS t`)).rows[0].t === null);
+  ok('no table is made for the copies', (await pool.query(`SELECT to_regclass('ws_photo_map') AS t, to_regclass('ws_photo_copy') AS d`)).rows
+     .every(r => r.t === null && r.d === null));
   const j0 = await JO('/t/json');
   ok('the old Cloudinary links go out untouched', j0.body.photoUrl === OLD('student_test-a'));
   const sp0 = await JO('/sp/' + 'a'.repeat(32) + '.jpg');
@@ -186,6 +192,9 @@ const J = base => async (p, opts = {}, headers = {}) => {
   const csv = await JN('/t/csv');
   ok('...a CSV gets a whole link', csv.text.includes(`,https://127.0.0.1:${sOn.address().port}/sp/${fileOf('student_test-a')}\n`), csv.text);
   ok('...and a page too', (await JN('/t/html')).text === `<img src="/sp/${fileOf('student_test-a')}">`);
+  const csvSp = await JN('/t/csv-sp'), H = `https://127.0.0.1:${sOn.address().port}`;
+  ok('...a CSV gets a whole link for a new /sp photo too (quoted or not); JSON keeps the path',
+     csvSp.text === `id,photoUrl\ntest-n,${H}${NEW_SP}\n"test-q","${H}${NEW_SP}"\n` && (await JN('/t/json-sp')).body.photoUrl === NEW_SP, csvSp.text);
   ok('Neo4j is never written by the copy', runs.length === nRuns + 2);
   cl.originals.set(OLD('student_test-e'), await jpeg(400, 400, '#123456'));
   fr2.ctl.badEtag = true;
@@ -196,9 +205,17 @@ const J = base => async (p, opts = {}, headers = {}) => {
        && (await pool.query(`SELECT 1 FROM ws_photo_map WHERE public_id='aybkk-students/student_test-e'`)).rowCount === 0, JSON.stringify(r2.st));
   const r3 = await run();
   ok('pressed again: only the one left is copied', r3.st.copied === 1 && r3.st.already === 4 && r3.st.failed === 0 && r3.st.inR2 === 5, JSON.stringify(r3.st));
+  const mark = async () => (await pool.query(`SELECT at FROM ws_photo_copy WHERE k='done'`)).rows[0] || null;
+  ok('...a whole pass with nothing failed or left: done, and the mark is kept in Postgres',
+     r3.st.done === true && !!r3.st.doneAt && !!(await mark()), JSON.stringify(r3.st));
   cl.pages = null;
   const r4 = await run();
   ok('Cloudinary cannot list: the run says so and nothing changes', /Cloudinary list/.test(r4.st.error || '') && r4.st.inR2 === 5, JSON.stringify(r4.st));
+  cl.refuse = 'Unknown API key (test)';
+  const r4b = await run();
+  ok("...Cloudinary refusing (the SDK's error object): its own words, not 'no answer'; the done mark stays",
+     r4b.st.error === 'Cloudinary list: Unknown API key (test)' && r4b.st.done === true && !!(await mark()), JSON.stringify(r4b.st));
+  cl.refuse = null;
 
   console.log('\n[after a restart, and the share card]');
   r2On();
@@ -207,6 +224,7 @@ const J = base => async (p, opts = {}, headers = {}) => {
   makeApp(again);                 // mounted first, as in server.js: start needs the database
   await again.start();
   ok('a new server reads the copies back from the table', again.rewriteText(`"${OLD('student_test-c')}"`) === `"/sp/${fileOf('student_test-c')}"`);
+  ok('...and the done mark: the copy box says done', again.status().done === true && !again.status().startedAt, JSON.stringify(again.status()));
   const card = await again.cardImage(OLD('student_test-a'));
   ok('the share card gets the copy from R2 (bytes), not the Cloudinary link',
      Buffer.isBuffer(card) && md5(card) === md5(cl.originals.get(OLD('student_test-a'))));
@@ -263,6 +281,27 @@ const J = base => async (p, opts = {}, headers = {}) => {
        && flakyWs.fileOf(OLD('student_x%20y')) === sp('f').slice(4), flakyWs.rewriteText(OLD('student_%E6%B5%8B%E8%AF%95')));
   ok('...a broken percent sign is left as it is', flakyWs.rewriteText(OLD('student_%E6%B5')) === OLD('student_%E6%B5'));
 
+  console.log('\n[right after a start, an answer with an old link waits for the table of copies (3 s at most)]');
+  r2On();
+  const slowWs = media.wsPhotos({ r2Endpoint: fr2.url, fetch: fakeFetch, auto: false }), deadWs = media.wsPhotos({ r2Endpoint: fr2.url, fetch: fakeFetch, auto: false });
+  r2Off();
+  const slowDb = { query: async (sql, p) => { if (/FROM ws_photo_map/.test(sql)) await sleep(400); return pool.query(sql, p); }, connect: () => pool.connect() };
+  const deadDb = { query: (sql, p) => /FROM ws_photo_map/.test(sql) ? new Promise(() => {}) : pool.query(sql, p), connect: () => pool.connect() };
+  const sS = await listen(makeApp(slowWs, slowDb)), sDd = await listen(makeApp(deadWs, deadDb));
+  const JS = J(`http://127.0.0.1:${sS.address().port}`), JDd = J(`http://127.0.0.1:${sDd.address().port}`);
+  slowWs.start(); deadWs.start();         // not awaited: the requests come while the table is read
+  const w1 = await JS('/t/json');
+  ok('an answer sent while the table is first read waits for it: the old link is rewritten, never sent as it was',
+     w1.body.photoUrl === '/sp/' + fileOf('student_test-a'), w1.text);
+  const tw = Date.now();
+  const wDead = JDd('/t/json'), wOther = await JDd('/api/ws-photos/copy', {}, A), tOther = Date.now() - tw;
+  const wd = await wDead, tDead = Date.now() - tw;
+  ok('...a table that does not come: the answer goes as it was after 3 s; an answer with no old link never waits',
+     wd.body.photoUrl === OLD('student_test-a') && tDead >= 2800 && tDead < 4500 && wOther.status === 200 && tOther < 1000, `${tDead} ms, ${tOther} ms`);
+  const tw2 = Date.now(), wd2 = await JDd('/t/json');
+  ok('...and after those 3 s nothing waits any more', wd2.body.photoUrl === OLD('student_test-a') && Date.now() - tw2 < 1000, `${Date.now() - tw2} ms`);
+  sS.close(); sDd.close();
+
   console.log('\n[a download checked against the size Cloudinary lists]');
   r2On(); const st = media.makeStore({ endpoint: fr2.url }); r2Off();
   const good = await jpeg(40, 40), U = OLD('student_test-size');
@@ -309,6 +348,7 @@ const J = base => async (p, opts = {}, headers = {}) => {
   sA.close(); sB.close();
 
   console.log('\n[the copy by itself, a few minutes after a start (here 0.2 s), until nothing is left]');
+  await pool.query('DELETE FROM ws_photo_copy');      // the staff runs above left the done mark
   const autoIds = ['student_test-auto1', 'student_test-auto2'];
   for (const id of autoIds) cl.originals.set(OLD(id), await jpeg(30, 30, '#336699'));
   cl.pages = [[...twoIds, ...autoIds].map(asset)];
@@ -323,6 +363,38 @@ const J = base => async (p, opts = {}, headers = {}) => {
   const sa = wauto.status();
   ok('...it ran with nobody pressing, copied what was left, and then stops', sa.auto.done === true && sa.auto.next === null && sa.copied === 2 && sa.left === 0
      && autoIds.every(id => /^\/sp\//.test(wauto.rewriteText(OLD(id)))), JSON.stringify(sa));
+  ok('...and leaves the done mark', sa.done === true && !!(await mark()));
+
+  console.log('\n[with the done mark the copy no longer runs by itself: a closed Cloudinary never shows as a failure]');
+  cl.refuse = 'Unknown API key (test)';
+  const listed0 = cl.listed;
+  r2On();
+  const wdone = media.wsPhotos({ r2Endpoint: fr2.url, fetch: fakeFetch, auto: { firstMs: 100, everyMs: 150 } });
+  r2Off();
+  const sD = await listen(makeApp(wdone)); await wdone.start();
+  const JD = J(`http://127.0.0.1:${sD.address().port}`);
+  await sleep(450);
+  const d0 = (await JD('/api/ws-photos/copy', {}, A)).body;
+  ok('a start with the done mark: no copy by itself, Cloudinary is never asked, nothing shows as failed, the box says done',
+     d0.done === true && d0.auto.done === true && d0.auto.next === null && !d0.startedAt && !d0.error && cl.listed === listed0, JSON.stringify(d0));
+  const dp = await JD('/api/ws-photos/copy', { method: 'POST', body: '{}' }, A);
+  await wdone.waitCopy();
+  const d1 = wdone.status();
+  ok('...staff can still run a full pass: Cloudinary is asked, and the box says why it could not list',
+     dp.status === 202 && cl.listed === listed0 + 1 && d1.error === 'Cloudinary list: Unknown API key (test)' && d1.done === true, JSON.stringify(d1));
+  cl.refuse = null;
+  sD.close();
+  await pool.query('DELETE FROM ws_photo_copy');
+  r2On();
+  const wlate = media.wsPhotos({ r2Endpoint: fr2.url, fetch: fakeFetch, auto: { firstMs: 300, everyMs: 300 } });
+  r2Off();
+  makeApp(wlate); await wlate.start();
+  ok('a server started before there is a mark has its copy due', !!wlate.status().auto.next && wlate.status().done === false);
+  await pool.query(`INSERT INTO ws_photo_copy (k) VALUES ('done')`);
+  const listed1 = cl.listed;
+  await sleep(500);
+  ok('...another server leaves the mark: this one reads it when its copy is due, and runs none',
+     cl.listed === listed1 && wlate.status().auto.done === true && wlate.status().auto.next === null && !wlate.status().startedAt, JSON.stringify(wlate.status()));
 
   console.log('\n[faces share the one photo queue and have their own limit]');
   const r2lib = require('../lib/r2');
@@ -350,7 +422,7 @@ const J = base => async (p, opts = {}, headers = {}) => {
 
   sOn.close();
   await fr2.close();
-  await pool.query('DROP TABLE IF EXISTS ws_photo_map');
+  await pool.query('DROP TABLE IF EXISTS ws_photo_map, ws_photo_copy');
   console.log(`\n${PASS} passed, ${FAIL} failed`);
   await pool.end();
   process.exit(FAIL ? 1 : 0);

@@ -963,6 +963,7 @@ const B_THB = 100; // satang per baht
     } },
     search: { expression: () => { const ch = { sort_by: () => ch, max_results: () => ch, execute: async () => {
       cl.searches++;
+      if (cl.hang) return new Promise(() => {});
       if (cl.down) throw new Error('Cloudinary is paused (test)');
       return { resources: cl.found };
     } }; return ch; } },
@@ -1020,7 +1021,14 @@ const B_THB = 100; // satang per baht
   ok('Cloudinary down: the hub list still answers, with the photos in R2',
      l0.status === 200 && l0.body.days.length === 1 && l0.body.days[0].items[0].url === up1.body.url, JSON.stringify(l0.body));
   cl.down = false;
-  const l1 = await J3('/api/idcn/idcn3/photos?slug=test-alum-a', {}, alumA);
+  // a server that has not seen the search fail (this one waits 5 minutes before asking again)
+  r2On();
+  const app3u = express(); app3u.use(express.json({ limit: '10mb' }));
+  mountIdcn(app3u, { pgPool: pool, r2Endpoint: fr2.url, cloudinary: fakeCloud, fetch: fakeFetch, autoCopy: false });
+  r2Off();
+  const srv3u = app3u.listen(0);
+  const l1 = await Jx(`http://127.0.0.1:${srv3u.address().port}`)('/api/idcn/idcn3/photos?slug=test-alum-a', {}, alumA);
+  srv3u.close();
   ok('Cloudinary up: the older photo still only there is listed too, under its own day',
      l1.status === 200 && l1.body.days.length === 2 && l1.body.days[0].items[0].url === up1.body.url
        && l1.body.days[1].date === '2026-11-20' && l1.body.days[1].items[0].url === cl.found[0].secure_url, JSON.stringify(l1.body));
@@ -1363,6 +1371,59 @@ const B_THB = 100; // satang per baht
   ok('...and with nothing left it stops', a1.auto.done === true && a1.auto.next === null
      && (await urlOf('idc_payments', 'proof_url', `proof_url LIKE 'https://res.cloudinary.com/%'`, [])).length === 0, JSON.stringify(a1.auto));
   srv6.close();
+
+  console.log('\n[a dead Cloudinary costs the hub list one short wait per 5 minutes, never one per load]');
+  await pool.query(`DELETE FROM idc_settings WHERE course_code='idcn3' AND key='hub_copied'`);
+  r2On(); process.env.TMPDIR = MULTER_TMP;
+  const app7 = express(); app7.use(express.json({ limit: '10mb' }));
+  mountIdcn(app7, { pgPool: pool, r2Endpoint: fr2.url, cloudinary: fakeCloud, fetch: fakeFetch, autoCopy: false });
+  const app8 = express(); app8.use(express.json({ limit: '10mb' }));
+  mountIdcn(app8, { pgPool: pool, r2Endpoint: fr2.url, cloudinary: fakeCloud, fetch: fakeFetch, autoCopy: false });
+  r2Off(); if (keepTmp == null) delete process.env.TMPDIR; else process.env.TMPDIR = keepTmp;
+  const srv7 = app7.listen(0), J7 = Jx(`http://127.0.0.1:${srv7.address().port}`);
+  const srv8 = app8.listen(0), J8 = Jx(`http://127.0.0.1:${srv8.address().port}`);
+  const HUB = '/api/idcn/idcn3/photos?slug=test-alum-a';
+  const inHub = (await pool.query(`SELECT count(*)::int AS n FROM idc_hub_photos WHERE course_code='idcn3'`)).rows[0].n;
+  const shown = b => (b.days || []).reduce((n, d) => n + d.items.length, 0);
+  cl.hang = true;
+  const sh = cl.searches, th1 = Date.now();
+  const hl1 = await J7(HUB, {}, alumA), tookH1 = Date.now() - th1;
+  ok('Cloudinary hangs: the hub list answers after about 3 s (not 8), with every photo of its own list',
+     hl1.status === 200 && tookH1 >= 2800 && tookH1 < 5000 && shown(hl1.body) === inHub && inHub > 0 && cl.searches === sh + 1,
+     `${tookH1} ms, ${shown(hl1.body)} of ${inHub}, ${cl.searches - sh} searches`);
+  const th2 = Date.now();
+  const hl2 = await J7(HUB, {}, alumA), tookH2 = Date.now() - th2;
+  ok('...the next load does not ask Cloudinary again for 5 minutes: no wait, the same photos',
+     hl2.status === 200 && tookH2 < 1000 && cl.searches === sh + 1 && shown(hl2.body) === inHub, `${tookH2} ms, ${cl.searches - sh} searches`);
+  const upH = await J7('/api/idcn/idcn3/photos', { method: 'POST', body: JSON.stringify({ slug: 'test-alum-a', imageBase64: dataUrl(ph) }) }, alumA);
+  const hl3 = await J7(HUB, {}, alumA);
+  ok('...a photo sent meanwhile is listed at once', upH.status === 200 && hl3.body.days.some(d => d.items.some(it => it.url === upH.body.url))
+     && cl.searches === sh + 1, JSON.stringify(upH.body));
+  cl.hang = false; cl.down = true;
+  const sd = cl.searches;
+  const hd1 = await J8(HUB, {}, alumA), hd2 = await J8(HUB, {}, alumA);
+  cl.down = false;
+  ok('a search that fails at once is remembered the same way: one ask, not one per load, and the list is whole',
+     hd1.status === 200 && hd2.status === 200 && cl.searches === sd + 1 && shown(hd2.body) === inHub + 1, `${cl.searches - sd} searches`);
+  srv7.close(); srv8.close();
+
+  console.log('\n[a deploy: an /api/idcn request that comes before the new columns are added waits for them]');
+  await pool.query('ALTER TABLE idc_payments DROP COLUMN proof_state');
+  const slowSchema = { query: (sql, p) => /ADD COLUMN IF NOT EXISTS proof_state/.test(sql) ? sleep(500).then(() => pool.query(sql, p)) : pool.query(sql, p),
+    connect: () => pool.connect() };
+  const app9 = express(); app9.use(express.json());
+  mountIdcn(app9, { pgPool: slowSchema });
+  const srv9 = app9.listen(0), J9 = Jx(`http://127.0.0.1:${srv9.address().port}`);
+  const gp = await J9('/api/idcn/idcn3/students/test-alum-a', {}, alumA);
+  ok('a profile asked for while proof_state is still being added: 200 once it is there, never a 500',
+     gp.status === 200 && Array.isArray(gp.body.payments) && gp.body.payments.length > 0, `${gp.status} ${JSON.stringify(gp.body).slice(0, 160)}`);
+  const failing = { query: (sql, p) => /CREATE TABLE IF NOT EXISTS idc_courses/.test(sql) ? Promise.reject(new Error('refused (test)')) : pool.query(sql, p),
+    connect: () => pool.connect() };
+  const app10 = express(); app10.use(express.json());
+  mountIdcn(app10, { pgPool: failing });
+  const srv10 = app10.listen(0), J10 = Jx(`http://127.0.0.1:${srv10.address().port}`);
+  ok('...a schema step that failed lets requests through, as before', (await J10('/api/idcn/idcn3/students/test-alum-a', {}, alumA)).status === 200);
+  srv9.close(); srv10.close();
   await sleep(200);
   ok('no upload left behind in the temp folder', tmpFiles() === 0, `${tmpFiles()} files`);
   srv3.close(); srv4.close(); await fr2.close();

@@ -816,6 +816,11 @@ function mountIdcn(app, opts = {}) {
     };
   }
 
+  // A deploy takes requests before the columns above are added: every /api/idcn request
+  // waits for that step (one that failed lets them through, as before).
+  const schemaReady = initSchema();
+  app.use('/api/idcn', (req, res, next) => { schemaReady.then(() => next(), () => next()); });
+
   // ── student endpoints ─────────────────────────────────────────────────────
   // The courses an AYBKK account is enrolled in, for My account on /book and the
   // cohort landing (/idcn3). Opened by the member code alone, like /api/bkk/me/:code;
@@ -971,7 +976,8 @@ function mountIdcn(app, opts = {}) {
   // that fails or hangs leaves those out, never the list. Without R2: Cloudinary's tag
   // search as before (own tag so nothing leaks between feeds), and each upload is also
   // noted in idc_hub_photos for the copy.
-  const photoCache = new Map();
+  // searchMiss: when a course's search last failed or hung; not asked again for 5 minutes
+  const photoCache = new Map(), searchMiss = new Map();
   const hubDay = r => { const m = String(r.public_id).match(/\/(\d{4}-\d{2}-\d{2})\//); return m ? m[1] : String(r.created_at).slice(0, 10); };
   const hubSearch = code => cloud().search.expression(`tags=aybkk-${code} AND resource_type:image`)
     .sort_by('created_at', 'desc').max_results(200).execute();
@@ -983,10 +989,11 @@ function mountIdcn(app, opts = {}) {
     let whole = true;
     if (!(await getSetting(code, 'hub_copied'))) {
       const known = new Set(rows.map(r => r.public_id).filter(Boolean));
-      try {
-        for (const r of (await within(hubSearch(code), 8000)).resources || []) if (!known.has(r.public_id))
+      if (Date.now() - (searchMiss.get(code) || 0) < 5 * 60e3) whole = false;
+      else try {
+        for (const r of (await within(hubSearch(code), 3000)).resources || []) if (!known.has(r.public_id))
           items.push({ day: hubDay(r), at: new Date(r.created_at).getTime() || 0, url: r.secure_url, w: r.width || 0, h: r.height || 0 });
-      } catch (e) { whole = false; console.warn('[idcn] photo hub: the photos still on Cloudinary are not listed:', e.message); }
+      } catch (e) { whole = false; searchMiss.set(code, Date.now()); console.warn('[idcn] photo hub: the photos still on Cloudinary are not listed:', e.message); }
     }
     items.sort((a, b) => b.day.localeCompare(a.day) || b.at - a.at);
     const byDay = new Map();
@@ -1945,7 +1952,7 @@ function mountIdcn(app, opts = {}) {
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
-  initSchema()
+  schemaReady
     .then(() => { console.log('✓ idcn-api mounted (/api/idcn/*)'); if (auto) autoSoon(auto.firstMs); })
     .catch(e => console.error('✗ idcn-api schema init failed:', e.message));
 }

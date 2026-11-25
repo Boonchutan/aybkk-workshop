@@ -4783,6 +4783,7 @@
     cfDoneAt: at => `Last copy, done ${at}:`,
     cfWs: (c, a, f, l, n) => `Old workshop photos: ${c} copied, ${a} were in already, ${f} failed${l ? `, ${l} left` : ''} (of ${n} on Cloudinary)`,
     cfWsNone: 'Old workshop photos: no copy has run on this server yet.',
+    cfWsDone: 'Old workshop photos: done, every one is in R2. No more copies by themselves; Copy now still runs one.',
     cfAutoNext: at => `Next copy by itself: ${at}`,
     cfAutoDone: 'Nothing is left to copy.',
     cfNow: 'Copy now',
@@ -4799,6 +4800,7 @@
     cfDoneAt: at => `คัดลอกครั้งล่าสุด เสร็จ ${at}:`,
     cfWs: (c, a, f, l, n) => `รูปเวิร์กช็อปเก่า: คัดลอกแล้ว ${c} รูป มีอยู่แล้ว ${a} รูป ไม่สำเร็จ ${f} รูป${l ? ` เหลือ ${l} รูป` : ''} (จากทั้งหมด ${n} รูปใน Cloudinary)`,
     cfWsNone: 'รูปเวิร์กช็อปเก่า: ยังไม่ได้คัดลอกบนเซิร์ฟเวอร์นี้',
+    cfWsDone: 'รูปเวิร์กช็อปเก่า: เสร็จแล้ว อยู่ใน R2 ครบทุกรูป จะไม่คัดลอกเองอีก แต่ยังกด คัดลอกตอนนี้ ได้',
     cfAutoNext: at => `คัดลอกเองครั้งต่อไป: ${at}`,
     cfAutoDone: 'ไม่มีไฟล์เหลือให้คัดลอกแล้ว',
     cfNow: 'คัดลอกตอนนี้',
@@ -4818,7 +4820,8 @@
     return `<div class="box" id="cfBox">${head}
       ${st.r2 ? '' : `<p><b>${esc(T('cfOff'))}</b></p>`}
       ${st.courses.map(course).join('')}
-      <p>${esc(ws && ws.startedAt ? T('cfWs', ws.copied, ws.already, ws.failed, ws.left, ws.listed) : T('cfWsNone'))}</p>
+      <p>${esc(ws && ws.startedAt ? T('cfWs', ws.copied, ws.already, ws.failed, ws.left, ws.listed) : T(ws && ws.done ? 'cfWsDone' : 'cfWsNone'))}</p>
+      ${ws && ws.startedAt && ws.done ? `<p class="muted">${esc(T('cfWsDone'))}</p>` : ''}
       ${ws && ws.error ? `<p class="flash warn">${esc(T('cfErr', ws.error))}</p>` : ''}
       ${next ? `<p class="muted">${esc(next)}</p>` : ''}
       <p><button class="btn pink" onclick="cfRun()"${st.r2 && !running ? '' : ' disabled'}>${esc(T(running ? 'cfRunning' : 'cfNow'))}</button></p></div>`;
