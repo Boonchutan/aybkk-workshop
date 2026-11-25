@@ -516,9 +516,29 @@
     };
     f.click();
   };
+  // A photo the server cannot use as it is (HEIC from some phones): drawn again as a
+  // JPEG when this browser can open it; otherwise it goes as it is and the server says why.
+  const asJpeg = file => new Promise(done => {
+    if (!file || !/^image\//.test(file.type) || /^image\/(jpeg|png|webp|gif)$/.test(file.type)) return done(file);
+    const url = URL.createObjectURL(file), img = new Image();
+    const asIs = () => { URL.revokeObjectURL(url); done(file); };
+    img.onload = () => {
+      try {
+        const k = Math.min(1, 4096 / Math.max(img.naturalWidth, img.naturalHeight)), c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round(img.naturalWidth * k)); c.height = Math.max(1, Math.round(img.naturalHeight * k));
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        c.toBlob(b => done(b ? new File([b], 'photo.jpg', { type: 'image/jpeg' }) : file), 'image/jpeg', 0.9);
+      } catch (_) { asIs(); }
+    };
+    img.onerror = asIs;
+    img.src = url;
+  });
+  const photoWhy = j => j.photoType ? T2('这种照片格式不能用。请发一张 JPEG 照片或截图。', 'This photo type cannot be used. Send a JPEG, or a screenshot of the photo.')
+    : j.photoBig ? T2('这张照片太大了。请发一张小一点的照片或截图。', 'This photo is too large. Send a smaller one, or a screenshot of it.') : '';
   window.handIn = async no => {
     const ta = $('#ans-' + no), f = $('#ansf-' + no), msg = $('#ansm-' + no), btn = $('#ansb-' + no);
-    const body = ta.value.trim(), file = f.files && f.files[0];
+    const body = ta.value.trim(), file = await asJpeg(f.files && f.files[0]);
     if (!body && !file) { msg.textContent = T2('请写下你的回答，或加一个视频。', 'Write your answer, or add a video.'); return; }
     if (body.length > 4000) { msg.textContent = T2('回答请控制在4000字以内。', 'Keep the answer under 4000 characters.'); return; }
     msg.textContent = file ? T2('上传中… 视频较大时需要一点时间，请不要关闭页面。', 'Uploading… a video can take a while, keep the page open.')
@@ -538,13 +558,16 @@
       if (!r.ok) {
         btn.disabled = false;
         msg.textContent = r.status === 403 ? T2('请先确认你的名额。', 'Confirm your spot first.')
-          : (j.error || T2('提交失败，请重试', 'That did not go through. Try again.'));
+          : (photoWhy(j) || j.error || T2('提交失败，请重试', 'That did not go through. Try again.'));
         return;
       }
       ta.value = ''; DRAFT[no] = '';
-      FLASH[no] = j.mediaFailed
-        ? T2('你的回答已保存，但文件没有上传成功。请点下面的「重新上传文件」。', 'Your answer is saved, but the file did not upload. Tap “Send the file again” below.')
-        : T2('已提交 ✓ 老师会在你的档案里看到。', 'Handed in ✓ The teachers see it on your profile.');
+      FLASH[no] = !j.mediaFailed ? T2('已提交 ✓ 老师会在你的档案里看到。', 'Handed in ✓ The teachers see it on your profile.')
+        : j.photoType ? T2('你的回答已保存，但这种照片格式不能用。请点下面的「重新上传文件」，发一张 JPEG 照片或截图。',
+          'Your answer is saved, but this photo type cannot be used. Tap “Send the file again” below and send a JPEG, or a screenshot of the photo.')
+        : j.photoBig ? T2('你的回答已保存，但这张照片太大了。请点下面的「重新上传文件」，发一张小一点的照片或截图。',
+          'Your answer is saved, but this photo is too large. Tap “Send the file again” below and send a smaller one, or a screenshot of it.')
+        : T2('你的回答已保存，但文件没有上传成功。请点下面的「重新上传文件」。', 'Your answer is saved, but the file did not upload. Tap “Send the file again” below.');
       await load();
       delete FLASH[no];
     } catch (_) {
@@ -568,7 +591,7 @@
   window.resend = id => {
     const f = $('#rf-' + id), msg = $('#rm-' + id), btn = $('#rb-' + id);
     f.onchange = async () => {
-      const file = f.files && f.files[0];
+      const file = await asJpeg(f.files && f.files[0]);
       if (!file) return;
       if (file.size > 100 * 1024 * 1024) {
         msg.textContent = T2('视频太大了，请控制在100MB以内（1-2分钟足够）。', 'That file is over 100MB. A 1 to 2 minute clip is enough.');
@@ -581,9 +604,10 @@
         fd.append('slug', SLUG); fd.append('file', file);
         const r = await fetch(`/api/idcn/${COURSE}/submissions/${id}/media`, { method: 'POST', headers: keys(), body: fd });
         if (r.ok) { await load(); return; }
+        const j = await r.json().catch(() => ({}));
         btn.disabled = false; f.value = '';
         msg.textContent = r.status === 404 ? T2('这个文件已经上传过了，请刷新页面。', 'This file is in already. Reload the page.')
-          : T2('还是没有上传成功，请稍后再试。', 'It did not upload this time either. Try again in a moment.');
+          : photoWhy(j) || T2('还是没有上传成功，请稍后再试。', 'It did not upload this time either. Try again in a moment.');
       } catch (_) {
         btn.disabled = false; f.value = '';
         msg.textContent = T2('网络中断，请重试', 'Connection dropped. Try again.');
@@ -670,14 +694,15 @@
 
   window.pickPhoto = () => {
     const f = $('#photoFile');
-    f.onchange = () => {
-      const file = f.files && f.files[0]; if (!file) return;
+    f.onchange = async () => {
+      const file = await asJpeg(f.files && f.files[0]); if (!file) return;
       $('#upMsg').textContent = T2('上传中…', 'Uploading…');
       const rd = new FileReader();
       rd.onload = async () => {
         const r = await api(`/api/idcn/${COURSE}/photos`, { method: 'POST',
           body: JSON.stringify({ slug: SLUG, imageBase64: rd.result }) });
-        $('#upMsg').textContent = r.ok ? T2('已上传 ✓', 'Uploaded ✓') : T2('上传失败，请重试', W('Upload failed — try again', 'Upload failed. Try again.'));
+        const j = r.ok ? {} : await r.json().catch(() => ({}));
+        $('#upMsg').textContent = r.ok ? T2('已上传 ✓', 'Uploaded ✓') : photoWhy(j) || T2('上传失败，请重试', W('Upload failed — try again', 'Upload failed. Try again.'));
         if (r.ok) loadPhotos();
       };
       rd.readAsDataURL(file);

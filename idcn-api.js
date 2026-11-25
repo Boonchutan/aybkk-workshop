@@ -578,6 +578,9 @@ function mountIdcn(app, opts = {}) {
     await q(`ALTER TABLE idc_notes ADD COLUMN IF NOT EXISTS media_state TEXT`);
     await q(`ALTER TABLE idc_notes ADD COLUMN IF NOT EXISTS media_batch TEXT`);
     await q(`ALTER TABLE idc_payments ADD COLUMN IF NOT EXISTS proof_state TEXT`);
+    // the Cloudinary link a copy in R2 took the place of, to trace a copy back to its source
+    await q(`ALTER TABLE idc_notes ADD COLUMN IF NOT EXISTS media_src TEXT`);
+    await q(`ALTER TABLE idc_payments ADD COLUMN IF NOT EXISTS proof_src TEXT`);
     // the photo hub's own list: media is "r2:<key>" or a Cloudinary link (public_id
     // then names it, so its copy in R2 takes the same row); uploader is the student, null for staff
     await q(`CREATE TABLE IF NOT EXISTS idc_hub_photos (
@@ -588,6 +591,7 @@ function mountIdcn(app, opts = {}) {
       uploader INTEGER,
       created_at TIMESTAMPTZ DEFAULT now())`);
     await q(`CREATE INDEX IF NOT EXISTS idc_hub_photos_course ON idc_hub_photos (course_code, day)`);
+    await q(`ALTER TABLE idc_hub_photos ADD COLUMN IF NOT EXISTS media_src TEXT`);
   }
 
   // the policy a student signed, or the one they would sign now
@@ -698,6 +702,11 @@ function mountIdcn(app, opts = {}) {
   // a file in R2 goes out as a signed link; media_failed only when the file did not arrive
   const failedKey = (state, key) => state === 'failed' ? { [key]: true } : {};
   const FILE_AGAIN = { mediaFailed: true, mediaError: 'saved, but the file did not upload: send the file again' };
+  // A photo R2's side refused as it is (HEIC, too large): its own reason, never "send it
+  // again", and a flag (photoType, photoBig) the pages say in the student's language.
+  const refused = e => !!store && e.status === 400;
+  const why = e => ({ error: e.message, ...(e.kind ? { [e.kind]: true } : {}) });
+  const failedWith = (e, again) => refused(e) ? { mediaFailed: true, mediaError: e.message, ...(e.kind ? { [e.kind]: true } : {}) } : again;
   const noteOut = n => ({ id: n.id, kind: n.kind, title: n.title, body: n.body, media_url: media.linkFor(n.media_url),
     media_type: n.media_type, created_by: n.created_by, created_at: n.created_at,
     updated_at: n.updated_at || null, session: n.session_no, day: n.day_no, ...failedKey(n.media_state, 'media_failed') });
@@ -903,13 +912,13 @@ function mountIdcn(app, opts = {}) {
       } else if (!req.file) return res.status(400).json({ error: 'attach the video (or photo) file' });
       // A file that does not arrive never costs the written answer: it is saved, marked,
       // and the student sends the file again. With no words to keep, the error as before.
-      let up = { url: null, type: null }, upFailed = false;
+      let up = { url: null, type: null }, upFailed = null;
       if (req.file) {
         try {
           up = await pushMedia(req.file, `aybkk/${course.code}/submissions/${s.slug}`, `idcn/${course.code}/sub`);
         } catch (e) {
           if (!body) throw e;
-          upFailed = true;
+          upFailed = failedWith(e, FILE_AGAIN);
           up = { url: null, type: /^video\//.test(req.file.mimetype || '') ? 'video' : 'image' };
           console.warn('[idcn] a hand-in is saved without its file:', e.message);
         }
@@ -924,8 +933,8 @@ function mountIdcn(app, opts = {}) {
       const n = r.rows[0];
       res.json({ success: true, note: sessionNo != null ? noteOut(n) : { id: n.id, kind: n.kind, title: n.title,
         body: n.body, created_by: n.created_by, media_url: media.linkFor(n.media_url), media_type: n.media_type,
-        created_at: n.created_at, ...failedKey(n.media_state, 'media_failed') }, ...(upFailed ? FILE_AGAIN : {}) });
-    } catch (e) { res.status(store && e.status === 400 ? 400 : 500).json({ error: e.message }); }
+        created_at: n.created_at, ...failedKey(n.media_state, 'media_failed') }, ...(upFailed || {}) });
+    } catch (e) { res.status(refused(e) ? 400 : 500).json(why(e)); }
     finally { dropUpload(req); }
   }));
 
@@ -946,7 +955,7 @@ function mountIdcn(app, opts = {}) {
         up = await pushMedia(req.file, `aybkk/${course.code}/submissions/${s.slug}`, `idcn/${course.code}/sub`);
       } catch (e) {
         console.warn('[idcn] a hand-in file did not arrive again:', e.message);
-        return res.status(e.status === 400 ? 400 : 502).json({ error: FILE_AGAIN.mediaError });
+        return refused(e) ? res.status(400).json(why(e)) : res.status(502).json({ error: FILE_AGAIN.mediaError });
       }
       const r = await q(`UPDATE idc_notes SET media_url=$2, media_type=$3, media_state=NULL
         WHERE id=$1 AND media_state='failed' RETURNING ${NOTE_COLS}`, [n.id, up.url, up.type]);
@@ -1044,7 +1053,7 @@ function mountIdcn(app, opts = {}) {
         .catch(e => console.warn('[idcn] photo hub: not noted for the copy:', e.message));
       photoCache.delete(course.code);
       res.json({ success: true, url: up.secure_url });
-    } catch (e) { res.status(store && e.status === 400 ? 400 : 500).json({ error: e.message }); }
+    } catch (e) { res.status(refused(e) ? 400 : 500).json(why(e)); }
   });
 
   // ── admin (Boonchu + Jamsai, x-bkk-key) ───────────────────────────────────
@@ -1110,12 +1119,14 @@ function mountIdcn(app, opts = {}) {
                   WHERE n.student_id=s.id AND n.kind='comment') AS comments,
                 (SELECT count(*)::int FROM idc_notes n
                   WHERE n.student_id=s.id AND n.kind='submission' AND n.session_no IS NOT NULL)
-                  AS session_submissions
+                  AS session_submissions,
+                (SELECT json_agg(json_build_object('id', p.id, 'label', p.label, 'amount_satang', p.amount_satang) ORDER BY p.id)
+                  FROM idc_payments p WHERE p.student_id=s.id AND p.proof_state='failed') AS proofs_missing
          FROM idc_students s
          LEFT JOIN idc_consents c ON c.student_id=s.id
          WHERE s.course_code=$1 ORDER BY s.name_en`, [course.code])).rows;
       const members = await liveMembers(rows.map(r => r.member_id).filter(x => x != null));
-      res.json({ policyVersion: currentVersion(course), students: rows.map(r => {
+      res.json({ policyVersion: currentVersion(course), students: rows.map(({ proofs_missing: missing, ...r }) => {
         const version = r.policy_version || currentVersion(course);
         const terms = termsFor(course, version);
         const qt = studentQuote(terms, r);
@@ -1129,7 +1140,9 @@ function mountIdcn(app, opts = {}) {
           held: heldFor(terms, r, !!r.signed_at, r.proofs),
           plan_changed: !!r.signed_plan && JSON.stringify(r.signed_plan)
             !== JSON.stringify((qt && qt.installments) || null),
-          attendee_discount: !!terms.attendeePct, options: optionList(terms) };
+          attendee_discount: !!terms.attendeePct, options: optionList(terms),
+          // payments saved while their screenshot did not upload: each waits for it on its own row
+          ...(missing ? { proofs_missing: missing.map(p => ({ ...p, amount_satang: p.amount_satang == null ? null : Number(p.amount_satang) })) } : {}) };
       }) });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
@@ -1235,7 +1248,7 @@ function mountIdcn(app, opts = {}) {
   // Proofs live OUTSIDE the tagged photo folders so they can never surface in any
   // moments/course feed (in R2: idcn/<course>/proof, opened only by a link that ends).
   async function pushProof(course, slug, dataUrl) {
-    if (store) return (await media.putImage(store, `idcn/${course.code}/proof`, media.dataUrlBytes(dataUrl))).ref;
+    if (store) return (await media.putImage(store, `idcn/${course.code}/proof`, media.dataUrlBytes(dataUrl), { whole: true })).ref;
     const up = await cloud().uploader.upload(dataUrl, {
       folder: `aybkk/${course.code}/proofs/${slug}`, resource_type: 'image' });
     return up.secure_url;
@@ -1256,10 +1269,11 @@ function mountIdcn(app, opts = {}) {
       const amount = b.amountSatang != null ? Number(b.amountSatang) : null;
       if (amount != null && (!Number.isSafeInteger(amount) || amount <= 0))
         return res.status(400).json({ error: 'amountSatang must be a positive integer' });
-      let proofUrl = null, proofFailed = false;
+      let proofUrl = null, proofFailed = null;
       if (b.imageBase64) {
         try { proofUrl = await pushProof(course, s.slug, b.imageBase64); } catch (e) {
-          proofFailed = true;
+          const { mediaFailed, ...f } = failedWith(e, { mediaError: 'the payment is saved, but the screenshot did not upload: send it again' });
+          proofFailed = { proofFailed: true, ...f };
           console.warn('[idcn] a payment is saved without its screenshot:', e.message);
         }
       }
@@ -1269,7 +1283,22 @@ function mountIdcn(app, opts = {}) {
         [s.id, label, amount, proofUrl, String(b.note || '').trim() || null,
          String(b.uploadedBy || 'AYBKK').slice(0, 60), proofFailed ? 'failed' : null]);
       res.json({ success: true, payment: payOut(r.rows[0]),
-        ...(proofFailed ? { proofFailed: true, mediaError: 'the payment is saved, but the screenshot did not upload: send it again' } : {}) });
+        ...(proofFailed || {}) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // A payment saved while its screenshot did not upload, made again by mistake: staff
+  // remove that row. Only such a row: a payment with its screenshot is never removed.
+  app.delete('/api/idcn/admin/:course/payments/:id', async (req, res) => {
+    if (!needAdmin(req, res)) return;
+    try {
+      const course = await courseFor(req, res); if (!course) return;
+      const id = idParam(req.params.id);
+      const r = id && await q(`DELETE FROM idc_payments p USING idc_students s
+        WHERE p.id=$1 AND s.id = p.student_id AND s.course_code=$2 AND p.proof_state='failed' AND p.proof_url IS NULL
+        RETURNING p.id`, [id, course.code]);
+      if (!r || !r.rowCount) return res.status(404).json({ error: 'no payment without its screenshot has this id' });
+      res.json({ success: true, removed: r.rows[0].id });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -1287,7 +1316,7 @@ function mountIdcn(app, opts = {}) {
       let url;
       try { url = await pushProof(course, p.slug, img); } catch (e) {
         console.warn('[idcn] a payment screenshot did not arrive again:', e.message);
-        return res.status(e.status === 400 ? 400 : 502).json({ error: 'the screenshot did not upload: try again' });
+        return refused(e) ? res.status(400).json(why(e)) : res.status(502).json({ error: 'the screenshot did not upload: try again' });
       }
       const r = await q(`UPDATE idc_payments SET proof_url=$2, proof_state=NULL WHERE id=$1 AND proof_state='failed'
         RETURNING ${PAY_COLS}`, [p.id, url]);
@@ -1328,10 +1357,11 @@ function mountIdcn(app, opts = {}) {
       }
       // a file that does not arrive: the notes go out without it, all marked with one
       // batch, and the file sent again to /notes/<any of them>/media reaches them all
-      let up = { url: null, type: null }, batch = null;
+      let up = { url: null, type: null }, batch = null, noteFailed = null;
       if (req.file) {
         try { up = await pushMedia(req.file, `aybkk/${course.code}/assignments`, `idcn/${course.code}/note`); } catch (e) {
           batch = crypto.randomBytes(8).toString('hex');
+          noteFailed = failedWith(e, FILE_AGAIN);
           up = { url: null, type: /^video\//.test(req.file.mimetype || '') ? 'video' : 'image' };
           console.warn('[idcn] a note is sent without its file:', e.message);
         }
@@ -1346,7 +1376,7 @@ function mountIdcn(app, opts = {}) {
         if (firstId == null) firstId = r.rows[0].id;
       }
       res.json({ success: true, sentTo: ids.length, ...(sessionNo != null ? { session: sessionNo } : {}),
-        ...(batch && firstId != null ? { ...FILE_AGAIN, retryId: firstId } : {}) });
+        ...(batch && firstId != null ? { ...noteFailed, retryId: firstId } : {}) });
     } catch (e) { res.status(500).json({ error: e.message }); }
     finally { dropUpload(req); }
   }));
@@ -1371,7 +1401,7 @@ function mountIdcn(app, opts = {}) {
           : await pushMedia(req.file, `aybkk/${course.code}/assignments`, `idcn/${course.code}/note`);
       } catch (e) {
         console.warn('[idcn] a note file did not arrive again:', e.message);
-        return res.status(e.status === 400 ? 400 : 502).json({ error: FILE_AGAIN.mediaError });
+        return refused(e) ? res.status(400).json(why(e)) : res.status(502).json({ error: FILE_AGAIN.mediaError });
       }
       const r = await q(`UPDATE idc_notes n SET media_url=$3, media_type=$4, media_state=NULL FROM idc_students s
         WHERE s.id = n.student_id AND s.course_code=$2 AND n.media_state='failed'
@@ -1402,44 +1432,52 @@ function mountIdcn(app, opts = {}) {
     }
   });
 
-  // ── one press: the course files still only on Cloudinary, copied into R2 ──
-  // Hub photos, hand-ins and notes, payment screenshots, in the background. A row is
-  // pointed at its copy only after a HEAD of the copy matches the original (size and
-  // MD5); Cloudinary's file is kept. Pressed again it copies only what is left.
+  // ── the course files still only on Cloudinary, copied into R2 ─────────────
+  // Hub photos, hand-ins and notes, payment screenshots, in the background, one server
+  // at a time. A row is pointed at its copy only after a HEAD of the copy matches the
+  // original (size and MD5), and keeps the link it had (media_src, proof_src);
+  // Cloudinary's file is kept. Run again it copies only what is left. Staff start it
+  // here or in Admin, Settings, Photo storage; with R2 on it also starts by itself a
+  // few minutes after each start and every few hours, until nothing is left.
   // Counts of files only.
-  const copyJobs = new Map();
+  const copyJobs = new Map(), copyRuns = new Map();
   async function copyCourse(code, job) {
-    const one = async (part, url, prefix, fallback, ms, point) => {
+    // point: how the rows take the copy; 0 rows when another copy got there first
+    const one = async (part, url, prefix, fallback, opts, point) => {
+      const key = `${prefix}/${crypto.randomBytes(16).toString('hex')}.${media.extOf(url, fallback)}`;
       try {
-        const key = `${prefix}/${crypto.randomBytes(16).toString('hex')}.${media.extOf(url, fallback)}`;
-        await media.copyIn(store, url, key, { fetch: httpFetch, ms });
-        await point(media.REF + key);
-        job[part].copied++;
+        await media.copyIn(store, url, key, { fetch: httpFetch, ...opts });
+        if (await point(media.REF + key)) job[part].copied++;
+        else store.del(key).catch(() => {});
+        job[part].left--;
       } catch (e) {
         job[part].failed++;
         if (e.r2) throw e;      // R2 itself refused: the next ones would fail the same way
       }
     };
-    // hub photos: the ones noted here, and the tag search for the ones from before the list
+    // hub photos: the ones noted here, and the tag search for the ones from before the
+    // list (no longer once every one of those is copied)
     let listed = null;
-    try { listed = (await within(hubSearch(code), 30000)).resources || []; } catch (e) {
+    if (await getSetting(code, 'hub_copied')) listed = [];
+    else try { listed = (await within(hubSearch(code), 30000)).resources || []; } catch (e) {
       job.errors.push(`Cloudinary search: ${e.message || 'no answer'}`);
     }
+    const byId = new Map((listed || []).map(r => [r.public_id, r]));
     const rows = (await q(`SELECT media, public_id FROM idc_hub_photos WHERE course_code=$1`, [code])).rows;
     const done = new Set(rows.filter(r => media.isRef(r.media)).map(r => r.public_id).filter(Boolean));
     const hub = new Map();
-    for (const r of rows) if (!media.isRef(r.media) && media.CLOUD.test(r.media)) hub.set(r.public_id || r.media, { url: r.media, row: true });
+    for (const r of rows) if (!media.isRef(r.media) && media.CLOUD.test(r.media))
+      hub.set(r.public_id || r.media, { url: r.media, row: true, bytes: (byId.get(r.public_id) || {}).bytes });
     for (const r of listed || []) if (!done.has(r.public_id) && !hub.has(r.public_id) && media.CLOUD.test(r.secure_url || ''))
-      hub.set(r.public_id, { url: r.secure_url, public_id: r.public_id, day: hubDay(r), at: r.created_at, w: r.width, h: r.height });
+      hub.set(r.public_id, { url: r.secure_url, public_id: r.public_id, day: hubDay(r), at: r.created_at, w: r.width, h: r.height, bytes: r.bytes });
     job.hub.left = hub.size;
-    for (const t of hub.values()) await one('hub', t.url, `idcn/${code}/hub`, 'jpg', 60000, async ref => {
-      if (t.row) await q(`UPDATE idc_hub_photos SET media=$3 WHERE course_code=$1 AND media=$2`, [code, t.url, ref]);
-      else await q(`INSERT INTO idc_hub_photos (course_code, media, public_id, day, width, height, created_at)
-          VALUES ($1,$2,$3,$4,$5,$6,COALESCE($7::timestamptz, now()))
-          ON CONFLICT (public_id) DO UPDATE SET media=EXCLUDED.media WHERE idc_hub_photos.media NOT LIKE 'r2:%'`,
-        [code, ref, t.public_id, t.day, t.w || null, t.h || null, t.at || null]);
-      job.hub.left--;
-    });
+    for (const t of hub.values()) await one('hub', t.url, `idcn/${code}/hub`, 'jpg', { ms: 60000, bytes: t.bytes }, async ref => t.row
+      ? (await q(`UPDATE idc_hub_photos SET media=$3, media_src=$2 WHERE course_code=$1 AND media=$2`, [code, t.url, ref])).rowCount
+      : (await q(`INSERT INTO idc_hub_photos (course_code, media, public_id, day, width, height, created_at, media_src)
+          VALUES ($1,$2,$3,$4,$5,$6,COALESCE($7::timestamptz, now()),$8)
+          ON CONFLICT (public_id) DO UPDATE SET media=EXCLUDED.media, media_src=EXCLUDED.media_src
+          WHERE idc_hub_photos.media NOT LIKE 'r2:%'`,
+        [code, ref, t.public_id, t.day, t.w || null, t.h || null, t.at || null, t.url])).rowCount);
     if (listed && !job.hub.left) await q(`INSERT INTO idc_settings (course_code, key, value) VALUES ($1,'hub_copied','true')
       ON CONFLICT (course_code, key) DO UPDATE SET value='true', updated_at=now()`, [code]);
     photoCache.delete(code);
@@ -1450,22 +1488,80 @@ function mountIdcn(app, opts = {}) {
     for (const n of notes) {
       const video = n.media_type === 'video';
       await one('notes', n.media_url, `idcn/${code}/${/\/submissions\//.test(n.media_url) ? 'sub' : 'note'}`,
-        video ? 'mp4' : 'jpg', video ? 300000 : 60000, async ref => {
-          await q(`UPDATE idc_notes n SET media_url=$3 FROM idc_students s
-            WHERE s.id = n.student_id AND s.course_code=$1 AND n.media_url=$2`, [code, n.media_url, ref]);
-          job.notes.left--;
-        });
+        video ? 'mp4' : 'jpg', { ms: video ? 300000 : 60000 }, async ref => (await q(`UPDATE idc_notes n SET media_url=$3, media_src=$2
+          FROM idc_students s WHERE s.id = n.student_id AND s.course_code=$1 AND n.media_url=$2`, [code, n.media_url, ref])).rowCount);
     }
     // payment screenshots
     const proofs = (await q(`SELECT DISTINCT p.proof_url FROM idc_payments p JOIN idc_students s ON s.id = p.student_id
       WHERE s.course_code=$1 AND p.proof_url LIKE 'https://res.cloudinary.com/%'`, [code])).rows;
     job.proofs.left = proofs.length;
-    for (const p of proofs) await one('proofs', p.proof_url, `idcn/${code}/proof`, 'jpg', 60000, async ref => {
-      await q(`UPDATE idc_payments p SET proof_url=$3 FROM idc_students s
-        WHERE s.id = p.student_id AND s.course_code=$1 AND p.proof_url=$2`, [code, p.proof_url, ref]);
-      job.proofs.left--;
-    });
+    for (const p of proofs) await one('proofs', p.proof_url, `idcn/${code}/proof`, 'jpg', { ms: 60000 }, async ref =>
+      (await q(`UPDATE idc_payments p SET proof_url=$3, proof_src=$2 FROM idc_students s
+        WHERE s.id = p.student_id AND s.course_code=$1 AND p.proof_url=$2`, [code, p.proof_url, ref])).rowCount);
   }
+  // the course's copy, or the one running; copyRuns holds the promise that ends with it
+  function startCopy(code) {
+    const now = copyJobs.get(code);
+    if (now && now.running) return now;
+    const part = () => ({ copied: 0, failed: 0, left: null });
+    const job = { running: true, startedAt: new Date().toISOString(), finishedAt: null,
+      hub: part(), notes: part(), proofs: part(), errors: [] };
+    copyJobs.set(code, job);
+    copyRuns.set(code, media.withLock(pool, `aybkk-copy:idcn:${code}`, () => copyCourse(code, job))
+      .then(got => { if (!got) job.errors.push('Another server is copying these files now.'); })
+      .catch(e => { job.errors.push(e.message); })
+      .finally(() => { job.running = false; job.finishedAt = new Date().toISOString(); }));
+    return job;
+  }
+  const clean = job => !job.errors.length && ['hub', 'notes', 'proofs'].every(k => !job[k].failed && job[k].left === 0);
+  const activeCodes = async () => (await q('SELECT code FROM idc_courses WHERE active ORDER BY code')).rows.map(r => r.code);
+  async function copyAll() {
+    let ok = true;
+    for (const code of await activeCodes()) {
+      const job = startCopy(code);
+      await copyRuns.get(code);
+      if (!clean(job)) ok = false;
+    }
+    return ok;
+  }
+  // by itself (R2 on; opts.autoCopy: false, or { firstMs, everyMs } for a test)
+  const auto = store && opts.autoCopy !== false ? { firstMs: 3 * 60e3, everyMs: 3 * 3600e3, ...(opts.autoCopy || {}) } : null;
+  const autoState = { next: null, done: false };
+  function autoSoon(ms) {
+    if (!auto || autoState.done || Date.now() + ms > media.AUTO_UNTIL) { autoState.next = null; return; }
+    autoState.next = new Date(Date.now() + ms).toISOString();
+    const t = setTimeout(async () => {
+      autoState.next = null;
+      try { if (await copyAll()) autoState.done = true; } catch (e) { console.warn('[idcn] course files copy did not run:', e.message); }
+      autoSoon(auto.everyMs);
+    }, ms);
+    if (t.unref) t.unref();
+  }
+  // what is still on Cloudinary by the rows here (older hub photos only by the search)
+  const cloudLeft = async code => ({ ...(await q(`SELECT
+      (SELECT count(*)::int FROM idc_hub_photos WHERE course_code=$1 AND media LIKE 'https://res.cloudinary.com/%') AS hub,
+      (SELECT count(DISTINCT n.media_url)::int FROM idc_notes n JOIN idc_students s ON s.id = n.student_id
+        WHERE s.course_code=$1 AND n.media_url LIKE 'https://res.cloudinary.com/%') AS notes,
+      (SELECT count(DISTINCT p.proof_url)::int FROM idc_payments p JOIN idc_students s ON s.id = p.student_id
+        WHERE s.course_code=$1 AND p.proof_url LIKE 'https://res.cloudinary.com/%') AS proofs`, [code])).rows[0],
+    hubChecked: !!(await getSetting(code, 'hub_copied')) });
+  // every course at once, for Admin, Settings, Photo storage
+  const allOut = async () => ({ r2: !!store, auto: { on: !!auto, ...autoState }, courses: await Promise.all((await activeCodes()).map(async code =>
+    ({ code, job: copyJobs.get(code) || null, onCloudinary: await cloudLeft(code) }))) });
+  app.get('/api/idcn/admin/media-copy', async (req, res) => {
+    if (!needAdmin(req, res)) return;
+    try { res.json(await allOut()); } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+  app.post('/api/idcn/admin/media-copy', async (req, res) => {
+    if (!needAdmin(req, res)) return;
+    try {
+      if (!store) return res.status(409).json({ error: 'R2 is not set up: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET are needed in Railway.' });
+      const codes = await activeCodes();
+      if (codes[0]) startCopy(codes[0]);
+      copyAll().catch(e => console.warn('[idcn] course files copy did not run:', e.message));
+      res.status(202).json(await allOut());
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
   app.get('/api/idcn/admin/:course/media-copy', async (req, res) => {
     if (!needAdmin(req, res)) return;
     try {
@@ -1478,16 +1574,7 @@ function mountIdcn(app, opts = {}) {
     try {
       const course = await courseFor(req, res); if (!course) return;
       if (!store) return res.status(409).json({ error: 'R2 is not set up: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET are needed in Railway.' });
-      let job = copyJobs.get(course.code);
-      if (!job || !job.running) {
-        const part = () => ({ copied: 0, failed: 0, left: null });
-        job = { running: true, startedAt: new Date().toISOString(), finishedAt: null,
-          hub: part(), notes: part(), proofs: part(), errors: [] };
-        copyJobs.set(course.code, job);
-        copyCourse(course.code, job).catch(e => job.errors.push(e.message))
-          .finally(() => { job.running = false; job.finishedAt = new Date().toISOString(); });
-      }
-      res.status(202).json({ r2: true, ...job });
+      res.status(202).json({ r2: true, ...startCopy(course.code) });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -1859,7 +1946,7 @@ function mountIdcn(app, opts = {}) {
   });
 
   initSchema()
-    .then(() => console.log('✓ idcn-api mounted (/api/idcn/*)'))
+    .then(() => { console.log('✓ idcn-api mounted (/api/idcn/*)'); if (auto) autoSoon(auto.firstMs); })
     .catch(e => console.error('✗ idcn-api schema init failed:', e.message));
 }
 

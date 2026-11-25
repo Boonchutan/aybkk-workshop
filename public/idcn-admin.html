@@ -319,6 +319,7 @@
         <button class="btn gray" onclick="setStatus(${s.id}, '${esc(s.status)}')">Status</button>
         <button class="btn gray" onclick="resetKey(${s.id})">Reset passcode</button>
       </div>
+      ${missingHtml(s)}
       <div id="proofRow${s.id}"></div>
     </div>`).join('') || '<p class="muted">No students yet.</p>';
   }
@@ -343,12 +344,46 @@
     load();
   };
 
-  // a payment saved without its screenshot: the next Upload sends only the screenshot
-  const PROOF_AGAIN = {}, NOTE_AGAIN = {};
+  // A payment saved while its screenshot did not upload stays on the student's card
+  // until it has one (from the server, so a reload or Cancel never loses it).
+  const NOTE_AGAIN = {};
+  const missingHtml = s => (s.proofs_missing || []).map(p => `<div class="warn" id="miss${Number(p.id)}">
+      <b>Screenshot missing</b> for “${esc(p.label)}”${p.amount_satang != null ? ' ' + baht(p.amount_satang) : ''}: the payment is saved, its screenshot did not upload.
+      <p style="margin:8px 0 0"><button class="btn pink sm" onclick="proofAgain(${Number(p.id)})">Upload screenshot</button>
+        <button class="btn gray sm" onclick="dropPayment(${Number(p.id)})">Remove this payment</button>
+        <span class="muted" id="mm${Number(p.id)}" role="status"></span></p></div>`).join('');
+  // a photo the server cannot use says why; anything else is sent again
+  const photoWhy = j => j.photoType ? 'This photo type cannot be used here. Send a JPEG, or a screenshot of it.'
+    : j.photoBig ? 'This photo is too large. Send a smaller one, or a screenshot of it.' : '';
+  window.proofAgain = pid => {
+    const f = document.createElement('input');
+    f.type = 'file'; f.accept = 'image/*';
+    f.onchange = () => {
+      const file = f.files && f.files[0];
+      if (!file) return;
+      $('#mm' + pid).textContent = 'Uploading…';
+      const rd = new FileReader();
+      rd.onload = async () => {
+        const r = await api(`/api/idcn/admin/${COURSE}/payments/${pid}/proof`, { method: 'POST', body: JSON.stringify({ imageBase64: rd.result }) }).catch(() => null);
+        const j = r ? await r.json().catch(() => ({})) : {};
+        if (r && r.ok) return load();
+        $('#mm' + pid).textContent = !r ? 'Connection dropped. Try again.' : r.status === 404 ? 'This payment has its screenshot already. Reload the page.'
+          : photoWhy(j) || j.error || 'The screenshot did not upload. Try again.';
+      };
+      rd.readAsDataURL(file);
+    };
+    f.click();
+  };
+  window.dropPayment = async pid => {
+    if (!confirm('Remove this payment? Only do this when it was saved twice by mistake: the student no longer sees it.')) return;
+    const r = await api(`/api/idcn/admin/${COURSE}/payments/${pid}`, { method: 'DELETE' }).catch(() => null);
+    if (r && r.ok) return load();
+    $('#mm' + pid).textContent = ((r && await r.json().catch(() => ({}))) || {}).error || 'failed';
+  };
   window.addProof = (id, slug) => {
-    delete PROOF_AGAIN[id];
-    const row = $('#proofRow' + id);
+    const row = $('#proofRow' + id), waiting = (STU[id] && STU[id].proofs_missing || []).length;
     row.innerHTML = `<div style="margin-top:8px;border:1.5px solid var(--line);border-radius:8px;padding:10px">
+      ${waiting ? `<p class="stale" style="margin:0 0 8px">A payment above is waiting for its screenshot. To send that screenshot, use Upload screenshot there, not a new payment.</p>` : ''}
       <div class="row">
         <div><label>Label (student sees this)</label><input id="pl${id}" placeholder="60% deposit 定金"></div>
         <div><label>Amount ฿ (optional)</label><input id="pa${id}" inputmode="decimal"></div>
@@ -371,25 +406,18 @@
       amountSatang = Number(m[1]) * 100 + Number((m[2] || '').padEnd(2, '0') || 0);
     }
     const file = $('#pf' + id).files[0];
-    const again = PROOF_AGAIN[id];
-    if (again && !file) return alert('Choose the screenshot again.');
     const send = async imageBase64 => {
       $('#pm' + id).textContent = 'Uploading…';
-      // the payment is saved already: only its screenshot goes again
-      const r = again
-        ? await api(`/api/idcn/admin/${COURSE}/payments/${again}/proof`, { method: 'POST', body: JSON.stringify({ imageBase64 }) })
-        : await api(`/api/idcn/admin/${COURSE}/students/${id}/payments`, { method: 'POST',
-          body: JSON.stringify({ label, amountSatang, imageBase64,
-            note: $('#pn' + id).value.trim() }) });
+      const r = await api(`/api/idcn/admin/${COURSE}/students/${id}/payments`, { method: 'POST',
+        body: JSON.stringify({ label, amountSatang, imageBase64,
+          note: $('#pn' + id).value.trim() }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok) { $('#pm' + id).textContent = j.error || 'failed'; return; }
-      if (j.proofFailed) {
-        PROOF_AGAIN[id] = j.payment.id;
-        $('#pm' + id).textContent = 'The payment is saved, but the screenshot did not upload. Choose it again and press Upload to profile.';
-        return;
-      }
-      delete PROOF_AGAIN[id];
-      $('#proofRow' + id).innerHTML = ''; load();
+      $('#proofRow' + id).innerHTML = '';
+      // the payment is saved: its row now waits on the card with Upload screenshot
+      await load();
+      if (j.proofFailed && $('#mm' + j.payment.id)) $('#mm' + j.payment.id).textContent = photoWhy(j)
+        || 'The screenshot did not upload. Press Upload screenshot to send it again.';
     };
     if (file) {
       const rd = new FileReader();
@@ -507,7 +535,7 @@
     const r = again ? await fileAgain(again, file) : await sendNoteForm({ studentId: id, kind: $('#nk' + id).value,
       title: $('#nt' + id).value.trim(), body, file });
     const j = await r.json().catch(() => ({}));
-    if (r.ok && j.mediaFailed) { NOTE_AGAIN[id] = j.retryId; $('#nm' + id).textContent = SAVED_NO_FILE; return; }
+    if (r.ok && j.mediaFailed) { NOTE_AGAIN[id] = j.retryId; $('#nm' + id).textContent = SAVED_NO_FILE + (photoWhy(j) ? ' ' + photoWhy(j) : ''); return; }
     if (r.ok) { delete NOTE_AGAIN[id]; $('#proofRow' + id).innerHTML = ''; load(); }
     else $('#nm' + id).textContent = j.error || 'failed';
   };
@@ -526,7 +554,7 @@
     const j = await r.json().catch(() => ({}));
     if (r.ok && j.mediaFailed) {
       NOTE_AGAIN.all = j.retryId;
-      $('#bMsg').textContent = `Sent to ${j.sentTo} students. ` + SAVED_NO_FILE;
+      $('#bMsg').textContent = `Sent to ${j.sentTo} students. ` + SAVED_NO_FILE + (photoWhy(j) ? ' ' + photoWhy(j) : '');
       $('#bBody').value = ''; $('#bTitle').value = '';
       return;
     }
@@ -545,7 +573,8 @@
       const r = await fileAgain(noteId, file).catch(() => null);
       if (r && r.ok) { loadDay(DAY, true); return; }
       btn.disabled = false; btn.textContent = 'Send the file again';
-      alert((r && (await r.json().catch(() => ({}))).error) || 'The file did not upload. Try again.');
+      const j = r ? await r.json().catch(() => ({})) : {};
+      alert(photoWhy(j) || j.error || 'The file did not upload. Try again.');
     };
     f.click();
   };
@@ -556,7 +585,7 @@
       text: j => ['hub', 'notes', 'proofs'].map(k => `${{ hub: 'hub photos', notes: 'hand-ins and notes', proofs: 'payment screenshots' }[k]} `
         + `${j[k].copied} copied${j[k].failed ? `, ${j[k].failed} failed` : ''}${j[k].left ? `, ${j[k].left} left` : ''}`).join(' · ') },
     ws: { url: () => '/api/ws-photos/copy', msg: '#cpWsMsg', btn: '#cpWs',
-      text: j => `${j.copied} copied, ${j.already} were in already, ${j.failed} failed (of ${j.listed} on Cloudinary)` },
+      text: j => `${j.copied} copied, ${j.already} were in already, ${j.failed} failed${j.left ? `, ${j.left} left` : ''} (of ${j.listed} on Cloudinary)` },
   };
   async function copyShow(which) {
     const c = COPY[which];

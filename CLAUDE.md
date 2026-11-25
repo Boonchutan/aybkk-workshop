@@ -141,13 +141,23 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
   byte ranges for video; a payment screenshot's link ends within 2 days). The hub lists from `idc_hub_photos`, plus
   Cloudinary's tag search until `hub_copied`. A file that fails never costs the words or the payment: the row is saved
   with `media_state`/`proof_state` 'failed' and the file is sent again (student: the button on the hand-in; staff:
-  Send/Upload again, or Day by day). Old workshop photos (`POST /api/upload/student-photo`) go to R2 as a new random
-  `/sp/<32 hex>.jpg` (400 px square, public like the old links); Neo4j's old `aybkk-students` Cloudinary links are not
-  changed but rewritten in every answer (`wsPhotos.rewrite`) once `ws_photo_map` has their copy, and the share card reads
-  the copy from R2. IDCN admin, Send & syllabus, "Files on Cloudinary": "Copy course files" and "Copy old workshop
-  photos" (`/api/idcn/admin/<course>/media-copy`, `/api/ws-photos/copy`, staff key) copy what is still on Cloudinary
-  and point at a copy only after a HEAD check (size, MD5); Cloudinary's files are kept. With R2 off all of this is as
-  before, except that a failed file still saves the row.
+  Send again or Day by day; a payment shows "Screenshot missing" on its student's card with Upload screenshot, and
+  Remove for a row saved twice, `DELETE /api/idcn/admin/<course>/payments/<id>`, only rows with no screenshot). With
+  R2 on, photos are made again with no camera data (the decode in `lib/photo-queue.js`, one photo at a time on the
+  whole server, shared with `lib/r2.js`); a payment screenshot keeps its own size (up to 25 MP, a PNG stays PNG), a
+  GIF is kept as it came, a video sent as application/octet-stream is known by its first bytes, and a photo it cannot
+  use (HEIC) gets its reason and `photoType`/`photoBig`, never "send again". Old workshop photos
+  (`POST /api/upload/student-photo`, no key, as before: anyone can still set a student's face to a new file; with R2 on
+  at most 300 an hour from one address, faces at most 16 MP) go to R2 as a new random `/sp/<32 hex>.jpg` (400 px
+  square, public like the old links); Neo4j's old `aybkk-students` Cloudinary links are not changed but rewritten in
+  every answer (`wsPhotos.rewrite`, percent-encoded ids too) once `ws_photo_map` has their copy (read at start, tried
+  again every 30 s if the database refused, read again every 5 min), and the share card reads the copy from R2. The
+  copies (`/api/idcn/admin/media-copy` for every course and `/api/idcn/admin/<course>/media-copy`,
+  `/api/ws-photos/copy`, staff key) start by themselves with R2 on, 3 min after each start and every 3 h until nothing
+  is left (until 2027), one server at a time (a Postgres advisory lock); staff see them and Copy now in Admin, Settings,
+  "Course files and old workshop photos" and in IDCN admin, "Files on Cloudinary". A row points at a copy only after a
+  HEAD check (size, MD5, and the size Cloudinary lists) and keeps the old link in `media_src`/`proof_src`;
+  Cloudinary's files are kept. With R2 off all of this is as before, except that a failed file still saves the row.
 - **Class photos:** new ones go to Cloudflare R2 when `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`
   and `R2_BUCKET` are all set (`lib/r2.js`); until then everything is on Cloudinary as before. Once a photo is in R2
   the switch is one-way: with a variable missing, or the code rolled back past this change, R2 photos do not show

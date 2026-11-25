@@ -967,11 +967,14 @@ const B_THB = 100; // satang per baht
       return { resources: cl.found };
     } }; return ch; } },
   };
-  const fakeFetch = async url => cl.originals.has(url) ? new Response(cl.originals.get(url), { status: 200 }) : new Response('gone', { status: 404 });
+  const fakeFetch = async url => {
+    if (cl.slow) await sleep(cl.slow);
+    return cl.originals.has(url) ? new Response(cl.originals.get(url), { status: 200 }) : new Response('gone', { status: 404 });
+  };
   r2On();
   process.env.TMPDIR = MULTER_TMP;
   const app3 = express(); app3.use(express.json({ limit: '10mb' }));
-  mountIdcn(app3, { pgPool: pool, r2Endpoint: fr2.url, cloudinary: fakeCloud, fetch: fakeFetch });
+  mountIdcn(app3, { pgPool: pool, r2Endpoint: fr2.url, cloudinary: fakeCloud, fetch: fakeFetch, autoCopy: false });
   r2Off();
   const app4 = express(); app4.use(express.json({ limit: '10mb' }));
   mountIdcn(app4, { pgPool: pool, cloudinary: fakeCloud, fetch: fakeFetch });
@@ -1213,6 +1216,153 @@ const B_THB = 100; // satang per baht
   ok('a signed /md link is a 503 nobody keeps', md4.status === 503 && md4.headers.get('cache-control') === 'no-store');
   ok('...and any other /md path is no route here (404 from express)', (await fetch(B4 + '/md/0.x/idcn/x')).status === 404
      && (await fetch(B4 + badSig)).status === 404);
+
+  console.log('\n[photos R2 cannot use, screenshots at their own size, a missing screenshot, two copies at once, the copy by itself]');
+  const GIF = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
+  const HEIC = Buffer.concat([Buffer.from([0, 0, 0, 24]), Buffer.from('ftypheic\0\0\0\0mif1heic', 'latin1'), crypto.randomBytes(300)]);
+  const keyOf = u => String(u || '').split('/').slice(3).join('/');
+  const hubGif = await J3('/api/idcn/idcn3/photos', { method: 'POST', body: JSON.stringify({ slug: 'test-alum-a', imageBase64: 'data:image/gif;base64,' + GIF.toString('base64') }) }, alumA);
+  const gifKey = keyOf(hubGif.body.url);
+  ok('R2 on: a GIF in the hub is kept as it came (Cloudinary took GIFs too)', hubGif.status === 200 && /\/hub\/[0-9a-f]{32}\.gif$/.test(gifKey)
+     && fr2.store.has(gifKey) && fr2.store.get(gifKey).body.equals(GIF) && fr2.store.get(gifKey).type === 'image/gif', JSON.stringify(hubGif.body));
+  const gifGet = await fetch(B3 + hubGif.body.url);
+  ok('...and opens as image/gif', gifGet.status === 200 && gifGet.headers.get('content-type') === 'image/gif' && Buffer.from(await gifGet.arrayBuffer()).equals(GIF));
+  const hubHeic = await J3('/api/idcn/idcn3/photos', { method: 'POST', body: JSON.stringify({ slug: 'test-alum-a', imageBase64: 'data:image/heic;base64,' + HEIC.toString('base64') }) }, alumA);
+  ok("...a HEIC photo: 400 with the reason, and photoType for the page to say it in the student's language",
+     hubHeic.status === 400 && hubHeic.body.photoType === true && /JPEG, or a screenshot/.test(hubHeic.body.error), JSON.stringify(hubHeic.body));
+  const hh = await multi(B3, SUB, { slug: 'test-alum-a', sessionNo: '3', body: 'Test words with a HEIC photo' }, { body: HEIC, type: 'image/heic', name: 'a.heic' }, alumA);
+  ok('a hand-in with words and a HEIC photo: the words are saved, and the answer says why, not "send the file again"',
+     hh.status === 200 && hh.body.mediaFailed === true && hh.body.photoType === true && /JPEG, or a screenshot/.test(hh.body.mediaError)
+       && hh.body.note.media_failed === true && hh.body.note.body === 'Test words with a HEIC photo', JSON.stringify(hh.body));
+  const HH = `/api/idcn/idcn3/submissions/${hh.body.note.id}/media`;
+  const hh2 = await multi(B3, HH, { slug: 'test-alum-a' }, { body: HEIC, type: 'image/heic', name: 'a.heic' }, alumA);
+  ok('...the same HEIC sent again: 400 with the same reason, so the page never loops on "send again"',
+     hh2.status === 400 && hh2.body.photoType === true && /JPEG, or a screenshot/.test(hh2.body.error) && !/send the file again/.test(hh2.body.error), JSON.stringify(hh2.body));
+  const hh3 = await multi(B3, HH, { slug: 'test-alum-a' }, { body: await jpeg(320, 240), type: 'image/jpeg', name: 'a.jpg' }, alumA);
+  ok('...a JPEG in its place: the hand-in has its photo', hh3.status === 200 && /\/sub\/[0-9a-f]{32}\.jpg$/.test(hh3.body.note.media_url) && !hh3.body.note.media_failed);
+  const hg = await multi(B3, SUB, { slug: 'test-alum-a', sessionNo: '3', body: 'Test words with a GIF' }, { body: GIF, type: 'image/gif', name: 'a.gif' }, alumA);
+  ok('a hand-in GIF is kept as it came', hg.status === 200 && /\.gif$/.test(hg.body.note.media_url) && !hg.body.mediaFailed, JSON.stringify(hg.body).slice(0, 200));
+  const n9 = await notesOf(AL);
+  const noWords = await multi(B3, SUB, { slug: 'test-alum-a', sessionNo: '3' }, { body: HEIC, type: 'image/heic', name: 'a.heic' }, alumA);
+  ok('...a HEIC with no words: 400 with the reason, nothing saved', noWords.status === 400 && noWords.body.photoType === true && (await notesOf(AL)) === n9);
+  const big = await multi(B3, SUB, { slug: 'test-alum-a', sessionNo: '3', body: 'Test words with a huge photo' },
+    { body: (() => { const b = Buffer.from(ph); const i = b.indexOf(Buffer.from([0xFF, 0xC0])); b.writeUInt16BE(9000, i + 5); b.writeUInt16BE(9000, i + 7); return b; })(), type: 'image/jpeg', name: 'big.jpg' }, alumA);
+  ok('...a photo over 50 megapixels: the words are saved, photoBig says why', big.status === 200 && big.body.mediaFailed === true && big.body.photoBig === true
+     && /too large/.test(big.body.mediaError), JSON.stringify(big.body));
+  const MP4 = Buffer.concat([Buffer.from([0, 0, 0, 32]), Buffer.from('ftypisom\0\0\x02\0isomiso2avc1mp41', 'latin1'), crypto.randomBytes(3000)]);
+  const oct = await multi(B3, SUB, { slug: 'test-alum-a', sessionNo: '3', body: 'Test clip with no type' }, { body: MP4, type: 'application/octet-stream', name: 'clip' }, alumA);
+  const octKey = keyOf(oct.body.note && oct.body.note.media_url);
+  ok('a video sent as application/octet-stream is known by its first bytes and kept as a video',
+     oct.status === 200 && oct.body.note.media_type === 'video' && /\/sub\/[0-9a-f]{32}\.mp4$/.test(octKey) && fr2.store.get(octKey).body.equals(MP4)
+       && !oct.body.mediaFailed, JSON.stringify(oct.body).slice(0, 200));
+  const md5csp = await fetch(B3 + vurl); await md5csp.arrayBuffer();
+  ok('a course file opened on its own can play: no sandbox, photos and video from this site only',
+     md5csp.headers.get('content-security-policy') === "default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'"
+       && md5csp.headers.get('x-content-type-options') === 'nosniff', md5csp.headers.get('content-security-policy'));
+
+  const tallPng = await (() => { const c = createCanvas(1080, 6000), x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, 1080, 6000);
+    x.fillStyle = '#000'; x.font = '28px sans-serif'; for (let y = 40; y < 6000; y += 60) x.fillText('Test transfer 500.00 ref ' + y, 20, y); return c.encode('png'); })();
+  const tp = await J3(PAY(AL), { method: 'POST', body: JSON.stringify({ label: 'Test tall screenshot', amountSatang: 1000, imageBase64: 'data:image/png;base64,' + tallPng.toString('base64') }) }, A);
+  const refOf = async id => String((await pool.query('SELECT proof_url FROM idc_payments WHERE id=$1', [id])).rows[0].proof_url || '');
+  const tpKey = (await refOf(tp.body.payment.id)).slice(3), tpObj = fr2.store.get(tpKey), tpd = tpObj && r2lib.dims(tpObj.body);
+  ok('a long payment screenshot keeps its own size (1080 x 6000), a PNG as a PNG',
+     tp.status === 200 && /\/proof\/[0-9a-f]{32}\.png$/.test(tpKey) && tpd.w === 1080 && tpd.h === 6000 && tpObj.type === 'image/png', JSON.stringify(tpd));
+  const ifd = Buffer.concat([Buffer.from('Exif\0\0MM\0*\0\0\0\x08\0\0\0\0\0\0', 'latin1'), Buffer.from('Test camera GPS')]);
+  const wideRaw = await jpeg(3000, 1000);
+  const withExif = Buffer.concat([wideRaw.subarray(0, 2), Buffer.from([0xFF, 0xE1]), Buffer.from([0, ifd.length + 2]), ifd, wideRaw.subarray(2)]);
+  const wp = await J3(PAY(AL), { method: 'POST', body: JSON.stringify({ label: 'Test wide screenshot', imageBase64: dataUrl(withExif) }) }, A);
+  const wpObj = fr2.store.get((await refOf(wp.body.payment.id)).slice(3)), wpd = wpObj && r2lib.dims(wpObj.body);
+  ok('...a JPEG wider than 2560 px keeps its width, and its camera data does not go with it',
+     wp.status === 200 && wpd.w === 3000 && wpd.h === 1000 && !wpObj.body.includes(Buffer.from('Exif')) && !wpObj.body.includes(Buffer.from('Test camera GPS')), JSON.stringify(wpd));
+
+  fr2.ctl.fail = (m, k) => (m === 'PUT' && k.includes('/proof/') ? 503 : null);
+  const mp = await J3(PAY(AL), { method: 'POST', body: JSON.stringify({ label: 'Test missing shot', amountSatang: 70000, imageBase64: shot }) }, A);
+  fr2.ctl.fail = null;
+  const listed = async () => (await J3('/api/idcn/admin/idcn3/students', {}, A)).body.students;
+  const missOf = async () => ((await listed()).find(s => s.id === AL).proofs_missing || []);
+  ok('a payment saved without its screenshot waits on the admin card from the server, so Cancel or a reload never loses it',
+     mp.body.proofFailed === true && (await missOf()).some(p => p.id === mp.body.payment.id && p.label === 'Test missing shot' && p.amount_satang === 70000));
+  ok('...a student with nothing missing has no such key, as before', (await listed()).some(s => s.id !== AL && !('proofs_missing' in s)));
+  ok('...a payment that has its screenshot is never removed', (await J3(`/api/idcn/admin/idcn3/payments/${p1.body.payment.id}`, { method: 'DELETE' }, A)).status === 404
+     && (await pool.query('SELECT 1 FROM idc_payments WHERE id=$1', [p1.body.payment.id])).rowCount === 1);
+  ok('...removing one needs the admin key', (await J3(`/api/idcn/admin/idcn3/payments/${mp.body.payment.id}`, { method: 'DELETE' })).status === 401);
+  const dup = await J3(PAY(AL), { method: 'POST', body: JSON.stringify({ label: 'Test missing shot', amountSatang: 70000, imageBase64: shot }) }, A);
+  const rm = await J3(`/api/idcn/admin/idcn3/payments/${mp.body.payment.id}`, { method: 'DELETE' }, A);
+  const shotRows = (await pool.query(`SELECT id, proof_url FROM idc_payments WHERE student_id=$1 AND label='Test missing shot'`, [AL])).rows;
+  ok('...saved twice by mistake: staff remove the row with no screenshot, the one with it stays, and the card is clear',
+     dup.status === 200 && !dup.body.proofFailed && rm.status === 200 && rm.body.removed === mp.body.payment.id
+       && shotRows.length === 1 && shotRows[0].id === dup.body.payment.id && /^r2:/.test(shotRows[0].proof_url)
+       && !(await missOf()).some(p => p.id === mp.body.payment.id), JSON.stringify(shotRows));
+  ok('...removed once, it is gone (404)', (await J3(`/api/idcn/admin/idcn3/payments/${mp.body.payment.id}`, { method: 'DELETE' }, A)).status === 404);
+
+  const allR = await J3('/api/idcn/admin/media-copy', {}, A);
+  const c3row = (allR.body.courses || []).find(c => c.code === 'idcn3');
+  ok('Admin, Settings: one answer for every course: what is still on Cloudinary and the last copy',
+     allR.status === 200 && allR.body.r2 === true && allR.body.auto.on === false && !!c3row && !!c3row.job
+       && typeof c3row.onCloudinary.notes === 'number' && typeof c3row.onCloudinary.proofs === 'number' && c3row.onCloudinary.hubChecked === true, JSON.stringify(allR.body).slice(0, 300));
+  ok('...staff key only', (await J3('/api/idcn/admin/media-copy')).status === 401 && (await J3('/api/idcn/admin/media-copy', { method: 'POST', body: '{}' })).status === 401);
+  const off4 = await J4('/api/idcn/admin/media-copy', {}, A);
+  ok('...R2 off: it says so, and a copy is refused', off4.status === 200 && off4.body.r2 === false && off4.body.auto.on === false
+     && (await J4('/api/idcn/admin/media-copy', { method: 'POST', body: '{}' }, A)).status === 409);
+
+  // a second server on the same database
+  r2On(); process.env.TMPDIR = MULTER_TMP;
+  const app5 = express(); app5.use(express.json({ limit: '10mb' }));
+  mountIdcn(app5, { pgPool: pool, r2Endpoint: fr2.url, cloudinary: fakeCloud, fetch: fakeFetch, autoCopy: false });
+  r2Off(); if (keepTmp == null) delete process.env.TMPDIR; else process.env.TMPDIR = keepTmp;
+  await sleep(500);
+  const srv5 = app5.listen(0), J5 = Jx(`http://127.0.0.1:${srv5.address().port}`);
+  // the files the R2-off uploads above left on the fake Cloudinary (and the one it lost) are there
+  // again, and copied, so the runs below can leave nothing behind
+  for (const r of (await pool.query(`SELECT media_url AS u FROM idc_notes WHERE media_url LIKE 'https://res.cloudinary.com/%'
+    UNION SELECT proof_url FROM idc_payments WHERE proof_url LIKE 'https://res.cloudinary.com/%'
+    UNION SELECT media FROM idc_hub_photos WHERE media LIKE 'https://res.cloudinary.com/%'`)).rows) if (!cl.originals.has(r.u)) cl.originals.set(r.u, await jpeg(24, 24));
+  const cpAll = await runCopy();
+  ok('...with every file there, one copy leaves nothing on Cloudinary', ['hub', 'notes', 'proofs'].every(k => !cpAll.st[k].failed && cpAll.st[k].left === 0)
+     && !cpAll.st.errors.length, JSON.stringify(cpAll.st));
+  const twoOld = [];
+  for (let i = 0; i < 6; i++) {
+    const u = `https://res.cloudinary.com/dw1uubecu/image/upload/v1/aybkk/idcn3/proofs/test-alum-a/testtwo${i}.jpg`;
+    cl.originals.set(u, await jpeg(30 + i, 30)); twoOld.push(u);
+    await pool.query(`INSERT INTO idc_payments (student_id, label, proof_url) VALUES ($1,'Test two copies',$2)`, [AL, u]);
+  }
+  const objs0 = fr2.store.size;
+  cl.slow = 60;
+  await Promise.all([J3(COPY, { method: 'POST', body: '{}' }, A), J5(COPY, { method: 'POST', body: '{}' }, A)]);
+  const settle = async J => { let st = (await J(COPY, {}, A)).body; for (let i = 0; i < 400 && st.running; i++) { await sleep(25); st = (await J(COPY, {}, A)).body; } return st; };
+  const [s3, s5] = [await settle(J3), await settle(J5)];
+  cl.slow = 0;
+  const lost = [s3, s5].find(s => s.errors.some(e => /Another server is copying/.test(e))), won = [s3, s5].find(s => s !== lost);
+  const twoNow = (await pool.query(`SELECT proof_url, proof_src FROM idc_payments WHERE label='Test two copies' ORDER BY id`)).rows;
+  ok('two servers asked to copy at once: one copies, the other says another server is copying and copies nothing',
+     !!lost && !!won && won.proofs.copied === 6 && lost.proofs.copied === 0 && lost.proofs.left === null, JSON.stringify([s3.proofs, s5.proofs, s3.errors, s5.errors]));
+  ok('...each file is copied once: every new object in R2 is the one its row points at', fr2.store.size - objs0 === 6
+     && twoNow.every(r => /^r2:/.test(r.proof_url) && fr2.store.has(r.proof_url.slice(3))), `${fr2.store.size - objs0} objects`);
+  ok('...and each row keeps the Cloudinary link it had', twoNow.every((r, i) => r.proof_src === twoOld[i]));
+  const s3b = await (async () => { await J5(COPY, { method: 'POST', body: '{}' }, A); return settle(J5); })();
+  ok('...run again on the other server: nothing to copy, nothing counted', s3b.proofs.copied === 0 && s3b.proofs.left === 0 && !s3b.errors.length, JSON.stringify(s3b));
+  srv5.close();
+
+  // the copy by itself, a few minutes after a start (here 0.3 s), until nothing is left
+  const autoOld = 'https://res.cloudinary.com/dw1uubecu/image/upload/v1/aybkk/idcn3/assignments/testauto1.jpg';
+  cl.originals.set(autoOld, await jpeg(50, 40));
+  await pool.query(`INSERT INTO idc_notes (student_id, kind, body, media_url, media_type) VALUES ($1,'assignment','Test auto copy',$2,'image')`, [AL, autoOld]);
+  r2On(); process.env.TMPDIR = MULTER_TMP;
+  const app6 = express(); app6.use(express.json({ limit: '10mb' }));
+  mountIdcn(app6, { pgPool: pool, r2Endpoint: fr2.url, cloudinary: fakeCloud, fetch: fakeFetch, autoCopy: { firstMs: 300, everyMs: 400 } });
+  r2Off(); if (keepTmp == null) delete process.env.TMPDIR; else process.env.TMPDIR = keepTmp;
+  const srv6 = app6.listen(0), J6 = Jx(`http://127.0.0.1:${srv6.address().port}`);
+  await sleep(150);
+  const a0 = (await J6('/api/idcn/admin/media-copy', {}, A)).body;
+  ok('R2 on: the copy is due by itself soon after a start', a0.auto.on === true && !!a0.auto.next && a0.auto.done === false, JSON.stringify(a0.auto));
+  let a1 = a0;
+  for (let i = 0; i < 200 && !a1.auto.done; i++) { await sleep(25); a1 = (await J6('/api/idcn/admin/media-copy', {}, A)).body; }
+  const autoNow = (await pool.query(`SELECT media_url, media_src FROM idc_notes WHERE body='Test auto copy'`)).rows[0];
+  ok('...it ran with nobody pressing: the old file is in R2, its row keeps the Cloudinary link',
+     /^r2:idcn\/idcn3\/note\//.test(autoNow.media_url) && autoNow.media_src === autoOld && fr2.store.has(autoNow.media_url.slice(3)), JSON.stringify(autoNow));
+  ok('...and with nothing left it stops', a1.auto.done === true && a1.auto.next === null
+     && (await urlOf('idc_payments', 'proof_url', `proof_url LIKE 'https://res.cloudinary.com/%'`, [])).length === 0, JSON.stringify(a1.auto));
+  srv6.close();
   await sleep(200);
   ok('no upload left behind in the temp folder', tmpFiles() === 0, `${tmpFiles()} files`);
   srv3.close(); srv4.close(); await fr2.close();

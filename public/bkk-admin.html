@@ -4484,6 +4484,7 @@
       <button class="btn" onclick="savePhotoCap()">${T('save')}</button></p>
       </div>` : ''}
       ${psBox(null)}
+      ${cfBox(null)}
       <div class="box"><b>${T('packages')}</b>
       <p class="muted">${T('pkgHelp')}</p>
       <table><tr><th>${T('thPackage')}</th><th>${T('thBase')}</th><th>${T('thPays')}</th><th></th></tr>
@@ -4533,6 +4534,7 @@
       <div id="doorList">${doorList(DOORS)}</div>
       </div>`;
     TB_ADD = null;
+    loadCf();
     loadTb();
     loadPs();
   }
@@ -4767,6 +4769,76 @@
     if (current !== 'settings' || SUB || !out) return;
     btn(true);
     out.textContent = r && r.ok ? j.text || '' : (j.error || T('failed'));
+  };
+  // Course files and the old workshop photos still on Cloudinary (idcn-api.js and
+  // lib/media-store.js): what is left, the last copy and the next one by itself.
+  Object.assign(STR.en, {
+    cfTitle: 'Course files and old workshop photos',
+    cfHelp: 'Cloudinary stops on 29 Nov 2026. What the In-Depth course keeps there (hub photos, hand-ins, notes, payment screenshots) and the photos of the old workshop system are copied to R2: by themselves a few minutes after each server start and every 3 hours until nothing is left, or now with Copy now. Each copy is checked before a page uses it. The files on Cloudinary are kept.',
+    cfOff: 'R2 is off: these files stay on Cloudinary until R2 is set in Railway.',
+    cfCourse: (code, n, p, h, checked) => `${code}: still on Cloudinary ${n} hand-ins and notes, ${p} payment screenshots, ${h} hub photos${checked ? '' : ' (and older hub photos, found when the copy runs)'}`,
+    cfPartHub: 'hub photos', cfPartNotes: 'hand-ins and notes', cfPartProofs: 'payment screenshots',
+    cfPart: (name, c, f, l) => `${name} ${c} copied${f ? `, ${f} failed` : ''}${l ? `, ${l} left` : ''}`,
+    cfRunning: 'Copying…',
+    cfDoneAt: at => `Last copy, done ${at}:`,
+    cfWs: (c, a, f, l, n) => `Old workshop photos: ${c} copied, ${a} were in already, ${f} failed${l ? `, ${l} left` : ''} (of ${n} on Cloudinary)`,
+    cfWsNone: 'Old workshop photos: no copy has run on this server yet.',
+    cfAutoNext: at => `Next copy by itself: ${at}`,
+    cfAutoDone: 'Nothing is left to copy.',
+    cfNow: 'Copy now',
+    cfErr: e => `Not done: ${e}`,
+  });
+  Object.assign(STR.th, {
+    cfTitle: 'ไฟล์คอร์สและรูปเวิร์กช็อปเก่า',
+    cfHelp: 'Cloudinary จะหยุดในวันที่ 29 พ.ย. 2026 ไฟล์ของคอร์ส In-Depth ที่อยู่ที่นั่น (รูปในคลังรูป งานที่นักเรียนส่ง โน้ต และสลิปการชำระเงิน) และรูปของระบบเวิร์กช็อปเก่า จะถูกคัดลอกไป R2 เอง หลังเซิร์ฟเวอร์เริ่มทำงานไม่กี่นาที และทุก 3 ชั่วโมงจนกว่าจะไม่เหลือ หรือกด คัดลอกตอนนี้ ทุกไฟล์จะตรวจก่อนที่หน้าเว็บจะใช้ ไฟล์ใน Cloudinary ยังเก็บไว้เหมือนเดิม',
+    cfOff: 'R2 ปิดอยู่: ไฟล์เหล่านี้ยังอยู่ที่ Cloudinary จนกว่าจะตั้ง R2 ใน Railway',
+    cfCourse: (code, n, p, h, checked) => `${code}: ยังอยู่ที่ Cloudinary งานที่ส่งและโน้ต ${n} ไฟล์ สลิป ${p} ไฟล์ รูปในคลังรูป ${h} รูป${checked ? '' : ' (รูปเก่าในคลังรูปจะนับตอนคัดลอก)'}`,
+    cfPartHub: 'รูปในคลังรูป', cfPartNotes: 'งานที่ส่งและโน้ต', cfPartProofs: 'สลิปการชำระเงิน',
+    cfPart: (name, c, f, l) => `${name} คัดลอกแล้ว ${c}${f ? ` ไม่สำเร็จ ${f}` : ''}${l ? ` เหลือ ${l}` : ''}`,
+    cfRunning: 'กำลังคัดลอก…',
+    cfDoneAt: at => `คัดลอกครั้งล่าสุด เสร็จ ${at}:`,
+    cfWs: (c, a, f, l, n) => `รูปเวิร์กช็อปเก่า: คัดลอกแล้ว ${c} รูป มีอยู่แล้ว ${a} รูป ไม่สำเร็จ ${f} รูป${l ? ` เหลือ ${l} รูป` : ''} (จากทั้งหมด ${n} รูปใน Cloudinary)`,
+    cfWsNone: 'รูปเวิร์กช็อปเก่า: ยังไม่ได้คัดลอกบนเซิร์ฟเวอร์นี้',
+    cfAutoNext: at => `คัดลอกเองครั้งต่อไป: ${at}`,
+    cfAutoDone: 'ไม่มีไฟล์เหลือให้คัดลอกแล้ว',
+    cfNow: 'คัดลอกตอนนี้',
+    cfErr: e => `ยังไม่เสร็จ: ${e}`,
+  });
+  let CF_POLL = null;
+  const cfBox = (st, ws) => {
+    const head = `<b>${T('cfTitle')}</b><p class="muted">${T('cfHelp')}</p>`;
+    if (!st) return `<div class="box" id="cfBox">${head}<p class="muted" role="status">${esc(T('tbLoading'))}</p></div>`;
+    const NAME = { hub: 'cfPartHub', notes: 'cfPartNotes', proofs: 'cfPartProofs' };
+    const parts = j => ['hub', 'notes', 'proofs'].map(k => T('cfPart', T(NAME[k]), j[k].copied, j[k].failed, j[k].left || 0)).join(' · ');
+    const course = c => `<p>${esc(T('cfCourse', c.code, c.onCloudinary.notes, c.onCloudinary.proofs, c.onCloudinary.hub, c.onCloudinary.hubChecked))}</p>
+      ${c.job ? `<p class="muted">${esc(c.job.running ? T('cfRunning') : T('cfDoneAt', tbWhen(c.job.finishedAt)))} ${esc(parts(c.job))}</p>
+      ${c.job.errors.length ? `<p class="flash warn">${esc(T('cfErr', c.job.errors.join(' · ')))}</p>` : ''}` : ''}`;
+    const running = st.courses.some(c => c.job && c.job.running) || !!(ws && ws.running), auto = st.auto || {};
+    const next = !st.r2 ? '' : auto.done ? T('cfAutoDone') : auto.next ? T('cfAutoNext', tbWhen(auto.next)) : '';
+    return `<div class="box" id="cfBox">${head}
+      ${st.r2 ? '' : `<p><b>${esc(T('cfOff'))}</b></p>`}
+      ${st.courses.map(course).join('')}
+      <p>${esc(ws && ws.startedAt ? T('cfWs', ws.copied, ws.already, ws.failed, ws.left, ws.listed) : T('cfWsNone'))}</p>
+      ${ws && ws.error ? `<p class="flash warn">${esc(T('cfErr', ws.error))}</p>` : ''}
+      ${next ? `<p class="muted">${esc(next)}</p>` : ''}
+      <p><button class="btn pink" onclick="cfRun()"${st.r2 && !running ? '' : ' disabled'}>${esc(T(running ? 'cfRunning' : 'cfNow'))}</button></p></div>`;
+  };
+  const loadCf = async () => {
+    clearTimeout(CF_POLL);
+    const get = url => api(url).then(r => r.ok ? r.json() : null).catch(() => null);
+    const [st, ws] = await Promise.all([get('/api/idcn/admin/media-copy'), get('/api/ws-photos/copy')]);
+    if (current !== 'settings' || SUB || !$('#cfBox')) return;
+    $('#cfBox').outerHTML = st ? cfBox(st, ws)
+      : `<div class="box" id="cfBox"><b>${T('cfTitle')}</b><p class="flash warn" role="status">${esc(T('failed'))}</p></div>`;
+    if (st && (st.courses.some(c => c.job && c.job.running) || (ws && ws.running))) CF_POLL = setTimeout(loadCf, 3000);
+  };
+  window.cfRun = async () => {
+    for (const url of ['/api/idcn/admin/media-copy', '/api/ws-photos/copy']) {
+      const r = await api(url, { method: 'POST' }).catch(() => null);
+      if (!r) { alert(T('failed')); break; }
+      if (!r.ok && !(await shout(r))) break;
+    }
+    loadCf();
   };
   // The door tablet: pair one by its code, see when it was used, unpair it.
   let DOORS = [];
