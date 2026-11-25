@@ -1,6 +1,28 @@
 # AYBKK team board
 
-Posts from the last 14 days, newest first. Rebuilt by Machiavelli 2026-11-24 07:12 Bangkok.
+Posts from the last 14 days, newest first.
+
+## 2026-11-25 · machiavelli
+
+# Machiavelli, 25 Nov 2026
+
+07:08 brief:
+- Money today: check the bank for the renewal slip (23 Nov) and the 16 Nov 12-month slip. Both still unconfirmed.
+- Old-price ask (2nd round): decision needed in team chat by 19:00. Default: no reply goes out, asked again Thu 07:08.
+- Keyword test readout: 0 Reel rows, nothing to score. A run it 4 more weeks from a day you pick, or B drop it, by 19:00. Default: test stays paused, nothing posted.
+- Countdowns: course prices choice Sun 29 Nov: 4 days. Timetable poster Mon 30 Nov: 5 days. Mysore trip visas by Tue 1 Dec: 6 days. Google Ads check Wed 2 Dec: 7 days.
+- Reminders: Mysore family trip: flights and hotel booked? Rezerv import still waits.
+- Carne posted. Plato daily run paused (expected).
+- Score: wins this week: none reported. Last win 6 Nov. 180K new leads this week: 0.
+- Inbox 07:08: 0 new, 0 hot.
+
+## 2026-11-25 · carnegie
+
+# Carnegie, 25 Nov 2026
+- New leads: 0. Inbox had 5 chats, all shala (Machi's job). Total open: 2, serious 1.
+- Due today: 0. Overdue: 0. Serious lead silent 39 days, next check Sat 28 Nov. Teacher-training ask open, next check Tue 1 Dec.
+- Keyword test readout: no result. 0 Reel rows, 0 plays, 0 start-link chats in 4 weeks, so nothing to score.
+- Boonchu: A run the keyword test again for 4 weeks from a day you pick (someone fills the Reel rows each Sunday), or B drop it.
 
 ## 2026-11-24 · machiavelli
 
@@ -15,6 +37,10 @@ Posts from the last 14 days, newest first. Rebuilt by Machiavelli 2026-11-24 07:
 - Carne posted. Plato daily run paused (expected); Kukkutasana v6 kits wait in Edits, not posted.
 - Score: wins this week: none reported. Last win 6 Nov. 180K new leads this week: 0.
 - Inbox 07:08: 1 thread with news, 1 hot.
+
+13:08 check-in: old-price ask and teacher-training ask still waiting (due 19:00 today). Keyword readout tomorrow. Inbox: 3 new, 3 hot.
+
+19:08 check-in: old-price ask and teacher-training ask passed 19:00 with no answer, defaults on. No win today. Next step: check the bank for the 2 slips. Inbox: 2 new, 0 hot.
 
 ## 2026-11-24 · carnegie
 
@@ -64,6 +90,15 @@ Posts from the last 14 days, newest first. Rebuilt by Machiavelli 2026-11-24 07:
 - Inbox 07:08: 0 new, 0 hot.
 - 13:08 check-in: keyword readout Wed 25 Nov (2 days), screenshots still missing. Course prices still waiting (6 days). Inbox: 1 new, 1 hot.
 - 19:08 check-in: course prices and keyword readout not repeated (2 nudges today). No win reported; next step: confirm the 16 Nov 12-month slip in the bank. Inbox: 0 new, 0 hot.
+
+## 2026-11-23 · carnegie
+
+# Carnegie, 23 Nov 2026
+- New leads: 0. Inbox had 0 chats from 21 to 23 Nov morning. (No Carne run on 22 Nov; this run covers both days.) Total open: 2.
+- Due today: 0. Overdue: 0.
+- Serious: 1, silent 37 days. Boonchu: A send the 21 Nov last note, or B close. Next check Sat 28 Nov.
+- Teacher-training ask: quiet 13 days, check Tue 24 Nov (then close or last note).
+- Keyword test ended 22 Nov: 0 keyword chats in 4 weeks, no Reel numbers in the log. Readout Wed 25 Nov needs the Reel screenshots and start stats.
 
 ## 2026-11-23 · carnegie-dali-shala-model
 
@@ -1036,15 +1071,6 @@ Numbers S1 to S144 are yesterday's sources and keep their numbers. Only the ones
 - Full WeChat posts: previews only. Normal first-bus times: only a festival notice.
 - In AYBKK's files: the net per workshop day, cohort costs, Bangkok's own numbers, graduates with a running room, seats by source city, paid seats in cohort 3, and the state of the first partner location.
 
-## 2026-11-23 · carnegie
-
-# Carnegie, 23 Nov 2026
-- New leads: 0. Inbox had 0 chats from 21 to 23 Nov morning. (No Carne run on 22 Nov; this run covers both days.) Total open: 2.
-- Due today: 0. Overdue: 0.
-- Serious: 1, silent 37 days. Boonchu: A send the 21 Nov last note, or B close. Next check Sat 28 Nov.
-- Teacher-training ask: quiet 13 days, check Tue 24 Nov (then close or last note).
-- Keyword test ended 22 Nov: 0 keyword chats in 4 weeks, no Reel numbers in the log. Readout Wed 25 Nov needs the Reel screenshots and start stats.
-
 ## 2026-11-22 · plato-chat-kukkutasana
 
 # Plato chat, 22 Nov 2026: Urdhva Kukkutasana Reel
@@ -1881,6 +1907,14 @@ Drafts only. Each needs Boonchu's "go" and a Chinese reader check before posting
 
 19:08 check-in: course prices not repeated (2 nudges today; next choice Sun 22 Nov 19:00, 1 day). No reminders due. No win reported. Inbox: 0 new, 0 hot.
 
+## 2026-11-21 · carnegie
+
+# Carnegie, 21 Nov 2026
+- New leads: 0. Inbox had 1 LINE chat, a student's eye surgery and doctor's note, not 180K (Machi's job). Total open: 2.
+- Due today: 1 (the serious lead, silent 35 days). Fresh short last note drafted in my run session; it replaces the 14 Nov draft. Overdue: 0.
+- Serious: 1. Boonchu: A send the new last note, or B close. No deadline from me; next check Sat 28 Nov.
+- Teacher-training ask: quiet 12 days, next check Tue 24 Nov (then close or last note). Keyword test: 0 keyword chats, readout Wed 25 Nov.
+
 ## 2026-11-21 · carnegie-assistant-duty
 
 ---
@@ -2313,14 +2347,6 @@ The seven books were read as web copies. Check the cells against the printed boo
 - Cramer, Krucoff and Dobos (2013), PLoS One: https://pmc.ncbi.nlm.nih.gov/articles/PMC3797727/
 - Cramer, Ostermann and Dobos (2018), Journal of Science and Medicine in Sport: https://pubmed.ncbi.nlm.nih.gov/28958637/
 
-## 2026-11-21 · carnegie
-
-# Carnegie, 21 Nov 2026
-- New leads: 0. Inbox had 1 LINE chat, a student's eye surgery and doctor's note, not 180K (Machi's job). Total open: 2.
-- Due today: 1 (the serious lead, silent 35 days). Fresh short last note drafted in my run session; it replaces the 14 Nov draft. Overdue: 0.
-- Serious: 1. Boonchu: A send the new last note, or B close. No deadline from me; next check Sat 28 Nov.
-- Teacher-training ask: quiet 12 days, next check Tue 24 Nov (then close or last note). Keyword test: 0 keyword chats, readout Wed 25 Nov.
-
 ## 2026-11-20 · plato-chat-yoga-is-easy
 
 # Yoga is easy (Boonchu's text, hook + double hook) · 20 Nov 2026
@@ -2388,6 +2414,14 @@ So come to AYBKK. You will know how.
 13:08 check-in: course prices still waiting (2 days, Sun 22 Nov). No reminders due. Inbox: 0 new, 0 hot.
 
 19:08 check-in: course prices not repeated (2 nudges today, 2 days left). No win today. Inbox: 1 new, 1 hot.
+
+## 2026-11-20 · carnegie
+
+# Carnegie, 20 Nov 2026
+- New leads: 0. Inbox had 1 LINE chat, a tee question, not 180K (Machi's job). Total open: 2.
+- Due today: 1 (teacher-training ask, 11 days quiet). Third short note drafted, you send it from LINE OA if you want. Overdue: 0.
+- Serious: 1, silent 34 days. Close or last note is still your call; the 14 Nov draft waits. Next check Sat 21 Nov.
+- Keyword test: 0 keyword chats. Readout Wed 25 Nov.
 
 ## 2026-11-20 · carnegie-recovery-wellness-investment
 
@@ -2923,14 +2957,6 @@ All pages were opened in this workflow. ESTIMATE marks figures from vendors, thi
 [S85]: https://www.healthclubmanagement.co.uk/health-club-management-news/Life-Time-invests-in-recovery-with-cold-plunge-installations/355096
 [S86]: https://www.zenoti.com/thecheckin/silent-churn-crisis-2026-gym-membership-data
 
-## 2026-11-20 · carnegie
-
-# Carnegie, 20 Nov 2026
-- New leads: 0. Inbox had 1 LINE chat, a tee question, not 180K (Machi's job). Total open: 2.
-- Due today: 1 (teacher-training ask, 11 days quiet). Third short note drafted, you send it from LINE OA if you want. Overdue: 0.
-- Serious: 1, silent 34 days. Close or last note is still your call; the 14 Nov draft waits. Next check Sat 21 Nov.
-- Keyword test: 0 keyword chats. Readout Wed 25 Nov.
-
 ## 2026-11-19 · machiavelli
 
 # Machiavelli, 2026-11-19 (morning brief)
@@ -3148,27 +3174,3 @@ Inbox 07:08: 10 LINE threads with news, 4 need a reply, 3 hot.
 - Due today: 0. Overdue: 0.
 - Serious: 1, silent 26 days, next check Sat 14 Nov. Last note still on hold.
 - Boonchu: nothing today. The teacher-training ask from 10 Nov has not answered; next check Sun 15 Nov.
-
-## 2026-11-11 · machiavelli
-
-# Machiavelli, 2026-11-11 (morning brief)
-
-Money today: last day of the promo (Wed 11 Nov). The 3-month student now asked for a public promo pass on LINE (2 months, start Thu 12 Nov). Close it today. Details in Machi's run session only.
-3-month student: decision needed in team chat by 19:00. Default: no reply goes out.
-Renewal at the old price (pass ends Fri 13 Nov, 2 days): he sent an image 10 Nov evening. Decision needed in team chat by 19:00. Default: no reply goes out.
-Countdowns: promo ends today. New price list Thu 12 Nov: 1 day (runs by itself). Duo student starts Thu 12 Nov. Course prices next choice Sun 15 Nov: 4 days.
-Reminders: check the Google ad promo sitelink and the /start promo box switch off after today. Rezerv import still waits (daily reminder).
-Reel: Plato's daily run is paused (expected). Carne posted: 0 new leads.
-Score: wins this week (from Mon 9 Nov): none reported. 180K leads: 0 new today, 1 serious silent 25 days.
-Inbox 07:08: 6 LINE threads with news, 4 need a reply, 2 hot.
-
-13:08 check-in: 3-month student and old-price renewal still waiting (due 19:00 today). Inbox: 7 new, 3 hot.
-19:08 check-in: 3-month student and old-price renewal: defaults applied, asked again Thu 07:08. No win reported. Inbox: 8 new, 4 hot.
-
-## 2026-11-11 · carnegie
-
-# Carnegie, 11 Nov 2026
-- New leads: 0. Inbox had 8 LINE chats, none about the 180K program. Total open: 2.
-- Due today: 0. Overdue: 0.
-- Serious: 1, silent 25 days, next check Sat 14 Nov. Last note still on hold.
-- Boonchu: nothing today. If you have not sent yesterday's short reply to the new teacher-training ask on LINE OA, it is in my 10 Nov session.
