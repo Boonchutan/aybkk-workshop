@@ -219,6 +219,18 @@
      its button and Read more. Only the script sets .acctm and .acc, so other tabs and no JavaScript show it all. */
   .acc .acx,.acc .acdup{display:none!important}
   .acc .act,#find.acc .links{margin-top:0}
+  /* Folded, a section is short (Boonchu, 25 Nov 2026: "the section can be shorter"): less air, and on a phone
+     its number beside the title. Opened by Read more, it is a full section again. */
+  body.acctm .sec.acc{padding-block:18px}
+  body.acctm .sec.acc::before{margin-bottom:12px}
+  body.acctm .sec.acc > h2{margin-bottom:4px}
+  body.acctm .sec.acc .accrm{margin-top:0}
+  body.acctm .pair{padding-block:0}
+  body.acctm .pair > #first.acc{margin-top:0}
+  @media (max-width:1099px){
+    body.acctm .sec.acc > h2{grid-row:2;padding-left:1.5em}
+    body.acctm .sec.acc .accrm{padding-left:calc(1.5 * var(--fs-h))}
+  }
   .accrm{display:none}
   .acctm .accrm{display:block}
   .acctm [data-fold] .rm:not(.accrm){display:none!important}
