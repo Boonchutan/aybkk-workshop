@@ -1561,17 +1561,30 @@
   // Settings: where class photos are kept, the R2 test and the move of older photos (Nov 2026).
   Object.assign(STR.en, {
     psTitle: 'Photo storage',
-    psHelp: 'Where class photos are kept. With R2 on, new photos go to Cloudflare R2: sharper, no daily limit, sent from this site. Faces stay on Cloudinary. Once photos are in R2, keep R2 on: with it off, they do not show.',
+    psHelp: 'Where class photos and faces are kept. With R2 on, new photos and faces go to Cloudflare R2: sharper, no daily limit, sent from this site. Once photos are in R2, keep R2 on: with it off, they do not show.',
     psOffHeld: n => `R2 is off, but ${n} photos are kept in R2: students cannot see them, and Save photo fails, until all four R2 variables are back in Railway.`,
     psNotice: 'The privacy notice students sign says Cloudinary stores photos and does not name Cloudflare. With R2 on that is no longer true: a new agreement version has to name it (Boonchu decides the wording; students then sign again).',
     psOn: 'New class photos go to Cloudflare R2.',
     psOff: 'R2 is off: new class photos go to Cloudinary. To switch it on, set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY and R2_BUCKET in Railway.',
-    psCount: (c, r) => `On Cloudinary: ${c} photos · On R2: ${r} photos`,
+    psCount: (c, r, nd) => `On R2: ${r.toLocaleString()} photos · Still on Cloudinary: ${c.toLocaleString()}${nd ? ` (${nd.toLocaleString()} of them have no Drive copy: Cloudinary has the only one)` : ''}`,
+    psFaces: (r, c) => `Faces: ${r.toLocaleString()} on R2 · ${c.toLocaleString()} on Cloudinary`,
     psTest: 'Test R2', psTesting: 'Testing…',
     psTestOk: ms => `OK: R2 stored, sent back and deleted a test file (${ms} ms).`,
     psTestNo: e => `Not OK: ${e}`,
     psMoveH: 'Move older photos to R2',
-    psMoveHelp: 'One photo at a time, about 3 a minute: from the Drive original when the photo came from Drive (and is still the same shape), else from its copy on Cloudinary. Each one is checked in R2 before it switches. Its Cloudinary copy is removed a day later, so a page a student already has open keeps working. It starts only when you tap Start, once R2 passes its test. A server restart stops it: tap Start to go on from where it stopped.',
+    psMoveHelp: 'Faces move first, then the photos. Each one is checked in R2 before it switches, and students see no change. It starts only when you tap Start, once R2 passes its test. A server restart stops it: tap Start to go on from where it stopped.',
+    psNormal: 'Normal move', psNormalHelp: 'One photo at a time, about 3 a minute, from the Drive original when there is one. Each Cloudinary copy is removed a day after its move.',
+    psFast: 'Fast move (before Cloudinary closes)',
+    psFastHelp: "About 4 photos at a time, with no wait. Photos with no Drive copy go first, because Cloudinary has the only one. From Drive's 2048 px copy or the photo on Cloudinary, never the Drive original. Every Cloudinary copy is kept until you remove them below.",
+    psPace: n => `${n.toLocaleString()} photos a minute`,
+    psFacesMoved: n => `Faces moved: ${n.toLocaleString()}`,
+    psFaceFailed: n => `${n} faces could not be moved this round and stay on Cloudinary, untouched. Once the round is done, Start tries them again:`,
+    psFaceItem: id => `face #${id}`,
+    psKeptH: 'Cloudinary copies kept',
+    psKept: (p, f) => `${p.toLocaleString()} moved photos and ${f.toLocaleString()} faces still have their copy on Cloudinary, kept on purpose. Remove them only once the photos show from R2.`,
+    psRelease: 'Remove the Cloudinary copies of moved photos',
+    psQRelease: (p, f) => `Remove ${p.toLocaleString()} photo copies and ${f.toLocaleString()} face copies from Cloudinary?\nThe photos stay on R2. This cannot be undone.`,
+    psReleased: (p, f) => `Removing ${p.toLocaleString()} photo copies and ${f.toLocaleString()} face copies from Cloudinary in the background. Any it cannot remove now are tried again each day.`,
     psStart: 'Start', psStop: 'Stop',
     psIdle: 'Not started.',
     psRunning: (n, at) => `Moving: ${n} moved so far${at ? `, the last at ${at}` : ''}.`,
@@ -1585,17 +1598,30 @@
   });
   Object.assign(STR.th, {
     psTitle: 'ที่เก็บรูป',
-    psHelp: 'ที่เก็บรูปคลาส ถ้าเปิด R2 รูปใหม่จะไปที่ Cloudflare R2: คมกว่า ไม่จำกัดต่อวัน และส่งจากเว็บนี้เอง รูปหน้ายังอยู่ที่ Cloudinary เมื่อมีรูปอยู่ใน R2 แล้ว ให้เปิด R2 ไว้ตลอด ถ้าปิด รูปเหล่านั้นจะไม่แสดง',
+    psHelp: 'ที่เก็บรูปคลาสและรูปหน้า ถ้าเปิด R2 รูปใหม่และรูปหน้าใหม่จะไปที่ Cloudflare R2: คมกว่า ไม่จำกัดต่อวัน และส่งจากเว็บนี้เอง เมื่อมีรูปอยู่ใน R2 แล้ว ให้เปิด R2 ไว้ตลอด ถ้าปิด รูปเหล่านั้นจะไม่แสดง',
     psOffHeld: n => `R2 ปิดอยู่ แต่มีรูป ${n} รูปเก็บอยู่ใน R2: นักเรียนจะไม่เห็นรูปเหล่านี้ และบันทึกรูปไม่ได้ จนกว่าจะตั้งตัวแปร R2 ครบทั้ง 4 ตัวใน Railway อีกครั้ง`,
     psNotice: 'ประกาศความเป็นส่วนตัวที่นักเรียนเซ็นบอกว่า Cloudinary เก็บรูป และไม่ได้ระบุ Cloudflare ถ้าเปิด R2 ข้อความนี้จะไม่ตรงอีกต่อไป: ต้องออกข้อตกลงฉบับใหม่ที่ระบุ Cloudflare (Boonchu เป็นคนตัดสินใจถ้อยคำ แล้วนักเรียนต้องเซ็นใหม่)',
     psOn: 'รูปคลาสใหม่ไปที่ Cloudflare R2',
     psOff: 'R2 ปิดอยู่: รูปคลาสใหม่ไปที่ Cloudinary ถ้าจะเปิด ให้ตั้ง R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY และ R2_BUCKET ใน Railway',
-    psCount: (c, r) => `อยู่ที่ Cloudinary ${c} รูป · อยู่ที่ R2 ${r} รูป`,
+    psCount: (c, r, nd) => `อยู่ที่ R2 ${r.toLocaleString()} รูป · ยังอยู่ที่ Cloudinary ${c.toLocaleString()} รูป${nd ? ` (ในนี้ ${nd.toLocaleString()} รูปไม่มีไฟล์ใน Drive: มีอยู่ที่ Cloudinary ที่เดียว)` : ''}`,
+    psFaces: (r, c) => `รูปหน้า: อยู่ที่ R2 ${r.toLocaleString()} รูป · อยู่ที่ Cloudinary ${c.toLocaleString()} รูป`,
     psTest: 'ทดสอบ R2', psTesting: 'กำลังทดสอบ…',
     psTestOk: ms => `ใช้ได้: R2 เก็บ ส่งกลับ และลบไฟล์ทดสอบแล้ว (${ms} ms)`,
     psTestNo: e => `ใช้ไม่ได้: ${e}`,
     psMoveH: 'ย้ายรูปเก่าไป R2',
-    psMoveHelp: 'ย้ายทีละรูป ประมาณนาทีละ 3 รูป: ใช้ไฟล์ต้นฉบับจาก Drive ถ้ารูปมาจาก Drive (และยังเป็นรูปทรงเดิม) ไม่อย่างนั้นใช้ไฟล์ที่อยู่ใน Cloudinary ทุกรูปจะตรวจใน R2 ก่อนสลับ ไฟล์ใน Cloudinary จะถูกลบหลังย้ายหนึ่งวัน หน้าที่นักเรียนเปิดค้างไว้จึงยังใช้ได้ จะเริ่มเมื่อกด เริ่ม และ R2 ผ่านการทดสอบเท่านั้น ถ้าเซิร์ฟเวอร์รีสตาร์ต การย้ายจะหยุด กด เริ่ม เพื่อทำต่อจากที่หยุด',
+    psMoveHelp: 'ย้ายรูปหน้าก่อน แล้วจึงย้ายรูปคลาส ทุกรูปจะตรวจใน R2 ก่อนสลับ นักเรียนจะไม่เห็นความเปลี่ยนแปลง จะเริ่มเมื่อกด เริ่ม และ R2 ผ่านการทดสอบเท่านั้น ถ้าเซิร์ฟเวอร์รีสตาร์ต การย้ายจะหยุด กด เริ่ม เพื่อทำต่อจากที่หยุด',
+    psNormal: 'ย้ายแบบปกติ', psNormalHelp: 'ย้ายทีละรูป ประมาณนาทีละ 3 รูป ใช้ไฟล์ต้นฉบับจาก Drive ถ้ามี ไฟล์ใน Cloudinary จะถูกลบหลังย้ายหนึ่งวัน',
+    psFast: 'ย้ายแบบเร็ว (ก่อน Cloudinary ปิด)',
+    psFastHelp: 'ย้ายครั้งละประมาณ 4 รูป ไม่ต้องรอ รูปที่ไม่มีไฟล์ใน Drive ย้ายก่อน เพราะมีอยู่ที่ Cloudinary ที่เดียว ใช้ไฟล์ 2048 px จาก Drive หรือไฟล์ใน Cloudinary ไม่ใช้ไฟล์ต้นฉบับจาก Drive ไฟล์ใน Cloudinary ทุกไฟล์จะเก็บไว้จนกว่าคุณจะกดลบด้านล่าง',
+    psPace: n => `นาทีละ ${n.toLocaleString()} รูป`,
+    psFacesMoved: n => `ย้ายรูปหน้าแล้ว ${n.toLocaleString()} รูป`,
+    psFaceFailed: n => `${n} รูปหน้าย้ายไม่ได้ในรอบนี้ ยังอยู่ที่ Cloudinary เหมือนเดิม จบรอบแล้วกด เริ่ม จะลองใหม่:`,
+    psFaceItem: id => `รูปหน้า #${id}`,
+    psKeptH: 'ไฟล์ที่เก็บไว้ใน Cloudinary',
+    psKept: (p, f) => `รูปที่ย้ายแล้ว ${p.toLocaleString()} รูป และรูปหน้า ${f.toLocaleString()} รูป ยังมีไฟล์อยู่ที่ Cloudinary เก็บไว้โดยตั้งใจ ให้ลบเมื่อรูปแสดงจาก R2 แล้วเท่านั้น`,
+    psRelease: 'ลบไฟล์ใน Cloudinary ของรูปที่ย้ายแล้ว',
+    psQRelease: (p, f) => `ลบไฟล์รูป ${p.toLocaleString()} ไฟล์ และรูปหน้า ${f.toLocaleString()} ไฟล์ ออกจาก Cloudinary?\nรูปยังอยู่ที่ R2 ย้อนกลับไม่ได้`,
+    psReleased: (p, f) => `กำลังลบไฟล์รูป ${p.toLocaleString()} ไฟล์ และรูปหน้า ${f.toLocaleString()} ไฟล์ ออกจาก Cloudinary อยู่เบื้องหลัง ไฟล์ที่ลบตอนนี้ไม่ได้จะลองใหม่ทุกวัน`,
     psStart: 'เริ่ม', psStop: 'หยุด',
     psIdle: 'ยังไม่ได้เริ่ม',
     psRunning: (n, at) => `กำลังย้าย: ย้ายแล้ว ${n} รูป${at ? ` ล่าสุดเวลา ${at}` : ''}`,
@@ -4537,9 +4563,12 @@
     loadPs();
   }
   // Photo storage (bkk-api.js /api/bkk/admin/photo-store): R2 on or off, the
-  // test, the photo counts and the move of the older photos, read again every
-  // few seconds while the move runs.
-  let PS_TEST = null, PS_POLL = null;
+  // test, the photo counts and the move of the older photos and faces, normal or
+  // fast, read again every few seconds while the move runs; and the button that
+  // removes the Cloudinary copies a fast move keeps.
+  // PS_FAST: the way picked here (null: the saved one, fast before any move).
+  let PS_TEST = null, PS_POLL = null, PS_FAST = null, PS_ST = null, PS_REL = null;
+  const psFast = m => PS_FAST ?? (m.startedAt ? !!m.fast : true);
   const psBox = (st, failed) => {
     const head = `<b>${T('psTitle')}</b><p class="muted">${T('psHelp')}</p>`;
     if (!st) return `<div class="box" id="psBox">${head}<p class="${failed ? 'flash warn' : 'muted'}" role="status">${esc(T(failed ? 'failed' : 'tbLoading'))}</p></div>`;
@@ -4549,26 +4578,40 @@
     const left = st.left || {};
     const fails = (m.failed || []).length ? `<p class="flash warn">${esc(T('psFailed', m.failedN || m.failed.length))}</p>
       <ul class="muted">${m.failed.map(f => `<li>#${Number(f.id)}: ${esc(f.why)}</li>`).join('')}</ul>` : '';
+    const faceFails = (m.faceFailed || []).length ? `<p class="flash warn">${esc(T('psFaceFailed', m.faceFailed.length))}</p>
+      <ul class="muted">${m.faceFailed.map(f => `<li>${esc(T('psFaceItem', Number(f.id)))}: ${esc(f.why)}</li>`).join('')}</ul>` : '';
+    const fast = psFast(m), faces = st.faces || {};
+    const way = (v, k) => `<label class="here"><input type="radio" name="psWay" value="${v}"${fast === v ? ' checked' : ''}${m.on ? ' disabled' : ''}
+      onchange="psWay(${v})"><span><b>${esc(T(k))}</b><small>${esc(T(k + 'Help'))}</small></span></label>`;
+    const kept = (left.kept || 0) + (faces.kept || 0);
     return `<div class="box" id="psBox">${head}
       <p><b>${esc(T(st.r2 ? 'psOn' : 'psOff'))}</b></p>
       ${!st.r2 && st.photos.r2 ? `<p class="flash warn" role="alert">${esc(T('psOffHeld', st.photos.r2))}</p>` : ''}
       ${st.noticeNamesR2 === false ? `<p class="flash warn">${esc(T('psNotice'))}</p>` : ''}
-      <p>${esc(T('psCount', st.photos.cloudinary, st.photos.r2))}</p>
+      <p>${esc(T('psCount', st.photos.cloudinary, st.photos.r2, st.photos.noDrive || 0))}</p>
+      <p>${esc(T('psFaces', faces.r2 || 0, faces.cloudinary || 0))}</p>
       <p><button class="btn gray" id="psTestBtn" onclick="psTest()"${PS_TEST === 'wait' ? ' disabled' : ''}>${esc(T(PS_TEST === 'wait' ? 'psTesting' : 'psTest'))}</button></p>
       ${PS_TEST && PS_TEST !== 'wait' ? `<p class="${PS_TEST.ok ? 'flash' : 'flash warn'}" role="status">${esc(PS_TEST.ok ? T('psTestOk', PS_TEST.ms) : T('psTestNo', PS_TEST.error))}</p>` : ''}
       <p style="margin-top:14px"><b>${T('psMoveH')}</b></p>
       <p class="muted">${T('psMoveHelp')}</p>
-      <p role="status">${esc(state)}</p>
-      ${fails}
+      ${way(false, 'psNormal')}${way(true, 'psFast')}
+      <p role="status" style="margin-top:12px"><b>${esc(state)}</b>${m.startedAt ? `<br><span class="muted">${esc([T(m.fast ? 'psFast' : 'psNormal'),
+        m.perMin != null ? T('psPace', m.perMin) : '', m.facesMoved ? T('psFacesMoved', m.facesMoved) : ''].filter(Boolean).join(' · '))}</span>` : ''}</p>
+      ${fails}${faceFails}
       ${left.cloudinary ? `<p class="muted">${esc(T('psLeftC', left.cloudinary))}</p>` : ''}
       ${left.r2 ? `<p class="muted">${esc(T('psLeftR', left.r2))}</p>` : ''}
       <p>${m.on ? `<button class="btn gray" onclick="psMove(false)">${T('psStop')}</button>`
-        : `<button class="btn pink" onclick="psMove(true)"${st.r2 ? '' : ' disabled'}>${T('psStart')}</button>`}</p></div>`;
+        : `<button class="btn pink" onclick="psMove(true)"${st.r2 ? '' : ' disabled'}>${T('psStart')}</button>`}</p>
+      ${kept || PS_REL ? `<p style="margin-top:14px"><b>${T('psKeptH')}</b></p>
+      ${kept ? `<p class="muted">${esc(T('psKept', left.kept || 0, faces.kept || 0))}</p>
+      <p><button class="btn gray" onclick="psRelease()">${esc(T('psRelease'))}</button></p>` : ''}
+      ${PS_REL ? `<p class="flash" role="status">${esc(T('psReleased', PS_REL.photos, PS_REL.faces))}</p>` : ''}` : ''}</div>`;
   };
   const loadPs = async () => {
     clearTimeout(PS_POLL);
     const st = await api('/api/bkk/admin/photo-store').then(r => r.ok ? r.json() : null).catch(() => null);
     if (current !== 'settings' || SUB || !$('#psBox')) return;
+    PS_ST = st;
     $('#psBox').outerHTML = psBox(st, !st);
     if (st && st.move && st.move.on) PS_POLL = setTimeout(loadPs, 5000);
   };
@@ -4580,8 +4623,16 @@
     PS_TEST = r && r.ok ? j : { ok: false, error: j.error || T('failed') };
     loadPs();
   };
+  window.psWay = v => { PS_FAST = v; };
   window.psMove = async on => {
-    if (await shout(await api('/api/bkk/admin/photo-store/move', { method: 'POST', body: JSON.stringify({ on }) }))) loadPs();
+    const fast = psFast((PS_ST && PS_ST.move) || {});
+    if (await shout(await api('/api/bkk/admin/photo-store/move', { method: 'POST', body: JSON.stringify(on ? { on, fast } : { on }) }))) loadPs();
+  };
+  window.psRelease = async () => {
+    const st = PS_ST || {}, p = (st.left || {}).kept || 0, f = (st.faces || {}).kept || 0;
+    if (!confirm(T('psQRelease', p, f))) return;
+    const j = await shout(await api('/api/bkk/admin/photo-store/release', { method: 'POST' }));
+    if (j) { PS_REL = j; loadPs(); }
   };
   // The LINE team brief (team-brief.js): whether LINE reaches the main AYBKK
   // account, which group gets the briefs, a group added by its ID, the two
