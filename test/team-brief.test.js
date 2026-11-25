@@ -575,6 +575,25 @@ const fakeDriver = { session: () => ({
   const b2 = await noImg.build('evening', D, 'th');
   ok('no safe https URL for a photo: the summary goes without images', b2.images.length === 0 && b2.messages.length === 1 && b2.text.includes('อัปโหลด 3 รูป'));
 
+  // A photo stored in R2 (lib/r2.js): this site's own /ph links, made whole on the
+  // address the sign-in links use, as LINE fetches them itself.
+  const { phPath } = require('../lib/r2');
+  const R2K = '0123456789abcdef01234567';
+  const bRow = (await pool.query(`UPDATE bkk_photos SET store='r2', r2_key=$1 WHERE public_id='aybkk/profile/2026-11-10/b' RETURNING id`, [R2K])).rows[0].id;
+  const baseWas = process.env.PUBLIC_BASE_URL;
+  delete process.env.PUBLIC_BASE_URL;
+  const eR2 = await team.build('evening', D, 'th');
+  process.env.PUBLIC_BASE_URL = 'https://aybkk.net/';
+  const eR2b = await team.build('evening', D, 'th');
+  if (baseWas === undefined) delete process.env.PUBLIC_BASE_URL; else process.env.PUBLIC_BASE_URL = baseWas;
+  await pool.query(`UPDATE bkk_photos SET store='cloudinary', r2_key=NULL WHERE id=$1`, [bRow]);
+  const r2Img = m => m.messages.find(x => x.type === 'image' && x.originalContentUrl.includes('/ph/'));
+  ok("a photo in R2 goes as this site's links: v.jpg (2560 px JPEG) and p.jpg (the tile as JPEG) to preview, on cn.aybkk.net by default",
+     r2Img(eR2) && r2Img(eR2).originalContentUrl === 'https://cn.aybkk.net' + phPath(bRow, R2K, 'v') && r2Img(eR2).previewImageUrl === 'https://cn.aybkk.net' + phPath(bRow, R2K, 'p')
+       && eR2.messages.filter(x => x.type === 'image').length === 3 && eR2.messages.filter(x => x.type === 'image' && x.originalContentUrl.includes('res.cloudinary.com')).length === 2,
+     JSON.stringify(eR2.messages.slice(1)));
+  ok('...or on PUBLIC_BASE_URL when set', r2Img(eR2b).originalContentUrl === 'https://aybkk.net' + phPath(bRow, R2K, 'v'), r2Img(eR2b).originalContentUrl);
+
   console.log('\n# the timer: exactly once per day');
   const morningPushes = () => pushes().filter(p => p.body.messages[0].text.startsWith('☀️'));
   const eveningPushes = () => pushes().filter(p => p.body.messages[0].text.startsWith('🌙'));

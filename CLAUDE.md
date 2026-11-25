@@ -135,6 +135,20 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
   list under Assignments & notes). `start_date` is per student (alumni start 2027-01-24, day 14, session #13); `terms_arranged` opens the course
   without the sign flow. The staff note (`cohort_note`) never reaches the student. The roster, calendar text and links
   are entered in Admin, never in git.
+- **Class photos:** new ones go to Cloudflare R2 when `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`
+  and `R2_BUCKET` are all set (`lib/r2.js`); until then everything is on Cloudinary as before. Once a photo is in R2
+  the switch is one-way: with a variable missing, or the code rolled back past this change, R2 photos do not show
+  (`/ph` answers 503, Save fails) until the variables are back. Before R2 goes on, the privacy notice students sign
+  (`CONSENT_TEXT`) must name Cloudflare: a new agreement version, Boonchu's call (Admin warns until then).
+  `bkk_photos.store` says where a photo is; in R2 it is `cls/<class date>/<r2_key>/v.jpg` (long side 2560 px, upright,
+  no metadata) and `t.webp` (the 600 px tile). Students get `/ph/<id>.<sig>/t.webp` and `v.jpg` (signed, never
+  ending, relative so cn.aybkk.net works too), sent `public, max-age=86400, s-maxage=86400` so Cloudflare's edge keeps
+  them: a deleted photo can still show for up to a day. Admin, Settings, "Photo storage": Test R2, photo counts, and
+  Start/Stop for moving the older Cloudinary photos (about 3 a minute, after Test R2 passes, each checked in R2 before
+  it switches; state in `bkk_settings` `photo_r2_move`; a server start stops it, Start goes on). Copies to remove
+  (a moved photo's Cloudinary copy a day after its move, R2 copies that could not be deleted) wait in
+  `bkk_photo_orphans`. With R2 on, `photos_daily_cap` does not apply.
+  Faces (`aybkk-profile`) stay on Cloudinary, and the `PHOTO_SIZES`/`FACE_SIZES` strings never change (a new one re-bills every photo).
 - **Inbox:** `inbox.js` keeps 1:1 chats from the LINE Official Account (`/line/webhook`) and
   Instagram/Facebook DMs and comments (`/meta/webhook`) in `aybkk_inbox` for 90 days.
   Machi reads `GET /api/inbox` (header `x-inbox-key`). Env: `INBOX_KEY`; `LINE_CHANNEL_SECRET`
