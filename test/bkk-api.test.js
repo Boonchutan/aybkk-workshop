@@ -8476,8 +8476,8 @@ const ok = (name, cond, extra = '') => {
       const offToday = await getD('/api/bkk/admin/today', ADMIN);
       const on = await postD('/api/bkk/admin/settings', { privacyName: 'Example Yoga Co., Ltd.', privacyAddress: '1 Example Road, Bangkok',
         privacyEmail: 'privacy@example.com', consentMode: 'require' }, ADMIN);
-      const sb = await postD(`/api/bkk/me/${people.BEN.code}/consent`, { agree: true, version: 'v1', lang: 'en', name: 'Ben Sample', under20: true });
-      const sc = await postD(`/api/bkk/me/${people.CAR.code}/consent`, { agree: true, version: 'v1', lang: 'th', name: 'Cara Ocean' });
+      const sb = await postD(`/api/bkk/me/${people.BEN.code}/consent`, { agree: true, version: 'v2', lang: 'en', name: 'Ben Sample', under20: true });
+      const sc = await postD(`/api/bkk/me/${people.CAR.code}/consent`, { agree: true, version: 'v2', lang: 'th', name: 'Cara Ocean' });
       ok('agreement on in require, two students sign on their own phones', on.status === 200 && on.body.consent.mode === 'require'
          && sb.status === 200 && sc.status === 200 && sb.body.consent.under20 === true, JSON.stringify([on.body.consent, sb.body, sc.body]));
       cc = AT(D, '05:20:00');
@@ -8503,7 +8503,7 @@ const ok = (name, cond, extra = '') => {
          && offTeach.body.students.every(x => !('signed' in x) && !('under20' in x)));
       const tv = await getD('/api/bkk/teacher/student/' + tOf('Ben Sample').ref, TH);
       ok('/teach student: the agreement is two true/false only', tv.status === 200
-         && JSON.stringify(tv.body.consent) === JSON.stringify({ signed: true, under20: true }) && !/Ben Sample.*v1|signedAt|"via"/.test(tv.raw), JSON.stringify(tv.body.consent));
+         && JSON.stringify(tv.body.consent) === JSON.stringify({ signed: true, under20: true }) && !/Ben Sample.*v[12]|signedAt|"via"/.test(tv.raw), JSON.stringify(tv.body.consent));
       const dAdd = await postD('/api/bkk/teacher/add', { slotId: my730, ref: (await refOf('Mr Dan Sample')).ref }, TH);
       const open_ = await one(`SELECT b.id FROM bkk_bookings b WHERE b.class_date=$1 AND b.slot_id=$2 AND b.status='booked'
         AND b.checked_in_at IS NULL AND NOT EXISTS (SELECT 1 FROM bkk_consents c WHERE c.member_id=b.member_id) ORDER BY b.id LIMIT 1`, [D, my730]);
@@ -8572,7 +8572,7 @@ const ok = (name, cond, extra = '') => {
     const SET = body => post('/api/bkk/admin/settings', body, ADMIN);
     const rowsOf = async code => (await pool.query(`SELECT c.* FROM bkk_consents c JOIN bkk_members m ON m.id=c.member_id
       WHERE m.code=$1 ORDER BY c.id`, [code])).rows;
-    const tick = (o = {}) => ({ agree: true, version: 'v1', lang: 'en', under20: false, ...o });
+    const tick = (o = {}) => ({ agree: true, version: 'v2', lang: 'en', under20: false, ...o });
     const grant = async (name, email, productCode = 'pack8') =>
       (await post('/api/bkk/admin/passes', { name, email, productCode }, ADMIN)).body.member.code;
     // The door block above switched it on and off: start from a shala that never had it.
@@ -8580,21 +8580,49 @@ const ok = (name, cond, extra = '') => {
     const passOf = code => one(`SELECT p.valid_from, p.valid_until, p.credits_used FROM bkk_passes p JOIN bkk_members m ON m.id=p.member_id
       WHERE m.code=$1 ORDER BY p.id DESC LIMIT 1`, [code]);
 
-    // The wording: pinned, and what a page is served is what is pinned.
+    // The wording: pinned, and what a page is served is what is pinned. v2 (25 Nov 2026) is v1's
+    // agreement, so the agreement hashes are v1's; only the privacy notice's changed.
     const PINNED = {
+      en: ['f5e5e04d53f70d5ca11548b68fe95389b57fb43e3ef3147b488009968f9919cb', 'f2de101dceefd54e21eb6e7a6619f37c7c49ad39cd827d1c8b9225153e025772'],
+      th: ['fa6ee2d1b3144e0229ef6410d6539d745473c86d6498150859efc3968fb7a6d2', '11f6cb6299ce8c888985ad2b6af292839d58271d63eb006f47de0099c19de3f6'],
+      zh: ['4634fa6fe518961986cbf6a9caf1459e8bb0f2b3ed98dce6ec9ff40048b97b6b', '95a7f30bd35011c6ba140bede4149ddc1ed3fc166391daacc31c0980f819f93c'],
+      ru: ['32ba4875bcecd36c8db1cd81b36b2fcc0835ed09406d2a458660a04b2f2ac7de', '3902af982f25bf1561e2883dbf3f0bc2cbe74fc4f7c714fe6246c74ed20b288a'],
+    };
+    // v1 as the people who signed it read it: never edited.
+    const PINNED_V1 = {
       en: ['f5e5e04d53f70d5ca11548b68fe95389b57fb43e3ef3147b488009968f9919cb', '2ecd21d65cf15328969e5d36340ab649a9022bece07df4a344c5344069f30016'],
       th: ['fa6ee2d1b3144e0229ef6410d6539d745473c86d6498150859efc3968fb7a6d2', 'cb1621b669d7e7e7178019a0585cc40c3e38c131762c233a22f4851c24b825c0'],
       zh: ['4634fa6fe518961986cbf6a9caf1459e8bb0f2b3ed98dce6ec9ff40048b97b6b', '2f6e8618cd17bf35b8bacfa44d3408e07d7d51d8833e7b3a30e9b5dedcb4e0a5'],
       ru: ['32ba4875bcecd36c8db1cd81b36b2fcc0835ed09406d2a458660a04b2f2ac7de', '2e7a8bce0b0259e32b290eb66054e8ed3ff082574d7bf54d8eff5fe563d8ce34'],
     };
-    ok('v1 is the current version, in exactly these 4 languages', CONSENT_VERSION === 'v1' && Object.keys(CONSENT_TEXT.v1).join() === 'en,th,zh,ru');
+    ok('v2 is the current version, in exactly these 4 languages, and v1 is kept', CONSENT_VERSION === 'v2'
+       && Object.keys(CONSENT_TEXT.v2).join() === 'en,th,zh,ru' && Object.keys(CONSENT_TEXT.v1).join() === 'en,th,zh,ru');
     for (const [l, [a, pv]] of Object.entries(PINNED)) {
       const c = await J(`/api/bkk/consent?lang=${l}`);
-      ok(`v1 ${l.toUpperCase()}: the agreement and the privacy notice are the pinned text, and the page is served that text`,
-         sha(CONSENT_TEXT.v1[l].agreement) === a && sha(CONSENT_TEXT.v1[l].privacy) === pv && c.status === 200 && c.body.lang === l
-           && c.body.sha === a && sha(c.body.text.agreement) === a && sha(c.body.text.privacy) === pv, `${sha(CONSENT_TEXT.v1[l].agreement)} ${sha(CONSENT_TEXT.v1[l].privacy)}`);
+      ok(`v2 ${l.toUpperCase()}: the agreement and the privacy notice are the pinned text, and the page is served that text`,
+         sha(CONSENT_TEXT.v2[l].agreement) === a && sha(CONSENT_TEXT.v2[l].privacy) === pv && c.status === 200 && c.body.lang === l
+           && c.body.version === 'v2' && c.body.current === 'v2'
+           && c.body.sha === a && sha(c.body.text.agreement) === a && sha(c.body.text.privacy) === pv, `${sha(CONSENT_TEXT.v2[l].agreement)} ${sha(CONSENT_TEXT.v2[l].privacy)}`);
     }
-    ok('v1 has 18 lines in each language', ['en', 'th', 'zh', 'ru'].every(l => CONSENT_TEXT.v1[l].agreement.groups.flatMap(g => g[1]).length === 18));
+    for (const [l, [a, pv]] of Object.entries(PINNED_V1)) {
+      const c = await J(`/api/bkk/consent?lang=${l}&version=v1`);
+      ok(`v1 ${l.toUpperCase()}: still the pinned text it was signed as, and still served for a receipt's ?version=v1`,
+         sha(CONSENT_TEXT.v1[l].agreement) === a && sha(CONSENT_TEXT.v1[l].privacy) === pv && c.status === 200 && c.body.version === 'v1'
+           && c.body.current === 'v2' && c.body.sha === a && sha(c.body.text.privacy) === pv && !JSON.stringify(c.body.text).includes('Cloudflare'),
+         `${sha(CONSENT_TEXT.v1[l].agreement)} ${sha(CONSENT_TEXT.v1[l].privacy)}`);
+    }
+    // v2's only change: one sentence naming Cloudflare (TEE_NOTICE t1's words), after Railway in "Who else handles it".
+    const CF = { en: 'Cloudflare carries this site’s traffic to and from cn.aybkk.net. ', th: 'Cloudflare รับส่งข้อมูลของเว็บไซต์นี้ที่เข้าและออกทาง cn.aybkk.net ',
+      zh: 'Cloudflare 为 cn.aybkk.net 传送本网站的数据。', ru: 'Cloudflare передаёт трафик этого сайта на cn.aybkk.net и обратно. ' };
+    ok('v2 is v1 with one sentence naming Cloudflare added after Railway, in each language, and nothing else changed', ['en', 'th', 'zh', 'ru'].every(l => {
+      const [a, b] = [CONSENT_TEXT.v1[l], CONSENT_TEXT.v2[l]];
+      const rest = s => JSON.stringify(s.privacy.sections.filter((x, i) => i !== 3));
+      return JSON.stringify(a.agreement) === JSON.stringify(b.agreement) && a.privacy.title === b.privacy.title && rest(a) === rest(b)
+        && b.privacy.sections[3][0] === a.privacy.sections[3][0] && b.privacy.sections[3][1].replace(CF[l], '') === a.privacy.sections[3][1]
+        && /Railway[^.。]*[.。]? ?$/.test(b.privacy.sections[3][1].slice(0, b.privacy.sections[3][1].indexOf(CF[l])));
+    }) && require('../bkk-api.js').TEE_NOTICE.t1.en.sections[3][1].includes(CF.en.trim()) && require('../bkk-api.js').TEE_NOTICE.t1.zh.sections[3][1].includes(CF.zh));
+    ok('the Thai text calls a third person เค้า, never เขา', !JSON.stringify(CONSENT_TEXT.v2.th).includes('เขา'));
+    ok('v2 has 18 lines in each language', ['en', 'th', 'zh', 'ru'].every(l => CONSENT_TEXT.v2[l].agreement.groups.flatMap(g => g[1]).length === 18));
     // Lines 14 to 16 are the booking page's own Member notes, in every language (the Chinese one once
     // said "a new student who just came" for "someone new to AYBKK").
     {
@@ -8617,17 +8645,17 @@ const ok = (name, cond, extra = '') => {
     }
     // The privacy notice names every service the code hands personal data to (inbox.js, team-brief.js,
     // server.js included: Neo4j keeps orientation forms and journals, OpenRouter writes the staff AI summary
-    // of a journal), and the messages, orientation answers and practice journal kept.
+    // of a journal; Cloudflare's tunnel carries cn.aybkk.net), and the messages, orientation answers and practice journal kept.
     ok('the privacy notice names every service that handles the data, and the practice journal, in every language', ['en', 'th', 'zh', 'ru'].every(l => {
-      const txt = CONSENT_TEXT.v1[l].privacy.sections.map(x => x[1]).join(' ');
-      return ['PaySolutions', 'Resend', 'Cloudinary', 'Google', 'Railway', 'Telegram', 'LINE', 'Meta', 'Instagram', 'Facebook', 'Anthropic', 'Neo4j',
+      const txt = CONSENT_TEXT.v2[l].privacy.sections.map(x => x[1]).join(' ');
+      return ['PaySolutions', 'Resend', 'Cloudinary', 'Google', 'Railway', 'Cloudflare', 'cn.aybkk.net', 'Telegram', 'LINE', 'Meta', 'Instagram', 'Facebook', 'Anthropic', 'Neo4j',
         'OpenRouter', 'DeepSeek', 'IP', '90', { en: 'practice journal', th: 'บันทึกการฝึก', zh: '练习日记', ru: 'дневник практики' }[l]]
         .every(w => txt.includes(w));
     }));
     const throwsWith = (fn, re) => { try { fn(); return false; } catch (e) { return re.test(e.message); } };
     const noTh = { v1: { en: CONSENT_TEXT.v1.en } }, noEn = { v1: { th: CONSENT_TEXT.v1.th } };
     ok('the server refuses to start when the current version has no English or no Thai', throwsWith(() => checkConsentText(noTh, 'v1'), /no TH text/)
-       && throwsWith(() => checkConsentText(noEn, 'v1'), /no EN text/) && throwsWith(() => checkConsentText(CONSENT_TEXT, 'v2'), /v2 has no text/)
+       && throwsWith(() => checkConsentText(noEn, 'v1'), /no EN text/) && throwsWith(() => checkConsentText(CONSENT_TEXT, 'v3'), /v3 has no text/)
        && !throwsWith(() => checkConsentText(), /./));
     const c0 = await J('/api/bkk/consent?lang=xx');
     ok('the public text needs no key, says the switch is off, falls back to English and holds no personal data', c0.status === 200
@@ -8637,7 +8665,7 @@ const ok = (name, cond, extra = '') => {
 
     // The switch.
     const s0 = (await J('/api/bkk/admin/settings', { headers: ADMIN })).body.consent;
-    ok('Settings show the switch off, v1, its 4 languages, and that the privacy notice is not filled in', s0 && s0.mode === 'off' && s0.version === 'v1'
+    ok('Settings show the switch off, v2, its 4 languages, and that the privacy notice is not filled in', s0 && s0.mode === 'off' && s0.version === 'v2'
        && s0.langs.join() === 'en,th,zh,ru' && s0.privacyFilled === false && s0.canTurnOn === false
        && s0.missing.join() === 'privacy name,privacy address,privacy email', JSON.stringify(s0));
     ok('only the staff key changes it', (await post('/api/bkk/admin/settings', { consentMode: 'ask' })).status === 401
@@ -8649,10 +8677,10 @@ const ok = (name, cond, extra = '') => {
     ok('a mode that is not off, ask or require, or a privacy email that is not one, is refused', (await SET({ consentMode: 'on' })).status === 400
        && (await SET({ privacyEmail: 'not an email' })).status === 400 && (await SET({ privacyName: '<b>x</b>' })).status === 400);
     const PRIV = { privacyName: 'Example Yoga Co., Ltd.', privacyAddress: '1 Example Road, Bangkok 10110', privacyEmail: 'privacy@example.com' };
-    const zh = CONSENT_TEXT.v1.zh;
-    delete CONSENT_TEXT.v1.zh;
+    const zh = CONSENT_TEXT.v2.zh;
+    delete CONSENT_TEXT.v2.zh;
     const noZh = await SET({ ...PRIV, consentMode: 'require' });
-    CONSENT_TEXT.v1.zh = zh;
+    CONSENT_TEXT.v2.zh = zh;
     ok('...nor while a language is missing, even with the privacy notice filled: 400 and nothing saved', noZh.status === 400
        && noZh.body.missing.join() === 'ZH text' && (await J('/api/bkk/admin/settings', { headers: ADMIN })).body.consent.privacyFilled === false,
        JSON.stringify(noZh.body));
@@ -8680,7 +8708,7 @@ const ok = (name, cond, extra = '') => {
     const o1x = await post('/api/bkk/orders', { productCode: 'unlim1', name: 'A', email: 'ada.agree@example.com', consent: tick() });
     const n1 = (await one('SELECT count(*)::int AS m, (SELECT count(*)::int FROM bkk_orders) AS o FROM bkk_members'));
     ok('checkout without the tick: 409 consent with the version, and no profile or order is made', o1.status === 409
-       && JSON.stringify(o1.body) === JSON.stringify({ error: 'consent', version: 'v1' }) && n1.m === n0.m && n1.o === n0.o, JSON.stringify(o1.body));
+       && JSON.stringify(o1.body) === JSON.stringify({ error: 'consent', version: 'v2' }) && n1.m === n0.m && n1.o === n0.o, JSON.stringify(o1.body));
     ok('...a stale version is 409 (the page reloads the text), no tick 409, a one-letter name 400, and still nothing made',
        o1s.status === 409 && o1s.body.stale === true && o1n.status === 409 && o1x.status === 400 && n1.m === n0.m, JSON.stringify([o1s.body, o1x.body]));
     const o2 = await post('/api/bkk/orders', { productCode: 'unlim1', name: 'Ada Agreement', email: 'ada.agree@example.com',
@@ -8689,10 +8717,10 @@ const ok = (name, cond, extra = '') => {
     const o2row = await one('SELECT consent FROM bkk_orders WHERE id=$1', [o2.body.order && o2.body.order.id]);
     ok('a new email with the tick: the order, and at once a checkout row with the version, language and the pinned text hash',
        o2.status === 200 && !!o2.body.member.code && adaRows.length === 1 && adaRows[0].via === 'checkout' && adaRows[0].kind === 'agreement'
-         && adaRows[0].version === 'v1' && adaRows[0].lang === 'th' && adaRows[0].signed_name === 'Ada Agreement' && adaRows[0].given === true
+         && adaRows[0].version === 'v2' && adaRows[0].lang === 'th' && adaRows[0].signed_name === 'Ada Agreement' && adaRows[0].given === true
          && adaRows[0].under20 === false && adaRows[0].order_id === o2.body.order.id && adaRows[0].email_at === 'ada.agree@example.com'
          && adaRows[0].text_sha === PINNED.th[0] && o2row.consent && Object.keys(o2row.consent).sort().join() === 'agree,lang,name,under20,version'
-         && o2row.consent.agree === true && o2row.consent.version === 'v1' && o2row.consent.lang === 'th' && o2row.consent.name === 'Ada Agreement'
+         && o2row.consent.agree === true && o2row.consent.version === 'v2' && o2row.consent.lang === 'th' && o2row.consent.name === 'Ada Agreement'
          && o2row.consent.under20 === false, JSON.stringify([o2.body, adaRows, o2row])); 
     ok('...and the row holds no address, browser or health field', !Object.keys(adaRows[0]).some(k => /ip|agent|browser|health|note/.test(k)),
        Object.keys(adaRows[0]).join());
@@ -8742,7 +8770,7 @@ const ok = (name, cond, extra = '') => {
         rec = require('../mailer.js').outbox.filter(m => m.to === 'bea.owner@example.com' && m.tag === 'receipt').pop();
         if (!rec) await new Promise(r => setTimeout(r, 50));
       }
-      ok('the receipt links the agreement and asks the owner to read it', rec && /You agreed to the AYBKK student agreement \(v1\): \S+\/book\?agreement=v1#agreement/.test(rec.text)
+      ok('the receipt links the agreement and asks the owner to read it', rec && /You agreed to the AYBKK student agreement \(v2\): \S+\/book\?agreement=v2#agreement/.test(rec.text)
          && rec.text.includes('If someone else bought this for you, please read it before class.'), rec && rec.text);
       // "We email you a copy": once paid, the copy goes to the email at signing, in the language signed.
       const waitCopy = async to => { for (let i = 0; i < 40 && !copiesTo(to).length; i++) await new Promise(r => setTimeout(r, 50)); return copiesTo(to); };
@@ -8756,8 +8784,8 @@ const ok = (name, cond, extra = '') => {
       const adaPaid = (await J('/api/bkk/pay/check/' + adaO.refno)).body;
       const adaCopy = await waitCopy('ada.agree@example.com');
       ok("a new student's checkout tick: the copy comes with the payment, in Thai, to the email typed", adaPaid.status === 'paid'
-         && adaCopy.length === 1 && adaCopy[0].subject === 'สำเนาข้อตกลงนักเรียน AYBKK (v1)' && adaCopy[0].text.startsWith('สวัสดี Ada Agreement')
-         && adaCopy[0].text.includes(CONSENT_TEXT.v1.th.agreement.groups[0][1][0]), JSON.stringify([adaPaid, adaCopy.length]));
+         && adaCopy.length === 1 && adaCopy[0].subject === 'สำเนาข้อตกลงนักเรียน AYBKK (v2)' && adaCopy[0].text.startsWith('สวัสดี Ada Agreement')
+         && adaCopy[0].text.includes(CONSENT_TEXT.v2.th.agreement.groups[0][1][0]), JSON.stringify([adaPaid, adaCopy.length]));
 
       // A drop-in for a class: the seat and the consent row come with the one payment.
       const cls = (await J('/api/bkk/schedule?days=10', { headers: ADMIN })).body.classes
@@ -8829,7 +8857,7 @@ const ok = (name, cond, extra = '') => {
     const seatsEve = async () => (await one(`SELECT count(*)::int AS n FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
       WHERE m.code=$1 AND b.status='booked'`, [EVE])).n;
     ok('require: an unsigned student booking gets 409 consent, and no seat, no pass clock started, no class used',
-       bk.status === 409 && JSON.stringify(bk.body) === JSON.stringify({ error: 'consent', version: 'v1' }) && await seatsEve() === 0
+       bk.status === 409 && JSON.stringify(bk.body) === JSON.stringify({ error: 'consent', version: 'v2' }) && await seatsEve() === 0
          && p0.valid_from === null && p1.valid_from === null && p1.valid_until === null && p1.credits_used === 0 && p0.credits_used === 0, JSON.stringify([bk.body, p1]));
     const fullD = X.date;
     await pool.query(`INSERT INTO bkk_class_overrides (slot_id,class_date,capacity) VALUES ($1,$2,0)
@@ -8850,7 +8878,7 @@ const ok = (name, cond, extra = '') => {
     const rStale = await mc(tick({ name: 'Eve Unsigned', version: 'v0' })), rNoTick = await mc(tick({ name: 'Eve Unsigned', agree: false }));
     const rShort = await mc(tick({ name: ' E ' })), rLang = await mc(tick({ name: 'Eve Unsigned', lang: 'fr' })), rKind = await mc(tick({ kind: 'photos_public', name: 'Eve Unsigned' }));
     ok('/me/:code/consent: unknown code 404, stale version 409, no tick 400, a one-letter name 400, an unknown language 400, another kind 400, and nothing saved',
-       r404.status === 404 && rStale.status === 409 && rStale.body.error === 'consent' && rStale.body.version === 'v1' && rNoTick.status === 400
+       r404.status === 404 && rStale.status === 409 && rStale.body.error === 'consent' && rStale.body.version === 'v2' && rNoTick.status === 400
          && rShort.status === 400 && rLang.status === 400 && rKind.status === 400 && (await rowsOf(EVE)).length === 0,
        JSON.stringify([rStale.body, rNoTick.body, rShort.body]));
     const out0 = require('../mailer.js').outbox.length;
@@ -8860,13 +8888,53 @@ const ok = (name, cond, extra = '') => {
     ok("signing on the student's own phone: 'self', once, however often it is sent, and one copy by email in the language signed",
        rOk.status === 200 && rOk.body.consent.signed === true && rOk.body.already === false && rAgain.status === 200 && rAgain.body.already === true
          && eveRows.length === 1 && eveRows[0].via === 'self' && eveRows[0].lang === 'ru' && eveRows[0].text_sha === PINNED.ru[0]
-         && copy.length === 1 && /соглашение ученика AYBKK \(v1\)/.test(copy[0].subject)
-         && copy[0].text.includes(CONSENT_TEXT.v1.ru.agreement.groups[0][1][0]) && copy[0].text.includes('Eve Unsigned'), JSON.stringify([rOk.body, eveRows.length, copy.length]));
+         && copy.length === 1 && /соглашение ученика AYBKK \(v2\)/.test(copy[0].subject)
+         && copy[0].text.includes(CONSENT_TEXT.v2.ru.agreement.groups[0][1][0]) && copy[0].text.includes('Eve Unsigned'), JSON.stringify([rOk.body, eveRows.length, copy.length]));
     const bk2 = await post('/api/bkk/bookings', { memberCode: EVE, slotId: X.slotId, date: X.date });
     ok('...then the same booking goes through', bk2.status === 200 && bk2.body.success === true, JSON.stringify(bk2.body));
     const meEve = (await J('/api/bkk/me/' + EVE)).body;
     ok('/me says where the student stands, and nothing more', JSON.stringify(Object.keys(meEve.consent).sort()) === JSON.stringify(['guardianSigned', 'mode', 'signed', 'signedAt', 'under20', 'version'])
        && meEve.consent.mode === 'require' && meEve.consent.signed === true && meEve.consent.under20 === false && !!meEve.consent.signedAt, JSON.stringify(meEve.consent));
+
+    // Signed v1 before v2 came (v2 changed only the privacy notice): the signature still counts, as it is.
+    const { CONSENT_HOLDS } = require('../bkk-api.js');
+    ok('the versions a signature still counts under: v1 and v2, whose agreement is the same', CONSENT_HOLDS.join() === 'v1,v2');
+    const LEO = await grant('Leo Earlier', 'leo.earlier@example.com', 'pack8'), UMA = await grant('Uma Earlier', 'uma.earlier@example.com', 'unlim1');
+    const v1Row = async (code, under20) => (await pool.query(`INSERT INTO bkk_consents (member_id,kind,version,given,signed_name,under20,lang,via,email_at,text_sha,created_at)
+      SELECT id,'agreement','v1',true,name,$2,'en','self',email,$3,now() - interval '3 days' FROM bkk_members WHERE code=$1 RETURNING *`,
+      [code, under20, PINNED_V1.en[0]])).rows[0];
+    const leo0 = await v1Row(LEO, false);
+    await v1Row(UMA, true);
+    const meLeo = (await J('/api/bkk/me/' + LEO)).body.consent;
+    const leoB = await post('/api/bkk/bookings', { memberCode: LEO, slotId: X.slotId, date: X.date });
+    const leoStale = await post(`/api/bkk/me/${LEO}/consent`, tick({ name: 'Leo Earlier', version: 'v1' }));
+    const leoAgain = await post(`/api/bkk/me/${LEO}/consent`, tick({ name: 'Leo Earlier' }));
+    const leoH = (await J(`/api/bkk/admin/members/${LEO}/history`, { headers: ADMIN })).body.consent;
+    const leoRows = await rowsOf(LEO);
+    ok('a v1 signature still counts: /me says signed, v1, on its day; booking in require goes through; signing again adds nothing',
+       meLeo.signed === true && meLeo.version === 'v1' && new Date(meLeo.signedAt).getTime() === new Date(leo0.created_at).getTime()
+         && leoB.status === 200 && leoB.body.success === true && leoAgain.status === 200 && leoAgain.body.already === true
+         && leoAgain.body.consent.version === 'v1' && leoH.signed === true && leoH.version === 'v1',
+       JSON.stringify([meLeo, leoB.body, leoAgain.body, leoH]));
+    ok("...its row stays as it was (v1, v1's pinned hash), and a page still holding v1 is told to load v2 (409 stale)",
+       leoRows.length === 1 && leoRows[0].id === leo0.id && leoRows[0].version === 'v1' && leoRows[0].text_sha === PINNED_V1.en[0]
+         && leoStale.status === 409 && leoStale.body.stale === true && leoStale.body.version === 'v2', JSON.stringify([leoRows.length, leoStale.body]));
+    const umaS = ((await J('/api/bkk/admin/members?q=uma.earlier', { headers: ADMIN })).body.members || [])[0];
+    const umaG = await post(`/api/bkk/admin/members/${UMA}/guardian`, { name: 'Ray Earlier', date: today }, ADMIN);
+    const umaS2 = ((await J('/api/bkk/admin/members?q=uma.earlier', { headers: ADMIN })).body.members || [])[0];
+    ok("a v1 signature under 20: the guardian is still due, and the guardian's paper recorded today settles it",
+       umaS && umaS.consent.signed === true && umaS.consent.guardianDue === true && umaG.status === 200 && umaG.body.consent.guardianSigned === true
+         && umaS2 && umaS2.consent.guardianDue === false, JSON.stringify([umaS && umaS.consent, umaG.body, umaS2 && umaS2.consent]));
+    const leoO = await post('/api/bkk/orders', { productCode: 'pack8', name: 'Leo Earlier', email: 'leo.earlier@example.com', consent: tick({ name: 'Leo Earlier' }) });
+    const outL = require('../mailer.js').outbox.length;
+    const leoA = leoO.body.order ? await post(`/api/bkk/admin/orders/${leoO.body.order.id}/force-activate`, { confirm: true }, ADMIN) : leoO;
+    let leoRec = null;
+    for (let i = 0; i < 40 && !leoRec; i++) {
+      leoRec = require('../mailer.js').outbox.slice(outL).filter(m => m.to === 'leo.earlier@example.com' && m.tag === 'receipt').pop();
+      if (!leoRec) await new Promise(r => setTimeout(r, 50));
+    }
+    ok("a v1 signer's receipt names v1, the agreement they signed, and links that version", leoA.status === 200 && !!leoRec
+       && /You agreed to the AYBKK student agreement \(v1\): \S+\/book\?agreement=v1#agreement/.test(leoRec.text), JSON.stringify([leoO.body, leoA.body, leoRec && leoRec.text]).slice(0, 600));
 
     // ask: checkout asks, booking does not.
     await SET({ consentMode: 'ask' });
@@ -8897,7 +8965,7 @@ const ok = (name, cond, extra = '') => {
     const nsl = await J('/api/bkk/admin/members?consent=missing', { headers: ADMIN });
     const codes = (nsl.body.members || []).map(m => m.code);
     ok('Not signed: people with a live pass who have not signed, with no search term; never the signed ones', nsl.status === 200
-       && codes.length > 0 && !codes.includes(EVE) && !codes.includes(GIA) && !codes.includes(ADA)
+       && codes.length > 0 && !codes.includes(EVE) && !codes.includes(GIA) && !codes.includes(ADA) && !codes.includes(LEO) && !codes.includes(UMA)
        && (nsl.body.members || []).every(m => m.consent && m.consent.signed === false), JSON.stringify(codes.length));
     ok('...it needs the staff key', (await J('/api/bkk/admin/members?consent=missing')).status === 401);
     ok('...and a search term narrows it', ((await J('/api/bkk/admin/members?consent=missing&q=fay.askmode', { headers: ADMIN })).body.members || [])
