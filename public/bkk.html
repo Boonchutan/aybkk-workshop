@@ -219,14 +219,23 @@
      its button and Read more. Only the script sets .acctm and .acc, so other tabs and no JavaScript show it all. */
   .acc .acx,.acc .acdup{display:none!important}
   .acc .act,#find.acc .links{margin-top:0}
-  /* Folded, a section is short (Boonchu, 25 Nov 2026: "the section can be shorter"): less air, and on a phone
-     its number beside the title. Opened by Read more, it is a full section again. */
-  body.acctm .sec.acc{padding-block:18px}
-  body.acctm .sec.acc::before{margin-bottom:12px}
-  body.acctm .sec.acc > h2{margin-bottom:4px}
+  /* Folded, a section is short and on a 7px grid (Boonchu, 25 Nov 2026: "the line space above the number and
+     the line space below Read more should be equal. Grid system"): 21px of air from each line to the tops of the
+     number's digits (they sit .2em into their line box), and 21 from the last thing in a section (Read more's
+     underline, the buttons, the party's last line or photo) to the next line: 7 of padding each side plus 7 inside.
+     14 under the title. On a phone the number sits beside the title. The party section takes the same air on
+     My account. Opened by Read more, a section is a full section again. */
+  body.acctm .sec.acc,body.acctm #party{padding-block:7px}
+  body.acctm #pacct{padding-bottom:7px}
+  body.acctm #partyPic{padding-bottom:14px}
+  body.acctm .sec.acc::before,body.acctm #party::before{margin-bottom:calc(21px - .2 * var(--fs-h))}
+  body.acctm .sec.acc > h2{margin-bottom:14px}
   body.acctm .sec.acc .accrm{margin-top:0}
+  body.acctm .sec.acc .accrm .readmore{min-height:33px}
+  body.acctm #party .ptext{padding-bottom:4px}
   body.acctm .pair{padding-block:0}
   body.acctm .pair > #first.acc{margin-top:0}
+  @media (min-width:1100px){ body.acctm #party .yang{margin-bottom:25px} }
   @media (max-width:1099px){
     body.acctm .sec.acc > h2{grid-row:2;padding-left:1.5em}
     body.acctm .sec.acc .accrm{padding-left:calc(1.5 * var(--fs-h))}
@@ -235,7 +244,7 @@
   .acctm .accrm{display:block}
   .acctm [data-fold] .rm:not(.accrm){display:none!important}
   #pacct .act{margin-top:0}
-  #promoBox .lead{margin:var(--grp) 0 0}
+  #promoBox .lead{margin:21px 0 0}
   #promoBox .soon{margin:0;font-size:var(--fs-s);color:var(--soft)}
   #promoBox .plan{background:var(--promo-soft);border-top-color:var(--promo);padding:14px 16px 16px;margin-top:12px}
 
@@ -1796,7 +1805,7 @@
   })();
   // My account's section 2 and the promos to come (Boonchu, 25 Nov 2026): no discount and no announce date yet.
   Object.assign(STR.en, { seePromo: 'See future promos', promoH: 'Coming soon. Keep practising, and watch this space.',
-    promoBdayH: 'Boonchu turns 53', promoBdayP: 'A birthday promo. On sale 5 Dec.',
+    promoBdayH: 'Teacher Boonchu turns 53', promoBdayP: 'A birthday promo on sale 5 Dec.',
     promoXmasH: 'Christmas to New Year', promoXmasP: 'A holiday special, so your mornings keep going through the holidays.',
     promoSoon: 'Details soon.' });
   Object.assign(STR.th, { seePromo: 'ดูโปรที่กำลังจะมา', promoH: 'เร็วๆ นี้ ฝึกต่อไปนะ แล้วรอติดตามที่นี่',
@@ -1808,7 +1817,7 @@
     promoXmasH: '圣诞到新年', promoXmasP: '节日特别优惠，让你的晨练在假期里也不间断。',
     promoSoon: '详情即将公布。' });
   Object.assign(STR.ru, { seePromo: 'Будущие акции', promoH: 'Скоро. Продолжайте практику и следите за этой страницей.',
-    promoBdayH: 'Бунчу исполняется 53', promoBdayP: 'Акция ко дню рождения. В продаже с 5 декабря.',
+    promoBdayH: 'Учителю Бунчу исполняется 53', promoBdayP: 'Акция ко дню рождения, в продаже с 5 декабря.',
     promoXmasH: 'С 25 декабря до Нового года', promoXmasP: 'Праздничное предложение, чтобы утренняя практика не прерывалась в праздники.',
     promoSoon: 'Подробности скоро.' });
   const t = (k, ...a) => {
