@@ -171,10 +171,13 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
   them: a deleted photo can still show for up to a day. Admin, Settings, "Photo storage": Test R2, photo counts, and
   Start/Stop for moving the older Cloudinary photos (about 3 a minute, after Test R2 passes, each checked in R2 before
   it switches; state in `bkk_settings` `photo_r2_move`). R2 failing is tried again in place (about 2 s, then 8 s, opt-in
-  `r2lib.again`, never on a student's request); still failing, the move stays on and waits (`wait`, `halts`), nothing
-  skipped, and tries again by itself after 1, 2, 5, then every 10 minutes. A server start no longer stops it: a move that
+  `r2lib.again`, never on a student's request); still failing while R2 took nothing in that step, the move stays on and
+  waits (`wait`, `halts`), nothing skipped, and tries again by itself after 1, 2, 5, then every 10 minutes (R2 taking the
+  others, it goes on and tries the refused one again next). A server start no longer stops it: a move that
   was on goes on by itself about 30 s after the start (`resumedAt`), so does one the code before 26 Nov 2026 had stopped
-  on an R2 error or at a start; Stop holds, through restarts too. Copies to remove
+  on an R2 error or at a start (and, during a deploy, one the old server stops on an R2 error); Stop holds, through
+  restarts too. A photo or face that stops the server twice is passed over for the round, each of its batch tried
+  alone after the first stop (`trying`, `cut`, `faceTrying`, `faceCut`). Copies to remove
   (a moved photo's Cloudinary copy a day after its move, R2 copies that could not be deleted) wait in
   `bkk_photo_orphans`. With R2 on, `photos_daily_cap` does not apply.
   **Cloudinary exit (25 Nov 2026, the account closes 29 Nov):** Photo storage offers "Fast move (before Cloudinary

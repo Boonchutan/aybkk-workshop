@@ -2204,17 +2204,21 @@ const ok = (name, cond, extra = '') => {
     clock = tBefore;
     ok('Admin shows the pace: photos moved a minute in this run', paced.move.perMin === 1.5 && paced.move.fast === true && paced.left.kept === 3,
        JSON.stringify(paced.move));
-    // R2 still refusing one photo of a batch after its tries in place: the move waits there; the ones beside it, moved, stay moved; nothing skipped.
+    // R2 still refusing one photo of a batch after its tries in place, while it took the others: R2 works, so no wait; the move
+    // goes on from that photo, tried again in the next step; the ones beside it, moved, stay moved; nothing skipped.
     // That batch reaches the photos with a Drive copy too: from the stored Cloudinary JPEG, Drive not even asked.
     r2Fail = (m, k) => m === 'PUT' && k.startsWith('cls/2026-09-22/') && 500;
     r2Fetches.length = 0;
-    const sf2 = await R2b.api.photoMove();
+    const sf2 = await R2b.api.photoMove(), sf2b = await R2b.api.photoMove();
     r2Fail = null;
     const [ka, kd] = await Promise.all([fa, fd].map(keysOf));
-    ok('fast: R2 refusing one photo makes the whole move wait at that batch, still on: the others moved, the refused one untouched, nothing skipped or failed',
-       sf2.on === true && sf2.wait.why === 'R2 PUT refused (500 InternalError)' && sf2.halts === 1 && sf2.after === ff && sf2.phase === 0 && sf2.failedN === 0
+    ok('fast: R2 still refusing one photo of a batch while it took the others: no wait, the move goes on from that photo: the others moved, the refused one untouched, nothing skipped or failed',
+       sf2.on === true && sf2.wait === null && sf2.halts === 0 && sf2.after === fg && sf2.phase === 0 && sf2.failedN === 0
          && sf2.moved === 6 && (await keysOf(fg)).store === 'r2' && (await keysOf(fh)).store === 'cloudinary'
          && ![...store.keys()].some(k => k.startsWith('cls/2026-09-22/')), JSON.stringify(sf2));
+    ok('...its next step asks R2 for that photo again; R2 taking nothing then, the move waits at it, still on, nothing skipped or failed',
+       sf2b.on === true && sf2b.wait.why === 'R2 PUT refused (500 InternalError)' && sf2b.halts === 1 && sf2b.after === fg && sf2b.moved === 6
+         && sf2b.failedN === 0 && (await keysOf(fh)).store === 'cloudinary', JSON.stringify(sf2b));
     ok('...the photos with a Drive copy come after those without, from the stored Cloudinary JPEG as it is (the very picture students have)',
        ka.store === 'r2' && objs(ka)[0].body.equals(r2lib.bareJpeg(cloudBytes)) && r2Fetches.some(u => u.includes('/fasta/'))
          && !r2Fetches.some(u => u.includes('thumbnail?id=FASTDRIVE')) && !r2Fetches.some(u => u.includes('uc?export=download')), JSON.stringify(r2Fetches));
@@ -2235,18 +2239,22 @@ const ok = (name, cond, extra = '') => {
     ok('...Start goes on from the saved place: the refused photo moves, then the pass is done',
        (await keysOf(fh)).store === 'r2' && sf3.after === fh && sf3.moved === 7 && sf3.halts === 0 && sf3.wait === null && sf4.on === false && sf4.done === true && sf4.fast === true,
        JSON.stringify([sf3, sf4]));
-    // The server stopped in the middle of a batch of 4: the next steps take one photo at a time until one finishes,
-    // so a photo that stops the server again is passed over alone, never the ones beside it.
-    const [fi, fj, fk] = [await mkOn(`aybkk/profile/${D1}/fasti`, D1), await mkOn(`aybkk/profile/${D1}/fastj`, D1), await mkOn(`aybkk/profile/${D1}/fastk`, D1)];
-    fastIds.push(fi, fj, fk);
+    // The server stopped in the middle of a batch of 4: the next steps take each photo of it alone, all noted as cut,
+    // so a photo that stops the server again is passed over alone, never the ones beside it; then batches of 4 again.
+    for (const n of ['i', 'j', 'k', 'o', 'p']) fastIds.push(await mkOn(`aybkk/profile/${D1}/fast${n}`, D1));
+    const [fi, fj, fk, fo, fp] = fastIds.slice(-5);
     await adminR3('/api/bkk/admin/photo-store/move', { on: true, fast: true });
     await pool.query(`UPDATE bkk_settings SET value = value || jsonb_build_object('trying', $1::jsonb) WHERE key='photo_r2_move'`, [JSON.stringify([fi, fj, fk, fa])]);
     const sCut1 = await R2c.api.photoMove();
     const kFi = await keysOf(fi), kFj = await keysOf(fj);
-    const sCut2 = await R2c.api.photoMove(), sCut3 = await R2c.api.photoMove();
-    ok('a batch cut off by a server stop: the next step moves one photo alone (noted as cut once), then batches of 4 again',
-       sCut1.moved === 8 && kFi.store === 'r2' && kFj.store === 'cloudinary' && sCut1.cut.includes(fi) && !sCut1.cut.includes(fj) && !sCut1.skip.length
-         && sCut1.trying === null && sCut2.moved === 10 && (await keysOf(fk)).store === 'r2' && sCut3.done === true, JSON.stringify([sCut1, sCut2]));
+    const sCut2 = await R2c.api.photoMove(), sCut3 = await R2c.api.photoMove(), kFo = await keysOf(fo);
+    const sCut4 = await R2c.api.photoMove(), sCut5 = await R2c.api.photoMove();
+    ok('a batch cut off by a server stop: the next steps move each of its photos alone (all noted as cut at once), then batches of 4 again',
+       sCut1.moved === 8 && kFi.store === 'r2' && kFj.store === 'cloudinary' && [fi, fj, fk, fa].every(id => sCut1.cut.includes(id)) && !sCut1.skip.length
+         && sCut1.trying === null && sCut2.moved === 9 && sCut3.moved === 10 && (await keysOf(fk)).store === 'r2' && kFo.store === 'cloudinary'
+         && sCut4.moved === 12 && (await keysOf(fp)).store === 'r2' && sCut5.done === true, JSON.stringify([sCut1, sCut2, sCut3, sCut4]));
+    await pool.query('DELETE FROM bkk_photos WHERE id = ANY($1::int[])', [[fo, fp]]);
+    await pool.query(`DELETE FROM bkk_photo_orphans WHERE ref = ANY($1::text[])`, [['fasto', 'fastp'].map(n => `aybkk/profile/${D1}/${n}`)]);
     // Passed over after two server stops in a row (two deploys, say): the next pass tries it again, and it moves.
     const fn = await mkOn(`aybkk/profile/${D1}/fastn`, D1);
     await adminR3('/api/bkk/admin/photo-store/move', { on: true, fast: true });
@@ -2277,6 +2285,30 @@ const ok = (name, cond, extra = '') => {
        JSON.stringify([kl, sDs2.failed, newDs2]));
     await pool.query('DELETE FROM bkk_photos WHERE id = ANY($1::int[])', [[fn, fl, fm]]);
     await pool.query(`DELETE FROM bkk_photo_orphans WHERE ref = ANY($1::text[])`, [['fastn', 'fastl', 'fastm'].map(n => `aybkk/profile/${D1}/${n}`)]);
+    // A photo that stops the server (out of memory, say), third in its batch of 4. Every server start goes on by
+    // itself, so it must cost two stops wherever it is in its batch, not one more for each photo before it.
+    const kIds = [];
+    for (let i = 0; i < 6; i++) kIds.push(await mkOn(`aybkk/profile/${D1}/stops${i}`, D1));
+    const killer = kIds[2];
+    let died = null;
+    // The server stops right after it noted a step with that photo: the step never ends, as with a server gone.
+    poolHook = (sql, p) => died && p && p[0] === 'photo_r2_move' && /^INSERT INTO bkk_settings/.test(sql)
+      && [].concat(JSON.parse(p[1]).trying ?? []).includes(killer) ? pool.query(sql, p).then(() => { died(); return new Promise(() => {}); }) : null;
+    await adminR3('/api/bkk/admin/photo-store/move', { on: true, fast: true });
+    let RK = await mountR(hookedPool), stops = 0, sK = null;
+    for (let i = 0; i < 14 && !(sK && sK.done); i++) {
+      const gone = new Promise(r => { died = r; });
+      sK = await Promise.race([RK.api.photoMove(), gone.then(() => null)]);
+      if (!sK) { stops++; RK.s.close(); RK = await mountR(hookedPool); }   // a new server, as Railway starts one
+    }
+    poolHook = null; died = null;
+    RK.s.close();
+    const kRows = await Promise.all(kIds.map(keysOf));
+    ok('a photo that stops the server, third in its batch of 4: each start goes on by itself, and it costs two stops, then it alone is passed over',
+       stops === 2 && !!sK && sK.done === true && sK.skip.includes(killer) && sK.failed.some(f => f.id === killer && /server stopped twice/.test(f.why))
+         && kRows.every((k, i) => k.store === (i === 2 ? 'cloudinary' : 'r2')), JSON.stringify([stops, sK && sK.skip, kRows.map(k => k.store)]));
+    await pool.query('DELETE FROM bkk_photos WHERE id = ANY($1::int[])', [kIds]);
+    await pool.query(`DELETE FROM bkk_photo_orphans WHERE ref LIKE $1`, [`aybkk/profile/${D1}/stops%`]);
     const BR3 = R2c.base;
 
     // ── faces to R2 ──────────────────────────────────────────────────────────
@@ -2410,6 +2442,28 @@ const ok = (name, cond, extra = '') => {
     ok('...Start moves it; a second server failing on the same face meanwhile takes away only its own files, never the ones the switch points at',
        movedAs(id4, ref4) && sF3.facesMoved === 3 && stepB.on === true && /R2 HEAD refused/.test(stepB.wait.why) && sF3.wait === null && faceObjs(id4).every(Boolean)
          && faceLeft(ref4).length === 3 && (await getR((await meFace(fm4.code)).small)).status === 200, JSON.stringify([sF3, stepB, faceLeft(ref4)]));
+    // A batch of faces cut off by a server stop: each face of it alone after, all noted as cut; one cut off again is
+    // passed over this round, never the ones beside it.
+    const cutF = [];
+    for (const n of ['Five', 'Six']) {
+      const m = await quickAdd({ name: `Quinn Facemove${n}`, email: `quinn.facemove${n.toLowerCase()}@example.com` }, PKEY);
+      const ref = hex();
+      await pool.query(`UPDATE bkk_members SET photo_id=$2 WHERE code=$1`, [m.code, `aybkk-profile/${ref}`]);
+      cloudOwn.set(`aybkk-profile/${ref}`, await face600());
+      cutF.push({ ...m, ref, id: (await pool.query('SELECT id FROM bkk_members WHERE code=$1', [m.code])).rows[0].id });
+    }
+    const [fm5, fm6] = cutF;
+    await pool.query(`UPDATE bkk_settings SET value = value || jsonb_build_object('faceTrying', $1::jsonb) WHERE key='photo_r2_move'`, [JSON.stringify([fm5.id, fm6.id])]);
+    const sFc1 = await R2c.api.photoMove();
+    const f5At = await rowF(fm5.code), f6At = await rowF(fm6.code);
+    await pool.query(`UPDATE bkk_settings SET value = value || jsonb_build_object('faceTrying', $1::jsonb) WHERE key='photo_r2_move'`, [JSON.stringify([fm6.id])]);
+    const sFc2 = await R2c.api.photoMove();
+    ok('a batch of faces cut off by a server stop: the next step moves one alone, both noted as cut; the other cut off again stays on Cloudinary this round',
+       movedAs(f5At, fm5.ref) && f6At === `aybkk-profile/${fm6.ref}` && [fm5.id, fm6.id].every(id => sFc1.faceCut.includes(id)) && sFc1.faceTrying === null
+         && sFc2.faceSkip.includes(fm6.id) && /server stopped twice while it was moving this face/.test((sFc2.faceFailed.find(f => f.id === fm6.id) || {}).why)
+         && await rowF(fm6.code) === `aybkk-profile/${fm6.ref}` && sFc2.on === true, JSON.stringify([sFc1.faceCut, sFc2.faceSkip, sFc2.faceFailed]));
+    await pool.query('UPDATE bkk_members SET photo_id=NULL WHERE code = ANY($1::text[])', [[fm5.code, fm6.code]]);
+    await pool.query(`DELETE FROM bkk_photo_orphans WHERE ref = ANY($1::text[])`, [cutF.map(f => `aybkk-profile/${f.ref}`)]);
 
     // New faces with R2 on: made here, no Cloudinary call, no Cloudinary key needed.
     cloudR.config = () => ({ cloud_name: 'x' });                                  // no api_secret
@@ -2588,6 +2642,21 @@ const ok = (name, cond, extra = '') => {
     ok('a server start goes on with a move the code before this stopped by itself (an R2 error, a start), from its place; one staff stopped, or a finished pass, stays off',
        [bHalted, bRestarted].every(v => v.on === true && v.halted === null && v.restarted === false && !!v.resumedAt && v.moved === 3 && v.fast === true && v.after === 0)
          && [bStopped, bDone].every(v => v.on === false && !v.resumedAt), JSON.stringify([bHalted, bRestarted, bStopped, bDone]));
+    // A Stop pressed while the state holds the old server's own stop (a deploy overlap; Admin offers Start then, but the
+    // call takes Stop): it holds, at this server's next step and through a start.
+    const Rx = await mountR();
+    await setMove({ fast: true, after: 0, phase: 0, moved: 3, failedN: 0, failed: [], startedAt: '2026-11-25T00:00:00.000Z',
+      on: false, halted: 'R2 PUT refused (500 InternalError)', restarted: true });
+    const xStop = await fetch(Rx.base + '/api/bkk/admin/photo-store/move', { method: 'POST', headers: { 'Content-Type': 'application/json', ...ADMIN },
+      body: JSON.stringify({ on: false }) });
+    const xStep = await Rx.api.photoMove();
+    Rx.s.close();
+    const Ry = await mountR();
+    Ry.s.close();
+    const xBoot = await moveNow();
+    ok("a Stop pressed while the state holds the old server's own stop holds: this server's next step and a start leave it off",
+       xStop.status === 200 && xStep.on === false && xBoot.on === false && !xBoot.resumedAt && xBoot.halted === null && xBoot.restarted === false,
+       JSON.stringify([xStep.on, xBoot]));
 
     // With its own timer (here the start's wait is 100 ms, and R2's waits 100 ms, 100 ms, then a minute).
     const DT = '2026-09-27', tDay = k => !!k && k.startsWith(`cls/${DT}/`);
@@ -2605,6 +2674,10 @@ const ok = (name, cond, extra = '') => {
     ok('on its own timer: a move halted by the code before this goes on by itself after a start; R2 still refusing, it waits and tries again by itself, then waits longer, nothing skipped',
        tBoot.on === true && !!tBoot.resumedAt && !!tW && tW.on === true && tW.halts === 3 && tW.failedN === 0 && Date.parse(tW.wait.next) - Date.parse(tW.wait.at) === 60e3
          && (await Promise.all(tIds.map(keysOf))).every(k => k.store === 'cloudinary') && ![...store.keys()].some(tDay), JSON.stringify([tBoot, tW]));
+    const putsAtW = r2Log.filter(l => l.method === 'PUT').length;
+    await new Promise(r => setTimeout(r, 600));
+    ok('...and its timer keeps to that wait: R2 is not asked again in the time after', r2Log.filter(l => l.method === 'PUT').length === putsAtW
+       && (await moveNow()).halts === 3, `${r2Log.filter(l => l.method === 'PUT').length - putsAtW} more PUTs`);
     r2Fail = null;
     const tGo = Date.now(), tStart = await adminRT('/api/bkk/admin/photo-store/move', { on: true, fast: true });
     const tD = await until(async () => { const v = await moveNow(); return v.done === true && v; });
@@ -2633,6 +2706,30 @@ const ok = (name, cond, extra = '') => {
        tAgain.status === 200 && !!tH && tStop.body.move.on === false && r2Log.filter(l => l.method === 'PUT').length === putsAtStop && tS.halts === haltsAtStop
          && tS.on === false && (await keysOf(t4)).store === 'cloudinary', JSON.stringify([tS, putsAtStop]));
     RT2.s.close();
+    // The database refusing a start's look at a move that was on: it is looked at again before the first step, and goes on.
+    const lIds = [];
+    for (const n of ['a', 'b']) lIds.push(await mkOn(`aybkk/profile/${DT}/lookdb${n}`, DT));
+    tIds.push(...lIds);
+    await setMove({ on: true, fast: true, after: 0, phase: 0, moved: 0, failedN: 0, failed: [], startedAt: '2026-11-26T05:00:00.000Z' });
+    let looks = 0;
+    poolHook = sql => /'resumedAt', \$2::text/.test(sql) && !looks++ ? Promise.reject(new Error('Connection terminated unexpectedly')) : null;
+    const RT3 = await mountR(hookedPool, { moveTimers: true, moveBootMs: 100 });
+    const tL = await until(async () => { const v = await moveNow(); return v.done === true && v; });
+    poolHook = null;
+    RT3.s.close();
+    ok("the database refusing a start's look at a move that was on: it is looked at again before the first step, goes on by itself, and the pass ends",
+       looks >= 2 && !!tL && !!tL.resumedAt && (await Promise.all(lIds.map(keysOf))).every(k => k.store === 'r2'), JSON.stringify([looks, tL]));
+    // The old server stopping the move on an R2 error during this start's wait (a deploy): it goes on all the same.
+    const wIds = [];
+    for (const n of ['a', 'b']) wIds.push(await mkOn(`aybkk/profile/${DT}/bootwait${n}`, DT));
+    tIds.push(...wIds);
+    await setMove({ on: true, fast: true, after: 0, phase: 0, moved: 0, failedN: 0, failed: [], startedAt: '2026-11-26T05:00:00.000Z' });
+    const RT4 = await mountR(pool, { moveTimers: true, moveBootMs: 300 });
+    await pool.query(`UPDATE bkk_settings SET value = value || '{"on": false, "halted": "R2 PUT refused (500 InternalError)", "trying": null}'::jsonb WHERE key='photo_r2_move'`);
+    const tO = await until(async () => { const v = await moveNow(); return v.done === true && v; });
+    RT4.s.close();
+    ok("the old server stopping the move on an R2 error during a start's wait (a deploy): it goes on all the same, and the pass ends",
+       !!tO && tO.halted === null && (await Promise.all(wIds.map(keysOf))).every(k => k.store === 'r2'), JSON.stringify(tO));
 
     // Two servers stepping the same move at once (during a deploy the old one runs for a while): every photo
     // moves once, no row is lost, and R2 keeps no copy beyond the two of each photo.
@@ -2657,9 +2754,40 @@ const ok = (name, cond, extra = '') => {
          && !(await pool.query(`SELECT 1 FROM bkk_photo_orphans WHERE store='r2'`)).rows.length && (await moveNow()).done === true,
        JSON.stringify([two.map(k => k && k.store), twoKeys.length, twoDels, twoKept]));
     SA.s.close(); SB.s.close();
-    await pool.query('DELETE FROM bkk_photos WHERE id = ANY($1::int[])', [[...tIds, ...twoIds]]);
-    await pool.query(`DELETE FROM bkk_photo_orphans WHERE ref LIKE 'aybkk/profile/${DT}/%' OR ref LIKE 'aybkk/profile/${D2}/%'`);
-    for (const k of [...store.keys()].filter(k => tDay(k) || k.startsWith(`cls/${D2}/`))) store.delete(k);
+    // The old server (the code before this) stopping the move on an R2 error while this one's step is under way (a
+    // deploy overlap): that step keeps the old server's mark, and the next one goes on by itself. Another server ending
+    // the pass meanwhile: the step keeps that it is done.
+    const D3 = '2026-09-29', oIds = [];
+    for (let i = 0; i < 6; i++) oIds.push(await mkOn(`aybkk/profile/${D3}/over${i}`, D3));
+    const SO = await mountR(hookedPool);
+    await setMove({ on: true, fast: true, after: 0, phase: 0, moved: 0, failedN: 0, failed: [], startedAt: '2026-11-26T05:00:00.000Z' });
+    const heldStep = async (n, meanwhile) => {
+      let letGo, held = 0, hold = new Promise(r => { letGo = r; });
+      poolHook = (sql, p) => hold && /^WITH m AS \(UPDATE bkk_photos SET store='r2'/.test(sql) ? (held++, hold.then(() => pool.query(sql, p))) : null;
+      const step = SO.api.photoMove();
+      for (let i = 0; i < 200 && held < n; i++) await new Promise(r => setTimeout(r, 25));
+      await pool.query(`UPDATE bkk_settings SET value = value || $1::jsonb WHERE key='photo_r2_move'`, [JSON.stringify(meanwhile)]);
+      letGo(); hold = null;
+      const out = await step;
+      poolHook = null;
+      return out;
+    };
+    const oStep = await heldStep(4, { on: false, halted: 'R2 PUT refused (500 InternalError)', trying: null });
+    const oKept = await moveNow();
+    const oNext = await SO.api.photoMove();
+    ok("the old server stopping the move on an R2 error while this one's step is under way: that step keeps its mark, and the next goes on by itself",
+       oStep.moved === 4 && oKept.on === false && oKept.halted === 'R2 PUT refused (500 InternalError)' && oNext.on === true && !!oNext.resumedAt
+         && oNext.halted === null && oNext.moved === 6 && (await Promise.all(oIds.map(keysOf))).every(k => k.store === 'r2'), JSON.stringify([oKept, oNext]));
+    oIds.push(await mkOn(`aybkk/profile/${D3}/over6`, D3));
+    await pool.query(`UPDATE bkk_settings SET value = value || '{"on": true, "halted": null}'::jsonb WHERE key='photo_r2_move'`);
+    await heldStep(1, { on: false, done: true, trying: null });
+    const dKept = await moveNow();
+    ok("...and another server ending the pass while this one's step is under way: the step keeps that it is done",
+       (await keysOf(oIds[6])).store === 'r2' && dKept.done === true && dKept.on === false, JSON.stringify(dKept));
+    SO.s.close();
+    await pool.query('DELETE FROM bkk_photos WHERE id = ANY($1::int[])', [[...tIds, ...twoIds, ...oIds]]);
+    await pool.query(`DELETE FROM bkk_photo_orphans WHERE ref LIKE 'aybkk/profile/${DT}/%' OR ref LIKE 'aybkk/profile/${D2}/%' OR ref LIKE 'aybkk/profile/${D3}/%'`);
+    for (const k of [...store.keys()].filter(k => tDay(k) || k.startsWith(`cls/${D2}/`) || k.startsWith(`cls/${D3}/`))) store.delete(k);
     await pool.query(`DELETE FROM bkk_settings WHERE key='photo_r2_move'`);
 
     // Cloudinary closed (29 Nov 2026) and hanging. Each Cloudinary delete gives up after a time limit (10 s; 150 ms on this

@@ -8344,15 +8344,16 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // upload or a delete meanwhile wins. A failure leaves the photo on Cloudinary as it
   // was and is listed with its reason; the next Start after the end of a pass tries
   // those again. R2 itself failing (a 500, no answer) is tried again in place, about
-  // 2 s then 8 s later, each try with files of its own; still failing, the move waits
-  // there, nothing skipped, and tries again by itself after 1, 2, 5, then every 10
-  // minutes while it is on (wait, halts). One R2 500 had stopped it until Start (26 Nov 2026).
+  // 2 s then 8 s later, each try with files of its own; still failing while R2 took
+  // nothing in that step, the move waits there, nothing skipped, and tries again by itself
+  // after 1, 2, 5, then every 10 minutes while it is on (wait, halts). R2 taking the others,
+  // it goes on, and the refused one is tried again next. One R2 500 had stopped it until Start (26 Nov 2026).
   // Same photo id, so who is on it does not change; a face keeps its ref, so every
   // face link handed out keeps working.
   // The place reached is kept in bkk_settings. It starts only on Start; a server start
-  // no longer stops it (moveAtBoot). The photos being moved are noted first. A deploy
-  // stops the server, so a photo cut off once is tried once more; cut off twice (out
-  // of memory, say) it is listed and passed over for good (skip).
+  // no longer stops it (moveAtBoot). The photos and faces being moved are noted first. A
+  // deploy stops the server, so one cut off once is tried once more, alone; cut off twice
+  // (out of memory, say) it is listed and passed over for good (skip).
   const MOVE_KEY = 'photo_r2_move', MOVE_EVERY_MS = 20000, FAST_EVERY_MS = 250, FAST_AT_ONCE = 4, FACE_AT_ONCE = 4;
   // Tests give shorter times.
   const R2_AGAIN_MS = opts.r2AgainMs || [2000, 8000], MOVE_WAITS_MS = opts.moveWaitsMs || [60e3, 120e3, 300e3, 600e3];
@@ -8360,12 +8361,15 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   const moveWait = halts => MOVE_WAITS_MS[Math.min(Math.max(halts, 1), MOVE_WAITS_MS.length) - 1];
   // q, not getSetting: a database error throws, so the timer keeps going.
   const moveState = async () => ({ on: false, after: 0, moved: 0, failedN: 0, failed: [], trying: null, cut: [], skip: [],
-    fast: false, phase: 0, facesMoved: 0, faceFailed: [], faceSkip: [], wait: null, halts: 0,
+    fast: false, phase: 0, facesMoved: 0, faceFailed: [], faceSkip: [], faceTrying: null, faceCut: [], wait: null, halts: 0,
     ...((await q('SELECT value FROM bkk_settings WHERE key = $1', [MOVE_KEY])).rows[0] || {}).value });
-  // A step can switch it off (done) but not back on: Stop pressed while a photo was moving holds.
+  // A step can switch it off (done) but not back on: Stop pressed while a photo was moving holds. Nor can it
+  // take away another server's done, or the old code's halted and restarted (a deploy overlap: moveOne, moveAtBoot).
   const saveMove = (s, plain) => q(`INSERT INTO bkk_settings (key,value,updated_at) VALUES ($1,$2::jsonb,now())
     ON CONFLICT (key) DO UPDATE SET updated_at=now(), value = EXCLUDED.value${plain ? ''
-      : ` || jsonb_build_object('on', (EXCLUDED.value->>'on')::boolean AND coalesce((bkk_settings.value->>'on')::boolean, false))`}`,
+      : ` || jsonb_build_object('on', (EXCLUDED.value->>'on')::boolean AND coalesce((bkk_settings.value->>'on')::boolean, false),
+        'done', coalesce((EXCLUDED.value->>'done')::boolean, false) OR coalesce((bkk_settings.value->>'done')::boolean, false),
+        'halted', bkk_settings.value->'halted', 'restarted', coalesce(bkk_settings.value->'restarted', 'false'::jsonb))`}`,
   [MOVE_KEY, JSON.stringify(s)]);
   const errText = e => String((e && (e.message || (e.error && e.error.message))) || e).slice(0, 200);
   // Same shape within 1%, both turned upright: else not the photo the tags were made on.
@@ -8443,54 +8447,69 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     return { gone: true };
   }
   async function moveOne() {
-    const s = await moveState();
+    let s = await moveState();
+    // Stopped meanwhile by the code before this (a deploy: the old server runs a while, and its code stops the
+    // move on an R2 error): it goes on, as at a start (moveGoOn). Only that code writes halted; Stop clears it.
+    if (!s.on && s.halted && r2 && cloudinary && await moveGoOn()) s = await moveState();
     if (!s.on || !r2 || !cloudinary) return { ...s, on: false };
     const at = new Date(nowMs()).toISOString();
     const listFail = (list, id, why) => [{ id, why, at }, ...list.filter(f => f.id !== id)].slice(0, 20);
     const fail = (p, why) => { s.failedN++; s.failed = listFail(s.failed, p.id, why); };
-    // R2 still failing after the tries in place: the move stays on and waits, nothing skipped or listed.
+    const faceFail = (id, why) => { s.faceSkip = [...s.faceSkip, id]; s.faceFailed = listFail(s.faceFailed, id, why); };
+    const twice = what => `The server stopped twice while it was moving this ${what}: it stays on Cloudinary this round.`;
+    // R2 still failing on all it was asked for, after the tries in place: the move stays on and waits, nothing skipped or listed.
     const halt = why => {
       const t = nowMs();
       s.halts = (s.halts || 0) + 1;
-      Object.assign(s, { wait: { why, at: new Date(t).toISOString(), next: new Date(t + moveWait(s.halts)).toISOString() }, at, trying: null });
+      Object.assign(s, { wait: { why, at: new Date(t).toISOString(), next: new Date(t + moveWait(s.halts)).toISOString() }, at, trying: null, faceTrying: null });
       return saveMove(s).then(() => s);
     };
+    // R2 took a photo or a face in the step: it works, so one it still refused is tried again in the next step,
+    // with no wait; one R2 keeps refusing never holds the others back. R2 took nothing: the step waits (halt).
+    const stopOf = out => !out.some(o => o.moved || o.gone) && out.find(o => o.halt);
     // A step through: no longer waiting; R2 counted as back once it took a photo or a face.
     const through = out => { s.wait = null; if (out.some(o => o.moved || o.gone)) s.halts = 0; };
-    const faces = (await q(`SELECT id, photo_id FROM bkk_members WHERE photo_id LIKE $1 AND id <> ALL($2::int[]) ORDER BY id LIMIT ${FACE_AT_ONCE}`,
+    // After a step the server did not finish (trying, faceTrying left over), each photo or face of it alone, all
+    // noted as cut, until none is left: one cut off again is passed over (skip, faceSkip). So one that stops the
+    // server costs two starts wherever it was in its batch, and the ones beside it are not passed over.
+    const fwas = [].concat(s.faceTrying ?? []), fgo = [];
+    let faces = (await q(`SELECT id, photo_id FROM bkk_members WHERE photo_id LIKE $1 AND id <> ALL($2::int[]) ORDER BY id LIMIT ${fwas.length ? 1 : FACE_AT_ONCE}`,
       [`${FACE_FOLDER}/%`, s.faceSkip])).rows;
+    if (faces.some(f => s.faceCut.includes(f.id))) faces = faces.slice(0, 1);
     if (faces.length) {
-      const out = await Promise.all(faces.map(moveFace)), stop = out.find(o => o.halt);
-      out.forEach((o, i) => {
-        if (o.moved) s.facesMoved++;
-        else if (o.fail && !stop) { s.faceSkip = [...s.faceSkip, faces[i].id]; s.faceFailed = listFail(s.faceFailed, faces[i].id, o.fail); }
-      });
+      for (const f of faces) { if (fwas.includes(f.id) && s.faceCut.includes(f.id)) faceFail(f.id, twice('face')); else fgo.push(f); }
+      s.faceCut = [...s.faceCut, ...fwas.filter(id => !s.faceCut.includes(id))].slice(-100);
+      if (fgo.length) await saveMove({ ...s, faceTrying: fgo.map(f => f.id) });
+      const out = await Promise.all(fgo.map(moveFace)), stop = stopOf(out);
+      out.forEach((o, i) => { if (o.moved) s.facesMoved++; else if (o.fail && !stop) faceFail(fgo[i].id, o.fail); });
       if (stop) return halt(stop.halt);
-      s.at = at;
+      Object.assign(s, { at, faceTrying: null });
       through(out);
       await saveMove(s);
       return s;
     }
     // Normal: by id. Fast: no Drive copy first (phase 0), then the rest (phase 1), each by id.
-    // After a step the server did not finish (trying left over), one photo at a time until
-    // one finishes: so only the photo that stops the server is passed over, not the 3 beside it.
     const was = [].concat(s.trying ?? []), go = [];
-    const ps = (await q(`SELECT id, public_id, drive_id, width, height, to_char(class_date,'YYYY-MM-DD') AS day FROM bkk_photos
+    let ps = (await q(`SELECT id, public_id, drive_id, width, height, to_char(class_date,'YYYY-MM-DD') AS day FROM bkk_photos
       WHERE store = 'cloudinary' AND id <> ALL($2::int[]) AND ${s.fast ? '((drive_id IS NOT NULL)::int, id) > ($3::int, $1::int)' : 'id > $1'}
       ORDER BY ${s.fast ? '(drive_id IS NOT NULL), id' : 'id'} LIMIT ${s.fast && !was.length ? FAST_AT_ONCE : 1}`, [s.after, s.skip, ...(s.fast ? [s.phase] : [])])).rows;
+    if (ps.some(p => s.cut.includes(p.id))) ps = ps.slice(0, 1);
     if (!ps.length) { Object.assign(s, { on: false, done: true, at, trying: null, wait: null, halts: 0 }); await saveMove(s); return s; }
     for (const p of ps) {
-      if (was.includes(p.id) && s.cut.includes(p.id)) { s.skip = [...s.skip, p.id].slice(-100); fail(p, 'The server stopped twice while it was moving this photo: it stays on Cloudinary this round.'); continue; }
-      if (was.includes(p.id)) s.cut = [...s.cut, p.id].slice(-100);
+      if (was.includes(p.id) && s.cut.includes(p.id)) { s.skip = [...s.skip, p.id].slice(-100); fail(p, twice('photo')); continue; }
       go.push(p);
     }
+    s.cut = [...s.cut, ...was.filter(id => !s.cut.includes(id))].slice(-100);
     if (go.length) await saveMove({ ...s, trying: s.fast ? go.map(p => p.id) : go[0].id });
-    const out = await Promise.all(go.map(p => moveIt(p, s.fast))), stop = out.find(o => o.halt);
-    // R2 itself refused or did not answer: stop at these photos, untouched, rather than fetch every other one for nothing.
-    out.forEach((o, i) => { if (o.moved) s.moved++; else if (o.fail && !stop) fail(go[i], o.fail); });
+    const out = await Promise.all(go.map(p => moveIt(p, s.fast))), stop = stopOf(out);
+    // R2 took nothing: wait at these photos, untouched, rather than fetch every other one for nothing. Else the
+    // place goes to just before the first one R2 still refused; what failed beyond it is tried again with it.
+    const held = go.find((p, i) => out[i].halt), upTo = held ? ps.indexOf(held) : ps.length;
+    out.forEach((o, i) => { if (o.moved) s.moved++; else if (o.fail && !stop && ps.indexOf(go[i]) < upTo) fail(go[i], o.fail); });
     if (stop) return halt(stop.halt);
-    const last = ps.at(-1);
-    Object.assign(s, { after: last.id, phase: s.fast && last.drive_id ? 1 : 0, at, trying: null });
+    const last = ps[upTo - 1];
+    if (last) Object.assign(s, { after: last.id, phase: s.fast && last.drive_id ? 1 : 0 });
+    Object.assign(s, { at, trying: null });
     through(out);
     await saveMove(s);
     return s;
@@ -8539,7 +8558,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         // even a photo that does stop the server can only do so once or twice a pass, and only on Start).
         const t = new Date(nowMs()).toISOString();
         if (s.done || !s.startedAt) Object.assign(s, { after: 0, phase: 0, failed: [], failedN: 0, skip: [], cut: [], done: false, trying: null, startedAt: t,
-          faceSkip: [], faceFailed: [] });
+          faceSkip: [], faceFailed: [], faceCut: [], faceTrying: null });
         // The other way round, the place means something else: from the start (what moved is no longer on Cloudinary).
         else if (s.fast !== fast) Object.assign(s, { after: 0, phase: 0, trying: null });
         Object.assign(s, { on: true, fast, restarted: false, halted: null, wait: null, halts: 0, resumedAt: null, runAt: t, runMoved: s.moved });
@@ -8566,8 +8585,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // before this stopped by itself, on an R2 error (halted) or at a start (restarted); that
   // code did not mark a Stop pressed after those, but its page offered Stop only while
   // the move was on. A Stop pressed here holds. Not done, and only with R2 and Cloudinary
-  // set up. Looked at again just before that first step: during a deploy the old server
-  // runs for a while and its code still stops the move on an R2 error.
+  // set up. Looked at again just before that first step, and at each step after (moveOne):
+  // during a deploy the old server runs for a while and its code still stops the move on an
+  // R2 error. The database refusing the first look, it is still looked at before that step.
   // Start waits for moveBooted, settled once the first look has run or the boot failed.
   let bootDone;
   const moveBooted = new Promise(ok => { bootDone = ok; });
@@ -8577,8 +8597,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       AND (value->>'on' = 'true' OR coalesce(value->>'halted', '') <> '' OR value->>'restarted' = 'true') RETURNING 1`,
   [MOVE_KEY, new Date(nowMs()).toISOString()]).then(r => r.rows.length > 0);
   const moveAtBoot = () => (r2 && cloudinary ? moveGoOn() : Promise.resolve(false))
-    .then(on => { if (on) moveSoon(MOVE_BOOT_MS, moveGoOn); })
-    .catch(e => console.error('[bkk photos] move not looked at at start:', e.message)).finally(bootDone);
+    .then(on => { if (on) moveSoon(MOVE_BOOT_MS, moveGoOn); },
+      e => { console.error('[bkk photos] move not looked at at start:', e.message); moveSoon(MOVE_BOOT_MS, moveGoOn); }).finally(bootDone);
 
   // ── the student's own face (Boonchu, 9 Nov 2026) ──────────────────────────
   // One square photo per student, for the round account button and for staff

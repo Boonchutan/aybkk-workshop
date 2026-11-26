@@ -1391,14 +1391,17 @@ const B_THB = 100; // satang per baht
   ok('R2 stops a run by itself: the next one is due in about 10 minutes (here 0.3 s), not 3 hours (here a minute)',
      agJob.errors && agJob.errors.some(e => /R2 PUT refused \(503/.test(e)) && agDue > 0 && agDue <= 300 && ag1.auto.done === false, JSON.stringify([agDue, ag1.auto, agJob]));
   let nAg = 2;
+  const agLogAt = fr2.log.length;
   fr2.ctl.fail = (m, k) => (m === 'PUT' && k.includes('/note/') && nAg-- > 0 ? 503 : null);
   let ag2 = await agNow();
   for (let i = 0; i < 200 && !ag2.auto.done; i++) { await sleep(25); ag2 = await agNow(); }
   fr2.ctl.fail = null;
   const agRow = (await pool.query(`SELECT media_url, media_src FROM idc_notes WHERE body='Test again copy'`)).rows[0];
+  // In place: the same file each time, in one run (a run after a run would take a new name)
+  const agPuts = fr2.log.slice(agLogAt).filter(l => l.method === 'PUT' && l.key && l.key.includes('/note/')).map(l => l.key);
   ok('...the next run: R2 refusing the file twice more is tried again in place, the file is copied, and with nothing left the copy stops',
      ag2.auto.done === true && ag2.auto.next === null && nAg < 0 && /^r2:idcn\/idcn3\/note\//.test(agRow.media_url) && agRow.media_src === agOld
-       && fr2.store.has(agRow.media_url.slice(3)), JSON.stringify([ag2.auto, agRow, nAg]));
+       && fr2.store.has(agRow.media_url.slice(3)) && agPuts.length === 3 && agPuts.every(k => k === agRow.media_url.slice(3)), JSON.stringify([ag2.auto, agRow, nAg, agPuts]));
   srv6b.close();
 
   console.log('\n[a dead Cloudinary costs the hub list one short wait per 5 minutes, never one per load]');
