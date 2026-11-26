@@ -12,7 +12,7 @@
  *     dateInfo: 'Mon, May 1 • Practice Journal saved ✅',
  *     quote: 'Atha Yoganushasanam',
  *     uplift: '',                         // optional larger phrase below quote
- *     photoUrl: 'https://...jpg',        // optional
+ *     photoUrl: 'https://...jpg',        // optional (or the photo's bytes)
  *     dayIndex: 0..6,                    // override day-of-week (Mon=0..Sun=6)
  *   }
  *
@@ -70,7 +70,8 @@ async function tryLoadImage(src) {
     if (typeof src === 'string' && /^https?:\/\//.test(src)) {
       // Explicit fetch → buffer → loadImage. More reliable than letting @napi-rs/canvas
       // do the download itself, especially for Cloudinary CDN URLs and HTTPS redirects.
-      const res = await fetch(src);
+      // 10 s for the whole photo: a host that hangs leaves the card without it.
+      const res = await fetch(src, { signal: AbortSignal.timeout(10000) });
       if (!res.ok) throw new Error(`http ${res.status} ${res.statusText}`);
       const buf = Buffer.from(await res.arrayBuffer());
       console.log('[share-card] fetched image:', buf.length, 'bytes from', src.slice(0, 80));

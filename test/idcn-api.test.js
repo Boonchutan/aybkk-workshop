@@ -940,6 +940,494 @@ const B_THB = 100; // satang per baht
   ok("bkk's own sign-in link route answers as before", viaBkk.status === 200 && viaBkk.body.success === true
      && Object.keys(viaBkk.body).join() === 'success,name,days,link,short_link', Object.keys(viaBkk.body).join());
 
+  // ── Cloudinary exit (25 Nov 2026): course files in R2, a file that does not arrive, the copy ──
+  console.log('\n[course files in R2 (a fake R2 and a fake Cloudinary on this machine)]');
+  const { fakeR2, r2On, r2Off, md5 } = require('./fake-r2');
+  const { createCanvas } = require('@napi-rs/canvas');
+  const r2lib = require('../lib/r2.js');
+  const mediaLib = require('../lib/media-store.js');
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const fr2 = await fakeR2();
+  const jpeg = async (w, h) => { const c = createCanvas(w, h), x = c.getContext('2d');
+    x.fillStyle = '#3366aa'; x.fillRect(0, 0, w, h); x.fillStyle = '#ffcc00'; x.fillRect(0, 0, w / 3, h / 3); return c.encode('jpeg', 90); };
+  const dataUrl = b => 'data:image/jpeg;base64,' + b.toString('base64');
+  // what Cloudinary was asked, an outage switch, its tag search and the originals it delivers
+  const cl = { calls: [], searches: 0, down: false, found: [], originals: new Map() };
+  const fakeCloud = {
+    uploader: { upload: async (src, o) => {
+      cl.calls.push(o);
+      if (cl.down) throw new Error('Cloudinary is paused (test)');
+      const n = cl.calls.length;
+      return { secure_url: `https://res.cloudinary.com/dw1uubecu/${o.resource_type}/upload/v1/${o.folder}/t${n}.${o.resource_type === 'video' ? 'mp4' : 'jpg'}`,
+        public_id: `${o.folder}/t${n}`, width: 40, height: 30 };
+    } },
+    search: { expression: () => { const ch = { sort_by: () => ch, max_results: () => ch, execute: async () => {
+      cl.searches++;
+      if (cl.hang) return new Promise(() => {});
+      if (cl.down) throw new Error('Cloudinary is paused (test)');
+      return { resources: cl.found };
+    } }; return ch; } },
+  };
+  const fakeFetch = async url => {
+    if (cl.slow) await sleep(cl.slow);
+    return cl.originals.has(url) ? new Response(cl.originals.get(url), { status: 200 }) : new Response('gone', { status: 404 });
+  };
+  r2On();
+  process.env.TMPDIR = MULTER_TMP;
+  const app3 = express(); app3.use(express.json({ limit: '10mb' }));
+  mountIdcn(app3, { pgPool: pool, r2Endpoint: fr2.url, cloudinary: fakeCloud, fetch: fakeFetch, autoCopy: false });
+  r2Off();
+  const app4 = express(); app4.use(express.json({ limit: '10mb' }));
+  mountIdcn(app4, { pgPool: pool, cloudinary: fakeCloud, fetch: fakeFetch });
+  if (keepTmp == null) delete process.env.TMPDIR; else process.env.TMPDIR = keepTmp;
+  await sleep(800);
+  await pool.query('DELETE FROM idc_hub_photos');
+  await pool.query(`DELETE FROM idc_settings WHERE key='hub_copied'`);
+  const srv3 = app3.listen(0), B3 = `http://127.0.0.1:${srv3.address().port}`;
+  const srv4 = app4.listen(0), B4 = `http://127.0.0.1:${srv4.address().port}`;
+  const Jx = base => async (p, opts = {}, headers = {}) => {
+    const r = await fetch(base + p, { ...opts, headers: { 'Content-Type': 'application/json', ...headers } });
+    return { status: r.status, headers: r.headers, body: await r.json().catch(() => ({})) };
+  };
+  const J3 = Jx(B3), J4 = Jx(B4);
+  const multi = (base, p, fields, file, headers = {}) => {
+    const fd = new FormData();
+    for (const [k, v] of Object.entries(fields)) fd.append(k, v);
+    if (file) fd.append('file', new Blob([file.body], { type: file.type }), file.name);
+    return fetch(base + p, { method: 'POST', body: fd, headers }).then(async r => ({ status: r.status, body: await r.json().catch(() => ({})) }));
+  };
+  const vid = crypto.randomBytes(2 * 1024 * 1024);
+  const clip = { body: vid.subarray(0, 4096), type: 'video/mp4', name: 'test.mp4' };
+  const AL = ID('test-alum-a');
+
+  const ph = await jpeg(800, 600);
+  const calls0 = cl.calls.length;
+  const up1 = await J3('/api/idcn/idcn3/photos', { method: 'POST', body: JSON.stringify({ slug: 'test-alum-a', imageBase64: dataUrl(ph) }) }, alumA);
+  ok('R2 on: a hub photo goes to R2, never to Cloudinary, and its link is a path on this site',
+     up1.status === 200 && /^\/md\/0\.[\w-]{22}\/idcn\/idcn3\/hub\/[0-9a-f]{32}\.jpg$/.test(up1.body.url) && cl.calls.length === calls0,
+     JSON.stringify(up1.body));
+  const g1 = await fetch(B3 + up1.body.url), g1b = Buffer.from(await g1.arrayBuffer()), d1 = r2lib.dims(g1b);
+  ok('...the link opens a JPEG made again (800 x 600, no EXIF), private, never kept on the way',
+     g1.status === 200 && g1.headers.get('content-type') === 'image/jpeg' && d1 && d1.w === 800 && d1.h === 600
+       && !g1b.includes(Buffer.from('Exif')) && g1.headers.get('cache-control') === 'private, max-age=86400'
+       && g1.headers.get('x-content-type-options') === 'nosniff', `${g1.status} ${g1.headers.get('cache-control')}`);
+  const hubRows = (await pool.query(`SELECT media, uploader FROM idc_hub_photos WHERE course_code='idcn3'`)).rows;
+  ok('...and the hub has its own row: the R2 key and who uploaded it', hubRows.length === 1
+     && /^r2:idcn\/idcn3\/hub\/[0-9a-f]{32}\.jpg$/.test(hubRows[0].media) && hubRows[0].uploader === AL, JSON.stringify(hubRows));
+  cl.found = [{ public_id: 'aybkk/idcn3/2026-11-20/testold', secure_url: 'https://res.cloudinary.com/dw1uubecu/image/upload/v1/aybkk/idcn3/2026-11-20/testold.jpg',
+    width: 40, height: 30, created_at: '2026-11-20T03:00:00Z' }];
+  cl.down = true;
+  const l0 = await J3('/api/idcn/idcn3/photos?slug=test-alum-a', {}, alumA);
+  ok('Cloudinary down: the hub list still answers, with the photos in R2',
+     l0.status === 200 && l0.body.days.length === 1 && l0.body.days[0].items[0].url === up1.body.url, JSON.stringify(l0.body));
+  cl.down = false;
+  // a server that has not seen the search fail (this one waits 5 minutes before asking again)
+  r2On();
+  const app3u = express(); app3u.use(express.json({ limit: '10mb' }));
+  mountIdcn(app3u, { pgPool: pool, r2Endpoint: fr2.url, cloudinary: fakeCloud, fetch: fakeFetch, autoCopy: false });
+  r2Off();
+  const srv3u = app3u.listen(0);
+  const l1 = await Jx(`http://127.0.0.1:${srv3u.address().port}`)('/api/idcn/idcn3/photos?slug=test-alum-a', {}, alumA);
+  srv3u.close();
+  ok('Cloudinary up: the older photo still only there is listed too, under its own day',
+     l1.status === 200 && l1.body.days.length === 2 && l1.body.days[0].items[0].url === up1.body.url
+       && l1.body.days[1].date === '2026-11-20' && l1.body.days[1].items[0].url === cl.found[0].secure_url, JSON.stringify(l1.body));
+
+  const h1 = await multi(B3, SUB, { slug: 'test-alum-a', sessionNo: '3', body: 'Test answer with a clip.' },
+    { body: vid, type: 'video/mp4', name: 'clip.mp4' }, alumA);
+  const vurl = h1.body.note && h1.body.note.media_url;
+  ok('a hand-in video goes to R2, its link a signed path on this site',
+     h1.status === 200 && /^\/md\/0\.[\w-]{22}\/idcn\/idcn3\/sub\/[0-9a-f]{32}\.mp4$/.test(vurl || '') && h1.body.note.media_type === 'video'
+       && !('mediaFailed' in h1.body) && !('media_failed' in h1.body.note), JSON.stringify(h1.body).slice(0, 200));
+  const rg = await fetch(B3 + vurl, { headers: { Range: 'bytes=0-1' } }), rgb = Buffer.from(await rg.arrayBuffer());
+  ok('...a phone asks for bytes 0-1 and gets a 206 with the whole size (Safari plays nothing without it)',
+     rg.status === 206 && rg.headers.get('content-range') === `bytes 0-1/${vid.length}` && rgb.equals(vid.subarray(0, 2))
+       && rg.headers.get('accept-ranges') === 'bytes' && rg.headers.get('content-type') === 'video/mp4', `${rg.status} ${rg.headers.get('content-range')}`);
+  const open = await fetch(B3 + vurl, { headers: { Range: 'bytes=1048576-' } });
+  ok('...an open range runs to the end', open.status === 206 && Buffer.from(await open.arrayBuffer()).equals(vid.subarray(1048576)));
+  const whole = await fetch(B3 + vurl);
+  ok('...no range: the whole file, byte for byte', whole.status === 200 && whole.headers.get('content-length') === String(vid.length)
+     && Buffer.from(await whole.arrayBuffer()).equals(vid));
+  ok('...a range past the end → 416', (await fetch(B3 + vurl, { headers: { Range: `bytes=${vid.length + 10}-` } })).status === 416);
+  const hd = await fetch(B3 + vurl, { method: 'HEAD' });
+  ok('...HEAD gives the size', hd.status === 200 && hd.headers.get('content-length') === String(vid.length));
+  const vkey = vurl.split('/').slice(3).join('/');
+  const sigAt = vurl.indexOf('.') + 1;
+  const badSig = vurl.slice(0, sigAt) + (vurl[sigAt] === 'A' ? 'B' : 'A') + vurl.slice(sigAt + 1);
+  ok('a link with a changed signature opens nothing (403)', (await fetch(B3 + badSig)).status === 403);
+  const endedR = await fetch(B3 + mediaLib.mdPath(vkey, { days: 1, now: Date.now() - 5 * 86400e3 }));
+  ok('a link that ended opens nothing (403, reload the page)', endedR.status === 403 && /ended/.test((await endedR.json()).error));
+  ok('...a fresh one opens', (await fetch(B3 + mediaLib.mdPath(vkey, { days: 1 }))).status === 200);
+  ok('a signed link to a file that is not there → 404', (await fetch(B3 + mediaLib.mdPath('idcn/idcn3/sub/' + 'a'.repeat(32) + '.mp4'))).status === 404);
+  ok('a signed link outside the course files is refused', mediaLib.mdCheck('0', 'x'.repeat(22), 'cls/2026-11-20/abc/v.jpg') === 'bad');
+
+  const notesOf = async id => (await pool.query('SELECT count(*)::int AS n FROM idc_notes WHERE student_id=$1', [id])).rows[0].n;
+  fr2.ctl.fail = (m, k) => (m === 'PUT' && k.includes('/sub/') ? 503 : null);
+  const n0 = await notesOf(AL);
+  const f1 = await multi(B3, SUB, { slug: 'test-alum-a', sessionNo: '3', body: 'Test words kept when the file fails.' }, clip, alumA);
+  ok('R2 refuses the file: the written answer is saved all the same, marked, and the page is told to send the file again',
+     f1.status === 200 && f1.body.mediaFailed === true && f1.body.note.media_failed === true && f1.body.note.media_url === null
+       && f1.body.note.body === 'Test words kept when the file fails.' && (await notesOf(AL)) === n0 + 1, JSON.stringify(f1.body));
+  const f0 = await multi(B3, SUB, { slug: 'test-alum-a', sessionNo: '3' }, clip, alumA);
+  ok('...a file with no words is an error as before, and nothing is saved', f0.status === 500 && (await notesOf(AL)) === n0 + 1, `${f0.status}`);
+  const kept = ((await J3('/api/idcn/idcn3/students/test-alum-a', {}, alumA)).body.sessionsWork['3'].submissions || [])
+    .find(n => n.id === f1.body.note.id);
+  ok('...her page shows the hand-in waiting for its file', !!kept && kept.media_failed === true && kept.media_url === null);
+  const AGAIN = `/api/idcn/idcn3/submissions/${f1.body.note.id}/media`;
+  const stateOf = async id => (await pool.query('SELECT media_state, media_url FROM idc_notes WHERE id=$1', [id])).rows[0];
+  ok('...sent again while R2 still refuses: 502, still waiting',
+     (await multi(B3, AGAIN, { slug: 'test-alum-a' }, clip, alumA)).status === 502 && (await stateOf(f1.body.note.id)).media_state === 'failed');
+  fr2.ctl.fail = null;
+  ok('...nobody else can send it', (await multi(B3, AGAIN, { slug: 'test-alum-a' }, clip, { 'x-idcn-key': 'wrong' })).status === 401);
+  const fix = await multi(B3, AGAIN, { slug: 'test-alum-a' }, clip, alumA);
+  ok('...sent again once R2 answers: the hand-in has its file and is no longer marked',
+     fix.status === 200 && /^\/md\/0\.[\w-]{22}\/idcn\/idcn3\/sub\//.test(fix.body.note.media_url) && !('media_failed' in fix.body.note)
+       && (await stateOf(f1.body.note.id)).media_state === null, JSON.stringify(fix.body).slice(0, 160));
+  ok('...a second time nothing is waiting (404)', (await multi(B3, AGAIN, { slug: 'test-alum-a' }, clip, alumA)).status === 404);
+
+  const PAY = id => `/api/idcn/admin/idcn3/students/${id}/payments`;
+  const shot = dataUrl(await jpeg(300, 500));
+  const p1 = await J3(PAY(AL), { method: 'POST', body: JSON.stringify({ label: 'Test deposit', amountSatang: 100000, imageBase64: shot }) }, A);
+  const pexp = p1.body.payment ? Number(p1.body.payment.proof_url.split('/')[2].split('.')[0]) * 1000 : 0;
+  ok('R2 on: a payment screenshot goes to R2 under a link that ends within two days',
+     p1.status === 200 && /^\/md\/[1-9]\d*\.[\w-]{22}\/idcn\/idcn3\/proof\/[0-9a-f]{32}\.jpg$/.test(p1.body.payment.proof_url)
+       && pexp - Date.now() > 86400e3 - 60e3 && pexp - Date.now() <= 2 * 86400e3
+       && Object.keys(p1.body.payment).join() === 'id,label,amount_satang,proof_url,note,created_at', JSON.stringify(p1.body));
+  const pg = await fetch(B3 + p1.body.payment.proof_url);
+  ok('...it opens, private and for an hour at most', pg.status === 200 && pg.headers.get('cache-control') === 'private, max-age=3600');
+  const ownPays = (await J3('/api/idcn/idcn3/students/test-alum-a', {}, alumA)).body.payments;
+  ok('...her page has it; the database keeps the key, never a link',
+     ownPays.some(p => p.id === p1.body.payment.id && /^\/md\//.test(p.proof_url) && !('proof_state' in p))
+       && /^r2:idcn\/idcn3\/proof\//.test((await pool.query('SELECT proof_url FROM idc_payments WHERE id=$1', [p1.body.payment.id])).rows[0].proof_url));
+  fr2.ctl.fail = (m, k) => (m === 'PUT' && k.includes('/proof/') ? 503 : null);
+  const p2 = await J3(PAY(AL), { method: 'POST', body: JSON.stringify({ label: 'Test second payment', amountSatang: 200000, imageBase64: shot }) }, A);
+  ok('R2 refuses the screenshot: the payment is saved, marked, and staff are told to send it again',
+     p2.status === 200 && p2.body.proofFailed === true && p2.body.payment.proof_failed === true && p2.body.payment.proof_url === null
+       && Number(p2.body.payment.amount_satang) === 200000, JSON.stringify(p2.body));
+  fr2.ctl.fail = null;
+  const PROOF = `/api/idcn/admin/idcn3/payments/${p2.body.payment.id}/proof`;
+  ok('...sending it again needs the admin key', (await J3(PROOF, { method: 'POST', body: JSON.stringify({ imageBase64: shot }) })).status === 401);
+  const p2r = await J3(PROOF, { method: 'POST', body: JSON.stringify({ imageBase64: shot }) }, A);
+  ok('...sent again: the payment has its screenshot', p2r.status === 200 && /\/proof\//.test(p2r.body.payment.proof_url)
+     && !('proof_failed' in p2r.body.payment) && p2r.body.payment.id === p2.body.payment.id);
+
+  fr2.ctl.fail = (m, k) => (m === 'PUT' && k.includes('/note/') ? 503 : null);
+  const bn = await multi(B3, '/api/idcn/admin/idcn3/notes', { all: 'true', kind: 'note', body: 'Test note to all, its file fails' }, clip, A);
+  const bnRows = async () => (await pool.query(`SELECT id, media_state, media_batch, media_url FROM idc_notes WHERE body='Test note to all, its file fails'`)).rows;
+  const bn1 = await bnRows();
+  ok('R2 refuses a note file: the note still reaches everyone, all marked with one batch',
+     bn.status === 200 && bn.body.mediaFailed === true && bn1.length === bn.body.sentTo && bn.body.sentTo > 1
+       && bn1.every(r => r.media_state === 'failed' && r.media_batch && r.media_batch === bn1[0].media_batch) && bn1.some(r => r.id === bn.body.retryId),
+     JSON.stringify(bn.body));
+  fr2.ctl.fail = null;
+  const bnr = await multi(B3, `/api/idcn/admin/idcn3/notes/${bn.body.retryId}/media`, {}, clip, A);
+  const bn2 = await bnRows();
+  ok('...the file sent once reaches every note of that send', bnr.status === 200 && bnr.body.updated === bn.body.sentTo
+     && bn2.every(r => r.media_state === null && /^r2:idcn\/idcn3\/note\//.test(r.media_url) && r.media_url === bn2[0].media_url));
+
+  console.log('\n[the copy of the course files still on Cloudinary]');
+  const OLD = {
+    v: 'https://res.cloudinary.com/dw1uubecu/video/upload/v1/aybkk/idcn3/submissions/test-alum-a/testold1.mov',
+    a: 'https://res.cloudinary.com/dw1uubecu/image/upload/v1/aybkk/idcn3/assignments/testdemo1.jpg',
+    p: 'https://res.cloudinary.com/dw1uubecu/image/upload/v1/aybkk/idcn3/proofs/test-alum-a/testp1.png',
+    gone: 'https://res.cloudinary.com/dw1uubecu/image/upload/v1/aybkk/idcn3/proofs/test-alum-a/testgone.jpg',
+  };
+  cl.originals.set(OLD.v, crypto.randomBytes(300000));
+  cl.originals.set(OLD.a, await jpeg(64, 48));
+  cl.originals.set(OLD.p, await createCanvas(20, 20).encode('png'));
+  cl.originals.set(cl.found[0].secure_url, await jpeg(40, 30));
+  const other = ID('test-new-one');
+  await pool.query(`INSERT INTO idc_notes (student_id, kind, body, media_url, media_type, session_no) VALUES ($1,'submission','Test old clip',$2,'video',3)`, [AL, OLD.v]);
+  await pool.query(`INSERT INTO idc_notes (student_id, kind, body, media_url, media_type) VALUES ($1,'assignment','Test old demo',$3,'image'), ($2,'assignment','Test old demo',$3,'image')`, [AL, other, OLD.a]);
+  const pOld = (await pool.query(`INSERT INTO idc_payments (student_id, label, proof_url) VALUES ($1,'Test old proof',$2), ($1,'Test lost proof',$3) RETURNING id`, [AL, OLD.p, OLD.gone])).rows;
+  const COPY = '/api/idcn/admin/idcn3/media-copy';
+  ok('the copy needs the admin key', (await J3(COPY, { method: 'POST', body: '{}' })).status === 401 && (await J3(COPY)).status === 401);
+  const runCopy = async () => {
+    const s = await J3(COPY, { method: 'POST', body: '{}' }, A);
+    let st = s.body;
+    for (let i = 0; i < 400 && st.running; i++) { await sleep(25); st = (await J3(COPY, {}, A)).body; }
+    return { start: s.status, st };
+  };
+  const cp1 = await runCopy();
+  ok('it runs in the background (202) and says how many files were copied, failed and are left',
+     cp1.start === 202 && cp1.st.running === false && cp1.st.hub.copied === 1 && cp1.st.hub.left === 0
+       && cp1.st.notes.copied === 2 && cp1.st.notes.left === 0 && cp1.st.proofs.copied === 1 && cp1.st.proofs.failed === 1 && cp1.st.proofs.left === 1,
+     JSON.stringify(cp1.st));
+  const urlOf = async (t, col, where, args) => (await pool.query(`SELECT ${col} AS u FROM ${t} WHERE ${where}`, args)).rows.map(r => r.u);
+  const vNow = await urlOf('idc_notes', 'media_url', `body='Test old clip'`, []);
+  const aNow = await urlOf('idc_notes', 'media_url', `body='Test old demo'`, []);
+  const pNow = await urlOf('idc_payments', 'proof_url', 'id = ANY($1::int[]) ORDER BY id', [pOld.map(r => r.id)]);
+  const same = (ref, orig) => !!ref && ref.startsWith('r2:') && fr2.store.has(ref.slice(3)) && md5(fr2.store.get(ref.slice(3)).body) === md5(orig);
+  ok('...each row now points at its copy in R2, byte for byte the original (a video keeps .mov, a PNG keeps .png)',
+     same(vNow[0], cl.originals.get(OLD.v)) && /\.mov$/.test(vNow[0]) && same(pNow[0], cl.originals.get(OLD.p)) && /\.png$/.test(pNow[0]), JSON.stringify([vNow, pNow]));
+  ok('...a note sent to two students shares one copy', aNow.length === 2 && aNow[0] === aNow[1] && same(aNow[0], cl.originals.get(OLD.a)));
+  ok('...a file Cloudinary no longer has keeps its old link, nothing lost', pNow[1] === OLD.gone);
+  const hubNow = (await pool.query(`SELECT media, to_char(day,'YYYY-MM-DD') AS day FROM idc_hub_photos WHERE public_id=$1`, [cl.found[0].public_id])).rows[0];
+  ok('...the older hub photo has its row in the hub list now, its day kept', !!hubNow && same(hubNow.media, cl.originals.get(cl.found[0].secure_url)) && hubNow.day === '2026-11-20');
+  const s1 = cl.searches;
+  const l2 = await J3('/api/idcn/idcn3/photos?slug=test-alum-a', {}, alumA);
+  ok('...every hub photo copied: the list no longer asks Cloudinary, and both are on this site',
+     cl.searches === s1 && l2.body.days.length === 2 && l2.body.days.every(d => d.items.every(it => /^\/md\/0\./.test(it.url))), JSON.stringify(l2.body));
+  const cp2 = await runCopy();
+  ok('pressed again: only what is left, nothing copied twice', cp2.st.hub.copied === 0 && cp2.st.notes.copied === 0 && cp2.st.proofs.copied === 0
+     && cp2.st.proofs.failed === 1 && (await urlOf('idc_notes', 'media_url', `body='Test old clip'`, []))[0] === vNow[0], JSON.stringify(cp2.st));
+  const OLDP2 = 'https://res.cloudinary.com/dw1uubecu/image/upload/v1/aybkk/idcn3/proofs/test-alum-a/testp2.jpg';
+  cl.originals.set(OLDP2, await jpeg(30, 30));
+  const pid2 = (await pool.query(`INSERT INTO idc_payments (student_id, label, proof_url) VALUES ($1,'Test checked proof',$2) RETURNING id`, [AL, OLDP2])).rows[0].id;
+  fr2.ctl.badEtag = true;
+  const cp3 = await runCopy();
+  fr2.ctl.badEtag = false;
+  ok('a copy R2 does not give back the same is never pointed at, and the run stops',
+     (await urlOf('idc_payments', 'proof_url', 'id=$1', [pid2]))[0] === OLDP2 && cp3.st.errors.some(e => /does not match/.test(e)), JSON.stringify(cp3.st));
+  const cp4 = await runCopy();
+  ok('...pressed again with R2 well: copied', cp4.st.proofs.copied === 1 && same((await urlOf('idc_payments', 'proof_url', 'id=$1', [pid2]))[0], cl.originals.get(OLDP2)));
+
+  console.log('\n[R2 off: Cloudinary exactly as before, but a file that fails never costs the row]');
+  const day = new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10);
+  const k0 = cl.calls.length;
+  const u4 = await J4('/api/idcn/idcn3/photos', { method: 'POST', body: JSON.stringify({ slug: 'test-alum-a', imageBase64: dataUrl(ph) }) }, alumA);
+  ok('a hub photo goes to Cloudinary as before (folder by day, the course tag); the answer is its Cloudinary link',
+     u4.status === 200 && JSON.stringify(cl.calls[k0]) === JSON.stringify({ folder: `aybkk/idcn3/${day}`, tags: ['aybkk-idcn3'], resource_type: 'image' })
+       && u4.body.url === `https://res.cloudinary.com/dw1uubecu/image/upload/v1/aybkk/idcn3/${day}/t${k0 + 1}.jpg`
+       && Object.keys(u4.body).join() === 'success,url', JSON.stringify(u4.body));
+  await sleep(150);
+  ok('...and it is noted in the hub list, for the copy', (await pool.query('SELECT 1 FROM idc_hub_photos WHERE media=$1 AND public_id IS NOT NULL', [u4.body.url])).rowCount === 1);
+  const s4 = cl.searches;
+  const l4 = await J4('/api/idcn/idcn3/photos?slug=test-alum-a', {}, alumA);
+  ok("the hub list is Cloudinary's tag search, as before", cl.searches === s4 + 1
+     && JSON.stringify(l4.body) === JSON.stringify({ days: [{ date: '2026-11-20', items: [{ url: cl.found[0].secure_url, w: 40, h: 30 }] }] }), JSON.stringify(l4.body));
+  const pay4 = await J4(PAY(AL), { method: 'POST', body: JSON.stringify({ label: 'Test R2 off', imageBase64: shot }) }, A);
+  ok('a screenshot goes to Cloudinary as before, and its link is sent as it is',
+     pay4.status === 200 && JSON.stringify(cl.calls[cl.calls.length - 1]) === JSON.stringify({ folder: 'aybkk/idcn3/proofs/test-alum-a', resource_type: 'image' })
+       && /^https:\/\/res\.cloudinary\.com\/dw1uubecu\/image\/upload\/v1\/aybkk\/idcn3\/proofs\/test-alum-a\/t\d+\.jpg$/.test(pay4.body.payment.proof_url)
+       && Object.keys(pay4.body).join() === 'success,payment'
+       && Object.keys(pay4.body.payment).join() === 'id,label,amount_satang,proof_url,note,created_at', JSON.stringify(pay4.body));
+  const h4 = await multi(B4, SUB, { slug: 'test-alum-a', sessionNo: '3', body: 'Test R2 off clip' }, clip, alumA);
+  const last = cl.calls[cl.calls.length - 1];
+  ok('a hand-in video goes to Cloudinary as before (video, 6 MB chunks)', h4.status === 200 && last.folder === 'aybkk/idcn3/submissions/test-alum-a'
+     && last.resource_type === 'video' && last.chunk_size === 6 * 1024 * 1024 && /^https:\/\/res\.cloudinary\.com\//.test(h4.body.note.media_url)
+     && !('mediaFailed' in h4.body), JSON.stringify(h4.body).slice(0, 200));
+  cl.down = true;
+  const n4 = await notesOf(AL);
+  const h5 = await multi(B4, SUB, { slug: 'test-alum-a', sessionNo: '3', body: 'Test words while Cloudinary is paused' }, clip, alumA);
+  ok('Cloudinary paused: the written answer is saved, marked, never lost', h5.status === 200 && h5.body.mediaFailed === true
+     && h5.body.note.media_failed === true && (await notesOf(AL)) === n4 + 1);
+  const p5 = await J4(PAY(AL), { method: 'POST', body: JSON.stringify({ label: 'Test paused', amountSatang: 5000, imageBase64: shot }) }, A);
+  ok('...and so is a payment whose screenshot did not go', p5.status === 200 && p5.body.proofFailed === true && p5.body.payment.proof_failed === true);
+  ok('...a hub photo (nothing to keep) is an error as before', (await J4('/api/idcn/idcn3/photos', { method: 'POST',
+    body: JSON.stringify({ slug: 'test-alum-a', imageBase64: dataUrl(ph) }) }, alumA)).status === 500);
+  cl.down = false;
+  const r5 = await multi(B4, `/api/idcn/idcn3/submissions/${h5.body.note.id}/media`, { slug: 'test-alum-a' }, clip, alumA);
+  ok('...sent again once Cloudinary answers', r5.status === 200 && /^https:\/\/res\.cloudinary\.com\//.test(r5.body.note.media_url));
+  ok('the copy says R2 is not set up', (await J4(COPY, { method: 'POST', body: '{}' }, A)).status === 409);
+  const md4 = await fetch(B4 + vurl);
+  ok('a signed /md link is a 503 nobody keeps', md4.status === 503 && md4.headers.get('cache-control') === 'no-store');
+  ok('...and any other /md path is no route here (404 from express)', (await fetch(B4 + '/md/0.x/idcn/x')).status === 404
+     && (await fetch(B4 + badSig)).status === 404);
+
+  console.log('\n[photos R2 cannot use, screenshots at their own size, a missing screenshot, two copies at once, the copy by itself]');
+  const GIF = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
+  const HEIC = Buffer.concat([Buffer.from([0, 0, 0, 24]), Buffer.from('ftypheic\0\0\0\0mif1heic', 'latin1'), crypto.randomBytes(300)]);
+  const keyOf = u => String(u || '').split('/').slice(3).join('/');
+  const hubGif = await J3('/api/idcn/idcn3/photos', { method: 'POST', body: JSON.stringify({ slug: 'test-alum-a', imageBase64: 'data:image/gif;base64,' + GIF.toString('base64') }) }, alumA);
+  const gifKey = keyOf(hubGif.body.url);
+  ok('R2 on: a GIF in the hub is kept as it came (Cloudinary took GIFs too)', hubGif.status === 200 && /\/hub\/[0-9a-f]{32}\.gif$/.test(gifKey)
+     && fr2.store.has(gifKey) && fr2.store.get(gifKey).body.equals(GIF) && fr2.store.get(gifKey).type === 'image/gif', JSON.stringify(hubGif.body));
+  const gifGet = await fetch(B3 + hubGif.body.url);
+  ok('...and opens as image/gif', gifGet.status === 200 && gifGet.headers.get('content-type') === 'image/gif' && Buffer.from(await gifGet.arrayBuffer()).equals(GIF));
+  const hubHeic = await J3('/api/idcn/idcn3/photos', { method: 'POST', body: JSON.stringify({ slug: 'test-alum-a', imageBase64: 'data:image/heic;base64,' + HEIC.toString('base64') }) }, alumA);
+  ok("...a HEIC photo: 400 with the reason, and photoType for the page to say it in the student's language",
+     hubHeic.status === 400 && hubHeic.body.photoType === true && /JPEG, or a screenshot/.test(hubHeic.body.error), JSON.stringify(hubHeic.body));
+  const hh = await multi(B3, SUB, { slug: 'test-alum-a', sessionNo: '3', body: 'Test words with a HEIC photo' }, { body: HEIC, type: 'image/heic', name: 'a.heic' }, alumA);
+  ok('a hand-in with words and a HEIC photo: the words are saved, and the answer says why, not "send the file again"',
+     hh.status === 200 && hh.body.mediaFailed === true && hh.body.photoType === true && /JPEG, or a screenshot/.test(hh.body.mediaError)
+       && hh.body.note.media_failed === true && hh.body.note.body === 'Test words with a HEIC photo', JSON.stringify(hh.body));
+  const HH = `/api/idcn/idcn3/submissions/${hh.body.note.id}/media`;
+  const hh2 = await multi(B3, HH, { slug: 'test-alum-a' }, { body: HEIC, type: 'image/heic', name: 'a.heic' }, alumA);
+  ok('...the same HEIC sent again: 400 with the same reason, so the page never loops on "send again"',
+     hh2.status === 400 && hh2.body.photoType === true && /JPEG, or a screenshot/.test(hh2.body.error) && !/send the file again/.test(hh2.body.error), JSON.stringify(hh2.body));
+  const hh3 = await multi(B3, HH, { slug: 'test-alum-a' }, { body: await jpeg(320, 240), type: 'image/jpeg', name: 'a.jpg' }, alumA);
+  ok('...a JPEG in its place: the hand-in has its photo', hh3.status === 200 && /\/sub\/[0-9a-f]{32}\.jpg$/.test(hh3.body.note.media_url) && !hh3.body.note.media_failed);
+  const hg = await multi(B3, SUB, { slug: 'test-alum-a', sessionNo: '3', body: 'Test words with a GIF' }, { body: GIF, type: 'image/gif', name: 'a.gif' }, alumA);
+  ok('a hand-in GIF is kept as it came', hg.status === 200 && /\.gif$/.test(hg.body.note.media_url) && !hg.body.mediaFailed, JSON.stringify(hg.body).slice(0, 200));
+  const n9 = await notesOf(AL);
+  const noWords = await multi(B3, SUB, { slug: 'test-alum-a', sessionNo: '3' }, { body: HEIC, type: 'image/heic', name: 'a.heic' }, alumA);
+  ok('...a HEIC with no words: 400 with the reason, nothing saved', noWords.status === 400 && noWords.body.photoType === true && (await notesOf(AL)) === n9);
+  const big = await multi(B3, SUB, { slug: 'test-alum-a', sessionNo: '3', body: 'Test words with a huge photo' },
+    { body: (() => { const b = Buffer.from(ph); const i = b.indexOf(Buffer.from([0xFF, 0xC0])); b.writeUInt16BE(9000, i + 5); b.writeUInt16BE(9000, i + 7); return b; })(), type: 'image/jpeg', name: 'big.jpg' }, alumA);
+  ok('...a photo over 50 megapixels: the words are saved, photoBig says why', big.status === 200 && big.body.mediaFailed === true && big.body.photoBig === true
+     && /too large/.test(big.body.mediaError), JSON.stringify(big.body));
+  const MP4 = Buffer.concat([Buffer.from([0, 0, 0, 32]), Buffer.from('ftypisom\0\0\x02\0isomiso2avc1mp41', 'latin1'), crypto.randomBytes(3000)]);
+  const oct = await multi(B3, SUB, { slug: 'test-alum-a', sessionNo: '3', body: 'Test clip with no type' }, { body: MP4, type: 'application/octet-stream', name: 'clip' }, alumA);
+  const octKey = keyOf(oct.body.note && oct.body.note.media_url);
+  ok('a video sent as application/octet-stream is known by its first bytes and kept as a video',
+     oct.status === 200 && oct.body.note.media_type === 'video' && /\/sub\/[0-9a-f]{32}\.mp4$/.test(octKey) && fr2.store.get(octKey).body.equals(MP4)
+       && !oct.body.mediaFailed, JSON.stringify(oct.body).slice(0, 200));
+  const md5csp = await fetch(B3 + vurl); await md5csp.arrayBuffer();
+  ok('a course file opened on its own can play: no sandbox, photos and video from this site only',
+     md5csp.headers.get('content-security-policy') === "default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'"
+       && md5csp.headers.get('x-content-type-options') === 'nosniff', md5csp.headers.get('content-security-policy'));
+
+  const tallPng = await (() => { const c = createCanvas(1080, 6000), x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, 1080, 6000);
+    x.fillStyle = '#000'; x.font = '28px sans-serif'; for (let y = 40; y < 6000; y += 60) x.fillText('Test transfer 500.00 ref ' + y, 20, y); return c.encode('png'); })();
+  const tp = await J3(PAY(AL), { method: 'POST', body: JSON.stringify({ label: 'Test tall screenshot', amountSatang: 1000, imageBase64: 'data:image/png;base64,' + tallPng.toString('base64') }) }, A);
+  const refOf = async id => String((await pool.query('SELECT proof_url FROM idc_payments WHERE id=$1', [id])).rows[0].proof_url || '');
+  const tpKey = (await refOf(tp.body.payment.id)).slice(3), tpObj = fr2.store.get(tpKey), tpd = tpObj && r2lib.dims(tpObj.body);
+  ok('a long payment screenshot keeps its own size (1080 x 6000), a PNG as a PNG',
+     tp.status === 200 && /\/proof\/[0-9a-f]{32}\.png$/.test(tpKey) && tpd.w === 1080 && tpd.h === 6000 && tpObj.type === 'image/png', JSON.stringify(tpd));
+  const ifd = Buffer.concat([Buffer.from('Exif\0\0MM\0*\0\0\0\x08\0\0\0\0\0\0', 'latin1'), Buffer.from('Test camera GPS')]);
+  const wideRaw = await jpeg(3000, 1000);
+  const withExif = Buffer.concat([wideRaw.subarray(0, 2), Buffer.from([0xFF, 0xE1]), Buffer.from([0, ifd.length + 2]), ifd, wideRaw.subarray(2)]);
+  const wp = await J3(PAY(AL), { method: 'POST', body: JSON.stringify({ label: 'Test wide screenshot', imageBase64: dataUrl(withExif) }) }, A);
+  const wpObj = fr2.store.get((await refOf(wp.body.payment.id)).slice(3)), wpd = wpObj && r2lib.dims(wpObj.body);
+  ok('...a JPEG wider than 2560 px keeps its width, and its camera data does not go with it',
+     wp.status === 200 && wpd.w === 3000 && wpd.h === 1000 && !wpObj.body.includes(Buffer.from('Exif')) && !wpObj.body.includes(Buffer.from('Test camera GPS')), JSON.stringify(wpd));
+
+  fr2.ctl.fail = (m, k) => (m === 'PUT' && k.includes('/proof/') ? 503 : null);
+  const mp = await J3(PAY(AL), { method: 'POST', body: JSON.stringify({ label: 'Test missing shot', amountSatang: 70000, imageBase64: shot }) }, A);
+  fr2.ctl.fail = null;
+  const listed = async () => (await J3('/api/idcn/admin/idcn3/students', {}, A)).body.students;
+  const missOf = async () => ((await listed()).find(s => s.id === AL).proofs_missing || []);
+  ok('a payment saved without its screenshot waits on the admin card from the server, so Cancel or a reload never loses it',
+     mp.body.proofFailed === true && (await missOf()).some(p => p.id === mp.body.payment.id && p.label === 'Test missing shot' && p.amount_satang === 70000));
+  ok('...a student with nothing missing has no such key, as before', (await listed()).some(s => s.id !== AL && !('proofs_missing' in s)));
+  ok('...a payment that has its screenshot is never removed', (await J3(`/api/idcn/admin/idcn3/payments/${p1.body.payment.id}`, { method: 'DELETE' }, A)).status === 404
+     && (await pool.query('SELECT 1 FROM idc_payments WHERE id=$1', [p1.body.payment.id])).rowCount === 1);
+  ok('...removing one needs the admin key', (await J3(`/api/idcn/admin/idcn3/payments/${mp.body.payment.id}`, { method: 'DELETE' })).status === 401);
+  const dup = await J3(PAY(AL), { method: 'POST', body: JSON.stringify({ label: 'Test missing shot', amountSatang: 70000, imageBase64: shot }) }, A);
+  const rm = await J3(`/api/idcn/admin/idcn3/payments/${mp.body.payment.id}`, { method: 'DELETE' }, A);
+  const shotRows = (await pool.query(`SELECT id, proof_url FROM idc_payments WHERE student_id=$1 AND label='Test missing shot'`, [AL])).rows;
+  ok('...saved twice by mistake: staff remove the row with no screenshot, the one with it stays, and the card is clear',
+     dup.status === 200 && !dup.body.proofFailed && rm.status === 200 && rm.body.removed === mp.body.payment.id
+       && shotRows.length === 1 && shotRows[0].id === dup.body.payment.id && /^r2:/.test(shotRows[0].proof_url)
+       && !(await missOf()).some(p => p.id === mp.body.payment.id), JSON.stringify(shotRows));
+  ok('...removed once, it is gone (404)', (await J3(`/api/idcn/admin/idcn3/payments/${mp.body.payment.id}`, { method: 'DELETE' }, A)).status === 404);
+
+  const allR = await J3('/api/idcn/admin/media-copy', {}, A);
+  const c3row = (allR.body.courses || []).find(c => c.code === 'idcn3');
+  ok('Admin, Settings: one answer for every course: what is still on Cloudinary and the last copy',
+     allR.status === 200 && allR.body.r2 === true && allR.body.auto.on === false && !!c3row && !!c3row.job
+       && typeof c3row.onCloudinary.notes === 'number' && typeof c3row.onCloudinary.proofs === 'number' && c3row.onCloudinary.hubChecked === true, JSON.stringify(allR.body).slice(0, 300));
+  ok('...staff key only', (await J3('/api/idcn/admin/media-copy')).status === 401 && (await J3('/api/idcn/admin/media-copy', { method: 'POST', body: '{}' })).status === 401);
+  const off4 = await J4('/api/idcn/admin/media-copy', {}, A);
+  ok('...R2 off: it says so, and a copy is refused', off4.status === 200 && off4.body.r2 === false && off4.body.auto.on === false
+     && (await J4('/api/idcn/admin/media-copy', { method: 'POST', body: '{}' }, A)).status === 409);
+
+  // a second server on the same database
+  r2On(); process.env.TMPDIR = MULTER_TMP;
+  const app5 = express(); app5.use(express.json({ limit: '10mb' }));
+  mountIdcn(app5, { pgPool: pool, r2Endpoint: fr2.url, cloudinary: fakeCloud, fetch: fakeFetch, autoCopy: false });
+  r2Off(); if (keepTmp == null) delete process.env.TMPDIR; else process.env.TMPDIR = keepTmp;
+  await sleep(500);
+  const srv5 = app5.listen(0), J5 = Jx(`http://127.0.0.1:${srv5.address().port}`);
+  // the files the R2-off uploads above left on the fake Cloudinary (and the one it lost) are there
+  // again, and copied, so the runs below can leave nothing behind
+  for (const r of (await pool.query(`SELECT media_url AS u FROM idc_notes WHERE media_url LIKE 'https://res.cloudinary.com/%'
+    UNION SELECT proof_url FROM idc_payments WHERE proof_url LIKE 'https://res.cloudinary.com/%'
+    UNION SELECT media FROM idc_hub_photos WHERE media LIKE 'https://res.cloudinary.com/%'`)).rows) if (!cl.originals.has(r.u)) cl.originals.set(r.u, await jpeg(24, 24));
+  const cpAll = await runCopy();
+  ok('...with every file there, one copy leaves nothing on Cloudinary', ['hub', 'notes', 'proofs'].every(k => !cpAll.st[k].failed && cpAll.st[k].left === 0)
+     && !cpAll.st.errors.length, JSON.stringify(cpAll.st));
+  const twoOld = [];
+  for (let i = 0; i < 6; i++) {
+    const u = `https://res.cloudinary.com/dw1uubecu/image/upload/v1/aybkk/idcn3/proofs/test-alum-a/testtwo${i}.jpg`;
+    cl.originals.set(u, await jpeg(30 + i, 30)); twoOld.push(u);
+    await pool.query(`INSERT INTO idc_payments (student_id, label, proof_url) VALUES ($1,'Test two copies',$2)`, [AL, u]);
+  }
+  const objs0 = fr2.store.size;
+  cl.slow = 60;
+  await Promise.all([J3(COPY, { method: 'POST', body: '{}' }, A), J5(COPY, { method: 'POST', body: '{}' }, A)]);
+  const settle = async J => { let st = (await J(COPY, {}, A)).body; for (let i = 0; i < 400 && st.running; i++) { await sleep(25); st = (await J(COPY, {}, A)).body; } return st; };
+  const [s3, s5] = [await settle(J3), await settle(J5)];
+  cl.slow = 0;
+  const lost = [s3, s5].find(s => s.errors.some(e => /Another server is copying/.test(e))), won = [s3, s5].find(s => s !== lost);
+  const twoNow = (await pool.query(`SELECT proof_url, proof_src FROM idc_payments WHERE label='Test two copies' ORDER BY id`)).rows;
+  ok('two servers asked to copy at once: one copies, the other says another server is copying and copies nothing',
+     !!lost && !!won && won.proofs.copied === 6 && lost.proofs.copied === 0 && lost.proofs.left === null, JSON.stringify([s3.proofs, s5.proofs, s3.errors, s5.errors]));
+  ok('...each file is copied once: every new object in R2 is the one its row points at', fr2.store.size - objs0 === 6
+     && twoNow.every(r => /^r2:/.test(r.proof_url) && fr2.store.has(r.proof_url.slice(3))), `${fr2.store.size - objs0} objects`);
+  ok('...and each row keeps the Cloudinary link it had', twoNow.every((r, i) => r.proof_src === twoOld[i]));
+  const s3b = await (async () => { await J5(COPY, { method: 'POST', body: '{}' }, A); return settle(J5); })();
+  ok('...run again on the other server: nothing to copy, nothing counted', s3b.proofs.copied === 0 && s3b.proofs.left === 0 && !s3b.errors.length, JSON.stringify(s3b));
+  srv5.close();
+
+  // the copy by itself, a few minutes after a start (here 0.3 s), until nothing is left
+  const autoOld = 'https://res.cloudinary.com/dw1uubecu/image/upload/v1/aybkk/idcn3/assignments/testauto1.jpg';
+  cl.originals.set(autoOld, await jpeg(50, 40));
+  await pool.query(`INSERT INTO idc_notes (student_id, kind, body, media_url, media_type) VALUES ($1,'assignment','Test auto copy',$2,'image')`, [AL, autoOld]);
+  r2On(); process.env.TMPDIR = MULTER_TMP;
+  const app6 = express(); app6.use(express.json({ limit: '10mb' }));
+  mountIdcn(app6, { pgPool: pool, r2Endpoint: fr2.url, cloudinary: fakeCloud, fetch: fakeFetch, autoCopy: { firstMs: 300, everyMs: 400 } });
+  r2Off(); if (keepTmp == null) delete process.env.TMPDIR; else process.env.TMPDIR = keepTmp;
+  const srv6 = app6.listen(0), J6 = Jx(`http://127.0.0.1:${srv6.address().port}`);
+  await sleep(150);
+  const a0 = (await J6('/api/idcn/admin/media-copy', {}, A)).body;
+  ok('R2 on: the copy is due by itself soon after a start', a0.auto.on === true && !!a0.auto.next && a0.auto.done === false, JSON.stringify(a0.auto));
+  let a1 = a0;
+  for (let i = 0; i < 200 && !a1.auto.done; i++) { await sleep(25); a1 = (await J6('/api/idcn/admin/media-copy', {}, A)).body; }
+  const autoNow = (await pool.query(`SELECT media_url, media_src FROM idc_notes WHERE body='Test auto copy'`)).rows[0];
+  ok('...it ran with nobody pressing: the old file is in R2, its row keeps the Cloudinary link',
+     /^r2:idcn\/idcn3\/note\//.test(autoNow.media_url) && autoNow.media_src === autoOld && fr2.store.has(autoNow.media_url.slice(3)), JSON.stringify(autoNow));
+  ok('...and with nothing left it stops', a1.auto.done === true && a1.auto.next === null
+     && (await urlOf('idc_payments', 'proof_url', `proof_url LIKE 'https://res.cloudinary.com/%'`, [])).length === 0, JSON.stringify(a1.auto));
+  srv6.close();
+
+  console.log('\n[a dead Cloudinary costs the hub list one short wait per 5 minutes, never one per load]');
+  await pool.query(`DELETE FROM idc_settings WHERE course_code='idcn3' AND key='hub_copied'`);
+  r2On(); process.env.TMPDIR = MULTER_TMP;
+  const app7 = express(); app7.use(express.json({ limit: '10mb' }));
+  mountIdcn(app7, { pgPool: pool, r2Endpoint: fr2.url, cloudinary: fakeCloud, fetch: fakeFetch, autoCopy: false });
+  const app8 = express(); app8.use(express.json({ limit: '10mb' }));
+  mountIdcn(app8, { pgPool: pool, r2Endpoint: fr2.url, cloudinary: fakeCloud, fetch: fakeFetch, autoCopy: false });
+  r2Off(); if (keepTmp == null) delete process.env.TMPDIR; else process.env.TMPDIR = keepTmp;
+  const srv7 = app7.listen(0), J7 = Jx(`http://127.0.0.1:${srv7.address().port}`);
+  const srv8 = app8.listen(0), J8 = Jx(`http://127.0.0.1:${srv8.address().port}`);
+  const HUB = '/api/idcn/idcn3/photos?slug=test-alum-a';
+  const inHub = (await pool.query(`SELECT count(*)::int AS n FROM idc_hub_photos WHERE course_code='idcn3'`)).rows[0].n;
+  const shown = b => (b.days || []).reduce((n, d) => n + d.items.length, 0);
+  cl.hang = true;
+  const sh = cl.searches, th1 = Date.now();
+  const hl1 = await J7(HUB, {}, alumA), tookH1 = Date.now() - th1;
+  ok('Cloudinary hangs: the hub list answers after about 3 s (not 8), with every photo of its own list',
+     hl1.status === 200 && tookH1 >= 2800 && tookH1 < 5000 && shown(hl1.body) === inHub && inHub > 0 && cl.searches === sh + 1,
+     `${tookH1} ms, ${shown(hl1.body)} of ${inHub}, ${cl.searches - sh} searches`);
+  const th2 = Date.now();
+  const hl2 = await J7(HUB, {}, alumA), tookH2 = Date.now() - th2;
+  ok('...the next load does not ask Cloudinary again for 5 minutes: no wait, the same photos',
+     hl2.status === 200 && tookH2 < 1000 && cl.searches === sh + 1 && shown(hl2.body) === inHub, `${tookH2} ms, ${cl.searches - sh} searches`);
+  const upH = await J7('/api/idcn/idcn3/photos', { method: 'POST', body: JSON.stringify({ slug: 'test-alum-a', imageBase64: dataUrl(ph) }) }, alumA);
+  const hl3 = await J7(HUB, {}, alumA);
+  ok('...a photo sent meanwhile is listed at once', upH.status === 200 && hl3.body.days.some(d => d.items.some(it => it.url === upH.body.url))
+     && cl.searches === sh + 1, JSON.stringify(upH.body));
+  cl.hang = false; cl.down = true;
+  const sd = cl.searches;
+  const hd1 = await J8(HUB, {}, alumA), hd2 = await J8(HUB, {}, alumA);
+  cl.down = false;
+  ok('a search that fails at once is remembered the same way: one ask, not one per load, and the list is whole',
+     hd1.status === 200 && hd2.status === 200 && cl.searches === sd + 1 && shown(hd2.body) === inHub + 1, `${cl.searches - sd} searches`);
+  srv7.close(); srv8.close();
+
+  console.log('\n[a deploy: an /api/idcn request that comes before the new columns are added waits for them]');
+  await pool.query('ALTER TABLE idc_payments DROP COLUMN proof_state');
+  const slowSchema = { query: (sql, p) => /ADD COLUMN IF NOT EXISTS proof_state/.test(sql) ? sleep(500).then(() => pool.query(sql, p)) : pool.query(sql, p),
+    connect: () => pool.connect() };
+  const app9 = express(); app9.use(express.json());
+  mountIdcn(app9, { pgPool: slowSchema });
+  const srv9 = app9.listen(0), J9 = Jx(`http://127.0.0.1:${srv9.address().port}`);
+  const gp = await J9('/api/idcn/idcn3/students/test-alum-a', {}, alumA);
+  ok('a profile asked for while proof_state is still being added: 200 once it is there, never a 500',
+     gp.status === 200 && Array.isArray(gp.body.payments) && gp.body.payments.length > 0, `${gp.status} ${JSON.stringify(gp.body).slice(0, 160)}`);
+  const failing = { query: (sql, p) => /CREATE TABLE IF NOT EXISTS idc_courses/.test(sql) ? Promise.reject(new Error('refused (test)')) : pool.query(sql, p),
+    connect: () => pool.connect() };
+  const app10 = express(); app10.use(express.json());
+  mountIdcn(app10, { pgPool: failing });
+  const srv10 = app10.listen(0), J10 = Jx(`http://127.0.0.1:${srv10.address().port}`);
+  ok('...a schema step that failed lets requests through, as before', (await J10('/api/idcn/idcn3/students/test-alum-a', {}, alumA)).status === 200);
+  srv9.close(); srv10.close();
+  await sleep(200);
+  ok('no upload left behind in the temp folder', tmpFiles() === 0, `${tmpFiles()} files`);
+  srv3.close(); srv4.close(); await fr2.close();
+
   srv2.close();
   await pool.query(`DELETE FROM idc_sessions WHERE course_code='idcn3'; DELETE FROM idc_days WHERE course_code='idcn3';`);
   const testMembers = (await pool.query(`SELECT id FROM bkk_members WHERE email LIKE $1 OR id = ANY($2::int[])`,

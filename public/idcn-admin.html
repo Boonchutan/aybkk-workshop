@@ -172,6 +172,17 @@
       <p style="margin:10px 0 0"><button class="btn" onclick="saveLinks()">Save links</button>
         <span class="muted" id="linksMsg"></span></p>
     </div>
+
+    <div class="card">
+      <b class="h">Files on Cloudinary 文件迁移</b>
+      <p class="muted" style="margin:6px 0 0">Cloudinary stops on 29 Nov 2026. These copy every file still there into
+        Cloudflare R2 and point the pages at the copy once it is checked. The files on Cloudinary are kept.
+        Press again any time: only what is left is copied. Needs R2 set in Railway.</p>
+      <p style="margin:10px 0 0"><button class="btn" id="cpIdcn" onclick="copyRun('idcn')">Copy course files</button>
+        <span class="muted" id="cpIdcnMsg" role="status"></span></p>
+      <p style="margin:10px 0 0"><button class="btn" id="cpWs" onclick="copyRun('ws')">Copy old workshop photos</button>
+        <span class="muted" id="cpWsMsg" role="status"></span></p>
+    </div>
     </section>
 
     <section data-pane="day" hidden>
@@ -308,6 +319,7 @@
         <button class="btn gray" onclick="setStatus(${s.id}, '${esc(s.status)}')">Status</button>
         <button class="btn gray" onclick="resetKey(${s.id})">Reset passcode</button>
       </div>
+      ${missingHtml(s)}
       <div id="proofRow${s.id}"></div>
     </div>`).join('') || '<p class="muted">No students yet.</p>';
   }
@@ -332,9 +344,46 @@
     load();
   };
 
+  // A payment saved while its screenshot did not upload stays on the student's card
+  // until it has one (from the server, so a reload or Cancel never loses it).
+  const NOTE_AGAIN = {};
+  const missingHtml = s => (s.proofs_missing || []).map(p => `<div class="warn" id="miss${Number(p.id)}">
+      <b>Screenshot missing</b> for “${esc(p.label)}”${p.amount_satang != null ? ' ' + baht(p.amount_satang) : ''}: the payment is saved, its screenshot did not upload.
+      <p style="margin:8px 0 0"><button class="btn pink sm" onclick="proofAgain(${Number(p.id)})">Upload screenshot</button>
+        <button class="btn gray sm" onclick="dropPayment(${Number(p.id)})">Remove this payment</button>
+        <span class="muted" id="mm${Number(p.id)}" role="status"></span></p></div>`).join('');
+  // a photo the server cannot use says why; anything else is sent again
+  const photoWhy = j => j.photoType ? 'This photo type cannot be used here. Send a JPEG, or a screenshot of it.'
+    : j.photoBig ? 'This photo is too large. Send a smaller one, or a screenshot of it.' : '';
+  window.proofAgain = pid => {
+    const f = document.createElement('input');
+    f.type = 'file'; f.accept = 'image/*';
+    f.onchange = () => {
+      const file = f.files && f.files[0];
+      if (!file) return;
+      $('#mm' + pid).textContent = 'Uploading…';
+      const rd = new FileReader();
+      rd.onload = async () => {
+        const r = await api(`/api/idcn/admin/${COURSE}/payments/${pid}/proof`, { method: 'POST', body: JSON.stringify({ imageBase64: rd.result }) }).catch(() => null);
+        const j = r ? await r.json().catch(() => ({})) : {};
+        if (r && r.ok) return load();
+        $('#mm' + pid).textContent = !r ? 'Connection dropped. Try again.' : r.status === 404 ? 'This payment has its screenshot already. Reload the page.'
+          : photoWhy(j) || j.error || 'The screenshot did not upload. Try again.';
+      };
+      rd.readAsDataURL(file);
+    };
+    f.click();
+  };
+  window.dropPayment = async pid => {
+    if (!confirm('Remove this payment? Only do this when it was saved twice by mistake: the student no longer sees it.')) return;
+    const r = await api(`/api/idcn/admin/${COURSE}/payments/${pid}`, { method: 'DELETE' }).catch(() => null);
+    if (r && r.ok) return load();
+    $('#mm' + pid).textContent = ((r && await r.json().catch(() => ({}))) || {}).error || 'failed';
+  };
   window.addProof = (id, slug) => {
-    const row = $('#proofRow' + id);
+    const row = $('#proofRow' + id), waiting = (STU[id] && STU[id].proofs_missing || []).length;
     row.innerHTML = `<div style="margin-top:8px;border:1.5px solid var(--line);border-radius:8px;padding:10px">
+      ${waiting ? `<p class="stale" style="margin:0 0 8px">A payment above is waiting for its screenshot. To send that screenshot, use Upload screenshot there, not a new payment.</p>` : ''}
       <div class="row">
         <div><label>Label (student sees this)</label><input id="pl${id}" placeholder="60% deposit 定金"></div>
         <div><label>Amount ฿ (optional)</label><input id="pa${id}" inputmode="decimal"></div>
@@ -364,7 +413,11 @@
           note: $('#pn' + id).value.trim() }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok) { $('#pm' + id).textContent = j.error || 'failed'; return; }
-      $('#proofRow' + id).innerHTML = ''; load();
+      $('#proofRow' + id).innerHTML = '';
+      // the payment is saved: its row now waits on the card with Upload screenshot
+      await load();
+      if (j.proofFailed && $('#mm' + j.payment.id)) $('#mm' + j.payment.id).textContent = photoWhy(j)
+        || 'The screenshot did not upload. Press Upload screenshot to send it again.';
     };
     if (file) {
       const rd = new FileReader();
@@ -464,30 +517,94 @@
     return true;
   };
 
+  // the note is out already: only its file goes again, to every note of that send
+  const fileAgain = (noteId, file) => {
+    const fd = new FormData();
+    fd.append('file', file);
+    return fetch(`/api/idcn/admin/${COURSE}/notes/${noteId}/media`, { method: 'POST', headers: { 'x-bkk-key': KEY }, body: fd });
+  };
+  const SAVED_NO_FILE = 'Sent, but the file did not upload. Choose the file again and press Send: only the file goes.';
   window.sendNote = async id => {
     const body = $('#nb' + id).value.trim();
     if (!body) return alert('Message required.');
     const file = $('#nf' + id).files[0];
     if (!fileOk(file)) return;
+    const again = NOTE_AGAIN[id];
+    if (again && !file) return alert('Choose the file again.');
     $('#nm' + id).textContent = file ? 'Uploading… keep the page open.' : 'Sending…';
-    const r = await sendNoteForm({ studentId: id, kind: $('#nk' + id).value,
+    const r = again ? await fileAgain(again, file) : await sendNoteForm({ studentId: id, kind: $('#nk' + id).value,
       title: $('#nt' + id).value.trim(), body, file });
-    if (r.ok) { $('#proofRow' + id).innerHTML = ''; load(); }
-    else $('#nm' + id).textContent = (await r.json().catch(() => ({}))).error || 'failed';
+    const j = await r.json().catch(() => ({}));
+    if (r.ok && j.mediaFailed) { NOTE_AGAIN[id] = j.retryId; $('#nm' + id).textContent = SAVED_NO_FILE + (photoWhy(j) ? ' ' + photoWhy(j) : ''); return; }
+    if (r.ok) { delete NOTE_AGAIN[id]; $('#proofRow' + id).innerHTML = ''; load(); }
+    else $('#nm' + id).textContent = j.error || 'failed';
   };
 
   window.broadcast = async () => {
     const body = $('#bBody').value.trim();
-    if (!body) return alert('Message required.');
-    if (!confirm('Send this to EVERY student in the course?')) return;
+    const again = NOTE_AGAIN.all;
+    if (!body && !again) return alert('Message required.');
     const file = $('#bFile').files[0];
+    if (again && !file) return alert('Choose the file again.');
+    if (!again && !confirm('Send this to EVERY student in the course?')) return;
     if (!fileOk(file)) return;
     $('#bMsg').textContent = file ? 'Uploading… keep the page open.' : 'Sending…';
-    const r = await sendNoteForm({ all: 'true', kind: $('#bKind').value,
+    const r = again ? await fileAgain(again, file) : await sendNoteForm({ all: 'true', kind: $('#bKind').value,
       title: $('#bTitle').value.trim(), body, file });
     const j = await r.json().catch(() => ({}));
-    $('#bMsg').textContent = r.ok ? `Sent to ${j.sentTo} students ✓` : (j.error || 'failed');
-    if (r.ok) { $('#bBody').value = ''; $('#bTitle').value = ''; $('#bFile').value = ''; }
+    if (r.ok && j.mediaFailed) {
+      NOTE_AGAIN.all = j.retryId;
+      $('#bMsg').textContent = `Sent to ${j.sentTo} students. ` + SAVED_NO_FILE + (photoWhy(j) ? ' ' + photoWhy(j) : '');
+      $('#bBody').value = ''; $('#bTitle').value = '';
+      return;
+    }
+    $('#bMsg').textContent = !r.ok ? (j.error || 'failed') : again ? 'The file is on every note of that send ✓' : `Sent to ${j.sentTo} students ✓`;
+    if (r.ok) { delete NOTE_AGAIN.all; $('#bBody').value = ''; $('#bTitle').value = ''; $('#bFile').value = ''; }
+  };
+
+  // a note shown in Day by day whose file did not upload
+  window.resendNote = (noteId, btn) => {
+    const f = document.createElement('input');
+    f.type = 'file'; f.accept = 'video/*,image/*';
+    f.onchange = async () => {
+      const file = f.files && f.files[0];
+      if (!file || !fileOk(file)) return;
+      btn.disabled = true; btn.textContent = 'Uploading…';
+      const r = await fileAgain(noteId, file).catch(() => null);
+      if (r && r.ok) { loadDay(DAY, true); return; }
+      btn.disabled = false; btn.textContent = 'Send the file again';
+      const j = r ? await r.json().catch(() => ({})) : {};
+      alert(photoWhy(j) || j.error || 'The file did not upload. Try again.');
+    };
+    f.click();
+  };
+
+  // ── Files on Cloudinary: the two copies to R2, run on the server ──
+  const COPY = {
+    idcn: { url: () => `/api/idcn/admin/${COURSE}/media-copy`, msg: '#cpIdcnMsg', btn: '#cpIdcn',
+      text: j => ['hub', 'notes', 'proofs'].map(k => `${{ hub: 'hub photos', notes: 'hand-ins and notes', proofs: 'payment screenshots' }[k]} `
+        + `${j[k].copied} copied${j[k].failed ? `, ${j[k].failed} failed` : ''}${j[k].left ? `, ${j[k].left} left` : ''}`).join(' · ') },
+    ws: { url: () => '/api/ws-photos/copy', msg: '#cpWsMsg', btn: '#cpWs',
+      text: j => `${j.copied} copied, ${j.already} were in already, ${j.failed} failed${j.left ? `, ${j.left} left` : ''} (of ${j.listed} on Cloudinary)` },
+  };
+  async function copyShow(which) {
+    const c = COPY[which];
+    const r = await api(c.url()).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (!r || !r.ok) { $(c.msg).textContent = j.error || 'Could not ask the server.'; $(c.btn).disabled = false; return; }
+    if (!j.startedAt) { $(c.msg).textContent = ''; $(c.btn).disabled = false; return; }
+    const errs = [].concat(j.errors || [], j.error || []);
+    $(c.msg).textContent = (j.running ? 'Copying… ' : 'Done. ') + c.text(j) + (errs.length ? ' · ' + errs.join(' · ') : '');
+    $(c.btn).disabled = !!j.running;
+    if (j.running) setTimeout(() => copyShow(which), 2000);
+  }
+  window.copyRun = async which => {
+    const c = COPY[which];
+    $(c.btn).disabled = true; $(c.msg).textContent = 'Starting…';
+    const r = await api(c.url(), { method: 'POST', body: '{}' }).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (!r || !r.ok) { $(c.msg).textContent = j.error || 'Could not start it.'; $(c.btn).disabled = false; return; }
+    copyShow(which);
   };
 
   window.setJournal = async (id, current) => {
@@ -539,8 +656,13 @@
       hour: '2-digit', minute: '2-digit' });
   };
   const nameOf = s => [s.name_zh, s.name_en].filter(Boolean).join(' ');
-  const safeUrl = u => /^https:\/\//i.test(String(u || '')) ? String(u) : '';
+  // a Cloudinary link, or a course file on this site (/md/…)
+  const safeUrl = u => /^https:\/\//i.test(String(u || '')) || /^\/md\/[\w./-]+$/.test(String(u || '')) ? String(u) : '';
   const mediaHtml = n => {
+    if (n.media_failed) return n.kind === 'submission'
+      ? '<p class="muted" style="margin:4px 0">The file did not upload. The student sees a button to send it again.</p>'
+      : `<p class="muted" style="margin:4px 0">The file did not upload.
+          <button class="btn gray sm" onclick="resendNote(${Number(n.id)}, this)">Send the file again</button></p>`;
     const u = safeUrl(n.media_url);
     if (!u) return '';
     return n.media_type === 'video'
