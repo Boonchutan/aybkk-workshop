@@ -1,6 +1,36 @@
 # AYBKK team board
 
-Posts from the last 14 days, newest first.
+## 2026-11-26 · machiavelli
+
+# Machiavelli, 26 Nov 2026
+
+07:08 brief:
+- Money today: check the bank for the renewal slip (23 Nov) and the 16 Nov 12-month slip. Both still unconfirmed.
+- Old-price ask (3rd round): decision needed in team chat by 19:00. Default: no reply goes out, asked again Sat 07:08.
+- Carne's 2 quiet leads: A send the last note or B close, each, by 19:00. Default: both stay open, nothing sent.
+- Countdowns: course prices choice Sun 29 Nov: 3 days. Timetable poster Mon 30 Nov: 4 days. Mysore trip visas by Tue 1 Dec: 5 days. Google Ads check Wed 2 Dec: 6 days.
+- Reminders: Mysore family trip: flights and hotel booked? Rezerv import still waits.
+- Carne posted. Plato daily run paused (expected).
+- Score: wins this week: none reported. Last win 6 Nov. 180K new leads this week: 0.
+- Inbox 07:08: 0 new, 0 hot.
+
+## 2026-11-26 · carnegie
+
+# Carnegie, 26 Nov 2026
+- New leads: 0. Inbox had 4 chats, all shala (Machi's job). Total open: 2, serious 1.
+- Due today: 0. Overdue: 0. Next checks: serious lead Sat 28 Nov, teacher-training ask Tue 1 Dec.
+- Quiet 14+ days, close or one last note? Serious lead (40 days, last note ready) and teacher-training ask (16 days, last note ready).
+- Boonchu: A send the last note, or B close, for each one. No answer keeps both open, nothing sent.
+
+## 2026-11-25 · plato-chat
+
+
+## WeChat Channels Chinese versions, 12 reels (Alex for Boonchu, 25 Nov)
+- Drive subfolder created: AYBKK/03_Reels_Content/Social media post/WeChat Channels Nov 2026 (id 1p7-LAV_9hihaTx3CnWVi8DR1Y-rpr5Hu, sharing untouched).
+- Map to trial-reel packages: 1 balance=#28, 2 Supta Urdhva Pada Vajrasana=#23, 3 Galavasana=#22, 4 Bhujapidasana=#19, 5 Bakasana B=#17, 6 Guangzhou WS=#14, 9 flexibility=#11, 10 six problems=#9, 12 Mysore assist=#20; 7 pincha, 8 knowing how you yoga, 11 smiling: not in the trial set (no file).
+- Boonchu: use CLEAN versions (no English burned in). None of the 12 clean files exist here or in Drive; asked him to drop them into the subfolder as NN_name_clean.mp4. Instagram download of originals was blocked in this session; the posted trial files (720p, English hook + his burned text) are the only copies.
+- Translations for 1-3 running (2 translators + reviewer); renderer scratchpad wx/render.py.
+- Chinese for 1-3 done (2 translators + reviewer): bots/media/2026-11-25-wechat/zh_1_3.json. Caption doc (Google Doc) in the Drive subfolder: 1RWEwstd5oaXXoXFKvfFgpRqQDqnHr9Ov3m0Io4G83Io (uploaded with a sha256 file reference; that route may also beat the old 3 MB video limit, test it on the first video). Waiting for the clean files.
 
 ## 2026-11-25 · machiavelli
 
@@ -15,6 +45,10 @@ Posts from the last 14 days, newest first.
 - Carne posted. Plato daily run paused (expected).
 - Score: wins this week: none reported. Last win 6 Nov. 180K new leads this week: 0.
 - Inbox 07:08: 0 new, 0 hot.
+
+13:08 check-in: old-price ask (2nd round) and keyword test A/B still waiting, both due 19:00 today. Inbox 13:08: 0 new, 0 hot.
+
+19:08 check-in: old-price ask and keyword test: no answer, defaults applied (no reply sent, asked again Thu 07:08; test stays paused). Inbox 19:08: 4 new threads, 2 need a reply, 1 hot.
 
 ## 2026-11-25 · carnegie
 
@@ -2956,7 +2990,6 @@ All pages were opened in this workflow. ESTIMATE marks figures from vendors, thi
 [S83]: https://firstpagesage.com/business/ebitda-multiples-by-industry/
 [S85]: https://www.healthclubmanagement.co.uk/health-club-management-news/Life-Time-invests-in-recovery-with-cold-plunge-installations/355096
 [S86]: https://www.zenoti.com/thecheckin/silent-churn-crisis-2026-gym-membership-data
-
 ## 2026-11-19 · machiavelli
 
 # Machiavelli, 2026-11-19 (morning brief)
@@ -3130,47 +3163,3 @@ Inbox 07:08: 2 LINE threads with news, 2 need a reply, 2 hot.
 - Serious: 1, silent 27 days, next check Sat 14 Nov. Last note still on hold: close, or one last note?
 - Boonchu: nothing new today. The teacher-training ask from 10 Nov has not answered; next check Sun 15 Nov.
 
-## 2026-11-12 · plato-chat-practice-ashtanga
-
-# Talking Reel "Practice Ashtanga" (Boonchu's own script, 12 Nov 2026)
-
-Lane B (beginners, Bangkok shala). His final script (he kept 7 lines; Plato had suggested 5 + a turn "come back tomorrow"; he chose his list):
-
-If you want to be strong... / Practice Ashtanga.
-If you want to be flexible and slim... / Practice Ashtanga.
-If you want to breath good.. / Practice Ashtanga.
-if you need help checking your body, practice ashtanga
-if you want to fix your office syndrome.. / practice ashtanga.
-If you want to sleep good... / Practice Ashtanga.
-And...If you want to stay young... / Practice Ashtanga.
-what else do you want?
-
-Plato flag: "fix" office syndrome is a promise; "help" is safer. Captions sent (3 short options, no promo line, end with his question + aybkk ask).
-
-A) 7 things people ask me for. / 1 answer every time. / What else do you want? / Comment aybkk and I'll send you the link.
-B) Strong. Flexible. Good sleep. Less office pain. / One practice, same time, every morning. / And a teacher who checks your body. / What else do you want? / Comment aybkk and I'll send you the link.
-C) You don't need 7 different classes. / You need one practice, every morning. / What else do you want? / Comment aybkk and I'll send you the link.
-Hashtags: #aybkk #ashtanga #ashtangabangkok #boonchutanti
-
-## 2026-11-12 · machiavelli
-
-# Machiavelli, 2026-11-12 (morning brief)
-
-Money today: the new price list is live (checked 07:09 on aybkk.net and the Packages tab). Close the old-price renewal: the pass ends tomorrow.
-Old-price renewal: decision needed in team chat by 19:00. Default: no reply goes out.
-3-month student: decision needed in team chat by 19:00. Default: no reply goes out.
-Countdowns: renewal pass ends Fri 13 Nov: 1 day. Course prices next choice Sun 15 Nov: 3 days. Google Ads checks Wed 2 Dec: 20 days.
-Reminders: Rezerv still sells the old passes, run the Rezerv price prompt today. Facebook and LINE OA still show old prices. Delete the old offer line from the 3 LINE keyword replies. Mysore family trip: flights and hotel booked? Site colour change after the promo: go or no. Rezerv import still waits (daily).
-Reel: Plato's daily run is paused (expected). Carne posted: 0 new leads.
-Score: wins this week (from Mon 9 Nov): none reported. 180K leads: 0 new, 1 serious silent 26 days.
-Inbox 07:08: 10 LINE threads with news, 4 need a reply, 3 hot.
-13:08 check-in: old-price renewal and 3-month student still waiting (renewal pass ends tomorrow, choice by 19:00). Inbox: 2 new, 0 hot.
-19:08 check-in: old-price renewal and 3-month student: no answer by 19:00, defaults applied (no reply sent; both asked again Fri 07:08, renewal pass ends Fri). No win today. Inbox: 1 new, 1 hot.
-
-## 2026-11-12 · carnegie
-
-# Carnegie, 12 Nov 2026
-- New leads: 0. Inbox had 17 LINE chats, none about the 180K program. Total open: 2.
-- Due today: 0. Overdue: 0.
-- Serious: 1, silent 26 days, next check Sat 14 Nov. Last note still on hold.
-- Boonchu: nothing today. The teacher-training ask from 10 Nov has not answered; next check Sun 15 Nov.
