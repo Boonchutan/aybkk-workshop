@@ -917,7 +917,8 @@ const FIX_REASONS = ['countOnce', 'asInRezerv'];
 const CASES = { overSize: 'a pack would go over its size', untied: 'a class that cannot be tied to one pack',
   handSet: 'changed here by hand since the import', nextToOurs: 'next to an aybkk.net or hand-given pass of the same kind',
   cancelledBooked: 'cancelled in Rezerv, with bookings here', blankLeft: 'the classes-left cell is blank',
-  pauseLater: 'a pause still to come', twoProfiles: 'two profiles for one person' };
+  leftOver: 'more classes left than the pack holds', pauseLater: 'a pause still to come', twoProfiles: 'two profiles for one person',
+  twoRows: 'Rezerv lists the pass twice, and the copies in use differ' };
 const PASS_KINDS = ['compared', 'notHere', 'notStarted', 'notOurs', 'twin', 'onOurs', 'again'];
 const isCount = x => Number.isInteger(x) && x >= 0;
 const isDay = s => /^\d{4}-\d{2}-\d{2}$/.test(String(s || ''));
@@ -950,7 +951,9 @@ function looksLikeCompare(L, rows) {
     && Array.isArray(L.fixes) && L.fixes.every(f => f && isCount(f.pass) && FIX_FIELDS.includes(f.field) && FIX_REASONS.includes(f.reason))
     && Array.isArray(L.ahead) && L.ahead.every(a => a && isCount(a.i) && a.i < rows.visits.length)
     && !!L.holdings && ['before', 'after'].every(k => L.holdings[k] && H.every(h => isCount(L.holdings[k][h])))
-    && !!L.visits && ['read', 'unread', 'noStudent'].every(k => isCount(L.visits[k])) && isCount(L.notInFiles);
+    && !!L.visits && ['read', 'unread', 'noStudent', 'missing'].every(k => isCount(L.visits[k]))
+    && (L.visits.first === null || isDay(L.visits.first)) && (L.visits.missing ? Array.isArray(L.visits.missingDays) && L.visits.missingDays.every(isDay) : true)
+    && isCount(L.notInFiles);
 }
 
 // Read every passes and visits file, ask the server, and make the token of what it said.
@@ -969,8 +972,18 @@ async function compareLook(page, cfg, plan) {
   if (!jobs.some(j => j.kind === 'passes')) {
     throw new Halt(EXIT.stopped, ['No passes file in this folder (rezerv-passes-memberships-*.csv, rezerv-passes-packages-*.csv): nothing to compare.']);
   }
+  // Without Rezerv's visits up to now and its bookings still to come, a class booked in both systems is counted twice.
+  const short = why => new Halt(EXIT.stopped, [`Stopped: ${why}, so a class booked in both systems would be counted twice. Nothing was compared.`,
+    'Export the visits again (past visits for each year, and the upcoming bookings) into this folder, then compare.']);
+  const lacks = [5, 6].filter(g => !plan.steps.some(x => x.group === g)).map(g => EXPECTED[g - 1]);
+  if (lacks.length) throw short(`no ${lacks.join(' and no ')} in this folder`);
   const scope = await askServer(cfg, COMPARE_PATH, { scope: true });
-  if (!scope.j || !isDay(scope.j.visitsFrom)) throw new Halt(EXIT.stopped, [`No compare from the server (${scope.why || 'not a compare answer'}). Nothing was changed.`]);
+  if (!scope.j || !isDay(scope.j.visitsFrom) || !isDay(scope.j.today)) {
+    throw new Halt(EXIT.stopped, [`No compare from the server (${scope.why || 'not a compare answer'}). Nothing was changed.`]);
+  }
+  const years = [];
+  for (let y = +scope.j.visitsFrom.slice(0, 4); y <= +scope.j.today.slice(0, 4); y++) if (!plan.steps.some(x => x.group === 5 && x.year === y)) years.push(y);
+  if (years.length) throw short(`no rezerv-visits-${years.join('*.csv and no rezerv-visits-')}*.csv in this folder (visits matter from ${scope.j.visitsFrom})`);
   const rows = { passes: [], visits: [] }, at = { passes: [], visits: [] };
   let early = 0;
   // Visits from before the first Rezerv pass came over, and before any seat here, cannot change a count.
@@ -986,6 +999,13 @@ async function compareLook(page, cfg, plan) {
   }
   const r = await askServer(cfg, COMPARE_PATH, rows);
   if (!r.j || !looksLikeCompare(r.j, rows)) throw new Halt(EXIT.stopped, [`No compare from the server (${r.why || 'the answer was not a compare'}). Nothing was changed.`]);
+  const V = r.j.visits;
+  if (!early && !(V.first && V.first <= r.j.visitsFrom)) throw short(`the visits files hold no class on or before ${r.j.visitsFrom}: they do not reach back that far`);
+  if (V.missing) {
+    const [a, b] = V.missingDays, n = V.missing === 1;
+    throw short(`${V.missing} Rezerv ${n ? 'class' : 'classes'} brought over (${a === b ? `on ${a}` : `from ${a} to ${b}`}) ${n ? 'is' : 'are'} in no visits file: `
+      + `the files do not reach ${n ? 'it' : 'them'}`);
+  }
   const mark = crypto.createHash('sha256').update(JSON.stringify([cfg.base, jobs.map(j => [j.name, j.sha]), r.j])).digest('hex').slice(0, 12);
   return { jobs, rows, at, early, look: r.j, token: `${r.j.fixes.length}:${r.j.cases.length}:${mark}` };
 }
@@ -1013,10 +1033,11 @@ function printCompare(c) {
   }
   out(`  Live Rezerv passes here that no row of these files is about: ${L.notInFiles}`);
   out(`  Visit rows read: ${L.visits.read} (not readable ${L.visits.unread}, student not here ${L.visits.noStudent})`);
-  const here = { bookings: 0, checkedIn: 0, ahead: 0, hereDays: 0, doorSeats: 0 };
+  const here = { bookings: 0, checkedIn: 0, ahead: 0, lateCancels: 0, hereClasses: 0, doorSeats: 0, usedHere: 0, givenBack: 0 };
   for (const x of L.passes.filter(p => p.kind === 'compared')) for (const k of Object.keys(here)) here[k] += Number(x.here && x.here[k]) || 0;
-  out(`  Here on these passes: ${here.bookings} bookings (${here.checkedIn} checked in, ${here.ahead} ahead)`);
-  out(`    classes here on a day Rezerv shows none: ${here.hereDays}; door seats "Rezerv package" on a day Rezerv shows none, on one of these passes: ${here.doorSeats}`);
+  out(`  Here on these passes: ${here.bookings} bookings (${here.checkedIn} checked in, ${here.ahead} ahead), ${here.lateCancels} cancelled late (still used)`);
+  out(`    classes here Rezerv did not count: ${here.hereClasses}; door seats "Rezerv package" Rezerv did not count, on one of these passes: ${here.doorSeats}`);
+  out(`    Rezerv classes brought over: used here and cancelled in Rezerv ${here.usedHere}; given back here and counted in Rezerv ${here.givenBack}`);
   const fixed = new Set(L.fixes.map(f => f.pass)).size;
   out(`  Fixes proposed: ${L.fixes.length} on ${fixed} ${fixed === 1 ? 'pass' : 'passes'}`);
   for (const [k, v] of by(L.fixes, f => f.field)) out(`    ${k}: ${v}`);
@@ -1070,6 +1091,7 @@ async function cmdCompare(page, cfg, plan, opt) {
     catch (e) { throw new Halt(EXIT.usage, [`Cannot write in the details folder ${opt.detailsDir} (${e.code || 'error'}).`]); }
   }
   out(`Folder: ${plan.dir}`);
+  if (plan.missing.length) out(`Not in this folder: ${plan.missing.join(', ')}`);
   const c = await compareLook(page, cfg, plan);
   printCompare(c);
   if (opt.detailsDir) writeCompareDetails(opt.detailsDir, cfg, c);

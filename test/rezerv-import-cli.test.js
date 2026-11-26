@@ -990,11 +990,12 @@ const MYSORE = 'Mysore 5.30am (1st batch)';
     // Since then, here: classes booked on the packs, a door seat "Rezerv package" Rezerv never saw, an extend, a pass given by hand.
     const book = (p, d) => api('/api/bkk/bookings', { memberCode: p.code, slotId: slotOn(d), date: d });
     const seat = (p, d) => api('/api/bkk/admin/walkin', { memberCode: p.code, slotId: slotOn(d), date: d, cover: 'rezerv', late: true });
+    const umaCode = (await one('SELECT code FROM bkk_members WHERE rezerv_id=$1', [uma.rz])).code;
     const used = [await book(P.pia, F1), await book(P.pia, F2), await book(P.vic, F1), await book(P.wes, F2),
-      await seat(P.pia, P2), await seat(P.vic, P2),
+      await seat(P.pia, P2), await seat(P.vic, P2), await seat({ code: umaCode }, P2),
       await api(`/api/bkk/admin/passes/${P.quin.id}/extend`, { days: 7, reason: 'goodwill' }),
       await api('/api/bkk/admin/passes', { memberCode: P.tam.code, productCode: 'unlim1', validFrom: addD(T0, -3), validUntil: addD(T0, 26), source: 'manual' })];
-    ok('...then used here: four classes booked on Rezerv packs, two door seats on Rezerv cover, a staff extend, a hand-given second pass',
+    ok('...then used here: four classes booked on Rezerv packs, three door seats on Rezerv cover (one before any Rezerv pass of hers), a staff extend, a hand-given second pass',
        used.every(r => r.status === 200) && (await passOf(trx(971))).credits_used === 5 && (await passOf(trx(977))).credits_used === 10,
        JSON.stringify(used.map(r => [r.status, r.body.error])));
 
@@ -1013,10 +1014,12 @@ const MYSORE = 'Mysore 5.30am (1st batch)';
     // A cancelled line with a day over 12 in each file, so its dates read one way only, as in a real export.
     let over12 = addD(T0, 20);
     while (Number(over12.slice(8)) <= 12) over12 = addD(over12, 1);
-    put(E2, 'rezerv-visits-2025.csv', csv(VISITS, [visit('2025-03-14', '05:30 AM', MYSORE, `B${s8}70`, pia, 'Completed')]));
-    put(E2, 'rezerv-visits-2026.csv', csv(VISITS, [visit('2026-10-15', '05:30 AM', MYSORE, `B${s8}75`, pia, 'Cancelled'),
+    // Past visits by year: last year's and this year's, so a compare finds each year it needs whenever it runs.
+    const Y = +T0.slice(0, 4), PAST = `rezerv-visits-${Y}.csv`, UPCOMING = 'rezerv-visits-upcoming-2026-11-26.csv';
+    put(E2, `rezerv-visits-${Y - 1}.csv`, csv(VISITS, [visit('2025-03-14', '05:30 AM', MYSORE, `B${s8}70`, pia, 'Completed')]));
+    put(E2, PAST, csv(VISITS, [visit('2026-10-15', '05:30 AM', MYSORE, `B${s8}75`, pia, 'Cancelled'),
       visit(P1, '05:30 AM', MYSORE, `B${s8}71`, pia, 'Completed'), visit(P1, '05:30 AM', MYSORE, `B${s8}72`, vic, 'Completed')]));
-    put(E2, 'rezerv-visits-upcoming-2026-11-26.csv', csv(VISITS, [visit(F1, '05:30 AM', MYSORE, `B${s8}73`, pia, 'Booked'),
+    put(E2, UPCOMING, csv(VISITS, [visit(F1, '05:30 AM', MYSORE, `B${s8}73`, pia, 'Booked'),
       visit(F3, '05:30 AM', MYSORE, `B${s8}74`, pia, 'Booked'), visit(over12, '05:30 AM', MYSORE, `B${s8}76`, pia, 'Cancelled')]));
     const D = path.join(E2, 'details');
     const snap = async () => JSON.stringify((await pool.query(`SELECT (SELECT json_agg(p ORDER BY p.id) FROM bkk_passes p) AS p,
@@ -1032,10 +1035,10 @@ const MYSORE = 'Mysore 5.30am (1st batch)';
     ok('compare looks and writes nothing: every pass, booking, student and payment is as it was, and no fix is recorded',
        c1.code === 0 && (await snap()) === before && c1.calls.length === 2 && c1.calls.every(x => x.kind === 'compare'), c1.all);
     ok('...it reads the folder\'s passes and visits files, and sends only the visits that can change a count',
-       /^Read: rezerv-passes-memberships-2026-11-12\.csv \(passes, 6 rows\)$/m.test(c1.out) && /^Read: rezerv-visits-2025\.csv \(visits, 1 row\)$/m.test(c1.out)
+       /^Read: rezerv-passes-memberships-2026-11-12\.csv \(passes, 6 rows\)$/m.test(c1.out) && new RegExp(`^Read: rezerv-visits-${Y - 1}\\.csv \\(visits, 1 row\\)$`, 'm').test(c1.out)
        && /^Visits sent: 5, on or after \d{4}-\d{2}-\d{2}; 2 from before that are not needed\.$/m.test(c1.out)
        && c1.calls[1].body.visits.length === 5 && c1.calls[1].body.passes.length === 10, c1.out);
-    ok('count once: Pia\'s pack is Rezerv\'s own 6 (3 before, one class since, two booked ahead), plus one class here on a day Rezerv shows none, '
+    ok('count once: Pia\'s pack is Rezerv\'s own 6 (3 before, one class since, two booked ahead), plus one class here Rezerv does not show, '
        + 'plus the door seat Rezerv never saw: 8 of 10, where 5 is saved', fix(P.pia.id, 'creditsUsed') && fix(P.pia.id, 'creditsUsed').ours === 5
        && fix(P.pia.id, 'creditsUsed').proposed === 8 && fix(P.pia.id, 'creditsUsed').why === 'Rezerv 6 + here 1 + door 1'
        && fix(P.pia.id, 'creditsUsed').reason === 'countOnce', JSON.stringify(fx.fixes));
@@ -1048,7 +1051,8 @@ const MYSORE = 'Mysore 5.30am (1st batch)';
     ok('...on screen: 6 fixes on 3 passes, by field', line(c1, 'Fixes proposed') === '6 on 3 passes' && line(c1, 'creditsUsed') === '1'
        && line(c1, 'status') === '2' && line(c1, 'validUntil') === '1' && line(c1, 'frozenFrom') === '1', c1.out);
     ok('...and what cannot be worked out is for Boonchu, each with its value in baht, never fixed',
-       line(c1, 'For Boonchu, never fixed here') === '6, THB 26,040'
+       line(c1, 'For Boonchu, never fixed here') === '7, THB 27,540'
+       && line(c1, 'untied') === '1, THB 1,500 (a class that cannot be tied to one pack)'
        && line(c1, 'overSize') === '1, THB 2,800 (a pack would go over its size)'
        && line(c1, 'handSet') === '1, THB 2,240 (changed here by hand since the import)'
        && line(c1, 'nextToOurs') === '1, THB 8,960 (next to an aybkk.net or hand-given pass of the same kind)'
@@ -1060,8 +1064,9 @@ const MYSORE = 'Mysore 5.30am (1st batch)';
        line(c1, 'Rezerv passes not here yet') === '1' && line(c1, 'new') === '1' && line(c1, 'Rezerv bookings ahead not here yet') === '1 (run-all brings them over)'
        && line(c1, 'Rezerv passes saved here and in these files') === '9', c1.out);
     ok('...with what happened here, and the holdings now and with every fix',
-       line(c1, 'Here on these passes') === '4 bookings (0 checked in, 4 ahead)'
-       && /classes here on a day Rezerv shows none: 3; door seats "Rezerv package" on a day Rezerv shows none, on one of these passes: 2$/m.test(c1.out)
+       line(c1, 'Here on these passes') === '4 bookings (0 checked in, 4 ahead), 0 cancelled late (still used)'
+       && /classes here Rezerv did not count: 3; door seats "Rezerv package" Rezerv did not count, on one of these passes: 2$/m.test(c1.out)
+       && /Rezerv classes brought over: used here and cancelled in Rezerv 0; given back here and counted in Rezerv 0$/m.test(c1.out)
        && line(c1, 'live passes') === '8 -> 7' && line(c1, 'classes left on all packs') === '18 -> 15' && line(c1, 'paused passes') === '0 -> 1'
        && line(c1, 'bookings ahead') === '4 -> 4', c1.out);
     const det = JSON.parse(fs.readFileSync(path.join(D, 'compare.details.json'), 'utf8'));
@@ -1070,6 +1075,7 @@ const MYSORE = 'Mysore 5.30am (1st batch)';
        (fxStat.mode & 0o777) === 0o600 && (detStat.mode & 0o777) === 0o600 && !JSON.stringify(fx).includes(TAG) && !c1.all.includes(TAG)
        && det.cases.find(x => x.code === 'overSize').name === vic.name && det.passes.find(x => x.pass === P.pia.id).email === pia.email
        && det.ahead.length === 1 && det.ahead[0].name === pia.name && det.ahead[0].date === F3
+       && det.cases.filter(x => x.code === 'untied').map(x => [x.name, x.date, x.seat, x.passes.length, x.thb].join()).join() === [uma.name, P2, true, 0, 1500].join()
        && c1.out.includes(`compare '${E2}' --apply '${path.join(E2, 'compare-fixes.json')}' --expect "${tokenIn(c1)}"`), c1.out);
     // A made-up repository with no .gitignore: one "git add" would publish the file.
     const G = dir('repo-compare');
@@ -1094,7 +1100,7 @@ const MYSORE = 'Mysore 5.30am (1st batch)';
     const moved = await snap();
     const stale = await since(() => cli(['compare', E2, '--apply', F, '--expect', t1]));
     ok('--apply after the data moved: a fresh look gives another token, so nothing is applied',
-       stale.code === 1 && /A fresh compare gives "6:6:[0-9a-f]{12}", not the/.test(stale.err) && stale.calls.every(x => x.kind === 'compare')
+       stale.code === 1 && /A fresh compare gives "6:7:[0-9a-f]{12}", not the/.test(stale.err) && stale.calls.every(x => x.kind === 'compare')
        && (await snap()) === moved, stale.all);
     const c2 = await cli(['compare', E2]);
     const t2 = tokenIn(c2), fx2 = fixesOf();
@@ -1121,12 +1127,60 @@ const MYSORE = 'Mysore 5.30am (1st batch)';
     const c4 = await since(() => cli(['compare', E2]));
     ok('then a compare shows 0 differences: nothing to fix, the cases for Boonchu still listed, holdings the same with or without fixes',
        c4.code === 0 && line(c4, 'Fixes proposed') === '0 on 0 passes' && /^Nothing to fix\.$/m.test(c4.out)
-       && /^  For Boonchu, never fixed here: 6, /m.test(c4.out) && line(c4, 'live passes') === '7 -> 7' && line(c4, 'classes left on all packs') === '15 -> 15'
+       && /^  For Boonchu, never fixed here: 7, /m.test(c4.out) && line(c4, 'live passes') === '7 -> 7' && line(c4, 'classes left on all packs') === '15 -> 15'
        && fixesOf().fixes.length === 0, c4.out);
     const after = await snap();
     const again = await since(() => cli(['compare', E2, '--apply', F, '--expect', tokenIn(c3)]));
     ok('a stale token is refused, and nothing changes', again.code === 1 && /Nothing was changed/.test(again.err)
        && again.calls.every(x => x.kind !== 'rezerv-fix') && (await snap()) === after, again.all);
+
+    // A row on a plan no longer sold, whose package is not here yet: the look makes none (planProduct's look).
+    const noTwo = async () => (await one(`SELECT count(*)::int AS n FROM bkk_products WHERE code='unlim2'`)).n === 0;
+    const hadNoTwo = await noTwo();
+    const retired = await api('/api/bkk/admin/rezerv/compare', { visits: [], passes: [{ memberRezervId: pia.rz, name: pia.name, email: pia.email,
+      rezervId: memberNo(81), plan: '2 months unlimited (18200thb + online transaction fee 5%)', start: addD(T0, -5), until: addD(T0, 54), status: 'Active' }] });
+    ok('a row on a retired plan whose package is not here yet is a pass not here yet, and no package is made',
+       hadNoTwo && retired.status === 200 && retired.body.passes.length === 1 && retired.body.passes[0].kind === 'notHere'
+       && retired.body.passes[0].code === 'new' && await noTwo(), JSON.stringify([hadNoTwo, retired.status, retired.body.passes, retired.body.error]));
+
+    // The visits a compare needs: past visits for each year from the day they matter, the bookings still to come,
+    // reaching back to that day, and every Rezerv class brought over. Short of them, a class booked in both systems
+    // would be counted twice: nothing is compared.
+    const like = (name, files) => {
+      const d = dir(name);
+      for (const f of [MEMBERSHIPS_FILE, PACKS_FILE]) fs.copyFileSync(path.join(E2, f), path.join(d, f));
+      for (const [f, text] of Object.entries(files)) { if (text == null) fs.copyFileSync(path.join(E2, f), path.join(d, f)); else put(d, f, text); }
+      return d;
+    };
+    const header = csv(VISITS, []);
+    const short = [
+      await since(() => cli(['compare', like('compare-no-visits', {})])),
+      await since(() => cli(['compare', like('compare-no-upcoming', { [PAST]: null })])),
+      await since(() => cli(['compare', like('compare-no-past', { [UPCOMING]: null })])),
+      await since(() => cli(['compare', like('compare-old-year', { [`rezerv-visits-${Y - 2}.csv`]: header, [UPCOMING]: null })])),
+      await since(() => cli(['compare', like('compare-cut', { [`rezerv-visits-${Y - 1}.csv`]: header, [UPCOMING]: null,
+        [PAST]: csv(VISITS, [visit(P1, '05:30 AM', MYSORE, `B${s8}71`, pia, 'Completed'), visit(P1, '05:30 AM', MYSORE, `B${s8}72`, vic, 'Completed')]) })]))];
+    ok('no visits file, no upcoming one or no past one: stopped before anything is sent, saying which is not there',
+       short.slice(0, 3).every(r => r.code === 1 && r.calls.length === 0 && /^Stopped: .*counted twice\. Nothing was compared\.$/m.test(r.err))
+       && /no rezerv-visits-<year>\*\.csv and no rezerv-visits-upcoming-\*\.csv in this folder/.test(short[0].err)
+       && /^Not in this folder: .*rezerv-visits-<year>\*\.csv, rezerv-visits-upcoming-\*\.csv$/m.test(short[0].out)
+       && /no rezerv-visits-upcoming-\*\.csv in this folder/.test(short[1].err) && /no rezerv-visits-<year>\*\.csv in this folder/.test(short[2].err),
+       JSON.stringify(short.slice(0, 3).map(r => [r.code, r.calls.length, r.all])));
+    ok('...past visits of another year only: stopped after the scope, naming this year\'s file',
+       short[3].code === 1 && short[3].calls.length === 1 && new RegExp(`no rezerv-visits-${Y}\\*\\.csv`).test(short[3].err), short[3].all);
+    ok('...visits that do not reach back to the day they matter from: stopped after the look, nothing written',
+       short[4].code === 1 && short[4].calls.length === 2 && /the visits files hold no class on or before \d{4}-\d{2}-\d{2}: they do not reach back that far/.test(short[4].err)
+       && !/^Token: /m.test(short[4].out) && (await snap()) === after, short[4].all);
+    // A Rezerv booking brought over that the final export does not have.
+    const brought = await saveFile('visits', put(dir('compare-later-visit'), UPCOMING, csv(VISITS, [visit(F2, '05:30 AM', MYSORE, `B${s8}77`, quin, 'Booked')])));
+    const gone = await since(() => cli(['compare', E2]));
+    const kept = like('compare-final-all', { [`rezerv-visits-${Y - 1}.csv`]: null, [PAST]: null,
+      [UPCOMING]: fs.readFileSync(path.join(E2, UPCOMING), 'utf8') + csv(VISITS, [visit(F2, '05:30 AM', MYSORE, `B${s8}77`, quin, 'Booked')]).split('\r\n').slice(1).join('\r\n') });
+    const whole = await cli(['compare', kept]);
+    ok('...a Rezerv class brought over that no visits file has: stopped; with it in the files the compare runs',
+       brought.code === 0 && gone.code === 1 && gone.calls.length === 2
+       && new RegExp(`1 Rezerv class brought over \\(on ${F2}\\) is in no visits file: the files do not reach it`).test(gone.err)
+       && whole.code === 0 && line(whole, 'Fixes proposed') === '0 on 0 passes', brought.all + gone.all + whole.all);
   }
 
   console.log('\n— the codes this tool knows are the server\'s —');

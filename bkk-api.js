@@ -6662,13 +6662,18 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // Every Rezerv pass saved here, next to what the export files run-all reads
   // say of it now: each row read by the import's own code, its student found as
   // the import finds them. One read-only transaction, rolled back. Count once,
-  // for a pack: Rezerv's own count of classes used (it counts a class when it is
-  // booked), plus each class taken here on that pass on a day Rezerv shows no
-  // class of that student, plus each door seat with cover 'rezerv' on such a day
-  // that only that pack can pay for, up to its size. What cannot be worked out
-  // is a case for the owner with its value in baht, and that pass gets no fix.
+  // for a pack, class by class: Rezerv's own count of classes used (it counts a
+  // class when it is booked), plus each class here on that pass Rezerv did not
+  // count (a seat, or one cancelled late, whose credit stays used), plus each
+  // door seat with cover 'rezerv' Rezerv did not count that only that pack can
+  // pay for, plus each Rezerv class brought over that they came to here while
+  // Rezerv has it cancelled, less each one given back here (cancelled in time,
+  // or the class closed) that Rezerv still counts, up to its size. What cannot
+  // be worked out is a case for the owner with its value in baht, and that pass
+  // gets no fix.
   const COMPARE_MAX = { passes: 20000, visits: 60000 };
   const NEAR_SALE_DAYS = 60;
+  const RZ_COUNTED = ['attended', 'booked', 'noshow'];
   const ymdGap = (a, b) => Math.round((Date.parse(`${b}T12:00:00Z`) - Date.parse(`${a}T12:00:00Z`)) / 86400000);
   const PASS_LOOK = `SELECT p.*, pr.code AS pr_code, pr.price_thb, pr.credits AS pr_credits, pr.valid_days AS pr_days,
       to_char(p.valid_from,'YYYY-MM-DD') AS f, to_char(p.valid_until,'YYYY-MM-DD') AS u,
@@ -6677,7 +6682,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   const FIX_FIELDS = ['creditsUsed', 'validUntil', 'frozenFrom', 'frozenUntil', 'status'];
   const fixView = p => ({ creditsUsed: p.kind === 'unlimited' ? null : p.credits_used, validUntil: p.u, frozenFrom: p.ff, frozenUntil: p.fu, status: p.status });
   // Staff changed it here since the import or the last fix: an extend, a pause, a void, or an imported pause ended early.
-  function setByHand(p) {
+  // After a fix, any end date, pause or status but the one it left (an unpause writes no note).
+  function setByHand(p, became) {
+    const now = fixView(p);
+    if (became && ['validUntil', 'frozenFrom', 'frozenUntil', 'status'].some(k => (became[k] ?? null) !== now[k])) return true;
     const segs = String(p.note || '').split(' | ');
     const after = segs.slice(segs.map(s => /^Rezerv fix /.test(s)).lastIndexOf(true) + 1);
     if (after.some(s => /^(extended \+|frozen \d+d)/.test(s) || (/^voided: /.test(s) && !/^voided: same sale as/.test(s)))) return true;
@@ -6719,15 +6727,16 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const perClass = p => p.price_thb / (p.pr_credits || p.credits_total || 1), perDay = p => p.price_thb / (p.pr_days || 1);
     const left = p => Math.max(0, (p.credits_total || 0) - (p.credits_used || 0));
     const remaining = p => p.kind === 'unlimited' ? perDay(p) * Math.max(0, ymdGap(today, p.u || today) + 1) : perClass(p) * left(p);
-    const out = { today, visitsFrom, passes: [], cases: [], fixes: [], ahead: [], visits: { rows: visitRows.length, read: 0, unread: 0, noStudent: 0 } };
+    const out = { today, visitsFrom, passes: [], cases: [], fixes: [], ahead: [],
+      visits: { rows: visitRows.length, read: 0, unread: 0, noStudent: 0, first: null, missing: 0, missingDays: null } };
     const caseKeys = new Set();
     const addCase = (code, thb, passes, more = {}, key = null) => {
       if (key && caseKeys.has(key)) return;
       if (key) caseKeys.add(key);
       out.cases.push({ code, thb: Math.round(thb), passes, ...more });
     };
-    // Each student's Rezerv passes as the files have them now: what a class on a given day could be paid with.
-    const windows = new Map(), compared = [], seen = new Set();
+    // Every passes row as the import reads it, and the pass here it is about.
+    const read = [], rowsOf = new Map();
     for (let i = 0; i < passRows.length; i++) {
       const row = obj(passRows[i]);
       const P = await passOf(db, row, ctx, quiet, true);
@@ -6749,17 +6758,33 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
           AND ($4::text IS NULL OR p.source_ref IS NULL)
           AND (p.valid_until=$3 OR ($4::text IS NOT NULL AND p.source='rezerv' AND p.valid_from=$5::date))
         ORDER BY p.valid_until=$3 DESC, p.id LIMIT 1`, [m.id, P.pr.id, P.until.date, ref, P.start ? P.start.date : null])).rows[0];
-      if (!windows.has(m.id)) windows.set(m.id, []);
-      const wid = had && had.source === 'rezerv' && !had.twin_of ? had.id : null;
-      if (!wid || !windows.get(m.id).some(w => w.id === wid)) {
-        windows.get(m.id).push({ id: wid, i, credits: P.pr.kind === 'credits', from: P.from, until: P.until.date, pause: P.pause, off: P.off,
-          cancelledOn: P.cancelledOn ? P.cancelledOn.date : null, perClass: P.pr.price_thb / (P.pr.credits || 1), perDay: P.pr.price_thb / (P.pr.valid_days || 1) });
-      }
-      const R = { creditsUsed: P.total != null && P.left != null ? P.used : null, creditsTotal: P.total, validFrom: P.from, validUntil: P.until.date,
+      // More classes left than the pack holds says nothing sure of what was used.
+      const over = P.total != null && P.left != null && P.left > P.total;
+      const R = { creditsUsed: P.total != null && P.left != null && !over ? P.used : null, creditsTotal: P.total, validFrom: P.from, validUntil: P.until.date,
         frozenFrom: P.pause[0], frozenUntil: P.pause[1], status: P.status, pauseLater: P.later ? [P.fFrom, P.fUntil] : null, said: P.said };
+      const e = { i, P, R, m, other, had, over };
+      read.push(e);
+      if (had) rowsOf.set(had.id, [...(rowsOf.get(had.id) || []), e]);
+    }
+    // Rezerv lists some passes twice, one copy "Inactive": as in the import, the copy still in use is
+    // the one compared, in either order. Two copies in use that say different things are for the owner.
+    const chosen = new Map(), twoRows = new Set();
+    const sayOf = R => JSON.stringify([R.creditsUsed, R.validFrom, R.validUntil, R.frozenFrom, R.frozenUntil, R.status, R.pauseLater]);
+    for (const [id, list] of rowsOf) {
+      const live = list.filter(e => !e.P.off);
+      chosen.set(id, (live.length ? live : list)[0]);
+      if (new Set(live.map(e => sayOf(e.R))).size > 1) twoRows.add(id);
+    }
+    // Each student's Rezerv passes as the files have them now: what a class on a given day could be paid with.
+    const windows = new Map(), compared = [];
+    for (const e of read) {
+      const { i, P, R, m, had } = e;
+      if (had && chosen.get(had.id) !== e) { out.passes.push({ i, kind: 'again', pass: had.id }); continue; }
+      if (!windows.has(m.id)) windows.set(m.id, []);
+      windows.get(m.id).push({ id: had && had.source === 'rezerv' && !had.twin_of ? had.id : null, i, credits: P.pr.kind === 'credits', from: P.from,
+        until: P.until.date, pause: P.pause, off: P.off, cancelledOn: P.cancelledOn ? P.cancelledOn.date : null,
+        perClass: P.pr.price_thb / (P.pr.credits || 1), perDay: P.pr.price_thb / (P.pr.valid_days || 1) });
       if (!had) { out.passes.push({ i, kind: 'notHere', code: 'new' }); continue; }
-      if (seen.has(had.id)) { out.passes.push({ i, kind: 'again', pass: had.id }); continue; }
-      seen.add(had.id);
       // Kept void as the copy of a sale here: Rezerv's count came over onto the pass kept. More since is for the owner.
       if (had.twin_of) {
         const more = R.creditsUsed != null ? R.creditsUsed - (had.credits_used || 0) : 0;
@@ -6772,89 +6797,140 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         out.passes.push({ i, kind: 'onOurs', pass: had.id });
         continue;
       }
-      compared.push({ i, p: had, R, m, other });
+      compared.push(e);
     }
 
-    // Days Rezerv shows a class of each student (attended, booked or a no-show), and its bookings still to come.
-    const shown = new Map();
+    // Every class Rezerv shows of each student, in any state: its day, slot and start, and whether Rezerv counted it.
+    const rz = new Map();
     for (let i = 0; i < visitRows.length; i++) {
       const row = obj(visitRows[i]);
       const v = visitOf(row, ctx, quiet);
       if (v.skip) { out.visits.unread++; continue; }
-      if (v.when.date < visitsFrom || !['attended', 'booked', 'noshow'].includes(v.status)) continue;
+      if (!out.visits.first || v.when.date < out.visits.first) out.visits.first = v.when.date;
+      if (v.when.date < visitsFrom) continue;
       const who = await whoOf(row);
       if (who.skip) { out.visits.noStudent++; continue; }
       out.visits.read++;
       const id = who.member.id;
-      if (!shown.has(id)) shown.set(id, new Set());
-      shown.get(id).add(v.when.date);
+      if (!rz.has(id)) rz.set(id, []);
+      rz.get(id).push({ d: v.when.date, slot: v.slot ? v.slot.id : null, at: Date.parse(v.startAt), timed: !!(v.slot || v.time),
+        counted: RZ_COUNTED.includes(v.status), ref: importId(row.rezervId) || null });
+      // Not here yet: no seat for it, and no Rezerv seat brought over in any state (the import keeps one cancelled here).
       if (v.status === 'booked' && !v.begun && !(await db.query(`SELECT 1 FROM bkk_bookings WHERE member_id=$1 AND class_date=$2
-          AND status='booked' AND ($3::int IS NULL OR slot_id=$3) LIMIT 1`, [id, v.when.date, v.slot ? v.slot.id : null])).rows.length) {
+          AND (status='booked' OR source='rezerv') AND ($3::int IS NULL OR slot_id=$3) LIMIT 1`, [id, v.when.date, v.slot ? v.slot.id : null])).rows.length) {
         out.ahead.push({ i, date: v.when.date });
       }
     }
-    const shownOn = (mid, d) => (shown.get(mid) || new Set()).has(d);
+    // The Rezerv row of a class here: by Rezerv's own booking id, else the same day and class (its slot, its start,
+    // or a Rezerv row with no time that day). One row for one class here, a row Rezerv counted first.
+    const sameClass = (v, c) => v.d === c.d && (!v.timed || v.at === c.at || (v.slot != null && v.slot === c.slot_id));
+    const claim = (mid, c, ref = null) => {
+      const list = rz.get(mid) || [];
+      const v = (ref && list.find(x => !x.taken && x.ref === ref))
+        || list.find(x => !x.taken && x.counted && sameClass(x, c)) || list.find(x => !x.taken && sameClass(x, c));
+      if (v) v.taken = true;
+      return v || null;
+    };
     // The Rezerv passes of that student that could have paid for a class that day.
     const payers = (mid, d) => (windows.get(mid) || []).filter(w => w.from <= d && d <= w.until
       && (!w.off || (w.cancelledOn && d < w.cancelledOn)) && !(w.pause[0] && w.pause[0] <= d && (!w.pause[1] || d < w.pause[1])));
     const dayValue = c => c.some(w => w.credits) ? Math.max(...c.filter(w => w.credits).map(w => w.perClass)) : c.length ? c[0].perDay : dropin;
 
-    const ids = compared.map(c => c.p.id), mids = [...windows.keys()];
-    const onPass = ids.length ? (await db.query(`SELECT pass_id, to_char(class_date,'YYYY-MM-DD') AS d, checked_in_at IS NOT NULL AS came,
-        start_at > now() AS ahead FROM bkk_bookings WHERE pass_id = ANY($1::int[]) AND status='booked'`, [ids])).rows : [];
-    const seats = mids.length ? (await db.query(`SELECT b.member_id, m.name, to_char(b.class_date,'YYYY-MM-DD') AS d
+    const ids = compared.map(e => e.had.id), mids = [...windows.keys()];
+    const byPass = new Map(compared.map(e => [e.had.id, e]));
+    const tally = new Map(ids.map(id => [id, { here: 0, door: 0, usedHere: 0, givenBack: 0 }]));
+    const lastFix = new Map(ids.length ? (await db.query(`SELECT DISTINCT ON (pass_id) pass_id, became FROM bkk_pass_fixes
+        WHERE pass_id = ANY($1::int[]) ORDER BY pass_id, id DESC`, [ids])).rows.map(r => [r.pass_id, r.became]) : []);
+    const at = b => ({ ...b, at: new Date(b.start_at).getTime() });
+    // Classes here on these passes: a seat, or one cancelled late (the cancel route keeps its class used; a staff
+    // cancel of a class added after it was over, a class closed, a merge or a /teach take-off gave it back).
+    const onPass = ids.length ? (await db.query(`SELECT b.pass_id, b.slot_id, b.start_at, to_char(b.class_date,'YYYY-MM-DD') AS d,
+        b.status='booked' AS live, b.checked_in_at IS NOT NULL AS came, b.start_at > now() AS ahead
+      FROM bkk_bookings b LEFT JOIN bkk_class_slots s ON s.id=b.slot_id
+      WHERE b.pass_id = ANY($1::int[]) AND (b.status='booked' OR (b.status='cancelled' AND b.cancel_reason IS NULL AND b.moved_at IS NULL
+        AND b.cancelled_at > b.start_at - make_interval(hours => $2)
+        AND NOT coalesce(b.booked_at > b.start_at + make_interval(mins => coalesce(s.duration_min, 120)), false)))
+      ORDER BY b.class_date, b.start_at, b.id`, [ids, CANCEL_CUTOFF_HOURS])).rows.map(at) : [];
+    const seats = mids.length ? (await db.query(`SELECT b.member_id, m.name, b.slot_id, b.start_at, to_char(b.class_date,'YYYY-MM-DD') AS d
         FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
         WHERE b.member_id = ANY($1::int[]) AND b.cover='rezerv' AND b.source IS DISTINCT FROM 'rezerv' AND b.status='booked'
-          AND b.pass_id IS NULL ORDER BY b.class_date, b.id`, [mids])).rows : [];
-    const doorAdd = new Map();
+          AND b.pass_id IS NULL ORDER BY b.class_date, b.id`, [mids])).rows.map(at) : [];
+    // Rezerv's own bookings brought over, and what was done to them here since: came at the door, cancelled
+    // (in time the class is given back, late it stays used), or the class closed. One a merge cancelled is the
+    // same class as the seat the merge kept, which then stands for that Rezerv row.
+    const brought = mids.length ? (await db.query(`SELECT b.member_id, m.name, b.slot_id, b.start_at, to_char(b.class_date,'YYYY-MM-DD') AS d, b.source_ref,
+        CASE WHEN b.status='booked' AND b.checked_in_at IS NOT NULL THEN 'came'
+          WHEN b.status='cancelled' AND b.cancel_reason IS NULL
+            THEN CASE WHEN b.cancelled_at <= b.start_at - make_interval(hours => $3) THEN 'back' ELSE 'kept' END
+          WHEN b.status='cancelled' AND b.cancel_reason LIKE 'class cancelled:%' THEN 'back' END AS here
+        FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
+        WHERE b.member_id = ANY($1::int[]) AND b.source='rezerv' AND b.pass_id IS NULL AND b.class_date >= $2::date
+          AND coalesce(b.cancel_reason, '') NOT LIKE 'merged:%'
+        ORDER BY b.class_date, b.start_at, b.id`, [mids, visitsFrom, CANCEL_CUTOFF_HOURS])).rows.map(at) : [];
+    // On the one Rezerv pack that could have paid for it that day; with no such pack, or two, it is for the owner.
+    const onePayer = (mid, d, k, more) => {
+      const c = payers(mid, d);
+      if (c.length === 1 && (c[0].id || !c[0].credits)) { if (c[0].id && c[0].credits) tally.get(c[0].id)[k]++; return; }
+      addCase('untied', dayValue(c), c.filter(w => w.id).map(w => w.id), { date: d, ...more, ...(c.length === 1 ? { i: c[0].i } : {}) });
+    };
+    for (const s of brought) {
+      const v = claim(s.member_id, s, /^h:/.test(s.source_ref || '') ? null : s.source_ref);
+      if (!v) {
+        const m = out.visits.missingDays || [s.d, s.d];
+        out.visits.missing++;
+        out.visits.missingDays = [s.d < m[0] ? s.d : m[0], s.d > m[1] ? s.d : m[1]];
+        continue;
+      }
+      if (s.here && (s.here !== 'back') !== v.counted) onePayer(s.member_id, s.d, v.counted ? 'givenBack' : 'usedHere', { seat: true, name: s.name });
+    }
+    for (const b of onPass) {
+      const { i, m } = byPass.get(b.pass_id);
+      const v = claim(m.id, b);
+      if (!v || !v.counted) { tally.get(b.pass_id).here++; continue; }
+      const c = payers(m.id, b.d);
+      if (c.length > 1) addCase('untied', dayValue(c), c.filter(w => w.id).map(w => w.id), { i, date: b.d }, `${m.id} ${b.at}`);
+    }
     for (const s of seats) {
-      if (shownOn(s.member_id, s.d)) continue;
-      const c = payers(s.member_id, s.d);
-      if (c.length === 1 && c[0].id) { doorAdd.set(c[0].id, (doorAdd.get(c[0].id) || 0) + 1); continue; }
-      if (c.length === 1 && !c[0].credits) continue;
-      addCase('untied', dayValue(c), c.filter(w => w.id).map(w => w.id), { seat: true, date: s.d, name: s.name,
-        ...(c.length === 1 ? { i: c[0].i } : {}) });
+      const v = claim(s.member_id, s);
+      if (!v || !v.counted) onePayer(s.member_id, s.d, 'door', { seat: true, name: s.name });
     }
 
-    for (const { i, p, R, m, other } of compared) {
+    for (const { i, had: p, R, m, other, over } of compared) {
       const ours = fixView(p), proposed = { ...ours };
-      const mine = onPass.filter(b => b.pass_id === p.id), days = [...new Set(mine.map(b => b.d))];
-      let hereAdd = 0;
-      for (const d of days) {
-        if (!shownOn(m.id, d)) { hereAdd++; continue; }
-        const c = payers(m.id, d);
-        if (c.length > 1) addCase('untied', dayValue(c), c.filter(w => w.id).map(w => w.id), { i, date: d }, `${m.id} ${d}`);
-      }
-      const door = doorAdd.get(p.id) || 0;
+      const mine = onPass.filter(b => b.pass_id === p.id), live = mine.filter(b => b.live), t = tally.get(p.id);
       let count = null;
       if (p.kind !== 'unlimited') {
-        if (R.creditsUsed == null) addCase('blankLeft', perClass(p) * left(p), [p.id], { i });
+        if (over) addCase('leftOver', perClass(p) * left(p), [p.id], { i });
+        else if (R.creditsUsed == null) addCase('blankLeft', perClass(p) * left(p), [p.id], { i });
         else {
-          count = { rezerv: R.creditsUsed, here: hereAdd, door };
-          const right = R.creditsUsed + hereAdd + door;
+          count = { rezerv: R.creditsUsed, ...t };
+          const right = R.creditsUsed + t.here + t.door + t.usedHere - t.givenBack;
           if (right > p.credits_total) addCase('overSize', (right - p.credits_total) * perClass(p), [p.id], { i });
-          proposed.creditsUsed = Math.min(right, p.credits_total);
+          // Given back here more classes than Rezerv counted on it: Rezerv paid them with another pass.
+          if (right < 0) addCase('untied', -right * perClass(p), [p.id], { i });
+          proposed.creditsUsed = Math.min(Math.max(right, 0), p.credits_total);
         }
       }
       proposed.validUntil = R.validUntil;
       if (R.pauseLater) addCase('pauseLater', perDay(p) * Math.max(1, ymdGap(R.pauseLater[0], R.pauseLater[1] || R.validUntil)), [p.id], { i });
       else { proposed.frozenFrom = R.frozenFrom; proposed.frozenUntil = R.frozenUntil; }
       proposed.status = R.status;
+      if (twoRows.has(p.id)) addCase('twoRows', remaining(p), [p.id], { i });
       const fields = FIX_FIELDS.filter(k => proposed[k] !== ours[k]);
-      if (fields.length && setByHand(p)) {
+      if (fields.length && setByHand(p, lastFix.get(p.id))) {
         const paused = x => x.frozenFrom && x.frozenUntil ? ymdGap(x.frozenFrom, x.frozenUntil) : 0;
         const moved = p.kind === 'unlimited'
           ? perDay(p) * (Math.abs(ymdGap(ours.validUntil, proposed.validUntil)) + Math.abs(paused(ours) - paused(proposed)))
           : perClass(p) * Math.abs((proposed.creditsUsed || 0) - (ours.creditsUsed || 0));
         addCase('handSet', moved || remaining(p), [p.id], { i });
       }
-      if (proposed.status === 'void' && ours.status !== 'void' && mine.length) {
-        addCase('cancelledBooked', p.kind === 'unlimited' ? perDay(p) * days.length : perClass(p) * mine.length, [p.id], { i });
+      if (proposed.status === 'void' && ours.status !== 'void' && live.length) {
+        addCase('cancelledBooked', p.kind === 'unlimited' ? perDay(p) * new Set(live.map(b => b.d)).size : perClass(p) * live.length, [p.id], { i });
       }
       if (other) addCase('twoProfiles', remaining(p), [p.id], { i });
       // An aybkk.net or hand-given pass of the same kind next to it: its days overlap, or it was sold near its start.
-      const live = x => ['active', 'frozen'].includes(x.status) && x.validUntil >= today && (p.kind === 'unlimited' || x.creditsUsed < p.credits_total);
-      if (p.credits_total !== 1 && (live(ours) || live(proposed))) {
+      const isLive = x => ['active', 'frozen'].includes(x.status) && x.validUntil >= today && (p.kind === 'unlimited' || x.creditsUsed < p.credits_total);
+      if (p.credits_total !== 1 && (isLive(ours) || isLive(proposed))) {
         const near = (await db.query(`SELECT to_char(x.valid_from,'YYYY-MM-DD') AS f, to_char(x.valid_until,'YYYY-MM-DD') AS u,
             to_char(coalesce(o.verified_at, o.created_at, x.created_at) AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS sold
           FROM bkk_passes x LEFT JOIN bkk_orders o ON o.id=x.order_id
@@ -6871,12 +6947,14 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       }
       const cases = out.cases.filter(k => k.passes.includes(p.id)).map(k => k.code);
       const item = { i, kind: 'compared', pass: p.id, product: p.pr_code, ours, rezerv: R, proposed, count,
-        here: { bookings: mine.length, checkedIn: mine.filter(b => b.came).length, ahead: mine.filter(b => b.ahead).length, hereDays: hereAdd, doorSeats: door },
+        here: { bookings: live.length, checkedIn: live.filter(b => b.came).length, ahead: live.filter(b => b.ahead).length,
+          lateCancels: mine.length - live.length, hereClasses: t.here, doorSeats: t.door, usedHere: t.usedHere, givenBack: t.givenBack },
         cases, fixes: cases.length ? 0 : fields.length };
       if (!cases.length) {
         for (const f of fields) {
           out.fixes.push({ pass: p.id, field: f, ours: ours[f], proposed: proposed[f], reason: f === 'creditsUsed' ? 'countOnce' : 'asInRezerv',
-            ...(f === 'creditsUsed' ? { why: `Rezerv ${count.rezerv} + here ${count.here} + door ${count.door}` } : {}),
+            ...(f === 'creditsUsed' ? { why: `Rezerv ${count.rezerv} + here ${count.here} + door ${count.door}`
+              + `${count.usedHere ? ` + used here, cancelled in Rezerv ${count.usedHere}` : ''}${count.givenBack ? ` - given back here, counted in Rezerv ${count.givenBack}` : ''}` } : {}),
             ...(f === 'status' && proposed.status === 'void' ? { said: R.said } : {}) });
         }
       }
@@ -6886,8 +6964,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
 
     // What the compared passes hold now, and with every fix made.
     const hold = withFixes => {
-      const t = { live: 0, classesLeft: 0, paused: 0, ahead: onPass.filter(b => b.ahead).length };
-      for (const { p } of compared) {
+      const t = { live: 0, classesLeft: 0, paused: 0, ahead: onPass.filter(b => b.live && b.ahead).length };
+      for (const { had: p } of compared) {
         const x = { ...fixView(p), ...(withFixes ? Object.fromEntries(out.fixes.filter(f => f.pass === p.id).map(f => [f.field, f.proposed])) : {}) };
         if (['active', 'frozen'].includes(x.status) && x.validUntil >= today && (p.kind === 'unlimited' || x.creditsUsed < p.credits_total)) {
           t.live++;
@@ -6901,7 +6979,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     // Live Rezerv passes here that no row of these files is about.
     out.notInFiles = (await db.query(`SELECT count(*)::int AS n FROM bkk_passes p WHERE p.source='rezerv' AND p.twin_of IS NULL
         AND p.status IN ('active','frozen') AND (p.valid_until IS NULL OR p.valid_until >= $1::date)
-        AND (p.kind='unlimited' OR p.credits_used < p.credits_total) AND p.id <> ALL($2::int[])`, [today, [...seen]])).rows[0].n;
+        AND (p.kind='unlimited' OR p.credits_used < p.credits_total) AND p.id <> ALL($2::int[])`, [today, [...rowsOf.keys()]])).rows[0].n;
     return out;
   }
 
