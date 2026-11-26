@@ -117,7 +117,7 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
   `/teach` can check in, undo, add someone with a started pass and take off its own add (today, in person,
   each saying who in `bkk_bookings.checkin_via`/`checkin_by`); wrong teacher passcodes lock an address out, but a
   browser that signed in before sends its `X-Teacher-Known` mark and is counted on its own (the shala wifi is one address).
-- **Student agreement:** the text is `CONSENT_TEXT` in `bkk-api.js` (v1: EN and TH "draft 3", Thai says เค้า for he/she/they, never เขา; ZH and RU need a native check), hashes pinned in `test/bkk-api.test.js` (new words are a new version), served at `GET /api/bkk/consent`; signatures go to append-only `bkk_consents`, and a copy is emailed (a checkout's once paid). Its privacy notice names every service personal data goes to (inbox.js, team-brief.js and server.js too, OpenRouter for the staff AI summary of a journal): a new one means new text. Admin, Settings, Student agreement holds the switch `consent_mode`: off as shipped (nothing changes), ask (checkout asks before the gateway), require (a student's own booking asks too); while on, `/bkk` and `/orientation-bkk.html` (the old waiver form) 302 to `/book` (a database that does not answer in 1.5 s reads as off there and on `/policy`). It cannot leave off without all 4 languages and the privacy notice's legal name, address and email. Payments, staff, /teach, imports and check-ins are never refused. The door key and `/tablet` get nothing of it; `/teach` gets only `signed` and `under20` as true/false.
+- **Student agreement:** the text is `CONSENT_TEXT` in `bkk-api.js` (v2 since 25 Nov 2026: v1 word for word but for the privacy notice's photo sentence, which names Cloudflare; the agreement being the same words, a v1 signature and a guardian's paper for v1 still count (`CONSENT_SAME`: every version whose agreement hash equals the current one in all 4 languages), new ones are v2; v1: EN and TH "draft 3", Thai says เค้า for he/she/they, never เขา; ZH and RU need a native check), hashes pinned in `test/bkk-api.test.js` (new words are a new version), served at `GET /api/bkk/consent`; signatures go to append-only `bkk_consents`, and a copy is emailed (a checkout's once paid). Its privacy notice names every service personal data goes to (inbox.js, team-brief.js and server.js too, OpenRouter for the staff AI summary of a journal): a new one means new text. Admin, Settings, Student agreement holds the switch `consent_mode`: off as shipped (nothing changes), ask (checkout asks before the gateway), require (a student's own booking asks too); while on, `/bkk` and `/orientation-bkk.html` (the old waiver form) 302 to `/book` (a database that does not answer in 1.5 s reads as off there and on `/policy`). It cannot leave off without all 4 languages and the privacy notice's legal name, address and email. Payments, staff, /teach, imports and check-ins are never refused. The door key and `/tablet` get nothing of it; `/teach` gets only `signed` and `under20` as true/false.
 - **Passes on the student page and the desk note (24 Nov 2026):** `GET /api/bkk/me/:code` never lists a void pass,
   and marks one whose last day has gone `ended` (a running freeze has moved its end out already); My account shows live passes, with
   ended ones folded under "Past passes". The desk note is `bkk_members.desk_note` (+ `desk_note_at`), one box on the
@@ -138,8 +138,7 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
 - **Class photos:** new ones go to Cloudflare R2 when `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`
   and `R2_BUCKET` are all set (`lib/r2.js`); until then everything is on Cloudinary as before. Once a photo is in R2
   the switch is one-way: with a variable missing, or the code rolled back past this change, R2 photos do not show
-  (`/ph` answers 503, Save fails) until the variables are back. Before R2 goes on, the privacy notice students sign
-  (`CONSENT_TEXT`) must name Cloudflare: a new agreement version, Boonchu's call (Admin warns until then).
+  (`/ph` answers 503, Save fails) until the variables are back. The privacy notice names Cloudflare since v2.
   `bkk_photos.store` says where a photo is; in R2 it is `cls/<class date>/<r2_key>/v.jpg` (long side 2560 px, upright,
   no metadata) and `t.webp` (the 600 px tile). Students get `/ph/<id>.<sig>/t.webp` and `v.jpg` (signed, never
   ending, relative so cn.aybkk.net works too), sent `public, max-age=86400, s-maxage=86400` so Cloudflare's edge keeps
@@ -148,7 +147,27 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
   it switches; state in `bkk_settings` `photo_r2_move`; a server start stops it, Start goes on). Copies to remove
   (a moved photo's Cloudinary copy a day after its move, R2 copies that could not be deleted) wait in
   `bkk_photo_orphans`. With R2 on, `photos_daily_cap` does not apply.
-  Faces (`aybkk-profile`) stay on Cloudinary, and the `PHOTO_SIZES`/`FACE_SIZES` strings never change (a new one re-bills every photo).
+  **Cloudinary exit (25 Nov 2026, the account closes 29 Nov):** Photo storage offers "Fast move (before Cloudinary
+  closes)": faces first, then 4 photos at a time a quarter second apart, photos with no Drive copy first, from the stored
+  Cloudinary JPEG, else Drive's 2048 px copy (never the Drive original); a JPEG of at most 2560 px with no EXIF turn goes
+  to R2 as it is, metadata and anything after its end out. A Drive copy is taken only if it is the same shape and not
+  smaller than the one on Cloudinary (both moves). A new pass (Start after the end) tries every photo left again, those
+  passed over after two server stops too. A fast move keeps every Cloudinary copy (`not_before` infinity in
+  `bkk_photo_orphans`, faces' copies there too as `aybkk-profile/<ref>`) until staff press "Remove the Cloudinary copies
+  of moved photos" (Boonchu's call). Faces with R2 on are `bkk_members.photo_id` `r2face/<8 hex>/<ref>`
+  (`face/<8 hex>/<ref>/l|d|s.jpg`, 600, 320, 160 px; the 8 hex is new for each upload or move, so two tries never share
+  files), under the same ref, so every face link handed out (door tablet too) keeps working; the face route stays
+  `private, max-age` and never a public cache. A new face is a square from the middle of a wide photo and near the top of
+  a tall one (no face finder); a HEIC is refused with 415 (the page asks for a JPEG or a screenshot) and anything over
+  4096 px or 16 MP with 413, neither counted as a try. A normal Start moves the faces too. Rolled back to code from
+  before this, faces in R2 show as initials until rolled forward, and the kept Cloudinary copies stay (that code's sweeps
+  never take a `not_before` infinity row). The save, face and `/ph` links are
+  signed with `PHOTO_LINK_SECRET`, else `CLOUDINARY_API_SECRET`: never remove `CLOUDINARY_API_SECRET` unless
+  `PHOTO_LINK_SECRET` holds the same value, or every photo and face link stops. The `PHOTO_SIZES`/`FACE_SIZES` strings
+  never change (a new one re-bills every photo). **Cloudinary is closed from 29 Nov 2026:** nothing a student or
+  teacher does waits on it (a delete there is noted in `bkk_photo_orphans` or `bkk_face_orphans` and tried in the
+  background, 10 s at most; with R2 on the `/photos` meter does not ask it), and the Cloudinary variables stay in
+  Railway unless `PHOTO_LINK_SECRET` holds `CLOUDINARY_API_SECRET`'s value.
 - **Inbox:** `inbox.js` keeps 1:1 chats from the LINE Official Account (`/line/webhook`) and
   Instagram/Facebook DMs and comments (`/meta/webhook`) in `aybkk_inbox` for 90 days.
   Machi reads `GET /api/inbox` (header `x-inbox-key`). Env: `INBOX_KEY`; `LINE_CHANNEL_SECRET`
