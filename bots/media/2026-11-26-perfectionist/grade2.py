@@ -8,6 +8,7 @@ def luma(path):
     return np.frombuffer(raw, np.uint8).astype(float) / 255
 def curve(pts): return "curves=master='" + ' '.join('%.3f/%.3f' % p for p in pts) + "'"
 for i, x in enumerate(it):
+    if x.get('nograde'): continue
     x.pop('eq', None); x.pop('look', None)
     y = luma(P + f'work/pieces/p{i:02d}.mp4')
     p1, med, p99, std = np.percentile(y, 1), np.median(y), np.percentile(y, 99), y.std() * 255
