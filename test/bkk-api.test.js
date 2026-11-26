@@ -10835,6 +10835,283 @@ const ok = (name, cond, extra = '') => {
     }
   }
 
+  console.log('\n-- the last Rezerv export next to what is here, and a pass set as in Rezerv (26 Nov 2026) --');
+  {
+    const one = async (sql, args = []) => (await pool.query(sql, args)).rows[0] || {};
+    const today = new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10);
+    const plus = (d, n) => new Date(Date.parse(d + 'T12:00:00Z') + n * 86400000).toISOString().slice(0, 10);
+    const imp = (kind, rows) => post(`/api/bkk/admin/import/${kind}`, { rows, dryRun: false, firstRow: 2 }, ADMIN);
+    await imp('members', [{ rezervId: 'RZFIX01', name: 'Fixa Example', email: 'fixa.example@example.com' }, { rezervId: 'RZFIX02', name: 'Twofold Example' }]);
+    // The same student again, on a profile of their own holding the email.
+    await pool.query(`INSERT INTO bkk_members (code,name,email) VALUES ('BRZFIXTWO002','Twofold Example','twofold.example@example.com')`);
+    const fixa = { memberRezervId: 'RZFIX01', name: 'Fixa Example', email: 'fixa.example@example.com' }, two = { memberRezervId: 'RZFIX02', name: 'Twofold Example' };
+    const packRow = (p, ref, left, from = -10, to = 80) => ({ rezervId: ref, ...p, plan: '10 classes/3mo', start: plus(today, from), until: plus(today, to),
+      classesLeft: String(left), status: 'Active' });
+    const brought = await imp('passes', [packRow(fixa, 'RZFIXP1', 7), packRow(two, 'RZFIXP2', 9), packRow(fixa, 'RZFIXP3', 10, -5, 60)]);
+    const pid = async ref => (await one(`SELECT id FROM bkk_passes WHERE source='rezerv' AND source_ref=$1`, [ref])).id;
+    const [p1, p2, p3] = [await pid('RZFIXP1'), await pid('RZFIXP2'), await pid('RZFIXP3')];
+    const fixaId = (await one(`SELECT id FROM bkk_members WHERE rezerv_id='RZFIX01'`)).id;
+    // A door seat "Rezerv package" two days ago, a day both of Fixa's packs ran.
+    await pool.query(`INSERT INTO bkk_bookings (slot_id,class_date,start_at,member_id,status,cover,source,checked_in_at)
+      VALUES (NULL,$1,$2,$3,'booked','rezerv','door',$2)`, [plus(today, -2), `${plus(today, -2)}T05:30:00+07:00`, fixaId]);
+    const look = body => post('/api/bkk/admin/rezerv/compare', body, ADMIN);
+    const snap = async () => JSON.stringify((await pool.query(`SELECT (SELECT json_agg(p ORDER BY p.id) FROM bkk_passes p) AS p,
+      (SELECT json_agg(b ORDER BY b.id) FROM bkk_bookings b) AS b, (SELECT json_agg(m ORDER BY m.id) FROM bkk_members m) AS m,
+      (SELECT count(*)::int FROM bkk_pass_fixes) AS f`)).rows[0]);
+    const rows = [packRow(fixa, 'RZFIXP1', 7), packRow({ ...two, email: 'twofold.example@example.com' }, 'RZFIXP2', 9), packRow(fixa, 'RZFIXP3', 10, -5, 60),
+      { ...packRow(fixa, 'RZFIXP4', 10), plan: 'Full workshop with Guest Teachers' }, { ...packRow(fixa, 'RZFIXP5', 10), start: '--', until: '--' }];
+    const before = await snap();
+    const noKey = await post('/api/bkk/admin/rezerv/compare', { passes: rows }), scope = await look({ scope: true });
+    const l1 = await look({ passes: rows, visits: [] });
+    const code = (b, c) => (b.cases || []).filter(x => x.code === c);
+    ok('compare: staff key only (401 without); its scope says from which day visits matter; a look changes nothing',
+       brought.status === 200 && p1 && p2 && p3 && noKey.status === 401 && scope.status === 200 && scope.body.visitsFrom <= plus(today, -4)
+       && l1.status === 200 && (await snap()) === before, JSON.stringify([brought.body.skipped, noKey.status, scope.body, l1.status, l1.body.error]));
+    ok('...a door seat on a day two Rezerv packs of that student ran, with no Rezerv visit that day, is tied to neither: a case at one class (THB 1,400)',
+       code(l1.body, 'untied').length === 1 && code(l1.body, 'untied')[0].thb === 1400 && code(l1.body, 'untied')[0].seat === true
+       && code(l1.body, 'untied')[0].passes.join() === [p1, p3].join() && code(l1.body, 'untied')[0].name === 'Fixa Example'
+       && !l1.body.fixes.some(f => f.pass === p1 || f.pass === p3), JSON.stringify(l1.body.cases));
+    ok('...a Rezerv id on one profile and its email on another is two profiles for one person, at what the pack holds (9 classes, THB 12,600)',
+       code(l1.body, 'twoProfiles').length === 1 && code(l1.body, 'twoProfiles')[0].thb === 12600 && code(l1.body, 'twoProfiles')[0].passes.join() === String(p2),
+       JSON.stringify(l1.body.cases));
+    ok('...a workshop row is not compared, and a pack paid and not started (no dates) is counted as such',
+       l1.body.passes[3].kind === 'notOurs' && l1.body.passes[3].code === 'badPlan' && l1.body.passes[4].kind === 'notStarted'
+       && l1.body.passes.filter(x => x.kind === 'compared').length === 3, JSON.stringify(l1.body.passes.map(x => [x.kind, x.code])));
+    const l2 = await look({ passes: rows, visits: [{ memberRezervId: 'RZFIX01', name: 'Fixa Example', date: plus(today, -2), time: '05:30', status: 'Completed' }] });
+    ok('...with a Rezerv visit on that day the seat is that visit: counted once, no case and nothing to add',
+       l2.status === 200 && code(l2.body, 'untied').length === 0 && l2.body.visits.read === 1
+       && l2.body.passes.filter(x => x.kind === 'compared').every(x => x.here.doorSeats === 0) && (await snap()) === before, JSON.stringify(l2.body.cases));
+
+    const fix = (id, body, headers = ADMIN) => post(`/api/bkk/admin/passes/${id}/rezerv-fix`, body, headers);
+    const was = { creditsUsed: 3, validUntil: plus(today, 80), frozenFrom: null, frozenUntil: null, status: 'active' };
+    const f0 = await fix(p1, {}, {}), f1 = await fix(p1, {});
+    const f2 = await fix(p1, { set: { creditsUsed: 6, validUntil: plus(today, 85) } });
+    ok('set as in Rezerv: staff key only; the look (the default) answers with the pass as it is, and what would change, and keeps nothing',
+       f0.status === 401 && f1.status === 200 && f1.body.dryRun === true && JSON.stringify(f1.body.was) === JSON.stringify(was) && f1.body.changes.length === 0
+       && f2.status === 200 && f2.body.changes.map(c => `${c.field}:${c.from}>${c.to}`).join() === `creditsUsed:3>6,validUntil:${plus(today, 80)}>${plus(today, 85)}`
+       && (await snap()) === before, JSON.stringify([f0.status, f1.body, f2.body]));
+    const bad = [await fix(p1, { dryRun: false, set: { creditsUsed: 6 }, was }), await fix(p1, { dryRun: false, set: { creditsUsed: 6 }, note: 'final export' }),
+      await fix(p1, { dryRun: false, set: { creditsUsed: 6 }, note: 'final export', was: { ...was, creditsUsed: 2 } }),
+      await fix(p1, { set: { creditsUsed: 11 } }), await fix(p1, { set: { status: 'frozen' } }),
+      await fix(p1, { set: { frozenFrom: plus(today, -1), frozenUntil: plus(today, -3) } }), await fix(p1, { set: { classes: 2 } })];
+    ok('...a save needs a note (400) and the pass as the look saw it: without it, or with older values, 409 with what it is now; nothing saved',
+       bad[0].status === 400 && bad[1].status === 409 && bad[2].status === 409 && bad[2].body.changed === true
+       && JSON.stringify(bad[2].body.was) === JSON.stringify(was) && (await snap()) === before, JSON.stringify(bad.slice(0, 3).map(r => [r.status, r.body])));
+    ok('...more classes than the pack, paused with no pause begun, a pause ending before it starts, or another field: 400',
+       bad.slice(3).every(r => r.status === 400), JSON.stringify(bad.slice(3).map(r => [r.status, r.body.error])));
+    const saved = await fix(p1, { dryRun: false, set: { creditsUsed: 6, validUntil: plus(today, 85) }, was, note: 'final export, row 12', by: 'M' });
+    const row = await one(`SELECT via, by_name, note, was, became FROM bkk_pass_fixes WHERE pass_id=$1`, [p1]);
+    const p1now = await one(`SELECT credits_used, to_char(valid_until,'YYYY-MM-DD') AS u, note FROM bkk_passes WHERE id=$1`, [p1]);
+    ok('...saved with the note, who and how, and the pass before and after; the pass note says when',
+       saved.status === 200 && saved.body.success === true && p1now.credits_used === 6 && p1now.u === plus(today, 85)
+       && p1now.note.endsWith(`| Rezerv fix ${today}`) && row.via === 'admin' && row.by_name === 'M' && row.note === 'final export, row 12'
+       && row.was.creditsUsed === 3 && row.became.creditsUsed === 6 && row.became.validUntil === plus(today, 85), JSON.stringify([saved.body, row, p1now]));
+    const again = await fix(p1, { dryRun: false, set: { creditsUsed: 7 }, was, note: 'from the same old look' });
+    ok('...the same look a second time is stale: 409, nothing saved', again.status === 409 && again.body.changed === true
+       && (await one(`SELECT credits_used FROM bkk_passes WHERE id=$1`, [p1])).credits_used === 6, JSON.stringify(again.body));
+    const voidIt = await fix(p3, { dryRun: false, set: { status: 'void' }, note: 'cancelled in the export', via: 'cli', said: 'cancelled on 2026-11-20',
+      was: { creditsUsed: 0, validUntil: plus(today, 60), frozenFrom: null, frozenUntil: null, status: 'active' } });
+    const p3now = await one(`SELECT status, note FROM bkk_passes WHERE id=$1`, [p3]);
+    ok('...a cancel is written as the import writes it: void, and "cancelled on ... in Rezerv" in the pass note',
+       voidIt.status === 200 && p3now.status === 'void' && / \| cancelled on 2026-11-20 in Rezerv \| Rezerv fix \d{4}-\d{2}-\d{2}$/.test(p3now.note)
+       && (await one(`SELECT via FROM bkk_pass_fixes WHERE pass_id=$1`, [p3])).via === 'cli', JSON.stringify([voidIt.body, p3now]));
+    const given = await post('/api/bkk/admin/passes', { memberCode: (await one(`SELECT code FROM bkk_members WHERE id=$1`, [fixaId])).code,
+      productCode: 'pack8', source: 'manual' }, ADMIN);
+    const ours = await fix(given.body.pass.id, {});
+    ok('...only a pass moved from Rezerv: one sold or given here is refused (409)', given.status === 200 && ours.status === 409, JSON.stringify(ours.body));
+
+    // Admin's "Fix as in Rezerv", run from the page itself against this server.
+    const fs = require('fs'), vm = require('vm'), path = require('path');
+    const page = fs.readFileSync(path.join(__dirname, '../public/bkk-admin.html'), 'utf8');
+    const seg = page.slice(page.indexOf('  // Fix as in Rezerv:'), page.indexOf('  window.grantPass = '));
+    const run = async answers => {
+      const asked = [], alerts = [], calls = [];
+      const ctx = { T: (k, ...a) => `${k}${a.length ? `(${a.join(',')})` : ''}`, alert: m => alerts.push(m), findStudents: () => {},
+        ask: q => { asked.push(q); return answers.length ? answers.shift() : null; },
+        shout: async r => { const j = await r.json().catch(() => ({})); if (!r.ok) { alerts.push(j.error || 'failed'); return null; } return j; },
+        api: (u, o = {}) => { calls.push(JSON.parse(o.body || '{}')); return fetch(B + u, { method: o.method, headers: { 'Content-Type': 'application/json', ...ADMIN }, body: o.body }); } };
+      ctx.window = ctx;
+      vm.createContext(ctx);
+      vm.runInContext(seg, ctx);
+      await ctx.rezervFix(p1);
+      return { asked, alerts, calls };
+    };
+    const u1 = plus(today, 85);
+    const noNote = await run(['7', u1, '', '', 'active', '']);
+    const same = await run(['6', u1, '', '', 'active']);
+    const byHand = await run(['7', u1, '', '', 'active', 'Rezerv shows 7 used']);
+    const p1hand = await one(`SELECT credits_used FROM bkk_passes WHERE id=$1`, [p1]);
+    const handRow = await one(`SELECT via, note, was, became FROM bkk_pass_fixes WHERE pass_id=$1 ORDER BY id DESC LIMIT 1`, [p1]);
+    ok('Admin\'s "Fix as in Rezerv" on a Rezerv pass row: it asks with the pass\'s own values, looks first, shows the change, and saves only with a note',
+       /p\.source === 'rezerv' && !p\.twin_of \? `<button class="btn gray" onclick="rezervFix\(\$\{p\.id\}\)">\$\{T\('rzFix'\)\}<\/button>`/.test(page)
+       && noNote.alerts.join() === 'rzNoteNeeded' && noNote.calls.length === 2 && noNote.calls.every(c => c.dryRun === true)
+       && same.alerts.join() === 'rzSame' && same.calls.length === 2
+       && byHand.asked[0] === 'rzUsed(10)' && byHand.asked[5] === 'rzNote(rzF_creditsUsed: 6 → 7)' && byHand.alerts.join() === 'rzDone'
+       && byHand.calls.map(c => c.dryRun).join() === 'true,true,false' && byHand.calls[2].was.creditsUsed === 6 && byHand.calls[2].note === 'Rezerv shows 7 used'
+       && p1hand.credits_used === 7 && handRow.via === 'admin' && handRow.note === 'Rezerv shows 7 used' && handRow.became.creditsUsed === 7,
+       JSON.stringify([noNote, same, byHand, p1hand, handRow]));
+  }
+
+  console.log('\n-- the compare, class by class: what was done here to each class, and a pass Rezerv lists twice (26 Nov 2026) --');
+  {
+    const one = async (sql, args = []) => (await pool.query(sql, args)).rows[0] || {};
+    const today = new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10);
+    const plus = (d, n) => new Date(Date.parse(d + 'T12:00:00Z') + n * 86400000).toISOString().slice(0, 10);
+    const imp = (kind, rows) => post(`/api/bkk/admin/import/${kind}`, { rows, dryRun: false, firstRow: 2 }, ADMIN);
+    const look = (passes, visits = []) => post('/api/bkk/admin/rezerv/compare', { passes, visits }, ADMIN);
+    const slots = (await pool.query(`SELECT id, weekday, start_time, title FROM bkk_class_slots WHERE active AND NOT is_online ORDER BY start_time, id`)).rows;
+    const slotOn = (d, t) => slots.find(s => s.weekday === new Date(d + 'T12:00:00Z').getUTCDay() && (!t || s.start_time === t));
+    const open = async d => !moonDaysBetween(d, d).size && !(await one('SELECT 1 AS x FROM bkk_class_overrides WHERE class_date=$1', [d])).x;
+    // Days a few days on with a 05:30 and a 07:30 class, each used once.
+    const days = [];
+    for (let d = plus(today, 2); days.length < 6; d = plus(d, 1)) if (slotOn(d, '05:30') && slotOn(d, '07:30') && await open(d)) days.push(d);
+    const [D1, D2, D3, D4, D5, D6] = days;
+    const ppl = Object.fromEntries(['Kai', 'Lux', 'Mo', 'Nia', 'Oz', 'Pip', 'Rex', 'Sky', 'Tam'].map((f, k) => [f.toLowerCase(),
+      { memberRezervId: `RZCMP${10 + k}`, name: `${f} Compare`, email: `${f.toLowerCase()}.compare@example.com` }]));
+    await imp('members', Object.values(ppl).map(p => ({ rezervId: p.memberRezervId, name: p.name, email: p.email })));
+    const codeOf = async p => (await one('SELECT code FROM bkk_members WHERE rezerv_id=$1', [p.memberRezervId])).code;
+    const pid = async ref => (await one(`SELECT id FROM bkk_passes WHERE source='rezerv' AND source_ref=$1`, [ref])).id;
+    const used = async id => (await one('SELECT credits_used FROM bkk_passes WHERE id=$1', [id])).credits_used;
+    const packRow = (p, ref, left) => ({ rezervId: ref, ...p, plan: '10 classes/3mo', start: plus(today, -10), until: plus(today, 80),
+      classesLeft: String(left), status: 'Active' });
+    const book = async (p, d, t) => post('/api/bkk/bookings', { memberCode: await codeOf(p), slotId: slotOn(d, t).id, date: d }, ADMIN);
+    const rzVisit = (p, ref, d, t, status) => ({ rezervId: ref, ...p, date: d, time: t, className: slotOn(d, t).title, status });
+    const cancelOn = (base, id, code) => fetch(`${base}/api/bkk/bookings/${id}/cancel`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ memberCode: code }) }).then(async r => ({ status: r.status, body: await r.json().catch(() => ({})) }));
+    const itemOf = (L, id) => L.body.passes.find(x => x.pass === id) || {};
+    const fixesOf = (L, id) => L.body.fixes.filter(f => f.pass === id);
+    const casesOf = (L, id) => L.body.cases.filter(c => c.passes.includes(id)).map(c => c.code);
+
+    // A class cancelled late here keeps its class used; one cancelled in time gives it back. Both by the cancel route,
+    // the late one on a server whose class clock is 4 hours before that class.
+    await imp('passes', [packRow(ppl.kai, 'RZCMPK', 7)]);
+    const kai = await pid('RZCMPK');
+    const bLate = await book(ppl.kai, D1, '05:30'), bBack = await book(ppl.kai, D2, '05:30');
+    const cc = Date.parse(`${D1}T05:30:00+07:00`) - 4 * 3600000;
+    const appK = express();
+    appK.use(express.json());
+    await mountBkk(appK, { pgPool: pool, now, clock: () => cc });
+    const srvK = appK.listen(0);
+    const cLate = await cancelOn(`http://127.0.0.1:${srvK.address().port}`, bLate.body.booking.id, await codeOf(ppl.kai));
+    srvK.close();
+    // The database's clock wrote cancelled_at; in use it is the moment the class clock judged the cancel by.
+    await pool.query('UPDATE bkk_bookings SET cancelled_at=to_timestamp($2::double precision / 1000) WHERE id=$1', [bLate.body.booking.id, cc]);
+    const cBack = await cancelOn(B, bBack.body.booking.id, await codeOf(ppl.kai));
+    const lk = await look([packRow(ppl.kai, 'RZCMPK', 7)]);
+    ok('compare: a class cancelled late here stays used (counted here), one cancelled in time does not: no fix to the 4 of 10 used',
+       bLate.status === 200 && cLate.status === 200 && cLate.body.creditReturned === false && cBack.body.creditReturned === true && await used(kai) === 4
+       && fixesOf(lk, kai).length === 0 && casesOf(lk, kai).length === 0 && itemOf(lk, kai).count.here === 1
+       && itemOf(lk, kai).here.lateCancels === 1 && itemOf(lk, kai).here.bookings === 0,
+       JSON.stringify([bLate.body, cLate.body, cBack.body, itemOf(lk, kai), lk.body.cases]));
+
+    // Two classes on one day are two classes; a Rezerv visit takes only its own class.
+    await imp('passes', [packRow(ppl.lux, 'RZCMPL', 7)]);
+    const lux = await pid('RZCMPL');
+    const two = [await book(ppl.lux, D3, '05:30'), await book(ppl.lux, D3, '07:30')];
+    const l2a = await look([packRow(ppl.lux, 'RZCMPL', 7)]);
+    const l2b = await look([packRow(ppl.lux, 'RZCMPL', 6)], [rzVisit(ppl.lux, 'RZCMPLV', D3, '05:30', 'Booked')]);
+    ok('...two classes here on one day count as two; with Rezerv\'s 05:30 that day only the 07:30 is added (5 of 10 either way, no fix)',
+       two.every(r => r.status === 200) && await used(lux) === 5 && fixesOf(l2a, lux).length === 0 && casesOf(l2a, lux).length === 0
+       && itemOf(l2a, lux).count.here === 2 && fixesOf(l2b, lux).length === 0 && itemOf(l2b, lux).count.rezerv === 4 && itemOf(l2b, lux).count.here === 1,
+       JSON.stringify([two.map(r => r.body.error), itemOf(l2a, lux), itemOf(l2b, lux), l2a.body.cases]));
+
+    // A Rezerv booking ahead brought over, cancelled here in time: Rezerv still counts it, so it is given back.
+    await imp('passes', [packRow(ppl.mo, 'RZCMPM', 6)]);
+    const vMo = rzVisit(ppl.mo, 'RZCMPMV', D4, '05:30', 'Booked'), vMoNew = rzVisit(ppl.mo, 'RZCMPMV2', D6, '05:30', 'Booked');
+    const iMo = await imp('visits', [vMo]);
+    const mo = await pid('RZCMPM');
+    const seatMo = await one(`SELECT id FROM bkk_bookings WHERE source='rezerv' AND source_ref='RZCMPMV'`);
+    const cMo = await cancelOn(B, seatMo.id, await codeOf(ppl.mo));
+    const lm = await look([packRow(ppl.mo, 'RZCMPM', 6)], [vMo, vMoNew]);
+    const fm = fixesOf(lm, mo)[0] || {};
+    ok('...a Rezerv booking brought over and cancelled here in time, still booked in Rezerv: a fix gives it back (4 to 3 of 10)',
+       iMo.body.added === 1 && cMo.body.creditReturned === true && await used(mo) === 4 && fixesOf(lm, mo).length === 1 && fm.field === 'creditsUsed'
+       && fm.ours === 4 && fm.proposed === 3 && fm.why === 'Rezerv 4 + here 0 + door 0 - given back here, counted in Rezerv 1' && casesOf(lm, mo).length === 0,
+       JSON.stringify([iMo.body, cMo.body, fixesOf(lm, mo), lm.body.cases]));
+    ok('...and it is no Rezerv booking ahead "not here yet" (run-all keeps it cancelled here); one with no seat here is',
+       lm.body.ahead.length === 1 && lm.body.ahead[0].i === 1 && lm.body.ahead[0].date === D6 && lm.body.visits.missing === 0, JSON.stringify(lm.body.ahead));
+
+    // The shala closed a class a Rezerv booking brought over was for: given back, as the close says.
+    await imp('passes', [packRow(ppl.nia, 'RZCMPN', 6)]);
+    const vNia = rzVisit(ppl.nia, 'RZCMPNV', D5, '07:30', 'Booked');
+    await imp('visits', [vNia]);
+    const nia = await pid('RZCMPN');
+    const close = await post('/api/bkk/admin/classes/cancel', { slotId: slotOn(D5, '07:30').id, date: D5, reason: 'compare test' }, ADMIN);
+    const ln = await look([packRow(ppl.nia, 'RZCMPN', 6)], [vNia]);
+    ok('...a class the shala closed here, still booked in Rezerv: given back (4 to 3)', close.status === 200
+       && (fixesOf(ln, nia)[0] || {}).proposed === 3 && itemOf(ln, nia).count.givenBack === 1, JSON.stringify([close.body, fixesOf(ln, nia), ln.body.cases]));
+
+    // A merge kept the seat here on the pack, and cancelled the Rezerv seat of that class on the other profile:
+    // the seat kept is that Rezerv class, counted once.
+    await imp('passes', [packRow(ppl.tam, 'RZCMPT', 6)]);
+    const tam = await pid('RZCMPT');
+    const dupe = await one(`INSERT INTO bkk_members (code,name) VALUES ('BRZCMPDUP01','Tam Compare') RETURNING id, code`);
+    await pool.query(`INSERT INTO bkk_bookings (slot_id,class_date,start_at,member_id,status,cover,source,source_ref)
+      VALUES ($1,$2,$3,$4,'booked','rezerv','rezerv','RZCMPTV')`, [slotOn(D2, '07:30').id, D2, `${D2}T07:30:00+07:00`, dupe.id]);
+    const bTam = await book(ppl.tam, D2, '07:30');
+    const mg = await post(`/api/bkk/admin/members/${await codeOf(ppl.tam)}/merge`, { from: dupe.code, sure: true }, ADMIN);
+    const lt = await look([packRow(ppl.tam, 'RZCMPT', 6)], [rzVisit(ppl.tam, 'RZCMPTV', D2, '07:30', 'Booked')]);
+    const merged = await one(`SELECT member_id, status, cancel_reason FROM bkk_bookings WHERE source_ref='RZCMPTV'`);
+    ok('...a Rezerv seat a merge cancelled for the same class booked here: Rezerv counted that class, so the booking here is not added (5 to 4)',
+       bTam.status === 200 && mg.status === 200 && /^merged:/.test(merged.cancel_reason || '') && await used(tam) === 5
+       && (fixesOf(lt, tam)[0] || {}).proposed === 4 && itemOf(lt, tam).count.here === 0 && lt.body.visits.missing === 0,
+       JSON.stringify([bTam.body.error, mg.body.error, merged, fixesOf(lt, tam), lt.body.cases]));
+
+    // A Rezerv booking brought over that they came to here (checked in), cancelled in Rezerv since: still used.
+    const { visitsFrom } = (await post('/api/bkk/admin/rezerv/compare', { scope: true }, ADMIN)).body;
+    let DP = today;
+    while (!(slotOn(DP) && await open(DP))) DP = plus(DP, -1);
+    const sOz = slotOn(DP), vOz = { rezervId: 'RZCMPOV', ...ppl.oz, date: DP, time: sOz.start_time, className: sOz.title, status: 'Booked' };
+    await imp('passes', [packRow(ppl.oz, 'RZCMPO', 6)]);
+    await imp('visits', [vOz]);
+    const oz = await pid('RZCMPO');
+    const seatOz = await one(`SELECT id FROM bkk_bookings WHERE source='rezerv' AND source_ref='RZCMPOV'`);
+    const inOz = await post(`/api/bkk/admin/bookings/${seatOz.id}/checkin`, {}, ADMIN);
+    const lo = await look([packRow(ppl.oz, 'RZCMPO', 7)], [{ ...vOz, status: 'Cancelled' }]);
+    const loGone = await look([packRow(ppl.oz, 'RZCMPO', 7)]);
+    ok('...a Rezerv booking brought over that they came to here, cancelled in Rezerv since (7 left): counted here, so 4 of 10 stays',
+       DP >= visitsFrom && inOz.status === 200 && fixesOf(lo, oz).length === 0 && casesOf(lo, oz).length === 0
+       && itemOf(lo, oz).count.usedHere === 1 && itemOf(lo, oz).count.rezerv === 3, JSON.stringify([DP, visitsFrom, inOz.body, itemOf(lo, oz), lo.body.cases]));
+    ok('...with no visits row for it, the look says one Rezerv class brought over is in no file (the tool stops on it)',
+       loGone.body.visits.missing === 1 && loGone.body.visits.missingDays.join() === [DP, DP].join() && lo.body.visits.missing === 0,
+       JSON.stringify([loGone.body.visits, lo.body.visits]));
+
+    // Rezerv lists a pass twice, its "Inactive" copy first: the copy in use is the one compared, as in the import.
+    const ms = (p, status, until = plus(today, 69)) => ({ rezervId: `${p.memberRezervId}M`, ...p, plan: '3 months Unlimited', start: plus(today, -20), until, status });
+    const twice = [ms(ppl.pip, 'Inactive'), ms(ppl.pip, 'Active')];
+    const iPip = await imp('passes', twice);
+    const pip = await pid(`${ppl.pip.memberRezervId}M`);
+    const lp = await look(twice);
+    ok('...a pass Rezerv lists twice, its Inactive copy first: compared as the copy in use, nothing to void, still live',
+       iPip.body.added === 1 && iPip.body.updated === 1 && (await one('SELECT status FROM bkk_passes WHERE id=$1', [pip])).status === 'active'
+       && lp.body.passes.map(x => x.kind).join() === 'again,compared' && fixesOf(lp, pip).length === 0 && casesOf(lp, pip).length === 0
+       && lp.body.holdings.before.live === 1 && lp.body.holdings.after.live === 1, JSON.stringify([iPip.body, lp.body.passes, lp.body.fixes]));
+    const lp2 = await look([ms(ppl.pip, 'Active'), ms(ppl.pip, 'Active', plus(today, 75))]);
+    ok('...two copies in use that differ: for Boonchu (twoRows), never fixed', casesOf(lp2, pip).join() === 'twoRows' && fixesOf(lp2, pip).length === 0,
+       JSON.stringify([lp2.body.cases, lp2.body.fixes]));
+
+    // A fix set a pause, then staff ended it early here: a change by hand, so the pause is not proposed again.
+    await imp('passes', [ms(ppl.rex, 'Active')]);
+    const rex = await pid(`${ppl.rex.memberRezervId}M`);
+    const paused = { ...ms(ppl.rex, 'Frozen', plus(today, 83)), frozenFrom: plus(today, -1), frozenUntil: plus(today, 13) };
+    const lr1 = await look([paused]);
+    const setR = await post(`/api/bkk/admin/passes/${rex}/rezerv-fix`, { dryRun: false, was: itemOf(lr1, rex).ours, note: 'compare test',
+      set: Object.fromEntries(fixesOf(lr1, rex).map(f => [f.field, f.proposed])) }, ADMIN);
+    const un = await post(`/api/bkk/admin/passes/${rex}/unfreeze`, {}, ADMIN);
+    const lr2 = await look([paused]);
+    ok('...a pause a fix set, ended early here by staff: the next compare calls it a change by hand (handSet), and proposes nothing',
+       fixesOf(lr1, rex).some(f => f.field === 'status' && f.proposed === 'frozen') && setR.status === 200 && un.status === 200
+       && casesOf(lr2, rex).join() === 'handSet' && fixesOf(lr2, rex).length === 0, JSON.stringify([fixesOf(lr1, rex), setR.body, un.status, lr2.body.cases]));
+
+    // A classes-left cell over the pack's size: for Boonchu, never read as 0 used.
+    await imp('passes', [packRow(ppl.sky, 'RZCMPS', 7)]);
+    const sky = await pid('RZCMPS');
+    const ls = await look([packRow(ppl.sky, 'RZCMPS', 12)]);
+    ok('...a classes-left cell of 12 on a pack of 10: a case (leftOver, at the 7 classes left, THB 9,800), no fix',
+       ls.body.cases.filter(c => c.passes.includes(sky)).map(c => `${c.code}:${c.thb}`).join() === 'leftOver:9800' && fixesOf(ls, sky).length === 0,
+       JSON.stringify([ls.body.cases, ls.body.fixes]));
+  }
+
   console.log(`\n${PASS} passed, ${FAIL} failed`);
   srv.close(); await pool.end();
   process.exit(FAIL ? 1 : 0);
