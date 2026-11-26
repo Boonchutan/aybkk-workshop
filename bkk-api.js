@@ -8343,17 +8343,24 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // switches, in one statement that takes only a row still on Cloudinary, so a new
   // upload or a delete meanwhile wins. A failure leaves the photo on Cloudinary as it
   // was and is listed with its reason; the next Start after the end of a pass tries
-  // those again. R2 itself refusing stops the move there, nothing skipped.
+  // those again. R2 itself failing (a 500, no answer) is tried again in place, about
+  // 2 s then 8 s later, each try with files of its own; still failing, the move waits
+  // there, nothing skipped, and tries again by itself after 1, 2, 5, then every 10
+  // minutes while it is on (wait, halts). One R2 500 had stopped it until Start (26 Nov 2026).
   // Same photo id, so who is on it does not change; a face keeps its ref, so every
   // face link handed out keeps working.
-  // The place reached is kept in bkk_settings. It never runs by itself: a server
-  // start stops it, and Start goes on from there. The photos being moved are noted
-  // first. A deploy also stops the server, so a photo cut off once is tried once
-  // more; cut off twice (out of memory, say) it is listed and passed over for good (skip).
+  // The place reached is kept in bkk_settings. It starts only on Start; a server start
+  // no longer stops it (moveAtBoot). The photos being moved are noted first. A deploy
+  // stops the server, so a photo cut off once is tried once more; cut off twice (out
+  // of memory, say) it is listed and passed over for good (skip).
   const MOVE_KEY = 'photo_r2_move', MOVE_EVERY_MS = 20000, FAST_EVERY_MS = 250, FAST_AT_ONCE = 4, FACE_AT_ONCE = 4;
+  // Tests give shorter times.
+  const R2_AGAIN_MS = opts.r2AgainMs || [2000, 8000], MOVE_WAITS_MS = opts.moveWaitsMs || [60e3, 120e3, 300e3, 600e3];
+  const MOVE_BOOT_MS = opts.moveBootMs || 30000;
+  const moveWait = halts => MOVE_WAITS_MS[Math.min(Math.max(halts, 1), MOVE_WAITS_MS.length) - 1];
   // q, not getSetting: a database error throws, so the timer keeps going.
   const moveState = async () => ({ on: false, after: 0, moved: 0, failedN: 0, failed: [], trying: null, cut: [], skip: [],
-    fast: false, phase: 0, facesMoved: 0, faceFailed: [], faceSkip: [],
+    fast: false, phase: 0, facesMoved: 0, faceFailed: [], faceSkip: [], wait: null, halts: 0,
     ...((await q('SELECT value FROM bkk_settings WHERE key = $1', [MOVE_KEY])).rows[0] || {}).value });
   // A step can switch it off (done) but not back on: Stop pressed while a photo was moving holds.
   const saveMove = (s, plain) => q(`INSERT INTO bkk_settings (key,value,updated_at) VALUES ($1,$2::jsonb,now())
@@ -8374,7 +8381,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   };
   // One photo: { moved }, { gone } (deleted meanwhile), { fail: why } or { halt: why } (R2 itself).
   async function moveIt(p, fast) {
-    const key = crypto.randomBytes(12).toString('hex');
+    let key;
     const drive = p.drive_id ? driveSources(p.drive_id) : [], cloud = () => grab(photoUrl(p.public_id, 'full'));
     // Fast: the JPEG stored on Cloudinary first (the very picture students have), Drive's 2048 px copy only
     // when Cloudinary does not send it. Normal: the Drive original, its 2048 px copy, then Cloudinary.
@@ -8385,10 +8392,12 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         (m, i) => i === cloudAt || sameShape(m, p) || 'Drive has another shape or a smaller copy, and Cloudinary did not send the photo.', { keep: fast });
     } catch (e) { return { fail: errText(e) }; }
     try {
-      await r2Put(p.day, key, made);
-      for (const kind of ['v', 't']) await r2Holds(r2lib.objectKey(p.day, key, kind), made[kind], kind === 'v' ? 'photo' : 'tile');
+      await r2lib.again(async () => {
+        key = crypto.randomBytes(12).toString('hex');
+        await r2Put(p.day, key, made);
+        for (const kind of ['v', 't']) await r2Holds(r2lib.objectKey(p.day, key, kind), made[kind], kind === 'v' ? 'photo' : 'tile');
+      }, { waits: R2_AGAIN_MS, undo: () => r2Drop(p.day, key) });
     } catch (e) {
-      await r2Drop(p.day, key);
       return e.r2 ? { halt: errText(e) } : { fail: errText(e) };
     }
     try {
@@ -8410,15 +8419,16 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // copy there), under the same ref and files of its own (another server moving the same
   // face at once never shares them). Its Cloudinary copy is kept until staff remove the copies.
   async function moveFace(f) {
-    const to = newFaceId(faceRef(f.photo_id));
-    let made;
+    let made, to;
     try {
       const buf = await grab(cloudinary.url(f.photo_id, { type: 'authenticated', sign_url: true, secure: true, format: 'jpg' }), 0, 30000);
       if (!buf) return { fail: 'Cloudinary did not send the face.' };
       made = await r2lib.faceVariants(buf);
     } catch (e) { return { fail: errText(e) }; }
-    try { await faceR2Put(to, made); }
-    catch (e) { await faceR2Drop(to); return e.r2 ? { halt: errText(e) } : { fail: errText(e) }; }
+    try {
+      await r2lib.again(async () => { to = newFaceId(faceRef(f.photo_id)); await faceR2Put(to, made); },
+        { waits: R2_AGAIN_MS, undo: () => faceR2Drop(to) });
+    } catch (e) { return e.r2 ? { halt: errText(e) } : { fail: errText(e) }; }
     try {
       const moved = (await q(`WITH m AS (UPDATE bkk_members SET photo_id=$3 WHERE id=$1 AND photo_id=$2 RETURNING id)
         INSERT INTO bkk_photo_orphans (store, ref, not_before) SELECT 'cloudinary', $2, 'infinity' FROM m
@@ -8438,7 +8448,15 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const at = new Date(nowMs()).toISOString();
     const listFail = (list, id, why) => [{ id, why, at }, ...list.filter(f => f.id !== id)].slice(0, 20);
     const fail = (p, why) => { s.failedN++; s.failed = listFail(s.failed, p.id, why); };
-    const halt = why => { Object.assign(s, { on: false, halted: why, at, trying: null }); return saveMove(s).then(() => s); };
+    // R2 still failing after the tries in place: the move stays on and waits, nothing skipped or listed.
+    const halt = why => {
+      const t = nowMs();
+      s.halts = (s.halts || 0) + 1;
+      Object.assign(s, { wait: { why, at: new Date(t).toISOString(), next: new Date(t + moveWait(s.halts)).toISOString() }, at, trying: null });
+      return saveMove(s).then(() => s);
+    };
+    // A step through: no longer waiting; R2 counted as back once it took a photo or a face.
+    const through = out => { s.wait = null; if (out.some(o => o.moved || o.gone)) s.halts = 0; };
     const faces = (await q(`SELECT id, photo_id FROM bkk_members WHERE photo_id LIKE $1 AND id <> ALL($2::int[]) ORDER BY id LIMIT ${FACE_AT_ONCE}`,
       [`${FACE_FOLDER}/%`, s.faceSkip])).rows;
     if (faces.length) {
@@ -8449,6 +8467,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       });
       if (stop) return halt(stop.halt);
       s.at = at;
+      through(out);
       await saveMove(s);
       return s;
     }
@@ -8459,7 +8478,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const ps = (await q(`SELECT id, public_id, drive_id, width, height, to_char(class_date,'YYYY-MM-DD') AS day FROM bkk_photos
       WHERE store = 'cloudinary' AND id <> ALL($2::int[]) AND ${s.fast ? '((drive_id IS NOT NULL)::int, id) > ($3::int, $1::int)' : 'id > $1'}
       ORDER BY ${s.fast ? '(drive_id IS NOT NULL), id' : 'id'} LIMIT ${s.fast && !was.length ? FAST_AT_ONCE : 1}`, [s.after, s.skip, ...(s.fast ? [s.phase] : [])])).rows;
-    if (!ps.length) { Object.assign(s, { on: false, done: true, at, trying: null }); await saveMove(s); return s; }
+    if (!ps.length) { Object.assign(s, { on: false, done: true, at, trying: null, wait: null, halts: 0 }); await saveMove(s); return s; }
     for (const p of ps) {
       if (was.includes(p.id) && s.cut.includes(p.id)) { s.skip = [...s.skip, p.id].slice(-100); fail(p, 'The server stopped twice while it was moving this photo: it stays on Cloudinary this round.'); continue; }
       if (was.includes(p.id)) s.cut = [...s.cut, p.id].slice(-100);
@@ -8472,6 +8491,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (stop) return halt(stop.halt);
     const last = ps.at(-1);
     Object.assign(s, { after: last.id, phase: s.fast && last.drive_id ? 1 : 0, at, trying: null });
+    through(out);
     await saveMove(s);
     return s;
   }
@@ -8479,11 +8499,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // No sweep between fast steps: it would destroy on Cloudinary while the move still reads from it.
   const moveStep = () => moving || (moving = moveOne().then(s => { if (!s.fast) sweepPhotos(); return s; }, e => { sweepPhotos(); throw e; })
     .finally(() => { moving = null; }));
-  function moveSoon(ms = MOVE_EVERY_MS) {
+  // first: run before the step (the boot's second look, moveAtBoot).
+  function moveSoon(ms = MOVE_EVERY_MS, first) {
     clearTimeout(moveTimer);
-    if (!timers) return;                 // a test steps by hand
-    moveTimer = setTimeout(() => moveStep().then(s => { if (s.on) moveSoon(s.fast ? FAST_EVERY_MS : MOVE_EVERY_MS); },
-      e => { console.error('[bkk photos] move step failed:', e.message); moveSoon(); }), ms);
+    if (!(opts.moveTimers ?? timers)) return;      // a test steps by hand
+    moveTimer = setTimeout(() => Promise.resolve(first && first()).then(() => moveStep()).then(s => {
+      if (s.on) moveSoon(s.wait ? moveWait(s.halts) : s.fast ? FAST_EVERY_MS : MOVE_EVERY_MS);
+    }, e => { console.error('[bkk photos] move step failed:', e.message); moveSoon(); }), ms);
     moveTimer.unref();
   }
   // Photos moved a minute in this run (since Start), to its last step when it is not running.
@@ -8498,12 +8520,14 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (on && (!r2 || !cloudinary)) return res.status(400).json({ error: r2 ? 'Cloudinary is not set up: nothing to move.' : 'R2 is not set up.' });
     try {
       if (!on) {
-        // Only the switch: a step finishing meanwhile keeps its count and place.
-        await q(`UPDATE bkk_settings SET value = value || '{"on": false}'::jsonb, updated_at = now() WHERE key = $1`, [MOVE_KEY]);
+        // Only the switch: a step finishing meanwhile keeps its count and place. A Stop holds
+        // through a server start too (moveAtBoot): the marks of an earlier code's own stops go.
+        await q(`UPDATE bkk_settings SET value = value || '{"on": false, "wait": null, "halted": null, "restarted": false}'::jsonb,
+          updated_at = now() WHERE key = $1`, [MOVE_KEY]);
         clearTimeout(moveTimer);
         return res.json({ move: await moveState() });
       }
-      await bootStopped;                             // Start in the first seconds after a server start: the start's stop first
+      await moveBooted;                              // Start in the first seconds after a server start: the start's look first
       if (moving) await moving.catch(() => {});      // a step Stop did not wait for: its place first
       const s = await moveState();
       if (s.on && s.fast !== fast) return res.status(409).json({ error: 'The move is running the other way: stop it first.', move: s });
@@ -8518,10 +8542,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
           faceSkip: [], faceFailed: [] });
         // The other way round, the place means something else: from the start (what moved is no longer on Cloudinary).
         else if (s.fast !== fast) Object.assign(s, { after: 0, phase: 0, trying: null });
-        Object.assign(s, { on: true, fast, restarted: false, halted: null, runAt: t, runMoved: s.moved });
+        Object.assign(s, { on: true, fast, restarted: false, halted: null, wait: null, halts: 0, resumedAt: null, runAt: t, runMoved: s.moved });
         await saveMove(s, true);
       }
-      moveSoon(1000);
+      moveSoon(1000);                                // waiting after an R2 failure too: it tries now
       res.json({ move: { ...s, perMin: movePace(s) } });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
@@ -8536,13 +8560,25 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       res.json({ photos: refs.length - faces, faces });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
-  // A server start stops a move staff started: it never runs by itself (a copy of
-  // this database on another server would move and remove photos with nobody there).
-  // Only one from before this start: Start waits for bootStopped, settled once this has run or the boot failed.
-  let bootStopDone;
-  const bootStopped = new Promise(ok => { bootStopDone = ok; });
-  const moveStopAtBoot = () => q(`UPDATE bkk_settings SET value = value || '{"on": false, "restarted": true}'::jsonb, updated_at = now()
-    WHERE key = $1 AND value->>'on' = 'true'`, [MOVE_KEY]).catch(e => console.error('[bkk photos] move not stopped at start:', e.message)).finally(bootStopDone);
+  // A server start (a deploy, a crash) no longer stops the move (26 Nov 2026, Cloudinary
+  // closing on the 29th): one that was on goes on by itself about 30 s later (resumedAt),
+  // its interrupted step protected as before (trying, cut, skip). So does one the code
+  // before this stopped by itself, on an R2 error (halted) or at a start (restarted); that
+  // code did not mark a Stop pressed after those, but its page offered Stop only while
+  // the move was on. A Stop pressed here holds. Not done, and only with R2 and Cloudinary
+  // set up. Looked at again just before that first step: during a deploy the old server
+  // runs for a while and its code still stops the move on an R2 error.
+  // Start waits for moveBooted, settled once the first look has run or the boot failed.
+  let bootDone;
+  const moveBooted = new Promise(ok => { bootDone = ok; });
+  const moveGoOn = () => q(`UPDATE bkk_settings SET updated_at = now(), value = value || jsonb_build_object('on', true,
+      'halted', null, 'restarted', false, 'wait', null, 'resumedAt', $2::text, 'runAt', $2::text, 'runMoved', coalesce((value->>'moved')::int, 0))
+    WHERE key = $1 AND coalesce(value->>'done', '') <> 'true'
+      AND (value->>'on' = 'true' OR coalesce(value->>'halted', '') <> '' OR value->>'restarted' = 'true') RETURNING 1`,
+  [MOVE_KEY, new Date(nowMs()).toISOString()]).then(r => r.rows.length > 0);
+  const moveAtBoot = () => (r2 && cloudinary ? moveGoOn() : Promise.resolve(false))
+    .then(on => { if (on) moveSoon(MOVE_BOOT_MS, moveGoOn); })
+    .catch(e => console.error('[bkk photos] move not looked at at start:', e.message)).finally(bootDone);
 
   // ── the student's own face (Boonchu, 9 Nov 2026) ──────────────────────────
   // One square photo per student, for the round account button and for staff
@@ -9475,9 +9511,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       console.log('✓ bkk-api mounted (/api/bkk/*)'); letterPurge(); sweepFaces();
       if (timers) { startPayWatch(); teePurgeTick(); setInterval(teePurgeTick, 24 * 3600 * 1000).unref(); }
       sweepPhotos();
-      return Promise.all([moveStopAtBoot(), switchPrices().catch(e => console.error('✗ bkk: price switch failed:', e.message))]);
+      return Promise.all([moveAtBoot(), switchPrices().catch(e => console.error('✗ bkk: price switch failed:', e.message))]);
     })
-    .catch(e => { console.error('✗ bkk-api schema init failed:', e.message); bootStopDone(); })
+    .catch(e => { console.error('✗ bkk-api schema init failed:', e.message); bootDone(); })
     .then(() => ({ paySweep, moneyTick, moneyLine, resendAlerts, teePurge, findOrCreateMember, staffSigninLink, photoMove: moveStep, photoSweep: sweepPhotos, faceSweep: sweepFaces }));
 }
 

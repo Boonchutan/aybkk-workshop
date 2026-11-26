@@ -1572,7 +1572,7 @@
     psTestOk: ms => `OK: R2 stored, sent back and deleted a test file (${ms} ms).`,
     psTestNo: e => `Not OK: ${e}`,
     psMoveH: 'Move older photos to R2',
-    psMoveHelp: 'Faces move first, then the photos. Each one is checked in R2 before it switches, and students see no change. It starts only when you tap Start, once R2 passes its test. A server restart stops it: tap Start to go on from where it stopped.',
+    psMoveHelp: 'Faces move first, then the photos. Each one is checked in R2 before it switches, and students see no change. It starts only when you tap Start, once R2 passes its test. Then it goes on by itself: after a server restart, and when R2 fails it waits and tries again by itself (after 1, 2, 5, then every 10 minutes). Stop holds until you tap Start.',
     psNormal: 'Normal move', psNormalHelp: 'One photo at a time, about 3 a minute, from the Drive original when there is one. Each Cloudinary copy is removed a day after its move.',
     psFast: 'Fast move (before Cloudinary closes)',
     psFastHelp: "About 4 photos at a time, with no wait. Photos with no Drive copy go first, because Cloudinary has the only one. From the photo on Cloudinary (the very one students see), else Drive's 2048 px copy, never the Drive original. Every Cloudinary copy is kept until you remove them below.",
@@ -1589,7 +1589,9 @@
     psIdle: 'Not started.',
     psRunning: (n, at) => `Moving: ${n} moved so far${at ? `, the last at ${at}` : ''}.`,
     psStopped: n => `Stopped after ${n} moved. Start goes on from where it stopped.`,
-    psRestarted: n => `Stopped by a server restart after ${n} moved. Start goes on from where it stopped.`,
+    psResumed: at => `Went on by itself after a server restart${at ? ` (${at})` : ''}.`,
+    psWaiting: (n, why, next) => `Waiting: R2 failed (${why}). ${n} moved so far, no photo skipped. It tries again by itself at ${next}.`,
+    psTryNow: 'Try now',
     psHalted: (n, why) => `Stopped after ${n} moved: R2 refused (${why}). No photo was skipped. Check it with Test R2, then tap Start.`,
     psDone: n => `Done: ${n} moved. Every photo that could be moved is on R2.`,
     psFailed: n => `${n} could not be moved this round and stay on Cloudinary, untouched. Once the round is done, Start tries each of them again:`,
@@ -1609,7 +1611,7 @@
     psTestOk: ms => `ใช้ได้: R2 เก็บ ส่งกลับ และลบไฟล์ทดสอบแล้ว (${ms} ms)`,
     psTestNo: e => `ใช้ไม่ได้: ${e}`,
     psMoveH: 'ย้ายรูปเก่าไป R2',
-    psMoveHelp: 'ย้ายรูปหน้าก่อน แล้วจึงย้ายรูปคลาส ทุกรูปจะตรวจใน R2 ก่อนสลับ นักเรียนจะไม่เห็นความเปลี่ยนแปลง จะเริ่มเมื่อกด เริ่ม และ R2 ผ่านการทดสอบเท่านั้น ถ้าเซิร์ฟเวอร์รีสตาร์ต การย้ายจะหยุด กด เริ่ม เพื่อทำต่อจากที่หยุด',
+    psMoveHelp: 'ย้ายรูปหน้าก่อน แล้วจึงย้ายรูปคลาส ทุกรูปจะตรวจใน R2 ก่อนสลับ นักเรียนจะไม่เห็นความเปลี่ยนแปลง จะเริ่มเมื่อกด เริ่ม และ R2 ผ่านการทดสอบเท่านั้น หลังจากนั้นจะทำต่อเอง: หลังเซิร์ฟเวอร์รีสตาร์ต และเมื่อ R2 ขัดข้อง จะรอแล้วลองใหม่เอง (หลัง 1, 2, 5 นาที แล้วทุก 10 นาที) ถ้ากด หยุด จะหยุดจนกว่าจะกด เริ่ม อีกครั้ง',
     psNormal: 'ย้ายแบบปกติ', psNormalHelp: 'ย้ายทีละรูป ประมาณนาทีละ 3 รูป ใช้ไฟล์ต้นฉบับจาก Drive ถ้ามี ไฟล์ใน Cloudinary จะถูกลบหลังย้ายหนึ่งวัน',
     psFast: 'ย้ายแบบเร็ว (ก่อน Cloudinary ปิด)',
     psFastHelp: 'ย้ายครั้งละประมาณ 4 รูป ไม่ต้องรอ รูปที่ไม่มีไฟล์ใน Drive ย้ายก่อน เพราะมีอยู่ที่ Cloudinary ที่เดียว ใช้ไฟล์ใน Cloudinary (รูปเดียวกับที่นักเรียนเห็นอยู่) ถ้าไม่ได้จึงใช้ไฟล์ 2048 px จาก Drive ไม่ใช้ไฟล์ต้นฉบับจาก Drive ไฟล์ใน Cloudinary ทุกไฟล์จะเก็บไว้จนกว่าคุณจะกดลบด้านล่าง',
@@ -1626,7 +1628,9 @@
     psIdle: 'ยังไม่ได้เริ่ม',
     psRunning: (n, at) => `กำลังย้าย: ย้ายแล้ว ${n} รูป${at ? ` ล่าสุดเวลา ${at}` : ''}`,
     psStopped: n => `หยุดแล้ว ย้ายไป ${n} รูป กด เริ่ม เพื่อทำต่อจากที่หยุด`,
-    psRestarted: n => `หยุดเพราะเซิร์ฟเวอร์รีสตาร์ต ย้ายไปแล้ว ${n} รูป กด เริ่ม เพื่อทำต่อจากที่หยุด`,
+    psResumed: at => `ทำต่อเองหลังเซิร์ฟเวอร์รีสตาร์ต${at ? ` (${at})` : ''}`,
+    psWaiting: (n, why, next) => `รออยู่: R2 ขัดข้อง (${why}) ย้ายแล้ว ${n} รูป ไม่มีรูปไหนถูกข้าม จะลองใหม่เองเวลา ${next}`,
+    psTryNow: 'ลองตอนนี้',
     psHalted: (n, why) => `หยุดแล้ว ย้ายไป ${n} รูป: R2 ไม่รับ (${why}) ไม่มีรูปไหนถูกข้าม ตรวจด้วย ทดสอบ R2 แล้วกด เริ่ม`,
     psDone: n => `เสร็จแล้ว: ย้าย ${n} รูป รูปที่ย้ายได้อยู่ที่ R2 ครบแล้ว`,
     psFailed: n => `${n} รูปย้ายไม่ได้ในรอบนี้ ยังอยู่ที่ Cloudinary เหมือนเดิม จบรอบแล้วกด เริ่ม จะลองใหม่ทุกรูป:`,
@@ -4575,8 +4579,9 @@
     const head = `<b>${T('psTitle')}</b><p class="muted">${T('psHelp')}</p>`;
     if (!st) return `<div class="box" id="psBox">${head}<p class="${failed ? 'flash warn' : 'muted'}" role="status">${esc(T(failed ? 'failed' : 'tbLoading'))}</p></div>`;
     const m = st.move || {}, at = m.at ? tbWhen(m.at) : '';
-    const state = m.on ? T('psRunning', m.moved || 0, at) : m.done ? T('psDone', m.moved || 0) : m.halted ? T('psHalted', m.moved || 0, m.halted)
-      : m.restarted ? T('psRestarted', m.moved || 0) : m.startedAt ? T('psStopped', m.moved || 0) : T('psIdle');
+    // wait: R2 failed and the move tries again by itself. halted: stopped by the code before 26 Nov 2026.
+    const state = m.on ? (m.wait ? T('psWaiting', m.moved || 0, m.wait.why, tbWhen(m.wait.next)) : T('psRunning', m.moved || 0, at))
+      : m.done ? T('psDone', m.moved || 0) : m.halted ? T('psHalted', m.moved || 0, m.halted) : m.startedAt ? T('psStopped', m.moved || 0) : T('psIdle');
     const left = st.left || {};
     const fails = (m.failed || []).length ? `<p class="flash warn">${esc(T('psFailed', m.failedN || m.failed.length))}</p>
       <ul class="muted">${m.failed.map(f => `<li>#${Number(f.id)}: ${esc(f.why)}</li>`).join('')}</ul>` : '';
@@ -4597,12 +4602,12 @@
       <p style="margin-top:14px"><b>${T('psMoveH')}</b></p>
       <p class="muted">${T('psMoveHelp')}</p>
       ${way(false, 'psNormal')}${way(true, 'psFast')}
-      <p role="status" style="margin-top:12px"><b>${esc(state)}</b>${m.startedAt ? `<br><span class="muted">${esc([T(m.fast ? 'psFast' : 'psNormal'),
+      <p role="status" style="margin-top:12px"><b>${esc(state)}</b>${m.on && m.resumedAt ? `<br><span class="muted">${esc(T('psResumed', tbWhen(m.resumedAt)))}</span>` : ''}${m.startedAt ? `<br><span class="muted">${esc([T(m.fast ? 'psFast' : 'psNormal'),
         m.perMin != null ? T('psPace', m.perMin) : '', m.facesMoved ? T('psFacesMoved', m.facesMoved) : ''].filter(Boolean).join(' · '))}</span>` : ''}</p>
       ${fails}${faceFails}
       ${left.cloudinary ? `<p class="muted">${esc(T('psLeftC', left.cloudinary))}</p>` : ''}
       ${left.r2 ? `<p class="muted">${esc(T('psLeftR', left.r2))}</p>` : ''}
-      <p>${m.on ? `<button class="btn gray" onclick="psMove(false)">${T('psStop')}</button>`
+      <p>${m.on ? `${m.wait ? `<button class="btn pink" onclick="psMove(true)">${T('psTryNow')}</button> ` : ''}<button class="btn gray" onclick="psMove(false)">${T('psStop')}</button>`
         : `<button class="btn pink" onclick="psMove(true)"${st.r2 ? '' : ' disabled'}>${T('psStart')}</button>`}</p>
       ${kept || PS_REL ? `<p style="margin-top:14px"><b>${T('psKeptH')}</b></p>
       ${kept ? `<p class="muted">${esc(T('psKept', left.kept || 0, faces.kept || 0))}</p>

@@ -423,6 +423,40 @@ const J = base => async (p, opts = {}, headers = {}) => {
   let e16 = null; try { await media.faceSquare(over); } catch (e) { e16 = e; }
   ok('a face over 16 megapixels is refused before it is opened (the pages send at most 700 px)', !!e16 && e16.status === 400 && e16.kind === 'photoBig', e16 && e16.message);
 
+  console.log('\n[R2 failing: a copy is tried again in place; after a run R2 stopped the next one comes soon, not hours later]');
+  let nPut = 2;
+  fr2.ctl.fail = (m, k) => (m === 'PUT' && k.startsWith('ws/') && nPut-- > 0 ? 500 : null);
+  const kAg = 'ws/' + '4'.repeat(32) + '.jpg', kAg2 = 'ws/' + '5'.repeat(32) + '.jpg';
+  let eAg = null; try { await media.copyIn(st, U, kAg, { fetch: same, bytes: good.length }); } catch (e) { eAg = e; }
+  ok('a copy asked with no tries again fails on the first R2 500, as before', !!eAg && eAg.r2 === true && /R2 PUT refused \(500/.test(eAg.message) && nPut === 1,
+     eAg && eAg.message);
+  nPut = 2;
+  const cAg = await media.copyIn(st, U, kAg, { fetch: same, bytes: good.length, again: [5, 10] }).catch(e => ({ error: e.message }));
+  let nHead = 1;
+  fr2.ctl.fail = m => (m === 'HEAD' && nHead-- > 0 ? 500 : null);
+  const cAg2 = await media.copyIn(st, U, kAg2, { fetch: same, bytes: good.length, again: [5, 10] }).catch(e => ({ error: e.message }));
+  fr2.ctl.fail = null;
+  ok("...with the copy jobs' tries again: two PUT 500s, then stored and checked; a HEAD 500, the same",
+     cAg.bytes === good.length && nPut < 0 && fr2.store.has(kAg) && cAg2.bytes === good.length && nHead < 0 && fr2.store.has(kAg2), `${nPut} ${nHead}`);
+  await pool.query('DELETE FROM ws_photo_copy');
+  const agIds = ['student_test-again1', 'student_test-again2'];
+  for (const id of agIds) cl.originals.set(OLD(id), await jpeg(30, 30, '#993366'));
+  cl.pages = [[...twoIds, ...autoIds, ...agIds].map(asset)];
+  fr2.ctl.fail = (m, k) => (m === 'PUT' && k.startsWith('ws/') ? 503 : null);
+  r2On();
+  const wag = media.wsPhotos({ r2Endpoint: fr2.url, fetch: fakeFetch, auto: { firstMs: 100, everyMs: 60e3, againMs: 300 }, r2AgainMs: [5, 10] });
+  r2Off();
+  makeApp(wag); await wag.start();
+  for (let i = 0; i < 200 && !(wag.status().finishedAt && wag.status().auto.next); i++) await sleep(25);
+  const g1 = wag.status(), dueIn = Date.parse(g1.auto.next) - Date.now();
+  ok('R2 stops a run by itself: the next one is due in about 10 minutes (here 0.3 s), not 3 hours (here a minute)',
+     /R2 PUT refused \(503/.test(g1.error || '') && g1.copied === 0 && dueIn > 0 && dueIn <= 300 && !g1.auto.done, JSON.stringify([dueIn, g1]));
+  fr2.ctl.fail = null;
+  for (let i = 0; i < 200 && !wag.status().auto.done; i++) await sleep(25);
+  const g2 = wag.status();
+  ok('...R2 back: that run copies what was left, and the copy then stops by itself for good',
+     g2.auto.done === true && g2.copied === 2 && !g2.error && agIds.every(id => /^\/sp\//.test(wag.rewriteText(OLD(id)))), JSON.stringify(g2));
+
   console.log('\n[uploads with no key: at most so many an hour from one address while R2 is on]');
   r2On();
   const lim = media.wsPhotos({ r2Endpoint: fr2.url, fetch: fakeFetch, auto: false, perHour: 2 });

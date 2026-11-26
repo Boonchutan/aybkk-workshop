@@ -975,7 +975,7 @@ const B_THB = 100; // satang per baht
   r2On();
   process.env.TMPDIR = MULTER_TMP;
   const app3 = express(); app3.use(express.json({ limit: '10mb' }));
-  mountIdcn(app3, { pgPool: pool, r2Endpoint: fr2.url, cloudinary: fakeCloud, fetch: fakeFetch, autoCopy: false });
+  mountIdcn(app3, { pgPool: pool, r2Endpoint: fr2.url, cloudinary: fakeCloud, fetch: fakeFetch, autoCopy: false, r2AgainMs: [5, 10] });
   r2Off();
   const app4 = express(); app4.use(express.json({ limit: '10mb' }));
   mountIdcn(app4, { pgPool: pool, cloudinary: fakeCloud, fetch: fakeFetch });
@@ -1371,6 +1371,35 @@ const B_THB = 100; // satang per baht
   ok('...and with nothing left it stops', a1.auto.done === true && a1.auto.next === null
      && (await urlOf('idc_payments', 'proof_url', `proof_url LIKE 'https://res.cloudinary.com/%'`, [])).length === 0, JSON.stringify(a1.auto));
   srv6.close();
+
+  // R2 stopping a run by itself: the next one 10 minutes later (here 0.3 s), not 3 hours (here a minute); R2 failing
+  // a file once or twice is tried again in place (here 5 and 10 ms later)
+  const agOld = 'https://res.cloudinary.com/dw1uubecu/image/upload/v1/aybkk/idcn3/assignments/testagain1.jpg';
+  cl.originals.set(agOld, await jpeg(50, 40));
+  await pool.query(`INSERT INTO idc_notes (student_id, kind, body, media_url, media_type) VALUES ($1,'assignment','Test again copy',$2,'image')`, [AL, agOld]);
+  fr2.ctl.fail = (m, k) => (m === 'PUT' && k.includes('/note/') ? 503 : null);
+  r2On(); process.env.TMPDIR = MULTER_TMP;
+  const app6b = express(); app6b.use(express.json({ limit: '10mb' }));
+  mountIdcn(app6b, { pgPool: pool, r2Endpoint: fr2.url, cloudinary: fakeCloud, fetch: fakeFetch, autoCopy: { firstMs: 100, everyMs: 60e3, againMs: 300 },
+    r2AgainMs: [5, 10] });
+  r2Off(); if (keepTmp == null) delete process.env.TMPDIR; else process.env.TMPDIR = keepTmp;
+  const srv6b = app6b.listen(0), J6b = Jx(`http://127.0.0.1:${srv6b.address().port}`);
+  const agNow = async () => (await J6b('/api/idcn/admin/media-copy', {}, A)).body;
+  let ag1 = await agNow();
+  for (let i = 0; i < 200 && !((ag1.courses || []).some(c => c.job && !c.job.running) && ag1.auto.next); i++) { await sleep(25); ag1 = await agNow(); }
+  const agDue = Date.parse(ag1.auto.next) - Date.now(), agJob = ((ag1.courses || []).find(c => c.code === 'idcn3') || {}).job || {};
+  ok('R2 stops a run by itself: the next one is due in about 10 minutes (here 0.3 s), not 3 hours (here a minute)',
+     agJob.errors && agJob.errors.some(e => /R2 PUT refused \(503/.test(e)) && agDue > 0 && agDue <= 300 && ag1.auto.done === false, JSON.stringify([agDue, ag1.auto, agJob]));
+  let nAg = 2;
+  fr2.ctl.fail = (m, k) => (m === 'PUT' && k.includes('/note/') && nAg-- > 0 ? 503 : null);
+  let ag2 = await agNow();
+  for (let i = 0; i < 200 && !ag2.auto.done; i++) { await sleep(25); ag2 = await agNow(); }
+  fr2.ctl.fail = null;
+  const agRow = (await pool.query(`SELECT media_url, media_src FROM idc_notes WHERE body='Test again copy'`)).rows[0];
+  ok('...the next run: R2 refusing the file twice more is tried again in place, the file is copied, and with nothing left the copy stops',
+     ag2.auto.done === true && ag2.auto.next === null && nAg < 0 && /^r2:idcn\/idcn3\/note\//.test(agRow.media_url) && agRow.media_src === agOld
+       && fr2.store.has(agRow.media_url.slice(3)), JSON.stringify([ag2.auto, agRow, nAg]));
+  srv6b.close();
 
   console.log('\n[a dead Cloudinary costs the hub list one short wait per 5 minutes, never one per load]');
   await pool.query(`DELETE FROM idc_settings WHERE course_code='idcn3' AND key='hub_copied'`);

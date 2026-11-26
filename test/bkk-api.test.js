@@ -1603,6 +1603,8 @@ const ok = (name, cond, extra = '') => {
     const store = new Map(), r2Log = [];
     let r2Fail = null;                   // (method, key) => status to answer instead
     let badEtag = false;
+    // As r2Fail: a 500 for the next n requests that of(method, key) picks, then R2 as usual.
+    const failNext = (n, of) => (m, k) => of(m, k) && n-- > 0 && 500;
     const xmlErr = (res, status, code) => { res.writeHead(status, { 'Content-Type': 'application/xml' }); res.end(`<?xml version="1.0"?><Error><Code>${code}</Code><Message>no</Message></Error>`); };
     const signedOk = (req, body) => {
       const m = /^AWS4-HMAC-SHA256 Credential=([^/]+)\/(\d{8})\/auto\/s3\/aws4_request, SignedHeaders=([a-z0-9;-]+), Signature=([0-9a-f]{64})$/.exec(req.headers.authorization || '');
@@ -1708,7 +1710,8 @@ const ok = (name, cond, extra = '') => {
       Object.assign(process.env, R2ENV);
       const a = express();
       a.use(express.json({ limit: '10mb' }));
-      const api = await mountBkk(a, { pgPool: pg, now, cloudinary: cloudR, fetch: fetchR, r2Endpoint: R2_URL, ...extra });
+      // R2 failing is tried again in place 5 and 10 ms later here (2 s and 8 s on the server)
+      const api = await mountBkk(a, { pgPool: pg, now, cloudinary: cloudR, fetch: fetchR, r2Endpoint: R2_URL, r2AgainMs: [5, 10], ...extra });
       for (const [k, v] of Object.entries(envWas)) { if (v === undefined) delete process.env[k]; else process.env[k] = v; }
       const s = a.listen(0);
       return { api, s, base: `http://127.0.0.1:${s.address().port}` };
@@ -1787,10 +1790,12 @@ const ok = (name, cond, extra = '') => {
        linesDb > 36 && await size(linesMade.v) === '2048x1365', linesDb.toFixed(1));
     const keysBefore = new Set(store.keys());
     r2Fail = (m, k) => m === 'PUT' && /t\.webp$/.test(k) && 500;
+    const logAtUp = r2Log.length;
     const halfUp = await postR('/api/bkk/teacher/photos', { date: '2026-10-05', image: 'data:image/jpeg;base64,' + driveCopy.toString('base64'), tags: [] });
     r2Fail = null;
-    ok("a phone upload whose tile R2 refuses fails with R2's reason, and its v.jpg is removed again: nothing left in R2",
-       halfUp.status === 502 && halfUp.body.error === 'R2 PUT refused (500 InternalError)' && [...store.keys()].every(k => keysBefore.has(k)),
+    ok("a phone upload whose tile R2 refuses fails with R2's reason at once (not tried again: that is only the move's), and its v.jpg is removed again: nothing left in R2",
+       halfUp.status === 502 && halfUp.body.error === 'R2 PUT refused (500 InternalError)' && [...store.keys()].every(k => keysBefore.has(k))
+         && r2Log.slice(logAtUp).filter(l => l.method === 'PUT' && /t\.webp$/.test(l.key)).length === 1,
        JSON.stringify([halfUp.status, halfUp.body, [...store.keys()].filter(k => !keysBefore.has(k))]));
     const badUp = await postR('/api/bkk/teacher/photos', { date: '2026-10-05', image: 'data:image/jpeg;base64,/9j/4AAQSkZJRg==', tags: [] });
     ok('...a file that is not a photo is refused with a reason, nothing stored',
@@ -1975,34 +1980,54 @@ const ok = (name, cond, extra = '') => {
     await postR('/api/bkk/admin/photo-store/move', { on: false }, ADMIN);
     const sStop = await step();
     ok('Stop: a step does nothing, the place is kept', sStop.on === false && sStop.after === m1 && sStop.moved === 1 && (await keysOf(m2)).store === 'cloudinary');
-    // A restart stops it: a new server on the same database moves nothing until Start.
+    // A restart no longer stops it (26 Nov 2026): a new server on the same database goes on by itself.
     await postR('/api/bkk/admin/photo-store/move', { on: true }, ADMIN);
     R.s.close();
     const R2b = await mountR(hookedPool);
     const BR2 = R2b.base;
     const adminR2 = (path, body) => fetch(BR2 + path, { method: 'POST', headers: { 'Content-Type': 'application/json', ...ADMIN }, body: JSON.stringify(body) }).then(async r => ({ status: r.status, body: await r.json() }));
-    const sBoot = await R2b.api.photoMove();
     const afterBoot = (await (await fetch(BR2 + '/api/bkk/admin/photo-store', { headers: ADMIN })).json()).move;
-    ok('a server start stops the move (it never runs by itself): a step does nothing, Admin sees it stopped by the restart',
-       sBoot.on === false && afterBoot.on === false && afterBoot.restarted === true && afterBoot.after === m1 && (await keysOf(m2)).store === 'cloudinary',
+    ok('a server start keeps the move on: it goes on by itself from the same place (its timer about 30 s after the start), and Admin sees that it did',
+       afterBoot.on === true && !!afterBoot.resumedAt && afterBoot.after === m1 && afterBoot.moved === 1 && (await keysOf(m2)).store === 'cloudinary',
        JSON.stringify(afterBoot));
-    const again1 = await adminR2('/api/bkk/admin/photo-store/move', { on: true });
     const s2 = await R2b.api.photoMove();
     const k2 = await keysOf(m2);
-    ok('...Start goes on from the next photo: one only on Cloudinary moves from its stored JPEG (no transformation)',
-       again1.body.move.restarted === false && s2.moved === 2 && s2.after === m2 && k2.store === 'r2' && await size(objs(k2)[0].body) === '2048x1365'
+    ok('...its next step moves the next photo: one only on Cloudinary moves from its stored JPEG (no transformation)',
+       s2.on === true && s2.moved === 2 && s2.after === m2 && k2.store === 'r2' && await size(objs(k2)[0].body) === '2048x1365'
          && urlCalls.some(c => c.id === 'aybkk/profile/2026-09-20/mig2' && !c.o.transformation && c.o.format === 'jpg') && !destroyedR.length,
        JSON.stringify([s2, k2]));
-    // R2 refusing mid-move: stop there, nothing skipped, the photo untouched.
+    // The tries again in place (lib/r2.js again): R2 itself failing only, about 2 s later by default, the try undone first.
+    let agCalls = 0, agUndos = 0, agOther = 0;
+    const tAg = Date.now();
+    const agOk = await r2lib.again(async () => {
+      if (++agCalls < 2) throw Object.assign(new Error('R2 PUT refused (500 InternalError)'), { status: 502, r2: true });
+      return 'stored';
+    }, { undo: () => { agUndos++; } });
+    const tookAg = Date.now() - tAg;
+    const agNo = await r2lib.again(async () => { agOther++; throw new Error('The photo could not be read.'); }).then(() => null, e => e.message);
+    ok('R2 failing is tried again in place about 2 s later (by default), its try undone first; any other error is not tried again',
+       agOk === 'stored' && agCalls === 2 && agUndos === 1 && tookAg >= 1900 && tookAg < 4000 && agNo === 'The photo could not be read.' && agOther === 1,
+       `${tookAg} ms`);
+    // R2 refusing mid-move: tried twice more in place, then the move waits at that photo, still on, nothing skipped.
     r2Fail = m => m === 'PUT' && 500;
     r2Fetches.length = 0;
+    const logAtHalt = r2Log.length, storeAtHalt = store.size;
     const sHalt = await R2b.api.photoMove();
+    const putsHalt = r2Log.slice(logAtHalt).filter(l => l.method === 'PUT' && l.key.startsWith('cls/')).length, fetchedHalt = r2Fetches.length;
+    const halts = [sHalt];
+    for (let i = 0; i < 4; i++) halts.push(await R2b.api.photoMove());
     r2Fail = null;
-    const sHalt2 = await R2b.api.photoMove();
-    ok('R2 refusing mid-move stops it at that photo: not skipped, not listed as failed, nothing else fetched, nothing left in R2',
-       sHalt.on === false && sHalt.halted === 'R2 PUT refused (500 InternalError)' && sHalt.after === m2 && sHalt.failedN === 0
-         && (await keysOf(m3)).store === 'cloudinary' && r2Fetches.length === 1 && sHalt2.on === false
-         && (await pool.query(`SELECT count(*)::int AS n FROM bkk_photo_orphans WHERE store='r2'`)).rows[0].n === 0, JSON.stringify(sHalt));
+    const gap = s => s.wait ? Date.parse(s.wait.next) - Date.parse(s.wait.at) : null;
+    const shownW = (await (await fetch(BR2 + '/api/bkk/admin/photo-store', { headers: ADMIN })).json()).move;
+    ok('R2 refusing mid-move: tried twice more in place, then the move stays on and waits at that photo: not skipped, not listed as failed, nothing else fetched, nothing left in R2',
+       sHalt.on === true && sHalt.wait.why === 'R2 PUT refused (500 InternalError)' && sHalt.halts === 1 && putsHalt === 3 && sHalt.after === m2
+         && sHalt.failedN === 0 && sHalt.trying === null && (await keysOf(m3)).store === 'cloudinary' && fetchedHalt === 1 && store.size === storeAtHalt
+         && (await pool.query(`SELECT count(*)::int AS n FROM bkk_photo_orphans WHERE store='r2'`)).rows[0].n === 0, JSON.stringify([sHalt, putsHalt]));
+    ok('...it tries again by itself after 1, 2, 5, then every 10 minutes, the halts in a row counted, still on at that photo; Admin shows why and when',
+       JSON.stringify(halts.map(gap)) === JSON.stringify([60e3, 120e3, 300e3, 600e3, 600e3]) && halts.map(s => s.halts).join() === '1,2,3,4,5'
+         && halts.every(s => s.on === true && s.after === m2 && s.failedN === 0 && !s.halted) && (await keysOf(m3)).store === 'cloudinary'
+         && shownW.on === true && shownW.wait.why === 'R2 PUT refused (500 InternalError)' && shownW.halts === 5 && !!shownW.wait.next,
+       JSON.stringify([halts.map(gap), shownW.wait]));
     // A database blip while reading the state: the step fails (the timer tries again), it does not end the move.
     await adminR2('/api/bkk/admin/photo-store/move', { on: true });
     poolHook = (sql, p) => /^SELECT value FROM bkk_settings WHERE key = \$1/.test(sql) && p[0] === 'photo_r2_move' ? Promise.reject(new Error('Connection terminated unexpectedly')) : null;
@@ -2017,12 +2042,22 @@ const ok = (name, cond, extra = '') => {
     ok('a photo no source sends stays on Cloudinary untouched, listed with its reason; nothing left in R2, nothing destroyed',
        k3.store === 'cloudinary' && !k3.r2_key && s3.failedN === 1 && s3.failed[0].id === m3 && /Neither Drive nor Cloudinary sent the photo/.test(s3.failed[0].why)
          && store.size === before3 && !destroyedR.length && s3.on === true, JSON.stringify(s3));
+    ok('...a step through no longer waits, but R2 counts as back only once a photo moved: the halts in a row stay', s3.wait === null && s3.halts === 5,
+       JSON.stringify([s3.wait, s3.halts]));
     r2Fetches.length = 0;
+    // R2 answering one check (a HEAD) with a 500: the try is undone and tried again in place, under a new key.
+    r2Fail = failNext(1, (m, k) => m === 'HEAD' && k.startsWith('cls/'));
+    const logAt4 = r2Log.length;
     const s4 = await R2b.api.photoMove();
+    r2Fail = null;
     const k4 = await keysOf(m4);
     ok('a Drive file replaced since (same id, another shape) is passed over: the photo moves from its Cloudinary JPEG, the one that was tagged',
        s4.moved === 3 && k4.store === 'r2' && k4.width === 2048 && k4.height === 1365 && await size(objs(k4)[0].body) === '2048x1365'
          && r2Fetches.some(u => u.includes('id=MIGSWAP')) && r2Fetches.some(u => u.startsWith('signed://')), JSON.stringify([s4, k4]));
+    const puts4 = r2Log.slice(logAt4).filter(l => l.method === 'PUT' && l.key.startsWith('cls/')).map(l => l.key.split('/')[2]);
+    ok('...a 500 on its check: tried again in place under a new key, the first try\'s two copies removed; it moves, nothing waits, the halts in a row clear',
+       puts4.length === 4 && new Set(puts4).size === 2 && puts4.at(-1) === k4.r2_key && store.size === before3 + 2 && objs(k4).every(Boolean)
+         && s4.wait === null && s4.halts === 0 && s4.on === true, JSON.stringify([puts4, s4.halts]));
     // The server stopped while moving m5 (a deploy, say): the step after tries it once more.
     const afterM4 = (await pool.query(`SELECT (value->>'after')::int AS a FROM bkk_settings WHERE key='photo_r2_move'`)).rows[0].a;
     await pool.query(`UPDATE bkk_settings SET value = value || jsonb_build_object('trying', $1::int) WHERE key='photo_r2_move'`, [m5]);
@@ -2169,15 +2204,15 @@ const ok = (name, cond, extra = '') => {
     clock = tBefore;
     ok('Admin shows the pace: photos moved a minute in this run', paced.move.perMin === 1.5 && paced.move.fast === true && paced.left.kept === 3,
        JSON.stringify(paced.move));
-    // R2 refusing one photo of a batch: the move stops there; the ones beside it, moved, stay moved; nothing skipped.
+    // R2 still refusing one photo of a batch after its tries in place: the move waits there; the ones beside it, moved, stay moved; nothing skipped.
     // That batch reaches the photos with a Drive copy too: from the stored Cloudinary JPEG, Drive not even asked.
     r2Fail = (m, k) => m === 'PUT' && k.startsWith('cls/2026-09-22/') && 500;
     r2Fetches.length = 0;
     const sf2 = await R2b.api.photoMove();
     r2Fail = null;
     const [ka, kd] = await Promise.all([fa, fd].map(keysOf));
-    ok('fast: R2 refusing one photo stops the whole move at that batch: the others moved, the refused one untouched, nothing skipped or failed',
-       sf2.on === false && sf2.halted === 'R2 PUT refused (500 InternalError)' && sf2.after === ff && sf2.phase === 0 && sf2.failedN === 0
+    ok('fast: R2 refusing one photo makes the whole move wait at that batch, still on: the others moved, the refused one untouched, nothing skipped or failed',
+       sf2.on === true && sf2.wait.why === 'R2 PUT refused (500 InternalError)' && sf2.halts === 1 && sf2.after === ff && sf2.phase === 0 && sf2.failedN === 0
          && sf2.moved === 6 && (await keysOf(fg)).store === 'r2' && (await keysOf(fh)).store === 'cloudinary'
          && ![...store.keys()].some(k => k.startsWith('cls/2026-09-22/')), JSON.stringify(sf2));
     ok('...the photos with a Drive copy come after those without, from the stored Cloudinary JPEG as it is (the very picture students have)',
@@ -2185,18 +2220,20 @@ const ok = (name, cond, extra = '') => {
          && !r2Fetches.some(u => u.includes('thumbnail?id=FASTDRIVE')) && !r2Fetches.some(u => u.includes('uc?export=download')), JSON.stringify(r2Fetches));
     ok('...so a Drive file replaced since (another shape) is never even asked', kd.store === 'r2' && await size(objs(kd)[0].body) === '2048x1365'
        && kd.width === 2048 && r2Fetches.some(u => u.includes('/fastd/')) && !r2Fetches.some(u => u.includes('thumbnail?id=FASTSWAP')));
-    // A restart stops a fast move too; Start goes on from the saved place.
-    await adminR2('/api/bkk/admin/photo-store/move', { on: true, fast: true });
+    // Stop while it waits holds at once, and through a server start; Start goes on from the saved place.
+    const stopW = await adminR2('/api/bkk/admin/photo-store/move', { on: false });
     const R2c = await mountR(hookedPool);
     const adminR3 = (path, body) => fetch(R2c.base + path, { method: 'POST', headers: { 'Content-Type': 'application/json', ...ADMIN }, body: JSON.stringify(body) }).then(async r => ({ status: r.status, body: await r.json() }));
     const postR3 = (path, body) => fetch(R2c.base + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(async r => ({ status: r.status, body: await r.json() }));
     const sBoot2 = await R2c.api.photoMove();
-    ok('a server start stops a fast move as well (it never runs by itself)', sBoot2.on === false && sBoot2.restarted === true && sBoot2.fast === true
-       && (await keysOf(fh)).store === 'cloudinary');
+    const stoppedNow = (await pool.query(`SELECT value FROM bkk_settings WHERE key='photo_r2_move'`)).rows[0].value;
+    ok('Stop while the move waits holds at once and through a server start: off, the wait note gone, a step does nothing',
+       stopW.status === 200 && stopW.body.move.on === false && stopW.body.move.wait === null && sBoot2.on === false && sBoot2.fast === true
+         && stoppedNow.on === false && !stoppedNow.resumedAt && (await keysOf(fh)).store === 'cloudinary', JSON.stringify(stoppedNow));
     await adminR3('/api/bkk/admin/photo-store/move', { on: true, fast: true });
     const sf3 = await R2c.api.photoMove(), sf4 = await R2c.api.photoMove();
     ok('...Start goes on from the saved place: the refused photo moves, then the pass is done',
-       (await keysOf(fh)).store === 'r2' && sf3.after === fh && sf3.moved === 7 && sf4.on === false && sf4.done === true && sf4.fast === true,
+       (await keysOf(fh)).store === 'r2' && sf3.after === fh && sf3.moved === 7 && sf3.halts === 0 && sf3.wait === null && sf4.on === false && sf4.done === true && sf4.fast === true,
        JSON.stringify([sf3, sf4]));
     // The server stopped in the middle of a batch of 4: the next steps take one photo at a time until one finishes,
     // so a photo that stops the server again is passed over alone, never the ones beside it.
@@ -2287,7 +2324,10 @@ const ok = (name, cond, extra = '') => {
         .then(r => r.json()); } };
     const uploadsAt = uploads.length, callsAt = urlCalls.length, destroyedF = destroyedR.length;
     const faceGo = await adminR3('/api/bkk/admin/photo-store/move', { on: true });
+    r2Fail = failNext(2, (m, k) => m === 'PUT' && k.startsWith('face/') && k.split('/')[2] === fm1.ref);
+    const logAtF = r2Log.length;
     const sF = await R2c.api.photoMove();
+    r2Fail = null;
     cloudHook = null;
     const rowF = async code => (await pool.query('SELECT photo_id FROM bkk_members WHERE code=$1', [code])).rows[0].photo_id;
     // A face in R2: r2face/<8 hex, new each time>/<ref>, its files face/<8 hex>/<ref>/<kind>.jpg.
@@ -2312,6 +2352,10 @@ const ok = (name, cond, extra = '') => {
        !!l1 && !!d1f && !!s1f && [l1, d1f, s1f].every(o => o.type === 'image/jpeg' && noMeta(o.body))
          && await size(l1.body) === '600x600' && await size(d1f.body) === '320x320' && await size(s1f.body) === '160x160'
          && await rgb(l1.body, 0.5, 0.05) === 'red' && await rgb(l1.body, 0.5, 0.95) === 'blue');
+    const putsF1 = r2Log.slice(logAtF).filter(l => l.method === 'PUT' && l.key.startsWith('face/') && l.key.split('/')[2] === fm1.ref);
+    ok('...R2 answering a face twice with a 500: tried again in place, each try with files of its own; it moves, three files in R2, nothing waits',
+       putsF1.length === 5 && new Set(putsF1.map(l => l.key.split('/')[1])).size === 3 && faceLeft(fm1.ref).length === 3 && sF.wait === null && sF.on === true,
+       JSON.stringify([putsF1.map(l => l.key), faceLeft(fm1.ref)]));
     const heldF = await Promise.all([fm1, fm3].map(f => keptFace(f.ref)));
     ok('...their Cloudinary copies are kept, not destroyed: in bkk_photo_orphans, never due (code from before this never sweeps them either)',
        heldF.every(r => r && r.kept) && !(await pool.query(`SELECT 1 FROM bkk_face_orphans`)).rows.length
@@ -2342,12 +2386,12 @@ const ok = (name, cond, extra = '') => {
     r2Fail = (m, k) => m === 'PUT' && k.startsWith('face/') && 500;
     const sF2 = await R2c.api.photoMove();
     r2Fail = null;
-    ok('R2 refusing a face stops the move at it: the face stays on Cloudinary, nothing of it in R2',
-       sF2.on === false && sF2.halted === 'R2 PUT refused (500 InternalError)' && await rowF(fm4.code) === `aybkk-profile/${ref4}`
+    ok('R2 still refusing a face after its tries in place: the move waits at it, still on; the face stays on Cloudinary, nothing of it in R2',
+       sF2.on === true && sF2.wait.why === 'R2 PUT refused (500 InternalError)' && await rowF(fm4.code) === `aybkk-profile/${ref4}`
          && !faceLeft(ref4).length, JSON.stringify(sF2));
     // Two servers moving the same face at once (a deploy overlap): one fails after the other checked its files,
     // before its switch. Each try has files of its own, so the failing one removes only its own.
-    const R2d = await mountR();                    // the second server, up before Start (a start stops the move)
+    const R2d = await mountR();                    // the second server
     let letGo, holdSwitch = new Promise(r => { letGo = r; });
     poolHook = (sql, p) => holdSwitch && /^WITH m AS \(UPDATE bkk_members SET photo_id=\$3/.test(sql) ? holdSwitch.then(() => pool.query(sql, p)) : null;
     await adminR3('/api/bkk/admin/photo-store/move', { on: true });
@@ -2355,8 +2399,8 @@ const ok = (name, cond, extra = '') => {
     const heads0 = headsOf4();
     const stepA = R2c.api.photoMove();
     for (let i = 0; i < 200 && headsOf4() < heads0 + 3; i++) await new Promise(r => setTimeout(r, 25));
-    let refusedOnce = false;
-    r2Fail = (m, k) => m === 'HEAD' && k.startsWith('face/') && k.includes(`/${ref4}/`) && !refusedOnce && (refusedOnce = true) && 500;
+    // The first has checked its files: every check of the second fails, through its tries in place.
+    r2Fail = (m, k) => m === 'HEAD' && k.startsWith('face/') && k.includes(`/${ref4}/`) && 500;
     const stepB = await R2d.api.photoMove();
     r2Fail = null; letGo(); holdSwitch = null;
     const sF3 = await stepA;
@@ -2364,7 +2408,7 @@ const ok = (name, cond, extra = '') => {
     R2d.s.close();
     const id4 = await rowF(fm4.code);
     ok('...Start moves it; a second server failing on the same face meanwhile takes away only its own files, never the ones the switch points at',
-       movedAs(id4, ref4) && sF3.facesMoved === 3 && stepB.on === false && /R2 HEAD refused/.test(stepB.halted) && faceObjs(id4).every(Boolean)
+       movedAs(id4, ref4) && sF3.facesMoved === 3 && stepB.on === true && /R2 HEAD refused/.test(stepB.wait.why) && sF3.wait === null && faceObjs(id4).every(Boolean)
          && faceLeft(ref4).length === 3 && (await getR((await meFace(fm4.code)).small)).status === 200, JSON.stringify([sF3, stepB, faceLeft(ref4)]));
 
     // New faces with R2 on: made here, no Cloudinary call, no Cloudinary key needed.
@@ -2497,13 +2541,15 @@ const ok = (name, cond, extra = '') => {
        td.status === 200 && td.body.success === true && tdNoted && destroyed.some(d => d.id === tdPid)
          && !(await pool.query(`SELECT 1 FROM bkk_photo_orphans WHERE ref=$1`, [tdPid])).rows.length, JSON.stringify([td.body, tdNoted]));
 
-    // Start pressed in the first seconds after a server start, before that start has stopped the move from before it:
-    // Start waits for that stop, so the move it starts holds. The start's stop is held here until Start is pressed.
+    // Start pressed in the first seconds after a server start, before that start has looked at the move from before it
+    // (here one the code before this had halted on an R2 error): Start waits for that look, then finds the move on, gone
+    // on by itself. The start's look is held here until Start is pressed.
     await pool.query(`INSERT INTO bkk_settings (key, value, updated_at) VALUES ('photo_r2_move', $1::jsonb, now())
-      ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`, [JSON.stringify({ on: true, fast: false, after: 0, moved: 0, startedAt: '2026-11-25T00:00:00.000Z' })]);
+      ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`, [JSON.stringify({ on: false, halted: 'R2 PUT refused (500 InternalError)', fast: false,
+        after: 0, moved: 0, startedAt: '2026-11-25T00:00:00.000Z' })]);
     let letStop, stopAsked;
     const stopHeld = new Promise(r => { letStop = r; }), stopReached = new Promise(r => { stopAsked = r; });
-    poolHook = (sql, p) => /"restarted": true\}'::jsonb/.test(sql) ? (stopAsked(), stopHeld.then(() => pool.query(sql, p))) : null;
+    poolHook = (sql, p) => /'resumedAt', \$2::text/.test(sql) ? (stopAsked(), stopHeld.then(() => pool.query(sql, p))) : null;
     Object.assign(process.env, R2ENV);
     const aS = express();
     aS.use(express.json());
@@ -2520,9 +2566,100 @@ const ok = (name, cond, extra = '') => {
     poolHook = null;
     sS.close();
     const moveS = (await pool.query(`SELECT value FROM bkk_settings WHERE key='photo_r2_move'`)).rows[0].value;
-    ok("Start pressed right after a server start waits for that start's stop of the earlier move, then holds: the move it starts stays on",
-       first === 'waiting' && startS.status === 200 && startS.body.move.on === true && moveS.on === true && moveS.restarted === false,
-       JSON.stringify([first, startS.status, moveS]));
+    ok("Start pressed right after a server start waits for that start's look at the earlier move, then finds it on, gone on by itself",
+       first === 'waiting' && startS.status === 200 && startS.body.move.on === true && !!startS.body.move.resumedAt && moveS.on === true
+         && !!moveS.resumedAt && moveS.halted === null, JSON.stringify([first, startS.status, moveS]));
+
+    // What the code before this saved, as a server start reads it. That code stopped the move itself on an R2 error
+    // (halted) and at each start (restarted), and its Stop cleared neither (its page offered Stop only while on).
+    const moveNow = async () => (await pool.query(`SELECT value FROM bkk_settings WHERE key='photo_r2_move'`)).rows[0].value;
+    const setMove = v => pool.query(`INSERT INTO bkk_settings (key, value, updated_at) VALUES ('photo_r2_move', $1::jsonb, now())
+      ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`, [JSON.stringify(v)]);
+    const bootOf = async v => {
+      await setMove({ fast: true, after: 0, phase: 0, moved: 3, failedN: 0, failed: [], startedAt: '2026-11-25T00:00:00.000Z', ...v });
+      const Rb = await mountR();
+      Rb.s.close();
+      return moveNow();
+    };
+    const bHalted = await bootOf({ on: false, halted: 'R2 PUT refused (500 InternalError)', restarted: false });
+    const bRestarted = await bootOf({ on: false, halted: null, restarted: true });
+    const bStopped = await bootOf({ on: false, halted: null, restarted: false });
+    const bDone = await bootOf({ on: false, done: true, halted: null, restarted: true });
+    ok('a server start goes on with a move the code before this stopped by itself (an R2 error, a start), from its place; one staff stopped, or a finished pass, stays off',
+       [bHalted, bRestarted].every(v => v.on === true && v.halted === null && v.restarted === false && !!v.resumedAt && v.moved === 3 && v.fast === true && v.after === 0)
+         && [bStopped, bDone].every(v => v.on === false && !v.resumedAt), JSON.stringify([bHalted, bRestarted, bStopped, bDone]));
+
+    // With its own timer (here the start's wait is 100 ms, and R2's waits 100 ms, 100 ms, then a minute).
+    const DT = '2026-09-27', tDay = k => !!k && k.startsWith(`cls/${DT}/`);
+    const tIds = [];
+    for (const n of ['a', 'b', 'c']) tIds.push(await mkOn(`aybkk/profile/${DT}/timed${n}`, DT));
+    await setMove({ on: false, halted: 'R2 PUT refused (500 InternalError)', fast: true, after: 0, phase: 0, moved: 0, failedN: 0, failed: [],
+      startedAt: '2026-11-26T05:00:00.000Z' });
+    const until = async (f, ms = 6000) => { const t = Date.now(); let v; while (!(v = await f()) && Date.now() - t < ms) await new Promise(r => setTimeout(r, 25)); return v; };
+    r2Fail = m => m === 'PUT' && 500;
+    const RT = await mountR(pool, { moveTimers: true, moveBootMs: 100, moveWaitsMs: [100, 100, 60e3] });
+    const adminRT = (path, body) => fetch(RT.base + path, { method: 'POST', headers: { 'Content-Type': 'application/json', ...ADMIN }, body: JSON.stringify(body) })
+      .then(async r => ({ status: r.status, body: await r.json() }));
+    const tBoot = await moveNow();
+    const tW = await until(async () => { const v = await moveNow(); return v.halts >= 3 && v; });
+    ok('on its own timer: a move halted by the code before this goes on by itself after a start; R2 still refusing, it waits and tries again by itself, then waits longer, nothing skipped',
+       tBoot.on === true && !!tBoot.resumedAt && !!tW && tW.on === true && tW.halts === 3 && tW.failedN === 0 && Date.parse(tW.wait.next) - Date.parse(tW.wait.at) === 60e3
+         && (await Promise.all(tIds.map(keysOf))).every(k => k.store === 'cloudinary') && ![...store.keys()].some(tDay), JSON.stringify([tBoot, tW]));
+    r2Fail = null;
+    const tGo = Date.now(), tStart = await adminRT('/api/bkk/admin/photo-store/move', { on: true, fast: true });
+    const tD = await until(async () => { const v = await moveNow(); return v.done === true && v; });
+    const tTook = Date.now() - tGo;
+    ok('...Start while it waits tries at once (the next try was a minute away): the photos move by themselves, the count and the note clear, the pass ends',
+       tStart.status === 200 && tStart.body.move.on === true && !!tD && tTook < 5000 && tD.on === false && tD.halts === 0 && tD.wait === null
+         && (await Promise.all(tIds.map(keysOf))).every(k => k.store === 'r2'), JSON.stringify([tTook, tD]));
+    RT.s.close();
+    // Stop while it waits holds at once: no try after it (here R2's wait is 150 ms each time).
+    const t4 = await mkOn(`aybkk/profile/${DT}/timedd`, DT);
+    tIds.push(t4);
+    const RT2 = await mountR(pool, { moveTimers: true, moveBootMs: 100, moveWaitsMs: [150] });
+    const adminRT2 = (path, body) => fetch(RT2.base + path, { method: 'POST', headers: { 'Content-Type': 'application/json', ...ADMIN }, body: JSON.stringify(body) })
+      .then(async r => ({ status: r.status, body: await r.json() }));
+    r2Fail = (m, k) => m === 'PUT' && !k.startsWith('test/') && 500;      // Test R2 passes; the photos do not
+    const tAgain = await adminRT2('/api/bkk/admin/photo-store/move', { on: true, fast: true });
+    const tH = await until(async () => { const v = await moveNow(); return v.halts >= 1 && v; });
+    const tStop = await adminRT2('/api/bkk/admin/photo-store/move', { on: false });
+    await new Promise(r => setTimeout(r, 200));
+    const putsAtStop = r2Log.filter(l => l.method === 'PUT').length, haltsAtStop = (await moveNow()).halts;
+    await new Promise(r => setTimeout(r, 700));
+    r2Fail = null;
+    await new Promise(r => setTimeout(r, 300));
+    const tS = await moveNow();
+    ok('...Stop while it waits holds at once: no try after it, even with R2 back; off, the photo still on Cloudinary',
+       tAgain.status === 200 && !!tH && tStop.body.move.on === false && r2Log.filter(l => l.method === 'PUT').length === putsAtStop && tS.halts === haltsAtStop
+         && tS.on === false && (await keysOf(t4)).store === 'cloudinary', JSON.stringify([tS, putsAtStop]));
+    RT2.s.close();
+
+    // Two servers stepping the same move at once (during a deploy the old one runs for a while): every photo
+    // moves once, no row is lost, and R2 keeps no copy beyond the two of each photo.
+    const D2 = '2026-09-28', twoIds = [];
+    for (let i = 0; i < 6; i++) twoIds.push(await mkOn(`aybkk/profile/${D2}/two${i}`, D2));
+    const SA = await mountR(), SB = await mountR();
+    await setMove({ on: true, fast: true, after: 0, phase: 0, moved: 0, failedN: 0, failed: [], startedAt: '2026-11-26T05:00:00.000Z' });
+    const rowsTwo = (await pool.query('SELECT count(*)::int AS n FROM bkk_photos')).rows[0].n, logAtTwo = r2Log.length;
+    cloudWait = 20;
+    for (let i = 0; i < 8; i++) {
+      const [a, b] = await Promise.all([SA.api.photoMove(), SB.api.photoMove()]);
+      if (!a.on && !b.on) break;
+    }
+    cloudWait = 0;
+    const two = await Promise.all(twoIds.map(keysOf));
+    const twoKeys = [...store.keys()].filter(k => k.startsWith(`cls/${D2}/`));
+    const twoDels = r2Log.slice(logAtTwo).filter(l => l.method === 'DELETE' && l.key && l.key.startsWith(`cls/${D2}/`)).length;
+    const twoKept = (await pool.query(`SELECT count(*)::int AS n FROM bkk_photo_orphans WHERE store='cloudinary' AND ref LIKE $1`, [`aybkk/profile/${D2}/%`])).rows[0].n;
+    ok('two servers stepping the same move at once: each photo moved once, every row kept, R2 holding only the two copies each row points at',
+       two.every(k => k && k.store === 'r2' && objs(k).every(Boolean)) && twoKeys.length === 2 * twoIds.length && twoDels >= 2
+         && (await pool.query('SELECT count(*)::int AS n FROM bkk_photos')).rows[0].n === rowsTwo && twoKept === twoIds.length
+         && !(await pool.query(`SELECT 1 FROM bkk_photo_orphans WHERE store='r2'`)).rows.length && (await moveNow()).done === true,
+       JSON.stringify([two.map(k => k && k.store), twoKeys.length, twoDels, twoKept]));
+    SA.s.close(); SB.s.close();
+    await pool.query('DELETE FROM bkk_photos WHERE id = ANY($1::int[])', [[...tIds, ...twoIds]]);
+    await pool.query(`DELETE FROM bkk_photo_orphans WHERE ref LIKE 'aybkk/profile/${DT}/%' OR ref LIKE 'aybkk/profile/${D2}/%'`);
+    for (const k of [...store.keys()].filter(k => tDay(k) || k.startsWith(`cls/${D2}/`))) store.delete(k);
     await pool.query(`DELETE FROM bkk_settings WHERE key='photo_r2_move'`);
 
     // Cloudinary closed (29 Nov 2026) and hanging. Each Cloudinary delete gives up after a time limit (10 s; 150 ms on this
