@@ -18,6 +18,8 @@
  *                                       [--base URL] [--past-attended] [--details FILE]
  *   node scripts/rezerv-import.js plan <dir>
  *   node scripts/rezerv-import.js run-all <dir> [--save] [--past-attended] [--base URL] [--details-dir DIR] [--from-step N:FILE]
+ *   node scripts/rezerv-import.js compare <dir> [--base URL] [--details-dir DIR] [--fixes FILE]
+ *   node scripts/rezerv-import.js compare <dir> --apply FILE --expect "<the token a compare printed>" [--base URL] [--details-dir DIR]
  *
  * Exit: 0 done · 1 stopped, or a look that found a file a person must see ·
  *       2 wrong use, or a file that cannot be read ·
@@ -53,12 +55,17 @@ const USAGE = `Usage:
                                       [--base URL] [--past-attended] [--details FILE]
   ${SELF} plan <dir>
   ${SELF} run-all <dir> [--save] [--past-attended] [--base URL] [--details-dir DIR] [--from-step N:FILE]
+  ${SELF} compare <dir> [--base URL] [--details-dir DIR] [--fixes FILE]
+  ${SELF} compare <dir> --apply FILE --expect "<the token a compare printed>" [--base URL] [--details-dir DIR]
 
   kind: ${KINDS.join(' | ')}        --base: ${DEFAULT_BASE} unless given
   check saves nothing. write runs the same check first and saves only if it gives the --expect of the check a person read.
   run-all without --save looks at every file of the folder and saves nothing. With --save it saves each file in order,
   and stops at the first one a person must look at.
   --past-attended: past classes Rezerv still shows as booked are saved as attended. That cannot be undone: ask the owner first.
+  compare puts every Rezerv pass saved here next to what the folder's passes and visits files say of it now, and saves
+  nothing. It writes the fixes it proposes to --fixes (compare-fixes.json in the folder unless given). --apply makes them,
+  one pass at a time, only if a fresh compare gives the token in --expect. What it cannot work out is for the owner.
   Only counts and reason codes are printed. Names stay in the details file. Exports stay outside the repository.`;
 
 const out = s => process.stdout.write(s + '\n');
@@ -386,15 +393,17 @@ function moved(status, location, base) {
     hint: `This tool does not follow a redirect. If ${to} is the right server, give it with --base.` };
 }
 
-// One batch, as the page's ciRun posts it. The key goes along only when it is
-// in the environment (local tests); otherwise the network adds it.
-function sendBatch(cfg, job, b, dry) {
-  const body = JSON.stringify({ rows: b.rows, dryRun: dry, firstRow: b.first,
-    ...(job.kind === 'visits' && job.R.CI.pastBooked ? { pastBookedAttended: true } : {}) });
+// The key goes along only when it is in the environment (local tests);
+// otherwise the network adds it.
+function postJson(cfg, pathname, data) {
+  const body = JSON.stringify(data);
   const headers = { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) };
   if (process.env.BKK_ADMIN_KEY) headers['x-bkk-key'] = process.env.BKK_ADMIN_KEY;
-  return post(new URL('/api/bkk/admin/import/' + job.kind, cfg.base), body, headers);
+  return post(new URL(pathname, cfg.base), body, headers);
 }
+// One batch, as the page's ciRun posts it.
+const sendBatch = (cfg, job, b, dry) => postJson(cfg, '/api/bkk/admin/import/' + job.kind, { rows: b.rows, dryRun: dry, firstRow: b.first,
+  ...(job.kind === 'visits' && job.R.CI.pastBooked ? { pastBookedAttended: true } : {}) });
 
 // Check (dry) or save, every batch in turn, summed as the page sums them. A
 // batch that fails stops the run: what came before it is saved, and running
@@ -493,9 +502,8 @@ function tally(list, classOf) {
 const SAYS = { ok: 'expected: nothing to keep', later: 'a pack bought and not started yet: not brought over', ask: 'a person must look',
   unknown: 'not known to this tool: a person must look' };
 
-// Why run-all may not save this file after its check: every reason, or none when it is clean.
-function gate(job, sum) {
-  if (sum.stopped) return [{ rule: 'failed-batch', text: `a batch failed at row ${sum.stopped.row} (${sum.stopped.why})` }];
+// What a person would see on the page, and nobody sees here, of a file read wrongly.
+function fileGate(job) {
   const g = [], add = (rule, text) => g.push({ rule, text });
   if (job.garbled) add('unreadable-characters', 'the file is not UTF-8, UTF-16 or Thai Windows text, so some of its letters could not be read');
   if (job.oddCells.length) {
@@ -508,6 +516,12 @@ function gate(job, sum) {
   if (job.bothWays.length) {
     add('dates-read-both-ways', `no date in ${job.bothWays.join(', ')} has a number over 12, so day and month cannot be told apart: they were read day first`);
   }
+  return g;
+}
+// Why run-all may not save this file after its check: every reason, or none when it is clean.
+function gate(job, sum) {
+  if (sum.stopped) return [{ rule: 'failed-batch', text: `a batch failed at row ${sum.stopped.row} (${sum.stopped.why})` }];
+  const g = fileGate(job), add = (rule, text) => g.push({ rule, text });
   const list = (by, cls) => by.filter(x => x.cls === cls).map(x => `${x.code} ${x.n}`).join(', ');
   const skips = tally(sum.skipped, x => skipClass(job.kind, x)), notes = tally(sum.warnings, warnClass);
   if (list(skips, 'unknown')) add('unknown-skip-code', `rows were skipped for a reason this tool does not know: ${list(skips, 'unknown')}`);
@@ -890,11 +904,229 @@ async function cmdRunAll(page, cfg, plan, opt) {
   return !save && wouldStop.length ? EXIT.stopped : EXIT.ok;
 }
 
+// ── compare: the last Rezerv export next to what is here ───────────────────
+// The passes and visits files of a folder, read as run-all reads them, go to a
+// look on the server that saves nothing. What it proposes goes to a fixes file;
+// --apply makes those fixes one pass at a time, and only when a fresh look gives
+// the token a person read.
+const COMPARE_PATH = '/api/bkk/admin/rezerv/compare';
+const TOKEN = /^\d+:\d+:[0-9a-f]{12}$/;
+const FIX_FIELDS = ['creditsUsed', 'validUntil', 'frozenFrom', 'frozenUntil', 'status'];
+const FIX_REASONS = ['countOnce', 'asInRezerv'];
+// What the owner decides. This tool never fixes them.
+const CASES = { overSize: 'a pack would go over its size', untied: 'a class that cannot be tied to one pack',
+  handSet: 'changed here by hand since the import', nextToOurs: 'next to an aybkk.net or hand-given pass of the same kind',
+  cancelledBooked: 'cancelled in Rezerv, with bookings here', blankLeft: 'the classes-left cell is blank',
+  pauseLater: 'a pause still to come', twoProfiles: 'two profiles for one person' };
+const PASS_KINDS = ['compared', 'notHere', 'notStarted', 'notOurs', 'twin', 'onOurs', 'again'];
+const isCount = x => Number.isInteger(x) && x >= 0;
+const isDay = s => /^\d{4}-\d{2}-\d{2}$/.test(String(s || ''));
+const baht = n => `THB ${Math.round(Number(n) || 0).toLocaleString('en-US')}`;
+// A day this tool can tell for sure: day first as rowFor writes it, or ISO. Any other date is sent, for the server to read.
+function clearDay(s) {
+  const t = String(s || '').trim();
+  let m = t.match(/^(\d{4})-(\d{2})-(\d{2})(?=$|[\sT])/);
+  if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+  m = t.match(/^(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})(?=$|[\sT,])/);
+  return m && +m[3] >= 1990 && +m[3] <= 2100 ? `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}` : null;
+}
+
+// One call that must answer 200 with JSON. Why not, in this tool's own words.
+async function askServer(cfg, pathname, data) {
+  let r;
+  try { r = await postJson(cfg, pathname, data); } catch (e) { return { why: netWhy(e) }; }
+  if (r.status === 401) throw new Halt(EXIT.auth, [UNAUTHORISED]);
+  if (r.status >= 300 && r.status <= 399) return { status: r.status, why: moved(r.status, r.location, cfg.base).why };
+  let j = null;
+  try { j = JSON.parse(r.text); } catch { /* not JSON */ }
+  if (r.status !== 200 || !j || typeof j !== 'object') return { status: r.status, why: `HTTP ${r.status}`, j };
+  return { status: 200, j };
+}
+function looksLikeCompare(L, rows) {
+  const H = ['live', 'classesLeft', 'paused', 'ahead'];
+  return isDay(L.today) && isDay(L.visitsFrom) && Array.isArray(L.passes) && L.passes.length === rows.passes.length
+    && L.passes.every((x, k) => x && x.i === k && PASS_KINDS.includes(x.kind))
+    && Array.isArray(L.cases) && L.cases.every(c => c && typeof c.code === 'string' && isCount(c.thb) && Array.isArray(c.passes))
+    && Array.isArray(L.fixes) && L.fixes.every(f => f && isCount(f.pass) && FIX_FIELDS.includes(f.field) && FIX_REASONS.includes(f.reason))
+    && Array.isArray(L.ahead) && L.ahead.every(a => a && isCount(a.i) && a.i < rows.visits.length)
+    && !!L.holdings && ['before', 'after'].every(k => L.holdings[k] && H.every(h => isCount(L.holdings[k][h])))
+    && !!L.visits && ['read', 'unread', 'noStudent'].every(k => isCount(L.visits[k])) && isCount(L.notInFiles);
+}
+
+// Read every passes and visits file, ask the server, and make the token of what it said.
+async function compareLook(page, cfg, plan) {
+  const jobs = [], stops = [];
+  for (const s of plan.steps.filter(x => x.kind === 'passes' || x.kind === 'visits')) {
+    const job = readCsv(page, s.kind, path.join(plan.dir, s.name), false);
+    if (job.refused) {
+      if (!(job.refused.rule === 'empty-file' && job.headOnly)) stops.push(`${s.name} (refused: ${job.refused.rule})`);
+      continue;
+    }
+    for (const g of fileGate(job)) stops.push(`${s.name} (${g.rule})`);
+    jobs.push(job);
+  }
+  if (stops.length) throw new Halt(EXIT.stopped, ['Stopped: a file must be looked at first, so nothing was compared.', ...stops.map(s => `  ${s}`)]);
+  if (!jobs.some(j => j.kind === 'passes')) {
+    throw new Halt(EXIT.stopped, ['No passes file in this folder (rezerv-passes-memberships-*.csv, rezerv-passes-packages-*.csv): nothing to compare.']);
+  }
+  const scope = await askServer(cfg, COMPARE_PATH, { scope: true });
+  if (!scope.j || !isDay(scope.j.visitsFrom)) throw new Halt(EXIT.stopped, [`No compare from the server (${scope.why || 'not a compare answer'}). Nothing was changed.`]);
+  const rows = { passes: [], visits: [] }, at = { passes: [], visits: [] };
+  let early = 0;
+  // Visits from before the first Rezerv pass came over, and before any seat here, cannot change a count.
+  for (const job of jobs) {
+    for (const b of job.batches) {
+      b.rows.forEach((o, k) => {
+        const d = job.kind === 'visits' ? clearDay(o.date) : null;
+        if (d && d < scope.j.visitsFrom) { early++; return; }
+        rows[job.kind].push(o);
+        at[job.kind].push({ file: job.name, row: b.first + k });
+      });
+    }
+  }
+  const r = await askServer(cfg, COMPARE_PATH, rows);
+  if (!r.j || !looksLikeCompare(r.j, rows)) throw new Halt(EXIT.stopped, [`No compare from the server (${r.why || 'the answer was not a compare'}). Nothing was changed.`]);
+  const mark = crypto.createHash('sha256').update(JSON.stringify([cfg.base, jobs.map(j => [j.name, j.sha]), r.j])).digest('hex').slice(0, 12);
+  return { jobs, rows, at, early, look: r.j, token: `${r.j.fixes.length}:${r.j.cases.length}:${mark}` };
+}
+
+function printCompare(c) {
+  const L = c.look;
+  const by = (list, f) => { const m = new Map(); for (const x of list) m.set(f(x), (m.get(f(x)) || 0) + 1); return [...m].sort((a, b) => (a[0] < b[0] ? -1 : 1)); };
+  const n = kind => L.passes.filter(x => x.kind === kind).length;
+  const code = (x, known) => known.has(x) ? x : UNKNOWN_CODE;
+  const sum = list => list.reduce((t, x) => t + x.thb, 0);
+  for (const job of c.jobs) out(`Read: ${job.name} (${job.kind}, ${job.rows} ${job.rows === 1 ? 'row' : 'rows'})`);
+  out(`Visits sent: ${c.rows.visits.length}, on or after ${L.visitsFrom}; ${c.early} from before that are not needed.`);
+  out('Compare (nothing saved):');
+  out(`  Rezerv passes saved here and in these files: ${n('compared')}`);
+  if (n('twin')) out(`  Rezerv copies of an aybkk.net sale, kept void: ${n('twin')}`);
+  if (n('onOurs')) out(`  Rows that fit an aybkk.net or hand-given pass: ${n('onOurs')}`);
+  if (n('again')) out(`  Rows about a pass another row is about too: ${n('again')}`);
+  out(`  Rezerv passes not here yet: ${n('notHere')}`);
+  const whoCodes = new Set(['new', ...OWN_CODES]);
+  for (const [k, v] of by(L.passes.filter(x => x.kind === 'notHere'), x => code(x.code, whoCodes))) out(`    ${k}: ${v}`);
+  out(`  Packs paid and not started (no dates in Rezerv): ${n('notStarted')}`);
+  if (n('notOurs')) {
+    out(`  Rows not compared: ${n('notOurs')}`);
+    for (const [k, v] of by(L.passes.filter(x => x.kind === 'notOurs'), x => code(x.code, OWN_CODES))) out(`    ${k}: ${v}`);
+  }
+  out(`  Live Rezerv passes here that no row of these files is about: ${L.notInFiles}`);
+  out(`  Visit rows read: ${L.visits.read} (not readable ${L.visits.unread}, student not here ${L.visits.noStudent})`);
+  const here = { bookings: 0, checkedIn: 0, ahead: 0, hereDays: 0, doorSeats: 0 };
+  for (const x of L.passes.filter(p => p.kind === 'compared')) for (const k of Object.keys(here)) here[k] += Number(x.here && x.here[k]) || 0;
+  out(`  Here on these passes: ${here.bookings} bookings (${here.checkedIn} checked in, ${here.ahead} ahead)`);
+  out(`    classes here on a day Rezerv shows none: ${here.hereDays}; door seats "Rezerv package" on a day Rezerv shows none, on one of these passes: ${here.doorSeats}`);
+  const fixed = new Set(L.fixes.map(f => f.pass)).size;
+  out(`  Fixes proposed: ${L.fixes.length} on ${fixed} ${fixed === 1 ? 'pass' : 'passes'}`);
+  for (const [k, v] of by(L.fixes, f => f.field)) out(`    ${k}: ${v}`);
+  out(`  For Boonchu, never fixed here: ${L.cases.length}, ${baht(sum(L.cases))}`);
+  const caseCodes = new Set(Object.keys(CASES));
+  for (const [k, v] of by(L.cases, x => code(x.code, caseCodes))) {
+    out(`    ${k}: ${v}, ${baht(sum(L.cases.filter(x => code(x.code, caseCodes) === k)))} (${CASES[k] || 'a person must look'})`);
+  }
+  out(`  Rezerv bookings ahead not here yet: ${L.ahead.length}${L.ahead.length ? ' (run-all brings them over)' : ''}`);
+  out('  Holdings of the passes compared, now -> with every fix:');
+  for (const [k, label] of [['live', 'live passes'], ['classesLeft', 'classes left on all packs'], ['paused', 'paused passes'], ['ahead', 'bookings ahead']]) {
+    out(`    ${label}: ${L.holdings.before[k]} -> ${L.holdings.after[k]}`);
+  }
+}
+
+// Names, emails and dates per row, for a person, in a file only its owner can read.
+function writeCompareDetails(dir, cfg, c) {
+  const file = path.join(dir, 'compare.details.json'), L = c.look;
+  const who = (kind, i) => { const o = c.rows[kind][i] || {}; return { ...c.at[kind][i], name: o.name ?? null, email: o.email ?? null }; };
+  const data = { writtenAt: new Date().toISOString(), server: cfg.base, token: c.token, visitsFrom: L.visitsFrom,
+    passes: L.passes.map(x => ({ ...who('passes', x.i), ...x })),
+    cases: L.cases.map(x => ({ ...(isCount(x.i) ? who('passes', x.i) : {}), ...x })),
+    ahead: L.ahead.map(a => ({ ...who('visits', a.i), date: a.date })) };
+  try { writePrivate(file, JSON.stringify(data, null, 2) + '\n'); } catch (e) {
+    process.stderr.write(`The details file could not be written (${e.code || 'error'}): ${file}\n`);
+    return;
+  }
+  out(`Details: ${file}`);
+}
+
+function readFixes(file) {
+  let d = null;
+  try { d = JSON.parse(fs.readFileSync(file, 'utf8')); } catch (e) { throw new Halt(EXIT.usage, [`Cannot read the fixes file ${file} (${e.code || 'not JSON'}).`]); }
+  const fine = d && typeof d === 'object' && TOKEN.test(d.token || '') && Array.isArray(d.fixes)
+    && d.fixes.every(f => f && typeof f === 'object' && isCount(f.pass) && FIX_FIELDS.includes(f.field) && FIX_REASONS.includes(f.reason)
+      && [true, false, undefined].includes(f.skip));
+  if (!fine) throw new Halt(EXIT.usage, [`${file} is not a fixes file a compare wrote, or a row of it was changed beyond "skip". Nothing was changed.`]);
+  return d;
+}
+
+async function cmdCompare(page, cfg, plan, opt) {
+  const fx = opt.apply ? readFixes(opt.apply) : null;
+  if (fx && fx.token !== opt.expect) {
+    throw new Halt(EXIT.stopped, [`The fixes file was written by the compare of token "${fx.token}", not the "${opt.expect}" in --expect. Nothing was changed.`]);
+  }
+  if (!fx) {
+    try { writePrivate(opt.fixes, ''); } catch (e) { throw new Halt(EXIT.usage, [`Cannot write the fixes file ${opt.fixes} (${e.code || 'error'}).`]); }
+  }
+  if (opt.detailsDir) {
+    try { fs.mkdirSync(opt.detailsDir, { recursive: true, mode: 0o700 }); fs.accessSync(opt.detailsDir, fs.constants.W_OK); }
+    catch (e) { throw new Halt(EXIT.usage, [`Cannot write in the details folder ${opt.detailsDir} (${e.code || 'error'}).`]); }
+  }
+  out(`Folder: ${plan.dir}`);
+  const c = await compareLook(page, cfg, plan);
+  printCompare(c);
+  if (opt.detailsDir) writeCompareDetails(opt.detailsDir, cfg, c);
+  if (!fx) {
+    writePrivate(opt.fixes, JSON.stringify({ token: c.token, server: cfg.base, folder: plan.dir, madeAt: new Date().toISOString(),
+      howTo: 'Set "skip": true on a row to leave that change out. Change nothing else.',
+      fixes: c.look.fixes.map(f => ({ ...f, skip: false })) }, null, 2) + '\n');
+    out(`Token: ${c.token}`);
+    out(`Fixes file: ${opt.fixes}`);
+    if (!c.look.fixes.length) { out('Nothing to fix.'); return EXIT.ok; }
+    out('To make these fixes (a row marked "skip": true is left out):');
+    out(`  ${SELF} compare ${shq(plan.dir)} --apply ${shq(opt.fixes)} --expect "${c.token}"${baseFlag(cfg)}`);
+    return EXIT.ok;
+  }
+  out('');
+  if (c.token !== opt.expect) {
+    throw new Halt(EXIT.stopped, [`A fresh compare gives "${c.token}", not the "${opt.expect}" in --expect.`,
+      'The files, the server or what it holds moved since that look. Nothing was changed.',
+      'Run compare again, read it, and apply the fixes file it writes.']);
+  }
+  const key = f => JSON.stringify([f.pass, f.field, f.ours ?? null, f.proposed ?? null]);
+  const fresh = new Map(c.look.fixes.map(f => [key(f), f]));
+  if (fx.fixes.length !== fresh.size || fx.fixes.some(f => !fresh.has(key(f)))) {
+    throw new Halt(EXIT.stopped, ['The fixes file does not hold the fixes of this compare. Nothing was changed.']);
+  }
+  const byPass = new Map(), take = fx.fixes.filter(f => f.skip !== true);
+  for (const f of take) {
+    if (!byPass.has(f.pass)) byPass.set(f.pass, []);
+    byPass.get(f.pass).push(fresh.get(key(f)));
+  }
+  const items = new Map(c.look.passes.filter(x => x.kind === 'compared').map(x => [x.pass, x]));
+  out(`The compare matches --expect. Applying ${take.length} of ${fx.fixes.length} fixes, on ${byPass.size} passes `
+    + `(${fx.fixes.length - take.length} marked skip).`);
+  let done = 0, k = 0;
+  for (const [id, list] of byPass) {
+    k++;
+    const stop = why => new Halt(EXIT.stopped, [`Stopped at pass ${k} of ${byPass.size} (pass id ${id}): ${why}.`,
+      `${done} ${done === 1 ? 'pass was' : 'passes were'} set before it. Run compare again to see where it stands.`]);
+    if (interrupted) throw stop('interrupted');
+    const said = (list.find(f => f.field === 'status' && typeof f.said === 'string') || {}).said;
+    const r = await askServer(cfg, `/api/bkk/admin/passes/${id}/rezerv-fix`, { dryRun: false, was: items.get(id).ours,
+      set: Object.fromEntries(list.map(f => [f.field, f.proposed])), via: 'cli', by: 'rezerv-import.js compare --apply',
+      note: `as in the Rezerv export (compare ${c.token}): ${[...new Set(list.map(f => f.why || f.reason))].join('; ')}`, ...(said ? { said } : {}) });
+    if (!r.j || r.j.success !== true) throw stop(r.j && r.j.changed ? 'it changed since the look' : r.why || 'refused');
+    done++;
+  }
+  out(`Done: ${done} ${done === 1 ? 'pass' : 'passes'} set as in Rezerv. Run compare again to see what is left.`);
+  return EXIT.ok;
+}
+
 // ── the command line ───────────────────────────────────────────────────────
-const VALUE = { '--base': 'base', '--details': 'details', '--details-dir': 'detailsDir', '--expect': 'expect', '--from-step': 'fromStep' };
+const VALUE = { '--base': 'base', '--details': 'details', '--details-dir': 'detailsDir', '--expect': 'expect', '--from-step': 'fromStep',
+  '--fixes': 'fixes', '--apply': 'apply' };
 const SWITCH = { '--past-attended': 'pastAttended', '--save': 'save' };
 const ALLOWED = { check: ['--base', '--past-attended', '--details'], write: ['--base', '--past-attended', '--details', '--expect'],
-  plan: [], 'run-all': ['--base', '--save', '--past-attended', '--details-dir', '--from-step'] };
+  plan: [], 'run-all': ['--base', '--save', '--past-attended', '--details-dir', '--from-step'],
+  compare: ['--base', '--details-dir', '--fixes', '--apply', '--expect'] };
 const BASE_HELP = `--base must be ${SERVERS.map(h => 'https://' + h).join(' or ')}, or a test server on this machine`;
 
 function parseArgs(argv) {
@@ -925,8 +1157,16 @@ function parseArgs(argv) {
   const testHost = !ours && !isLoopback(base.hostname);
   if (testHost && process.env.REZERV_IMPORT_TEST_ANY_HOST !== '1') throw usage(BASE_HELP);
   const cfg = { base: base.origin, testHost };
-  if (cmd === 'plan' || cmd === 'run-all') {
+  if (cmd === 'plan' || cmd === 'run-all' || cmd === 'compare') {
     if (rest.length !== 1) throw usage(`${cmd} takes one folder`);
+    if (cmd === 'compare') {
+      if (opt.apply && !TOKEN.test(opt.expect || '')) throw usage('compare --apply needs --expect "<fixes>:<cases>:<mark>", as the compare printed it');
+      if (!opt.apply && opt.expect) throw usage('--expect goes with --apply');
+      if (opt.apply && opt.fixes) throw usage('--apply takes the fixes file: leave out --fixes');
+      // Made new each time: never over a file that is not one of ours.
+      if (!opt.apply) opt.fixes = opt.fixes || path.join(rest[0], 'compare-fixes.json');
+      if (opt.fixes && !/fixes\.json$/.test(path.basename(opt.fixes))) throw usage('--fixes: the name ends in fixes.json');
+    }
     if (opt.fromStep != null) {
       const m = opt.fromStep.match(/^([1-9]\d*):(.+)$/);
       if (!m) throw usage('--from-step takes a step and its file, as run-all prints them: 3:rezerv-visits-2025.csv');
@@ -964,6 +1204,10 @@ async function main() {
   if (a.cmd === 'run-all') {
     plan = planDir(a.dir);
     guardPlan(plan, detFileOf(a.opt));
+  } else if (a.cmd === 'compare') {
+    plan = planDir(a.dir);
+    guardPlan(plan, null);
+    for (const f of [a.opt.fixes, a.opt.apply, a.opt.detailsDir && path.join(a.opt.detailsDir, 'compare.details.json')]) if (f) keepOutOfGit(f);
   } else {
     keepOutOfGit(a.file);
     if (a.opt.details) keepOutOfGit(a.opt.details);
@@ -973,6 +1217,7 @@ async function main() {
   if (a.cfg.testHost) out('REZERV_IMPORT_TEST_ANY_HOST is set: this server is not one of ours. For tests only.');
   if (a.cmd === 'check') return cmdCheck(page, a.cfg, a.kind, a.file, a.opt);
   if (a.cmd === 'write') return cmdWrite(page, a.cfg, a.kind, a.file, a.opt);
+  if (a.cmd === 'compare') return cmdCompare(page, a.cfg, plan, a.opt);
   return cmdRunAll(page, a.cfg, plan, a.opt);
 }
 

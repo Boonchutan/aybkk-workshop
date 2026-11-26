@@ -543,6 +543,12 @@
       qPauseDays: 'Pause for how many days?', qPauseWhy: 'Why? (injury, travel…)',
       qAddDays: 'Add how many days? (0 for none)', qAddClasses: 'Add how many classes? (0 for none)', qNote: 'Note',
       qVoid: 'Void this pass? The student will not be able to book with it.', qWhy: 'Why?',
+      rzFix: 'Fix as in Rezerv', rzUsed: n => `Classes used, as Rezerv shows them (of ${n})`, rzUntil: 'End date in Rezerv (YYYY-MM-DD)',
+      rzPauseFrom: 'Pause from, in Rezerv (YYYY-MM-DD, blank for none)', rzPauseUntil: 'Pause until, in Rezerv (YYYY-MM-DD, blank for none)',
+      rzStatus: 'Status: active, frozen or void (void = cancelled in Rezerv)', rzSame: 'Nothing to change: this pass is already as typed.',
+      rzNote: lines => `This will change:\n${lines}\n\nNote (required): why, and where you saw it in Rezerv`, rzNoteNeeded: 'A note is required. Nothing was changed.',
+      rzDone: 'Saved, as in Rezerv.', rzF_creditsUsed: 'Classes used', rzF_validUntil: 'End date', rzF_frozenFrom: 'Pause from',
+      rzF_frozenUntil: 'Pause until', rzF_status: 'Status',
       qWhichCode: codes => `Which package? (${codes})`,
       qName: 'Student name', qEmailFind: 'Email (used to find them again)',
       qStart: 'Start date YYYY-MM-DD (blank = starts on first booking)', qExpires: 'Expires YYYY-MM-DD',
@@ -659,6 +665,12 @@
       qPauseDays: 'พักแพ็กเกจกี่วัน?', qPauseWhy: 'เหตุผล? (บาดเจ็บ เดินทาง…)',
       qAddDays: 'เพิ่มกี่วัน? (ใส่ 0 ถ้าไม่เพิ่ม)', qAddClasses: 'เพิ่มกี่ครั้ง? (ใส่ 0 ถ้าไม่เพิ่ม)', qNote: 'หมายเหตุ',
       qVoid: 'ยกเลิกแพ็กเกจนี้? นักเรียนจะใช้แพ็กเกจนี้จองคลาสไม่ได้อีก', qWhy: 'เหตุผล?',
+      rzFix: 'แก้ให้ตรงกับ Rezerv', rzUsed: n => `ใช้ไปกี่ครั้ง ตามที่ Rezerv แสดง (จาก ${n} ครั้ง)`, rzUntil: 'วันหมดอายุใน Rezerv (YYYY-MM-DD)',
+      rzPauseFrom: 'พักตั้งแต่ ตาม Rezerv (YYYY-MM-DD เว้นว่างถ้าไม่มี)', rzPauseUntil: 'พักถึง ตาม Rezerv (YYYY-MM-DD เว้นว่างถ้าไม่มี)',
+      rzStatus: 'สถานะ: active, frozen หรือ void (void = ยกเลิกใน Rezerv)', rzSame: 'ไม่มีอะไรต้องแก้ แพ็กเกจนี้ตรงกับที่พิมพ์แล้ว',
+      rzNote: lines => `จะเปลี่ยน:\n${lines}\n\nหมายเหตุ (ต้องใส่): เหตุผล และเห็นใน Rezerv ตรงไหน`, rzNoteNeeded: 'ต้องใส่หมายเหตุ ยังไม่ได้เปลี่ยนอะไร',
+      rzDone: 'บันทึกแล้ว ตรงกับ Rezerv', rzF_creditsUsed: 'ใช้ไป', rzF_validUntil: 'วันหมดอายุ', rzF_frozenFrom: 'พักตั้งแต่',
+      rzF_frozenUntil: 'พักถึง', rzF_status: 'สถานะ',
       qWhichCode: codes => `แพ็กเกจไหน? (${codes})`,
       qName: 'ชื่อนักเรียน', qEmailFind: 'อีเมล (ใช้ค้นหานักเรียนภายหลัง)',
       qStart: 'วันเริ่ม YYYY-MM-DD (เว้นว่าง = เริ่มเมื่อจองคลาสแรก)', qExpires: 'วันหมดอายุ YYYY-MM-DD',
@@ -1825,6 +1837,7 @@
         <button class="btn gray" onclick="passAct(${p.id},'unfreeze')">${T('unfreeze')}</button>
         <button class="btn gray" onclick="passAct(${p.id},'extend')">${T('extend')}</button>
         <button class="btn red" onclick="passAct(${p.id},'void')">${T('void')}</button>
+        ${p.source === 'rezerv' && !p.twin_of ? `<button class="btn gray" onclick="rezervFix(${p.id})">${T('rzFix')}</button>` : ''}
       </div>`).join('') || `<p class="muted">${T('noPass')}</p>`}
       <p style="margin-top:8px"><button class="btn" onclick="bookFor('${esc(m.code)}')">${T('bookBtn')}</button>
         <button class="btn pink" onclick="signinLink('${esc(m.code)}')">${T('linkBtn')}</button>
@@ -2087,6 +2100,27 @@
     // The Rezerv copy of a voided pass is the sale's pass again: said, so nobody voids it by mistake.
     if (j && (j.rezervPassBack || []).length) alert(T('rzPassBack'));
     if (j) findStudents();
+  };
+
+  // Fix as in Rezerv: M types what Rezerv shows, sees what would change, and saves it with a note.
+  window.rezervFix = async id => {
+    const call = body => api(`/api/bkk/admin/passes/${id}/rezerv-fix`, { method: 'POST', body: JSON.stringify(body) }).then(shout);
+    const cur = await call({ dryRun: true });
+    if (!cur) return;
+    const w = cur.was, set = {};
+    const one = (k, q, d) => { const v = ask(q, d == null ? '' : String(d)); if (v === null) return false; set[k] = v; return true; };
+    if (cur.pass.kind !== 'unlimited' && !one('creditsUsed', T('rzUsed', cur.pass.creditsTotal), w.creditsUsed)) return;
+    if (!one('validUntil', T('rzUntil'), w.validUntil) || !one('frozenFrom', T('rzPauseFrom'), w.frozenFrom)
+      || !one('frozenUntil', T('rzPauseUntil'), w.frozenUntil) || !one('status', T('rzStatus'), w.status)) return;
+    const look = await call({ dryRun: true, set });
+    if (!look) return;
+    if (!look.changes.length) { alert(T('rzSame')); return; }
+    const lines = look.changes.map(c => `${T('rzF_' + c.field)}: ${c.from == null ? '-' : c.from} → ${c.to == null ? '-' : c.to}`).join('\n');
+    const note = ask(T('rzNote', lines), '');
+    if (note === null) return;
+    if (!note) { alert(T('rzNoteNeeded')); return; }
+    const done = await call({ dryRun: false, set, was: w, note, via: 'admin' });
+    if (done) { alert(T('rzDone')); findStudents(); }
   };
 
   window.grantPass = async () => {

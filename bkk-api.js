@@ -908,6 +908,14 @@ function mountBkk(app, opts = {}) {
     // gave that pass, and untilWas before them), and status (what Rezerv says of
     // this one now, so it comes back paused, or stays void if Rezerv stopped it).
     await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS twin_undo JSONB`);
+    // A Rezerv pass set as Rezerv has it (26 Nov 2026): one row per fix, never
+    // edited. via 'cli' or 'admin', by_name who said they did it, was and became
+    // the pass's classes used, end date, pause dates and status before and after.
+    await q(`CREATE TABLE IF NOT EXISTS bkk_pass_fixes (
+      id SERIAL PRIMARY KEY, pass_id INTEGER NOT NULL REFERENCES bkk_passes(id) ON DELETE CASCADE,
+      at TIMESTAMPTZ NOT NULL DEFAULT now(), via TEXT NOT NULL, by_name TEXT, note TEXT NOT NULL,
+      was JSONB NOT NULL, became JSONB NOT NULL)`);
+    await q(`CREATE INDEX IF NOT EXISTS bkk_pass_fixes_pass ON bkk_pass_fixes (pass_id)`);
     // The student's own face (9 Nov 2026), so teachers can greet them by name.
     // photo_id is a private Cloudinary asset, or 'r2face/<8 hex>/<id>' in R2. photo_tries counts uploads on
     // photo_tries_on (a Bangkok day), to cap them.
@@ -5820,11 +5828,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     return `${m[3]}-${String(MONTHS[m[2].toLowerCase()]).padStart(2, '0')}-${m[1].padStart(2, '0')}`;
   }
   // 2- and 6-month plans are no longer sold, but Rezerv students still hold
-  // them: keep the package as a retired (never for sale) record.
-  async function planProduct(db, code) {
+  // them: keep the package as a retired (never for sale) record. look: write
+  // nothing, and answer with what that record would be.
+  async function planProduct(db, code, look = false) {
     const pr = (await db.query('SELECT * FROM bkk_products WHERE code=$1', [code])).rows[0];
     if (pr || !RETIRED_PLANS[code]) return pr || null;
     const r = RETIRED_PLANS[code];
+    if (look) return { id: null, code, name_en: r.en, name_th: r.th, price_thb: r.price, kind: 'unlimited', credits: null, valid_days: r.days, daily_cap: 2 };
     return (await db.query(`INSERT INTO bkk_products (code,name_en,name_th,price_thb,kind,credits,valid_days,daily_cap,sort,active)
                    VALUES ($1,$2,$3,$4,'unlimited',NULL,$5,2,$6,false)
                    ON CONFLICT (code) DO UPDATE SET code=EXCLUDED.code RETURNING *`,
@@ -6166,7 +6176,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
 
   // A "Checked in" column of Yes/No instead of a time.
   const CI_YES = /^(yes|y|true|1|[✓✔x]|ใช่|มา)$/i, CI_NO = /^(no|n|false|0|[✗✘]|ไม่|ไม่มา)$/i;
-  async function importVisit(db, row, ctx, warn) {
+  // One visits row as the import reads it, before anyone is looked up: its day,
+  // time, slot and what Rezerv says of it.
+  function visitOf(row, ctx, warn) {
     if (excelId(row.rezervId)) return { skip: why('excelId', cleanId(row.rezervId, 40)) };
     const when = parseWhen(row.date);
     if (!when) return { skip: why('badDate', clean(row.date, 40)) };
@@ -6198,8 +6210,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (status === 'booked' && begun) {
       if (ctx.pastBookedAttended) status = 'attended'; else ctx.rowPastBooked = true;
     }
+    return { when, time, status, ci, className, slot, startAt, begun, future: when.date >= ctx.today };
+  }
+  async function importVisit(db, row, ctx, warn) {
+    const v = visitOf(row, ctx, warn);
+    if (v.skip) return v;
+    const { when, time, status, ci, className, slot, startAt, future } = v;
     // A booking still to come is a real seat: it must be a class we run.
-    const future = when.date >= ctx.today;
     let ov = null;
     if (status === 'booked' && future) {
       if (!slot || !slot.active) return { skip: why('noSlot', time, when.date) };
@@ -6396,9 +6413,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     return hit ? hit[1] : undefined;
   }
 
-  // The paste importer's fields plus memberRezervId, start, Rezerv's pass id
-  // (rezervId), and Rezerv's status, cancel and freeze columns.
-  async function importPass(db, row, ctx, warn) {
+  // One passes row as the import reads it, before anyone is looked up. look: nothing is written.
+  async function passOf(db, row, ctx, warn, look = false) {
     row = { ...row, name: String(row.name || '').replace(/\s*\((renewed|staff)\)\s*/gi, ' ') };
     const planRaw = clean(row.plan, 80);
     const plan = IMPORT_PLANS.find(([re]) => re.test(planRaw));
@@ -6422,7 +6438,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     // is what Rezerv sold, whatever its dates (a year cut short by hand).
     const code = plan[1] === 'unlim12' && start && (Date.parse(until.date) - Date.parse(start.date)) / 86400000 <= 366
       && !/13\s*months?|free\s*month/i.test(planRaw) ? 'unlim12m' : plan[1];
-    const pr = await planProduct(db, code);
+    const pr = await planProduct(db, code, look);
     if (!pr) return { skip: why('noPackage', code) };
     const total = pr.kind === 'credits' ? (pr.credits || 10) : null;
     // "3", "3/10" or "3 classes": the number at the start. Unreadable is never "all left".
@@ -6459,8 +6475,20 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     // CREDIT_NOTE marks a class credit, which the doubles list never takes for a copy.
     const note = ['moved from Rezerv', creditBack(planRaw) ? CREDIT_NOTE : null, off ? `${said} in Rezerv` : null,
       fFrom || fUntil ? `paused in Rezerv ${fFrom || '?'} to ${fUntil || '?'}` : null].filter(Boolean).join(' | ');
+    const from = start ? start.date
+      : new Date(Date.parse(until.date + 'T00:00:00Z') - (pr.valid_days - 1) * 86400e3).toISOString().slice(0, 10);
+    const used = left != null ? Math.max(0, total - left) : 0;
+    const pause = [later ? null : fFrom, later ? null : fUntil];
+    return { row, planRaw, pr, total, left, until, start, cancelledOn, off, said, fFrom, fUntil, later, frozen, status, note, from, used, pause };
+  }
 
-    const who = await importStudent(db, row, ctx, warn);
+  // The paste importer's fields plus memberRezervId, start, Rezerv's pass id
+  // (rezervId), and Rezerv's status, cancel and freeze columns.
+  async function importPass(db, row, ctx, warn) {
+    const P = await passOf(db, row, ctx, warn);
+    if (P.skip) return P;
+    const { planRaw, pr, total, until, start, off, said, fFrom, frozen, status, note, from, used, pause } = P;
+    const who = await importStudent(db, P.row, ctx, warn);
     if (who.skip) return who;
     const m = who.member;
     // As the paste importer did: an email or phone on the pass list fills a gap.
@@ -6476,10 +6504,6 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         AND ($4::text IS NULL OR source_ref IS NULL)
         AND (valid_until=$3 OR ($4::text IS NOT NULL AND source='rezerv' AND valid_from=$5::date))
       ORDER BY valid_until=$3 DESC, id LIMIT 1`, [m.id, pr.id, until.date, ref, start ? start.date : null])).rows[0];
-    const from = start ? start.date
-      : new Date(Date.parse(until.date + 'T00:00:00Z') - (pr.valid_days - 1) * 86400e3).toISOString().slice(0, 10);
-    const used = left != null ? Math.max(0, total - left) : 0;
-    const pause = [later ? null : fFrom, later ? null : fUntil];
     const copy = { used, total, from, until: until.date, started: from <= ctx.today, status, paused: frozen ? fFrom || '-' : '', today: ctx.today };
     if (had) {
       const tag = had.source === 'rezerv' ? had.source_ref || ref : null;
@@ -6632,6 +6656,337 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     } finally { client.release(); }
     if (!dryRun) console.log(`✓ bkk: Rezerv ${kind} import: ${out.added} added, ${out.matched} matched, ${out.updated} updated, ${out.skipped.length} skipped`);
     res.json(out);
+  });
+
+  // ── the last Rezerv export next to what is here (26 Nov 2026) ─────────────
+  // Every Rezerv pass saved here, next to what the export files run-all reads
+  // say of it now: each row read by the import's own code, its student found as
+  // the import finds them. One read-only transaction, rolled back. Count once,
+  // for a pack: Rezerv's own count of classes used (it counts a class when it is
+  // booked), plus each class taken here on that pass on a day Rezerv shows no
+  // class of that student, plus each door seat with cover 'rezerv' on such a day
+  // that only that pack can pay for, up to its size. What cannot be worked out
+  // is a case for the owner with its value in baht, and that pass gets no fix.
+  const COMPARE_MAX = { passes: 20000, visits: 60000 };
+  const NEAR_SALE_DAYS = 60;
+  const ymdGap = (a, b) => Math.round((Date.parse(`${b}T12:00:00Z`) - Date.parse(`${a}T12:00:00Z`)) / 86400000);
+  const PASS_LOOK = `SELECT p.*, pr.code AS pr_code, pr.price_thb, pr.credits AS pr_credits, pr.valid_days AS pr_days,
+      to_char(p.valid_from,'YYYY-MM-DD') AS f, to_char(p.valid_until,'YYYY-MM-DD') AS u,
+      to_char(p.frozen_from,'YYYY-MM-DD') AS ff, to_char(p.frozen_until,'YYYY-MM-DD') AS fu
+    FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id`;
+  const FIX_FIELDS = ['creditsUsed', 'validUntil', 'frozenFrom', 'frozenUntil', 'status'];
+  const fixView = p => ({ creditsUsed: p.kind === 'unlimited' ? null : p.credits_used, validUntil: p.u, frozenFrom: p.ff, frozenUntil: p.fu, status: p.status });
+  // Staff changed it here since the import or the last fix: an extend, a pause, a void, or an imported pause ended early.
+  function setByHand(p) {
+    const segs = String(p.note || '').split(' | ');
+    const after = segs.slice(segs.map(s => /^Rezerv fix /.test(s)).lastIndexOf(true) + 1);
+    if (after.some(s => /^(extended \+|frozen \d+d)/.test(s) || (/^voided: /.test(s) && !/^voided: same sale as/.test(s)))) return true;
+    const paused = after.map(s => /^paused in Rezerv (\S+) to (\S+)$/.exec(s)).filter(Boolean).pop();
+    return !!paused && after.length === segs.length && (p.fu || '?') !== paused[2];
+  }
+  async function compareScope(db) {
+    const d = (await db.query(`SELECT to_char(least(
+        (SELECT min((created_at AT TIME ZONE 'Asia/Bangkok')::date) FROM bkk_passes WHERE source='rezerv'),
+        (SELECT min(class_date) FROM bkk_bookings WHERE cover='rezerv' AND source IS DISTINCT FROM 'rezerv'),
+        (SELECT min(b.class_date) FROM bkk_bookings b JOIN bkk_passes p ON p.id=b.pass_id WHERE p.source='rezerv')) - 2, 'YYYY-MM-DD') AS d`)).rows[0].d;
+    return { today: bkkToday(), visitsFrom: d || addDaysYmd(bkkToday(), -2) };
+  }
+  // importStudent for a look: the same match, and nobody is made.
+  async function lookStudent(db, row) {
+    const f = importWho(row, 'memberRezervId', () => {});
+    if (f.bad) return { skip: f.bad };
+    if (!f.rezervId && !f.email && !f.phone && !f.name) return { skip: why('noWho') };
+    const hit = await importFind(db, f);
+    if (hit.reason) return { skip: hit.reason };
+    if (hit.clash) return { skip: why(hit.clash.code, ...hit.clash.vals, 'hand') };
+    if (!hit.member) return { skip: why('notFound') };
+    const byEmail = f.email ? await liveMember(db, await rawByEmail(db, f.email)) : null;
+    return { member: hit.member, other: byEmail && byEmail.id !== hit.member.id };
+  }
+
+  async function rezervCompare(db, passRows, visitRows) {
+    const { today, visitsFrom } = await compareScope(db);
+    const ctx = { today, now: bkkNow(), seen: new Set(), pastBookedAttended: false,
+      slots: (await db.query('SELECT * FROM bkk_class_slots ORDER BY id')).rows };
+    const quiet = () => {}, obj = x => x && typeof x === 'object' ? x : {};
+    const people = new Map();
+    const whoOf = row => {
+      const k = JSON.stringify(['memberRezervId', 'email', 'phone', 'name'].map(f => String(row[f] ?? '')));
+      if (!people.has(k)) people.set(k, lookStudent(db, row));
+      return people.get(k);
+    };
+    const dropin = Number(((await db.query(`SELECT price_thb FROM bkk_products WHERE code='dropin'`)).rows[0] || {}).price_thb) || 0;
+    const perClass = p => p.price_thb / (p.pr_credits || p.credits_total || 1), perDay = p => p.price_thb / (p.pr_days || 1);
+    const left = p => Math.max(0, (p.credits_total || 0) - (p.credits_used || 0));
+    const remaining = p => p.kind === 'unlimited' ? perDay(p) * Math.max(0, ymdGap(today, p.u || today) + 1) : perClass(p) * left(p);
+    const out = { today, visitsFrom, passes: [], cases: [], fixes: [], ahead: [], visits: { rows: visitRows.length, read: 0, unread: 0, noStudent: 0 } };
+    const caseKeys = new Set();
+    const addCase = (code, thb, passes, more = {}, key = null) => {
+      if (key && caseKeys.has(key)) return;
+      if (key) caseKeys.add(key);
+      out.cases.push({ code, thb: Math.round(thb), passes, ...more });
+    };
+    // Each student's Rezerv passes as the files have them now: what a class on a given day could be paid with.
+    const windows = new Map(), compared = [], seen = new Set();
+    for (let i = 0; i < passRows.length; i++) {
+      const row = obj(passRows[i]);
+      const P = await passOf(db, row, ctx, quiet, true);
+      if (P.skip) {
+        const later = P.skip.code === 'badUntil' && /^-*$/.test(String(P.skip.vals[0] ?? '').trim());
+        out.passes.push({ i, kind: later ? 'notStarted' : 'notOurs', code: P.skip.code });
+        continue;
+      }
+      const who = await whoOf(P.row);
+      if (who.skip) { out.passes.push({ i, kind: 'notHere', code: who.skip.code }); continue; }
+      let m = who.member, other = who.other;
+      const ref = importId(row.rezervId) || null;
+      let had = ref ? (await db.query(`${PASS_LOOK} WHERE p.source='rezerv' AND p.source_ref=$1`, [ref])).rows[0] : null;
+      if (had && had.member_id !== m.id) {
+        const owner = await liveMember(db, (await db.query('SELECT * FROM bkk_members WHERE id=$1', [had.member_id])).rows[0]);
+        if (owner && owner.id !== m.id) { m = owner; other = true; }
+      }
+      if (!had && P.pr.id) had = (await db.query(`${PASS_LOOK} WHERE p.member_id=$1 AND p.product_id=$2
+          AND ($4::text IS NULL OR p.source_ref IS NULL)
+          AND (p.valid_until=$3 OR ($4::text IS NOT NULL AND p.source='rezerv' AND p.valid_from=$5::date))
+        ORDER BY p.valid_until=$3 DESC, p.id LIMIT 1`, [m.id, P.pr.id, P.until.date, ref, P.start ? P.start.date : null])).rows[0];
+      if (!windows.has(m.id)) windows.set(m.id, []);
+      const wid = had && had.source === 'rezerv' && !had.twin_of ? had.id : null;
+      if (!wid || !windows.get(m.id).some(w => w.id === wid)) {
+        windows.get(m.id).push({ id: wid, i, credits: P.pr.kind === 'credits', from: P.from, until: P.until.date, pause: P.pause, off: P.off,
+          cancelledOn: P.cancelledOn ? P.cancelledOn.date : null, perClass: P.pr.price_thb / (P.pr.credits || 1), perDay: P.pr.price_thb / (P.pr.valid_days || 1) });
+      }
+      const R = { creditsUsed: P.total != null && P.left != null ? P.used : null, creditsTotal: P.total, validFrom: P.from, validUntil: P.until.date,
+        frozenFrom: P.pause[0], frozenUntil: P.pause[1], status: P.status, pauseLater: P.later ? [P.fFrom, P.fUntil] : null, said: P.said };
+      if (!had) { out.passes.push({ i, kind: 'notHere', code: 'new' }); continue; }
+      if (seen.has(had.id)) { out.passes.push({ i, kind: 'again', pass: had.id }); continue; }
+      seen.add(had.id);
+      // Kept void as the copy of a sale here: Rezerv's count came over onto the pass kept. More since is for the owner.
+      if (had.twin_of) {
+        const more = R.creditsUsed != null ? R.creditsUsed - (had.credits_used || 0) : 0;
+        if (more > 0) addCase('nextToOurs', more * perClass(had), [had.id], { i, twin: true });
+        out.passes.push({ i, kind: 'twin', pass: had.id });
+        continue;
+      }
+      if (had.source !== 'rezerv') {
+        addCase('nextToOurs', remaining(had), [had.id], { i });
+        out.passes.push({ i, kind: 'onOurs', pass: had.id });
+        continue;
+      }
+      compared.push({ i, p: had, R, m, other });
+    }
+
+    // Days Rezerv shows a class of each student (attended, booked or a no-show), and its bookings still to come.
+    const shown = new Map();
+    for (let i = 0; i < visitRows.length; i++) {
+      const row = obj(visitRows[i]);
+      const v = visitOf(row, ctx, quiet);
+      if (v.skip) { out.visits.unread++; continue; }
+      if (v.when.date < visitsFrom || !['attended', 'booked', 'noshow'].includes(v.status)) continue;
+      const who = await whoOf(row);
+      if (who.skip) { out.visits.noStudent++; continue; }
+      out.visits.read++;
+      const id = who.member.id;
+      if (!shown.has(id)) shown.set(id, new Set());
+      shown.get(id).add(v.when.date);
+      if (v.status === 'booked' && !v.begun && !(await db.query(`SELECT 1 FROM bkk_bookings WHERE member_id=$1 AND class_date=$2
+          AND status='booked' AND ($3::int IS NULL OR slot_id=$3) LIMIT 1`, [id, v.when.date, v.slot ? v.slot.id : null])).rows.length) {
+        out.ahead.push({ i, date: v.when.date });
+      }
+    }
+    const shownOn = (mid, d) => (shown.get(mid) || new Set()).has(d);
+    // The Rezerv passes of that student that could have paid for a class that day.
+    const payers = (mid, d) => (windows.get(mid) || []).filter(w => w.from <= d && d <= w.until
+      && (!w.off || (w.cancelledOn && d < w.cancelledOn)) && !(w.pause[0] && w.pause[0] <= d && (!w.pause[1] || d < w.pause[1])));
+    const dayValue = c => c.some(w => w.credits) ? Math.max(...c.filter(w => w.credits).map(w => w.perClass)) : c.length ? c[0].perDay : dropin;
+
+    const ids = compared.map(c => c.p.id), mids = [...windows.keys()];
+    const onPass = ids.length ? (await db.query(`SELECT pass_id, to_char(class_date,'YYYY-MM-DD') AS d, checked_in_at IS NOT NULL AS came,
+        start_at > now() AS ahead FROM bkk_bookings WHERE pass_id = ANY($1::int[]) AND status='booked'`, [ids])).rows : [];
+    const seats = mids.length ? (await db.query(`SELECT b.member_id, m.name, to_char(b.class_date,'YYYY-MM-DD') AS d
+        FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
+        WHERE b.member_id = ANY($1::int[]) AND b.cover='rezerv' AND b.source IS DISTINCT FROM 'rezerv' AND b.status='booked'
+          AND b.pass_id IS NULL ORDER BY b.class_date, b.id`, [mids])).rows : [];
+    const doorAdd = new Map();
+    for (const s of seats) {
+      if (shownOn(s.member_id, s.d)) continue;
+      const c = payers(s.member_id, s.d);
+      if (c.length === 1 && c[0].id) { doorAdd.set(c[0].id, (doorAdd.get(c[0].id) || 0) + 1); continue; }
+      if (c.length === 1 && !c[0].credits) continue;
+      addCase('untied', dayValue(c), c.filter(w => w.id).map(w => w.id), { seat: true, date: s.d, name: s.name,
+        ...(c.length === 1 ? { i: c[0].i } : {}) });
+    }
+
+    for (const { i, p, R, m, other } of compared) {
+      const ours = fixView(p), proposed = { ...ours };
+      const mine = onPass.filter(b => b.pass_id === p.id), days = [...new Set(mine.map(b => b.d))];
+      let hereAdd = 0;
+      for (const d of days) {
+        if (!shownOn(m.id, d)) { hereAdd++; continue; }
+        const c = payers(m.id, d);
+        if (c.length > 1) addCase('untied', dayValue(c), c.filter(w => w.id).map(w => w.id), { i, date: d }, `${m.id} ${d}`);
+      }
+      const door = doorAdd.get(p.id) || 0;
+      let count = null;
+      if (p.kind !== 'unlimited') {
+        if (R.creditsUsed == null) addCase('blankLeft', perClass(p) * left(p), [p.id], { i });
+        else {
+          count = { rezerv: R.creditsUsed, here: hereAdd, door };
+          const right = R.creditsUsed + hereAdd + door;
+          if (right > p.credits_total) addCase('overSize', (right - p.credits_total) * perClass(p), [p.id], { i });
+          proposed.creditsUsed = Math.min(right, p.credits_total);
+        }
+      }
+      proposed.validUntil = R.validUntil;
+      if (R.pauseLater) addCase('pauseLater', perDay(p) * Math.max(1, ymdGap(R.pauseLater[0], R.pauseLater[1] || R.validUntil)), [p.id], { i });
+      else { proposed.frozenFrom = R.frozenFrom; proposed.frozenUntil = R.frozenUntil; }
+      proposed.status = R.status;
+      const fields = FIX_FIELDS.filter(k => proposed[k] !== ours[k]);
+      if (fields.length && setByHand(p)) {
+        const paused = x => x.frozenFrom && x.frozenUntil ? ymdGap(x.frozenFrom, x.frozenUntil) : 0;
+        const moved = p.kind === 'unlimited'
+          ? perDay(p) * (Math.abs(ymdGap(ours.validUntil, proposed.validUntil)) + Math.abs(paused(ours) - paused(proposed)))
+          : perClass(p) * Math.abs((proposed.creditsUsed || 0) - (ours.creditsUsed || 0));
+        addCase('handSet', moved || remaining(p), [p.id], { i });
+      }
+      if (proposed.status === 'void' && ours.status !== 'void' && mine.length) {
+        addCase('cancelledBooked', p.kind === 'unlimited' ? perDay(p) * days.length : perClass(p) * mine.length, [p.id], { i });
+      }
+      if (other) addCase('twoProfiles', remaining(p), [p.id], { i });
+      // An aybkk.net or hand-given pass of the same kind next to it: its days overlap, or it was sold near its start.
+      const live = x => ['active', 'frozen'].includes(x.status) && x.validUntil >= today && (p.kind === 'unlimited' || x.creditsUsed < p.credits_total);
+      if (p.credits_total !== 1 && (live(ours) || live(proposed))) {
+        const near = (await db.query(`SELECT to_char(x.valid_from,'YYYY-MM-DD') AS f, to_char(x.valid_until,'YYYY-MM-DD') AS u,
+            to_char(coalesce(o.verified_at, o.created_at, x.created_at) AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS sold
+          FROM bkk_passes x LEFT JOIN bkk_orders o ON o.id=x.order_id
+          WHERE x.member_id=$1 AND x.kind=$2 AND x.source IS DISTINCT FROM 'rezerv' AND x.status IN ('active','frozen')
+            AND coalesce(x.credits_total, 0) <> 1 AND (x.valid_until IS NULL OR x.valid_until >= $3::date)`, [m.id, p.kind, today])).rows
+          .map(x => ({ overlap: x.f && x.u ? Math.max(0, ymdGap(x.f > R.validFrom ? x.f : R.validFrom, x.u < R.validUntil ? x.u : R.validUntil) + 1) : 0,
+            near: Math.abs(ymdGap(x.sold, R.validFrom)) <= NEAR_SALE_DAYS }))
+          .filter(x => x.overlap || x.near);
+        if (near.length) {
+          addCase('nextToOurs', p.kind === 'unlimited'
+            ? perDay(p) * (Math.max(...near.map(x => x.overlap)) || Math.max(0, ymdGap(today, R.validUntil) + 1))
+            : perClass(p) * (R.creditsUsed != null ? Math.max(0, p.credits_total - R.creditsUsed) : left(p)), [p.id], { i });
+        }
+      }
+      const cases = out.cases.filter(k => k.passes.includes(p.id)).map(k => k.code);
+      const item = { i, kind: 'compared', pass: p.id, product: p.pr_code, ours, rezerv: R, proposed, count,
+        here: { bookings: mine.length, checkedIn: mine.filter(b => b.came).length, ahead: mine.filter(b => b.ahead).length, hereDays: hereAdd, doorSeats: door },
+        cases, fixes: cases.length ? 0 : fields.length };
+      if (!cases.length) {
+        for (const f of fields) {
+          out.fixes.push({ pass: p.id, field: f, ours: ours[f], proposed: proposed[f], reason: f === 'creditsUsed' ? 'countOnce' : 'asInRezerv',
+            ...(f === 'creditsUsed' ? { why: `Rezerv ${count.rezerv} + here ${count.here} + door ${count.door}` } : {}),
+            ...(f === 'status' && proposed.status === 'void' ? { said: R.said } : {}) });
+        }
+      }
+      out.passes.push(item);
+    }
+    out.passes.sort((a, b) => a.i - b.i);
+
+    // What the compared passes hold now, and with every fix made.
+    const hold = withFixes => {
+      const t = { live: 0, classesLeft: 0, paused: 0, ahead: onPass.filter(b => b.ahead).length };
+      for (const { p } of compared) {
+        const x = { ...fixView(p), ...(withFixes ? Object.fromEntries(out.fixes.filter(f => f.pass === p.id).map(f => [f.field, f.proposed])) : {}) };
+        if (['active', 'frozen'].includes(x.status) && x.validUntil >= today && (p.kind === 'unlimited' || x.creditsUsed < p.credits_total)) {
+          t.live++;
+          if (p.kind !== 'unlimited') t.classesLeft += p.credits_total - x.creditsUsed;
+        }
+        if (x.status === 'frozen') t.paused++;
+      }
+      return t;
+    };
+    out.holdings = { before: hold(false), after: hold(true) };
+    // Live Rezerv passes here that no row of these files is about.
+    out.notInFiles = (await db.query(`SELECT count(*)::int AS n FROM bkk_passes p WHERE p.source='rezerv' AND p.twin_of IS NULL
+        AND p.status IN ('active','frozen') AND (p.valid_until IS NULL OR p.valid_until >= $1::date)
+        AND (p.kind='unlimited' OR p.credits_used < p.credits_total) AND p.id <> ALL($2::int[])`, [today, [...seen]])).rows[0].n;
+    return out;
+  }
+
+  app.post('/api/bkk/admin/rezerv/compare', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const b = req.body || {};
+    const passRows = Array.isArray(b.passes) ? b.passes : [], visitRows = Array.isArray(b.visits) ? b.visits : [];
+    if (passRows.length > COMPARE_MAX.passes || visitRows.length > COMPARE_MAX.visits) {
+      return res.status(400).json({ error: `at most ${COMPARE_MAX.passes} pass rows and ${COMPARE_MAX.visits} visit rows` });
+    }
+    const client = await pool.connect();
+    try {
+      await switchPrices();
+      await client.query('BEGIN TRANSACTION READ ONLY');
+      res.json(b.scope === true ? await compareScope(client) : await rezervCompare(client, passRows, visitRows));
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    } finally {
+      await client.query('ROLLBACK').catch(() => {});
+      client.release();
+    }
+  });
+
+  // Set one Rezerv pass as Rezerv has it (26 Nov 2026): classes used, end date,
+  // pause dates and status, written as the import writes them. /extend and
+  // /freeze move dates on from today, while Rezerv's end date already holds its
+  // pause. dryRun (the default) answers with the pass as it is and what would
+  // change, and keeps nothing. A save takes a note, and was: the pass as the
+  // look saw it, so a fix made on an older look changes nothing.
+  const oneLine = (v, n) => String(v ?? '').replace(/[\u0000-\u001f\u007f|]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, n);
+  app.post('/api/bkk/admin/passes/:id/rezerv-fix', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    if (!/^\d{1,9}$/.test(req.params.id)) return res.status(404).json({ error: 'pass not found' });
+    const b = req.body || {}, dryRun = b.dryRun !== false;
+    const set = b.set && typeof b.set === 'object' && !Array.isArray(b.set) ? b.set : {};
+    if (Object.keys(set).some(k => !FIX_FIELDS.includes(k))) return res.status(400).json({ error: `set takes ${FIX_FIELDS.join(', ')}` });
+    const note = oneLine(b.note, 300);
+    if (!dryRun && !note) return res.status(400).json({ error: 'a note is required: why this pass is set as in Rezerv' });
+    const fail = (status, error, extra = {}) => { throw Object.assign(new Error(error), { status, extra }); };
+    const norm = (k, v) => v === '' || v == null ? null : k === 'creditsUsed' ? Number(v) : String(v).trim();
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const p = (await client.query(`${PASS_LOOK} WHERE p.id=$1 FOR UPDATE OF p`, [req.params.id])).rows[0];
+      if (!p) fail(404, 'pass not found');
+      if (p.source !== 'rezerv' || p.twin_of) fail(409, 'only a pass moved from Rezerv, and not one kept void as the copy of a sale here');
+      const was = fixView(p), to = { ...was }, today = bkkToday();
+      for (const k of Object.keys(set)) to[k] = norm(k, set[k]);
+      if (p.kind === 'unlimited' ? to.creditsUsed != null : !(Number.isInteger(to.creditsUsed) && to.creditsUsed >= 0 && to.creditsUsed <= p.credits_total)) {
+        fail(400, p.kind === 'unlimited' ? 'an unlimited pass has no classes used' : `classes used is a whole number from 0 to ${p.credits_total}`);
+      }
+      if (!realYmd(to.validUntil) || (p.f && to.validUntil < p.f)) fail(400, 'the end date is a date (YYYY-MM-DD), not before the pass starts');
+      for (const k of ['frozenFrom', 'frozenUntil']) if (to[k] != null && !realYmd(to[k])) fail(400, `${k} is a date (YYYY-MM-DD) or empty`);
+      if (to.frozenUntil && (!to.frozenFrom || to.frozenUntil < to.frozenFrom)) fail(400, 'a pause needs its first day, and ends after it');
+      if (!['active', 'frozen', 'void'].includes(to.status)) fail(400, 'status is active, frozen or void');
+      if (to.status === 'frozen' && !(to.frozenFrom && to.frozenFrom <= today)) {
+        fail(400, 'a paused pass needs a pause that has begun: a pause still to come is started on its day');
+      }
+      const changes = FIX_FIELDS.filter(k => to[k] !== was[k]).map(k => ({ field: k, from: was[k], to: to[k] }));
+      const pass = { id: p.id, kind: p.kind, product: p.pr_code, creditsTotal: p.credits_total, validFrom: p.f };
+      if (dryRun) {
+        await client.query('ROLLBACK');
+        return res.json({ dryRun: true, pass, was, changes });
+      }
+      const w = b.was && typeof b.was === 'object' ? b.was : null;
+      if (!w || FIX_FIELDS.some(k => norm(k, w[k]) !== was[k])) fail(409, 'the pass changed since the look: look again', { changed: true, was });
+      if (!changes.length) {
+        await client.query('ROLLBACK');
+        return res.json({ success: true, dryRun: false, pass, was, became: to, changes });
+      }
+      const voided = to.status === 'void' && was.status !== 'void';
+      await client.query(`UPDATE bkk_passes SET credits_used=coalesce($2, credits_used), valid_until=$3, frozen_from=$4, frozen_until=$5,
+          status=$6, note = coalesce(note || ' | ', '') || $7 WHERE id=$1`,
+        [p.id, to.creditsUsed, to.validUntil, to.frozenFrom, to.frozenUntil, to.status,
+          [voided ? `${oneLine(b.said, 60) || 'void'} in Rezerv` : null, `Rezerv fix ${today}`].filter(Boolean).join(' | ')]);
+      const f = (await client.query(`INSERT INTO bkk_pass_fixes (pass_id, via, by_name, note, was, became)
+          VALUES ($1,$2,$3,$4,$5,$6) RETURNING id, at`,
+        [p.id, b.via === 'cli' ? 'cli' : 'admin', oneLine(b.by, 60) || null, note, was, to])).rows[0];
+      await client.query('COMMIT');
+      console.log(`✓ bkk: pass ${p.id} set as in Rezerv (${changes.map(c => c.field).join(', ')})`);
+      res.json({ success: true, dryRun: false, pass, was, became: to, changes, fix: { id: f.id, at: f.at } });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      res.status(e.status || 500).json({ error: e.message, ...(e.extra || {}) });
+    } finally { client.release(); }
   });
 
   // ── admin sees everything ─────────────────────────────────────────────────
