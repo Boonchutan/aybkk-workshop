@@ -10,3 +10,4 @@
 - Score: wins this week: none reported. Last win 6 Nov. 180K new leads this week: 0.
 - Inbox 07:08: 0 new, 0 hot.
 13:08 check-in: old-price ask (3rd round) and Carne's 2 quiet leads still waiting, due 19:00 (2nd nudge today, last). Course prices Sun 29 Nov: 3 days. No reminders due. Inbox 13:08: 0 new, 0 hot.
+19:08 check-in: old-price ask and Carne's 2 quiet leads passed 19:00, defaults applied (nothing sent). No win today. Inbox 19:08: 0 new, 0 hot.
