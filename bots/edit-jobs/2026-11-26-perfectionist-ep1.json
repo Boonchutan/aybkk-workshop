@@ -1,0 +1,19 @@
+{
+ "id": "2026-11-26-perfectionist-ep1",
+ "created": "2026-11-27T04:12:15+07:00",
+ "by": "plato",
+ "status": "queued",
+ "title": "Yogi superpower #1: The Perfectionist (talking head + B-roll boxes)",
+ "brief": "68 s vertical reel, rebuild of the finished cut 00_REFERENCE_perfectionist_ep1.mp4 as an Edits DRAFT so Meta keeps the project data. Main track: 01_TALK_cut_with_DJI_mic_audio.mp4, use it whole (already cut and synced, DJI mic audio). Add the 14 B clips (B01..B14) as overlays at the times and positions in 04_shot_list.txt: 'chest' = lower box over his chest (face visible), 'head' = upper box over his face, 'tall' = narrow box over his chest. No sound on B clips. Add 02_TITLE_whole_video.png as an image overlay for the whole video. Captions optional (Edits auto captions; spelling per 03_captions.srt: asana, lat control, whose mat). Compare with 00_REFERENCE before saving. Save as draft 'Yogi superpower 1 Perfectionist'. Do not post. If 00_REFERENCE or 01_TALK is missing from the folder (Drive upload limit from the cloud is 10 MB; Boonchu adds them by hand), set status needs-boonchu.",
+ "media": [
+  "03_Reels_Content/Social media post/the perfectionist/Edits kit Ep1 (Yogi superpower 1)"
+ ],
+ "text": [
+  "Yogi superpower #1: The Perfectionist",
+  "Every shala has one."
+ ],
+ "format": {
+  "aspect": "9:16",
+  "seconds": 68
+ }
+}

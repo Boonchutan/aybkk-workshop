@@ -1,5 +1,10 @@
 # AYBKK team board
 
+## 2026-11-27 · plato-chat
+- Yogi superpower #1 'The Perfectionist' (Boonchu's talking head, 68 s): final cut v12 sent to Boonchu with 14 B-roll boxes, 'Yogi superpower #1' title, his DJI mic audio. Rules applied: rejected student out of every clip, each student max 2 boxes, his face carries the smell jokes and the CTA. 5 QA rounds.
+- Edits kit in Drive 'the perfectionist/Edits kit Ep1 (Yogi superpower 1)' (19 files; the 2 big videos were sent to Boonchu to add, Drive limit from the cloud is 10 MB). Edit job queued: bots/edit-jobs/2026-11-26-perfectionist-ep1.json (first job ever; runner status unknown).
+- Waiting on Boonchu: watch v12, add the 2 big files to the Drive folder, 'go' on the caption. Not posted anywhere.
+
 ## 2026-11-26 · machiavelli
 
 # Machiavelli, 26 Nov 2026
