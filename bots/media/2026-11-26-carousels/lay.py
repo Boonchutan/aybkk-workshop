@@ -186,7 +186,18 @@ def layout(s, ov_):
         wx = 60 if fx['wx'] == 'L' else (1020 - wwid if fx['wx'] == 'R' else fx['wx'])
         wy = fx['wy'] if isinstance(fx['wy'], (int, float)) else (60 if fx['wy'] == 'top' else int(fx['wy'][1:]) - whgt)
         wr = (wx, wy, wx + wwid, wy + whgt)
-        cw = fx['cw']; lines = wrap(text, cw); bh = len(lines) * LEAD
+        cw = fx['cw']; lines = wrap(text, cw)
+        if 'roww' in fx:      # per-row max widths (short rows where a body comes close); keeps the exact text
+            rw = {int(k): v for k, v in fx['roww'].items()}; lines, cur, r = [], '', 1
+            for tk in tokens(text):
+                if tk == ' ':
+                    if cur: cur += ' '
+                    continue
+                lim = rw.get(r, cw); cand = cur + tk
+                if seg_len(cand.rstrip(), SZ) <= lim or not cur.strip(): cur = cand
+                else: lines.append(cur.rstrip()); cur = tk; r += 1
+            if cur.strip(): lines.append(cur.rstrip())
+        bh = len(lines) * LEAD
         c0 = fx['c0']; col = (c0, c0 + cw)
         top = fx['top'] if 'top' in fx else fx['bottom'] - bh
         return img, lum, Z, (0, dict(t=t, sz=sz, wr=wr, ib=ib, cw=cw, col=col, top=top, lines=lines, wc=0, sc=0))
