@@ -8,7 +8,7 @@ S = '/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e
 HLG = ('zscale=tin=arib-std-b67:min=bt2020nc:pin=bt2020:t=linear:npl=100,format=gbrpf32le,exposure=exposure=-1.3,'
        'zscale=p=bt709,tonemap=mobius:param=0.15:desat=2,zscale=t=bt709:m=bt709:r=tv,format=gbrp,'
        "colorchannelmixer=rr=1.03:gg=0.96:bb=0.91,curves=master='0/0 0.1/0.13 0.5/0.54 0.8/0.8 1/0.9',format=yuv420p")
-BOX = {'chest': (120, 1050, 840, 600), 'head': (90, 262, 900, 760), 'tall': (270, 1025, 540, 640)}
+BOX = {'chest': (120, 1094, 840, 556), 'head': (90, 262, 900, 760), 'tall': (270, 1070, 540, 596)}
 M, R, BW = 30, 30, 6
 CAPY = 1370          # canvas margin for the shadow, corner radius, white border width
 FPS = 30
@@ -83,12 +83,17 @@ def main():
     fd = 0.13
     for k, ((c, cx, cy, n), p) in enumerate(zip(cans, items)):
         d = n / FPS; t0 = p['out']
-        fc.append(f"[{k + 3}:v]fade=t=in:st=0:d={fd}:alpha=1,fade=t=out:st={d - fd:.3f}:d={fd}:alpha=1,setpts=PTS-STARTPTS+{t0:.4f}/TB[b{k}]")
+        nxt = items[k + 1]['out'] if k + 1 < len(items) else None
+        fout = '' if (nxt is not None and nxt < t0 + d) or (nxt is None and t0 + d >= 68.29) else f',fade=t=out:st={d - fd:.3f}:d={fd}:alpha=1'
+        fc.append(f"[{k + 3}:v]fade=t=in:st=0:d={fd}:alpha=1{fout},setpts=PTS-STARTPTS+{t0:.4f}/TB[b{k}]")
         fc.append(f"[{last}][b{k}]overlay={cx}:{cy}:eof_action=pass:enable='between(t,{t0:.4f},{t0 + d:.4f})'[o{k}]")
         last = f'o{k}'
+    if '--stick' in sys.argv:
+        args += ['-i', S + 'work/stick.mov']
+        fc.append(f"[{last}][{len(cans) + 3}:v]overlay=0:1094:eof_action=pass[os]"); last = 'os'
     if '--caps' in sys.argv:
         args += ['-i', S + 'work/caps.mov']
-        fc.append(f"[{last}][{len(cans) + 3}:v]overlay=0:{CAPY}:eof_action=pass[oc]"); last = 'oc'
+        fc.append(f"[{last}][{len(cans) + 3 + (1 if '--stick' in sys.argv else 0)}:v]overlay=0:{CAPY}:eof_action=pass[oc]"); last = 'oc'
     fc.append(f"[{last}][2:v]overlay=0:0:shortest=1,format=yuv420p[vout]")
     args += ['-filter_complex', ';'.join(fc), '-map', '[vout]', '-map', '1:a', '-c:v', 'libx264', '-preset', 'slow', '-crf', '17',
              '-r', str(FPS), '-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709',
