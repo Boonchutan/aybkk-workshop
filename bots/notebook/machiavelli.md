@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-11-27T06:10:47.753Z
+Inbox last read: 2026-11-27T12:09:55.865Z
 
 ## Standing orders from Boonchu
 - 2026-11-08 BRAND COLOURS CHANGED (Boonchu picked "L1 Grande Galerie", the Louvre palette, for aybkk.net; PR on branch claude/louvre-palette, Neo): Louvre red #7E262E (hero band, headings), oxblood #5F1C23 (deep sections), honey parquet #D6A35C (buttons, offer bars; same hue as the new maple floor), limestone #F4EDE2 (page), soft brass #84621F (prices, gilt), pyramid steel blue #2F507F (links only). The old aubergine #3E1442 + mustard #F2C94C + pink is retired on the website. Posters, carousels, the timetable poster and the review QR card still use aubergine and gold: move them to the Louvre palette only after Boonchu says go for each piece. Small text rule from the same day: nothing under 15 px on the site; keep the grid.
@@ -316,3 +316,4 @@ Inbox last read: 2026-11-27T06:10:47.753Z
 - 2026-11-26 19:08: old-price ask (3rd round) and Carne's 2 quiet leads: no answer by 19:00, defaults applied (no reply sent, old-price asked again Sat 28 Nov 07:08; both leads stay open, nothing sent). No reminders due since 13:08. No win today. Next step given: confirm the 23 Nov renewal slip and 16 Nov 12-month slip in the bank app. Inbox 19:08: 0 new, 0 hot.
 - 2026-11-27 07:08: Carne posted (0 new leads, 2 open; both quiet 14+ days, A last note or B close by 19:00, default open; serious lead check Sat 28 Nov); Plato paused (expected), Plato chat scheduled HISTORY carousel 10:00. No @Machi requests. Money: renewal slip (23 Nov) + 16 Nov 12-month slip unconfirmed. Old-price ask next Sat 28 Nov 07:08. Course prices Sun 29 Nov (2 days). Reminders: Mysore trip flights/hotel/visas (daily, visas by 1 Dec), Rezerv import (daily). Inbox 07:08: 1 new, 0 hot. No wins this week. Board rebuilt.
 - 2026-11-27 13:08: check-in. Course prices Sun 29 Nov (2 days, default B) led; Carne's 2 quiet leads (A last note / B close) repeated, due 19:00 (2nd today, last). No reminders due since 07:08. Inbox 13:08: 1 new, 1 hot (class time question for tomorrow).
+- 2026-11-27 19:08: check-in. Carne's 2 quiet leads: no answer by 19:00, default applied (both stay open, nothing sent). Course prices not repeated (2 nudges today; due 19:00 Sun 29 Nov, 2 days, default B). No reminders due since 13:08. No win today; next step given: confirm the 23 Nov renewal slip and 16 Nov 12-month slip in the bank app. Inbox 19:08: 1 new, 1 hot.
