@@ -2303,10 +2303,14 @@
 
   // My account, for a student on an In-Depth course (IDCN#3, 24 Nov 2026): a card that opens
   // their course page. Nothing shows for anyone else.
-  Object.assign(STR.en, { idcnH: l => `${l} · In-Depth course`, idcnOpen: 'Open my course page', idcnStart: d => `Your first day: ${d}` });
-  Object.assign(STR.th, { idcnH: l => `${l} · คอร์ส In-Depth`, idcnOpen: 'เปิดหน้าคอร์สของฉัน', idcnStart: d => `วันแรกของคุณ: ${d}` });
-  Object.assign(STR.zh, { idcnH: l => `${l} · 深度迈索尔课程`, idcnOpen: '打开我的课程页面', idcnStart: d => `你的第一天：${d}` });
-  Object.assign(STR.ru, { idcnH: l => `${l} · курс In-Depth`, idcnOpen: 'Открыть страницу курса', idcnStart: d => `Ваш первый день: ${d}` });
+  Object.assign(STR.en, { idcnH: l => `${l} · In-Depth course`, idcnOpen: 'Open my course page', idcnStart: d => `Your first day: ${d}`,
+    idcnArrive: d => `Arrive: ${d} (morning practice only)`, idcnFirst: d => `Course starts: ${d}` });
+  Object.assign(STR.th, { idcnH: l => `${l} · คอร์ส In-Depth`, idcnOpen: 'เปิดหน้าคอร์สของฉัน', idcnStart: d => `วันแรกของคุณ: ${d}`,
+    idcnArrive: d => `วันมาถึง: ${d} (ฝึกช่วงเช้าเท่านั้น)`, idcnFirst: d => `เริ่มคอร์ส: ${d}` });
+  Object.assign(STR.zh, { idcnH: l => `${l} · 深度迈索尔课程`, idcnOpen: '打开我的课程页面', idcnStart: d => `你的第一天：${d}`,
+    idcnArrive: d => `抵达：${d}（只有上午练习）`, idcnFirst: d => `开课：${d}` });
+  Object.assign(STR.ru, { idcnH: l => `${l} · курс In-Depth`, idcnOpen: 'Открыть страницу курса', idcnStart: d => `Ваш первый день: ${d}`,
+    idcnArrive: d => `Приезд: ${d} (только утренняя практика)`, idcnFirst: d => `Начало курса: ${d}` });
 
   // Booking closes a while after the class starts, at the class's bookUntil from the server
   // (Boonchu, 16 Nov 2026). closesAt takes the Bangkok time.
@@ -3626,6 +3630,15 @@
     }
   }
 
+  // On the course from the start: the arrival day and the first session (Boonchu, 27 Nov 2026).
+  // Joining later (an alum's start date after the first session): their own first day.
+  const idcnWhen = c => {
+    const wd = ymd => { try { return new Date(ymd + 'T12:00:00+07:00').toLocaleDateString(LOCALE[LANG] || 'en-GB',
+      { timeZone: 'Asia/Bangkok', weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }); } catch (_) { return ymd; } };
+    if (c.arrive && c.courseStart && !(c.startDate && c.startDate > c.courseStart))
+      return [t('idcnArrive', wd(c.arrive)), t('idcnFirst', wd(c.courseStart))];
+    return c.startDate ? [t('idcnStart', wd(c.startDate))] : [];
+  };
   // The In-Depth course this account is on (idcn-api.js /api/idcn/mine), drawn after My account
   // and never in its way: no course, a slow answer or an error leaves the box empty.
   async function renderIdcn(code) {
@@ -3638,7 +3651,7 @@
     if (!box || !box.isConnected || code !== myCode()) return;
     box.innerHTML = courses.filter(c => /^\/idcn\d+\/[a-z0-9-]+$/.test(c.link || '')).map(c => `<div class="pkg idcn">
         <h3>${esc(t('idcnH', c.label || c.course))}</h3>
-        ${c.startDate ? `<div class="note">${esc(t('idcnStart', dayLong(c.startDate)))}</div>` : ''}
+        ${idcnWhen(c).map(line => `<div class="note">${esc(line)}</div>`).join('')}
         <p style="margin-top:12px"><a class="btn pink" href="${esc(c.link)}">${esc(t('idcnOpen'))}</a></p></div>`).join('');
   }
 

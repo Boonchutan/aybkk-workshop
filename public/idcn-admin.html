@@ -136,7 +136,7 @@
         <b>Name EN | 中文名 | member code or email | start date | note | arranged (yes/no)</b>.
         Only the name is needed. A member code links the AYBKK account they already have (alumni);
         an email links the account with that email, or makes one (new students). Start date is
-        YYYY-MM-DD; empty means from day 1 (alumni joining later: 2027-01-24, day 14, from session #13).
+        YYYY-MM-DD; empty means from day 1 (alumni joining later: 2027-01-24, from session #13).
         arranged yes = terms agreed directly with AYBKK, so the course opens without the online signature.
         Up to 30 lines. Rows copied from a spreadsheet (tabs) work too. Someone already on the course is
         never added twice: only their empty fields are filled.</p>
@@ -209,7 +209,7 @@
         A slot cell that starts with #N (or SN, as S31) is session N; the morning column is never a session.
         Lines around the table are fine, and a line such as "Slot A is 10:30-12:30." sets that slot's time.
         Save replaces the whole calendar.</p>
-      <textarea id="calBox" rows="9" spellcheck="false" placeholder="| Day no. | Date | Day | Morning class | Slot A 10:30-12:30 | Slot B 13:00-16:00 |&#10;| --- | --- | --- | --- | --- | --- |&#10;| 1 | 11 Jan 2027 | Mon | Morning practice | – | #1 Session title |"></textarea>
+      <textarea id="calBox" rows="9" spellcheck="false" placeholder="| Day no. | Date | Day | Morning class | Slot A 10:30-12:30 | Slot B 13:00-16:00 |&#10;| --- | --- | --- | --- | --- | --- |&#10;| 1 | 11 Jan 2027 | Mon | Morning practice (arrival) | – | – |&#10;| 2 | 12 Jan 2027 | Tue | Morning practice | – | #1 Session title |"></textarea>
       <p style="margin:10px 0 0"><button class="btn" id="calPrev" onclick="calRun(true)">Preview</button>
         <button class="btn pink" id="calSave" onclick="calRun(false)">Save calendar</button>
         <span class="muted" id="calMsg"></span></p>
@@ -736,7 +736,7 @@
           <input id="sn${id}" maxlength="80" value="${esc(s.cohort_note || '')}" placeholder="IDCN #1 alum"></div>
       </div>
       <div class="muted" id="si${id}">${esc(startInfo(s.start_date))}</div>
-      <p class="muted" style="margin:4px 0 0">Alumni joining later start 2027-01-24 (day 14, from session #13).</p>
+      <p class="muted" style="margin:4px 0 0">Alumni joining later start 2027-01-24 (from session #13).</p>
       <p style="margin:8px 0 0"><button class="btn pink" id="sb${id}" onclick="saveCohort(${id})">Save</button>
         <button class="btn gray" onclick="closePanel(${id})">Cancel</button> <span class="muted" id="sm${id}"></span></p></div>`);
     $('#sd' + id).addEventListener('input', e => { $('#si' + id).textContent = startInfo(e.target.value); });

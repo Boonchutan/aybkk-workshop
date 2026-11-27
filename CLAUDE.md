@@ -132,7 +132,7 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
   "Link AYBKK account", a 7-day login link per student (bkk's `staffSigninLink`), the calendar pasted as Boonchu's table
   (`idc_days`, `idc_sessions` from "#N"/"SN" in a slot), assignments per session and one teacher comment per student per
   day; hand-ins are per session only (the old daily video box is gone, Boonchu, 25 Nov 2026; earlier videos still
-  list under Assignments & notes). `start_date` is per student (alumni start 2027-01-24, day 14, session #13); `terms_arranged` opens the course
+  list under Assignments & notes). `start_date` is per student (alumni start 2027-01-24, session #13); Mon 11 Jan 2027 is arrival (morning practice only), Tue 12 Jan the first session, Tue 9 Feb the last day (`COURSE_DAYS`, Boonchu, 27 Nov 2026), shown beside the signed terms, whose date line stays "11 Jan to 9 Feb"; `terms_arranged` opens the course
   without the sign flow. The staff note (`cohort_note`) never reaches the student. The roster, calendar text and links
   are entered in Admin, never in git.
 - **Course files and old workshop photos off Cloudinary (25 Nov 2026, `lib/media-store.js`):** with the same four
