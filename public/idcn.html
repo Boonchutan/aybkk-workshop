@@ -274,9 +274,9 @@
 
     html += `<div class="card"><b class="h">${T('课程安排', 'Course schedule')}</b>
       ${c.sessions.map((x, i) => `<div style="padding:6px 0">
-        <b>${c.sessions.length === 1 ? T('课程时间', 'Course dates')
+        <b>${c.sessions.length === 1 ? (c.arrive && c.start && !lateStart() ? T('课程时间（含抵达日）', 'Course dates (arrival day included)') : T('课程时间', 'Course dates'))
           : T('第' + '一二'[i] + '阶段', 'Session ' + (i + 1))}</b> · ${esc(LANG === 'zh' && x.dates_zh ? x.dates_zh : x.dates)}<br>
-        <span class="muted">${esc(LANG === 'zh' ? x.place_zh : x.place_en)}</span></div>`).join('')}${c.arrive && c.start
+        <span class="muted">${esc(LANG === 'zh' ? x.place_zh : x.place_en)}</span></div>`).join('')}${c.arrive && c.start && !lateStart()
           ? `<div style="padding:0 0 6px"><b>${T('抵达', 'Arrival')}</b> · ${dayFull(c.arrive)} · ${T2('只有上午练习，没有课', 'morning practice only, no session')}<br>
         <b>${T('开课', 'Course starts')}</b> · ${dayFull(c.start)}</div>` : ''}${(c.facts || []).map(f =>
           `<div class="muted" style="padding:2px 0">${esc(LANG === 'zh' ? f.zh : f.en)}</div>`).join('')}
@@ -409,6 +409,9 @@
       : `${d.weekday ? esc(d.weekday) + ' ' : ''}${dd} ${MON[m - 1]}`;
   };
   const startOf = () => (P.cohort && P.cohort.startDate) || '';
+  // a start date on or before the first session is "with the course from the start" (arrival
+  // day included); only a later one (an alum joining at session #13) is the student's own start
+  const lateStart = () => { const st = startOf(), cs = (P.course || {}).start; return cs && st && st <= cs ? '' : st; };
   // "Day N of 30" in the header: the day whose date is today in Bangkok
   function dayCount() {
     const days = P.days || [];
@@ -417,8 +420,8 @@
     if (d) return LANG === 'zh' ? `第 ${d.day} 天 / 共 ${days.length} 天` : `Day ${d.day} of ${days.length}`;
     if (days[0].date && today < days[0].date) {
       // on the course from the start: the arrival day and the first session (Boonchu, 27 Nov 2026)
-      const c = P.course || {}, st = startOf();
-      if (c.arrive && c.start && (!st || st <= c.start))
+      const c = P.course || {};
+      if (c.arrive && c.start && !lateStart())
         return LANG === 'zh' ? `${dayShort(c.arrive)}抵达 · ${dayShort(c.start)}开课`
           : `Arrive ${dayShort(c.arrive)} · course starts ${dayShort(c.start)}`;
       const first = days.find(x => !startOf() || x.date >= startOf()) || days[0];
@@ -492,7 +495,7 @@
   function renderDays() {
     const days = P.days || [];
     if (!days.length) return '';
-    const today = bkkToday(), start = startOf(), slots = P.slots || {};
+    const today = bkkToday(), start = lateStart(), slots = P.slots || {};
     // open on load: today, or before the course the student's next day
     const focus = days.find(d => d.date && d.date >= today && !(start && d.date < start));
     const first = start && days.find(d => d.date >= start);
