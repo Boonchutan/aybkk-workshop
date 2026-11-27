@@ -1453,14 +1453,16 @@ function mountIdcn(app, opts = {}) {
   // Cloudinary's file is kept. Run again it copies only what is left. Staff start it
   // here or in Admin, Settings, Photo storage; with R2 on it also starts by itself a
   // few minutes after each start and every few hours, until nothing is left.
-  // Counts of files only.
-  const copyJobs = new Map(), copyRuns = new Map();
+  // Counts of files only. R2 failing is tried again in place (2 s, then 8 s); a run R2 still
+  // stopped is followed by the next one 10 minutes later, not 3 hours (Cloudinary closes 29 Nov 2026).
+  const copyJobs = new Map(), copyRuns = new Map(), r2Stopped = new WeakSet();
+  const R2_AGAIN_MS = opts.r2AgainMs || [2000, 8000];
   async function copyCourse(code, job) {
     // point: how the rows take the copy; 0 rows when another copy got there first
     const one = async (part, url, prefix, fallback, opts, point) => {
       const key = `${prefix}/${crypto.randomBytes(16).toString('hex')}.${media.extOf(url, fallback)}`;
       try {
-        await media.copyIn(store, url, key, { fetch: httpFetch, ...opts });
+        await media.copyIn(store, url, key, { fetch: httpFetch, again: R2_AGAIN_MS, ...opts });
         if (await point(media.REF + key)) job[part].copied++;
         else store.del(key).catch(() => {});
         job[part].left--;
@@ -1523,31 +1525,37 @@ function mountIdcn(app, opts = {}) {
     copyJobs.set(code, job);
     copyRuns.set(code, media.withLock(pool, `aybkk-copy:idcn:${code}`, () => copyCourse(code, job))
       .then(got => { if (!got) job.errors.push('Another server is copying these files now.'); })
-      .catch(e => { job.errors.push(e.message); })
+      .catch(e => { job.errors.push(e.message); if (e.r2) r2Stopped.add(job); })
       .finally(() => { job.running = false; job.finishedAt = new Date().toISOString(); }));
     return job;
   }
   const clean = job => !job.errors.length && ['hub', 'notes', 'proofs'].every(k => !job[k].failed && job[k].left === 0);
   const activeCodes = async () => (await q('SELECT code FROM idc_courses WHERE active ORDER BY code')).rows.map(r => r.code);
+  // true: every course clean; 'r2': R2 itself stopped one
   async function copyAll() {
-    let ok = true;
+    let ok = true, r2 = false;
     for (const code of await activeCodes()) {
       const job = startCopy(code);
       await copyRuns.get(code);
       if (!clean(job)) ok = false;
+      if (r2Stopped.has(job)) r2 = true;
     }
-    return ok;
+    return ok || (r2 ? 'r2' : false);
   }
-  // by itself (R2 on; opts.autoCopy: false, or { firstMs, everyMs } for a test)
-  const auto = store && opts.autoCopy !== false ? { firstMs: 3 * 60e3, everyMs: 3 * 3600e3, ...(opts.autoCopy || {}) } : null;
+  // by itself (R2 on; opts.autoCopy: false, or { firstMs, everyMs, againMs } for a test)
+  const auto = store && opts.autoCopy !== false ? { firstMs: 3 * 60e3, everyMs: 3 * 3600e3, againMs: 10 * 60e3, ...(opts.autoCopy || {}) } : null;
   const autoState = { next: null, done: false };
   function autoSoon(ms) {
     if (!auto || autoState.done || Date.now() + ms > media.AUTO_UNTIL) { autoState.next = null; return; }
     autoState.next = new Date(Date.now() + ms).toISOString();
     const t = setTimeout(async () => {
       autoState.next = null;
-      try { if (await copyAll()) autoState.done = true; } catch (e) { console.warn('[idcn] course files copy did not run:', e.message); }
-      autoSoon(auto.everyMs);
+      let next = auto.everyMs;
+      try {
+        const r = await copyAll();
+        if (r === true) autoState.done = true; else if (r === 'r2') next = auto.againMs;
+      } catch (e) { console.warn('[idcn] course files copy did not run:', e.message); }
+      autoSoon(next);
     }, ms);
     if (t.unref) t.unref();
   }
