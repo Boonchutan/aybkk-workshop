@@ -114,6 +114,10 @@ const currentVersion = course => CURRENT_POLICY[course.code] || course.policy_ve
 // What staff and students call the group; the code stays the one in links and tables.
 const COURSE_LABEL = { idcn3: 'IDCN#3' };
 const courseLabel = code => COURSE_LABEL[code] || String(code).toUpperCase();
+// Boonchu, 27 Nov 2026: Mon 11 Jan is arrival (morning practice only, no session), Tue 12 Jan
+// the first session, Tue 9 Feb the last day. Shown beside the terms, never inside them: the
+// signed date line ("11 Jan to 9 Feb 2027") is the stay, and stays as each student signed it.
+const COURSE_DAYS = { idcn3: { arrive: '2027-01-11', start: '2027-01-12', end: '2027-02-09' } };
 const ymd = v => v == null ? null : v instanceof Date
   ? `${v.getFullYear()}-${String(v.getMonth() + 1).padStart(2, '0')}-${String(v.getDate()).padStart(2, '0')}`
   : String(v).slice(0, 10);
@@ -798,6 +802,7 @@ function mountIdcn(app, opts = {}) {
       name_zh: terms.name_zh || course.name_zh,
       sessions: terms.sessions, confirmBy: terms.confirmBy, policyVersion: version };
     if (terms.facts) c.facts = terms.facts;
+    if (COURSE_DAYS[course.code]) Object.assign(c, COURSE_DAYS[course.code]);
     return {
       course: c,
       student: { slug: s.slug, name_en: s.name_en, name_zh: s.name_zh, lang: s.lang,
@@ -837,7 +842,9 @@ function mountIdcn(app, opts = {}) {
          ORDER BY s.course_code, s.id`, [await foldedInto(m.id)])).rows;
       res.json({ courses: rows.map(r => ({ course: r.course_code, label: courseLabel(r.course_code),
         name_en: r.name_en, name_zh: r.name_zh, slug: r.slug, link: `/${r.course_code}/${r.slug}`,
-        startDate: r.start_date })) });
+        startDate: r.start_date,
+        ...(COURSE_DAYS[r.course_code] ? { arrive: COURSE_DAYS[r.course_code].arrive,
+          courseStart: COURSE_DAYS[r.course_code].start } : {}) })) });
     } catch (e) { res.status(500).json({ error: 'something went wrong' }); }
   });
 
@@ -1958,4 +1965,4 @@ function mountIdcn(app, opts = {}) {
 }
 
 module.exports = { mountIdcn, quote, applyPct, planError, termsFor, IDCN3_TERMS, IDCN3_TERMS_V4,
-  IDCN3_POLICY_VERSION, TERMS_BY_POLICY, parseCalendar };
+  IDCN3_POLICY_VERSION, TERMS_BY_POLICY, COURSE_DAYS, parseCalendar };

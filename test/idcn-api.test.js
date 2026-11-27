@@ -204,6 +204,14 @@ const B_THB = 100; // satang per baht
        && prof.body.course.name_en === 'In-Depth Mysore: the development of the practice · Generation #3'
        && prof.body.course.confirmBy === '2026-12-10' && prof.body.consent === null
        && prof.body.course.facts.length === 3, JSON.stringify(prof.body.course));
+  ok('the course page shows arrival Mon 11 Jan and the first session Tue 12 Jan beside the terms (Boonchu, 27 Nov 2026)',
+     prof.body.course.arrive === '2027-01-11' && prof.body.course.start === '2027-01-12'
+       && prof.body.course.end === '2027-02-09', JSON.stringify(prof.body.course));
+  ok('...and the signed date line is left as it was: v4 and v1 to v3 still say 11 Jan to 9 Feb',
+     JSON.stringify(prof.body.course.sessions) === JSON.stringify(IDCN3_TERMS_V4.sessions)
+       && IDCN3_TERMS_V4.sessions[0].dates === '11 Jan to 9 Feb 2027 (30 days)'
+       && IDCN3_TERMS_V4.sessions[0].dates_zh === '2027年1月11日至2月9日（30天）'
+       && IDCN3_TERMS.sessions[0].dates === '11 Jan – 9 Feb 2027 (30 days)');
   ok('she is offered exactly options A and B at ฿192,600, no −3% though flagged attendee',
      JSON.stringify(prof.body.quotes) === JSON.stringify([qa, qb]) && prof.body.quote === null,
      JSON.stringify(prof.body.quotes));
@@ -384,11 +392,13 @@ const B_THB = 100; // satang per baht
      JSON.stringify(v3p.quote) === V3_QUOTES['3true'], JSON.stringify(v3p.quote));
   ok('her three v3 quotes are unchanged',
      JSON.stringify(v3p.quotes) === `[${V3_QUOTES['1true']},${V3_QUOTES['2true']},${V3_QUOTES['3true']}]`);
-  ok('she sees the same course card: name, dates, confirm-by, policy idcn3-v3, no v4 facts',
+  ok('she sees the same course card: name, dates, confirm-by, policy idcn3-v3, no v4 facts; '
+     + 'only the arrival and first session are added beside it',
      JSON.stringify(v3p.course) === JSON.stringify({ code: 'idcn3',
        name_en: 'AYBKK In-Depth Mysore Course for Chinese Generation #3',
        name_zh: 'AYBKK 深度迈索尔课程 · 中国第三期', sessions: IDCN3_TERMS.sessions,
-       confirmBy: '2026-09-10', policyVersion: 'idcn3-v3' }), JSON.stringify(v3p.course));
+       confirmBy: '2026-09-10', policyVersion: 'idcn3-v3',
+       arrive: '2027-01-11', start: '2027-01-12', end: '2027-02-09' }), JSON.stringify(v3p.course));
   ok('her signed record still says idcn3-v3, option 3, attendee',
      v3p.consent.policy_version === 'idcn3-v3' && v3p.consent.payment_option === 3
        && v3p.student.isAttendee === true && v3p.student.paymentOption === 3);
@@ -669,7 +679,8 @@ const B_THB = 100; // satang per baht
   ok('/mine lists her course: IDCN#3, her link and start date, nobody else',
      mineOne.status === 200 && /no-store/.test(mineOne.headers.get('cache-control') || '')
        && JSON.stringify(mineOne.body) === JSON.stringify({ courses: [{ course: 'idcn3', label: 'IDCN#3',
-         name_en: 'Test New One', name_zh: null, slug: 'test-new-one', link: '/idcn3/test-new-one', startDate: '2027-01-11' }] }),
+         name_en: 'Test New One', name_zh: null, slug: 'test-new-one', link: '/idcn3/test-new-one', startDate: '2027-01-11',
+         arrive: '2027-01-11', courseStart: '2027-01-12' }] }),
      JSON.stringify(mineOne.body));
   ok('/mine for an account on no course, and for a made-up code, is empty',
      JSON.stringify((await J2(`/api/idcn/mine/${mOut.code}`)).body) === '{"courses":[]}'

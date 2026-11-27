@@ -276,7 +276,9 @@
       ${c.sessions.map((x, i) => `<div style="padding:6px 0">
         <b>${c.sessions.length === 1 ? T('课程时间', 'Course dates')
           : T('第' + '一二'[i] + '阶段', 'Session ' + (i + 1))}</b> · ${esc(LANG === 'zh' && x.dates_zh ? x.dates_zh : x.dates)}<br>
-        <span class="muted">${esc(LANG === 'zh' ? x.place_zh : x.place_en)}</span></div>`).join('')}${(c.facts || []).map(f =>
+        <span class="muted">${esc(LANG === 'zh' ? x.place_zh : x.place_en)}</span></div>`).join('')}${c.arrive && c.start
+          ? `<div style="padding:0 0 6px"><b>${T('抵达', 'Arrival')}</b> · ${dayFull(c.arrive)} · ${T2('只有上午练习，没有课', 'morning practice only, no session')}<br>
+        <b>${T('开课', 'Course starts')}</b> · ${dayFull(c.start)}</div>` : ''}${(c.facts || []).map(f =>
           `<div class="muted" style="padding:2px 0">${esc(LANG === 'zh' ? f.zh : f.en)}</div>`).join('')}
     </div>`;
 
@@ -305,6 +307,12 @@
   const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const dateEn = d => { const [y, m, dd] = String(d).split('-').map(Number); return `${dd} ${MON[m - 1]} ${y}`; };
   const dateZh = d => { const [y, m, dd] = String(d).split('-').map(Number); return `${y}年${m}月${dd}日`; };
+  const WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const wdOf = d => { const [y, m, dd] = String(d).split('-').map(Number); return WD[new Date(Date.UTC(y, m - 1, dd)).getUTCDay()]; };
+  // "Mon 11 Jan 2027" / "2027年1月11日（周一）"; short drops the year
+  const dayFull = d => LANG === 'zh' ? `${dateZh(d)}（${WD_ZH[wdOf(d)]}）` : `${wdOf(d)} ${dateEn(d)}`;
+  const dayShort = d => { const [, m, dd] = String(d).split('-').map(Number);
+    return LANG === 'zh' ? `${m}月${dd}日（${WD_ZH[wdOf(d)]}）` : `${wdOf(d)} ${dd} ${MON[m - 1]}`; };
   const byDate = d => LANG === 'zh' ? dateZh(d) + '前' : 'by ' + dateEn(d);
 
   // one price with its VAT, and the dated payments of an option
@@ -408,6 +416,11 @@
     const today = bkkToday(), d = days.find(x => x.date === today);
     if (d) return LANG === 'zh' ? `第 ${d.day} 天 / 共 ${days.length} 天` : `Day ${d.day} of ${days.length}`;
     if (days[0].date && today < days[0].date) {
+      // on the course from the start: the arrival day and the first session (Boonchu, 27 Nov 2026)
+      const c = P.course || {}, st = startOf();
+      if (c.arrive && c.start && (!st || st <= c.start))
+        return LANG === 'zh' ? `${dayShort(c.arrive)}抵达 · ${dayShort(c.start)}开课`
+          : `Arrive ${dayShort(c.arrive)} · course starts ${dayShort(c.start)}`;
       const first = days.find(x => !startOf() || x.date >= startOf()) || days[0];
       return LANG === 'zh' ? '开始：' + dateZh(first.date) : 'Starts ' + dateEn(first.date);
     }
@@ -448,6 +461,7 @@
     const handOk = !before && !!d.date && d.date <= today;
     const slots = P.slots || {}, ss = d.sessions || [], work = P.sessionsWork || {};
     const cm = (P.comments || {})[d.day];
+    const arrival = !before && !!d.date && d.date === (P.course || {}).arrive && !ss.length;
     const nAs = ss.reduce((n, x) => n + ((work[x.no] || {}).assignments || []).length, 0);
     const nSub = ss.reduce((n, x) => n + ((work[x.no] || {}).submissions || []).length, 0);
     const open = FOLD.has(d.day) ? FOLD.get(d.day) : !!focus && focus.day === d.day;
@@ -458,7 +472,8 @@
     const short = [d.slotA, d.slotB].filter(Boolean).join(' · ') || d.morning || '';
     const tags = [isToday ? `<span class="tag now">${T2('今天', 'Today')}</span>` : '',
       before ? `<span class="tag">${T2('你加入之前', 'before your start')}</span>` : '',
-      start && d.date === start ? `<span class="tag now">${T2('你的第一天', 'your first day')}</span>` : '',
+      arrival ? `<span class="tag now">${T2('抵达日 · 只有上午练习', 'arrival day · morning practice only')}</span>` : '',
+      start && d.date === start && !arrival ? `<span class="tag now">${T2('你的第一天', 'your first day')}</span>` : '',
       nAs ? `<span class="tag">${T2('作业 ' + nAs, nAs === 1 ? '1 assignment' : nAs + ' assignments')}</span>` : '',
       nSub ? `<span class="tag ok">${T2('已提交 ' + nSub + ' ✓', nSub + ' handed in ✓')}</span>` : '',
       cm ? `<span class="tag ok">${T2('老师点评', 'teacher’s comment')}</span>` : ''].join('');
