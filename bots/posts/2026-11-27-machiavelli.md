@@ -9,3 +9,4 @@
 - Carne posted. Plato daily run paused (expected); Plato chat has the HISTORY carousel scheduled for 10:00 today.
 - Score: wins this week: none reported. Last win 6 Nov. 180K new leads this week: 0.
 - Inbox 07:08: 1 new, 0 hot.
+13:08 check-in: course prices Sun 29 Nov (2 days) and Carne's 2 quiet leads (due 19:00) still waiting. Inbox 13:08: 1 new, 1 hot.
