@@ -78,9 +78,14 @@
   .ini img.on{opacity:1}
   .ini.lit{background:none}
   .tile .nm{font-size:23px;font-weight:600;line-height:1.2;max-width:100%;overflow-wrap:anywhere}
-  .tile .at{position:absolute;top:10px;left:12px;font-size:14px;color:var(--soft)}
   .tile.in{border-color:rgba(61,220,151,.45);background:#18131c}
-  .tile.in .ini,.tile.in .nm,.tile.in .at{opacity:.4}
+  .tile.in .ini,.tile.in .nm{opacity:.4}
+  /* Two classes open at once: each has its own part of the list. */
+  .part{margin:26px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--line);font-size:26px;font-weight:600;line-height:1.25}
+  .part:first-child{margin-top:0}
+  .part .num{color:var(--plum);margin-right:10px}
+  .part small{display:block;color:var(--soft);font-size:16px;font-weight:400}
+  .part + .grid .empty{grid-column:1/-1;padding:18px 10px}
   .tile .ok{position:absolute;top:10px;right:10px;width:38px;height:38px;border-radius:50%;background:var(--in);color:#0d1a14;
     display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;line-height:1}
   .empty{color:var(--soft);font-size:21px;text-align:center;padding:40px 10px}
@@ -540,7 +545,11 @@
     if (!DATA || !DATA.classes) return;
     var head = $('#classes');
     head.textContent = '';
-    DATA.classes.forEach(function (c) {
+    // Two classes open at once (M, 28 Nov 2026): the class still to start comes first, here and in
+    // the list, since its students are the ones at the door; one that has begun goes under it.
+    var now = hm(nowMs());
+    var classes = DATA.classes.slice().sort(function (a, b) { return (a.start <= now) - (b.start <= now) || (a.start < b.start ? -1 : a.start > b.start ? 1 : 0); });
+    classes.forEach(function (c) {
       var b = el('b');
       b.appendChild(el('span', 'num', LANG ? WORDS[LANG].time(c.start) : c.start));
       b.appendChild(document.createTextNode(LANG ? cls(LANG, c.title) : c.title));
@@ -560,7 +569,7 @@
       return;
     }
     var used = {};
-    DATA.seats.forEach(function (s) {
+    var tile = function (s) {
       var b = el('button', 'tile' + (s.in ? ' in' : ''));
       b.type = 'button';
       b.setAttribute('data-t', s.t);
@@ -570,10 +579,26 @@
       ini.setAttribute('aria-hidden', 'true');
       b.appendChild(ini);
       b.appendChild(el('span', 'nm', s.n));
-      if (many) b.appendChild(el('span', 'at num', LANG ? A.time(s.c) : s.c));
       if (s.in) { var ok = el('span', 'ok', '✓'); ok.setAttribute('aria-hidden', 'true'); b.appendChild(ok); }
       b.setAttribute('aria-label', s.n + (s.in ? sep + A.isIn : '') + (many ? sep + A.time(s.c) : ''));
-      grid.appendChild(b);
+      return b;
+    };
+    grid.classList.toggle('grid', !many);
+    if (!many) { DATA.seats.forEach(function (s) { grid.appendChild(tile(s)); }); return; }
+    // A part of the list for each class.
+    var starts = [];
+    classes.forEach(function (c) { if (starts.indexOf(c.start) < 0) starts.push(c.start); });
+    starts.forEach(function (st) {
+      var h = el('h2', 'part');
+      h.appendChild(el('span', 'num', LANG ? A.time(st) : st));
+      var names = classes.filter(function (c) { return c.start === st; });
+      h.appendChild(document.createTextNode(names.map(function (c) { return LANG ? cls(LANG, c.title) : c.title; }).join(' · ')));
+      if (!LANG) h.appendChild(el('small', '', names.map(function (c) { return cls('th', c.title); }).join(' · ')));
+      grid.appendChild(h);
+      var box = el('div', 'grid'), mine = DATA.seats.filter(function (s) { return s.c === st; });
+      mine.forEach(function (s) { box.appendChild(tile(s)); });
+      if (!mine.length) box.appendChild(el('p', 'empty', LANG ? A.none : WORDS.th.none + ' ' + WORDS.en.none));
+      grid.appendChild(box);
     });
   }
   $('#grid').addEventListener('click', function (e) {
